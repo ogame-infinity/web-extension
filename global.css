@@ -1,0 +1,6622 @@
+.ship_input_row input {
+  font-weight: 800 !important;
+}
+
+.technology .icon .level,
+.technology .icon .amount {
+  background: linear-gradient(#1d2732, #131c24) !important;
+}
+
+input.metal,
+.metal + input,
+#resources .res_wrap:first-child input {
+  /* background: #1e2c38 !important; */
+  color: #ffaacca1 !important;
+  border: solid 1px rgb(58 72 86) !important;
+  box-shadow: none !important;
+}
+input.crystal,
+.crystal ~ input,
+#resources .res_wrap:nth-child(2) input {
+  /* background: #1e2c38 !important; */
+  color: #73e5ffc7 !important;
+  border: solid 1px rgb(58 72 86) !important;
+  box-shadow: none !important;
+}
+
+input.deuterium,
+.deuterium ~ input,
+#resources .res_wrap:nth-child(3) input {
+  /* background: #1e2c38 !important; */
+  color: #a6e0b0 !important;
+  border: solid 1px rgb(58 72 86) !important;
+  box-shadow: none !important;
+}
+input[disabled] {
+  filter: grayscale(1);
+}
+input {
+  background: -webkit-linear-gradient(top, #0d151b 0, #1f2a35 100%) !important;
+  color: #bbb !important;
+  border: solid 1px rgb(58 72 86) !important;
+  box-shadow: none !important;
+  line-height: 23px !important;
+  background: -webkit-linear-gradient(
+    top,
+    rgb(14 17 23) 0px,
+    rgb(35 43 51) 100%
+  ) !important;
+}
+
+.ogl-res-filler .ogk-real-cargo {
+  position: absolute;
+  right: 137px;
+  background: #1c2730;
+  padding: 1px 5px;
+  border-radius: 5px;
+  border: solid 1px #252f3a;
+  color: #9c0 !important;
+  background: -webkit-linear-gradient(top, #0d151b 0, #1f2a35 100%);
+  font-size: 9px !important;
+}
+.ogl-res-filler .ogk-real-cargo.ogk-metal {
+  top: -7px;
+  color: #ffbfd9a1;
+}
+.ogl-res-filler .ogk-real-cargo.ogk-crystal {
+  top: 47px;
+}
+.ogl-res-filler .ogk-real-cargo.ogk-deut {
+  top: 101px;
+}
+
+.ogl-sideStalk .ogl-stalkPlanets a {
+  height: 23px;
+}
+
+.ogl-sideStalk .ogl-stalkPlanets .ogl-planet,
+.ogl-sideStalk .ogl-stalkPlanets .ogl-moon {
+  transform: scale(0.75);
+  opacity: 0.75;
+}
+
+.ogl-sideStalk .ogl-stalkPlanets .ogl-planet-div,
+.ogl-sideStalk .ogl-stalkPlanets .ogl-moon-div {
+  /* transform: scale(0.8); */
+}
+.ogl-sideStalk .ogl-stalkPlanets .ogl-moon-act.active,
+.ogl-sideStalk .ogl-stalkPlanets .ogl-moon-act.showMinutes {
+  opacity: 0.75;
+  top: 1px;
+  transform: scale(0.9);
+}
+
+.ogl-sideStalk .ogl-stalkPlanets .ogl-planet-act.active,
+.ogl-sideStalk .ogl-stalkPlanets .ogl-planet-act.showMinutes {
+  opacity: 0.75;
+  transform: scale(0.9);
+}
+
+.ogl-sideStalk .ogl-stalkPlanets .ogl-moon-act.showMinutes {
+  right: 7px;
+}
+
+.ogl-sideStalk .ogl-stalkPlanets .ogl-moon-hover,
+.ogl-sideStalk .ogl-stalkPlanets .ogl-planet-hover {
+  top: 2px;
+}
+
+.ogl-stalkPlanets .ogl-planet-hover .icon_eye {
+  margin-right: -2px;
+}
+.ogl-stalkPlanets .ogl-moon-hover {
+  width: 75px !important;
+}
+.ogl-stalkPlanets .ogl-moon-hover .icon_eye {
+  margin-left: -2px;
+}
+
+.ogk-welcome .mmoflag {
+  background: transparent
+    url(https://gf3.geo.gfsrv.net/cdn28/71fe874d78b03e38e06a3b471f6224.png)
+    no-repeat;
+  background-position-x: 0%;
+  background-position-y: 0%;
+  height: 14px !important;
+  padding-left: 23px;
+  margin: 9px 15px 0px 0px;
+}
+
+.ogk-logo {
+  width: 175px;
+  height: 71px;
+  background: url("chrome-extension://__MSG_@@extension_id__/res/logo-text.png");
+  background-size: 175px;
+}
+
+.ogk-keep-dialog h1 {
+  font-weight: 800;
+  color: #5d7fa4;
+  font-size: 12px;
+}
+.ogk-keep-dialog .btn_blue {
+  margin-top: 10px;
+  float: right;
+}
+.ogk-keep-dialog .ogk-bhole-grid {
+  margin-bottom: 4px;
+}
+.ogk-keep-dialog .ogk-adjust-grid {
+  margin-bottom: 10px;
+  width: 187px;
+}
+
+/*****************************
+* BUY ME A COFFE
+/****************************/
+@font-face {
+  font-family: "Sterilict";
+  src: url("chrome-extension://__MSG_@@extension_id__/res/Sterilict.ttf");
+}
+.bmc-button {
+  line-height: 30px !important;
+  height: 39px !important;
+  text-decoration: none !important;
+  display: inline-flex !important;
+  color: #fff !important;
+  border-radius: 10px !important;
+  border: 2px solid #4a6786 !important;
+  padding: 3px 10px 0px 3px !important;
+  font-size: 11px !important;
+  letter-spacing: 0.6px !important;
+  margin: 0 auto !important;
+  font-family: "Sterilict", cursive !important;
+  box-sizing: border-box !important;
+}
+.bmc-button span {
+  margin-left: 2px;
+  font-family: "Sterilict", cursive !important;
+}
+
+.bmc-button:hover {
+  background-color: #4a6786 !important;
+}
+
+.bmc-button img {
+  height: 22px !important;
+  width: 31px !important;
+  margin-top: 3px !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+/*****************************
+* SETTING PAGE
+/****************************/
+.ogl-settings {
+  display: flex;
+  width: 650px;
+  justify-content: space-around;
+}
+.ogl-settings > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.ogl-settings .ogk-logo {
+  margin-bottom: 20px;
+  margin-left: 30px;
+}
+
+.ogl-settings h1 {
+  font-weight: 800;
+  color: #5d7fa4;
+  font-size: 12px;
+}
+
+.ogl-settings > div:first-child,
+.ogl-settings > div:last-child {
+  padding: 10px;
+}
+.ogl-settings > div:last-child {
+  display: flex;
+  flex-direction: column;
+}
+
+.ogl-settings .ogl-rvalInput {
+  cursor: auto !important;
+  float: right;
+  height: 14px;
+  line-height: 16px;
+  padding: 0 4px;
+  text-align: center;
+  width: 100px !important;
+}
+
+.ogl-settings .ogl-right {
+  margin-top: 0;
+}
+
+.ogl-settings.btn_blue {
+  margin-left: 5px;
+}
+
+.ogl-settings .btn_blue.save {
+  width: 30px;
+  align-self: flex-end;
+  margin-top: 5px;
+}
+
+/*****************************
+* FLEET DISPATCH
+/****************************/
+.fleetStatus .ogl-backLast {
+  margin-left: 55px;
+}
+.fleetStatus .ogl-backLast .icon_link {
+  margin: 0 0 -4px;
+  background-position-y: -576px !important;
+  filter: hue-rotate(180deg) saturate(150%);
+}
+
+.fleetStatus:nth-child(4) #slots {
+  opacity: 0.5;
+}
+.fleetStatus:nth-child(4):hover #slots {
+  opacity: 1;
+}
+
+.fleetStatus .fleft:first-of-type .advice span {
+  margin-right: 5px;
+  color: #9099a3;
+}
+.fleetStatus .fleft:first-of-type .advice,
+.fleetStatus .fleft:nth-of-type(2) .advice {
+  font-size: 11px;
+  font-weight: 800;
+  color: #ddd;
+  line-height: 27px !important;
+}
+
+#shipsChosen .sprite_before.recycler::before,
+#shipsChosen .sprite_after.recycler::after,
+#shipsChosen .sprite.recycler {
+  background-position: 57.89% 52.12%;
+}
+#shipsChosen .sprite_before.espionageProbe::before,
+#shipsChosen .sprite_after.espionageProbe::after,
+#shipsChosen .sprite.espionageProbe {
+  background-position: 63.15% 52.72%;
+}
+#shipsChosen .sprite_before.transporterSmall::before,
+#shipsChosen .sprite_after.transporterSmall::after,
+#shipsChosen .sprite.transporterSmall {
+  background-position: 42.1% 52.12%;
+}
+#shipsChosen .sprite_before.fighterLight::before,
+#shipsChosen .sprite_after.fighterLight::after,
+#shipsChosen .sprite.fighterLight {
+  background-position: 0 52.22%;
+}
+#shipsChosen .sprite_before.fighterHeavy::before,
+#shipsChosen .sprite_after.fighterHeavy::after,
+#shipsChosen .sprite.fighterHeavy {
+  background-position: 5.25% 52.22%;
+}
+#shipsChosen .sprite_before.cruiser::before,
+#shipsChosen .sprite_after.cruiser::after,
+#shipsChosen .sprite.cruiser {
+  background-position: 10.53% 52.1%;
+}
+#shipsChosen .sprite_before.interceptor::before,
+#shipsChosen .sprite_after.interceptor::after,
+#shipsChosen .sprite.interceptor {
+  background-position: 21.05% 51.99%;
+}
+#shipsChosen .sprite_before.reaper::before,
+#shipsChosen .sprite_after.reaper::after,
+#shipsChosen .sprite.reaper {
+  background-position: 73.68% 52.12%;
+}
+#shipsChosen .sprite_before.explorer::before,
+#shipsChosen .sprite_after.explorer::after,
+#shipsChosen .sprite.explorer {
+  background-position: 78.94% 52%;
+}
+#shipsChosen .sprite_before.colonyShip::before,
+#shipsChosen .sprite_after.colonyShip::after,
+#shipsChosen .sprite.colonyShip {
+  background-position: 52.62% 52.12%;
+}
+
+#fleetdispatchcomponent #allornone .info {
+  display: none;
+}
+#fleet1 .allornonewrap .firstcol {
+  width: 283px !important;
+  margin-top: 9px !important;
+}
+.show_fleet_apikey {
+  margin-top: 7px !important;
+}
+#fleetdispatchcomponent .allornonewrap .secondcol {
+  width: 170px !important;
+}
+
+.ogl-dispatch .ogl-missions {
+  height: 30px;
+  display: flex;
+  justify-content: space-around;
+  text-align: center;
+  align-content: center;
+}
+.ogl-dispatch .ogl-missions div {
+  display: flex;
+}
+.ogl-dispatch .ogl-missions span {
+  margin-top: 8px;
+}
+
+#fleetdispatchcomponent #buttonz #technologies {
+  min-height: 200px !important;
+}
+
+.ogi-plus-icon {
+  width: 20px;
+  height: 20px;
+  opacity: 0.5;
+}
+
+.ogi-plus-icon.ogl-active {
+  opacity: 1;
+}
+.ogi-plus-icon:hover {
+  opacity: 0.85;
+}
+.ogi-plus-icon.ogl-active:hover {
+  opacity: 0.75;
+}
+
+#fleet1 #statusBarFleet {
+  display: none;
+}
+
+/* RESFILLER CSS */
+#shipsChosen {
+  margin-left: -5px;
+}
+
+#loadRoom {
+  color: #ccc;
+  margin-left: 10px !important;
+  top: 80px !important;
+}
+#loadAllResources {
+  color: #ccc;
+  margin-left: 10px !important;
+}
+
+.ogl-res-filler .ogl-actions {
+  position: relative;
+  top: -13px;
+  left: 1px;
+  display: inline-flex;
+  background: #252f3a;
+}
+
+.ogl-res-filler .resourceIcon {
+  margin-right: 5px;
+  width: 48px;
+  border-radius: 5px;
+  height: 20px;
+  padding: 0px;
+  margin-top: 0px;
+}
+.ogl-res-filler span {
+  display: block;
+  margin-top: 2px;
+  font-size: 10px;
+  margin-left: 57px;
+  color: #ccc;
+}
+
+.ogl-res-filler > div {
+  margin-bottom: 10px;
+  width: 160px;
+  height: 35px;
+  border: solid 1px;
+  padding: 4px;
+  border-radius: 5px;
+  background: -webkit-linear-gradient(top, #0d151b 0, #1f2a35 100%);
+  border: 1px solid #252f3a;
+  padding-bottom: 3px;
+}
+/* .ogl-res-filler > div:last-child {
+  margin-bottom: 0px;
+} */
+#selectMinMetal,
+#selectMinCrystal,
+#selectMinDeuterium {
+  position: relative;
+  left: -50px;
+}
+
+#selectMaxMetal,
+#selectMaxCrystal,
+#selectMaxDeuterium {
+  position: relative;
+  left: -52px;
+}
+#selectMostMetal,
+#selectMostCrystal,
+#selectMostDeuterium {
+  position: relative;
+  left: -51px;
+}
+
+.ogl-dest .ogl-planet-icon {
+  width: 27px;
+  height: 27px;
+  margin-left: 5px;
+  background: url("chrome-extension://__MSG_@@extension_id__/res/planet.png")
+    no-repeat left top;
+  background-size: 25px 22px;
+  margin-top: 4px;
+  opacity: 0.6;
+}
+.ogl-dest .ogl-moon-icon {
+  width: 27px;
+  height: 27px;
+  margin-left: 5px;
+  background: url("chrome-extension://__MSG_@@extension_id__/res/moon.png")
+    no-repeat left top;
+  background-size: 27px 24px;
+  margin-top: 2px;
+  margin-left: -1px;
+  opacity: 0.6;
+}
+
+.ogl-dest .ogl-debris-icon {
+  width: 27px;
+  height: 27px;
+  margin-left: 5px;
+  background: url("chrome-extension://__MSG_@@extension_id__/res/debris.gif")
+    no-repeat left top;
+  background-size: 20px 21px;
+  margin-top: 5px;
+  margin-left: 3px;
+  opacity: 0.4;
+}
+
+.ogl-dest .ogl-debris-icon:hover,
+.ogl-dest .ogl-moon-icon:hover,
+.ogl-dest .ogl-planet-icon:hover,
+.ogl-dest .ogl-debris-icon.ogl-active,
+.ogl-dest .ogl-moon-icon.ogl-active,
+.ogl-dest .ogl-planet-icon.ogl-active {
+  filter: brightness(150%);
+  opacity: 1;
+}
+.ogl-dest .ogl-debris-icon:hover,
+.ogl-dest .ogl-debris-icon.ogl-active {
+  opacity: 0.85 !important;
+}
+
+.ogl-res-filler input {
+  width: 94px;
+  height: 15px !important;
+}
+
+.ogl-dispatch {
+  position: relative;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  right: 100px;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 656px;
+  right: 414px;
+}
+.ogl-dispatch > div:last-child {
+  margin-bottom: 0px;
+}
+
+.ogl-dispatch .ogl-transport {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* margin-bottom: 5px; */
+}
+.ogl-res-transport a {
+  color: #aaa;
+}
+.ogl-res-transport {
+  width: 85px;
+  height: 130px;
+  display: grid;
+  grid-gap: 3px;
+  grid-template-columns: 1fr 2fr;
+  align-items: center;
+  border-radius: 5px;
+  background: -webkit-linear-gradient(
+    top,
+    rgb(13, 21, 27) 0px,
+    rgb(31, 42, 53) 100%
+  );
+  column-gap: 10px;
+  margin-bottom: 10px;
+  color: #aaa;
+  /* background: -webkit-linear-gradient(top, rgb(13, 21, 27) 50%, rgb(31, 42, 53) 100%); 
+  */
+
+  background: linear-gradient(0deg, #1a232d, transparent);
+
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(37, 47, 58);
+  border-image: initial;
+  padding: 10px;
+  margin-left: 10px;
+}
+
+#fleet1 .planet-header.shortHeader {
+  display: none;
+}
+.ogl-dest .ogl-coords {
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ogl-dest .ogl-duration {
+  color: #ddd;
+}
+
+.ogl-dest .ogl-info div:last-child.overmark {
+  font-weight: 800;
+}
+
+.ogl-dest .ogl-arrival-time {
+  color: #ffd700eb;
+  font-style: italic;
+}
+
+.ogl-dest .ogl-return-time {
+  color: rgb(149, 86, 206);
+  color: #ffd700eb;
+  opacity: 0.8;
+  font-style: italic;
+}
+.ogl-dest .ogl-return-time strong,
+.ogl-dest .ogl-arrival-time strong {
+  font-style: normal;
+}
+
+.ogl-mission-icon {
+  background: url("https://gf2.geo.gfsrv.net/cdn14/f45a18b5e55d2d38e7bdc3151b1fee.jpg")
+    no-repeat;
+  width: 20px;
+  height: 20px;
+  background-size: 220px;
+  margin-left: 0px;
+  margin-right: 0px;
+  transform: scale(1.3);
+  overflow: hidden;
+  margin-right: 11px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  /* filter: brightness(100%); */
+}
+.ogl-settings .ogl-mission-icon {
+  transform: scale(1);
+  margin: 0px !important;
+  margin-left: 5px !important;
+  opacity: 0.8;
+}
+.ogl-settings .ogl-mission-icon.ogl-active,
+.ogl-settings .ogl-mission-icon:hover {
+  opacity: 1;
+}
+
+.ogl-mission-icon:last-child {
+  margin-right: 0px;
+}
+
+.ogl-mission-icon.ogl-inactive:hover {
+  filter: brightness(115%);
+}
+.ogl-mission-icon:hover,
+.ogl-mission-icon.ogl-active:hover,
+.ogl-mission-icon.ogl-active {
+  filter: none;
+}
+
+.ogl-mission-icon.ogl-mission-15 {
+  background-position: 0px 0px !important;
+}
+.ogl-mission-icon.ogl-mission-15:hover,
+.ogl-mission-icon.ogl-mission-15.ogl-active {
+  background-position: 0px -20px !important;
+}
+.ogl-mission-icon.ogl-mission-15.ogl-inactive {
+  background-position: 0px -40px !important;
+}
+
+.ogl-mission-icon.ogl-mission-7 {
+  background-position: -40px 0px !important;
+}
+.ogl-mission-icon.ogl-mission-7.ogl-active,
+.ogl-mission-icon.ogl-mission-7:hover {
+  background-position: -40px -20px !important;
+}
+.ogl-mission-icon.ogl-mission-7.ogl-inactive {
+  background-position: -40px -40px !important;
+}
+
+.ogl-mission-icon.ogl-mission-8 {
+  background-position: -80px 0px !important;
+}
+.ogl-mission-icon.ogl-mission-8.ogl-active,
+.ogl-mission-icon.ogl-mission-8:hover {
+  background-position: -80px -20px !important;
+}
+.ogl-mission-icon.ogl-mission-8.ogl-inactive {
+  background-position: -80px -40px !important;
+}
+
+.ogl-mission-icon.ogl-mission-3 {
+  background-position: -100px 0px !important;
+}
+.ogl-mission-icon.ogl-mission-3.ogl-active,
+.ogl-mission-icon.ogl-mission-3:hover {
+  background-position: -100px -20px !important;
+}
+.ogl-mission-icon.ogl-mission-3.ogl-inactive {
+  background-position: -100px -40px !important;
+}
+
+.ogl-mission-icon.ogl-mission-4 {
+  background-position: -60px 0px !important;
+}
+.ogl-mission-icon.ogl-mission-4.ogl-active,
+.ogl-mission-icon.ogl-mission-4:hover {
+  background-position: -60px -20px !important;
+}
+.ogl-mission-icon.ogl-mission-4.ogl-inactive {
+  background-position: -60px -40px !important;
+}
+
+.ogl-mission-icon.ogl-mission-6 {
+  background-position: -120px 0px !important;
+}
+.ogl-mission-icon.ogl-mission-6.ogl-active,
+.ogl-mission-icon.ogl-mission-6:hover {
+  background-position: -120px -20px !important;
+}
+.ogl-mission-icon.ogl-mission-6.ogl-inactive {
+  background-position: -120px -40px !important;
+}
+
+.ogl-mission-icon.ogl-mission-5 {
+  background-position: -140px 0px !important;
+}
+.ogl-mission-icon.ogl-mission-5.ogl-active,
+.ogl-mission-icon.ogl-mission-5:hover {
+  background-position: -140px -20px !important;
+}
+.ogl-mission-icon.ogl-mission-5.ogl-inactive {
+  background-position: -140px -40px !important;
+}
+
+.ogl-mission-icon.ogl-mission-1 {
+  background-position: -160px 0px !important;
+}
+.ogl-mission-icon.ogl-mission-1.ogl-active,
+.ogl-mission-icon.ogl-mission-1:hover {
+  background-position: -160px -20px !important;
+}
+.ogl-mission-icon.ogl-mission-1.ogl-inactive {
+  background-position: -160px -40px !important;
+}
+
+.ogl-mission-icon.ogl-mission-2 {
+  background-position: -200px 0px !important;
+}
+.ogl-mission-icon.ogl-mission-2.ogl-active,
+.ogl-mission-icon.ogl-mission-2:hover {
+  background-position: -200px -20px !important;
+}
+.ogl-mission-icon.ogl-mission-2.ogl-inactive {
+  background-position: -200px -40px !important;
+}
+
+.ogl-mission-icon.ogl-mission-9 {
+  background-position: -180px 0px !important;
+}
+.ogl-mission-icon.ogl-mission-9.ogl-active,
+.ogl-mission-icon.ogl-mission-9:hover {
+  background-position: -180px -20px !important;
+}
+.ogl-mission-icon.ogl-mission-9.ogl-inactive {
+  background-position: -180px -40px !important;
+}
+
+.ogl-dest .ogl-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-content: space-between;
+  align-content: space-between;
+  gap: 5px;
+  color: #9099a3;
+}
+
+.ogl-cargo {
+  padding: 2px 0px;
+  border-radius: 5px;
+  background: -webkit-linear-gradient(
+    top,
+    rgb(13, 21, 27) 0px,
+    rgb(31, 42, 53) 100%
+  );
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(37, 47, 58);
+  border-image: initial;
+  display: flex;
+}
+
+.ogl-setting-icon {
+  margin-top: 8px;
+  filter: brightness(120%);
+}
+
+.ogl-setting-icon:hover {
+  margin-top: 8px;
+  filter: brightness(150%);
+}
+
+.ogl-cargo .sendall,
+.ogl-cargo .send_none {
+  margin-left: -5px;
+}
+
+.ogl-cargo .select-most,
+.ogl-cargo .sendall,
+.ogl-res-filler .ogl-actions *,
+.res a {
+  opacity: 1;
+  filter: grayscale(1);
+}
+
+.allornonewrap .select-most,
+.allornonewrap #sendall {
+  filter: grayscale(1) !important;
+}
+.allornonewrap .select-most:hover,
+.allornonewrap .sendall:hover {
+  filter: none !important;
+}
+
+.ogl-cargo .select-most:hover,
+.ogl-cargo .sendall:hover,
+.res a:hover,
+.ogl-res-filler .ogl-actions img:hover,
+.ogl-res-filler .ogl-actions a:hover {
+  opacity: 1;
+  filter: none;
+}
+
+.ogl-cargo > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ogl-cargo .bar_container {
+  margin-top: 4px;
+  margin-left: 10px;
+  margin-right: 10px;
+  width: 155px;
+}
+.ogl-cargo .bar_container + div {
+  position: relative;
+  top: 4px;
+  font-size: 10px;
+}
+.ogl-cargo .select-most {
+  transform: scale(0.75);
+}
+.ogl-cargo .send_none {
+  transform: scale(0.75);
+}
+
+.ogl-dest > div {
+  width: 0px;
+  margin-bottom: 5px;
+  width: 300px;
+  /* height: 35px; */
+  padding: 4px 4px 3px;
+  border-radius: 5px;
+  background: -webkit-linear-gradient(
+    top,
+    rgb(13, 21, 27) 0px,
+    rgb(31, 42, 53) 100%
+  );
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(37, 47, 58);
+  border-image: initial;
+  display: flex;
+  justify-content: center;
+
+  background: linear-gradient(0deg, #1a232d, transparent);
+}
+.ogl-dest > div:nth-child(2) {
+  margin-bottom: 10px;
+}
+.ogl-dest > div:last-child {
+  margin-bottom: 0px;
+}
+
+.ogl-dest .ogl-coords .ogl-warning {
+  width: 12px;
+  height: 12px;
+  background: url("chrome-extension://__MSG_@@extension_id__/res/warning.gif")
+    no-repeat left top;
+  margin-right: 9px;
+  margin-top: 1px;
+}
+
+.ogl-dest .ogl-coords input {
+  width: 25px;
+  text-align: center;
+  font-weight: 800;
+  height: 14px !important;
+  padding-top: 4px;
+}
+.ogl-dest .ogl-coords input:first-of-type {
+  width: 15px !important;
+  margin-right: 5px;
+}
+
+.ogl-dest .ogl-coords input:last-of-type {
+  width: 15px !important;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+/* .ogl-dest .ogl-coords a:last-child {
+  margin-left: 50px;
+} */
+.ogl-dest .ogl-coords .ogl-homes {
+  width: 50px;
+  height: auto;
+  /* background: linear-gradient(
+    0deg,
+    rgba(110 137 157, 1) 0%,
+    rgb(110 137 157) 50%,
+    rgb(91 118 138) 50%,
+    rgb(91 118 138) 100%
+  ); */
+  cursor: pointer;
+  background: #5b768a70;
+  border-radius: 5px;
+  width: 69px;
+  margin-left: 5px;
+}
+
+.ogl-dest .ogl-coords .ogl-homes svg {
+  padding: 3px;
+  margin-left: 25px;
+  margin-top: 2px;
+}
+
+.ogl-dest .ogl-coords .ogl-homes a {
+  margin-left: 50px;
+  background: url("https://gf2.geo.gfsrv.net/cdn7d/195289b6c88eff9d729496ed0c527a.gif")
+    no-repeat;
+  width: 16px;
+  height: 16px;
+  padding: 3px;
+  width: 38px;
+  margin-left: -9px;
+  background-position: 26px 2px;
+  border-radius: 5px;
+  display: block;
+  transform: scale(1.2);
+  margin-top: 2px;
+  margin-left: -2px;
+  padding: 3px;
+}
+.ogl-dest .ogl-coords .ogl-homes:hover {
+  filter: hue-rotate(180deg) saturate(150%);
+  opacity: 1;
+}
+
+.sendall {
+  display: block;
+  width: 32px;
+  height: 32px;
+  overflow: hidden;
+  background: url("https://gf3.geo.gfsrv.net/cdneb/f5f81e8302aaad56c958c033677fb8.png") -374px -162px
+    no-repeat;
+  transform: scale(0.75);
+}
+
+.res_wrap .resourceIcon {
+  height: 18px !important;
+  border-radius: 5px !important;
+  margin-top: 1px !important;
+  width: 49px !important;
+}
+
+.res .select-most-min {
+  margin: 0px;
+}
+
+.res .ogi-metalLeft,
+.res .ogi-crystalLeft,
+.res .ogi-deuteriumLeft {
+  font-size: 10px;
+  position: relative;
+  top: -15px;
+  left: 5px;
+  display: block;
+  margin-top: 1px;
+  color: rgb(204, 204, 204);
+}
+
+#fleet3 #sendfleet #resources .res_wrap {
+  width: 150px !important;
+  z-index: 10;
+}
+#fleet3 #sendfleet .res input {
+  width: 93px !important;
+}
+
+#fleet3 #sendfleet #resources #mostresources {
+  position: absolute;
+  top: 10px;
+  left: 35px;
+}
+#fleet3 #sendfleet #resources a#allresources {
+  margin-left: 55px !important;
+}
+#loadAllResources .select-most {
+  margin: -42px 0px 0px 20px !important;
+}
+#loadAllResources .send_none a {
+  margin: -42px 17px 0px 0px !important;
+}
+
+.ogi-actions {
+  display: inline-flex;
+  justify-content: center;
+}
+
+.ogi-actions a {
+  margin-right: 5px !important;
+}
+
+.ogl-spyTable td.ogi-new {
+  background: #3c7f77;
+  color: white;
+}
+
+.ogi-speed-icon {
+  width: 20px;
+  height: 20px;
+  opacity: 0.5;
+}
+.ogi-speed-icon:hover {
+  opacity: 1;
+}
+
+.ogl-dispatch-icons {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 75px;
+  height: 73px;
+}
+.ogi-speed {
+  position: absolute;
+  top: 20px;
+  right: 0px;
+  font-size: 11px;
+  background: #000000dd;
+  color: white;
+  padding: 3px;
+  /* padding-right: px; */
+  border-radius: 5px 0px 0px 5px;
+}
+
+.select-most-min {
+  background: url("chrome-extension://__MSG_@@extension_id__/res/select_most.gif")
+    no-repeat left top;
+  display: inline-block;
+  height: 11px;
+  width: 14px;
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+.select-most {
+  background: url("chrome-extension://__MSG_@@extension_id__/res/select_most.jpg")
+    no-repeat left top;
+  display: block;
+  float: left;
+  height: 32px;
+  width: 32px;
+}
+.select-most:hover {
+  background-position: 0 -32px;
+}
+#jumpgate .secondcol span {
+  padding: 0 5px !important;
+}
+.ogi-transparent .ogl-needed:not(.ogi-speed) {
+  opacity: 0;
+}
+.ogi-transparent *:not(.ogi-speed) {
+  opacity: 0.5;
+}
+
+.ogi-checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ogi-checkbox a {
+  text-decoration: none !important;
+  font-style: italic !important;
+  color: #5d7fa4 !important;
+}
+.ogi-checkbox a:hover .overmark,
+.ogi-checkbox a:hover {
+  color: goldenrod !important;
+}
+
+input[type="file"] {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+#tutorialiconcomponent #helper a {
+  transform: scale(0.5);
+  left: 20px !important;
+  top: -20px !important;
+  opacity: 0.5;
+}
+#tutorialiconcomponent #helper a:hover {
+  opacity: 1;
+}
+
+#toolbarcomponent {
+  margin-top: -30px;
+}
+
+#pageReloader {
+  background: #00000070;
+  border-radius: 50px;
+}
+
+#links .leftmenu li {
+  height: 25px !important;
+}
+
+.menu_icon .menuImage {
+  transform: scale(0.9);
+}
+
+#links .leftmenu li span {
+  font-size: 10px;
+}
+
+#commandercomponent {
+  opacity: 0.5;
+}
+#commandercomponent:hover {
+  opacity: 1;
+}
+
+/* .ogl-quickLinks {
+  width: 200px;
+  top: -98px;
+  position: relative;
+  left: 68px;
+}
+
+#target {
+  position: absolute;
+  top: -634px;
+  left: 23px;
+  display: flex;
+  width: 300px;
+}
+#target .planetname {
+  display: none;
+}
+
+#fleet2 .briefing.border5px {
+  position: absolute;
+  top: -647px;
+  width: 300px;
+  left: 351px;
+}
+
+#fleet2 not(#target) {
+  display:none;
+}
+#fleet3 #resources {
+  position: absolute;
+  top: -834px;
+  z-index: 20;
+} */
+
+/****************************
+  WARNING DIALOG 
+*****************************/
+
+.ogl-warning-dialog a.detail_button,
+.ogl-warning-dialog a.detail_button {
+  display: block;
+  height: 100px;
+  width: 100px;
+  background: url("https://gf2.geo.gfsrv.net/cdn47/7b21b8753bdabe14aae95ae7a093a7.gif")
+    no-repeat;
+  text-decoration: none;
+}
+.ogl-warning-dialog .ecke img {
+  margin-bottom: 4px;
+}
+.ogl-warning-dialog .ecke {
+  position: relative;
+  float: left;
+  top: 85px;
+  left: 10px;
+  width: 80px;
+  text-align: right;
+  height: 16px;
+}
+
+.ogl-warning-dialog {
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  font-size: 15px;
+  font-weight: 800;
+  align-items: center;
+  height: 150px;
+  justify-content: space-between;
+}
+
+.ogl-syncOption {
+  background: url("chrome-extension://__MSG_@@extension_id__/res/settings.png");
+  background-position: 4px 4px;
+  background-size: 15px;
+  background-repeat: no-repeat;
+}
+
+.originFleet,
+.destFleet {
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* display: inline-block; */
+  word-wrap: break-word;
+  line-break: unset;
+  white-space: nowrap;
+}
+
+.ogl-fleet-table {
+  min-width: 500px;
+}
+.ogl-fleet-table .ogl-current {
+  background: #1e242b !important;
+}
+.ogl-fleet-table tr:hover .ogl-current {
+  background: transparent !important;
+}
+
+#star,
+#star1,
+#star2 {
+  display: none;
+}
+
+.ogl-target-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  background: rgb(23, 29, 35);
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(0, 0, 0);
+  border-image: initial;
+  padding: 3px;
+  min-height: 300px;
+  max-height: 800px;
+  justify-content: start;
+}
+
+.ogl-target-list .ogl-stalkPlanets {
+  grid-template-columns: repeat(2, 1fr);
+  padding: 5px;
+}
+
+.ogl-target-list .ogk-controls {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 5px;
+  width: 261px;
+}
+.ogl-target-list .ogk-controls > div:first-child {
+  padding: 20px 0px;
+}
+
+/* 
+  HIDDING TOOLTIP (avoid having it sometimes when diplayed before removed by js)
+*/
+.tpd-tooltip {
+  display: none !important;
+}
+
+.fadeBox {
+  top: 80% !important;
+}
+
+/* 
+  FLEET MOVEMENTS
+*/
+.detailsOpened .sendMail,
+.detailsOpened .fedAttack {
+  top: 23px !important;
+}
+
+.ogk-stats .ogk-win {
+  margin-top: -50px;
+}
+
+.ogk-stats .ogk-top {
+  display: grid;
+  padding: 0px 25px;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 5px;
+  margin-bottom: 25px;
+}
+.ogk-stats .ogk-top div {
+  text-align: right;
+  color: #6a8198;
+}
+.ogk-stats .ogk-top p {
+  font-weight: 700;
+  color: #6a8198;
+}
+
+.ogk-stats .ogk-top .ogk-name {
+  display: inline-block;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.ogk-stats .ogk-top .debris {
+  font-weight: 800;
+  color: rgb(13, 110, 44) !important;
+}
+
+.ogk-stats .ogk-top-title {
+  margin-top: -80px;
+  font-size: 15px;
+  margin-bottom: 0px;
+  padding-top: 20px;
+  font-weight: 800;
+}
+
+div#banner_skyscraper {
+  left: 1115px !important;
+}
+
+/*****************************
+* DELAY COUNTER
+/****************************/
+
+#fleetBriefingPart1_2 li:first-of-type {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  text-align: right;
+}
+
+#fleetBriefingPart1_2 li:first-of-type .value {
+  float: none;
+}
+
+#fleet2 .ogk-delay {
+  color: #d43635 !important;
+  font-size: 11px;
+  right: 8px;
+  position: absolute;
+}
+
+#roundup .ogk-delay {
+  font-size: 11px;
+  color: #d43635 !important;
+  text-align: center;
+  font-weight: 800;
+  margin: 8px;
+}
+
+#fleet3 #roundup li {
+  display: flex;
+  justify-content: space-between;
+  margin-right: 20px;
+}
+
+#fleet3 #roundup ul li span.value {
+  text-align: right;
+}
+
+#fleet3 #roundup {
+  display: flex;
+  align-items: center;
+}
+
+#fleet3 #roundup .dropdown {
+  width: 55px !important;
+  justify-self: start;
+  margin-left: 60px;
+  margin-bottom: 2px;
+  margin-top: -2px;
+}
+
+.ogk-box.ogk-technos {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.ogk-center {
+  position: absolute;
+  width: 420px;
+  text-align: center;
+  font-size: 20px;
+  color: #ccc;
+  font-weight: 800;
+}
+
+.ogk-profit {
+  display: flex;
+  align-items: center;
+}
+
+.ogk-profit .ogk-date {
+  font-size: 18px;
+  font-weight: 100;
+  color: #5a6e82;
+  width: 420px;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.ogk-scroll-wrapper {
+  width: 350px;
+  height: 60px;
+  display: flex;
+  align-items: flex-end;
+  margin-left: 25px;
+}
+
+.ogk-scroll-wrapper > span {
+  cursor: pointer;
+  display: inline-block;
+  margin: 0px 5px;
+  height: 20px;
+  width: 20px;
+  background-color: rgb(13, 17, 23);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  border-radius: 5px 5px 0px 0px;
+  /* border: solid 2px rgb(13, 17, 23); */
+  border-bottom: none;
+  box-sizing: border-box;
+}
+
+.ogk-stats .overmark {
+  color: #bd3c43 !important;
+}
+
+.ogk-scroll-wrapper > span:last-of-type {
+  border: solid 2px #8b5617;
+  border-bottom: none;
+  box-sizing: border-box;
+  min-height: 10px;
+  /* display: none; */
+}
+.ogk-scroll-wrapper > span:last-of-type.ogk-active.ogk-minus {
+  border-color: rgb(139, 86, 23);
+}
+
+.ogk-scroll-wrapper > span.ogk-active {
+  background: #38485d !important;
+}
+.ogk-scroll-wrapper > span.ogk-minus {
+  background: #682428;
+}
+/* .ogk-scroll-wrapper > span.ogk-minus.ogk-active { */
+/* background: #682428 !important; */
+/* border: #38485d; */
+/* border: solid 2px #38485d;
+  border-bottom: none;
+  box-sizing: border-box;
+} */
+
+.ogk-scroll-wrapper > span:hover {
+  background-color: #38485d !important;
+}
+
+strong {
+  font-weight: bold !important;
+}
+
+#resources_metal {
+  font-weight: 800;
+  color: #ffaacca1 !important;
+}
+
+#resources_crystal {
+  font-weight: 800;
+  color: #73e5ffc7 !important;
+}
+
+#resources_deuterium {
+  font-weight: 800;
+  color: rgb(166, 224, 176) !important;
+}
+
+.ogk-time {
+  /* margin-top: 2px; */
+  color: #ffd700eb;
+  /* font-weight: 800; */
+}
+
+.sprite .mCSB_scrollTools_vertical,
+.ogl-search-content .mCSB_scrollTools_vertical,
+.ogl-target-list .mCSB_scrollTools_vertical {
+  opacity: 0 !important;
+}
+.sprite .mCSB_container:hover ~ .mCSB_scrollTools_vertical,
+.ogl-search-content .mCSB_container:hover ~ .mCSB_scrollTools_vertical,
+.ogl-target-list .mCSB_container:hover ~ .mCSB_scrollTools_vertical {
+  opacity: 0.5 !important;
+}
+
+.sprite .mCSB_inside > .mCSB_container,
+.ogl-search-content .mCSB_inside > .mCSB_container,
+.ogl-target-list .mCSB_inside > .mCSB_container {
+  margin-right: 0px !important;
+}
+
+.sprite .ogl-search-content .mCSB_draggerRail,
+.ogl-search-content .mCSB_draggerRail,
+.ogl-target-list .mCSB_draggerRail {
+  display: none !important;
+}
+
+.sprite .mCSB_scrollTools_vertical {
+  margin-right: -5px;
+}
+
+.sprite .mCustomScrollBox {
+  width: 100%;
+  padding: 0px 15px;
+}
+/*****************************
+* FLEET DETAIL
+/****************************/
+
+.fleetSlots,
+.expSlots {
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.detailsOpened .reversal {
+  top: 46px;
+  z-index: 10;
+}
+
+.detailsOpened .starStreak {
+  background: url("https://gf1.geo.gfsrv.net/cdnf5/6006050db8c19f1d3734c7f1ee4c89.gif")
+    0px -10px no-repeat !important;
+  height: 22px !important;
+  top: 20px !important;
+  background-color: rgba(0, 0, 0, 0.5);
+  height: 58px;
+}
+
+.detailsOpened .starStreak div {
+  top: -9px;
+}
+.ogk-fleet-detail {
+  width: 410px;
+  height: 21px;
+  line-height: 21px;
+  left: 122px;
+  position: absolute;
+  justify-content: space-around;
+  display: flex;
+  flex-direction: row;
+  top: 45px;
+  background: #00000080;
+  z-index: -1;
+  border-left: 1px solid #000;
+  border-right: 1px solid #000;
+}
+
+.ogl-tooltip .ogk-fleet-detail .ogl-date {
+  color: inherit;
+}
+
+.ogl-date strong {
+  display: inline-block;
+  font-style: normal;
+}
+
+.ogl-date {
+  font-style: italic;
+  color: #ffd700eb !important;
+}
+
+/*****************************
+* TECHNOLOGIES DETAIL
+/****************************/
+#technologydetails .ogk-sum,
+#technologydetails .ogk-sum .ogl-date {
+  color: #cec452 !important;
+}
+
+/* .research #technologydetails time.ogk-sum {
+  right: -140px;
+} */
+
+#technologydetails time.ogk-sum {
+  position: absolute;
+  right: -140px;
+  width: 130px;
+  font-weight: 800;
+}
+
+#technologydetails .build_duration time {
+  text-align: right;
+}
+#technologydetails .narrow strong {
+  font-weight: 100 !important;
+}
+#technologydetails .details {
+  background-color: #5d788c;
+  padding: 2px 5px;
+  border-radius: 2px;
+  font-weight: 800;
+}
+
+#technologydetails .ogk-lvl {
+  font-size: 14px;
+  font-weight: 800;
+  color: #ff9600;
+  min-width: 40px;
+  text-align: center;
+}
+
+#technologydetails #build_amount {
+  height: 32px !important;
+}
+#technologydetails .build_amount .maximum::before {
+  content: none !important;
+}
+#technologydetails .build_amount .maximum {
+  display: block !important;
+  position: absolute !important;
+  margin: 0 0 0 30px !important;
+  height: 24px !important;
+  top: 37px !important;
+  left: -35px !important;
+  background: none !important;
+}
+
+#technologydetails > .sprite {
+  height: 199px !important;
+  display: flex !important;
+  align-items: start;
+  justify-content: center;
+  backdrop-filter: grayscale(100%);
+}
+#technologydetails .mCustomScrollBox {
+  background: #000000a6;
+}
+
+#technologydetails .ogl-fleetInfo {
+  opacity: 0.5;
+  color: #ccc;
+}
+
+#technologydetails .ogl-fleetInfo:hover {
+  opacity: 1;
+}
+
+#technologydetails .resource.icon::before {
+  border-radius: 5px;
+  width: 38px !important;
+  height: 25px !important;
+  border: solid 1px #000 !important;
+}
+
+#technologydetails .description .txt_box button {
+  display: none;
+}
+
+#technologydetails .build_amount {
+  top: 140px !important;
+}
+
+#technologydetails button.downgrade {
+  top: 165px !important;
+  opacity: 0.6;
+}
+#technologydetails button.downgrade:hover {
+  opacity: 1;
+}
+
+#technologydetails button.downgrade span {
+  display: none !important;
+}
+
+a.build-it_premium,
+button.build-it_premium {
+  width: 150px !important;
+  background: transparent
+    url("https://gf1.geo.gfsrv.net/cdnfc/35658d707df040ae66b71215d187c1.png") -30px
+    0 no-repeat !important;
+  border-radius: 5px;
+  padding: 0 0 0 0px !important;
+}
+#technologydetails button.build-it_premium:disabled span,
+#technologydetails button.build-it_premium span {
+  padding-left: 0px !important;
+}
+
+.premium_info {
+  display: none !important;
+}
+
+#technologydetails .ogk-titles {
+  left: -44px;
+  position: absolute;
+  top: 29px;
+}
+#technologydetails .costs p {
+  display: none !important;
+}
+
+#technologydetails .resource.insufficient {
+  color: #fff !important;
+}
+
+.shipyard .ogl-fleetInfo {
+  padding: 15px 0px;
+}
+
+#technologydetails .information > ul li {
+  width: 285px !important;
+  margin-bottom: 2px !important;
+}
+
+#technologydetails .information > ul li:only-child {
+  margin-bottom: 15px !important;
+}
+
+#technologydetails .value {
+  float: right !important;
+}
+.build-it_wrap {
+  height: 50px !important;
+  top: 40px !important;
+}
+
+/* .research #technologydetails .technology_tree,
+.shipyard #technologydetails .technology_tree {
+  top: 5px !important;
+} */
+
+#technologydetails .technology_tree {
+  opacity: 0.85 !important;
+  background-color: transparent !important;
+  position: relative !important;
+  top: 0px !important;
+  margin-left: 25px !important;
+}
+
+#technologydetails_content {
+  background: #141e27 !important;
+}
+#technologydetails > .description {
+  background: #0e1014 !important;
+  /* left: 81px !important;
+  width: 89% !important; */
+}
+#technologydetails > .description .txt_box {
+  padding-left: 10px !important;
+  width: 90% !important;
+}
+
+#technologydetails .costs {
+  top: 40px !important;
+  left: 50px !important;
+}
+#technologydetails .resource.icon {
+  height: 75px !important;
+  margin: 0 2px;
+}
+
+#technologydetails .information > ul:first-of-type {
+  height: 83px;
+  align-items: end;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: absolute;
+  top: 115px;
+  width: auto !important;
+}
+#technologydetails .information > ul:first-of-type strong {
+  font-weight: 100 !important;
+}
+
+.ogk-tech-controls {
+  display: flex;
+  width: 100%;
+  position: inherit;
+  top: 50px;
+  right: 0px;
+  justify-content: space-around;
+  background: #1c2934a3;
+  padding: 13px 0px;
+}
+
+/*****************************
+* EXPEDITION COLORS
+/****************************/
+
+.msg_new.ogk-metal .msg_status,
+.msg.ogk-metal .msg_status {
+  background-color: #ffaacca1 !important;
+}
+.msg_new.ogk-crystal .msg_status,
+.msg.ogk-crystal .msg_status {
+  background-color: #73e5ffc7 !important;
+}
+.msg_new.ogk-deuterium .msg_status,
+.msg.ogk-deuterium .msg_status {
+  background-color: #a6e0b0 !important;
+}
+.msg_new.ogk-am .msg_status,
+.msg.ogk-am .msg_status {
+  background-color: #ddd !important;
+}
+.msg_new.ogk-object .msg_status,
+.msg.ogk-object .msg_status {
+  background-color: #c08931 !important;
+}
+.msg_new.ogk-fleet .msg_status,
+.msg.ogk-fleet .msg_status {
+  background-color: #782c2f !important;
+}
+.msg_new.ogk-aliens .msg_status,
+.msg.ogk-aliens .msg_status {
+  background-color: #1e6900 !important;
+}
+.msg_new.ogk-pirates .msg_status,
+.msg.ogk-pirates .msg_status {
+  background-color: #734a26 !important;
+}
+.msg_new.ogk-late .msg_status,
+.msg.ogk-late .msg_status {
+  background-color: #656565 !important;
+}
+.msg_new.ogk-early .msg_status,
+.msg.ogk-early .msg_status {
+  background-color: #adadad !important;
+}
+
+.msg_new.ogk-bhole .msg_status,
+.msg.ogk-bhole .msg_status {
+  background-color: #614bb1 !important;
+}
+
+.msg_new.ogk-void .msg_status,
+.msg.ogk-void .msg_status {
+  background-color: #344051 !important;
+}
+
+/*****************************
+* MESSAGING:  RC
+/****************************/
+
+.msg {
+  padding-left: 1px;
+}
+
+.msg_status,
+.msg {
+  border-radius: 5px 0 0 5px;
+}
+.msg_status {
+  opacity: 0.8;
+  background-color: #23313b !important;
+}
+
+.msg_status:before {
+  background-image: none !important;
+}
+
+.msg.ogk-expedition .msg_status,
+.msg_new.ogk-expedition .msg_status {
+  background-color: #3b5994 !important;
+}
+.msg.ogk-harvest .msg_status,
+.msg_new.ogk-harvest .msg_status {
+  background-color: rgb(13, 110, 44) !important;
+}
+.msg.ogk-combat .msg_status,
+.msg_new.ogk-combat .msg_status {
+  background-color: #d43635ba !important;
+}
+.msg.ogk-combat-win .msg_status,
+.msg_new.ogk-combat-wib .msg_status {
+  background-color: #92b820bf !important;
+}
+
+.msg.ogk-combat-probes .msg_status,
+.msg_new.ogk-combat-probes .msg_status {
+  background-color: #bd9b2f !important;
+}
+.msg.ogk-combat-probes,
+.msg.ogk-combat-contact {
+  opacity: 0.75;
+}
+
+.msg.ogk-combat-draw .msg_status,
+.msg_new.ogk-combat-draw .msg_status {
+  background-color: #d29d00d9 !important;
+}
+
+.msg_new .msg_status {
+  background-color: #439286 !important;
+}
+
+#pageContent {
+  left: 40px !important;
+}
+/*****************************
+* SPY TABLE
+/****************************/
+
+.ogl-spyTable {
+  border-spacing: 0 1px;
+  font-size: 11px;
+  text-align: center;
+  width: 100%;
+}
+
+.ogl-spyTable figure {
+  margin-left: 3px;
+  vertical-align: sub;
+}
+
+.ogl-spyTable tr:not(:first-child):hover {
+  outline: 1px solid #ffc937;
+}
+
+.ogl-spyTable tr:nth-child(odd) {
+  box-shadow: inset 0 -40px rgba(0, 0, 0, 0.1);
+}
+
+.ogl-spyTable tr:nth-child(even) {
+  box-shadow: inset 0 -40px rgba(0, 0, 0, 0.2);
+}
+
+.ogl-spyTable td,
+.ogl-spyTable th {
+  color: #8193a2;
+  height: 26px;
+  margin: auto;
+  padding: 0 3px;
+  position: relative;
+}
+
+.ogl-spyTable th {
+  background: #0a0d0e;
+  color: #d4d4d4;
+  font-size: 10px;
+}
+
+.ogl-spyTable .ogl-headerColors {
+  width: 20px;
+}
+
+.ogl-spyTable th[data-filter] {
+  cursor: pointer;
+}
+
+.ogl-spyTable th[data-filter]:hover,
+.ogl-spyTable th[data-filter].ogl-active {
+  background: #862f88;
+  color: #fff;
+}
+
+.ogl-spyTable th[data-filter]:after {
+  content: "<>";
+  display: inline-block;
+  font-family: consolas;
+  font-size: 9px;
+  margin-left: 3px;
+  transform: rotate(90deg);
+}
+
+.ogl-spyTable .ogl-metal {
+  background: #ffaacca1;
+}
+
+.ogl-spyTable .ogl-crystal {
+  background: #73e5ffc7;
+}
+
+.ogl-spyTable .ogl-deut {
+  background: #376f58;
+}
+
+.ogl-spyTable a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.ogl-spyTable a:hover {
+  color: orange;
+}
+
+.ogl-spyTable tr > *:nth-child(odd) {
+  box-shadow: inset 0 -40px rgba(0, 0, 0, 0.2);
+}
+
+.ogl-spyTable .ogl-spyOptions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.5;
+}
+
+.ogl-spyTable tr:hover .ogl-spyOptions {
+  opacity: 1;
+}
+
+.ogl-spyTable .ogl-spyOptions * {
+  margin: 0 1px;
+}
+
+.ogl-spyTable .ogl-attacked td,
+.ogl-spyTable .ogl-attacked td:not(.ogl-spyOptions) a {
+  color: #f49cf5 !important;
+}
+
+.ogl-spyTable .ogl-good {
+  color: #73d2af !important;
+}
+
+.ogl-spyTable .ogl-care {
+  color: #d2b62c !important;
+}
+
+.ogl-spyTable .ogl-danger {
+  color: #fb6a6a !important;
+}
+
+.ogl-spyTable .ogl-name {
+  padding-left: 5px;
+  text-align: left;
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 90px;
+  text-overflow: ellipsis;
+  height: 14px;
+  margin-top: 5px;
+}
+
+.ogl-spyTable .ogl-sub {
+  background: linear-gradient(to left, #090e13, #0c1319, #090e13);
+}
+
+.ogl-spyTable .ogl-lootable:not(:hover) {
+  background: none !important;
+}
+
+.ogl-spyTable .ogl-lootable:hover {
+  color: #fff !important;
+}
+
+.ogl-tooltip .ogk-cargo {
+  width: 90px;
+}
+.ogl-tooltip .ogk-cargo > div {
+  margin: 2px;
+}
+
+/*****************************
+* STATISTICS POPUP
+/****************************/
+
+.ogk-stats {
+  display: flex;
+}
+.ogk-stats .ogl-mmorpgstats {
+  margin-left: 15px;
+}
+
+.ogk-stats .ogk-global-expe {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 15px;
+  margin-bottom: 20px;
+}
+
+.ogk-stats .ogk-global-expe span:nth-of-type(1) {
+  margin-top: 30px;
+}
+
+.ogk-stats .ogk-details .ogk-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  align-items: center;
+  grid-row-gap: 10px;
+  width: inherit;
+  justify-items: end;
+}
+.ogk-stats .ogk-details .ogk-grid.ogk-am {
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+}
+.ogk-stats .ogk-details .ogk-grid span {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.ogk-stats .ogk-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 10px;
+}
+
+.ogk-stats .ogk-box {
+  z-index: 1;
+  border-radius: 10px;
+  min-width: 450px;
+  width: auto;
+  height: auto;
+  margin: 10px;
+  padding: 15px 20px;
+  background: rgb(13, 17, 23);
+  /* background: #141821; */
+  /* background: #151d24; */
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.ogk-stats .ogk-box.ogk-small {
+  /* width: 200px; */
+  min-width: 0px;
+  align-self: center;
+}
+
+.ogk-adjust-grid {
+  display: grid;
+  grid-template-columns: 0fr 1fr;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 8px 10px;
+}
+.ogk-adjust-grid .resourceIcon {
+  height: 20px !important;
+}
+
+.ogk-adjust-grid input {
+  width: 125px !important;
+  height: 16px !important;
+}
+
+.ogk-bhole-grid input {
+  width: 75px !important;
+  height: 16px !important;
+}
+
+.ogk-bhole-grid {
+  display: grid;
+  grid-template-columns: 0fr 1fr 0fr 1fr;
+  gap: 8px 10px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.ogk-stats .ogk-box .ogk-grid-adjust {
+  grid-template-columns: 1fr 1fr;
+}
+
+.ogk-stats .ogk-details .ogk-box:nth-of-type(2) {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ogk-stats-content .ogl-tabs {
+  position: absolute;
+  overflow: hidden;
+  border-radius: 5px 5px 0px 0px;
+  height: 20px;
+  line-height: 20px;
+  top: 111px;
+  right: 50px;
+}
+.ogk-stats-content .ogl-tab {
+  font-size: 10px;
+  padding: 5px;
+  border: none;
+  background: rgb(13, 17, 23);
+  font-weight: 800;
+}
+.ogk-stats-content .ogl-tab:first-child {
+  padding-left: 10px;
+}
+.ogk-stats-content .ogl-tab:last-child {
+  padding-right: 10px;
+}
+
+.ogk-stats-content .ogl-tab.ogl-active {
+  color: #8b5617;
+}
+
+.ogk-stats .ogk-details .ogk-prod {
+  display: grid;
+}
+
+.ogk-stats .ogk-details .ogk-fleet {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 5px;
+  min-width: 450px;
+  justify-items: baseline;
+}
+
+.ogk-stats .ogk-details .ogk-fleet > div {
+  display: flex;
+  align-items: center;
+  /* font-weight: 800; */
+}
+
+.ogk-stats .ogk-details .ogk-fleet a {
+  width: 30px;
+  height: 25px;
+  margin-right: 10px;
+}
+
+.ogk-stats h1 {
+  display: flex;
+  font-size: 18px;
+  line-height: 13px;
+  justify-content: center;
+  padding: 15px;
+  /* color: #6f9fc8; */
+  color: #6a8198;
+  z-index: 10;
+}
+
+.ogk-stats h1 p:first-child {
+  font-weight: 800;
+}
+
+.honorRank {
+  margin-top: -2px !important;
+}
+
+.ogl-missions .honorRank {
+  margin-right: 8px;
+}
+
+.ogk-stats .honorRank {
+  margin-right: 10px;
+  transform: scale(1.2);
+}
+
+.ogk-stats h1 .undermark,
+.ogk-stats h1 .overmark {
+  margin-left: 10px;
+  font-size: 13px;
+  line-height: 14px;
+}
+.ogk-stats h2 {
+  text-align: center;
+  margin-top: -120px;
+  margin-bottom: 15px;
+  font-size: 30px;
+}
+
+.ogk-stats h3 {
+  font-size: 20px;
+  text-align: center;
+  margin-bottom: 20px;
+  margin-top: 25px;
+}
+.ogk-stats small {
+  font-size: 12px !important;
+}
+.ogk-stats .ogl-detailRank {
+  margin-top: 30px;
+  padding-top: 25px;
+  padding-bottom: 15px;
+  font-size: 15px;
+  row-gap: 10px;
+  margin: 0 auto;
+  width: max-content;
+}
+.ogk-stats .ogl-ranking {
+  margin-left: 10px;
+  font-size: 13px;
+}
+
+.ogk-stats .ogl-techIcon,
+.ogk-stats .ogl-fleetIcon,
+.ogk-stats .ogl-ecoIcon,
+.ogk-stats .ogl-fleetIcon.grey {
+  transform: scale(1.25);
+  float: none;
+}
+
+.ogk-stats .ogk-global {
+  width: 420px;
+  justify-content: space-evenly;
+  display: flex;
+  flex-direction: column;
+}
+
+.ogk-stats .ogk-repartition {
+  margin-top: -50px;
+}
+
+.ogk-stats .ogk-mines {
+  display: grid;
+  grid-template-columns: 2fr 5fr 5fr 5fr;
+  align-items: center;
+  grid-row-gap: 10px;
+  width: inherit;
+  text-align: right;
+}
+
+.ogk-stats .ogk-tech {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  align-items: center;
+  gap: 5px;
+}
+
+.ogk-stats .ogk-tech:nth-of-type(1) {
+  grid-template-columns: 3fr 1fr 1fr;
+}
+
+/* .ogk-stats .ogl-detailRank {
+  grid-template-columns: repeat(2, 1fr);
+} */
+.ogk-stats .ogk-commander {
+  padding: 40px 10px;
+  color: #4a5b6b;
+  font-style: oblique;
+}
+
+.ogk-stats .ogk-fleet-info {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.ogk-stats strong {
+  font-weight: 800;
+}
+
+.ogk-stats .ogk-total {
+  width: 100%;
+  text-align: right;
+  padding-top: 10px;
+  border-top: solid 1px rgb(54, 67, 82);
+  font-weight: 800;
+  /* font-size: 13px; */
+}
+
+.ogk-stats .resourceIcon {
+  border-radius: 5px;
+  width: 30px;
+  background-position: -1px -124px;
+  height: 20px;
+  background-size: 200px;
+  margin-right: 10px;
+}
+.ogk-stats .resourceIcon.metal {
+  background-position: -2px -46px;
+}
+.ogk-stats .resourceIcon.crystal {
+  background-position: -46px -46px;
+}
+.ogk-stats .resourceIcon.deuterium {
+  background-position: -82px -46px;
+}
+.ogk-stats .resourceIcon.darkmatter {
+  background-position: -146px -122px;
+  background-size: 300px;
+}
+
+.ogk-grid .resourceIcon {
+  margin-right: 0px;
+}
+
+.ogk-grid p,
+.ogk-mines p {
+  width: 100% !important;
+  text-align: left !important;
+}
+
+.ogk-grid p.ogk-edit:hover {
+  color: rgb(139, 86, 23);
+  color: #5a6e81;
+  font-weight: 600;
+}
+.ogk-grid p.ogk-edit {
+  cursor: pointer;
+}
+
+.ogk-grid p.ogk-edit strong {
+  font-size: 20px;
+  top: 2px;
+  position: relative;
+  left: 5px;
+  line-height: 0px;
+  font-weight: 100 !important;
+  cursor: pointer;
+}
+
+.ogk-stats .ogl-option {
+  border: solid 1px rgb(59, 74, 92);
+}
+
+.ogk-stats .ogk-title {
+  font-size: 16px;
+  font-weight: 800;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  font-size: 18px;
+}
+
+/*****************************
+* FLEET DISPATCHER
+/****************************/
+
+#fleetdispatchcomponent #planet {
+  height: 0px !important;
+}
+#fleetdispatchcomponent .c-right,
+#fleetdispatchcomponent .c-left {
+  display: none;
+}
+
+#fleetdispatchcomponent .toggleHeader {
+  display: none;
+}
+
+/* #fleet2 {
+  display: block !important;
+}
+
+#fleet3 {
+  display: block !important;
+}
+
+#fleet3 *:not(#fleetBriefingPart1) {
+  display: none; 
+}
+
+#fleet3 {
+  display: block !important;
+}
+
+#fleet2 .briefing {
+  position: absolute;
+  top: -500px;
+}
+
+#selectMinMetal,
+#selectMaxMetal,
+#selectMinCrystal,
+#selectMaxCrystal,
+#selectMinDeuterium,
+#selectMaxDeuterium {
+  left: -50px;
+  position: relative;
+}
+
+.ogk-res-left {
+  position: relative;
+  top: -16px;
+  font-size: 9px;
+} */
+
+/*****************************
+* LOADING SPINNER
+/****************************/
+
+.spinner {
+  width: 20px;
+  height: 20px;
+}
+
+.spinner svg {
+  position: relative;
+  top: -3px;
+  left: -20px;
+}
+
+#outline {
+  stroke-dasharray: 2.42777px, 242.77666px;
+  stroke-dashoffset: 0;
+  -webkit-animation: anim 1.6s linear infinite;
+  animation: anim 1.6s linear infinite;
+}
+
+@-webkit-keyframes anim {
+  12.5% {
+    stroke-dasharray: 33.98873px, 242.77666px;
+    stroke-dashoffset: -26.70543px;
+  }
+  43.75% {
+    stroke-dasharray: 84.97183px, 242.77666px;
+    stroke-dashoffset: -84.97183px;
+  }
+  100% {
+    stroke-dasharray: 2.42777px, 242.77666px;
+    stroke-dashoffset: -240.34889px;
+  }
+}
+
+@keyframes anim {
+  12.5% {
+    stroke-dasharray: 33.98873px, 242.77666px;
+    stroke-dashoffset: -26.70543px;
+  }
+  43.75% {
+    stroke-dasharray: 84.97183px, 242.77666px;
+    stroke-dashoffset: -84.97183px;
+  }
+  100% {
+    stroke-dasharray: 2.42777px, 242.77666px;
+    stroke-dashoffset: -240.34889px;
+  }
+}
+
+/*****************************
+* PLAYER SEARCH
+/****************************/
+
+.ogl-search-content .ogl-techIcon {
+  background-position: 80% 0 !important;
+  margin-left: 0px !important;
+}
+
+.ogl-search-content .ogl-fleetIcon.grey {
+  filter: hue-rotate(78deg);
+  margin-left: 0px !important;
+}
+
+.ogl-search-content .ogl-totalIcon {
+  background-position: -32px 0px !important;
+  margin-left: 0px !important;
+}
+
+.ogl-alliance {
+  font-weight: 800;
+  color: #ccc;
+  font-size: 9px;
+  font-style: italic;
+}
+
+.ogl-alliance:hover {
+  /* color: #3c536d; */
+  color: rgb(208, 129, 62);
+}
+
+.ogl-detailRank {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  line-height: 16px;
+  width: 100%;
+}
+
+.ogl-tooltip .ogl-detailRank {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.ogl-detailRank > div {
+  padding: 5px;
+}
+
+.ogl-search-content .ogl-detailRank {
+  border-top: solid 1px #334258;
+  border-bottom: solid 1px #334258;
+  width: 90%;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+/* .ogl-search-content .ogl-detailRank > div:nth-child(3) {
+  background-color: #13181d;
+}
+.ogl-search-content .ogl-detailRank > div:nth-child(4) {
+  background-color: #0d1014;
+} */
+
+.ogl-search-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  background: rgb(23, 29, 35);
+  border: 1px solid #000;
+  padding: 3px;
+  animation: fadeIn ease 0.4s;
+}
+
+.ogl-search-col,
+.ogl-planets-col {
+  display: flex;
+  flex-direction: column;
+  width: 261px;
+  align-items: center;
+  margin-top: 15px;
+}
+
+.ogl-search-col {
+  margin: 20px 0 20px 0;
+}
+
+.ogl-planets-col .ogl-search-controls {
+  width: 100%;
+  align-items: center;
+  justify-content: space-around;
+  display: flex;
+  border-top: 1px solid #334258;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.ogl-planets-col .ogl-stalkPlanets {
+  min-height: 0 !important;
+  min-width: 0 !important;
+  grid-template-columns: repeat(2, 1fr);
+  height: 100%;
+}
+
+.ogl-search-result .ogl-player-div {
+  background: #1d2023;
+  border-radius: 5px;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid #2f2f2f;
+  text-align: initial;
+  margin: 5px;
+  padding: 5px 10px 5px 10px;
+  line-height: 15px;
+}
+
+.ogl-search-result .ogl-ranking {
+  float: right;
+}
+
+.ogl-search-result > .ogl-player-div:hover,
+.ogl-search-result > .ogl-player-div:focus {
+  border: 1px solid #3c536d;
+}
+
+.ogl-search-result .ogl-active {
+  border: 1px solid #3c536d;
+}
+
+.ogl-search-result > div > a {
+  text-align: right;
+  float: right;
+}
+
+.ogl-search-result {
+  /* width: 250px; */
+  min-height: 0px;
+  overflow: hidden;
+  /* overflow-y: scroll; */
+  text-align: center;
+  color: #ddd;
+  max-height: 300px;
+}
+
+/* .ogl-search-col > input {
+  margin: 0 auto;
+  display: block;
+  margin-bottom: 20px;
+} */
+
+/*****************************
+* FLEET DISPATCHER
+/****************************/
+
+#fleetdispatchcomponent #buttonz #civilships ul {
+  padding: 0px 0px 0 5px !important;
+}
+#fleetdispatchcomponent #buttonz #civilships {
+  width: 250px !important;
+}
+
+#fleetdispatchcomponent #buttonz #battleships ul {
+  padding: 0 0px 0 12px !important;
+}
+#fleetdispatchcomponent #buttonz #battleships {
+  width: 432px !important;
+}
+
+#shipsChosen .technology input[type="number"],
+#shipsChosen .technology input[type="text"] {
+  font-weight: 800;
+  height: 20px;
+  bottom: -20px !important;
+}
+
+#shipsChosen .technology .icon.small {
+  height: 50px !important;
+}
+
+#shipsChosen .technology.interactive {
+  margin-bottom: 25px !important;
+}
+
+/* #fleet2 .briefing {
+  position: absolute;
+  top: -500px;ogk-own-moon
+  display: block !important;
+}
+#fleet2 #steps,
+#fleet2 .briefing h2,
+#fleetBriefingPart1_2 {
+  display: none !important;
+} */
+
+/*****************************
+* FLEET MOVEMENT CSS
+/****************************/
+
+.ogl-search-controls > div {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 3px;
+}
+
+/*****************************
+* TABS CSS
+/****************************/
+
+.ogl-tabs {
+  text-align: center;
+  margin-bottom: 25px;
+}
+.ogl-tab {
+  font-size: 11px;
+  color: #ccc;
+  padding: 8px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.ogl-tab:hover {
+  color: #485e93;
+}
+.ogl-tab.ogl-active {
+  color: #ccc;
+  border-bottom: solid 2px #485e93;
+}
+
+/*****************************
+* WELCOME PAGE
+/****************************/
+.ogk-welcome {
+  width: 650px;
+  padding: 15px 50px 15px 50px;
+}
+.ogk-welcome a {
+  color: #5d7fa4 !important;
+}
+.ogk-welcome a:hover {
+  color: goldenrod !important;
+}
+
+.ogk-welcome h1 {
+  color: #5d7fa4;
+  font-size: 20px;
+  font-weight: 800;
+  margin: 0 !important;
+}
+
+.ogk-welcome .ogk-thanks {
+  color: #5d7fa4;
+  margin-top: 20px;
+}
+
+.ogk-welcome .ogk-love {
+  display: flex;
+  justify-content: center;
+  font-size: 11px;
+  justify-content: flex-end;
+  margin-right: 25px;
+}
+
+.ogk-welcome .ogk-love strong {
+  margin: 0px 4px;
+}
+
+.ogk-welcome .ogk-love svg {
+  margin-top: -1px;
+  margin-left: 6px;
+  margin-right: 6px;
+  width: 15px;
+  height: 15px;
+}
+
+.ogk-welcome p {
+  font-size: 13px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.ogk-welcome p strong {
+  font-weight: 800 !important;
+}
+
+.ogk-welcome .ogk-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ogk-welcome .ogk-reminder {
+  font-style: italic !important;
+}
+
+.ogk-keyhelp {
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: repeat(2, 30px 1fr 48px);
+  align-items: center;
+  padding: 15px;
+  background: rgb(13, 17, 23);
+  border-radius: 10px;
+  color: #ccc;
+}
+.ogk-keyhelp .ogl-keyboard {
+  margin-right: 30px;
+}
+
+.ogk-welcome .friendly {
+  margin-top: 20px !important;
+  margin-bottom: 20px !important;
+}
+
+/*****************************
+* FLYING FLEET PERCENTAGE 
+/****************************/
+
+.ogk-flying-per {
+  position: absolute;
+  right: 8px;
+  top: 0px;
+}
+
+.ogk-flying-per span {
+  font-weight: 800;
+}
+
+/*****************************
+* LOGO
+/****************************/
+
+/*****************************
+* FLEET TABLE
+/****************************/
+
+.ogl-fleet-table td:first-child {
+  border-left: none;
+}
+
+.ogl-fleet-table td:first-child > div {
+  padding: 0 !important;
+}
+
+/*****************************
+* SIDE STALK
+/****************************/
+
+.ogl-sideStalk {
+  background: #171d23;
+  outline: 1px solid #000;
+  padding: 10px;
+  min-width: 125px;
+  margin: 10px 0 0px 10px;
+  width: max-content;
+  position: relative;
+  z-index: 10;
+}
+
+.ogl-sideStalk > a {
+  opacity: 0.5;
+}
+
+.ogl-sideStalk:hover > a {
+  opacity: 1;
+}
+
+.ogl-sideStalk:hover {
+  opacity: 1;
+}
+
+.ogl-sideStalk .ogi-title {
+  font-size: 11px;
+  display: block;
+  width: 120px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  margin-top: 7px;
+  text-align: center;
+  font-weight: 800;
+}
+
+.ogl-sideStalk hr {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  height: 1px;
+}
+
+.ogl-sideStalk h1 a {
+  color: #e6648e !important;
+  font-size: 10px;
+}
+
+.ogl-sideStalk .ogl-player {
+  border: solid 2px rgb(47, 47, 47);
+  background: rgb(30, 33, 35);
+  padding: 5px;
+  margin-bottom: 3px;
+  font-size: 11px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.ogl-sideStalk .ogl-player:hover {
+  border-color: rgb(60, 83, 109);
+}
+
+.ogl-sideStalk .ogi-ranking,
+.ogl-sideStalk .ogl-player span:last-child {
+  font-size: 10px;
+  color: rgb(230, 100, 142) !important;
+  float: right;
+  margin-left: 5px;
+}
+
+.ogl-sideStalk.ogi-hidden {
+  opacity: 0.4;
+}
+.ogl-sideStalk.ogi-hidden:hover {
+  opacity: 1;
+}
+
+.ogl-sideStalk.ogi-hidden .ogl-stalkPlanets {
+  display: none;
+}
+
+/*****************************
+* OGAME FIXES
+/****************************/
+.moon_a {
+  z-index: 0 !important;
+}
+
+/*****************************
+* GALAXY
+/****************************/
+
+/* .row[class*="filtered"] .playername {
+  pointer-events: none;
+} */
+
+/*****************************
+* ICONS
+/****************************/
+
+.ogl-targetIcon {
+  /* background: #6b2020 !important; */
+  cursor: pointer;
+  height: 100%;
+  position: relative;
+  width: 100%;
+  background: #1b1b1b !important;
+}
+
+.ogl-targetIcon:before {
+  background: #000000;
+  border-radius: 50%;
+  border: 6px double rgb(144, 161, 172);
+  box-sizing: border-box;
+  content: "";
+  height: 15px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 15px;
+}
+
+.ogl-active.ogl-targetIcon:before {
+  border-color: #ca8e4c;
+}
+
+.ogl-overview-icon {
+  background: url("chrome-extension://__MSG_@@extension_id__/res/menuicons.png")
+    161px -92px;
+  background-size: calc(23px * 14) !important;
+}
+
+.ogl-statistics-icon {
+  background: url("chrome-extension://__MSG_@@extension_id__/res/menuicons.png")
+    184px -92px;
+  background-size: calc(23px * 14) !important;
+}
+
+.ogl-fleet-icon {
+  background: url("chrome-extension://__MSG_@@extension_id__/res/menuicons.png") -92px -23px;
+  background-size: calc(23px * 14) !important;
+}
+
+.ogl-search-icon {
+  background: url("chrome-extension://__MSG_@@extension_id__/res/menuicons.png")
+    0px -24px;
+  background-size: calc(23px * 14) !important;
+}
+
+.ogl-empire-icon {
+  background: url("chrome-extension://__MSG_@@extension_id__/res/menuicons.png") -46px -24px;
+  background-size: calc(23px * 14) !important;
+}
+
+.ogl-search-icon.ogl-active {
+  background-position-y: -47px;
+}
+
+.ogl-overview-icon.ogl-active {
+  background-position-y: 0px;
+}
+
+.ogl-option {
+  background-color: rgb(27, 27, 27) !important;
+  border: 1px solid #000;
+  border-radius: 4px;
+  color: rgb(144, 161, 172) !important;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 11px;
+  height: 22px;
+  /* image-rendering: crisp-edges;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-optimize-contrast; */
+  line-height: 22px;
+  overflow: hidden;
+  position: relative;
+  text-decoration: none;
+  width: 22px;
+  font-weight: 800;
+  font-size: 12px;
+  line-height: 20px;
+}
+
+.ogl-option:after {
+  background: linear-gradient(to top, #000 50%, #fff 50%);
+  bottom: 0;
+  content: "";
+  display: block;
+  height: 100%;
+  opacity: 0.1;
+  position: absolute;
+  width: 100%;
+}
+
+.ogl-ecoIcon,
+.ogl-techIcon,
+.ogl-fleetIcon,
+.ogl-totalIcon,
+.ogl-defenseIcon {
+  background: url("https://gf3.geo.gfsrv.net/cdne9/1fd57fa51cdb81035382943e635348.gif")
+    no-repeat;
+  background-position: 100% 0 !important;
+  background-size: calc(16px * 6) !important;
+  border-radius: 3px;
+  box-shadow: 0 0 0 1px #000;
+  display: inline-block;
+  float: left;
+  height: 16px;
+  image-rendering: crisp-edges;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+  margin-right: 10px;
+  margin-left: 7px;
+  vertical-align: middle;
+  width: 16px;
+}
+
+.ogl-techIcon {
+  background-position: 80% 0 !important;
+}
+
+.ogl-fleetIcon {
+  background-position: 60% 0 !important;
+}
+
+.ogl-fleetIcon.grey {
+  filter: hue-rotate(78deg);
+}
+
+.ogl-fleetIcon.orange {
+  filter: hue-rotate(50deg);
+}
+
+.ogl-totalIcon {
+  background-position: -32px 0px !important;
+}
+
+.ogl-defenseIcon {
+  background: transparent
+    url("https://gf2.geo.gfsrv.net/cdnab/0c604ee3171ccb9a2c6398fb543bda.png");
+  background-size: 207px !important;
+  background-position: -14px !important;
+}
+
+.ogl-keyboard {
+  background: #cccccc;
+  border: 1px solid #d2d2d2;
+  box-shadow: 1px 0 1px 0 #797979, 0 2px 0 2px #7b7b7b, 0 2px 0 3px #1f1f1f;
+  border-radius: 3px;
+  color: #585858;
+  display: inline-block;
+  font-weight: bold;
+  padding: 0 4px;
+  text-shadow: 0px 1px 0 #dedede;
+}
+
+.refresh.icon {
+  margin-left: 4px;
+  margin-top: 3px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border-top: solid 2px #333333;
+  border-bottom: solid 2px #333333;
+  border-left: solid 2px transparent;
+  border-right: solid 2px #333333;
+}
+.refresh.icon:before {
+  width: 5px;
+  height: 5px;
+  border-top: solid 2px #333333;
+  border-left: solid 2px #333333;
+  -webkit-transform: rotate(-22.5deg);
+  transform: rotate(-22.5deg);
+  left: 0px;
+  top: 9px;
+}
+
+/*****************************
+* GALAXY TABLE
+/****************************/
+#galaxytable span.filter {
+  background: #485f93 !important;
+}
+
+#galaxytable span.filter_active {
+  background: rgb(199, 88, 23) !important;
+  opacity: 0.8;
+}
+
+/*****************************
+* PLANET LIST
+/****************************/
+
+.ogk-gate-counter {
+  opacity: 0.75;
+  font-size: 14px;
+  margin-right: 5px;
+  font-weight: 800;
+  padding-top: 7px;
+}
+
+.ogl-fly-summary,
+.ogl-full-summary {
+  font-weight: 800;
+  align-items: center;
+  justify-content: space-around;
+  border-top: solid 1px #333;
+  border-radius: 0px !important;
+  padding-top: 5px;
+}
+
+.ogl-summary {
+  font-weight: 800;
+  border-top: solid 1px #333;
+  border-radius: 0px !important;
+  margin-top: 10px !important;
+  padding-top: 5px;
+}
+
+.ogl-sum-symbol {
+  align-self: center;
+}
+
+.ogl-planet-act {
+  position: absolute;
+  width: 16px;
+}
+
+.ogl-moon-act {
+  position: absolute;
+  right: 5px;
+  top: 3px;
+}
+
+.ogl-planet-act.active,
+.ogl-moon-act.active {
+  background-color: transparent !important;
+  background: url(//gf1.geo.gfsrv.net/cdn6f/91ad13c8f9a7e9390085d12adde508.png)
+    no-repeat 0 -819px;
+  display: inline-block;
+  vertical-align: middle;
+  width: 18px;
+  height: 17px;
+  background-size: calc(5px * 4) !important;
+  z-index: 1;
+}
+
+#rechts {
+  width: auto;
+  margin-top: -61px !important;
+}
+
+#rechts.empire {
+  width: 275px;
+}
+
+#countColonies {
+  background: linear-gradient(to right, #1c2b38 45%, #090e13) !important;
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.07),
+    inset 0 11px rgba(255, 255, 255, 0.03);
+  font-size: 10px;
+  height: 22px !important;
+  line-height: 22px !important;
+  margin: 0 !important;
+  outline: 1px solid #000;
+  width: auto !important;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+#countColonies select {
+  color: #6f9fc8;
+  background-color: transparent;
+  color: #848484;
+  font-size: 11px;
+  padding: 0;
+  border: none;
+}
+
+.smallplanet {
+  display: flex;
+  /* justify-content: space-between; */
+  height: auto !important;
+  margin-bottom: 5px !important;
+  position: relative !important;
+  height: 40px !important;
+  width: 100% !important;
+}
+
+.smallplanet:last-child {
+  margin-bottom: 0px !important;
+}
+
+.planetlink,
+.moonlink {
+  position: relative !important;
+  background: linear-gradient(to right, #1c2b38 45%, #090e13);
+  background-position: 0 !important;
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.07),
+    inset 0 16px rgba(255, 255, 255, 0.03);
+  /* outline: 1px solid #000; */
+  height: 100% !important;
+  margin: 0 !important;
+  overflow: hidden;
+  padding: 0 !important;
+  position: absolute;
+  top: 0 !important;
+  border-radius: 5px;
+}
+
+.planetlink {
+  left: 0 !important;
+  width: 90px;
+  min-width: 90px;
+}
+
+.moonlink {
+  left: 0 !important;
+  right: 0 !important;
+  width: 40px;
+  min-width: 40px;
+}
+
+.empire .moonlink {
+  left: 0px !important;
+}
+
+.planetlink:hover,
+.moonlink:hover {
+  background: linear-gradient(to right, #633311, #090e13);
+}
+
+.planetlink.active,
+.moonlink.active {
+  background: linear-gradient(to right, rgb(136, 108, 26), rgb(9, 14, 19));
+}
+
+.planetlink.ogl-target,
+.moonlink.ogl-target {
+  outline-color: #fff;
+}
+
+.planetlink .ogl-timer,
+.moonlink .ogl-timer {
+  background: #00692a;
+  border: 1px solid #121a23;
+  border-radius: 50%;
+  bottom: 0;
+  content: "";
+  height: 5px;
+  right: 1px;
+  position: absolute;
+  top: 1px;
+  width: 5px;
+}
+
+.planetlink .ogl-medium,
+.moonlink .ogl-medium {
+  background: #ce9021;
+}
+
+.planetlink .ogl-short,
+.moonlink .ogl-short {
+  background: #ab2a2a;
+}
+
+.planetlink .planetPic,
+.moonlink img {
+  display: none;
+}
+
+.planetlink .planet-name {
+  color: #fff !important;
+  font-size: 18px !important;
+  font-weight: normal !important;
+  position: absolute;
+  top: 3px !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 75px;
+  text-align: left;
+}
+
+#planetbarcomponent #rechts .planet-name,
+#planetbarcomponent #rechts .planet-koords {
+  margin-top: 4px !important;
+}
+
+.planetlink:hover .planet-koords {
+  opacity: 0;
+}
+
+.planetlink .planet-koords {
+  color: #99c6f5 !important;
+  font-size: 10px !important;
+  font-weight: normal !important;
+  opacity: 0.7;
+  position: absolute !important;
+  top: 15px !important;
+  transform: translateX(0);
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.planetlink.active .planet-koords {
+  color: #ffbfc9 !important;
+}
+
+.planetlink .planet-name,
+.planetlink .planet-koords,
+.planetlink .ogl-mines {
+  font-size: 12px !important;
+  left: 5px !important;
+}
+.planetlink .ogl-mines {
+  margin-top: 5px !important;
+}
+
+.planetlink .planet-koords {
+  margin-top: 5px;
+}
+
+.ogl-planet,
+.ogl-moon {
+  background: #3c536d;
+  border-radius: 12px;
+  bottom: 2px;
+  cursor: pointer;
+  font-size: 16px;
+  height: 16px;
+  right: 2px;
+  padding: 0;
+  position: absolute;
+  transform: scale(0.85);
+  width: 16px;
+  z-index: 1;
+}
+
+.ogl-planet {
+  margin-bottom: 0px !important;
+  height: 17px !important;
+}
+
+.ogl-planet:hover {
+  background: #d0813e !important;
+}
+
+.ogl-stalkPlanets .ogl-planet:hover {
+  background: #3c536d !important;
+}
+.ogl-stalkPlanets .ogl-planet:hover:after {
+  border-bottom-color: #3c536d !important;
+}
+
+.ogl-planet:after {
+  border: 2px solid transparent;
+  border-bottom: 3px solid #1d2b3a;
+  border-radius: 50%;
+  content: "";
+  display: block;
+  height: 16px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  transform: rotate(-20deg) translate(-4px, -48%);
+  width: 22px;
+}
+
+.ogl-planet:hover:after {
+  border-bottom-color: #773210 !important;
+}
+
+.ogl-moon {
+  background: none;
+  box-shadow: inset -0.5em -0.2em #3c536d;
+}
+
+.ogl-fleet-table .ogl-planet {
+  margin-right: 7px;
+}
+.ogl-fleet-table .ogl-moon,
+.ogl-fleet-table .ogl-planet {
+  display: inline-block;
+  position: relative;
+  margin-top: 7px;
+}
+
+.moonlink .ogl-moon:hover,
+.ogl-fleet-table .ogl-moon:hover {
+  box-shadow: inset -0.5em -0.2em gold !important;
+}
+
+.ogl-planet.ogl-active {
+  background: #d0813e !important;
+}
+
+.planetlink .ogl-mines {
+  color: #ffbfc9 !important;
+  opacity: 0;
+  position: absolute;
+  top: 15px !important;
+  transform: translateX(-10px);
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.planetlink:hover .ogl-mines {
+  opacity: 0.7;
+  transform: translateX(0);
+}
+
+.smallplanet .constructionIcon {
+  bottom: 2px !important;
+  left: auto !important;
+  right: 110px !important;
+  top: auto !important;
+  z-index: 10;
+}
+
+.smallplanet .constructionIcon.moon {
+  left: auto !important;
+  right: 15px !important;
+}
+
+.smallplanet .alert {
+  left: auto !important;
+  right: 85px !important;
+  top: 2px !important;
+  z-index: 10;
+}
+
+.smallplanet .alert.moon {
+  left: auto !important;
+  right: 15px !important;
+}
+
+#planetList {
+  background: #0d1014;
+  border: 2px solid #000;
+  padding: 5px;
+}
+
+.ogl-summary > .ogl-sum-symbol:first-child {
+  width: 90px;
+}
+
+.ogl-summary > .ogl-sum-symbol {
+  width: 45px;
+}
+
+/* #rechts {
+  display: none;
+} */
+
+#rechts #myPlanets .smallplanet a.moonlink {
+  margin-left: 5px !important;
+}
+/* 
+#rechts.ogk-hover {
+  position: absolute !important;
+  right: 0px;
+  transition: all 0.1s ease-in-out;
+} */
+
+#myPlanets {
+  width: max-content !important;
+}
+
+#planetbarcomponent #rechts .smallplanet,
+#rechts .smallplanet {
+  margin: 0 0 5px 0px !important;
+}
+
+#planetbarcomponent #rechts .smallplanet:only-child,
+#rechts .smallplanet:only-child {
+  margin: 0px !important;
+}
+
+#planetbarcomponent #rechts .smallplanet:last-child {
+  margin: 0px !important;
+}
+
+#planetList,
+#cutty,
+#rechts {
+  min-width: 136px;
+  width: max-content !important;
+  /* padding-bottom: 5px !important; */
+}
+#cutty > div {
+  width: auto !important;
+}
+
+.ogl-res {
+  display: flex;
+  flex-direction: column;
+  font-size: 11px;
+  text-align: left;
+  width: 60px;
+  margin-left: 5px;
+  margin-right: -5px;
+}
+
+.ogl-afull {
+  color: #d29d00 !important;
+  font-style: oblique;
+}
+
+.ogl-full {
+  color: #d43635 !important;
+  font-style: oblique;
+}
+
+/*****************************
+* SEARCH PANEL
+/****************************/
+
+.ogl-search-result {
+  min-height: 100px;
+  max-height: 200px;
+}
+
+.ogl-search-result .historic {
+  border: 0;
+  text-align: center;
+  background: 0;
+  font-style: italic;
+  margin-top: 0px;
+  margin-bottom: 10px;
+}
+
+.ogl-search-result .historic:hover {
+  border: 0;
+}
+.ogl-search-content {
+  width: max-content;
+}
+
+.ogl-search-content .ogl-right {
+  position: relative;
+  margin-left: auto;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+/*****************************
+* UNIVERSE VIEW BUTTONS
+/****************************/
+
+.ogk-trashsim {
+  display: inline-block;
+  height: 26px;
+  padding-left: 26px;
+  background: url("chrome-extension://__MSG_@@extension_id__/res/uv-buttons.png")
+    0px -52px;
+  background-position: 0px -52px;
+}
+.ogl-tooltip .ogk-trashsim {
+  margin-top: 10px;
+}
+
+.ogk-ogotcha {
+  display: inline-block;
+  height: 26px;
+  width: 26px;
+  background: url("chrome-extension://__MSG_@@extension_id__/res/uv-buttons.png")
+    0px 0px;
+  background-position: 0px 0px;
+}
+
+/*****************************
+* CHAT CSS 
+/****************************/
+
+.ogk-chat {
+  background-color: aliceblue;
+  position: fixed !important;
+  right: 10px;
+  bottom: 25px;
+  z-index: 10;
+  opacity: 0.5;
+}
+
+.ogk-chat:hover {
+  opacity: 1;
+}
+
+#chatBar {
+  display: none;
+  /* bottom: 0px !important; */
+}
+
+/*****************************
+* EVENTBOX CSS 
+/****************************/
+#movement .ogl-mission-icon {
+  width: 20px;
+  height: 20px;
+  display: block;
+  position: absolute;
+  left: 128px;
+  top: 18px;
+  transform: scale(0.9);
+  pointer-events: none;
+}
+
+.missionFleet img {
+  opacity: 0.85;
+}
+.icon_movement {
+  opacity: 0.75;
+}
+
+.ogk-ships-count {
+  font-weight: 800;
+}
+
+.fleetDetails .originPlanet,
+.fleetDetails .destinationPlanet {
+  font-size: 11px;
+}
+
+.fleetDetails[data-mission-type="1"] .ogl-mission-icon {
+  display: none !important;
+}
+.fleetDetails[data-mission-type="1"] .icon.overlay {
+  filter: sepia(85%) hue-rotate(-50deg) saturate(5);
+}
+
+.fleetDetails[data-mission-type="1"] .timer,
+.fleetDetails[data-mission-type="1"] .nextTimer,
+.fleetDetails[data-mission-type="1"] .ogk-ships-count,
+.fleetDetails[data-mission-type="1"] .mission,
+.fleetDetails[data-mission-type="1"] .nextMission {
+  color: #d43635 !important;
+}
+.fleetDetails[data-mission-type="1"] .timer.friendly,
+.fleetDetails[data-mission-type="1"] .nextTimer.friendly {
+  color: #9c0 !important;
+}
+
+.fleetDetails[data-mission-type="3"] .timer,
+.fleetDetails[data-mission-type="3"] .nextTimer,
+.fleetDetails[data-mission-type="3"] .ogk-ships-count,
+.fleetDetails[data-mission-type="3"] .mission,
+.fleetDetails[data-mission-type="3"] .nextMission {
+  color: #7ead3d !important;
+}
+.fleetDetails[data-mission-type="3"] .timer.neutral,
+.fleetDetails[data-mission-type="3"] .nextTimer.neutral {
+  color: #d29d00 !important;
+}
+
+.fleetDetails[data-mission-type="4"] .timer,
+.fleetDetails[data-mission-type="4"] .nextTimer,
+.fleetDetails[data-mission-type="4"] .ogk-ships-count,
+.fleetDetails[data-mission-type="4"] .mission,
+.fleetDetails[data-mission-type="4"] .nextMission {
+  color: #34a37b !important;
+}
+
+.fleetDetails[data-mission-type="5"] .timer,
+.fleetDetails[data-mission-type="5"] .nextTimer,
+.fleetDetails[data-mission-type="5"] .ogk-ships-count,
+.fleetDetails[data-mission-type="5"] .mission,
+.fleetDetails[data-mission-type="5"] .nextMission {
+  color: #e6913e !important;
+}
+.fleetDetails[data-mission-type="5"] .timer.friendly,
+.fleetDetails[data-mission-type="5"] .nextTimer.friendly {
+  color: #9c0 !important;
+}
+
+.fleetDetails[data-mission-type="6"] .timer,
+.fleetDetails[data-mission-type="6"] .nextTimer,
+.fleetDetails[data-mission-type="6"] .ogk-ships-count,
+.fleetDetails[data-mission-type="6"] .mission,
+.fleetDetails[data-mission-type="6"] .nextMission {
+  color: #bd9b2f !important;
+}
+
+.fleetDetails[data-mission-type="6"] .timer.hostile,
+.fleetDetails[data-mission-type="6"] .nextTimer.hostile {
+  color: #d43635 !important;
+}
+
+.fleetDetails[data-mission-type="7"] .timer,
+.fleetDetails[data-mission-type="7"] .nextTimer,
+.fleetDetails[data-mission-type="7"] .ogk-ships-count,
+.fleetDetails[data-mission-type="7"] .mission,
+.fleetDetails[data-mission-type="7"] .nextMission {
+  color: #29b7ba !important;
+}
+
+.fleetDetails[data-mission-type="8"] .timer,
+.fleetDetails[data-mission-type="8"] .nextTimer,
+.fleetDetails[data-mission-type="8"] .ogk-ships-count,
+.fleetDetails[data-mission-type="8"] .mission,
+.fleetDetails[data-mission-type="8"] .nextMission {
+  color: #00842a !important;
+}
+
+.fleetDetails[data-mission-type="9"] .timer,
+.fleetDetails[data-mission-type="9"] .nextTimer,
+.fleetDetails[data-mission-type="9"] .ogk-ships-count,
+.fleetDetails[data-mission-type="9"] .mission,
+.fleetDetails[data-mission-type="9"] .nextMission {
+  color: #a52136 !important;
+}
+.fleetDetails[data-mission-type="9"] .timer.friendly,
+.fleetDetails[data-mission-type="9"] .nextTimer.friendly {
+  color: #9c0 !important;
+}
+
+.fleetDetails[data-mission-type="15"] .timer,
+.fleetDetails[data-mission-type="15"] .nextTimer,
+.fleetDetails[data-mission-type="15"] .ogk-ships-count,
+.fleetDetails[data-mission-type="15"] .mission,
+.fleetDetails[data-mission-type="15"] .nextMission {
+  color: #4162a5 !important;
+}
+
+.fleetDetails[data-mission-type="16"] .timer,
+.fleetDetails[data-mission-type="16"] .nextTimer,
+.fleetDetails[data-mission-type="16"] .ogk-ships-count,
+.fleetDetails[data-mission-type="16"] .mission,
+.fleetDetails[data-mission-type="16"] .nextMission {
+  color: #68a6b2 !important;
+}
+
+.fleetDetails[data-mission-type] {
+  /* box-shadow: #0000005d 0px 0px 0px 50px inset; */
+  background: #1b262f !important;
+}
+.fleetDetails[data-mission-type] .absTime,
+.fleetDetails[data-mission-type] .nextabsTime {
+  font-size: 11px;
+  /* color: gold; */
+}
+.fleetDetails[data-mission-type] .timer,
+.fleetDetails[data-mission-type] .nextTimer {
+  font-weight: 800;
+  font-size: 11px;
+}
+.eventFleet[data-mission-type="1"] .friendly,
+.eventFleet[data-mission-type="1"] .neutral {
+  color: #9c0 !important;
+}
+.eventFleet[data-mission-type="1"] .hostile {
+  color: #d43635 !important;
+}
+
+.eventFleet[data-mission-type="3"] .friendly,
+.eventFleet[data-mission-type="3"] .hostile {
+  color: #7ead3d !important;
+}
+.eventFleet[data-mission-type="3"] .neutral {
+  color: #d29d00 !important;
+}
+
+.eventFleet[data-mission-type="4"] .friendly,
+.eventFleet[data-mission-type="4"] .neutral,
+.eventFleet[data-mission-type="4"] .hostile {
+  color: #34a37b !important;
+}
+
+.eventFleet[data-mission-type="5"] .neutral,
+.eventFleet[data-mission-type="5"] .hostile {
+  color: #e6913e !important;
+}
+.eventFleet[data-mission-type="5"] .friendly {
+  color: #9c0 !important;
+}
+
+.eventFleet[data-mission-type="6"] .friendly,
+.eventFleet[data-mission-type="6"] .neutral {
+  color: #bd9b2f !important;
+}
+.eventFleet[data-mission-type="6"] .hostile {
+  color: #d43635 !important;
+}
+
+.eventFleet[data-mission-type="7"] .friendly,
+.eventFleet[data-mission-type="7"] .neutral,
+.eventFleet[data-mission-type="7"] .hostile {
+  color: #29b7ba !important;
+}
+.eventFleet[data-mission-type="8"] .friendly,
+.eventFleet[data-mission-type="8"] .neutral,
+.eventFleet[data-mission-type="8"] .hostile {
+  color: #00842a !important;
+}
+
+.eventFleet[data-mission-type="9"] .neutral,
+.eventFleet[data-mission-type="9"] .hostile {
+  color: #a52136 !important;
+}
+.eventFleet[data-mission-type="9"] .friendly {
+  color: #9c0 !important;
+}
+
+.eventFleet[data-mission-type="15"] .friendly,
+.eventFleet[data-mission-type="15"] .neutral,
+.eventFleet[data-mission-type="15"] .hostile {
+  color: #4162a5 !important;
+}
+
+.eventFleet[data-mission-type="16"] .friendly,
+.eventFleet[data-mission-type="16"] .neutral,
+.eventFleet[data-mission-type="16"] .hostile {
+  color: #68a6b2 !important;
+}
+
+/* .fleetDetails[data-mission-type="15"] .neutral,
+.eventFleet[data-mission-type="15"] .friendly {
+  color: #4162a5 !important;
+}
+
+.eventFleet[data-mission-type="16"] .neutral {
+  color: #68a6b2 !important;
+}
+
+.eventFleet[data-mission-type="4"] .friendly {
+  color: #34a37b !important;
+}
+
+.eventFleet[data-mission-type="7"] .friendly {
+  color: #29b7ba !important;
+}
+
+.eventFleet[data-mission-type="3"] .neutral,
+.eventFleet[data-mission-type="3"] .friendly {
+  color: #7ead3d !important;
+}
+
+.eventFleet[data-mission-type="6"] .friendly {
+  color: #bd9b2f !important;
+}
+
+.eventFleet[data-mission-type="8"] .friendly {
+  color: #00842a !important;
+} */
+
+.eventFleet[data-mission-type="15"][data-return-flight="false"] {
+  display: none;
+}
+
+.eventFleet[data-return-flight="true"] {
+  opacity: 0.65;
+}
+
+.eventFleet[data-return-flight="true"][data-mission-type="15"] {
+  opacity: 0.5;
+}
+.originCoords a,
+.originCoords a:link,
+.destinationCoords a,
+.destinationCoords a:link {
+  font-size: 11px !important;
+}
+
+.eventFleet,
+.eventFleet .tooltip {
+  color: #8c9eaa !important;
+}
+
+.eventFleet .icon_movement,
+.eventFleet .icon_movement_reserve {
+  position: relative;
+  top: 4px;
+}
+
+.eventFleet .detailsFleet {
+  font-weight: 800;
+}
+
+#eventContent tr {
+  box-shadow: 0px 0px 0px 0px #0d1014;
+}
+#eventContent .eventFleet > td:not([class*="icon_movement"]) {
+  /* line-height: 18px; */
+  padding: 2px;
+  border-top: 1px solid rgb(51, 51, 51, 0.5);
+}
+
+#eventContent
+  .eventF leet[data-return-flight="true"]
+  > td:not([class*="icon_movement"]) {
+  border-top: 1px solid rgb(51, 51, 51, 1);
+}
+
+#eventContent .ogk-own-coords {
+  color: #6f9fc8 !important;
+}
+#eventContent .ogk-coords-hostile {
+  color: rgb(210 27 56);
+  color: #e23b3a;
+}
+#eventContent .ogk-coords-neutral {
+  color: #d29d00;
+}
+#eventContent .ogk-current-coords {
+  color: #6f9fc8 !important;
+  background-color: #6f9ec831 !important;
+  padding: 3px 6px 3px 6px;
+  border-radius: 5px;
+}
+#eventContent .ogk-coords-moon {
+  font-style: italic;
+}
+#eventContent .ogk-coords-debris {
+  color: green !important;
+}
+#eventContent .ogk-coords-expedition {
+  color: #4162a5 !important;
+}
+
+.eventFleet .countDown,
+.eventFleet .arrivalTime {
+  text-align: left;
+  text-indent: 5px;
+}
+
+#eventHeader div {
+  position: absolute;
+  top: 7px;
+  right: 38px;
+  color: #6f9fc8;
+  opacity: 0.5;
+}
+
+#eventHeader input {
+  margin-right: 10px;
+}
+
+#eventHeader .eventToggle {
+  display: none;
+}
+#eventHeader h2 {
+  padding-top: 2px;
+}
+
+/*****************************
+* TOP BAR
+/****************************/
+
+#bar {
+  width: 950px !important;
+}
+#bar li:nth-of-type(5) {
+  display: none;
+}
+
+.ogk-ping {
+  color: #848484;
+  font-weight: 700;
+  position: absolute;
+  top: 2px;
+  right: 100px;
+}
+
+/*****************************
+* SPY TABLE
+/****************************/
+
+.ogl-spyTable .moon {
+  margin-left: 5px;
+}
+
+/*****************************
+* GLOBAL FIXES
+/****************************/
+
+/* Fix fot the planet overview so it's on top */
+#eventboxContent {
+  z-index: 0 !important;
+}
+.content {
+  z-index: 0;
+}
+
+a {
+  cursor: pointer !important;
+}
+
+.tooltip {
+  color: none;
+}
+
+.ogl-tooltip a[href] {
+  color: #6f9fc8;
+  text-decoration: none;
+}
+
+small {
+  font-size: 9px !important;
+}
+
+#eventlistcomponent.ogk-hover #eventboxContent {
+  display: block !important;
+}
+
+#eventlistcomponent.ogk-hover {
+  pointer-events: none;
+}
+
+/* 
+
+Global fix to center the page when planet overview is expender 
+
+*/
+
+#pageContent {
+  width: max-content !important;
+  min-width: 1120px !important;
+}
+
+#pageContent > #right {
+  float: left !important;
+  width: max-content !important;
+}
+
+#top {
+  background-repeat: no-repeat;
+}
+
+#box {
+  width: auto !important;
+}
+
+#mainContent {
+  width: auto !important;
+}
+
+#planetbarcomponent {
+  float: left !important;
+  width: max-content !important;
+}
+
+/*
+ Color change to avoir breaking my eyes on toooooo bright colors
+*/
+
+/* a.status_abbr_active,
+span.status_abbr_active {
+  color: #eee !important;
+} */
+/* a.status_abbr_honorableTarget,
+span.status_abbr_honorableTarget {
+  color: #ff6c !important;
+} */
+
+span.espionageDefText {
+  color: #ff9600e3 !important;
+}
+
+/* a.txt_link,
+.no-touch a.txt_link:hover,
+a.btn:link,
+a.btn:visited,
+#messages.no-touch a.btn_blue:hover,
+.no-touch a.btn:hover,
+a.btn:active,
+.tooltipCustom.player {
+  color: #ddd !important;
+} */
+
+#galaxytable div.activity {
+  cursor: pointer;
+}
+
+/* Links stylr in tooltips*/
+
+/* MINES CSS */
+.ogl-mines-content td {
+  padding: 15px;
+}
+.ogl-mines-content td > div:first-child {
+  padding: 5px;
+  font-size: 20px;
+}
+
+.ogl-mines-content .ogl-planet-fields {
+  font-size: 11px;
+  font-style: italic;
+}
+
+.ogl-mines-content .ogl-fleet-table tr:not(:first-child):hover {
+  background: inherit;
+}
+
+.ogl-mines-content .ogl-fleet-table tr:not(:first-child):hover .ogl-current {
+  background: rgb(30, 36, 43) !important;
+}
+
+.ogl-mines-content td .resourceIcon {
+  width: 40px !important;
+  height: 28px !important;
+}
+
+/* SEARCH CSS */
+
+/* .ogl-v,
+.ogl-vi,
+.ogl-vI {
+  color: aqua;
+}
+.ogl-vb,
+.ogl-vib,
+.ogl-vIb,
+.ogl-vib {
+  text-decoration: line-through;
+}
+.ogl-i {
+  color: #7b7b7b;
+}
+.ogl-I {
+  color: #666;
+}
+.ogl-o {
+  color: #f3f;
+} */
+
+/* FLEET CSS */
+
+/* #fleetdispatchcomponent #buttonz #civilships ul {
+  padding: 0px 0px 0 5px !important;
+} */
+/* #fleetdispatchcomponent #buttonz #civilships {
+  width: 270px;
+} */
+
+#fleetdispatchcomponent #buttonz #battleships ul {
+  padding: 0 0px 0 12px !important;
+}
+#fleetdispatchcomponent #buttonz #battleships {
+  width: 432px;
+}
+
+.technology input[type="number"],
+.technology input[type="text"] {
+  font-weight: 800;
+  height: 20px;
+  bottom: -20px !important;
+}
+
+.technology.interactive {
+  margin-bottom: 25px !important;
+}
+
+/* COUNTER CSS */
+/* 
+.ogl-counter-end {
+  font-style: italic;
+  color: #9c0;
+}
+
+.icon.medium time {
+  top: 24px !important;
+}
+
+.icon.small time {
+  top: 17px !important;
+}
+
+.icon.small .ogl-counter-end {
+  top: 33px;
+} */
+
+.ogl-planet-div {
+  display: flex;
+  background: inherit;
+  box-shadow: inherit;
+}
+
+.ogl-planet-div:hover > .ogl-planet-hover,
+.ogl-moon-div.ogl-active:hover > .ogl-moon-hover {
+  display: flex;
+  width: 100px;
+  transition: width 2s;
+  animation: fadeIn ease 0.4s;
+}
+.fade-in {
+  animation: fadeIn ease 1s;
+  -webkit-animation: fadeIn ease 10s;
+  -moz-animation: fadeIn ease 10s;
+  -o-animation: fadeIn ease 10s;
+  -ms-animation: fadeIn ease 10s;
+}
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@-moz-keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@-o-keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@-ms-keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.ogl-planet-hover:hover {
+  display: flex;
+}
+/* 
+// .ogl-planet-hover {
+//     height: 100%;
+//     position: absolute;
+//     background: #171d23;
+//     right: 0;
+//     z-index: 10;
+//     grid-template-columns: 1fr 1fr 3fr 1fr 1fr;
+//     align-items: center;
+//     margin-right: 5px;
+//     margin-left: 5px;
+//     grid-gap: 8px;
+//     display: none;
+// }
+
+// .ogl-planet-hover {
+//     height: 100%;
+//     position: absolute;
+//     background: #171d23;
+//     right: 0;
+//     z-index: 10;
+//     grid-template-columns: 1fr 1fr 3fr 1fr 1fr;
+//     align-items: center;
+//     margin-right: -20px;
+//     margin-left: 31px;
+//     grid-gap: 8px;
+//     display: grid;
+//     visibility: hidden;
+// } */
+
+.ogl-stalkPlanets span {
+  z-index: 0;
+}
+
+.ogl-moon-div {
+  margin-left: auto;
+  background: inherit;
+  box-shadow: inherit;
+}
+
+.ogl-planet-hover,
+.ogl-moon-hover {
+  background: inherit;
+  box-shadow: inherit;
+  position: absolute;
+  align-items: center;
+  grid-gap: 8px;
+  display: none;
+  left: 8px;
+  top: 4px;
+  z-index: 2;
+  width: 70px;
+}
+
+.ogl-moon-hover {
+  left: 32px;
+  justify-content: flex-end;
+  width: 79px !important;
+}
+
+/* .ogl-planet-hover:hover {
+  //    display: grid;
+} */
+
+.ogl-sideStalk .ogl-stalkPlanets .close-tooltip {
+  padding: 0;
+}
+
+.ogl-side-head {
+  display: flex;
+  justify-content: space-between;
+}
+
+.ogl-text-btn {
+  color: white !important;
+  background: #485f93;
+  border-radius: 2px;
+  width: 16px;
+  display: inline-block;
+  text-align: center;
+  font-size: inherit;
+  margin-right: 3px;
+  cursor: pointer;
+  user-select: none;
+  line-height: 15px;
+  /* padding-bottom: 0px; */
+  vertical-align: bottom;
+  border-top: solid 1px #5b6e9e;
+  height: 15px;
+}
+
+.ogl-text-btn:hover {
+  background: #c75817;
+  color: white !important;
+  border-color: #cd6833;
+}
+
+.icon_movement {
+  margin: 0 auto;
+}
+
+body.ogame select {
+  visibility: visible !important;
+}
+
+#middle {
+  margin-bottom: 100px;
+}
+
+#siteFooter > * {
+  opacity: 0.5;
+}
+
+.ogl-fleet-table .ogl-sum-symbol {
+  font-weight: 800;
+  width: 80px;
+}
+
+.ogl-fleet-table td:last-child,
+.ogl-fleet-table td:first-child {
+  font-weight: 800;
+  color: #537797 !important;
+}
+
+.ogl-fleet-ship {
+  background-size: calc(100px * 10) !important;
+  background: url("https://gf3.geo.gfsrv.net/cdn53/7a9861be0c38bf7de05a57c56d73cf.jpg");
+
+  width: 25px;
+  height: 20px;
+  border: solid 1px #5f5d6b;
+}
+
+.ogl-fleet-ship:hover {
+  border: solid 1px #da961a;
+}
+
+.ogl-fleet-ship:hover + span {
+  color: #da961a;
+}
+
+.ogl-tech-114 {
+  background-position: 17% 68.3% !important;
+}
+.ogl-tech-115 {
+  background-position: 28% 68.5% !important;
+}
+.ogl-tech-117 {
+  background-position: 32% 68.5% !important;
+}
+.ogl-tech-118 {
+  background-position: 37% 68.5% !important;
+}
+.ogl-tech-109 {
+  background-position: 73% 68.5% !important;
+}
+.ogl-tech-110 {
+  background-position: 78% 68.5% !important;
+}
+.ogl-tech-111 {
+  background-position: 67% 68.5% !important;
+}
+
+.ogl-fleet-203 {
+  background-position: 46.9% 51.5% !important;
+}
+.ogl-fleet-202 {
+  background-position: 42.3% 52% !important;
+}
+.ogl-fleet-208 {
+  background-position: 52.9% 51.8% !important;
+}
+.ogl-fleet-209 {
+  background-position: 57.3% 52% !important;
+}
+.ogl-fleet-210 {
+  background-position: 62.9% 52.5% !important;
+}
+.ogl-fleet-204 {
+  background-position: 0.9% 52% !important;
+}
+.ogl-fleet-205 {
+  background-position: 5.9% 52% !important;
+}
+.ogl-fleet-206 {
+  background-position: 10.9% 52% !important;
+}
+.ogl-fleet-207 {
+  background-position: 15.9% 51.5% !important;
+}
+.ogl-fleet-215 {
+  background-position: 21% 51.8% !important;
+}
+.ogl-fleet-211 {
+  background-position: 26.9% 51.5% !important;
+}
+.ogl-fleet-213 {
+  background-position: 31.9% 51.5% !important;
+}
+.ogl-fleet-214 {
+  background-position: 36.9% 51% !important;
+}
+.ogl-fleet-217 {
+  background-position: 84% 51.8% !important;
+}
+.ogl-fleet-218 {
+  background-position: 73% 52.1% !important;
+}
+.ogl-fleet-219 {
+  background-position: 79% 51.7% !important;
+}
+
+.ogl-fleet-401 {
+  background-position: 0% 34% !important;
+}
+.ogl-fleet-402 {
+  background-position: 5.3% 34% !important;
+}
+.ogl-fleet-403 {
+  background-position: 11% 34% !important;
+}
+.ogl-fleet-404 {
+  background-position: 16% 34% !important;
+}
+
+.ogl-fleet-405 {
+  background-position: 21% 34.5% !important;
+}
+.ogl-fleet-406 {
+  background-position: 27% 33.8% !important;
+}
+.ogl-fleet-407 {
+  background-position: 32% 33.8% !important;
+}
+.ogl-fleet-408 {
+  background-position: 37% 33.8% !important;
+}
+
+.ogl-fleet-502 {
+  background-position: 42.4% 34.2% !important;
+}
+.ogl-fleet-503 {
+  background-position: 46.4% 34% !important;
+}
+
+.ogl-moon-icon {
+  background: url("https://gf2.geo.gfsrv.net/cdn40/b63220183e356430158dc998a2bb99.gif")
+    no-repeat;
+  background-position: -44px 0;
+}
+
+.ogl-moon-icon.active {
+  background-position: -44px -36px;
+}
+
+.ogl-fleet-coords {
+  font-weight: 800;
+  /* font-size: 10px; */
+  color: #537797 !important;
+  display: block;
+  margin: 4px;
+}
+
+.ogl-fleet-content .ogl-option {
+  height: 20px;
+  width: 40px;
+  margin: 3px 15px 3px 15px;
+  border: 1px solid #3b4a5c;
+}
+
+.ogl-fleet-table {
+  color: #ccc;
+  text-align: center;
+  /* animation: fadeIn ease 1s; */
+}
+
+.ogl-fleet-table th p {
+  max-width: 80px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.ogl-fleet-table .ogl-fleet-empty {
+  color: #59748a !important;
+}
+
+.ogl-fleet-table tr:last-child td {
+  border-bottom: none;
+}
+
+.ogl-fleet-table td {
+  border-left: solid 1px #3e5161;
+  border-bottom: solid 1px #28313c;
+}
+.ogl-fleet-table td span {
+  animation: fadeIn ease 1s;
+}
+
+.ogl-fleet-table td.values {
+  border-left: solid 2px #3e5161;
+}
+
+/* .ogl-fleet-table td:first-child {
+  border: none;
+} */
+
+.ogl-fleet-table tr:first-child th {
+  height: 50px;
+  min-width: 60px;
+}
+
+.ogl-fleet-table tr:not(:first-child) th {
+  border-bottom: solid 1px #28313c;
+  border-left: solid 1px #3e5161;
+}
+
+.ogl-fleet-table tr:last-child th {
+  border-bottom: none;
+}
+
+.ogl-fleet-table tr:not(:first-child):hover {
+  background: #3e5161;
+}
+
+/* .ogl-fleet-table td:first-child {
+  margin: 20px 10px 0px 10px;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  margin-top: 20px;
+} */
+
+.search.icon {
+  color: #000;
+  position: absolute;
+  margin-top: 2px;
+  margin-left: 3px;
+  width: 12px;
+  height: 12px;
+  border: solid 1px currentColor;
+  border-radius: 100%;
+  -webkit-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+.search.icon:before {
+  content: "";
+  position: absolute;
+  top: 12px;
+  left: 5px;
+  height: 6px;
+  width: 1px;
+  background-color: currentColor;
+}
+
+#galaxytable div.activity.showMinutes,
+#galaxytable div.activity.minute15,
+#galaxytable .fleetAction {
+  pointer-events: none;
+}
+
+div.activity.showMinutes {
+  width: 15px;
+  background-color: #000;
+  color: #ffa800;
+  padding: 0 1px 1px 0;
+  border: 1px solid #ffa800;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -khtml-border-radius: 3px;
+  border-radius: 3px;
+  z-index: 1 !important;
+  text-align: center;
+  line-height: 13px;
+  margin-top: 1px;
+}
+
+#galaxytable tbody tr td.planetname {
+  width: 100px !important;
+}
+
+#galaxytable tbody tr td.action {
+  width: 83px !important;
+}
+
+#galaxytable tbody tr td.moon a {
+  width: 38px !important;
+}
+
+#galaxytable tbody tr td .moon_a {
+  background-size: 30px !important;
+  width: 100% !important;
+}
+
+#galaxytable .playername {
+  padding: 0 7px;
+  position: relative;
+  width: 190px !important;
+}
+
+#galaxytable .playername > a {
+  display: inline-block;
+}
+.ogl-spyTable .status_abbr_longinactive,
+#galaxytable .playername .status_abbr_longinactive {
+  color: #6e6e6e !important;
+}
+.ogl-spyTable .status_abbr_inactive,
+#galaxytable .playername .status_abbr_inactive {
+  color: #888 !important;
+}
+
+#galaxytable .playername span {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  white-space: nowrap;
+}
+
+#galaxytable .allytag {
+  position: relative;
+}
+
+#galaxytable tr[data-marked].debris.ogl-active td {
+  background: #c14529 !important;
+  opacity: 1 !important;
+}
+
+#galaxytable .debrisField {
+  background: none !important;
+  color: #fff;
+  font-size: 10px;
+  line-height: 14px;
+  padding: 0;
+  width: 100% !important;
+}
+
+#galaxytable tr[class*="filtered_filter"],
+#galaxytable tr[data-marked="gray"] {
+  background: none;
+  opacity: 1 !important;
+}
+
+tr[class*="filtered_filter"] td,
+tr[data-marked="gray"] td,
+.ogl-stalkPlanets [data-marked="gray"] {
+  opacity: 0.2 !important;
+}
+
+#galaxytable .debris.ogl-active {
+  background: #c14529 !important;
+  opacity: 1 !important;
+}
+
+#galaxytable tr[data-marked]:not([data-marked="gray"]) td {
+  opacity: 1 !important;
+}
+
+#galaxytable .ogl-highlighted .planetname,
+#galaxytable .ogl-highlighted .playername,
+#galaxytable .ogl-highlighted .allytag {
+  /*filter:contrast(.9) brightness(1.4) saturate(1.2);*/
+  border-bottom: 1px solid #ccc !important;
+  border-top: 1px solid #ccc !important;
+}
+
+.ogl-colors {
+  background: linear-gradient(
+    -45deg,
+    #fff,
+    #ab2727,
+    #d4be27,
+    #28c78d,
+    #1f8ad6,
+    #c785ed,
+    #fff
+  );
+  background: #212121;
+  border: 2px dotted #414f5d;
+  border-radius: 50%;
+  box-shadow: inset 0 5px 5px rgba(0, 0, 0, 0.7);
+  cursor: pointer;
+  height: 16px;
+  position: absolute;
+  top: 5px;
+  width: 16px;
+}
+
+.ogl-colors:hover {
+  box-shadow: inset 0 50px rgba(255, 255, 255, 0.1),
+    inset 0 5px 5px rgba(0, 0, 0, 0.7);
+}
+
+div[data-marker],
+[data-marked] .ogl-colors {
+  background: currentColor;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  box-shadow: inset 0 50px rgba(0, 0, 0, 0.9);
+  cursor: pointer;
+  height: 16px;
+  width: 16px;
+}
+.ogl-spyTable .ogl-date {
+  font-style: normal !important;
+  font-size: 10px !important;
+}
+
+.ogl-spyTable .ogl-colors {
+  height: 20px;
+  left: 1px;
+  padding: 0;
+  top: 1px;
+  width: 20px;
+}
+
+.ogl-colorChoice {
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 6px;
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: repeat(2, 1fr);
+  padding: 10px;
+}
+
+div[data-marker].ogl-active,
+[data-marked] .ogl-colors,
+div[data-marker]:hover {
+  box-shadow: inset 0 50px rgba(0, 0, 0, 0.3),
+    inset 0 5px 5px rgba(0, 0, 0, 0.3);
+}
+
+[data-marker="red"],
+[data-marked="red"] .ogl-colors,
+[data-toggle="red"] {
+  color: #ab2727 !important;
+}
+[data-marker="yellow"],
+[data-marked="yellow"] .ogl-colors,
+[data-toggle="yellow"] {
+  color: #f3de4c !important;
+  color: #d4be27 !important;
+}
+[data-marker="green"],
+[data-marked="green"] .ogl-colors,
+[data-toggle="green"] {
+  color: #31af9d !important;
+}
+[data-marker="blue"],
+[data-marked="blue"] .ogl-colors,
+[data-toggle="blue"] {
+  color: #435f92 !important;
+}
+[data-marker="violet"],
+[data-marked="violet"] .ogl-colors,
+[data-toggle="violet"] {
+  color: #a833da !important;
+}
+[data-marker="gray"],
+[data-marked="gray"] .ogl-colors,
+[data-toggle="gray"] {
+  color: #8a8a8a !important;
+}
+
+.ogl-stalkPlanets [data-marked="red"] {
+  background: #ab2727 !important;
+}
+.ogl-stalkPlanets [data-marked="yellow"] {
+  background: #f3de4c !important;
+  background: #d4be27 !important;
+}
+.ogl-stalkPlanets [data-marked="green"] {
+  background: #31af9d !important;
+}
+.ogl-stalkPlanets [data-marked="blue"] {
+  background: #435f92 !important;
+}
+.ogl-stalkPlanets [data-marked="violet"] {
+  background: #a833da !important;
+}
+
+.ogl-spyTable tr {
+  background: rgb(22, 28, 35);
+}
+.ogl-spyTable tr[data-marked="red"] {
+  background: #6b3e3f !important;
+}
+.ogl-spyTable tr[data-marked="yellow"] {
+  background: #696734 !important;
+}
+.ogl-spyTable tr[data-marked="green"] {
+  background: #24777b !important;
+}
+.ogl-spyTable tr[data-marked="blue"] {
+  background: #344971 !important;
+}
+.ogl-spyTable tr[data-marked="violet"] {
+  background: #5d3d77 !important;
+}
+
+#galaxytable tr[data-marked="red"] td[class*="playername"] {
+  background: linear-gradient(to left, #b13434, #1a202b) !important;
+}
+#galaxytable tr[data-marked="yellow"] td[class*="playername"] {
+  background: linear-gradient(to left, #907923, #1a202b) !important;
+}
+#galaxytable tr[data-marked="green"] td[class*="playername"] {
+  background: linear-gradient(to left, #24777b, #1a202b) !important;
+}
+#galaxytable tr[data-marked="blue"] td[class*="playername"] {
+  background: linear-gradient(to left, #355084, #1a202b) !important;
+}
+#galaxytable tr[data-marked="violet"] td[class*="playername"] {
+  background: linear-gradient(to left, #a833da, #1a202b) !important;
+}
+
+#galaxytable tr[data-marked="red"] td[class*="allytag"] {
+  background: linear-gradient(to right, #b13434, #1a202b) !important;
+}
+
+#galaxytable tr[data-marked="blue"] td[class*="allytag"] {
+  background: linear-gradient(to right, #355084, #1a202b) !important;
+}
+
+#galaxytable tr[data-marked="green"] td[class*="allytag"] {
+  background: linear-gradient(to right, #24777b, #1a202b) !important;
+}
+
+#galaxytable tr[data-marked="yellow"] td[class*="allytag"] {
+  background: linear-gradient(to right, #907923, #1a202b) !important;
+}
+
+#galaxytable tr[data-marked="violet"] td[class*="allytag"] {
+  background: linear-gradient(to right, #5d2b94, #1a202b) !important;
+}
+
+#galaxytable tr[data-marked] td[class*="playername"],
+#galaxytable tr[data-marked] td[class*="planetname"],
+#galaxytable tr[data-marked] td[class*="allytag"] {
+  box-shadow: inset 0 50px 0 rgba(0, 0, 0, 0.5);
+}
+
+.ogl-needed {
+  background: #141e26;
+  border-radius: 5px 0;
+  font-size: 11px;
+  left: 2px;
+  padding: 3px 4px;
+  position: absolute;
+  top: 2px;
+  color: #aaa;
+}
+
+.ogl-tableOptions {
+  border-bottom: 2px solid #1d1d1d;
+  height: 20px;
+  text-align: right;
+  width: 100%;
+}
+
+.ogl-tableOptions:before {
+  content: "OGL options:";
+  margin-right: 5px;
+  vertical-align: top;
+}
+
+.ogl-tableOptions > * {
+  float: right !important;
+}
+
+.ogl-tableOptions button {
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+.ogl-smallBtn {
+  height: 16px !important;
+  line-height: 10px !important;
+  min-width: 0 !important;
+  padding: 0 4px !important;
+}
+
+.ogl-none {
+  background: #000;
+  color: gold;
+  font-size: 16px;
+  line-height: 30px;
+  text-align: center;
+  width: 30px;
+}
+
+.ogl-harvestOptions {
+  background: #171e25;
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.07);
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  justify-items: center;
+  margin-top: 5px;
+  padding: 3px;
+  text-align: center;
+  align-items: center;
+  border-radius: 5px 5px 0 0;
+}
+
+.ogl-harvestOptions .ogl-option:hover:after {
+  background: linear-gradient(
+    to top,
+    rgb(70, 70, 70) 50%,
+    rgb(138, 138, 138) 50%
+  );
+  opacity: 0.5;
+}
+
+.ogl-harvestMission {
+  background: url("https://gf2.geo.gfsrv.net/cdn14/f45a18b5e55d2d38e7bdc3151b1fee.jpg")
+    no-repeat;
+  background-position: 30% 0 !important;
+  background-size: calc(22px * 11) !important;
+}
+
+.ogl-harvestMission.ogl-transpoIcon {
+  background-position: 50% 0 !important;
+}
+
+.ogl-harvestMission.ogl-active {
+  background-position-y: 0 !important;
+}
+
+.ogl-defaultCargo {
+  background: url("https://gf2.geo.gfsrv.net/cdn7e/41c09757d8212f48fc574515c8bc87.jpg")
+    no-repeat;
+  background-position: 69.3% 0 !important;
+  background-size: calc(22px * 14) !important;
+}
+
+.ogl-defaultCargo.ogl-smallCargo {
+  background-position: 61.3% 0 !important;
+}
+
+.ogl-harvestType {
+  background: #262879;
+}
+
+.ogl-autoHarvest {
+  background: url("https://gf2.geo.gfsrv.net/cdn14/f45a18b5e55d2d38e7bdc3151b1fee.jpg")
+    no-repeat;
+  background-position: 10% 0 !important;
+  background-size: calc(22px * 11) !important;
+}
+
+.ogl-autoHarvest.ogl-active {
+  border: 1px solid #fff;
+}
+
+.ogl-harvest {
+  transform-origin: bottom right;
+}
+
+.ogl-skip {
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  z-index: 10;
+}
+
+.ogl-skipList {
+  background-color: #13181d;
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.05);
+  color: #96a0a2 !important;
+  line-height: 24px;
+  outline: 1px solid #000;
+  padding: 0 5px;
+  position: relative;
+}
+
+.ogl-skipList:nth-child(odd) {
+  background-color: #0d1014;
+}
+
+.ogl-skipList:hover {
+  background: rgba(255, 215, 0, 0.1) !important;
+  color: #e6648e !important;
+  outline: 1px solid gold;
+  z-index: 10;
+}
+
+.ogl-skipList figure {
+  margin-left: 5px;
+}
+
+.ogl-stalkContainer h1 {
+  display: inline-block;
+  margin-right: 5px;
+  vertical-align: sub;
+}
+
+.ogl-toggle.ogl-active {
+  box-shadow: inset 0 50px rgba(0, 0, 0, 0.3);
+}
+
+.ogl-toggle.ogl-active:before {
+  color: #fff;
+  content: "✓";
+  display: inline-block;
+  left: 0;
+  line-height: 16px;
+  text-align: center;
+  top: 0;
+  width: 100%;
+}
+
+.ogl-toggle:hover {
+  opacity: 0.7;
+}
+
+.ogl-toggle {
+  background: currentColor;
+  border: 2px solid currentColor;
+  border-radius: 3px;
+  box-shadow: inset 0 50px rgba(0, 0, 0, 0.9);
+  display: inline-block;
+  height: 14px;
+  margin-right: 5px;
+  vertical-align: middle;
+  width: 14px;
+}
+
+.ogl-stalk h1 a,
+.ogl-ranking {
+  color: #e6648e !important;
+  font-size: 10px;
+}
+
+.ogl-stalk h1 a:hover,
+.ogl-ranking:hover {
+  color: orange !important;
+  text-decoration: underline !important;
+}
+
+.ogl-stalk h1 s {
+  color: #fff;
+}
+
+.ogl-stalkPlanets {
+  margin-top: 10px;
+  display: grid;
+  grid-gap: 3px;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.ogl-tooltip .ogl-stalkPlanets {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.ogl-sideStalk .ogl-stalkPlanets {
+  max-height: none;
+  margin-top: 0px;
+}
+
+.ogl-stalkPlanets > a {
+  background: #1e2123;
+  border: 2px solid #2f2f2f;
+  border-radius: 3px;
+  box-sizing: border-box;
+  color: #fff !important;
+  cursor: pointer;
+  font-size: 11px;
+  height: 27px;
+  line-height: 23px;
+  padding: 0 28px 0 8px;
+  position: relative;
+  text-decoration: none !important;
+  text-align: left !important;
+  align-items: center;
+  display: flex;
+  width: 120px;
+  justify-self: center;
+}
+
+.ogl-main span {
+  color: rgb(208, 129, 62) !important;
+  font-weight: 800;
+}
+.ogl-scan span {
+  color: #9c0 !important;
+  font-weight: 800;
+}
+.ogl-deleted span {
+  font-weight: 800;
+  color: #d43635;
+}
+
+/* .ogl-stalkPlanets > a:hover .ogl-planet-hover {
+  //     display: grid;
+} */
+
+.ogl-stalkPlanets > a.ogl-main.ogl-activity i {
+  display: none;
+}
+
+.ogl-stalkPlanets [data-marked]:not([data-marked="gray"]) {
+  border: 2px solid rgba(0, 0, 0, 0.45);
+  box-shadow: inset 0 50px 0 rgba(0, 0, 0, 0.6);
+}
+
+.ogl-stalkPlanets > a.ogl-active {
+  border: 2px solid #3c536d;
+}
+
+/* .ogl-stalkPlanets [data-marked]:not([data-marked="gray"]).ogl-active */
+.ogl-stalkPlanets [data-marked]:not([data-marked="gray"]).ogl-active {
+  /* box-shadow: 0 0 0 1px #fff, inset 0 50px 0 rgba(0, 0, 0, 0.6); */
+  border: 2px solid #3c536d !important;
+}
+
+.ogl-stalkPlanets > a:hover {
+  border: 2px solid #ff5722 !important;
+  border: 2px solid #3c536d !important;
+}
+
+.ogl-stalkPlanets.ogl-stalkList a {
+  opacity: 1 !important;
+  text-align: center;
+}
+
+.ogl-stalkPlanets .ogl-moon {
+  bottom: 3px;
+  box-shadow: inset -0.5em -0.2em rgba(0, 0, 0, 0.5) !important;
+  right: 6px;
+  transform: scale(0.8);
+}
+
+.ogl-stalkPlanets .ogl-planet {
+  position: initial;
+  margin-right: 8px;
+  margin-bottom: 1px;
+}
+
+.ogl-active.ogl-planet:after {
+  border-bottom-color: rgb(119, 50, 16) !important;
+}
+
+.ogl-stalkPlanets .ogl-planet {
+  z-index: 0;
+}
+
+.ogl-stalkPlanets .ogl-planet-act:hover {
+  display: grid;
+  filter: hue-rotate(180deg);
+}
+
+.ogl-stalkPlanets .ogl-moon {
+  position: initial;
+  background: none;
+  z-index: 0;
+  margin-left: auto;
+}
+
+.ogl-sideStalk .close-tooltip {
+  right: 0;
+  top: 0;
+}
+
+.ogl-moon.ogl-active {
+  box-shadow: inset -0.5em -0.2em gold !important;
+}
+
+.ogl-stalkPlanets .splitLine {
+  grid-column: 1/-1;
+}
+
+.ogl-textRight {
+  text-align: right;
+}
+
+.ogl-lock {
+  background: rgba(0, 0, 0, 0.7) !important;
+  box-sizing: border-box;
+  color: #fff;
+  height: 30px;
+  line-height: 30px !important;
+  text-align: left;
+  width: 100%;
+}
+
+.ogl-lock:before {
+  background: url("https://gf1.geo.gfsrv.net/cdn6f/91ad13c8f9a7e9390085d12adde508.png");
+  background-position: 0 -272px;
+  background-repeat: no-repeat;
+  content: "";
+  display: inline-block;
+  margin: 0 10px 0 5px;
+  height: 16px;
+  vertical-align: sub;
+  width: 16px;
+}
+
+.ogl-lock.ogl-active:before {
+  filter: sepia(100%) hue-rotate(-50deg) saturate(10);
+}
+
+.ogl-lock > span {
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 130px;
+  vertical-align: top;
+  white-space: nowrap;
+}
+
+.ogl-sideLock {
+  background: url("https://gf1.geo.gfsrv.net/cdn6f/91ad13c8f9a7e9390085d12adde508.png");
+  background-position: 0 -272px;
+  background-repeat: no-repeat;
+  filter: sepia(100%) hue-rotate(-50deg) saturate(10);
+  height: 16px;
+  position: absolute;
+  top: 0px;
+  left: 100%;
+  /* margin-left: -16px; */
+  width: 16px;
+  z-index: 1;
+  top: 2px;
+}
+.ogl-moonLock {
+  top: 22px;
+  border-radius: 20px;
+}
+
+.ogl-sideLockFilled {
+  filter: sepia(100%) hue-rotate(80deg) saturate(3);
+}
+
+#allornone .secondcol {
+  background: #0d1014;
+  border-radius: 5px;
+  display: grid !important;
+  grid-template-columns: repeat(5, 1fr);
+  padding: 5px !important;
+  width: 150px !important;
+}
+
+#allornone .secondcol .clearfloat {
+  display: none !important;
+}
+
+#allornone .secondcol * {
+  float: none !important;
+}
+
+.ogl-icon-pt {
+  background: url(https://gf2.geo.gfsrv.net/cdn7e/41c09757d8212f48fc574515c8bc87.jpg);
+  background-position: calc(-8px * 30) 0 !important;
+  background-size: calc(30px * 14) !important;
+  border: 1px solid #666;
+  cursor: pointer;
+  display: inline-block;
+  height: 30px;
+  position: relative;
+  width: 30px;
+  z-index: 10;
+  border-radius: 5px;
+}
+
+.ogl-icon-gt {
+  background: url(https://gf2.geo.gfsrv.net/cdn7e/41c09757d8212f48fc574515c8bc87.jpg);
+  background-position: calc(-9px * 30) 0 !important;
+  background-size: calc(30px * 14) !important;
+  border: 1px solid #666;
+  cursor: pointer;
+  display: inline-block;
+  height: 30px;
+  position: relative;
+  width: 30px;
+  z-index: 10;
+  border-radius: 5px;
+}
+
+.ogl-icon-pt:hover,
+.ogl-icon-gt:hover {
+  border: 1px solid orange;
+}
+
+.ogl-prefab {
+  background: url(https://gf2.geo.gfsrv.net/cdn7e/41c09757d8212f48fc574515c8bc87.jpg);
+  background-position: calc(-8px * 30) 0 !important;
+  background-size: calc(30px * 14) !important;
+  border: 1px solid #000;
+  cursor: pointer;
+  display: inline-block;
+  height: 30px;
+  position: relative;
+  width: 30px;
+  z-index: 10;
+}
+
+.ogl-prefab:before {
+  background: url(https://gf2.geo.gfsrv.net/cdn14/f45a18b5e55d2d38e7bdc3151b1fee.jpg)
+    no-repeat;
+  background-size: calc(36px * 11) !important;
+  background-position: -3px -5px;
+  border: 1px solid #000;
+  content: "";
+  display: block;
+  height: 28px;
+  right: -5px;
+  position: absolute;
+  top: -5px;
+  transform: scale(0.5);
+  transform-origin: top right;
+  width: 28px;
+}
+
+.ogl-prefab:hover {
+  border: 1px solid orange;
+}
+
+.ogl-gtexpe {
+  background-position: calc(-9px * 30) 0 !important;
+}
+
+.ogl-quickLinks {
+  box-sizing: border-box;
+  display: grid;
+  grid-gap: 1px;
+  grid-template-columns: auto 40px;
+  user-select: none;
+}
+
+.ogl-quickLinks > div {
+  background-color: #13181d;
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.05);
+  color: #96a0a2 !important;
+  line-height: 24px;
+  outline: 1px solid #000;
+  position: relative;
+}
+
+.ogl-quickPlanet {
+  cursor: pointer;
+  font-size: 11px;
+  padding: 0 8px;
+}
+.ogl-quickMoon.ogl-current,
+.ogl-quickPlanet.ogl-current {
+  pointer-events: none;
+}
+
+.ogl-quickMoon {
+  cursor: pointer;
+  text-align: center !important;
+}
+
+.ogl-current {
+  background-color: #3c1212 !important;
+}
+
+.ogl-quickPlanet:not(.ogl-quickEmpty):hover,
+.ogl-quickMoon:not(.ogl-quickEmpty):hover {
+  background: rgba(255, 94, 0, 0.18) !important;
+  color: #ffa330 !important;
+  outline: 1px solid #ad5b16;
+  z-index: 10;
+}
+
+#shortcuts .dropdown.planets {
+  display: none !important;
+}
+
+.ogl-quickBtn {
+  background: #1e2c39;
+  border: 1px solid #000;
+  border-radius: 4px;
+  box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.1), 0 0 10px 3px #192026;
+  box-sizing: border-box;
+  display: block;
+  height: 24px;
+  line-height: 22px;
+  margin-top: 4px;
+  padding: 0 4px;
+  position: relative;
+  width: 144px;
+}
+
+.ogl-quickBtn:before {
+  background: url("https://gf3.geo.gfsrv.net/cdne1/d03835718066a5a592a6426736e019.png");
+  background-position: 100% -488px;
+  content: "";
+  display: block;
+  height: 24px;
+  position: absolute;
+  right: -1px;
+  top: -1px;
+  width: 24px;
+}
+
+.ogl-quickBtn:hover {
+  background: #243746;
+}
+
+.ogl-quickBtn:hover:before {
+  background-position: 100% -512px;
+}
+
+.maincontent .ogl-shortHeader {
+  height: auto !important;
+  min-height: 40px !important;
+}
+
+.maincontent .ogl-shortHeader #slot01 {
+  right: 40px !important;
+}
+
+.maincontent .ogl-shortHeader + #technologydetails_wrapper {
+  display: none !important;
+  margin-top: -48px !important;
+  position: relative !important;
+}
+
+.maincontent .ogl-shortHeader + #technologydetails_wrapper.slide-up {
+  display: block !important;
+}
+
+.toggleHeader {
+  background: url("https://gf1.geo.gfsrv.net/cdn0b/d55059f8c9bab5ebf9e8a3563f26d1.gif")
+    no-repeat 0 -22px !important;
+  cursor: pointer;
+  height: 22px;
+  position: absolute;
+  right: 13px;
+  top: 8px;
+  width: 23px;
+}
+
+.ogl-shortHeader .toggleHeader,
+.shortHeader .toggleHeader {
+  background: url("https://gf1.geo.gfsrv.net/cdn0b/d55059f8c9bab5ebf9e8a3563f26d1.gif")
+    no-repeat 0 0 !important;
+}
+
+.ogl-hidden {
+  display: none !important;
+}
+
+/* .eventFleet[data-mission-type="1"],
+.fleetDetails[data-mission-type="1"] {
+  background: #3e2724 !important;
+}
+
+.eventFleet[data-mission-type="3"],
+.fleetDetails[data-mission-type="3"] {
+  background: #2c351d !important;
+}
+
+.eventFleet[data-mission-type="4"],
+.fleetDetails[data-mission-type="4"] {
+  background: #15312c !important;
+}
+
+.eventFleet[data-mission-type="6"],
+.fleetDetails[data-mission-type="6"] {
+  background: #35340f !important;
+}
+
+.eventFleet[data-mission-type="7"],
+.fleetDetails[data-mission-type="7"] {
+  background: #173f61 !important;
+}
+
+.eventFleet[data-mission-type="8"],
+.fleetDetails[data-mission-type="8"] {
+  background: #0d2f15 !important;
+}
+
+.eventFleet[data-mission-type="9"],
+.fleetDetails[data-mission-type="9"] {
+  background: #381313 !important;
+}
+
+.eventFleet[data-mission-type="15"],
+.fleetDetails[data-mission-type="15"] {
+  background: #192542 !important;
+}
+
+/* .eventFleet[data-mission-type="15"][data-return-flight="false"] {
+  display: none;
+} */
+
+/* .eventFleet[data-return-flight="true"] {
+  opacity: 0.5;
+}
+
+#eventContent tr:nth-child(odd) {
+  box-shadow: inset 0 150px 0 rgba(0, 0, 0, 0.2);
+}
+
+.eventFleet[data-return-flight="true"],
+.fleetDetails[data-return-flight="1"] {
+  box-shadow: inset 0 150px 0 rgba(0, 0, 0, 0.45);
+}
+
+#eventContent tr[data-return-flight="true"]:nth-child(odd) {
+  box-shadow: inset 0 150px 0 rgba(0, 0, 0, 0.55);
+}
+
+#eventContent tr[data-return-flight="true"] td {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.eventFleet .countDown,
+.eventFleet .arrivalTime {
+  text-align: left;
+  text-indent: 5px;
+}
+ .ogl-translated {
+  font-size: 11px;
+} */
+
+.ogl-defaultCargo .ogl-translated {
+  background: rgba(0, 0, 0, 0.7);
+  display: block;
+  font-size: 10px;
+}
+
+.resourceIcon {
+  height: 25px;
+  width: 35px;
+}
+
+resourceIcon.metal {
+  background-position: -1px -174px !important;
+  background-size: 430px auto !important;
+}
+
+/* .resourceIcon.crystal {
+  background-position: -53px -175px;
+  background-size: 430px auto;
+}
+.resourceIcon.deuterium {
+  background-position: -104px -175px;
+  background-size: 430px auto;
+}
+
+.resourceIcon.energy {
+  background-position: -104px -175px;
+  background-size: 430px auto;
+} */
+
+.ogl-keepRes {
+  background: linear-gradient(to top, #de8225, #da5a15);
+  border: none;
+  border-radius: 2px;
+  box-shadow: inset 0 5px #e88748, inset 0 1px #df8b39, inset 0 -1px #dd9828;
+  color: #fff;
+  float: right;
+  height: 11px;
+  line-height: 11px;
+  padding: 0;
+  text-align: center;
+  width: 14px;
+  position: absolute !important;
+  bottom: 0px;
+  right: 0px;
+  user-select: none;
+}
+
+.ogl-keepRes.ogl-active {
+  background: linear-gradient(to top, #a02b8d, #c44ecc);
+  box-shadow: inset 0 5px #d748e8, inset 0 1px #ce5fca, inset 0 -1px #de47da;
+}
+
+.res #selectMinMetal,
+.res #selectMinCrystal,
+.res #selectMinDeuterium,
+.res #selectMaxMetal,
+.res #selectMaxCrystal,
+.res #selectMaxDeuterium {
+  cursor: pointer;
+}
+
+.ogl-stalkPlanets {
+  grid-template-columns: repeat(1, 1fr);
+}
+
+.ogl-stalkPlanets a {
+  padding: 0 8px 0 8px;
+}
+
+.ogl-stalk .icon_eye {
+  cursor: pointer;
+  filter: sepia(100%) hue-rotate(-50deg) saturate(5);
+  position: absolute;
+  top: 2px;
+  right: 20px;
+}
+
+.ogl-right {
+  float: right;
+  margin-top: 5px;
+  text-align: right;
+}
+
+.ogl-fullGrid {
+  grid-column: 1/-1;
+}
+
+.ogl-dialog h1 {
+  grid-column: 1/-1;
+  margin-bottom: 10px;
+}
+
+.ogl-flyingGrid > div {
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: repeat(4, 1fr);
+  overflow-y: auto;
+}
+
+.ogl-flyingGrid > div > div {
+  background: #0f1317;
+  padding: 10px;
+}
+
+.ogl-flyingGrid .ogl-metal span,
+.ogl-flyingGrid .ogl-crystal span,
+.ogl-flyingGrid .ogl-deut span {
+  display: inline-block;
+  margin-right: 10px;
+  width: 20px;
+}
+
+.ogl-flyingGrid .ogl-destination {
+  text-align: center;
+}
+
+.ogl-hiddenTooltip {
+  display: none !important;
+  visibility: hidden !important;
+  z-index: -1 !important;
+}
+
+.ogl-fleetSpeed {
+  background: linear-gradient(to left, #248469, #b9801a, #a72525);
+  border-radius: 2px;
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.2), 0 0 0 1px #000;
+  color: #fff;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  margin-top: 10px;
+  text-align: center;
+}
+
+.ogl-fleetSpeed > div {
+  background: #252d3e;
+  box-shadow: inset -2px 0 7px rgba(0, 0, 0, 0.7);
+  cursor: pointer;
+  padding: 5px 0;
+  position: relative;
+  transition: all 0.2s;
+  color: #9099a3;
+}
+
+.ogl-fleetSpeed > div:hover {
+  opacity: 0.5;
+  color: white;
+}
+
+.ogl-fleetSpeed > div.ogl-active {
+  background: none;
+  opacity: 1;
+  color: white;
+}
+
+.ogl-tooltip {
+  background: #171d23;
+  border: 2px solid #364352;
+  border-radius: 7px;
+  box-shadow: 0 0 10px #000;
+  display: none;
+  font-size: 11px;
+  padding: 10px;
+  position: absolute;
+  transform: translateX(-50%) translateY(-100%);
+  max-width: 400px;
+  width: max-content;
+  z-index: 100000;
+}
+
+.ogl-tooltip div[style*="display:none;"] {
+  display: block !important;
+}
+
+/* .ogl-tooltip a {
+  color: cornflowerblue !important;
+  text-decoration: none;
+} */
+
+.ogl-tooltip a[href]:hover {
+  color: orange;
+}
+
+.ogl-tooltip.ogl-active {
+  display: block;
+}
+
+hr {
+  background: #364352;
+  border: none;
+  height: 1px;
+  width: 100%;
+}
+
+.ogl-search-content .ogl-date,
+.ogl-tooltip .ogl-date,
+.ogl-sideStalk .ogl-date {
+  color: #61768e !important;
+  font-size: 10px;
+}
+
+.ogl-tooltip .ogl-pin {
+  position: absolute;
+  right: 26px;
+  top: 7px;
+}
+
+.ogl-tooltip .ogl-mmorpgstats {
+  position: absolute;
+  right: 45px;
+  top: 7px;
+}
+
+.ogl-tooltip .ogl-ranking {
+  position: relative !important;
+  right: auto !important;
+}
+
+.ogl-tooltip .icon_chat,
+.ogl-tooltip .icon_user,
+.ogl-tooltip .icon_against {
+  margin-right: 0px;
+}
+
+.ogl-tooltip .galaxyTooltip {
+  display: block !important;
+}
+
+.ogl-tooltip.ogl-autoHide .close-tooltip {
+  display: none;
+}
+
+.ogl-tooltip.ogl-tooltipLeft {
+  transform: translateX(-100%);
+}
+
+.ogl-tooltip.ogl-tooltipRight {
+  transform: none;
+}
+
+.ogl-tooltip.ogl-tooltipBottom {
+  transform: translateX(-50%);
+}
+
+.ogl-tooltip:not(.ogl-update):after {
+  background: #171d23;
+  border-bottom: 2px solid #364352;
+  border-right: 2px solid #364352;
+  bottom: -6px;
+  content: "";
+  display: block;
+  height: 15px;
+  left: 50%;
+  pointer-events: none;
+  position: absolute;
+  transform: translateX(-50%) rotate(45deg);
+  width: 15px;
+  z-index: -1;
+}
+
+.ogl-tooltip.ogl-tooltipLeft:after {
+  border: none;
+  border-top: 2px solid #364352;
+  border-right: 2px solid #364352;
+  bottom: auto;
+  left: auto;
+  top: 8px;
+  transform: rotate(45deg);
+  right: -6px;
+}
+
+.ogl-tooltip.ogl-tooltipRight:after {
+  border: none;
+  border-bottom: 2px solid #364352;
+  border-left: 2px solid #364352;
+  bottom: auto;
+  left: -6px;
+  transform: rotate(45deg);
+  top: 8px;
+}
+
+.ogl-tooltip.ogl-tooltipBottom:after {
+  border: none;
+  border-top: 2px solid #364352;
+  border-left: 2px solid #364352;
+  bottom: auto;
+  left: 50%;
+  top: -8px;
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.ogl-tooltip .ogl-text-btn_bluen {
+  float: right;
+}
+
+.ogl-listSeparator {
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 14px;
+  margin-top: 5px;
+  padding: 5px 0;
+  text-align: center;
+}
+
+.ogl-listSeparator:after {
+  content: ">";
+  display: inline-block;
+  float: right;
+  font-family: consolas;
+  margin-right: 10px;
+  transform: rotate(90deg);
+}
+
+.ogl-dialogOverlay {
+  padding-top: 20vh;
+  /* align-items: center; */
+  background: rgba(0, 0, 0, 0.7);
+  bottom: 0;
+  display: none;
+  justify-content: center;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 1000;
+}
+
+.ogl-dialogOverlay.ogl-active {
+  display: flex;
+}
+
+.ogl-dialog {
+  /* background: #1a222b; */
+  /* background: #23313b; */
+  background: #262e39;
+  background: rgb(34, 42, 51);
+  display: flex;
+  overflow: hidden;
+  padding: 20px;
+  position: fixed;
+  /* max-width: 950px; */
+  animation: fadeIn ease 0.4s;
+}
+
+.ogl-dialog .close-tooltip {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+}
+
+.ogl-dialogContent {
+  /* max-height: 500px; */
+  overflow-y: auto;
+  padding: 10px;
+}
+
+@media only screen and (max-height: 800px) {
+  .ogl-dialogOverlay {
+    padding-top: 10vh;
+  }
+}
+@media only screen and (max-height: 600px) {
+  .ogl-dialogOverlay {
+    padding-top: 0vh;
+  }
+}
+
+.ogl-dialogContent .ogl-stalkPlanets {
+  grid-template-columns: repeat(4, 1fr) !important;
+  align-content: start;
+  background: #0d1117;
+  padding: 10px;
+  min-height: 300px;
+  min-width: 467px;
+}
+
+.ogl-dialogContent .ogl-stalkPlanets .ogl-targetItem {
+  width: 112px;
+}
+
+.ogl-tabList {
+  display: flex;
+  align-items: center;
+}
+
+.ogl-tabList .ogl-tab {
+  min-width: 23px;
+  background: #334258;
+  border-radius: 2px;
+  color: #fff;
+  cursor: pointer;
+  margin-right: 1px;
+  margin-bottom: 1px;
+  padding: 5px 0;
+  text-align: center;
+  font-size: 9px;
+  user-select: none;
+}
+
+.ogl-tabList .ogl-tab:hover {
+  background: #894d1d;
+}
+
+.ogl-tabList .ogl-tab.ogl-active {
+  border: none !important;
+  background: #894d1d;
+  opacity: 1 !important;
+}
+
+.ogl-tab.ogl-isEmpty {
+  opacity: 0.2;
+}
+
+.ogl-colorHidden,
+.ogl-galaxyHidden,
+.ogl-systemHidden {
+  display: none !important;
+}
+
+.ogl-atk {
+  background: #c14d4d;
+  border: 6px double #fff;
+  border-radius: 50%;
+  bottom: 4px;
+  box-sizing: border-box;
+  height: 14px;
+  opacity: 0.5;
+  right: 3px;
+  width: 14px;
+}
+
+.ogl-atk:hover {
+  opacity: 1;
+}
+
+.ogl-atk.ogl-active {
+  opacity: 1;
+}
+
+.ogl-fleetInfo {
+  min-width: 100px;
+}
+
+.ogl-fleetInfo div:nth-of-type(1) {
+  color: #edff54;
+}
+
+.ogl-fleetInfo div:nth-of-type(2) {
+  color: #66f8ff;
+}
+
+.ogl-fleetInfo div:nth-of-type(3) {
+  color: #ff7c7c;
+}
+
+.ogl-fleetInfo div,
+.ogl-fleetInfo li {
+  display: flex;
+  justify-content: space-between;
+}
+
+.ogl-fleetInfo div:nth-of-type(4) {
+  display: flex;
+  flex-direction: column;
+  min-width: 150px;
+}
+
+.ogl-fleetInfo strong {
+  font-weight: 800;
+}
+
+.ogl-fleetInfo div:nth-of-type(4) strong {
+  font-style: oblique;
+  text-decoration-line: underline;
+}
+
+.ogl-fleetInfo .ogl-rapid-minus {
+  font-style: none;
+  text-decoration-line: none;
+  color: #d43635;
+}
+
+.ogl-fleetInfo .ogl-rapid-plus {
+  font-style: none;
+  text-decoration-line: none;
+  color: #9c0;
+}
+
+#civilships .ogl-fret {
+  bottom: 5px;
+  color: #edff54;
+  font-size: 10px;
+  position: absolute;
+  right: 20px;
+}
+
+/* FLEET INFO TOOTIP
+   ------------------------------- */
+
+table.fleetinfo {
+  /* min-width: 200px !important; */
+  width: max-content !important;
+}
+
+table.fleetinfo tr td,
+table.fleetinfo tr th {
+  padding: 2px 5px;
+}
+
+table.fleetinfo tr:nth-child(even) {
+  box-shadow: inset 0 50px rgba(0, 0, 0, 0.2);
+}
+
+table.fleetinfo tr:nth-child(odd) {
+  box-shadow: inset 0 50px rgba(0, 0, 0, 0.4);
+}
+
+table.fleetinfo tr:nth-last-child(3),
+.ogl-metal {
+  /* color: #e4ae74b8; */
+  /* color: #deaf8e !important; */
+  /* color: #b77d54; */
+  color: #af866a;
+  color: #ffaacca1;
+  /* color: #999; */
+}
+
+table.fleetinfo tr:nth-last-child(2),
+.ogl-crystal {
+  color: #73e5ffc7;
+}
+
+table.fleetinfo tr:nth-last-child(1),
+.ogl-deut {
+  color: #a6e0b0;
+}
+
+/* BTN_BLUE
+   ------------------------------- */
+.btn_blue {
+  background: #485f93 !important;
+  border: 1px solid #5b77b5 !important;
+  border-radius: 2px !important;
+  user-select: none;
+}
+
+.ogl-btn_red {
+  background: #b13131 !important;
+  border: 1px solid #de3e3e !important;
+}
+
+.btn_blue:hover {
+  background: #c75817 !important;
+  border: 1px solid #e06c29 !important;
+}
+
+/* ICONS
+   ------------------------------- */
+/* .ogl-tooltip a {
+  color: cornflowerblue !important; */
+/* } */
+.ogl-icon-attack,
+.close-tooltip,
+.icon_chat,
+.icon_close,
+.icon_fastforward,
+.icon_user,
+.icon_missile,
+.icon_eye,
+.icon_against,
+.icon_maximize,
+.icon_trash,
+.ogl-pin,
+.ogl-mmorpgstats {
+  background: currentColor !important;
+  color: #485f93 !important;
+  cursor: pointer;
+  border-radius: 2px;
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.1);
+  height: 16px;
+  overflow: hidden;
+  position: relative;
+  width: 16px;
+}
+
+.ogl-icon-attack.ogl-active,
+.close-tooltip.ogl-active,
+.icon_chat.ogl-active,
+.icon_close.ogl-active,
+.icon_fastforward.ogl-active,
+.icon_user.ogl-active,
+.icon_missile.ogl-active,
+.icon_eye.ogl-active,
+.icon_against.ogl-active,
+.icon_maximize.ogl-active,
+.icon_trash.ogl-active,
+.ogl-pin.ogl-active,
+.ogl-tableOptions .icon.ogl-active,
+.ogl-mmorpgstats.ogl-active {
+  color: #813383 !important;
+}
+
+.ogl-icon-attack:hover,
+.close-tooltip:hover,
+.icon_chat:hover,
+.icon_close:hover,
+.icon_fastforward:hover,
+.icon_user:hover,
+.icon_missile:hover,
+.icon_eye:hover,
+.icon_against:hover,
+.icon_maximize:hover,
+.icon_trash:hover,
+.ogl-pin:hover,
+.ogl-tableOptions .icon:hover,
+.ogl-mmorpgstats:hover {
+  color: #c75817 !important;
+}
+
+.ogl-icon-attack:before {
+  background: #485f93;
+  border-radius: 50%;
+  border: 5px double rgb(255, 255, 255);
+  box-sizing: border-box;
+  content: "";
+  height: 11px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 11px;
+}
+
+.icon.hueRotate {
+  background: #41846b !important;
+  filter: none !important;
+}
+
+.icon_eye:before {
+  background: #fff;
+  border-radius: 0 12px;
+  content: "";
+  display: block;
+  height: 14px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(0.6, 0.85) rotate(-45deg);
+  width: 14px;
+}
+
+.ogl-stalkPlanets .icon_eye {
+  box-shadow: none;
+  border-radius: 10px;
+  opacity: 0.5;
+  margin-right: 8px;
+}
+
+.ogl-moon-hover .icon_eye {
+  margin-left: 8px;
+  margin-right: 0px;
+}
+
+.ogl-stalkPlanets .icon_eye:hover {
+  color: #485f93 !important;
+  opacity: 1;
+}
+
+.icon_eye:after {
+  background: inherit;
+  border-radius: 10px;
+  content: "";
+  display: block;
+  height: 4px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-61%, -47%);
+  width: 4px;
+}
+
+.icon_chat:before {
+  background: #fff;
+  border-radius: 1px;
+  content: "";
+  display: block;
+  height: 7px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -60%);
+  width: 10px;
+}
+
+.icon_chat:after {
+  background: #fff;
+  content: "";
+  display: block;
+  height: 4px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: rotate(45deg) translate(-10%, 20%);
+  width: 4px;
+}
+
+.icon_plus:before {
+  background: #fff;
+  content: "";
+  display: block;
+  height: 9px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(45deg);
+  width: 2px;
+}
+
+.icon_plus:after {
+  background: #fff;
+  content: "";
+  display: block;
+  height: 9px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(45deg);
+  width: 2px;
+}
+
+.icon_close:before,
+.close-tooltip:before {
+  background: #fff;
+  content: "";
+  display: block;
+  height: 9px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(45deg);
+  width: 2px;
+}
+
+.icon_close:after,
+.close-tooltip:after {
+  background: #fff;
+  content: "";
+  display: block;
+  height: 9px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  width: 2px;
+}
+
+.icon_fastforward:before {
+  border-bottom: 2px solid #fff;
+  border-right: 2px solid #fff;
+  box-sizing: border-box;
+  content: "";
+  display: block;
+  height: 6px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-20%, -50%) rotate(-45deg);
+  width: 6px;
+}
+
+.icon_fastforward:after {
+  border-bottom: 2px solid #fff;
+  border-right: 2px solid #fff;
+  box-sizing: border-box;
+  content: "";
+  display: block;
+  height: 6px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-110%, -50%) rotate(-45deg);
+  width: 6px;
+}
+
+.icon_user:before {
+  background: #fff;
+  border-radius: 50px 50px 0 0;
+  content: "";
+  display: block;
+  height: 6px;
+  left: 50%;
+  position: absolute;
+
+  top: 65%;
+  transform: translate(-50%, -43%);
+  width: 12px;
+}
+
+.icon_user:after {
+  background: #fff;
+  border: 2px solid currentColor;
+  border-radius: 10px;
+  content: "";
+  display: block;
+  height: 6px;
+  left: 50%;
+  position: absolute;
+  top: 36%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+}
+
+.icon_missile:before {
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-sizing: border-box;
+  content: "";
+  display: block;
+  height: 11px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 11px;
+}
+
+.icon_missile:after {
+  background: #fff;
+  border-radius: 50%;
+  content: "";
+  display: block;
+  height: 3px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 3px;
+}
+
+.icon_against:before {
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-sizing: border-box;
+  content: "";
+  display: block;
+  height: 11px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 11px;
+}
+
+.icon_against:after {
+  background: #fff;
+  content: "";
+  display: block;
+  height: 9px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  width: 2px;
+}
+
+.ogl-pin:before {
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-top: 4px solid #fff;
+  content: "";
+  display: block;
+  height: 0;
+  left: 50%;
+  position: absolute;
+  top: 71%;
+  transform: translate(-50%, -50%);
+  width: 0;
+}
+
+.ogl-pin:after {
+  border: 2px solid #fff;
+  border-radius: 50%;
+  content: "";
+  display: block;
+  height: 4px;
+  left: 50%;
+  position: absolute;
+  top: 45%;
+  transform: translate(-50%, -50%);
+  width: 4px;
+}
+
+.ogl-mmorpgstats:before {
+  border-bottom: 2px solid #fff;
+  border-right: 2px solid #fff;
+  box-sizing: border-box;
+  content: "";
+  display: block;
+  height: 4px;
+  left: 35%;
+  position: absolute;
+  top: 60%;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  width: 6px;
+}
+
+.ogl-mmorpgstats:after {
+  border-top: 2px solid #fff;
+  box-sizing: border-box;
+  content: "";
+  display: block;
+  height: 4px;
+  left: 55%;
+  position: absolute;
+  top: 40%;
+  transform: translate(-50%, -50%) rotate(-30deg);
+  width: 7px;
+}
+
+.icon_maximize:before {
+  border: 1px solid #fff;
+  box-sizing: border-box;
+  content: "";
+  display: block;
+  height: 6px;
+  left: 60%;
+  position: absolute;
+  top: 45%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+}
+
+.icon_maximize:after {
+  background: inherit;
+  border: 1px solid #fff;
+  box-sizing: border-box;
+  content: "";
+  display: block;
+  height: 6px;
+  left: 40%;
+  position: absolute;
+  top: 55%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+}
+
+.icon_trash:before {
+  background: repeating-linear-gradient(to right, transparent, #fff 2px);
+  border: 1px solid #fff;
+  border-radius: 0 0 2px 2px;
+  border-top: none;
+  box-sizing: border-box;
+  content: "";
+  display: block;
+  height: 8px;
+  left: 50%;
+  position: absolute;
+  top: 55%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+}
+
+.icon_trash:after {
+  background: #fff;
+  box-sizing: border-box;
+  content: "";
+  display: block;
+  height: 2px;
+  left: 50%;
+  position: absolute;
+  top: 25%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+}
+
+/* EXPEDITION DEBRIS
+   ------------------------------- */
+.expeditionDebrisSlotBox {
+  align-items: center;
+  display: grid;
+  grid-template-columns: 20% auto auto auto;
+}
+
+.expeditionDebrisSlotBox li {
+  list-style: none;
+}
+
+.expeditionDebrisSlotBox > img {
+  float: right;
+  justify-self: center;
+}
+
+.expeditionDebrisSlotBox > div {
+  line-height: 1.6;
+  text-align: left;
+}
+
+.expeditionDebrisSlotBox a:hover {
+  color: orange;
+}
