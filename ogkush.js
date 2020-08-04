@@ -8,10 +8,10 @@ var dataHelper = (function () {
     return new Promise(function (resolve, reject) {
       var listener = function (evt) {
         if (evt.detail.requestId == rid) {
-          if (!evt.detail.player.name) {
-            // alert("NAME MISSING");
-            // console.log(evt.detail.player);
-          }
+          // if (!evt.detail.player.name) {
+          // alert("NAME MISSING");
+          // console.log(evt.detail.player);
+          // }
           // Deregister self
           window.removeEventListener("ogi-players-rep", listener);
           resolve(evt.detail.player);
@@ -6209,7 +6209,7 @@ class OGLight {
       };
 
       let dispatch = document
-        .querySelector("#civilships")
+        .querySelector("#shipsChosen")
         .appendChild(this.createDOM("div", { class: "ogl-dispatch" }));
 
       if (!this.json.options.dispatcher) {
@@ -7261,10 +7261,9 @@ class OGLight {
             deutLeft.innerText != "0"
           ) {
             deutLeft.classList.add("overmark");
-            deutReal.innerText = Math.max(
-              0,
-              filled - (deutAvailable - fleetDispatcher.cargoDeuterium)
-            ).toLocaleString("de-DE");
+            deutReal.innerText = fleetDispatcher.cargoDeuterium.toLocaleString(
+              "de-DE"
+            );
           } else {
             deutLeft.classList.remove("overmark");
             deutReal.innerText = "-";
@@ -7299,10 +7298,9 @@ class OGLight {
             crystalLeft.innerText != "0"
           ) {
             crystalLeft.classList.add("overmark");
-            crystalReal.innerText = Math.max(
-              0,
-              filled - (crystalAvailable - fleetDispatcher.cargoCrystal)
-            ).toLocaleString("de-DE");
+            crystalReal.innerText = fleetDispatcher.cargoCrystal.toLocaleString(
+              "de-DE"
+            );
           } else {
             crystalLeft.classList.remove("overmark");
             crystalReal.innerText = "-";
@@ -7335,10 +7333,9 @@ class OGLight {
                 "de-DE"
               )
             );
-            metalReal.innerText = Math.max(
-              0,
-              filled - (metalAvailable - fleetDispatcher.cargoMetal)
-            ).toLocaleString("de-DE");
+            metalReal.innerText = fleetDispatcher.cargoMetal.toLocaleString(
+              "de-DE"
+            );
           } else {
             metalLeft.classList.remove("overmark");
             metalReal.innerText = "-";

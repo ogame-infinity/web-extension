@@ -23,10 +23,10 @@ echo "$JS_FILE_NAME minified"
 echo "Minification complete!"
 
 cp -r res/ dist/res
+cp -r libs/ dist/libs
 cp  $MANIFEST_FILE_NAME ./dist/$MANIFEST_FILE_NAME
 
 cd ./dist
-test="1.2.4"
 sed -i "" 's/"version": "1"/"version": "'"$1"'"/g' $MANIFEST_FILE_NAME
 
 zip -qr -X "ogi-v$1-chrome.zip" * 

@@ -7,26 +7,26 @@
   background: linear-gradient(#1d2732, #131c24) !important;
 }
 
-input.metal,
-.metal + input,
-#resources .res_wrap:first-child input {
+input[type="text"].metal,
+.metal + input[type="text"],
+#resources .res_wrap:first-child input[type="text"] {
   /* background: #1e2c38 !important; */
   color: #ffaacca1 !important;
   border: solid 1px rgb(58 72 86) !important;
   box-shadow: none !important;
 }
-input.crystal,
-.crystal ~ input,
-#resources .res_wrap:nth-child(2) input {
+input[type="text"].crystal,
+.crystal ~ input[type="text"],
+#resources .res_wrap:nth-child(2) input[type="text"] {
   /* background: #1e2c38 !important; */
   color: #73e5ffc7 !important;
   border: solid 1px rgb(58 72 86) !important;
   box-shadow: none !important;
 }
 
-input.deuterium,
-.deuterium ~ input,
-#resources .res_wrap:nth-child(3) input {
+input[type="text"].deuterium,
+.deuterium ~ input[type="text"],
+#resources .res_wrap:nth-child(3) input[type="text"] {
   /* background: #1e2c38 !important; */
   color: #a6e0b0 !important;
   border: solid 1px rgb(58 72 86) !important;
@@ -35,7 +35,11 @@ input.deuterium,
 input[disabled] {
   filter: grayscale(1);
 }
-input {
+
+input[type="text"]::selection {
+  background-color: #a2a2a2;
+}
+input[type="text"] {
   background: -webkit-linear-gradient(top, #0d151b 0, #1f2a35 100%) !important;
   color: #bbb !important;
   border: solid 1px rgb(58 72 86) !important;
@@ -50,7 +54,8 @@ input {
 
 .ogl-res-filler .ogk-real-cargo {
   position: absolute;
-  right: 137px;
+  top: -10px;
+  right: -1px;
   background: #1c2730;
   padding: 1px 5px;
   border-radius: 5px;
@@ -59,7 +64,7 @@ input {
   background: -webkit-linear-gradient(top, #0d151b 0, #1f2a35 100%);
   font-size: 9px !important;
 }
-.ogl-res-filler .ogk-real-cargo.ogk-metal {
+/* .ogl-res-filler .ogk-real-cargo.ogk-metal {
   top: -7px;
   color: #ffbfd9a1;
 }
@@ -68,7 +73,7 @@ input {
 }
 .ogl-res-filler .ogk-real-cargo.ogk-deut {
   top: 101px;
-}
+} */
 
 .ogl-sideStalk .ogl-stalkPlanets a {
   height: 23px;
@@ -382,9 +387,6 @@ input {
 }
 
 /* RESFILLER CSS */
-#shipsChosen {
-  margin-left: -5px;
-}
 
 #loadRoom {
   color: #ccc;
@@ -421,6 +423,7 @@ input {
 }
 
 .ogl-res-filler > div {
+  position: relative;
   margin-bottom: 10px;
   width: 160px;
   height: 35px;
@@ -508,15 +511,12 @@ input {
 }
 
 .ogl-dispatch {
-  position: relative;
-  margin-top: 15px;
   margin-bottom: 15px;
-  right: 100px;
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-  width: 656px;
-  right: 414px;
+  width: 660px;
+  margin-right: 3px;
 }
 .ogl-dispatch > div:last-child {
   margin-bottom: 0px;
@@ -2677,17 +2677,10 @@ button.build-it_premium {
 /****************************/
 
 #fleetdispatchcomponent #buttonz #civilships ul {
-  padding: 0px 0px 0 5px !important;
+  padding: 0px !important;
 }
 #fleetdispatchcomponent #buttonz #civilships {
-  width: 250px !important;
-}
-
-#fleetdispatchcomponent #buttonz #battleships ul {
-  padding: 0 0px 0 12px !important;
-}
-#fleetdispatchcomponent #buttonz #battleships {
-  width: 432px !important;
+  width: 245px !important;
 }
 
 #shipsChosen .technology input[type="number"],
@@ -2695,6 +2688,12 @@ button.build-it_premium {
   font-weight: 800;
   height: 20px;
   bottom: -20px !important;
+}
+#shipsChosen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 #shipsChosen .technology .icon.small {
@@ -2704,6 +2703,24 @@ button.build-it_premium {
 #shipsChosen .technology.interactive {
   margin-bottom: 25px !important;
 }
+
+#fleetdispatchcomponent #buttonz #battleships {
+  width: 415px !important;
+}
+#fleetdispatchcomponent #buttonz #battleships ul {
+  padding: 0 0px 0 2px !important;
+}
+
+.technology input[type="number"],
+.technology input[type="text"] {
+  font-weight: 800;
+  height: 20px;
+  bottom: -20px !important;
+}
+
+/* #shipsChosen {
+  margin-left: -5px;
+} */
 
 /* #fleet2 .briefing {
   position: absolute;
@@ -4198,24 +4215,6 @@ a.btn:active,
 /* #fleetdispatchcomponent #buttonz #civilships {
   width: 270px;
 } */
-
-#fleetdispatchcomponent #buttonz #battleships ul {
-  padding: 0 0px 0 12px !important;
-}
-#fleetdispatchcomponent #buttonz #battleships {
-  width: 432px;
-}
-
-.technology input[type="number"],
-.technology input[type="text"] {
-  font-weight: 800;
-  height: 20px;
-  bottom: -20px !important;
-}
-
-.technology.interactive {
-  margin-bottom: 25px !important;
-}
 
 /* COUNTER CSS */
 /* 
