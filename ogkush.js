@@ -2539,7 +2539,7 @@ class OGLight {
     );
     if ("fr".indexOf(this.gameLang) == -1) {
       languageDiv.html(
-        `<div class='mmoflag mmo_${this.gameLang.toUpperCase()}'> </div><strong class="neutral"> Expeditions statistics are not available in your language at the moment. Please also see the settings page to help me make it avalaible in your language...</strong>`
+        `<div class='mmoflag mmo_${this.gameLang.toUpperCase()}'> </div><strong class="neutral"> Expeditions statistics are not available in your language at the moment. Please also see the settings page to help me make it available in your language...</strong>`
       );
     }
 
@@ -2636,7 +2636,7 @@ class OGLight {
       this.createDOM(
         "div",
         { class: "ogk-love" },
-        "Made  <strong> isolated </strong>  with " + heart + "in Paris"
+        "Made isolated with " + heart + "in Paris"
       )
     );
     this.popup(null, container);
@@ -6753,14 +6753,16 @@ class OGLight {
         interval = setInterval(() => {
           arrivalDiv.html(
             getFormatedDate(
-              new Date().getTime() + fleetDispatcher.getDuration() * 1000,
+              new Date(serverTime).getTime() +
+                fleetDispatcher.getDuration() * 1000,
               "<strong> [G]:[i]:[s] </strong> - [d].[m]"
             )
           );
 
           returnDiv.html(
             getFormatedDate(
-              new Date().getTime() + 2 * fleetDispatcher.getDuration() * 1000,
+              new Date(serverTime).getTime() +
+                2 * fleetDispatcher.getDuration() * 1000,
               "<strong> [G]:[i]:[s] </strong> - [d].[m]"
             )
           );

@@ -1493,6 +1493,23 @@ strong {
   /* font-weight: 800; */
 }
 
+#roundup #targetPlanet {
+  color: #ccc !important;
+}
+#roundup #duration {
+  color: rgb(221, 221, 221);
+  font-weight: 800 !important;
+}
+#roundup #arrivalTime {
+  color: #ffd700eb;
+  font-weight: 800;
+}
+#roundup #returnTime {
+  color: #ffd700eb;
+  font-weight: 800;
+  opacity: 0.8;
+}
+
 .sprite .mCSB_scrollTools_vertical,
 .ogl-search-content .mCSB_scrollTools_vertical,
 .ogl-target-list .mCSB_scrollTools_vertical {
