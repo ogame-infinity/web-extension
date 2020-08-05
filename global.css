@@ -1601,6 +1601,10 @@ strong {
 /*****************************
 * TECHNOLOGIES DETAIL
 /****************************/
+#technologydetails .information > ul li:only-child {
+  margin-bottom: 10px;
+}
+
 #technologydetails .ogk-sum,
 #technologydetails .ogk-sum .ogl-date {
   color: #cec452 !important;

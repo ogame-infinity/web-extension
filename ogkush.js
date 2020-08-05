@@ -693,7 +693,7 @@ class OGLight {
             prodDiv.html(
               `<strong>Production :</strong> <span class="value">${parseInt(
                 baseProd
-              ).toLocaleString("de-DE")} <span class="bonus"> (+${(
+              ).toLocaleString("de-DE")} <span class="bonus"> (+${parseInt(
                 baseProd - currentProd
               ).toLocaleString("de-DE")})</span></span>`
             );
@@ -704,7 +704,7 @@ class OGLight {
             energyDiv.html(
               `<span class="value">${parseInt(baseProd).toLocaleString(
                 "de-DE"
-              )} <span class="bonus"> (+${(
+              )} <span class="bonus"> (+${parseInt(
                 baseProd - currentProd
               ).toLocaleString("de-DE")})</span></span>`
             );
@@ -10438,7 +10438,7 @@ TOTAL: ${this.formatToUnits(report.total)}
     } else {
       tech113 = this.json.tech113;
       tech122 = this.json.tech122;
-      let temp = mines.temperature;
+      temp = this.json.myMines[this.current.coords].temperature;
     }
 
     let percentBonus = 0;
