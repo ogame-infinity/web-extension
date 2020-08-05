@@ -3282,7 +3282,6 @@ class OGLight {
         clvl += crystal;
         dlvl += deut;
         mprod += this.production(1, metal, true);
-        console.log(this.production(2, crystal, true));
         cprod += this.production(2, crystal, true);
         dprod += this.production(3, deut, true);
       }
@@ -10344,61 +10343,25 @@ TOTAL: ${this.formatToUnits(report.total)}
   }
 
   cleanValue(value) {
-    if (this.language == 0) {
-      if (value.indexOf("Md") > -1) {
-        if (value.indexOf(",") == -1) {
-          value = value.replace("Md", ".000Md");
-        }
-
-        value = value.replace(/\Md/g, "").replace(/\,/g, ".");
-
-        value = value.split(".");
-        value[1] = value[1].padEnd(9, "0");
-        value = value.join();
-        value = value.replace(/\,/g, "");
-      } else if (value.indexOf("M") > -1) {
-        if (value.indexOf(",") == -1) {
-          value = value.replace("M", ".000M");
-        }
-
-        value = value.replace(/\M/g, "").replace(/\,/g, ".");
-
-        value = value.split(".");
-        value[1] = value[1].padEnd(6, "0");
-        value = value.join();
-        value = value.replace(/\,/g, "");
-      } else {
-        value = value.replace(/\./g, "");
-      }
-    } else {
-      if (value.indexOf("Md") > -1) {
-        if (value.indexOf(".") == -1) {
-          value = value.replace("Md", ".000Md");
-        }
-
-        value = value.replace(/\Md/g, "").replace(/\,/g, ".");
-
-        value = value.split(".");
-        value[1] = value[1].padEnd(9, "0");
-        value = value.join();
-        value = value.replace(/\,/g, "");
-      } else if (value.indexOf("Mn") > -1) {
-        if (value.indexOf(".") == -1) {
-          value = value.replace("Mn", ".000Mn");
-        }
-
-        value = value.replace(/\Mn/g, "").replace(/\,/g, ".");
-
-        value = value.split(".");
-        value[1] = value[1].padEnd(6, "0");
-        value = value.join();
-        value = value.replace(/\,/g, "");
-      } else {
-        value = value.replace(/\./g, "");
-      }
+    let sep = LocalizationStrings["thousandSeperator"];
+    let dec = LocalizationStrings["decimalPoint"];
+    let reg = new RegExp(`${dec}([^${dec}]*)$`, "g");
+    let factor = 1;
+    if (value.indexOf(LocalizationStrings["unitMilliard"]) > -1) {
+      value = value.replace(reg, "|" + "$1");
+      value = value.slice(0, -LocalizationStrings["unitMilliard"].length);
+      factor = 1000000000;
+    } else if (value.indexOf(LocalizationStrings["unitMega"]) > -1) {
+      value = value.replace(reg, "|" + "$1");
+      value = value.slice(0, -LocalizationStrings["unitMega"].length);
+      factor = 1000000;
+    } else if (value.indexOf(LocalizationStrings["unitKilo"]) > -1) {
+      value = value.replace(reg, "|" + "$1");
+      value = value.slice(0, -LocalizationStrings["unitKilo"].length);
+      factor = 1000;
     }
-
-    return parseInt(value);
+    value = value.split(sep).join("");
+    return parseInt(value.replace("|", ".") * factor);
   }
 
   removeNumSeparator(str, forced) {
