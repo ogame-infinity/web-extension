@@ -1395,6 +1395,9 @@ class OGLight {
   }
 
   betterFleetDispatcher() {
+    // Coords in clipboard ?
+    // navigator.clipboard.readText().then((txt) => alert(txt));
+
     if (
       this.page == "fleetdispatch" &&
       document.querySelector("#civilships") &&
@@ -3090,6 +3093,20 @@ class OGLight {
     return div;
   }
 
+  APIStringToClipboard(fleet) {
+    let str = "";
+    str += `characterClassId;${this.playerClass}|114;${this.json.tech114}|`;
+    for (let id in this.json.apiTechData) {
+      str += id + ";" + this.json.apiTechData[id] + "|";
+    }
+    for (let id in fleet) {
+      let count = fleet[id];
+      str += `${id};${count}|`;
+    }
+    fadeBox("<br/>API Key copied in clipboard");
+    navigator.clipboard.writeText(str);
+  }
+
   generalStats(player) {
     let content = this.createDOM("div", { class: "ogk-stats" });
 
@@ -3370,6 +3387,7 @@ class OGLight {
 
       let flying = this.getFlyingRes();
 
+      let totalFleet = {};
       let cyclos = 0;
       let totalSum = 0;
       [
@@ -3409,11 +3427,21 @@ class OGLight {
           cyclos = sum;
         }
         shipDiv.appendChild(this.createDOM("span", {}, dotted(sum)));
+        totalFleet[id] = sum;
       });
 
       let fleetInfo = fleetDetail.appendChild(
         this.createDOM("div", { class: "ogk-fleet-info" })
       );
+
+      let apiBtn = fleetInfo.appendChild(
+        this.createDOM("span", { class: "show_fleet_apikey" })
+      );
+
+      apiBtn.addEventListener("click", () => {
+        this.APIStringToClipboard(totalFleet);
+      });
+
       fleetInfo.appendChild(
         this.createDOM(
           "span",
@@ -4639,7 +4667,7 @@ class OGLight {
       }
       weekSums.topCombats.sort((a, b) => {
         if (a.loot) {
-          return b.debris + b.loot - (a.debris + a.loot);
+          return b.debris + Math.abs(b.loot) - (a.debris + Math.abs(a.loot));
         }
         return b.debris - a.debris;
       });
@@ -7232,6 +7260,10 @@ class OGLight {
 
       let onResChange = (index) => {
         let capacity = fleetDispatcher.getCargoCapacity();
+        if (capacity == 0) {
+          fleetDispatcher.resetCargo();
+        }
+
         let filled = this.removeNumSeparator(deutFiller.value);
         let deut = Math.min(
           this.removeNumSeparator(deutFiller.value),
@@ -7262,9 +7294,10 @@ class OGLight {
             deutLeft.innerText != "0"
           ) {
             deutLeft.classList.add("overmark");
-            deutReal.innerText = fleetDispatcher.cargoDeuterium.toLocaleString(
-              "de-DE"
-            );
+            deutReal.innerText = Math.max(
+              0,
+              fleetDispatcher.cargoDeuterium
+            ).toLocaleString("de-DE");
           } else {
             deutLeft.classList.remove("overmark");
             deutReal.innerText = "-";
@@ -7299,9 +7332,10 @@ class OGLight {
             crystalLeft.innerText != "0"
           ) {
             crystalLeft.classList.add("overmark");
-            crystalReal.innerText = fleetDispatcher.cargoCrystal.toLocaleString(
-              "de-DE"
-            );
+            crystalReal.innerText = Math.max(
+              0,
+              fleetDispatcher.cargoCrystal
+            ).toLocaleString("de-DE");
           } else {
             crystalLeft.classList.remove("overmark");
             crystalReal.innerText = "-";
@@ -7327,16 +7361,10 @@ class OGLight {
             metalLeft.innerText != "0"
           ) {
             metalLeft.classList.add("overmark");
-            console.log("0", this.removeNumSeparator(metalFiller.innerText));
-            console.log(
-              "1",
-              (metalAvailable - fleetDispatcher.cargoMetal).toLocaleString(
-                "de-DE"
-              )
-            );
-            metalReal.innerText = fleetDispatcher.cargoMetal.toLocaleString(
-              "de-DE"
-            );
+            metalReal.innerText = Math.max(
+              0,
+              fleetDispatcher.cargoMetal
+            ).toLocaleString("de-DE");
           } else {
             metalLeft.classList.remove("overmark");
             metalReal.innerText = "-";
@@ -10974,6 +11002,29 @@ TOTAL: ${this.formatToUnits(report.total)}
     });
   }
 
+  betterAPITooltip(sender) {
+    if (sender.classList.contains("icon_apikey")) {
+      let data = sender.getAttribute("title");
+      let first = data.indexOf("'");
+      let second = data.indexOf("'", first + 1);
+      sender.addEventListener("click", () => {
+        fadeBox("<br/>API Key copied in clipboard");
+        navigator.clipboard.writeText(data.substr(first + 1, second - first));
+      });
+      return true;
+    }
+    if (sender.classList.contains("show_fleet_apikey")) {
+      let data = sender.getAttribute("title");
+      let first = data.indexOf('value="');
+      let second = data.indexOf('"', first + 1);
+      sender.addEventListener("click", () => {
+        fadeBox("<br/>API Key copied in clipboard");
+        navigator.clipboard.writeText(data.substr(first + 1, second - first));
+      });
+      return true;
+    }
+  }
+
   showTooltip(sender) {
     if (
       !sender.classList.contains("ogl-tooltipReady") &&
@@ -10985,6 +11036,8 @@ TOTAL: ${this.formatToUnits(report.total)}
       sender.addEventListener(this.eventAction, () => {
         let content;
         let appendMode = false;
+
+        this.betterAPITooltip(sender);
 
         if (sender.classList.contains("tooltipRel")) {
           let rel = sender.getAttribute("rel");

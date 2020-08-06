@@ -341,9 +341,18 @@ input[type="text"] {
   width: 283px !important;
   margin-top: 9px !important;
 }
+.ogk-box .show_fleet_apikey {
+  position: absolute;
+  margin-top: -4px !important;
+}
 .show_fleet_apikey {
   margin-top: 7px !important;
 }
+
+.show_fleet_apikey:hover {
+  background-position: 0 -548px !important;
+}
+
 #fleetdispatchcomponent .allornonewrap .secondcol {
   width: 170px !important;
 }
@@ -2363,6 +2372,10 @@ button.build-it_premium {
   display: flex;
   justify-content: space-between;
   margin-top: 15px;
+}
+
+.ogk-stats .ogk-fleet-info span:nth-child(2) {
+  padding-left: 40px;
 }
 
 .ogk-stats strong {
