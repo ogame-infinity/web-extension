@@ -4042,11 +4042,26 @@ button.build-it_premium {
 }
 
 #eventHeader div {
+  display: flex;
+  align-items: center;
   position: absolute;
   top: 7px;
   right: 38px;
   color: #6f9fc8;
   opacity: 0.5;
+}
+#eventHeader div:hover {
+  opacity: 1;
+}
+
+#eventHeader .icon {
+  position: absolute;
+  left: 30px;
+  top: 7px;
+  opacity: 0.5;
+}
+#eventHeader .icon:hover {
+  opacity: 1;
 }
 
 #eventHeader input {
