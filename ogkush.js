@@ -2604,7 +2604,7 @@ class OGLight {
       this.createDOM(
         "p",
         {},
-        "<strong class='friendly'>Note</strong>: Ogame Infinity is being reviewed by Ogame to be official (<a href='https://board.en.ogame.gameforge.com/index.php?thread/819842-ogame-infinity-extension/' target='_blank'>Origin board</a>)."
+        "<strong class='friendly'>Note</strong>: Ogame Infinity is now officially tolarated by Ogame! (<a href='https://board.en.ogame.gameforge.com/index.php?thread/819842-ogame-infinity-extension/' target='_blank'>Origin board</a>)."
       )
     );
 
@@ -2622,7 +2622,7 @@ class OGLight {
       this.createDOM(
         "p",
         {},
-        "If you see a bug or have a feature request please report to discord 🙏 <a href='https://discord.gg/Z7MDHmk' target='_blank'>Link</a> also in the setting page."
+        "If you see a bug or have a feature request please report to discord 🙏 <a href='https://discord.gg/Z7MDHmk' target='_blank'>Link</a> also in the setting page. Be advised that using multiple addons/script might generate conflicts. "
       )
     );
 
@@ -11598,7 +11598,7 @@ TOTAL: ${this.formatToUnits(report.total)}
         "div",
         { class: "ogi-checkbox" },
         `Bug reporting 
-        <a target="_blank" href="https://discord.gg/qkuFjYp"> Here </span>`
+        <a target="_blank" href="https://discord.gg/9aMdQgk"> Here </span>`
       )
     );
     dataDiv.appendChild(
@@ -11606,21 +11606,10 @@ TOTAL: ${this.formatToUnits(report.total)}
         "div",
         { class: "ogi-checkbox" },
         `Feature request  
-        <a target="_blank" href="https://discord.gg/hKS4eF6"> Here </span>`
+        <a target="_blank" href="https://discord.gg/9aMdQgk"> Here </span>`
       )
     );
 
-    if ("fr".indexOf(this.gameLang) == -1) {
-      let lang = dataDiv.appendChild(
-        this.createDOM(
-          "div",
-          { class: "ogi-checkbox" },
-          `Expeditions langage (${this.gameLang.toUpperCase()})
-          <a target="_blank" href="https://discord.gg/8Y4SWup"> <span class="overmark">Help me?</span></span>`
-        )
-      );
-      lang.classList.add("overmark");
-    }
     dataDiv.appendChild(
       this.createDOM(
         "p",
