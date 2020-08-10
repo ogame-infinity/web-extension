@@ -270,7 +270,7 @@ class OGLight {
     this.json.options.expeditionMission =
       this.json.options.expeditionMission || 15;
 
-    this.json.options.spyFilter = this.json.options.spyFilter || "$";
+    this.json.options.spyFilter = this.json.options.spyFilter || "DATE";
     this.json.options.rvalLimit =
       this.json.options.rvalLimit || 400000 * this.json.speed;
     this.json.options.spyTableEnable =
