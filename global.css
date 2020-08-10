@@ -1,3 +1,16 @@
+.ogl-unknown-warning {
+  margin-left: 10px;
+  margin-top: 5px;
+  font-weight: 800;
+  color: #ab2b2a;
+}
+.ogl-unknown-warning a {
+  color: #ab2b2a !important;
+}
+.ogl-unknown-warning a:hover {
+  color: goldenrod !important;
+}
+
 .adviceWrapper {
   position: unset !important;
 }
@@ -882,6 +895,16 @@ input[type="text"] {
   margin-bottom: 0px;
 }
 
+.msg .ogl-warning {
+  width: 17px;
+  height: 15px;
+  position: absolute;
+  top: 6px;
+  left: 226px;
+  background-size: 12px;
+  background: url("chrome-extension://__MSG_@@extension_id__/res/warning.gif")
+    no-repeat left top;
+}
 .ogl-dest .ogl-coords .ogl-warning {
   width: 12px;
   height: 12px;

@@ -3,6 +3,24 @@ let keyPrefix = "ogkush-";
 var dataHelper = (function () {
   var requestId = 0;
 
+  function expedition(message) {
+    let rid = requestId++;
+    return new Promise(function (resolve, reject) {
+      var listener = function (evt) {
+        if (evt.detail.requestId == rid) {
+          // Deregister self
+          window.removeEventListener("ogi-expedition-rep", listener);
+          resolve(evt.detail.type);
+        }
+      };
+      window.addEventListener("ogi-expedition-rep", listener);
+      var payload = { requestId: rid, message: message };
+      window.dispatchEvent(
+        new CustomEvent("ogi-expedition", { detail: payload })
+      );
+    });
+  }
+
   function Get(id) {
     let rid = requestId++;
     return new Promise(function (resolve, reject) {
@@ -46,6 +64,7 @@ var dataHelper = (function () {
   }
 
   return {
+    getExpeditionType: expedition,
     getPlayer: Get,
     filter: filter,
   };
@@ -1294,6 +1313,7 @@ class OGLight {
           this.current.coords + (this.current.isMoon ? " (Moon)" : " (Planet)")
         )
       );
+      container.appendChild(this.createDOM("hr"));
     }
 
     let box = this.createDOM("div", { class: "ogk-keep-dialog" });
@@ -3626,8 +3646,11 @@ class OGLight {
   }
 
   expeditionMessages() {
-    let ressources = ["Metal", "Crystal", "Deuterium", "AM"];
+    // let ressources = ["Metal", "Crystal", "Deuterium", "AM"];
+    let normalized = ["Metal", "Crystal", "Deuterium", "AM"];
+    let ressources = this.json.resNames;
     if (!this.combats) this.combats = {};
+    if (!this.expeditionsIds) this.expeditionsIds = {};
 
     let cyclosName = "";
     for (let i in this.json.shipNames) {
@@ -3650,7 +3673,11 @@ class OGLight {
 
         document.querySelectorAll(`div[id=${id}] li.msg`).forEach((msg) => {
           let id = msg.getAttribute("data-msg-id");
-
+          if (!this.expeditionsIds[id]) {
+            this.expeditionsIds[id] = true;
+          } else {
+            return;
+          }
           if (id in this.json.expeditions && this.json.expeditions[id].result) {
             if (msg.querySelector(".icon_favorited")) {
               this.json.expeditions[id].favorited = true;
@@ -3658,68 +3685,112 @@ class OGLight {
             } else {
               this.json.expeditions[id].favorited = false;
             }
+
+            if (this.json.expeditions[id].result == "Unknown") {
+              msg
+                .querySelector(".msg_actions")
+                .appendChild(
+                  this.createDOM(
+                    "div",
+                    { class: "ogl-unknown-warning" },
+                    "Unknown expedition message... <a href='https://discord.gg/8Y4SWup'> Help me find them all</a>"
+                  )
+                );
+            } else if (this.json.expeditions[id].busy) {
+              msg.querySelector(".msg_actions").appendChild(
+                this.createDOM("a", {
+                  class:
+                    "ogl-warning tooltipRight ogl-tooltipReady ogl-tooltipInit",
+                  "data-title": "Warning : Expedition position is weak...",
+                })
+              );
+            }
+
             msg.classList.add(
               "ogk-" + this.json.expeditions[id].result.toLowerCase()
             );
             return;
           }
-
-          let coords = msg.querySelector("a.txt_link").innerText;
           let content = msg.querySelector("span.msg_content");
           let date = msg.querySelector(".msg_date").innerText;
+          let textContent = content.innerText;
 
-          let result = this.expeditionTextToJson(content);
+          dataHelper.getExpeditionType(textContent).then((type) => {
+            date = date.split(" ")[0].slice(0, -2);
 
-          result.coords = coords;
-          date = date.split(" ")[0].slice(0, -2);
+            let sums = this.json.expeditionSums[date];
+            if (!sums) {
+              sums = {
+                found: [0, 0, 0, 0],
+                harvest: [0, 0],
+                losses: {},
+                fleet: {},
+                type: {},
+                adjust: [0, 0, 0],
+                fuel: 0,
+              };
+            }
 
-          let sums = this.json.expeditionSums[date];
-          if (!sums) {
-            sums = {
-              found: [0, 0, 0, 0],
-              harvest: [0, 0],
-              losses: {},
-              fleet: {},
-              type: {},
-              adjust: [0, 0, 0],
-              fuel: 0,
+            ressources.forEach((res, i) => {
+              res = res.replace("(", "\\(").replace(")", "\\)");
+              let regex = new RegExp(`${res} [0-9]{1,3}(.[0-9]{1,3})*`, "gm");
+
+              let found = textContent.match(regex);
+              if (found) {
+                let split = found[0].split(" ");
+                type = normalized[i];
+                sums.found[i] += Number(
+                  this.removeNumSeparator(split[split.length - 1])
+                );
+              }
+            });
+            let fleetMatches = textContent.match(/.*: [1-9].*/gm);
+            fleetMatches &&
+              fleetMatches.forEach((result) => {
+                let split = result.split(": ");
+                type = "Fleet";
+                let id = this.json.shipNames[split[0]];
+                let count = Number(split[1]);
+                sums.fleet[id]
+                  ? (sums.fleet[id] += count)
+                  : (sums.fleet[id] = count);
+              });
+
+            if (type != "Unknown") {
+              sums.type[type] ? (sums.type[type] += 1) : (sums.type[type] = 1);
+            }
+
+            this.json.expeditionSums[date] = sums;
+            this.json.expeditions[id] = {
+              result: type,
+              date: new Date(dateStrToDate(date)),
+              favorited: msg.querySelector(".icon_favorited") ? true : false,
             };
-          }
-
-          if (result.result == "Fleet") {
-            for (let [key, value] of Object.entries(result.fleet)) {
-              sums.fleet[key]
-                ? (sums.fleet[key] += value)
-                : (sums.fleet[key] = value);
+            if (this.json.expeditions[id].result == "Unknown") {
+              msg
+                .querySelector(".msg_actions")
+                .appendChild(
+                  this.createDOM(
+                    "div",
+                    { class: "ogl-unknown-warning" },
+                    "Unknown expedition message... <a href='https://discord.gg/8Y4SWup'> Help me find them all</a>"
+                  )
+                );
+            } else if (this.json.expeditions[id].busy) {
+              msg.querySelector(".msg_actions").appendChild(
+                this.createDOM("a", {
+                  class:
+                    "ogl-warning tooltipRight ogl-tooltipReady ogl-tooltipInit",
+                  "data-title": "Warning : Expedition position is weak...",
+                })
+              );
             }
-          }
-          ressources.forEach((res, index) => {
-            if (result.result == res) {
-              let tot = Number(result[res].split(".").join(""));
-              sums.found[index] += tot;
-            }
-          });
 
-          if (!result.result) result.result = "Unknown";
-          sums.type[result.result]
-            ? (sums.type[result.result] += 1)
-            : (sums.type[result.result] = 1);
-
-          result.date = new Date(dateStrToDate(date));
-
-          if (result.result) {
-            this.json.expeditions[id] = result;
             msg.classList.add(
               "ogk-" + this.json.expeditions[id].result.toLowerCase()
             );
-          }
-          this.json.expeditionSums[date] = sums;
-          this.json.expeditions[id].favorited = msg.querySelector(
-            ".icon_favorited"
-          )
-            ? true
-            : false;
-          this.saveData();
+            this.saveData();
+          });
         });
       }
 
@@ -5347,87 +5418,6 @@ class OGLight {
     let chart = new Chart(ctx, config);
 
     return div;
-  }
-
-  expeditionTextToJson(content) {
-    let json = {};
-    let textContent = content.innerText;
-
-    let ressources = this.json.resNames;
-    let normalized = ["Metal", "Crystal", "Deuterium", "AM"];
-
-    ressources.forEach((res, i) => {
-      // Getting the start (substring with 100 char) then substring with line
-      // break
-      let index = textContent.indexOf(res);
-      if (index > 0) {
-        textContent = textContent.substr(index + res.length + 1, 100);
-
-        // If we have the spy probe message
-        if (textContent.indexOf("\n") != -1) {
-          textContent = textContent.substr(0, textContent.indexOf("\n") - 1);
-        }
-
-        json.result = normalized[i];
-        json[normalized[i]] = textContent;
-      }
-    });
-
-    if (json.result) {
-      return json;
-    }
-
-    if (textContent.includes("nouveaux vaisseaux")) {
-      json.result = "Fleet";
-      json["fleet"] = {};
-
-      textContent.match(/.*: [1-9].*/gm).forEach((result) => {
-        let split = result.split(": ");
-        json["fleet"][this.json.shipNames[split[0]]] = Number(split[1]);
-      });
-    } else if (
-      textContent.includes("accélérer") ||
-      textContent.includes("avance")
-    ) {
-      json.result = "Early";
-    } else if (
-      textContent.includes("fausse route") ||
-      textContent.includes("retard") ||
-      textContent.includes("dommages") ||
-      textContent.includes("dure plus longtemps")
-    ) {
-      json.result = "Late";
-    } else if (
-      textContent.includes("pirates") ||
-      textContent.includes("barbares primitifs")
-    ) {
-      json.result = "Pirates";
-    } else if (
-      textContent.includes("déchiffré correctement") ||
-      textContent.includes("attaquée par un petit groupe") ||
-      textContent.includes("rencontre peu amicale") ||
-      textContent.includes("inconnus ont attaqué") ||
-      textContent.includes("attaque notre expédition")
-    ) {
-      json.result = "Aliens";
-    } else if (
-      textContent.includes("réaction en chaîne") ||
-      textContent.includes("perdu le contact")
-    ) {
-      json.result = "Bhole";
-    } else {
-      json.result = "Void";
-    }
-
-    let objectNode = content.querySelector("a");
-    if (objectNode) {
-      json.result = "Object";
-      json["object"] = objectNode.innerText;
-    }
-
-    if (!json.result) json.result = "Unknown";
-
-    return json;
   }
 
   generateMMORPGLink(playerid) {

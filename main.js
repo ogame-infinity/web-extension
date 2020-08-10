@@ -12,7 +12,6 @@ const UNIVERSE = window.location.host.split(".")[0];
 if (window.location.href.includes("galaxy")) {
   let inter = setInterval(() => {
     if (document.head) {
-      console.log("HEAD");
       clearInterval(inter);
       var s = document.createElement("script");
       s.innerHTML = `
@@ -41,6 +40,28 @@ document.addEventListener("ogi-chart", function (e) {
     injectScript("libs/chartjs-plugin-labels.js");
   }, 100);
 });
+
+window.addEventListener(
+  "ogi-expedition",
+  function (evt) {
+    let request = evt.detail;
+    // do Chrome things with request.data, add stuff to response.data
+    chrome.runtime.sendMessage(
+      { type: "expedition", message: request.message },
+      function (response) {
+        var clone = response;
+        if (navigator.userAgent.indexOf("Firefox") > 0) {
+          clone = cloneInto(response, document.defaultView);
+        }
+        clone.requestId = request.requestId;
+        window.dispatchEvent(
+          new CustomEvent("ogi-expedition-rep", { detail: clone })
+        );
+      }
+    );
+  },
+  false
+);
 
 window.addEventListener(
   "ogi-players",
