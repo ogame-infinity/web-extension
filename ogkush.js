@@ -2388,6 +2388,7 @@ class OGLight {
             // Calling the actual function
             jg();
           };
+
           $("#jumpgate .send_all").after(
             this.createDOM("span", { class: "select-most" })
           );
@@ -2563,7 +2564,7 @@ class OGLight {
         this.createDOM(
           "p",
           { class: "neutral" },
-          "<strong>Reminder: </strong>The commander officier will bring improved empire visuals (seriously, try it :)."
+          "<strong>Reminder: </strong>The commander officier will bring improved empire features (seriously, try it :)."
         )
       );
     }
@@ -2572,12 +2573,14 @@ class OGLight {
       this.createDOM(
         "p",
         {},
-        "If you see a bug or have a feature request please report to discord 🙏 <a href='https://discord.gg/Z7MDHmk' target='_blank'>Link</a> also in the setting page"
+        "If you see a bug or have a feature request please report to discord 🙏 <a href='https://discord.gg/Z7MDHmk' target='_blank'>Link</a> also in the setting page."
       )
     );
 
     let languageDiv = container.appendChild(
-      this.createDOM("div", { style: "margin-top: 20px;display: flex;" })
+      this.createDOM("div", {
+        style: "margin-top: 20px;display: flex;font-size: revert",
+      })
     );
     if ("fr".indexOf(this.gameLang) == -1) {
       languageDiv.html(
@@ -2585,22 +2588,26 @@ class OGLight {
       );
     }
 
-    container.appendChild(
+    let shortcutsDiv = container.appendChild(
       this.createDOM(
         "p",
-        { class: "ogk-tips friendly" },
+        {
+          class: "ogk-tips friendly",
+          style:
+            "display: flex;justify-content: space-between;font-size: revert",
+        },
         "Oh, and here are some quick tips: "
       )
     );
 
-    let ctrl = container.appendChild(
+    let ctrl = shortcutsDiv.appendChild(
       this.createDOM(
-        "p",
+        "div",
         {
           style:
-            "margin-top:20px;display: flex;justify-content: center; position:absolute; top: 214px; right: 120px; color: #ccc",
+            "width: auto;display: flex;margin-right: 60px;color: white;margin-top: 5px;",
         },
-        "Shortcuts with "
+        "Shortcuts with"
       )
     );
 
