@@ -10742,7 +10742,13 @@ TOTAL: ${this.formatToUnits(report.total)}
     if (this.page == "galaxy") {
       document.addEventListener("keydown", (event) => {
         if (event.keyCode == 13 || event.keyCode == 32) {
-          submitForm();
+          if (document.querySelector(".refreshPhalanxLink")) {
+            document.querySelector(".refreshPhalanxLink").click();
+          } else {
+            submitForm();
+          }
+          event.preventDefault();
+          event.stopPropagation();
         }
       });
     }
