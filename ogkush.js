@@ -11092,9 +11092,9 @@ TOTAL: ${this.formatToUnits(report.total)}
           rel = rel.replace("_oneTimeelement", "");
 
           let id = "#" + rel;
-          this.tooltipList[id] =
-            this.tooltipList[id] || document.querySelector(id);
-          content = document.querySelector(id);
+          // this.tooltipList[id] =
+          //   this.tooltipList[id] || document.querySelector(id);
+          content = document.querySelector(id).cloneNode(true);
           appendMode = true;
         } else {
           content = sender.getAttribute("data-title");
