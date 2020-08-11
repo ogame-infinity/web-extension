@@ -854,7 +854,15 @@ class OGLight {
                 )
               );
             }
-            missing[3] = Math.min(0, currentEnergy - resSum[3]);
+            // In that case, we need the all energy prod
+            let tooltip = document
+              .querySelector("#energy_box")
+              .getAttribute("title");
+            let div = that.createDOM("div");
+            div.html(tooltip);
+            let prod = div.querySelectorAll("span")[1].innerText.substring(1);
+
+            missing[3] = Math.min(0, that.removeNumSeparator(prod) - resSum[3]);
             energy.appendChild(
               that.createDOM(
                 "li",
