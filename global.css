@@ -1,3 +1,7 @@
+#galaxytable td {
+  vertical-align: middle !important;
+}
+
 .ship_input_row input {
   font-weight: 800 !important;
 }
