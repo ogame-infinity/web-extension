@@ -6488,6 +6488,21 @@ class OGLight {
       };
 
       let isDefaultMission = (index) => {
+        if (this.rawURL.searchParams.get(`mission`) == 1) {
+          if (index == 1) {
+            return true;
+          } else {
+            return false;
+          }
+        }
+        if (this.rawURL.searchParams.get(`mission`) == 3) {
+          if (index == 3) {
+            return true;
+          } else {
+            return false;
+          }
+        }
+
         if (index == 3) {
           if (
             fleetDispatcher.targetPlayerId == playerId &&
