@@ -338,7 +338,6 @@ class OGLight {
 
     document.querySelector("#pageContent").style.width = "1200px";
 
-    this.ressourceFiller();
     this.sideOptions();
     this.neededCargo();
     this.preselectShips();
@@ -368,6 +367,7 @@ class OGLight {
     this.sideLock();
     this.jumpGate();
     this.topBarUtilities();
+    this.fleetDispatcher();
     this.betterFleetDispatcher();
     this.technoDetail();
     this.updateEmpireData();
@@ -1402,7 +1402,84 @@ class OGLight {
     return container;
   }
 
-  betterFleetDispatcher() {
+  initUnionCombat(union) {
+    let interval;
+    let delayDiv;
+    let delayDiv2;
+    let delayDiv3;
+    let delayTimeDiv;
+    let delayTimeDiv2;
+    let delayTimeDiv3;
+
+    if (delayDiv) {
+      delayDiv.remove();
+      delayDiv2.remove();
+      delayTimeDiv.remove();
+      delayTimeDiv2.remove();
+      clearInterval(interval);
+    }
+
+    delayDiv = document
+      .querySelector(".briefing h2")
+      .appendChild(this.createDOM("span", { class: "ogk-delay" }));
+    delayDiv2 = document
+      .querySelector("#roundup ul")
+      .appendChild(this.createDOM("div", { class: "ogk-delay" }));
+
+    delayDiv3 = document
+      .querySelector("#continueToFleet2")
+      .appendChild(this.createDOM("div", { class: "ogk-delay" }));
+
+    delayTimeDiv = document
+      .querySelector("#fleetBriefingPart1_2 li:first-of-type .value")
+      .appendChild(this.createDOM("div", { class: "undermark" }));
+    delayTimeDiv2 = document
+      .querySelector("#fleet3 #arrivalTime")
+      .parentElement.appendChild(this.createDOM("div", { class: "undermark" }));
+
+    delayTimeDiv3 = document.querySelector("#fleet1 .ogl-info").appendChild(
+      this.createDOM("div", {
+        class: "undermark",
+        style: "position: absolute;left: 65px;",
+      })
+    );
+
+    // unions.forEach((union) => {
+    //   if (union.id == splits[splits.length - 1]) {
+    let end = 0;
+    let update = () => {
+      let diff = union.time * 1000 - serverTime.getTime();
+      let maxDelay = diff * 0.3;
+      let str = getFormatedTime(maxDelay / 1000);
+
+      let flighDiff = fleetDispatcher.getDuration() - diff / 1000;
+
+      end = maxDelay / 1000 - flighDiff;
+      let abs = Math.abs(end);
+
+      delayDiv.innerText = end > 0 ? getFormatedTime(abs) : getFormatedTime(0);
+      delayDiv2.innerText = end > 0 ? getFormatedTime(abs) : getFormatedTime(0);
+      delayDiv3.innerText = end > 0 ? getFormatedTime(abs) : getFormatedTime(0);
+
+      let format = getFormatedTime(flighDiff >= 0 ? flighDiff : 0);
+      delayTimeDiv.innerText = "+" + format;
+      delayTimeDiv2.innerText = "+" + format;
+      delayTimeDiv3.innerText = "+" + format;
+    };
+
+    // fleetDispatcher.hasValidTarget = () => {
+    //   if (end <= 0) return false;
+    //   return old();
+    // };
+    fleetDispatcher.refreshFleet2();
+    update();
+    interval = setInterval(update, 200);
+  }
+  // });
+  // });
+  // }
+
+  fleetDispatcher() {
     // Coords in clipboard ?
     // navigator.clipboard.readText().then((txt) => alert(txt));
     // \d{1}:\d{1,3}:\d{1,2}
@@ -1412,70 +1489,13 @@ class OGLight {
       document.querySelector("#civilships") &&
       fleetDispatcher.shipsOnPlanet.length != 0
     ) {
-      let old = fleetDispatcher.hasValidTarget;
+      // let old = fleetDispatcher.hasValidTarget;
 
-      let interval;
-      let delayDiv;
-      let delayDiv2;
-      let delayTimeDiv;
-      let delayTimeDiv2;
       $("#shortcuts .combatunits").on("change", () => {
         let splits = $("#shortcuts .combatunits").val().split("#");
-
-        if (delayDiv) {
-          delayDiv.remove();
-          delayDiv2.remove();
-          delayTimeDiv.remove();
-          delayTimeDiv2.remove();
-          clearInterval(interval);
-        }
-
-        delayDiv = document
-          .querySelector(".briefing h2")
-          .appendChild(this.createDOM("span", { class: "ogk-delay" }));
-        delayDiv2 = document
-          .querySelector("#roundup ul")
-          .appendChild(this.createDOM("div", { class: "ogk-delay" }));
-
-        delayTimeDiv = document
-          .querySelector("#fleetBriefingPart1_2 li:first-of-type .value")
-          .appendChild(this.createDOM("div", { class: "undermark" }));
-        delayTimeDiv2 = document
-          .querySelector("#fleet3 #arrivalTime")
-          .parentElement.appendChild(
-            this.createDOM("div", { class: "undermark" })
-          );
-
         unions.forEach((union) => {
           if (union.id == splits[splits.length - 1]) {
-            let end = 0;
-            let update = () => {
-              let diff = union.time * 1000 - serverTime.getTime();
-              let maxDelay = diff * 0.3;
-              let str = getFormatedTime(maxDelay / 1000);
-
-              let flighDiff = fleetDispatcher.getDuration() - diff / 1000;
-
-              end = maxDelay / 1000 - flighDiff;
-              let abs = Math.abs(end);
-
-              delayDiv.innerText =
-                end > 0 ? getFormatedTime(abs) : getFormatedTime(0);
-              delayDiv2.innerText =
-                end > 0 ? getFormatedTime(abs) : getFormatedTime(0);
-
-              let format = getFormatedTime(flighDiff >= 0 ? flighDiff : 0);
-              delayTimeDiv.innerText = "+" + format;
-              delayTimeDiv2.innerText = "+" + format;
-            };
-
-            fleetDispatcher.hasValidTarget = () => {
-              if (end <= 0) return false;
-              return old();
-            };
-            fleetDispatcher.refreshFleet2();
-            update();
-            interval = setInterval(update, 500);
+            this.initUnionCombat(union);
           }
         });
       });
@@ -6247,7 +6267,7 @@ class OGLight {
     return content;
   }
 
-  ressourceFiller() {
+  betterFleetDispatcher() {
     if (
       this.page == "fleetdispatch" &&
       document.querySelector("#civilships") &&
@@ -6365,6 +6385,52 @@ class OGLight {
           `<svg height="12px" viewBox="0 0 512 512" width="12px"><path fill="white" d="m498.195312 222.695312c-.011718-.011718-.023437-.023437-.035156-.035156l-208.855468-208.847656c-8.902344-8.90625-20.738282-13.8125-33.328126-13.8125-12.589843 0-24.425781 4.902344-33.332031 13.808594l-208.746093 208.742187c-.070313.070313-.140626.144531-.210938.214844-18.28125 18.386719-18.25 48.21875.089844 66.558594 8.378906 8.382812 19.445312 13.238281 31.277344 13.746093.480468.046876.964843.070313 1.453124.070313h8.324219v153.699219c0 30.414062 24.746094 55.160156 55.167969 55.160156h81.710938c8.28125 0 15-6.714844 15-15v-120.5c0-13.878906 11.289062-25.167969 25.167968-25.167969h48.195313c13.878906 0 25.167969 11.289063 25.167969 25.167969v120.5c0 8.285156 6.714843 15 15 15h81.710937c30.421875 0 55.167969-24.746094 55.167969-55.160156v-153.699219h7.71875c12.585937 0 24.421875-4.902344 33.332031-13.808594 18.359375-18.371093 18.367187-48.253906.023437-66.636719zm0 0"/></svg>`
         )
       );
+
+      if (unions.length != 0) {
+        let unionsBtn = coords.appendChild(
+          this.createDOM(
+            "div",
+            { class: "ogl-union-btn" },
+            '<img src="https://gf3.geo.gfsrv.net/cdn56/2ff25995f98351834db4b5aa048c68.gif" height="16" width="16"></img>'
+          )
+        );
+        unionsBtn.addEventListener("click", () => {
+          let container = this.createDOM("div", {
+            class: "ogl-quickLinks",
+            style: "display: flex;",
+          });
+          for (let i in unions) {
+            let union = container.appendChild(
+              this.createDOM(
+                "div",
+                { class: "ogl-quickPlanet" },
+                `${unions[0].name} (${unions[0].targetname})`
+              )
+            );
+            union.addEventListener("click", () => {
+              fleetDispatcher.union = unions[i].id;
+              fleetDispatcher.targetPlanet.position = unions[i].planet;
+              fleetDispatcher.targetPlanet.system = unions[i].system;
+              fleetDispatcher.targetPlanet.galaxy = unions[i].galaxy;
+              fleetDispatcher.targetPlanet.type = unions[i].planettype;
+
+              galaxyInput.value = fleetDispatcher.targetPlanet.galaxy;
+              systemInput.value = fleetDispatcher.targetPlanet.system;
+              positionInput.value = fleetDispatcher.targetPlanet.position;
+              document.querySelector(".ogl-dialog .close-tooltip").click();
+              update(true);
+              this.initUnionCombat(unions[i]);
+            });
+          }
+
+          this.popup(false, container);
+
+          //   hat.selectCombatUnion($(e.currentTarget));
+          // that.updateTarget();
+          // that.refresh();
+          // that.focusSubmitFleet2();
+        });
+      }
 
       planetList.addEventListener("click", () => {
         let container = this.openPlanetList((planet) => {

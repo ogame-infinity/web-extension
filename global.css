@@ -757,6 +757,7 @@ input[type="text"] {
 }
 
 .ogl-dest .ogl-info {
+  position: relative;
   display: grid;
   grid-template-columns: 1fr 1fr;
   justify-content: space-between;
@@ -903,16 +904,24 @@ input[type="text"] {
 /* .ogl-dest .ogl-coords a:last-child {
   margin-left: 50px;
 } */
+.ogl-dest .ogl-union-btn {
+  margin-top: -1px;
+  margin-left: 10px;
+  background: #32434f;
+  filter: sepia(100%) hue-rotate(-50deg) saturate(11) brightness(0.8);
+  height: 15px;
+  margin-right: 4px;
+}
+.ogl-dest .ogl-union-btn:hover {
+  filter: sepia(70%) hue-rotate(-50deg) saturate(11) brightness(0.8);
+}
+
 .ogl-dest .ogl-coords .ogl-homes {
   width: 50px;
   height: auto;
-  /* background: linear-gradient(
-    0deg,
-    rgba(110 137 157, 1) 0%,
-    rgb(110 137 157) 50%,
-    rgb(91 118 138) 50%,
-    rgb(91 118 138) 100%
-  ); */
+  display: flex;
+  height: 23px;
+  justify-content: center;
   cursor: pointer;
   background: #5b768a70;
   border-radius: 5px;
@@ -922,7 +931,6 @@ input[type="text"] {
 
 .ogl-dest .ogl-coords .ogl-homes svg {
   padding: 3px;
-  margin-left: 25px;
   margin-top: 2px;
 }
 
@@ -1369,6 +1377,13 @@ div#banner_skyscraper {
   text-align: center;
   font-weight: 800;
   margin: 8px;
+}
+#continueToFleet2 .ogk-delay {
+  color: #d43635 !important;
+  position: absolute;
+  right: 36px;
+  top: 56px;
+  font-weight: 800;
 }
 
 #fleet3 #roundup li {
@@ -3752,7 +3767,10 @@ button.build-it_premium {
   display: none !important;
 }
 .fleetDetails[data-mission-type="1"] .icon.overlay {
-  filter: sepia(85%) hue-rotate(-50deg) saturate(5);
+  filter: sepia(100%) hue-rotate(-50deg) saturate(11) brightness(0.8);
+}
+.fleetDetails[data-mission-type="1"] .icon.overlay:hover {
+  filter: sepia(70%) hue-rotate(-50deg) saturate(11) brightness(0.8);
 }
 
 .fleetDetails[data-mission-type="1"] .timer,
