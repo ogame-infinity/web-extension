@@ -1,3 +1,10 @@
+.adviceWrapper {
+  position: unset !important;
+}
+div#banner_skyscraper {
+  top: 0px !important;
+}
+
 #galaxytable td {
   vertical-align: middle !important;
 }
