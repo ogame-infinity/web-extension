@@ -346,6 +346,7 @@ input[type="text"] {
   margin-top: 9px !important;
 }
 .ogk-box .show_fleet_apikey {
+  z-index: 1000;
   position: absolute;
   margin-top: -4px !important;
 }
@@ -1295,6 +1296,7 @@ input[type="file"] {
 
 .fadeBox {
   top: 80% !important;
+  z-index: 100000000000000 !important;
 }
 
 /* 
