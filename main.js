@@ -36,7 +36,10 @@ window.addEventListener("DOMContentLoaded", (event) => {
 });
 
 document.addEventListener("ogi-chart", function (e) {
-  injectScript("libs/chart.js");
+  injectScript("libs/chart.min.js");
+  setTimeout(() => {
+    injectScript("libs/chartjs-plugin-labels.js");
+  }, 100);
 });
 
 window.addEventListener(
