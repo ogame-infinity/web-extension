@@ -1286,6 +1286,15 @@ class OGLight {
     if (!kept) kept = this.json.options.defaultKept;
 
     let container = this.createDOM("div");
+    if (coords) {
+      container.appendChild(
+        this.createDOM(
+          "h1",
+          { style: "text-align: center; font-weight: 800" },
+          this.current.coords + (this.current.isMoon ? " (Moon)" : " (Planet)")
+        )
+      );
+    }
 
     let box = this.createDOM("div", { class: "ogk-keep-dialog" });
     box.appendChild(this.createDOM("h1", {}, "Resources to keep on planets"));
@@ -7237,7 +7246,7 @@ class OGLight {
         this.popup(
           null,
           this.keepOnPlanetDialog(
-            this.current.coords + this.current.isMoon ? "M" : "P"
+            this.current.coords + (this.current.isMoon ? "M" : "P")
           )
         );
       });
