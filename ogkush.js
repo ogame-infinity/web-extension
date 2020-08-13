@@ -11154,22 +11154,28 @@ TOTAL: ${this.formatToUnits(report.total)}
 
   betterAPITooltip(sender) {
     if (sender.classList.contains("icon_apikey")) {
-      let data = sender.getAttribute("title");
+      let data =
+        sender.getAttribute("title") || sender.getAttribute("data-title");
       let first = data.indexOf("'");
       let second = data.indexOf("'", first + 1);
       sender.addEventListener("click", () => {
         fadeBox("<br/>API Key copied in clipboard");
-        navigator.clipboard.writeText(data.substr(first + 1, second - first));
+        navigator.clipboard.writeText(
+          data.substr(first + 1, second - first - 1)
+        );
       });
       return true;
     }
     if (sender.classList.contains("show_fleet_apikey")) {
-      let data = sender.getAttribute("title");
+      let data =
+        sender.getAttribute("title") || sender.getAttribute("data-title");
       let first = data.indexOf('value="');
-      let second = data.indexOf('"', first + 1);
+      let second = data.indexOf('"', first + 7);
       sender.addEventListener("click", () => {
         fadeBox("<br/>API Key copied in clipboard");
-        navigator.clipboard.writeText(data.substr(first + 1, second - first));
+        navigator.clipboard.writeText(
+          data.substr(first + 7, second - first - 7)
+        );
       });
       return true;
     }
