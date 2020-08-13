@@ -6508,7 +6508,7 @@ class OGLight {
         $(
           `.ogl-fleetSpeed div[data-step=${fleetDispatcher.speedPercent}]`
         ).addClass("ogl-active");
-        update(true);
+        update(false);
         if (fleetDispatcher.currentPage == "fleet1") {
           fleetDispatcher.focusSubmitFleet1();
         } else {
