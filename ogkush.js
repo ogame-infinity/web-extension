@@ -3786,8 +3786,11 @@ class OGLight {
               );
             }
 
+            let resultClass = this.json.expeditions[id].result.toLowerCase();
+            if (resultClass === "black hole") resultClass = "bhole";
+
             msg.classList.add(
-              "ogk-" + this.json.expeditions[id].result.toLowerCase()
+                "ogk-" + resultClass
             );
             this.saveData();
           });
