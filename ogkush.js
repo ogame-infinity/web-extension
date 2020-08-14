@@ -286,9 +286,6 @@ class OGLight {
     this.gameLang = document
       .querySelector('meta[name="ogame-language"]')
       .getAttribute("content");
-    this.language = ["fr", "de", "es", "pl", "it"].includes(this.gameLang)
-      ? 0
-      : 1;
 
     this.isLoading = false;
   }
@@ -10518,12 +10515,11 @@ TOTAL: ${this.formatToUnits(report.total)}
     return parseInt(value.replace("|", ".") * factor);
   }
 
-  removeNumSeparator(str, forced) {
-    if (this.language == 0 || forced) {
-      return str.replace(/\./g, "");
-    } else {
-      return str.replace(/\,/g, "");
-    }
+  removeNumSeparator(str) {
+    return str.replace(
+      new RegExp(`\\${LocalizationStrings["thousandSeperator"]}`, "g"),
+      ""
+    );
   }
 
   consumption(id, lvl) {

@@ -38,7 +38,7 @@ document.addEventListener("ogi-chart", function (e) {
   injectScript("libs/chart.min.js");
   setTimeout(() => {
     injectScript("libs/chartjs-plugin-labels.js");
-  }, 100);
+  }, 150);
 });
 
 window.addEventListener(
