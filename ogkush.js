@@ -3672,10 +3672,11 @@ class OGLight {
           let id = msg.getAttribute("data-msg-id");
           if (!this.expeditionsIds[id]) {
             this.expeditionsIds[id] = true;
-          } else {
-            return;
           }
-          if (id in this.json.expeditions && this.json.expeditions[id].result) {
+          if (
+            (id in this.json.expeditions && this.json.expeditions[id].result) ||
+            this.expeditionsIds[id]
+          ) {
             if (msg.querySelector(".icon_favorited")) {
               this.json.expeditions[id].favorited = true;
               this.json.expeditions[id].date = new Date();

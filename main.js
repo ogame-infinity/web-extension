@@ -1,9 +1,10 @@
-function injectScript(path) {
+function injectScript(path, cb) {
   var s = document.createElement("script");
   s.src = chrome.extension.getURL(path);
   document.head.appendChild(s);
-  s.onload = function () {
+  s.onload = () => {
     s.remove();
+    cb && cb();
   };
 }
 
@@ -35,10 +36,9 @@ window.addEventListener("DOMContentLoaded", (event) => {
 });
 
 document.addEventListener("ogi-chart", function (e) {
-  injectScript("libs/chart.min.js");
-  setTimeout(() => {
+  injectScript("libs/chart.min.js", () => {
     injectScript("libs/chartjs-plugin-labels.js");
-  }, 150);
+  });
 });
 
 window.addEventListener(
