@@ -3727,7 +3727,14 @@ class OGLight {
                 fuel: 0,
               };
             }
+            // Objects
+            let objectNode = content.querySelector("a");
+            if (objectNode) {
+              json.result = "Object";
+              json["object"] = objectNode.innerText;
+            }
 
+            // Resources
             ressources.forEach((res, i) => {
               res = res.replace("(", "\\(").replace(")", "\\)");
               let regex = new RegExp(`${res} [0-9]{1,3}(.[0-9]{1,3})*`, "gm");
@@ -3741,6 +3748,7 @@ class OGLight {
                 );
               }
             });
+            // Fleet
             let fleetMatches = textContent.match(/.*: [1-9].*/gm);
             fleetMatches &&
               fleetMatches.forEach((result) => {
