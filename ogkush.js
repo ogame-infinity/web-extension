@@ -3660,13 +3660,7 @@ class OGLight {
 
         document.querySelectorAll(`div[id=${id}] li.msg`).forEach((msg) => {
           let id = msg.getAttribute("data-msg-id");
-          if (!this.expeditionsIds[id]) {
-            this.expeditionsIds[id] = true;
-          }
-          if (
-            (id in this.json.expeditions && this.json.expeditions[id].result) ||
-            this.expeditionsIds[id]
-          ) {
+          if (id in this.json.expeditions && this.json.expeditions[id].result) {
             if (msg.querySelector(".icon_favorited")) {
               this.json.expeditions[id].favorited = true;
               this.json.expeditions[id].date = new Date();
@@ -3675,30 +3669,37 @@ class OGLight {
             }
 
             if (this.json.expeditions[id].result == "Unknown") {
-              msg
-                .querySelector(".msg_actions")
-                .appendChild(
-                  this.createDOM(
-                    "div",
-                    { class: "ogl-unknown-warning" },
-                    "Unknown expedition message... <a href='https://discord.gg/8Y4SWup'> Help me find them all</a>"
-                  )
-                );
+              msg.querySelector(".ogl-unknown-warning") ||
+                msg
+                  .querySelector(".msg_actions")
+                  .appendChild(
+                    this.createDOM(
+                      "div",
+                      { class: "ogl-unknown-warning" },
+                      "Unknown expedition message... <a href='https://discord.gg/8Y4SWup'> Help me find them all</a>"
+                    )
+                  );
             } else if (this.json.expeditions[id].busy) {
-              msg.querySelector(".msg_actions").appendChild(
-                this.createDOM("a", {
-                  class:
-                    "ogl-warning tooltipRight ogl-tooltipReady ogl-tooltipInit",
-                  "data-title": "Warning : Expedition position is weak...",
-                })
-              );
+              msg.querySelector(".ogl-warning") ||
+                msg.querySelector(".msg_actions").appendChild(
+                  this.createDOM("a", {
+                    class: "ogl-warning tooltip",
+                    "data-title":
+                      "Warning : expedition position is getting weak...",
+                  })
+                );
             }
 
             msg.classList.add(
               "ogk-" + this.json.expeditions[id].result.toLowerCase()
             );
             return;
+          } else if (id in this.expeditionsIds) {
+            return;
           }
+
+          this.expeditionsIds[id] = true;
+
           let content = msg.querySelector("span.msg_content");
           let date = msg.querySelector(".msg_date").innerText;
           let textContent = content.innerText;

@@ -439,6 +439,7 @@ function similarity(s1, s2) {
 const url = chrome.runtime.getURL("res/expeditions.tsv");
 
 let expeditionsMap = {};
+let logbooks = {};
 fetch(url)
   .then((response) => response.text())
   .then((text) => {
@@ -448,28 +449,46 @@ fetch(url)
       line.split(",");
       let splits = line.split("\t");
       for (let split of splits) {
+        // Ignoring first value
         if (split == splits[0]) continue;
-        expeditionsMap[split] = splits[0];
+        if (splits[0] == "Logbook") {
+          logbooks[split] = true;
+        } else {
+          expeditionsMap[split] = splits[0];
+        }
       }
     }
   });
 
 function getExpeditionType(message) {
-  message = message.split("\n")[0];
+  let splits = message.split("\n");
+  message = splits[0];
+  logbook = splits[splits.length - 1];
+
+  // Checking lobbook entries
+  let busy = true;
+  for (let i in logbooks) {
+    let sim = similarity(logbook, i);
+    if (sim > 0.9) {
+      busy = false;
+    }
+  }
+
   for (let i in expeditionsMap) {
     let sim = similarity(message, i);
     if (sim > 0.9) {
-      return expeditionsMap[i];
+      return { type: expeditionsMap[i], busy: busy };
     }
   }
-  return "Unknown";
+
+  return { type: "Unknown", busy: busy };
 }
 
 let universes = {};
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.type == "expedition") {
-    sendResponse({ type: getExpeditionType(request.message) });
+    sendResponse(getExpeditionType(request.message));
     return;
   }
   try {
