@@ -1429,49 +1429,36 @@ class OGLight {
   }
 
   initUnionCombat(union) {
-    let interval;
-    let delayDiv;
-    let delayDiv2;
-    let delayDiv3;
-    let delayTimeDiv;
-    let delayTimeDiv2;
-    let delayTimeDiv3;
-
-    if (delayDiv) {
-      delayDiv.remove();
-      delayDiv2.remove();
-      delayTimeDiv.remove();
-      delayTimeDiv2.remove();
-      clearInterval(interval);
+    if (this.unionInterval) {
+      clearInterval(this.unionInterval);
+    } else {
+      this.delayDiv = document
+        .querySelector(".briefing h2")
+        .appendChild(this.createDOM("span", { class: "ogk-delay" }));
+      this.delayDiv2 = document
+        .querySelector("#roundup ul")
+        .appendChild(this.createDOM("div", { class: "ogk-delay" }));
+      this.delayDiv3 = document
+        .querySelector("#continueToFleet2")
+        .appendChild(this.createDOM("div", { class: "ogk-delay" }));
+      this.delayTimeDiv = document
+        .querySelector("#fleetBriefingPart1_2 li:first-of-type .value")
+        .appendChild(this.createDOM("div", { class: "undermark" }));
+      this.delayTimeDiv2 = document
+        .querySelector("#fleet3 #arrivalTime")
+        .parentElement.appendChild(
+          this.createDOM("div", { class: "undermark" })
+        );
+      this.delayTimeDiv3 = document
+        .querySelector("#fleet1 .ogl-info")
+        .appendChild(
+          this.createDOM("div", {
+            class: "undermark",
+            style: "position: absolute;left: 65px;",
+          })
+        );
     }
 
-    delayDiv = document
-      .querySelector(".briefing h2")
-      .appendChild(this.createDOM("span", { class: "ogk-delay" }));
-    delayDiv2 = document
-      .querySelector("#roundup ul")
-      .appendChild(this.createDOM("div", { class: "ogk-delay" }));
-
-    delayDiv3 = document
-      .querySelector("#continueToFleet2")
-      .appendChild(this.createDOM("div", { class: "ogk-delay" }));
-
-    delayTimeDiv = document
-      .querySelector("#fleetBriefingPart1_2 li:first-of-type .value")
-      .appendChild(this.createDOM("div", { class: "undermark" }));
-    delayTimeDiv2 = document
-      .querySelector("#fleet3 #arrivalTime")
-      .parentElement.appendChild(this.createDOM("div", { class: "undermark" }));
-
-    delayTimeDiv3 = document.querySelector("#fleet1 .ogl-info").appendChild(
-      this.createDOM("div", {
-        class: "undermark",
-        style: "position: absolute;left: 65px;",
-      })
-    );
-
-    // unions.forEach((union) => {
-    //   if (union.id == splits[splits.length - 1]) {
     let end = 0;
     let update = () => {
       let diff = union.time * 1000 - serverTime.getTime();
@@ -1483,14 +1470,17 @@ class OGLight {
       end = maxDelay / 1000 - flighDiff;
       let abs = Math.abs(end);
 
-      delayDiv.innerText = end > 0 ? getFormatedTime(abs) : getFormatedTime(0);
-      delayDiv2.innerText = end > 0 ? getFormatedTime(abs) : getFormatedTime(0);
-      delayDiv3.innerText = end > 0 ? getFormatedTime(abs) : getFormatedTime(0);
+      this.delayDiv.innerText =
+        end > 0 ? getFormatedTime(abs) : getFormatedTime(0);
+      this.delayDiv2.innerText =
+        end > 0 ? getFormatedTime(abs) : getFormatedTime(0);
+      this.delayDiv3.innerText =
+        end > 0 ? getFormatedTime(abs) : getFormatedTime(0);
 
       let format = getFormatedTime(flighDiff >= 0 ? flighDiff : 0);
-      delayTimeDiv.innerText = "+" + format;
-      delayTimeDiv2.innerText = "+" + format;
-      delayTimeDiv3.innerText = "+" + format;
+      this.delayTimeDiv.innerText = "+" + format;
+      this.delayTimeDiv2.innerText = "+" + format;
+      this.delayTimeDiv3.innerText = "+" + format;
     };
 
     // fleetDispatcher.hasValidTarget = () => {
@@ -1499,7 +1489,7 @@ class OGLight {
     // };
     fleetDispatcher.refreshFleet2();
     update();
-    interval = setInterval(update, 200);
+    this.unionInterval = setInterval(update, 200);
   }
   // });
   // });
@@ -6402,29 +6392,32 @@ class OGLight {
         unionsBtn.addEventListener("click", () => {
           let container = this.createDOM("div", {
             class: "ogl-quickLinks",
-            style: "display: flex;",
+            style: "display: flex;flex-direction:column",
           });
           for (let i in unions) {
-            let union = container.appendChild(
+            let union = unions[i];
+            let unionDiv = container.appendChild(
               this.createDOM(
                 "div",
                 { class: "ogl-quickPlanet" },
-                `${unions[0].name} (${unions[0].targetname})`
+                `${union.name} [${union.galaxy}:${union.system}:${
+                  union.planet
+                }] ${union.planettype == 1 ? "P" : "M"}`
               )
             );
-            union.addEventListener("click", () => {
-              fleetDispatcher.union = unions[i].id;
-              fleetDispatcher.targetPlanet.position = unions[i].planet;
-              fleetDispatcher.targetPlanet.system = unions[i].system;
-              fleetDispatcher.targetPlanet.galaxy = unions[i].galaxy;
-              fleetDispatcher.targetPlanet.type = unions[i].planettype;
+            unionDiv.addEventListener("click", () => {
+              fleetDispatcher.union = union.id;
+              fleetDispatcher.targetPlanet.position = union.planet;
+              fleetDispatcher.targetPlanet.system = union.system;
+              fleetDispatcher.targetPlanet.galaxy = union.galaxy;
+              fleetDispatcher.targetPlanet.type = union.planettype;
 
               galaxyInput.value = fleetDispatcher.targetPlanet.galaxy;
               systemInput.value = fleetDispatcher.targetPlanet.system;
               positionInput.value = fleetDispatcher.targetPlanet.position;
               document.querySelector(".ogl-dialog .close-tooltip").click();
               update(true);
-              this.initUnionCombat(unions[i]);
+              this.initUnionCombat(union);
             });
           }
 
