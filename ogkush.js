@@ -556,6 +556,7 @@ class OGLight {
         deuterium: deut,
         crawlers: crawlers,
         temperature: mines ? mines.temperature : undefined,
+        energy: parseInt(document.querySelector("#resources_energy").innerText),
       };
 
       if (!mines.temperature) {
@@ -3476,9 +3477,10 @@ class OGLight {
         mlvl += metal;
         clvl += crystal;
         dlvl += deut;
-        mprod += this.production(1, metal, true);
-        cprod += this.production(2, crystal, true);
-        dprod += this.production(3, deut, true);
+        mprod += this.production(1, metal, true, i);
+        cprod += this.production(2, crystal, true, i);
+        dprod += this.production(3, deut, true, i);
+        console.log(i, this.production(1, metal, true, i));
       }
     }
 
@@ -10795,11 +10797,8 @@ TOTAL: ${this.formatToUnits(report.total)}
 
       let energy = energyMet + energyCri + energyDeut;
 
-      let diffEnergy = parseInt(
-        document.querySelector("#resources_energy").innerText
-      );
-      if (diffEnergy < 0) {
-        prodFactor = (energy + diffEnergy) / energy;
+      if (mines.energy < 0) {
+        prodFactor = (energy + mines.energy) / energy;
 
         // alert(energyMet);
         // alert(energyMet / energyDeut);
