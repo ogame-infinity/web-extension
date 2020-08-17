@@ -1868,17 +1868,18 @@ class OGLight {
           //     flying.ids.filter((x) => !this.json.flying.ids.includes(x))
           //   );
           let gone = [];
-          this.json.flying.ids.forEach((mov) => {
-            let found = false;
-            flying.ids.forEach((oldMov) => {
-              if (mov.id == oldMov.id) {
-                found = true;
+          this.json.flying.ids &&
+            this.json.flying.ids.forEach((mov) => {
+              let found = false;
+              flying.ids.forEach((oldMov) => {
+                if (mov.id == oldMov.id) {
+                  found = true;
+                }
+              });
+              if (!found) {
+                gone.push(mov);
               }
             });
-            if (!found) {
-              gone.push(mov);
-            }
-          });
 
           gone.forEach((movement) => {
             if (this.json.myRes[movement.dest]) {
@@ -2976,12 +2977,15 @@ class OGLight {
         title: "Statistics",
       })
     );
-    let empireBtn = harvestOptions.appendChild(
-      this.createDOM("div", {
-        class: "ogl-option ogl-empire-icon tooltip",
-        title: "Overview",
-      })
-    );
+
+    let empireBtn;
+    this.commander &&
+      (empireBtn = harvestOptions.appendChild(
+        this.createDOM("div", {
+          class: "ogl-option ogl-empire-icon tooltip",
+          title: "Overview",
+        })
+      ));
     let overViewBtn = harvestOptions.appendChild(
       this.createDOM("div", {
         class: "ogl-option ogl-overview-icon tooltip",
@@ -3026,20 +3030,21 @@ class OGLight {
       this.searchOpened = !this.searchOpened;
     });
 
-    empireBtn.addEventListener("click", () => {
-      if (!this.commander) {
-        this.warningCommander();
-        return;
-      }
-      this.loading();
-
-      let inter = setInterval(() => {
-        if (!this.isLoading) {
-          clearInterval(inter);
-          this.overview();
+    empireBtn &&
+      empireBtn.addEventListener("click", () => {
+        if (!this.commander) {
+          this.warningCommander();
+          return;
         }
-      }, 20);
-    });
+        this.loading();
+
+        let inter = setInterval(() => {
+          if (!this.isLoading) {
+            clearInterval(inter);
+            this.overview();
+          }
+        }, 20);
+      });
 
     overViewBtn.addEventListener("click", () => {
       // if (!this.commander) {
@@ -8625,7 +8630,7 @@ class OGLight {
     if (emulatedEmpire.length != 0) {
       empire = emulatedEmpire;
     }
-    this.json.empire.forEach((elem) => {
+    empire.forEach((elem) => {
       let planet = list.querySelector(`div[id=planet-${elem.id}]`);
       if (!planet) return;
       let isFullM = elem.metalStorage - elem.metal > 0 ? "" : " ogl-full";
