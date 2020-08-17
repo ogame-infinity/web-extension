@@ -3674,6 +3674,10 @@ button.build-it_premium {
   margin-left: 5px;
   margin-right: -5px;
 }
+.ogi-invalidate span {
+  color: #9466ec !important;
+  font-style: italic !important;
+}
 
 .ogl-afull {
   color: #d29d00 !important;
@@ -5101,6 +5105,7 @@ div[data-marker]:hover {
 }
 
 .ogl-harvestOptions {
+  min-height: 24px;
   background: #171e25;
   box-shadow: inset 0 1px rgba(255, 255, 255, 0.07);
   display: grid;
@@ -6006,6 +6011,7 @@ hr {
   left: -6px;
   transform: rotate(45deg);
   top: 8px;
+  top: 50%;
 }
 
 .ogl-tooltip.ogl-tooltipBottom:after {

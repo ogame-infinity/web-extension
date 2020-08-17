@@ -249,6 +249,8 @@ class OGLight {
     this.json.tech113 = this.json.tech113 || 0;
     this.json.tech122 = this.json.tech122 || 0;
     this.json.tchat = this.json.tchat || false;
+    this.json.lastResUpdate = this.json.lastResUpdate || new Date();
+    this.json.myRes = this.json.myRes || {};
 
     this.json.options = this.json.options || {};
     this.json.options.dispatcher =
@@ -353,8 +355,10 @@ class OGLight {
     this.saveData();
 
     document.querySelector("#pageContent").style.width = "1200px";
-
     this.sideOptions();
+    this.minesLevel();
+    this.resourceDetail();
+    this.eventBox();
     this.neededCargo();
     this.preselectShips();
     this.harvest();
@@ -367,8 +371,7 @@ class OGLight {
     this.sideStalk();
     this.checkDebris();
     this.spyTable();
-    this.minesLevel();
-    this.resourceDetail();
+
     this.checkInputs();
     this.keyboardActions();
     this.betterTooltip();
@@ -379,7 +382,7 @@ class OGLight {
     this.flyingFleet();
     this.highScoreTooltips();
     this.overviewDates();
-    this.eventBox();
+
     this.sideLock();
     this.jumpGate();
     this.topBarUtilities();
@@ -481,6 +484,37 @@ class OGLight {
 
       this.saveData();
     }
+    let div = this.createDOM("div");
+    div.html(document.querySelector("#metal_box").getAttribute("title"));
+    let metalStorage = this.removeNumSeparator(
+      div.querySelectorAll("span")[1].innerText
+    );
+    div.html(document.querySelector("#crystal_box").getAttribute("title"));
+    let crystalStorage = this.removeNumSeparator(
+      div.querySelectorAll("span")[1].innerText
+    );
+    div.html(document.querySelector("#deuterium_box").getAttribute("title"));
+    let deuteriumStorage = this.removeNumSeparator(
+      div.querySelectorAll("span")[1].innerText
+    );
+    // this.json.lastResUpdate = new Date();
+
+    this.json.myRes[this.current.coords + (this.current.isMoon ? "M" : "P")] = {
+      metal: parseInt(
+        document.querySelector("#resources_metal").getAttribute("data-raw")
+      ),
+      metalStorage: metalStorage,
+      crystal: parseInt(
+        document.querySelector("#resources_crystal").getAttribute("data-raw")
+      ),
+      crystalStorage: crystalStorage,
+      deuterium: parseInt(
+        document.querySelector("#resources_deuterium").getAttribute("data-raw")
+      ),
+      deuteriumStorage: deuteriumStorage,
+      lastUpdate: new Date(),
+      invalidate: false,
+    };
 
     if (this.page == "supplies" && !this.current.isMoon) {
       let targetMetal = document.querySelector(
@@ -1577,22 +1611,22 @@ class OGLight {
           this.json.combatsSums[dateStr].fuel -= fuel;
         }
 
-        let self = false;
-        this.json.empire.forEach((planet) => {
-          if (planet.coordinates.slice(1, -1) == coords) self = true;
-        });
-        if (self) return;
-        if (this.json.coordsHistory.length > 15) {
-          this.json.coordsHistory.shift();
-        }
+        // let self = false;
+        // this.json.empire.forEach((planet) => {
+        //   if (planet.coordinates.slice(1, -1) == coords) self = true;
+        // });
+        // if (self) return;
+        // if (this.json.coordsHistory.length > 15) {
+        //   this.json.coordsHistory.shift();
+        // }
 
-        this.json.coordsHistory.forEach((elem, i) => {
-          if (elem == coords) {
-            this.json.coordsHistory.splice(i, 1);
-          }
-        });
-        this.json.coordsHistory.push(coords);
-        this.saveData();
+        // this.json.coordsHistory.forEach((elem, i) => {
+        //   if (elem == coords) {
+        //     this.json.coordsHistory.splice(i, 1);
+        //   }
+        // });
+        // this.json.coordsHistory.push(coords);
+        // this.saveData();
       });
 
       $(".send_all").before(this.createDOM("span", { class: "select-most" }));
@@ -1823,13 +1857,58 @@ class OGLight {
       if (document.querySelector("#eventboxLoading").style.display == "none") {
         clearInterval(interval);
         let flying = this.getFlyingRes();
+        console.log(flying.ids);
         if (
           JSON.stringify(this.json.flying.ids) != JSON.stringify(flying.ids)
         ) {
+          // let difference = this.json.flying.ids
+          //   .filter((x) => !flying.ids.includes(x))
+          //   .concat(
+          //     flying.ids.filter((x) => !this.json.flying.ids.includes(x))
+          //   );
+          let gone = [];
+          this.json.flying.ids.forEach((mov) => {
+            let found = false;
+            flying.ids.forEach((oldMov) => {
+              if (mov.id == oldMov.id) {
+                found = true;
+              }
+            });
+            if (!found) {
+              gone.push(mov);
+            }
+          });
+
+          gone.forEach((movement) => {
+            if (this.json.myRes[movement.dest]) {
+              let found = false;
+              this.planetList.forEach((planet) => {
+                let coords = planet
+                  .querySelector(".planet-koords")
+                  .innerText.slice(1, -1);
+                if (coords == movement.origin.slice(0, -1)) {
+                  found = true;
+                }
+              });
+              if (found) {
+                this.json.myRes[movement.dest].metal += movement.metal;
+                this.json.myRes[movement.dest].crystal += movement.crystal;
+                this.json.myRes[movement.dest].deuterium += movement.deuterium;
+              } else {
+                let tot =
+                  movement.metal + movement.crystal + movement.deuterium;
+                if (tot != 0) {
+                  this.json.myRes[movement.dest].invalidate = true;
+                }
+              }
+            }
+          });
+
           this.json.needsUpdate = true;
           this.saveData();
           this.updateInfo();
         }
+
         this.json.flying = flying;
         this.saveData();
       }
@@ -2060,7 +2139,7 @@ class OGLight {
     history.pushState(
       {},
       null,
-      `/game/index.php?page=ingame&component=galaxy&galaxy${galaxy}&system=${system}`
+      `/game/index.php?page=ingame&component=galaxy&galaxy=${galaxy}&system=${system}`
     );
   }
 
@@ -2310,6 +2389,17 @@ class OGLight {
           `.ogl-stalkPlanets [data-coords="${coords}"]`
         );
         if (sided.length != 0) {
+          if (!document.querySelector(".ogl-tooltip.ogl-active")) {
+            // location.reload();
+            document.querySelector(".ogl-tooltip").classList.add("ogl-active");
+            // dataHelper
+            //   .getPlayer(sided[0].parentElement.getAttribute("player-id"))
+            //   .then((player) => {
+            //     this.stalk(row.querySelector(".playername"), player);
+            //   });
+            // console.log(this.rawURL.searchParams.get("galaxy"));
+            // loadContent(this.rawURL.searchParams.get('galaxy'),this.rawURL.searchParams.get('system'))
+          }
           this.activities[coords] = this.getActivity(row);
           changes.push({
             id: sided[0].parentElement.getAttribute("player-id"),
@@ -2951,10 +3041,10 @@ class OGLight {
     });
 
     overViewBtn.addEventListener("click", () => {
-      if (!this.commander) {
-        this.warningCommander();
-        return;
-      }
+      // if (!this.commander) {
+      //   this.warningCommander();
+      //   return;
+      // }
       if (this.json.options.empire) {
         document
           .querySelector(".ogl-overview-icon")
@@ -8145,7 +8235,21 @@ class OGLight {
         .innerText.trim()
         .slice(1, -1);
 
-      ids.push(id);
+      let destCoords = line
+        .querySelector(".destCoords > a")
+        .innerText.trim()
+        .slice(1, -1);
+
+      let destIsMoon = document.querySelector(".destFleet .moon");
+      let originIsMoon = document.querySelector(".originFleet .moon");
+
+      let origin = coords + (destIsMoon ? "M" : "P");
+      let dest = destCoords + (originIsMoon ? "M" : "P");
+      let movement = {
+        id: id,
+        origin: back ? dest : origin,
+        dest: back ? origin : dest,
+      };
 
       // Market movements
       if (type == 16) return;
@@ -8175,21 +8279,27 @@ class OGLight {
               planets[coords] = { metal: 0, crystal: 0, deuterium: 0 };
             }
             if (name == this.json.resNames[0]) {
+              movement.metal = count;
               met += count;
               planets[coords].metal += count;
             }
             if (name == this.json.resNames[1]) {
+              movement.crystal = count;
               cri += count;
               planets[coords].crystal += count;
             }
             if (name == this.json.resNames[2]) {
+              movement.deuterium = count;
               deut += count;
               planets[coords].deuterium += count;
             }
           }
         });
       }
+      console.log(movement);
+      ids.push(movement);
     });
+
     let t = {
       metal: met,
       crystal: cri,
@@ -8370,7 +8480,7 @@ class OGLight {
       rechts.style.right = "0px";
     });
 
-    if (!this.json.options.empire || !this.commander) {
+    if (!this.json.options.empire) {
       return;
     }
     document.querySelector(".ogl-overview-icon").classList.add("ogl-active");
@@ -8419,6 +8529,101 @@ class OGLight {
       cSumM = 0,
       dSumM = 0;
 
+    let emulatedEmpire = [];
+    !this.commander &&
+      this.planetList.forEach((planet) => {
+        let coords = planet
+          .querySelector(".planet-koords")
+          .textContent.slice(1, -1);
+        let id = planet.getAttribute("id").replace("planet-", "");
+        let moon = planet.querySelector(".moonlink");
+
+        let metal = 0;
+        let crystal = 0;
+        let deuterium = 0;
+        let metProd = 0,
+          criProd = 0,
+          deutProd = 0,
+          diff = 0;
+        let res = this.json.myRes[coords + "P"];
+        let moonRes = this.json.myRes[coords + "M"];
+
+        if (res) {
+          metal = res.metal;
+          crystal = res.crystal;
+          deuterium = res.deuterium;
+
+          let mines = this.json.myMines[coords];
+          if (mines && mines.metal && mines.temperature) {
+            diff = new Date().getTime() - new Date(res.lastUpdate).getTime();
+
+            diff = diff / 1000 / 60 / 60;
+
+            metProd = this.production(
+              1,
+              Number(mines.metal.replace("(", "").replace(")", "")),
+              true,
+              coords
+            );
+            criProd = this.production(
+              2,
+              Number(mines.crystal.replace("(", "").replace(")", "")),
+              true,
+              coords
+            );
+            deutProd = this.production(
+              3,
+              Number(mines.deuterium.replace("(", "").replace(")", "")),
+              true,
+              coords
+            );
+
+            if (res.metalStorage > res.metal) {
+              metal = res.metal + metProd * diff;
+              metal = Math.min(metal, res.metalStorage);
+            } else {
+              metal = res.metal;
+            }
+            if (res.crystalStorage > res.crystal) {
+              crystal = res.crystal + criProd * diff;
+              crystal = Math.min(crystal, res.crystalStorage);
+            } else {
+              crystal = res.crystal;
+            }
+            if (res.deuteriumStorage > res.deuterium) {
+              deuterium = res.deuterium + deutProd * diff;
+              deuterium = Math.min(deuterium, res.deuteriumStorage);
+            } else {
+              deuterium = res.deuterium;
+            }
+          }
+        }
+        // alert(diff * metProd);
+        // console.log(metProd, criProd, deutProd);
+
+        emulatedEmpire.push({
+          id: id,
+          metalStorage: (res && res.metalStorage) || 0,
+          metal: metal,
+          crystalStorage: (res && res.crystalStorage) || 0,
+          crystal: crystal,
+          deuteriumStorage: (res && res.deuteriumStorage) || 0,
+          deuterium: deuterium,
+          production: { hourly: [metProd, criProd, deutProd] },
+          invalidate: (res && res.invalidate) || false,
+          moon: moon && {
+            metal: (moonRes && moonRes.metal) || 0,
+            crystal: (moonRes && moonRes.crystal) || 0,
+            deuterium: (moonRes && moonRes.deuterium) || 0,
+            invalidate: (moonRes && moonRes.invalidate) || false,
+          },
+        });
+      });
+
+    let empire = this.json.empire;
+    if (emulatedEmpire.length != 0) {
+      empire = emulatedEmpire;
+    }
     this.json.empire.forEach((elem) => {
       let planet = list.querySelector(`div[id=planet-${elem.id}]`);
       if (!planet) return;
@@ -8441,6 +8646,7 @@ class OGLight {
           : " ogl-afull";
 
       let divPla = this.createDOM("div", { class: "ogl-res" });
+      if (elem.invalidate) divPla.classList.add("ogi-invalidate");
 
       divPla.appendChild(
         this.createDOM(
@@ -8475,8 +8681,11 @@ class OGLight {
           planet.querySelector(".planetlink").nextSibling
         );
 
-      if (elem.moon != undefined) {
+      if (elem.moon) {
         let divMoon = this.createDOM("div", { class: "ogl-res" });
+        if (elem.moon.invalidate) {
+          divMoon.classList.add("ogi-invalidate");
+        }
         divMoon.appendChild(
           this.createDOM(
             "span",
@@ -8508,6 +8717,7 @@ class OGLight {
     });
 
     let divPlaSum = this.createDOM("div", { class: "ogl-res" });
+
     divPlaSum.appendChild(
       this.createDOM("span", { class: "ogl-metal" }, this.formatToUnits(mSumP))
     );
@@ -8544,7 +8754,7 @@ class OGLight {
       this.createDOM("div", { class: "ogl-sum-symbol" }, "Σ")
     );
     sumPlanet.appendChild(divPlaSum);
-    sumPlanet.appendChild(
+    let moonSumSymbol = sumPlanet.appendChild(
       this.createDOM("div", { class: "ogl-sum-symbol" }, "Σ")
     );
     sumPlanet.appendChild(divMoonSum);
@@ -8582,6 +8792,11 @@ class OGLight {
     sum.appendChild(sumres);
 
     list.appendChild(sum);
+
+    if (document.querySelectorAll(".moonlink").length == 0) {
+      divMoonSum.style.display = "none";
+      moonSumSymbol.style.display = "none";
+    }
   }
 
   updateInfo() {
@@ -9136,6 +9351,8 @@ class OGLight {
       this.page == "galaxy"
         ? (pos = { bottom: pos < 4, top: pos > 4 })
         : (pos = {});
+
+      // pos = { left: true };
       this.tooltip(sender, content, false, pos, delay);
 
       let planets = this.updateStalk(player.planets, player.id);
@@ -9345,9 +9562,9 @@ class OGLight {
       let plaspy = panel.appendChild(
         this.createDOM("button", { class: "icon_eye" })
       );
-      let plaFleet = panel.appendChild(
-        this.createDOM("div", { class: "ogl-atk" })
-      );
+      // let plaFleet = panel.appendChild(
+      // this.createDOM("div", { class: "ogl-atk" })
+      // );
 
       plaspy.addEventListener("click", (e) => {
         sendShipsWithPopup(
@@ -9360,10 +9577,10 @@ class OGLight {
         );
         e.stopPropagation();
       });
-      plaFleet.addEventListener("click", (e) => {
-        window.location.href = `?page=ingame&component=fleetdispatch&galaxy=${coords[0]}&system=${coords[1]}&position=${coords[2]}&type=1`;
-        e.stopPropagation();
-      });
+      // plaFleet.addEventListener("click", (e) => {
+      //   window.location.href = `?page=ingame&component=fleetdispatch&galaxy=${coords[0]}&system=${coords[1]}&position=${coords[2]}&type=1`;
+      //   e.stopPropagation();
+      // });
 
       planetDiv.appendChild(this.createDOM("div", { class: "ogl-planet-act" }));
       a.appendChild(this.createDOM("span", {}, planet.coords));
@@ -9392,7 +9609,7 @@ class OGLight {
       panel = moonDiv.appendChild(
         this.createDOM("div", { class: "ogl-moon-hover" })
       );
-      plaFleet = panel.appendChild(this.createDOM("div", { class: "ogl-atk" }));
+      // plaFleet = panel.appendChild(this.createDOM("div", { class: "ogl-atk" }));
       plaspy = panel.appendChild(
         this.createDOM("button", { class: "icon_eye" })
       );
@@ -9408,10 +9625,10 @@ class OGLight {
         );
         e.stopPropagation();
       });
-      plaFleet.addEventListener("click", (e) => {
-        window.location.href = `?page=ingame&component=fleetdispatch&galaxy=${coords[0]}&system=${coords[1]}&position=${coords[2]}&type=3`;
-        e.stopPropagation();
-      });
+      // plaFleet.addEventListener("click", (e) => {
+      //   window.location.href = `?page=ingame&component=fleetdispatch&galaxy=${coords[0]}&system=${coords[1]}&position=${coords[2]}&type=3`;
+      //   e.stopPropagation();
+      // });
 
       a.addEventListener("click", (event) => {
         let link = `?page=ingame&component=galaxy&galaxy=${coords[0]}&system=${coords[1]}&position=${coords[2]}`;
@@ -10534,12 +10751,13 @@ TOTAL: ${this.formatToUnits(report.total)}
     };
 
     let cons = baseCons[id] * lvl * Math.pow(1.1, lvl);
-    return Math.ceil(cons);
+    return Math.floor(cons);
   }
 
-  production(id, lvl, total) {
+  production(id, lvl, total, coords) {
+    let prodFactor = 1;
     let tech113, tech122, temp;
-    let mines = this.json.myMines[this.current.coords];
+    let mines = this.json.myMines[coords || this.current.coords];
 
     if (this.commander) {
       tech113 = this.json.empire[0][113];
@@ -10554,7 +10772,33 @@ TOTAL: ${this.formatToUnits(report.total)}
     } else {
       tech113 = this.json.tech113;
       tech122 = this.json.tech122;
-      temp = this.json.myMines[this.current.coords].temperature;
+      temp = mines.temperature;
+
+      let energyMet = this.consumption(
+        1,
+        mines.metal.replace("(", "").replace(")", "")
+      );
+      let energyCri = this.consumption(
+        2,
+        mines.crystal.replace("(", "").replace(")", "")
+      );
+      let energyDeut = this.consumption(
+        3,
+        mines.deuterium.replace("(", "").replace(")", "")
+      );
+
+      let energy = energyMet + energyCri + energyDeut;
+
+      let diffEnergy = parseInt(
+        document.querySelector("#resources_energy").innerText
+      );
+      if (diffEnergy < 0) {
+        prodFactor = (energy + diffEnergy) / energy;
+
+        // alert(energyMet);
+        // alert(energyMet / energyDeut);
+        // alert(prodFactor / 100);
+      }
     }
 
     let percentBonus = 0;
@@ -10593,6 +10837,14 @@ TOTAL: ${this.formatToUnits(report.total)}
     }
 
     let prod = baseProd[id] * lvl * Math.pow(1.1, lvl);
+    if (id == 3) {
+      prod *= 1.44 - 0.004 * temp;
+    }
+    if (id == 12) {
+      prod = 30 * lvl * Math.pow(1.05 + tech113 * 0.01, lvl);
+    }
+    // console.log(prod, prod * prodFactor);
+    if (total) prod = prod * prodFactor;
     let plasma = prod * plasmaFactor[id] * tech122;
     let crawlers = prod * crawlerBonus;
     let geologist = prod * geologistFactor;
@@ -10602,20 +10854,14 @@ TOTAL: ${this.formatToUnits(report.total)}
     let totalProd =
       initProd + prod + geologist + plasma + crawlers + miner + bonus;
 
-    if (id == 3) {
-      prod *= 1.44 - 0.004 * temp;
-    }
-
-    if (id == 12) {
-      prod = 30 * lvl * Math.pow(1.05 + tech113 * 0.01, lvl);
-    }
-
     if (id == 1 || id == 2 || id == 3) {
       prod = prod * this.json.speed;
       totalProd = totalProd * this.json.speed;
-      return total ? totalProd : prod;
+      console.log(id, prodFactor, totalProd);
+      return total ? Math.round(totalProd) : Math.round(prod);
     }
-    return Math.ceil(prod);
+
+    return Math.round(prod);
   }
 
   research(id, lvl, labs, technocrat, explorer) {
@@ -10934,6 +11180,10 @@ TOTAL: ${this.formatToUnits(report.total)}
     if (sender.classList.contains("tooltipOffsetX")) {
       position.x += 33;
     }
+
+    // if (sender.parentElement.classList.contains("playername")) {
+    //   position.y -= 200;
+    // }
 
     if (autoHide) {
       tooltip.classList.add("ogl-autoHide");
@@ -11387,11 +11637,19 @@ TOTAL: ${this.formatToUnits(report.total)}
           destination +
           (fleet.querySelector(".destinationData moon") ? "M" : "P");
         let revesal = fleet.querySelector(".reversal a");
-        if (this.json.missing[coords] && revesal) {
+        if (revesal) {
           revesal.addEventListener("click", () => {
-            this.json.missing[coords][0] += backed[0];
-            this.json.missing[coords][1] += backed[1];
-            this.json.missing[coords][2] += backed[2];
+            if (this.json.missing[coords]) {
+              this.json.missing[coords][0] += backed[0];
+              this.json.missing[coords][1] += backed[1];
+              this.json.missing[coords][2] += backed[2];
+            }
+            alert(coords);
+            if (this.json.myRes[coords]) {
+              this.json.myRes[coords].metal -= backed[0];
+              this.json.myRes[coords].crystal -= backed[1];
+              this.json.myRes[coords].deuterium -= backed[2];
+            }
             this.saveData();
           });
         }
