@@ -11042,6 +11042,19 @@ TOTAL: ${this.formatToUnits(report.total)}
         closeDialog();
       }
 
+      if (this.page == "galaxy") {
+        if (document.activeElement.getAttribute("type") == "search") {
+          return;
+        }
+        if (event.keyCode == 13 || event.keyCode == 32) {
+          if (document.querySelector(".refreshPhalanxLink")) {
+            document.querySelector(".refreshPhalanxLink").click();
+          } else {
+            submitForm();
+          }
+        }
+      }
+
       if ((event.ctrlKey || event.metaKey) && event.keyCode == 70) {
         if (this.page != "highscore") {
           document.querySelector(".ogl-search-icon").click();
@@ -11063,20 +11076,6 @@ TOTAL: ${this.formatToUnits(report.total)}
         event.stopPropagation();
       }
     });
-
-    if (this.page == "galaxy") {
-      document.addEventListener("keydown", (event) => {
-        if (event.keyCode == 13 || event.keyCode == 32) {
-          if (document.querySelector(".refreshPhalanxLink")) {
-            document.querySelector(".refreshPhalanxLink").click();
-          } else {
-            submitForm();
-          }
-          event.preventDefault();
-          event.stopPropagation();
-        }
-      });
-    }
 
     if (this.page == "fleetdispatch") {
       document.addEventListener("keydown", (event) => {
