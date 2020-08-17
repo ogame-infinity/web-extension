@@ -3515,6 +3515,25 @@ class OGLight {
       )
     );
 
+    prod.appendChild(this.createDOM("p", {}, `<strong>Ratio</strong>`));
+    prod.appendChild(
+      this.createDOM(
+        "span",
+        { class: "ogl-metal" },
+        `<strong>${(mprod / dprod).toFixed(2)}</strong>`
+      )
+    );
+    prod.appendChild(
+      this.createDOM(
+        "span",
+        { class: "ogl-crystal" },
+        `<strong>${(cprod / dprod).toFixed(2)}</strong>`
+      )
+    );
+    prod.appendChild(
+      this.createDOM("span", { class: "ogl-deut" }, `<strong>1</strong>`)
+    );
+
     prod.appendChild(this.createDOM("p", {}, `Hour`));
     prod.appendChild(
       this.createDOM("span", { class: "ogl-metal" }, `${dotted(mprod)}`)
