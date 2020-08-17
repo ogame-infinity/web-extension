@@ -394,7 +394,8 @@ class OGLight {
 
     let storage = this.getLocalStorageSize();
     if (storage.total > 4.5) {
-      this.settings();
+      // this.settings();
+      this.purgeLocalStorage();
     }
 
     if (this.json.welcome) {
