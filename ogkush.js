@@ -10728,7 +10728,13 @@ TOTAL: ${this.formatToUnits(report.total)}
 
     if (isNaN(value)) return value;
 
-    const abbrev = ["", "k", "M", "Md", "t"];
+    const abbrev = [
+      "",
+      LocalizationStrings["unitKilo"],
+      LocalizationStrings["unitMega"],
+      LocalizationStrings["unitMilliard"],
+      "T",
+    ];
     const unrangifiedOrder = Math.floor(Math.log10(Math.abs(value)) / 3);
     const order = Math.max(0, Math.min(unrangifiedOrder, abbrev.length - 1));
     const suffix = abbrev[order];
