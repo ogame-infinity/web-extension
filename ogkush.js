@@ -362,7 +362,7 @@ class OGLight {
     this.neededCargo();
     this.preselectShips();
     this.harvest();
-    this.autoHarvest();
+    // this.autoHarvest();
     this.expedition();
     this.expeditionMessages();
     this.cleanupMessages();
@@ -11352,12 +11352,21 @@ TOTAL: ${this.formatToUnits(report.total)}
   highScoreTooltips() {
     if (this.page == "highscore") {
       let addTooltip = () => {
-        let positions = document.querySelectorAll("#ranks tr");
+        let positions = document.querySelectorAll("#ranks tbody tr");
 
-        positions.forEach((position, index) => {
-          if (index == 0) return;
-          let playerDiv = position.querySelector(".playername");
-          if (!playerDiv.classList.contains("ogl-stalkReady")) {
+        positions.forEach((position) => {
+          if (!position.classList.contains("ogi-ready")) {
+            position.classList.add("ogi-ready");
+            let playerDiv = position.querySelector(".playername");
+
+            let countDiv = position.querySelector(".score.tooltip");
+            if (countDiv) {
+              let count = countDiv.getAttribute("title").split(":")[1].trim();
+              countDiv.html(
+                `<span class="ogi-highscore-ships">(${count})</span> ${countDiv.innerText}`
+              );
+            }
+
             let mail = position.querySelector(".sendMail");
             if (mail) {
               let id = mail.getAttribute("data-playerid");
@@ -11381,24 +11390,24 @@ TOTAL: ${this.formatToUnits(report.total)}
         addTooltip();
       };
       // Replacing ogame's ajax call function by a replicate adding a callback
-      ajaxCall = (url, targetSelector, callback) => {
-        if (typeof targetSelector === "string") {
-          let $targetHTMLObj = $(targetSelector);
-          $targetHTMLObj.find("select").ogameDropDown("destroy");
-          $targetHTMLObj.html('<p class="ajaxLoad"></p>');
-        }
-        $.post(url, function (data) {
-          if (typeof targetSelector === "string") {
-            let $targetHTMLObj = $(targetSelector);
-            $targetHTMLObj.html(data);
-            $targetHTMLObj.find("select").ogameDropDown();
-          }
-          if (typeof callback === "function") {
-            callback();
-          }
-          addTooltip();
-        });
-      };
+      // ajaxCall = (url, targetSelector, callback) => {
+      //   if (typeof targetSelector === "string") {
+      //     let $targetHTMLObj = $(targetSelector);
+      //     $targetHTMLObj.find("select").ogameDropDown("destroy");
+      //     $targetHTMLObj.html('<p class="ajaxLoad"></p>');
+      //   }
+      //   $.post(url, function (data) {
+      //     if (typeof targetSelector === "string") {
+      //       let $targetHTMLObj = $(targetSelector);
+      //       $targetHTMLObj.html(data);
+      //       $targetHTMLObj.find("select").ogameDropDown();
+      //     }
+      //     if (typeof callback === "function") {
+      //       callback();
+      //     }
+      //     addTooltip();
+      //   });
+      // };
     }
   }
 
@@ -11667,7 +11676,7 @@ TOTAL: ${this.formatToUnits(report.total)}
               this.json.missing[coords][1] += backed[1];
               this.json.missing[coords][2] += backed[2];
             }
-            alert(coords);
+
             if (this.json.myRes[coords]) {
               this.json.myRes[coords].metal -= backed[0];
               this.json.myRes[coords].crystal -= backed[1];

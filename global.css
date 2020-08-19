@@ -1,3 +1,21 @@
+.ogi-highscore-ships {
+  font-weight: 100 !important;
+  font-size: 10px;
+  color: darkgoldenrod;
+}
+#highscoreContent #ranks .sendmsg {
+  width: 37px !important;
+}
+#highscoreContent #ranks .sendmsg a {
+  margin: 0px !important;
+}
+#highscoreContent #ranks .name {
+  width: 245px !important;
+}
+#highscoreContent #ranks .score {
+  width: unset !important;
+}
+
 .ogl-unknown-warning {
   margin-left: 10px;
   margin-top: 5px;
