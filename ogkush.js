@@ -6885,13 +6885,13 @@ class OGLight {
           positionInput.value = fleetDispatcher.targetPlanet.position;
         }
 
-        if (
-          fleetDispatcher.targetPlanet.position ===
-          fleetDispatcher.fleetHelper.EXPEDITION_POSITION
-        ) {
-          fleetDispatcher.targetPlanet.type =
-            fleetDispatcher.fleetHelper.PLANETTYPE_PLANET;
-        }
+        // if (
+        //   fleetDispatcher.targetPlanet.position ===
+        //   fleetDispatcher.fleetHelper.EXPEDITION_POSITION
+        // ) {
+        //   fleetDispatcher.targetPlanet.type =
+        //     fleetDispatcher.fleetHelper.PLANETTYPE_PLANET;
+        // }
 
         if (fleetDispatcher.mission == 4 || fleetDispatcher.mission == 0) {
           returnDiv.style.visibility = "hidden";
@@ -8060,6 +8060,7 @@ class OGLight {
             inputs[0].value = coords[0];
             inputs[1].value = coords[1];
             inputs[2].value = 16;
+            document.querySelector(".ogl-planet-icon").click();
             this.expedition = true;
 
             shipsOnPlanet.forEach((ship) => {
@@ -11446,14 +11447,16 @@ TOTAL: ${this.formatToUnits(report.total)}
     if (sender.classList.contains("show_fleet_apikey")) {
       let data =
         sender.getAttribute("title") || sender.getAttribute("data-title");
-      let first = data.indexOf('value="');
-      let second = data.indexOf('"', first + 7);
-      sender.addEventListener("click", () => {
-        fadeBox("<br/>API Key copied in clipboard");
-        navigator.clipboard.writeText(
-          data.substr(first + 7, second - first - 7)
-        );
-      });
+      if (data) {
+        let first = data.indexOf('value="');
+        let second = data.indexOf('"', first + 7);
+        sender.addEventListener("click", () => {
+          fadeBox("<br/>API Key copied in clipboard");
+          navigator.clipboard.writeText(
+            data.substr(first + 7, second - first - 7)
+          );
+        });
+      }
       return true;
     }
   }
