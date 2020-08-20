@@ -3,6 +3,9 @@
   font-size: 10px;
   color: darkgoldenrod;
 }
+#highscoreContent #ranks .movement {
+  width: 60px !important;
+}
 #highscoreContent #ranks .sendmsg {
   width: 37px !important;
 }

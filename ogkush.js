@@ -380,7 +380,7 @@ class OGLight {
     this.chat();
     this.uvlinks();
     this.flyingFleet();
-    this.highScoreTooltips();
+    this.betterHighscore();
     this.overviewDates();
 
     this.sideLock();
@@ -11356,8 +11356,14 @@ TOTAL: ${this.formatToUnits(report.total)}
     });
   }
 
-  highScoreTooltips() {
+  betterHighscore() {
     if (this.page == "highscore") {
+      // history.pushState(
+      //   {},
+      //   null,
+      //   `location.pathname  + location.search + "type=1"`
+      // );
+
       let addTooltip = () => {
         let positions = document.querySelectorAll("#ranks tbody tr");
 
@@ -11391,30 +11397,78 @@ TOTAL: ${this.formatToUnits(report.total)}
       };
 
       addTooltip();
-      let oldfunc = initHighscoreContent;
+      // let oldfunc = initHighscoreContent;
+      // initHighscoreContent = () => {
+      //   oldfunc();
+      //   addTooltip();
+      // };
+
+      // let inter = setInterval(() => {
+      //   $("html, body").stop();
+      // }, 10);
+      // setTimeout(() => {
+      //   clearInterval(inter);
+      // }, 1500);
+
       initHighscoreContent = () => {
-        oldfunc();
+        let active = document.querySelector(".stat_filter.active");
+        let type = 0;
+        if (active) {
+          type = active.getAttribute("rel");
+        }
+
+        var href = new URL(location.href);
+        href.searchParams.set("type", type);
+        history.replaceState({}, null, href.toString());
+
+        if (userWantsFocus) {
+          if ($("#position" + searchPosition).length > 0) {
+            let top = Math.max(
+              0,
+              $("#position" + searchPosition).offset().top - 200
+            );
+            scrollTo(0, top);
+          }
+        }
+        $(".changeSite").change(function () {
+          var value = $(this).val();
+          $("#stat_list_content").html(
+            '<div class="ajaxLoad">' + LocalizationStrings.loading + "</div>"
+          );
+          ajaxCall(
+            highscoreContentUrl +
+              "&category=" +
+              currentCategory +
+              "&type=" +
+              currentType +
+              "&site=" +
+              value,
+            "#stat_list_content",
+            initHighscoreContent
+          );
+        });
+        // scroll to top buttons
+        var scrollToTopButton = $("#scrollToTop");
+        var positionCell = $("#ranks thead .score");
+        function positionScrollButton() {
+          if (positionCell.length) {
+            scrollToTopButton.css("left", positionCell.offset().left);
+          }
+        }
+        positionScrollButton();
+        $(window)
+          .unbind("resize.highscoreTop")
+          .bind("resize.highscoreTop", positionScrollButton);
         addTooltip();
       };
-      // Replacing ogame's ajax call function by a replicate adding a callback
-      // ajaxCall = (url, targetSelector, callback) => {
-      //   if (typeof targetSelector === "string") {
-      //     let $targetHTMLObj = $(targetSelector);
-      //     $targetHTMLObj.find("select").ogameDropDown("destroy");
-      //     $targetHTMLObj.html('<p class="ajaxLoad"></p>');
-      //   }
-      //   $.post(url, function (data) {
-      //     if (typeof targetSelector === "string") {
-      //       let $targetHTMLObj = $(targetSelector);
-      //       $targetHTMLObj.html(data);
-      //       $targetHTMLObj.find("select").ogameDropDown();
-      //     }
-      //     if (typeof callback === "function") {
-      //       callback();
-      //     }
-      //     addTooltip();
-      //   });
-      // };
+      history.scrollRestoration = "manual";
+
+      let type = this.rawURL.searchParams.get("type");
+      if (type) {
+        $(".stat_filter").removeClass("active");
+        $(`.stat_filter[rel=${type}]`).addClass("active");
+      }
+      initHighscoreContent();
     }
   }
 

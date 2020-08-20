@@ -31,6 +31,27 @@ if (window.location.href.includes("galaxy")) {
   }, 1);
 }
 
+if (window.location.href.includes("highscore")) {
+  let inter = setInterval(() => {
+    if (document.head) {
+      clearInterval(inter);
+      var s = document.createElement("script");
+      s.innerHTML = `
+        let inter = setInterval(() => {
+          if (initHighscoreContent) {
+            clearInterval(inter)
+            window.loadGalaxy = initHighscoreContent;
+            initHighscoreContent = () => {}
+          }
+        }, 10);`;
+      document.head.appendChild(s);
+      s.onload = function () {
+        s.remove();
+      };
+    }
+  }, 1);
+}
+
 window.addEventListener("DOMContentLoaded", (event) => {
   injectScript("ogkush.js");
 });
