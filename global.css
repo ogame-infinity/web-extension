@@ -252,6 +252,9 @@ input[type="text"] {
 /*****************************
 * SETTING PAGE
 /****************************/
+.ogl-settings hr {
+  margin: 4px 0px;
+}
 .ogl-settings {
   display: flex;
   width: 650px;
