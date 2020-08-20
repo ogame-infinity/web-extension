@@ -272,6 +272,8 @@ class OGLight {
     this.json.options.expeditionMission =
       this.json.options.expeditionMission || 15;
 
+    this.json.options.activitytimers =
+      this.json.options.activitytimers === true ? true : false;
     this.json.options.spyFilter = this.json.options.spyFilter || "DATE";
     this.json.options.rvalLimit =
       this.json.options.rvalLimit || 400000 * this.json.speed;
@@ -2702,7 +2704,7 @@ class OGLight {
       this.createDOM(
         "p",
         {},
-        "If you see a bug or have a feature request please report to discord 🙏 <a href='https://discord.gg/Z7MDHmk' target='_blank'>Link</a> also in the setting page. Be advised that using multiple addons/script might generate conflicts. "
+        "If you see a bug or have a feature request please report to discord 🙏 <a href='https://discord.gg/Z7MDHmk' target='_blank'>Link</a> also in the setting page. <span class='overmark'> Be advised that using multiple addons/script might generate conflicts. </span>"
       )
     );
 
@@ -8133,16 +8135,25 @@ class OGLight {
         .textContent.slice(1, -1);
       let timers = this.json.myActivities[coords] || [0, 0];
 
+      let value = Math.min(Math.round((now - timers[0]) / 60000), 60);
       let pTimer = planet.querySelector(".planetlink").appendChild(
         this.createDOM("div", {
           class: "ogl-timer ogl-short ogl-medium",
-          "data-timer": Math.min(Math.round((now - timers[0]) / 60000), 60),
+          "data-timer": value,
         })
       );
 
+      if (this.json.options.activitytimers && value != 60 && value >= 15) {
+        planet
+          .querySelector(".planetlink")
+          .appendChild(
+            this.createDOM("div", { class: "activity showMinutes" }, value)
+          );
+      }
       this.updateTimer(pTimer);
       setInterval(() => this.updateTimer(pTimer, true), 60000);
 
+      value = Math.min(Math.round((now - timers[1]) / 60000), 60);
       if (planet.querySelector(".moonlink")) {
         let mTimer = planet.querySelector(".moonlink").appendChild(
           this.createDOM("div", {
@@ -8150,6 +8161,14 @@ class OGLight {
             "data-timer": Math.min(Math.round((now - timers[1]) / 60000), 60),
           })
         );
+
+        if (this.json.options.activitytimers && value != 60 && value >= 15) {
+          planet
+            .querySelector(".moonlink")
+            .appendChild(
+              this.createDOM("div", { class: "activity showMinutes" }, value)
+            );
+        }
 
         this.updateTimer(mTimer);
         setInterval(() => this.updateTimer(mTimer, true), 60000);
@@ -12282,6 +12301,30 @@ TOTAL: ${this.formatToUnits(report.total)}
       })
     );
     settingDiv.appendChild(this.createDOM("hr"));
+
+    span = settingDiv.appendChild(
+      this.createDOM(
+        "span",
+        {
+          style:
+            "display: flex;justify-content: space-between; align-items: center;",
+        },
+        "Show activity timers"
+      )
+    );
+    let timerCheck = span.appendChild(
+      this.createDOM("input", { type: "checkbox" })
+    );
+    timerCheck.addEventListener("change", () => {
+      this.json.options.activitytimers = timerCheck.checked;
+      this.saveData();
+    });
+    if (this.json.options.activitytimers) {
+      timerCheck.checked = true;
+    }
+
+    settingDiv.appendChild(this.createDOM("hr"));
+
     settingDiv.appendChild(saveBtn);
 
     saveBtn.addEventListener("click", () => {

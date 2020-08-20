@@ -1,3 +1,13 @@
+#rechts .activity.showMinutes {
+  font-size: 8px;
+  width: min-content;
+  height: min-content;
+  line-height: initial;
+  right: 0px;
+  position: absolute;
+  border-color: rgb(255 168 0 / 65%) !important;
+}
+
 .ogi-highscore-ships {
   font-weight: 100 !important;
   font-size: 10px;
