@@ -2468,10 +2468,10 @@ class OGLight {
 
           let updateCounter = () => {
             let diff = (new Date() - time) / 1000 / 60;
-            if (diff < 60) {
-              let refreshTime = jumpTimes[gateLevel - 1] / this.json.speedFleet;
-              let count = Math.round(refreshTime - diff);
-              counter.innerText = count + "'";
+            let refreshTime = jumpTimes[gateLevel - 1] / this.json.speedFleet;
+            let count = Math.round(refreshTime - diff);
+            counter.innerText = count + "'";
+            if (count > 0) {
               if (count < 10) {
                 counter.classList.add("friendly");
               } else if (count < 30) {
