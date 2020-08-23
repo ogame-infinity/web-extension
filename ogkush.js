@@ -488,15 +488,24 @@ class OGLight {
       this.saveData();
     }
     let div = this.createDOM("div");
-    div.html(document.querySelector("#metal_box").getAttribute("title"));
+    let metalBox = document.querySelector("#metal_box");
+    div.html(
+      metalBox.getAttribute("data-title") || metalBox.getAttribute("title")
+    );
     let metalStorage = this.removeNumSeparator(
       div.querySelectorAll("span")[1].innerText
     );
-    div.html(document.querySelector("#crystal_box").getAttribute("title"));
+    let crystalBox = document.querySelector("#crystal_box");
+    div.html(
+      crystalBox.getAttribute("data-title") || crystalBox.getAttribute("title")
+    );
     let crystalStorage = this.removeNumSeparator(
       div.querySelectorAll("span")[1].innerText
     );
-    div.html(document.querySelector("#deuterium_box").getAttribute("title"));
+    let deutBox = document.querySelector("#deuterium_box");
+    div.html(
+      deutBox.getAttribute("data-title") || deutBox.getAttribute("title")
+    );
     let deuteriumStorage = this.removeNumSeparator(
       div.querySelectorAll("span")[1].innerText
     );
@@ -909,9 +918,9 @@ class OGLight {
               );
             }
             // In that case, we need the all energy prod
-            let tooltip = document
-              .querySelector("#energy_box")
-              .getAttribute("title");
+            let tooltip =
+              document.querySelector("#energy_box").getAttribute("title") ||
+              document.querySelector("#energy_box").getAttribute("data-title");
             let div = that.createDOM("div");
             div.html(tooltip);
             let prod = div.querySelectorAll("span")[1].innerText.substring(1);
@@ -2864,7 +2873,9 @@ class OGLight {
         if (elem.querySelector(".ogk-trashsim, .ogk-ogotcha")) return;
         let keyNode = elem.querySelector(".icon_apikey");
         if (keyNode) {
-          let key = keyNode.getAttribute("title").split("'")[1];
+          let key =
+            keyNode.getAttribute("title") || keyNode.getAttribute("data-title");
+          key = key.split("'")[1];
           if (key.startsWith("sr")) {
             let link = elem.appendChild(
               this.createDOM("div", {
@@ -8307,7 +8318,9 @@ class OGLight {
         uniques[id] = true;
 
         let div = document.createElement("div");
-        div.html(tooltip.getAttribute("title"));
+        div.html(
+          tooltip.getAttribute("title") || tooltip.getAttribute("data-title")
+        );
 
         div.querySelectorAll('td[colspan="2"]').forEach((tooltip) => {
           let count = Number(
@@ -10055,10 +10068,10 @@ class OGLight {
       report.total = report.metal + report.crystal + report.deut;
       report.renta = Math.round((report.total * report.loot) / 100);
 
-      report.apiKey = msg
-        .querySelector(".icon_apikey")
-        .getAttribute("title")
-        .split("'")[1];
+      report.apiKey =
+        msg.querySelector(".icon_apikey").getAttribute("title") ||
+        msg.querySelector(".icon_apikey").getAttribute("data-title");
+      report.apiKey = report.apiKey.split("'")[1];
 
       report.pb = this.calcNeededShips({
         moreFret: true,
@@ -11393,7 +11406,10 @@ TOTAL: ${this.formatToUnits(report.total)}
 
             let countDiv = position.querySelector(".score.tooltip");
             if (countDiv) {
-              let count = countDiv.getAttribute("title").split(":")[1].trim();
+              let count =
+                countDiv.getAttribute("title") ||
+                countDiv.getAttribute("data-title");
+              count = count.split(":")[1].trim();
               countDiv.html(
                 `<span class="ogi-highscore-ships">(${count})</span> ${countDiv.innerText}`
               );
@@ -12290,19 +12306,6 @@ TOTAL: ${this.formatToUnits(report.total)}
     settingDiv.appendChild(this.createDOM("hr"));
 
     span = settingDiv.appendChild(
-      this.createDOM("span", {}, "Rentability value")
-    );
-    let rvalInput = span.appendChild(
-      this.createDOM("input", {
-        type: "text",
-        class: "ogl-rvalInput ogl-formatInput tooltip",
-        value: this.json.options.rvalLimit,
-        title: this.getTranslatedText(6),
-      })
-    );
-    settingDiv.appendChild(this.createDOM("hr"));
-
-    span = settingDiv.appendChild(
       this.createDOM(
         "span",
         {
@@ -12323,6 +12326,19 @@ TOTAL: ${this.formatToUnits(report.total)}
       timerCheck.checked = true;
     }
 
+    settingDiv.appendChild(this.createDOM("hr"));
+
+    span = settingDiv.appendChild(
+      this.createDOM("span", {}, "Rentability value")
+    );
+    let rvalInput = span.appendChild(
+      this.createDOM("input", {
+        type: "text",
+        class: "ogl-rvalInput ogl-formatInput tooltip",
+        value: this.json.options.rvalLimit,
+        title: this.getTranslatedText(6),
+      })
+    );
     settingDiv.appendChild(this.createDOM("hr"));
 
     settingDiv.appendChild(saveBtn);

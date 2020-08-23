@@ -1,4 +1,4 @@
-#rechts .activity.showMinutes {
+#planetList .activity.showMinutes {
   font-size: 8px;
   width: min-content;
   height: min-content;
@@ -3181,7 +3181,7 @@ button.build-it_premium {
   image-rendering: -moz-crisp-edges;
   image-rendering: -webkit-optimize-contrast; */
   line-height: 22px;
-  overflow: hidden;
+  /* overflow: hidden; */
   position: relative;
   text-decoration: none;
   width: 22px;
