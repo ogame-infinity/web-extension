@@ -546,13 +546,13 @@ class OGLight {
         energy: parseInt(document.querySelector('#resources_energy').innerText),
       };
 
+      this.json.myMines[this.current.coords] = mines;
+      this.saveData();
+
       if (!mines.temperature) {
         document.location = `https://s${this.universe}-${
             this.gameLang}.ogame.gameforge.com/game/index.php?page=ingame&component=overview`;
       }
-
-      this.json.myMines[this.current.coords] = mines;
-      this.saveData();
     }
 
     this.planetList.forEach((planet) => {
@@ -1825,8 +1825,7 @@ class OGLight {
             'a',
             {href: this.generateHiscoreLink(id) || '', class: 'ogl-ranking'},
             '#' + (rank ? rank.textContent : 'b')));
-        sender.classList.remove('tooltipRel');
-        sender.removeAttribute('rel');
+        sender.classList.add('ogl-tooltipReady');
         this.stalk(sender, id);
       }
     });
