@@ -1371,6 +1371,7 @@ class OGLight {
           }
           this.json.combatsSums[dateStr].fuel -= fuel;
         }
+        this.saveData();
 
         // let self = false;
         // this.json.empire.forEach((planet) => {
