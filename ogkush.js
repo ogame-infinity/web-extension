@@ -9846,18 +9846,6 @@ TOTAL: ${this.formatToUnits(report.total)}
       };
 
       addTooltip();
-      // let oldfunc = initHighscoreContent;
-      // initHighscoreContent = () => {
-      //   oldfunc();
-      //   addTooltip();
-      // };
-
-      // let inter = setInterval(() => {
-      //   $("html, body").stop();
-      // }, 10);
-      // setTimeout(() => {
-      //   clearInterval(inter);
-      // }, 1500);
 
       initHighscoreContent = () => {
         let active = document.querySelector('.stat_filter.active');
@@ -9911,18 +9899,6 @@ TOTAL: ${this.formatToUnits(report.total)}
       }
       initHighscoreContent();
     }
-  }
-
-  waitForNode(selector) {
-    return new Promise((resolve, reject) => {
-      let checkExist = setInterval(function() {
-        let node = document.querySelector(selector);
-        if (node) {
-          clearInterval(checkExist);
-          return resolve(node);
-        }
-      }, 100);
-    });
   }
 
   betterAPITooltip(sender) {

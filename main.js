@@ -1,153 +1,127 @@
 function injectScript(path, cb) {
-  var s = document.createElement("script");
+  var s = document.createElement('script');
   s.src = chrome.extension.getURL(path);
-  document.head.appendChild(s);
+  (document.head || document.documentElement).appendChild(s);
   s.onload = () => {
     s.remove();
     cb && cb();
   };
 }
 
-const UNIVERSE = window.location.host.split(".")[0];
+const UNIVERSE = window.location.host.split('.')[0];
 
-if (window.location.href.includes("galaxy")) {
-  let inter = setInterval(() => {
-    if (document.head) {
-      clearInterval(inter);
-      var s = document.createElement("script");
-      s.innerHTML = `
-        let inter = setInterval(() => {
-          if (loadContent) {
-            clearInterval(inter)
-            window.loadGalaxy = loadContent;
-            loadContent = () => {}
-          }
-        }, 10);`;
-      document.head.appendChild(s);
-      s.onload = function () {
-        s.remove();
-      };
-    }
-  }, 1);
+if (window.location.href.includes('galaxy')) {
+  var s = document.createElement('script');
+  s.innerHTML = `
+    const check = () => {
+      if (window.loadContent != undefined) {
+        window.loadGalaxy = loadContent;
+        loadContent = () => {}
+      } else {
+        requestAnimationFrame(check);
+      }
+    };
+    requestAnimationFrame(check);
+  `
+  s.onload = function() {
+    s.remove();
+  };
+  (document.head || document.documentElement).appendChild(s);
 }
 
-if (window.location.href.includes("highscore")) {
-  let inter = setInterval(() => {
-    if (document.head) {
-      clearInterval(inter);
-      var s = document.createElement("script");
-      s.innerHTML = `
-        let inter = setInterval(() => {
-          if (initHighscoreContent) {
-            clearInterval(inter)
-            window.loadGalaxy = initHighscoreContent;
-            initHighscoreContent = () => {}
-          }
-        }, 10);`;
-      document.head.appendChild(s);
-      s.onload = function () {
-        s.remove();
-      };
-    }
-  }, 1);
+if (window.location.href.includes('highscore')) {
+  var s = document.createElement('script');
+  s.innerHTML = `
+    const check = () => {
+      if (window.initHighscoreContent != undefined) {
+        initHighscoreContent = () => {}
+      } else {
+        requestAnimationFrame(check);
+      }
+    };
+    requestAnimationFrame(check);
+  `
+  s.onload = function() {
+    s.remove();
+  };
+  (document.head || document.documentElement).appendChild(s);
 }
 
-window.addEventListener("DOMContentLoaded", (event) => {
-  injectScript("ogkush.js");
+
+window.addEventListener('DOMContentLoaded', (event) => {
+  injectScript('ogkush.js');
 });
 
-document.addEventListener("ogi-chart", function (e) {
-  injectScript("libs/chart.min.js", () => {
-    injectScript("libs/chartjs-plugin-labels.js");
+document.addEventListener('ogi-chart', function(e) {
+  injectScript('libs/chart.min.js', () => {
+    injectScript('libs/chartjs-plugin-labels.js');
   });
 });
 
-window.addEventListener(
-  "ogi-expedition",
-  function (evt) {
-    let request = evt.detail;
-    // do Chrome things with request.data, add stuff to response.data
-    chrome.runtime.sendMessage(
-      { type: "expedition", message: request.message },
-      function (response) {
+window.addEventListener('ogi-expedition', function(evt) {
+  let request = evt.detail;
+  // do Chrome things with request.data, add stuff to response.data
+  chrome.runtime.sendMessage(
+      {type: 'expedition', message: request.message}, function(response) {
         var clone = response;
-        if (navigator.userAgent.indexOf("Firefox") > 0) {
+        if (navigator.userAgent.indexOf('Firefox') > 0) {
           clone = cloneInto(response, document.defaultView);
         }
         clone.requestId = request.requestId;
         window.dispatchEvent(
-          new CustomEvent("ogi-expedition-rep", { detail: clone })
-        );
-      }
-    );
-  },
-  false
-);
+            new CustomEvent('ogi-expedition-rep', {detail: clone}));
+      });
+}, false);
 
-window.addEventListener(
-  "ogi-players",
-  function (evt) {
-    let request = evt.detail;
-    // var response = {requestId: request.id};
-    // do Chrome things with request.data, add stuff to response.data
-    chrome.runtime.sendMessage(
-      { type: "get", universe: UNIVERSE, id: request.id },
-      function (response) {
+window.addEventListener('ogi-players', function(evt) {
+  let request = evt.detail;
+  // var response = {requestId: request.id};
+  // do Chrome things with request.data, add stuff to response.data
+  chrome.runtime.sendMessage(
+      {type: 'get', universe: UNIVERSE, id: request.id}, function(response) {
         var clone = response;
-        if (navigator.userAgent.indexOf("Firefox") > 0) {
+        if (navigator.userAgent.indexOf('Firefox') > 0) {
           clone = cloneInto(response, document.defaultView);
         }
         clone.requestId = request.requestId;
         window.dispatchEvent(
-          new CustomEvent("ogi-players-rep", { detail: clone })
-        );
+            new CustomEvent('ogi-players-rep', {detail: clone}));
         // }
-      }
-    );
-  },
-  false
-);
+      });
+}, false);
 
-window.addEventListener(
-  "ogi-filter",
-  function (evt) {
-    let request = evt.detail;
-    // var response = {requestId: request.id};
-    // do Chrome things with request.data, add stuff to response.data
-    chrome.runtime.sendMessage(
+window.addEventListener('ogi-filter', function(evt) {
+  let request = evt.detail;
+  // var response = {requestId: request.id};
+  // do Chrome things with request.data, add stuff to response.data
+  chrome.runtime.sendMessage(
       {
-        type: "filter",
+        type: 'filter',
         universe: UNIVERSE,
         name: request.name,
         alliance: request.alliance,
       },
-      function (response) {
+      function(response) {
         var clone = response;
-        if (navigator.userAgent.indexOf("Firefox") > 0) {
+        if (navigator.userAgent.indexOf('Firefox') > 0) {
           clone = cloneInto(response, document.defaultView);
         }
 
         clone.requestId = request.requestId;
         window.dispatchEvent(
-          new CustomEvent("ogi-filter-rep", { detail: clone })
-        );
+            new CustomEvent('ogi-filter-rep', {detail: clone}));
         // }
-      }
-    );
-  },
-  false
-);
+      });
+}, false);
 
-document.addEventListener("ogi-galaxy", function (e) {
+document.addEventListener('ogi-galaxy', function(e) {
   chrome.runtime.sendMessage(
-    { type: "galaxy", universe: UNIVERSE, changes: e.detail },
-    function (response) {}
-  );
+      {type: 'galaxy', universe: UNIVERSE, changes: e.detail},
+      function(response) {});
 });
 
-document.addEventListener("ogi-clear", function (e) {
+document.addEventListener('ogi-clear', function(e) {
   chrome.runtime.sendMessage(
-    { type: "clear", universe: UNIVERSE, changes: e.detail },
-    function (response) {}
-  );
+      {type: 'clear', universe: UNIVERSE, changes: e.detail},
+      function(response) {});
 });

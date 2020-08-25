@@ -3174,16 +3174,9 @@ button.build-it_premium {
   border-radius: 4px;
   color: rgb(144, 161, 172) !important;
   cursor: pointer;
-  display: inline-block;
-  font-size: 11px;
   height: 22px;
-  line-height: 22px;
-  position: relative;
-  text-decoration: none;
   width: 22px;
-  font-weight: 800;
-  font-size: 12px;
-  line-height: 20px;
+  position: sticky;
 }
 
 .ogl-option:after {
