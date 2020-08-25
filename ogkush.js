@@ -504,23 +504,31 @@ class OGLight {
     };
 
     if (this.page == 'supplies' && !this.current.isMoon) {
-      let targetMetal =
-          document.querySelector('.technology.metalMine .twargetlevel');
-      let targetCrystal =
-          document.querySelector('.technology.crystalMine .targetlevel');
-      let targetDeut = document.querySelector(
-          '.technology.deuteriumSynthesizer .targetlevel');
+      // let targetMetal =
+      //     document.querySelector('.technology.metalMine .targetlevel');
+      // let targetCrystal =
+      //     document.querySelector('.technology.crystalMine .targetlevel');
+      // let targetDeut = document.querySelector(
+      //     '.technology.deuteriumSynthesizer .targetlevel');
 
-      let metal = targetMetal ?
-          '(' + targetMetal.getAttribute('data-value') + ')' :
-          document.querySelector('.technology.metalMine .level')
-              .getAttribute('data-value');
-      let crystal = targetCrystal ?
-          '(' + targetCrystal.getAttribute('data-value') + ')' :
-          document.querySelector('.technology.crystalMine .level')
-              .getAttribute('data-value');
-      let deut = targetDeut ?
-          '(' + targetDeut.getAttribute('data-value') + ')' :
+      // let metal = targetMetal ?
+      //     '(' + targetMetal.getAttribute('data-value') + ')' :
+      //     document.querySelector('.technology.metalMine .level')
+      //         .getAttribute('data-value');
+      // let crystal = targetCrystal ?
+      //     '(' + targetCrystal.getAttribute('data-value') + ')' :
+      //     document.querySelector('.technology.crystalMine .level')
+      //         .getAttribute('data-value');
+      // let deut = targetDeut ?
+      //     '(' + targetDeut.getAttribute('data-value') + ')' :
+      //     document.querySelector('.technology.deuteriumSynthesizer .level')
+      //         .getAttribute('data-value');
+
+      let metal = document.querySelector('.technology.metalMine .level')
+                      .getAttribute('data-value');
+      let crystal = document.querySelector('.technology.crystalMine .level')
+                        .getAttribute('data-value');
+      let deut =
           document.querySelector('.technology.deuteriumSynthesizer .level')
               .getAttribute('data-value');
 
