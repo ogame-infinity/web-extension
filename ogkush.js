@@ -3799,6 +3799,22 @@ class OGInfinity {
     }
 
     if (this.page == "messages") {
+      document.querySelectorAll(`div li.msg`).forEach((msg) => {
+        let date = msg.querySelector(".msg_date").innerText;
+        if (!msg.querySelector(".msg_date").classList.contains(".ogl-ready")) {
+          msg.querySelector(".msg_date").classList.add(".ogl-ready");
+
+          console.log(
+            this.dateStrToDate(date).getTime() +
+              Number(this.json.timezoneDiff * 1000)
+          );
+          msg.querySelector(".msg_date").innerText = getFormatedDate(
+            this.dateStrToDate(date).getTime() + this.json.timezoneDiff * 1000,
+            "[d].[m].[Y] [H]:[i]:[s]"
+          );
+        }
+      });
+
       if (document.querySelector("li[id=subtabs-nfFleet22].ui-state-active")) {
         let id = document
           .querySelector("li[id=subtabs-nfFleet22].ui-state-active")
