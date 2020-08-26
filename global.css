@@ -4165,7 +4165,7 @@ button.build-it_premium {
 /****************************/
 
 #bar {
-  width: 950px !important;
+  width: 1045px !important;
 }
 #bar li:nth-of-type(5) {
   display: none;
@@ -4174,9 +4174,8 @@ button.build-it_premium {
 .ogk-ping {
   color: #848484;
   font-weight: 700;
-  position: absolute;
-  top: 2px;
-  right: 100px;
+  float: right;
+  margin-left: 5px;
 }
 
 /*****************************
