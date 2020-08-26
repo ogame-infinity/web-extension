@@ -6034,7 +6034,6 @@ hr {
   left: -6px;
   transform: rotate(45deg);
   top: 8px;
-  top: 50%;
 }
 
 .ogl-tooltip.ogl-tooltipBottom:after {

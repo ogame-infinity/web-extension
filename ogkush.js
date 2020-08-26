@@ -154,7 +154,7 @@ let PLAYER_CLASS_WARRIOR = 2;
 let PLAYER_CLASS_MINER = 1;
 let PLAYER_CLASS_NONE = 0;
 
-class OGLight {
+class OGInfinity {
   constructor() {
     this.commander = player.hasCommander;
     this.rawURL = new URL(window.location.href);
@@ -467,63 +467,56 @@ class OGLight {
       } else {
         this.json.myMines[this.current.coords] = {temperature: maxTemp};
       }
-
-      this.saveData();
     }
+    let coords = this.current.coords + (this.current.isMoon ? 'M' : 'P')
     let div = this.createDOM('div');
     let metalBox = document.querySelector('#metal_box');
-    div.html(
-        metalBox.getAttribute('data-title') || metalBox.getAttribute('title'));
-    let metalStorage =
-        this.removeNumSeparator(div.querySelectorAll('span')[1].innerText);
-    let crystalBox = document.querySelector('#crystal_box');
-    div.html(
-        crystalBox.getAttribute('data-title') ||
-        crystalBox.getAttribute('title'));
-    let crystalStorage =
-        this.removeNumSeparator(div.querySelectorAll('span')[1].innerText);
-    let deutBox = document.querySelector('#deuterium_box');
-    div.html(
-        deutBox.getAttribute('data-title') || deutBox.getAttribute('title'));
-    let deuteriumStorage =
-        this.removeNumSeparator(div.querySelectorAll('span')[1].innerText);
-    // this.json.lastResUpdate = new Date();
+    let title =
+        metalBox.getAttribute('data-title') || metalBox.getAttribute('title');
+    let metalStorage, crystalStorage, deuteriumStorage;
+    if (title) {
+      div.html(
+          metalBox.getAttribute('data-title') ||
+          metalBox.getAttribute('title'));
 
-    this.json.myRes[this.current.coords + (this.current.isMoon ? 'M' : 'P')] = {
-      metal: parseInt(
-          document.querySelector('#resources_metal').getAttribute('data-raw')),
-      metalStorage: metalStorage,
-      crystal: parseInt(document.querySelector('#resources_crystal')
-                            .getAttribute('data-raw')),
-      crystalStorage: crystalStorage,
-      deuterium: parseInt(document.querySelector('#resources_deuterium')
-                              .getAttribute('data-raw')),
-      deuteriumStorage: deuteriumStorage,
-      lastUpdate: new Date(),
-      invalidate: false,
-    };
+      metalStorage =
+          this.removeNumSeparator(div.querySelectorAll('span')[1].innerText);
+      let crystalBox = document.querySelector('#crystal_box');
+      div.html(
+          crystalBox.getAttribute('data-title') ||
+          crystalBox.getAttribute('title'));
+      crystalStorage =
+          this.removeNumSeparator(div.querySelectorAll('span')[1].innerText);
+      let deutBox = document.querySelector('#deuterium_box');
+      div.html(
+          deutBox.getAttribute('data-title') || deutBox.getAttribute('title'));
+      deuteriumStorage =
+          this.removeNumSeparator(div.querySelectorAll('span')[1].innerText);
+    }
+
+    if (!this.json.myRes[coords]) {
+      this.json.myRes[coords] = {}
+    }
+
+    this.json.myRes[coords].metal = parseInt(
+        document.querySelector('#resources_metal').getAttribute('data-raw'));
+    this.json.myRes[coords].crystal = parseInt(
+        document.querySelector('#resources_crystal').getAttribute('data-raw'));
+    this.json.myRes[coords].deuterium =
+        parseInt(document.querySelector('#resources_deuterium')
+                     .getAttribute('data-raw'));
+
+    metalStorage && (this.json.myRes[coords].metalStorage = metalStorage);
+    crystalStorage && (this.json.myRes[coords].crystalStorage = crystalStorage);
+    deuteriumStorage &&
+        (this.json.myRes[coords].deuteriumStorage = deuteriumStorage);
+
+    this.json.myRes[coords].lastUpdate = new Date();
+    this.json.myRes[coords].invalidate = false;
+
+    this.saveData();
 
     if (this.page == 'supplies' && !this.current.isMoon) {
-      // let targetMetal =
-      //     document.querySelector('.technology.metalMine .targetlevel');
-      // let targetCrystal =
-      //     document.querySelector('.technology.crystalMine .targetlevel');
-      // let targetDeut = document.querySelector(
-      //     '.technology.deuteriumSynthesizer .targetlevel');
-
-      // let metal = targetMetal ?
-      //     '(' + targetMetal.getAttribute('data-value') + ')' :
-      //     document.querySelector('.technology.metalMine .level')
-      //         .getAttribute('data-value');
-      // let crystal = targetCrystal ?
-      //     '(' + targetCrystal.getAttribute('data-value') + ')' :
-      //     document.querySelector('.technology.crystalMine .level')
-      //         .getAttribute('data-value');
-      // let deut = targetDeut ?
-      //     '(' + targetDeut.getAttribute('data-value') + ')' :
-      //     document.querySelector('.technology.deuteriumSynthesizer .level')
-      //         .getAttribute('data-value');
-
       let metal = document.querySelector('.technology.metalMine .level')
                       .getAttribute('data-value');
       let crystal = document.querySelector('.technology.crystalMine .level')
@@ -3232,6 +3225,14 @@ class OGLight {
     this.saveData();
   }
 
+  dateStrToDate(datestr) {
+    let splits = datestr.split('.');
+    let tmp = splits[0];
+    splits[0] = splits[1];
+    splits[1] = tmp;
+    return new Date(splits.join('/'));
+  }
+
   expeditionMessages() {
     // let ressources = ["Metal", "Crystal", "Deuterium", "AM"];
     let normalized = ['Metal', 'Crystal', 'Deuterium', 'AM'];
@@ -3243,14 +3244,6 @@ class OGLight {
     for (let i in this.json.shipNames) {
       if (this.json.shipNames[i] == 209) cyclosName = i;
     }
-
-    let dateStrToDate = (datestr) => {
-      let splits = datestr.split('.');
-      let tmp = splits[0];
-      splits[0] = splits[1];
-      splits[1] = tmp;
-      return new Date(splits.join('.'));
-    };
 
     if (this.page == 'messages') {
       if (document.querySelector('li[id=subtabs-nfFleet22].ui-state-active')) {
@@ -3350,7 +3343,7 @@ class OGLight {
             this.json.expeditionSums[date] = sums;
             this.json.expeditions[id] = {
               result: type,
-              date: new Date(dateStrToDate(date)),
+              date: new Date(this.dateStrToDate(date)),
               favorited: msg.querySelector('.icon_favorited') ? true : false,
             };
             if (this.json.expeditions[id].result == 'Unknown') {
@@ -3583,7 +3576,7 @@ class OGLight {
             }
 
             this.json.harvests[id] = {
-              date: new Date(dateStrToDate(date)),
+              date: new Date(this.dateStrToDate(date)),
               metal: met,
               crystal: cri,
               coords: coords,
@@ -3951,13 +3944,6 @@ class OGLight {
       return total;
     };
 
-    let dateStrToDate = (datestr) => {
-      let splits = datestr.split('.');
-      let tmp = splits[0];
-      splits[0] = splits[1];
-      splits[1] = tmp;
-      return new Date(splits.join('.'));
-    };
 
     let refresh = (index) => {
       if (index) {
@@ -4112,13 +4098,13 @@ class OGLight {
       },
       All: () => {
         let keys = Object.keys(this.json.expeditionSums).sort((a, b) => {
-          return dateStrToDate(a) - dateStrToDate(b);
+          return this.dateStrToDate(a) - this.dateStrToDate(b);
         });
         let minDate = keys[0];
         let maxDate = keys[keys.length - 1];
         let range = computeRangeSums(
-            this.json.expeditionSums, dateStrToDate(maxDate),
-            dateStrToDate(minDate));
+            this.json.expeditionSums, this.dateStrToDate(maxDate),
+            this.dateStrToDate(minDate));
 
         let total = getTotal(range);
         let content = this.createDOM('div', {class: 'ogk-profit'});
@@ -4131,14 +4117,15 @@ class OGLight {
 
         let contentHtml = `<strong>${
             getFormatedDate(
-                dateStrToDate(minDate).getTime(),
+                this.dateStrToDate(minDate).getTime(),
                 '[d].[m].[y]')}</strong> <span class="${
             total > 0 ? 'undermark' : 'overmark'}">${total > 0 ? ' +' : ' -'}${
             getNumberFormatShort(Math.abs(total), 2)}</strong></span>`;
 
         contentHtml += `<strong>${
             getFormatedDate(
-                dateStrToDate(maxDate).getTime(), '[d].[m].[y]')}</strong>`;
+                this.dateStrToDate(maxDate).getTime(),
+                '[d].[m].[y]')}</strong>`;
         title.html(contentHtml);
         let div = this.createDOM('div');
         div.appendChild(content);
@@ -4339,14 +4326,6 @@ class OGLight {
       return total;
     };
 
-    let dateStrToDate = (datestr) => {
-      let splits = datestr.split('.');
-      let tmp = splits[0];
-      splits[0] = splits[1];
-      splits[1] = tmp;
-      return new Date(splits.join('/'));
-    };
-
     let refresh = (index) => {
       if (index) {
         this.initialRange = index;
@@ -4489,13 +4468,13 @@ class OGLight {
       },
       All: () => {
         let keys = Object.keys(this.json.combatsSums).sort((a, b) => {
-          return dateStrToDate(a) - dateStrToDate(b);
+          return this.dateStrToDate(a) - this.dateStrToDate(b);
         });
         let minDate = keys[0];
         let maxDate = keys[keys.length - 1];
         let range = computeRangeSums(
-            this.json.combatsSums, dateStrToDate(maxDate),
-            dateStrToDate(minDate));
+            this.json.combatsSums, this.dateStrToDate(maxDate),
+            this.dateStrToDate(minDate));
 
         let total = getTotal(range);
         let content = this.createDOM('div', {class: 'ogk-profit'});
@@ -4508,14 +4487,15 @@ class OGLight {
 
         let contentHtml = `<strong>${
             getFormatedDate(
-                dateStrToDate(minDate).getTime(),
+                this.dateStrToDate(minDate).getTime(),
                 '[d].[m].[y]')}</strong> <span class="${
             total > 0 ? 'undermark' : 'overmark'}">${total > 0 ? ' +' : ' -'}${
             getNumberFormatShort(Math.abs(total), 2)}</strong></span>`;
 
         contentHtml += `<strong>${
             getFormatedDate(
-                dateStrToDate(maxDate).getTime(), '[d].[m].[y]')}</strong>`;
+                this.dateStrToDate(maxDate).getTime(),
+                '[d].[m].[y]')}</strong>`;
         title.html(contentHtml);
         let div = this.createDOM('div');
         div.appendChild(content);
@@ -7148,7 +7128,6 @@ class OGLight {
           }
         });
       }
-      console.log(movement);
       ids.push(movement);
     });
 
@@ -7397,8 +7376,6 @@ class OGLight {
           }
         }
       }
-      // alert(diff * metProd);
-      // console.log(metProd, criProd, deutProd);
 
       emulatedEmpire.push({
         id: id,
@@ -9347,7 +9324,6 @@ TOTAL: ${this.formatToUnits(report.total)}
     if (id == 12) {
       prod = 30 * lvl * Math.pow(1.05 + tech113 * 0.01, lvl);
     }
-    // console.log(prod, prod * prodFactor);
     if (total) prod = prod * prodFactor;
     let plasma = prod * plasmaFactor[id] * tech122;
     let crawlers = prod * crawlerBonus;
@@ -9361,7 +9337,6 @@ TOTAL: ${this.formatToUnits(report.total)}
     if (id == 1 || id == 2 || id == 3) {
       prod = prod * this.json.speed;
       totalProd = totalProd * this.json.speed;
-      console.log(id, prodFactor, totalProd);
       return total ? Math.round(totalProd) : Math.round(prod);
     }
 
@@ -9943,8 +9918,7 @@ TOTAL: ${this.formatToUnits(report.total)}
         !sender.classList.contains('ogl-stalkReady') &&
         !sender.classList.contains('activity')) {
       sender.classList.add('ogl-tooltipReady');
-
-      sender.addEventListener(this.eventAction, () => {
+      let show = () => {
         let content;
         let appendMode = false;
 
@@ -9956,8 +9930,6 @@ TOTAL: ${this.formatToUnits(report.total)}
           rel = rel.replace('_oneTimeelement', '');
 
           let id = '#' + rel;
-          // this.tooltipList[id] =
-          //   this.tooltipList[id] || document.querySelector(id);
           content = document.querySelector(id).cloneNode(true);
           appendMode = true;
         } else {
@@ -9966,7 +9938,6 @@ TOTAL: ${this.formatToUnits(report.total)}
 
         if (!content) {
           content = sender.getAttribute('title');
-          if (!content) return;
           sender.setAttribute('data-title', content);
         }
 
@@ -9998,9 +9969,10 @@ TOTAL: ${this.formatToUnits(report.total)}
             sender.classList.contains('tooltipCustom')) {
           autoHide = false;
         }
-
         this.tooltip(sender, div, autoHide, side);
-      });
+      };
+      sender.addEventListener(this.eventAction, () => {show()});
+      show()
     }
   }
 
@@ -10665,7 +10637,7 @@ TOTAL: ${this.formatToUnits(report.total)}
   }
 
   (async () => {
-    let ogKush = new OGLight();
+    let ogKush = new OGInfinity();
     await ogKush.init();
     ogKush.start();
   })();
