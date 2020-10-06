@@ -187,6 +187,16 @@ input[type="text"] {
   margin: 9px 15px 0px 0px;
 }
 
+#logoLink {
+  width: 200px;
+  height: 75px;
+  background: #00000060;
+  z-index: 123;
+  position: relative;
+  border-radius: 49px;
+  left: -7px;
+}
+
 .ogk-logo {
   width: 175px;
   height: 71px;
@@ -1191,7 +1201,19 @@ input[type="file"] {
 }
 
 #pageReloader {
-  background: #00000070;
+  /* background: #00000070;
+  border-radius: 50px;
+  position: absolute !important;
+  top: 30px !important;
+  cursor: pointer !important;
+  width: 208px !important;
+  position: relative !important;
+  height: 50px !important;
+  margin-left: -5px;
+  background: url(chrome-extension://klibfaohbnnnhmnheikmdkcalhgjcoeb/res/ogame_icon.png)
+      45% -6px / 133px no-repeat,
+    linear-gradient(45deg, black, rgb(8 20 35)) 0% 0%; */
+  background: rgba(0, 0, 0, 0.44);
   border-radius: 50px;
 }
 
@@ -1428,6 +1450,13 @@ div#banner_skyscraper {
 
 #fleetBriefingPart1_2 li:first-of-type .value {
   float: none;
+}
+#fleetBriefingPart1 .ogl-fleetSpeed {
+  width: fit-content !important;
+  grid-template-columns: repeat(20, 1fr);
+}
+#fleetBriefingPart1 .ogl-fleetSpeed > div {
+  min-width: 30px;
 }
 
 #fleet2 .ogk-delay {
@@ -1965,9 +1994,13 @@ button.build-it_premium {
   background-color: #614bb1 !important;
 }
 
-.msg_new.ogk-void .msg_status,
-.msg.ogk-void .msg_status {
-  background-color: #344051 !important;
+.msg_new.ogk-merchant .msg_status,
+.msg.ogk-merchant .msg_status {
+  background-color: #a0c02b !important;
+}
+.msg_new.ogk-merchant .msg_status,
+.msg.ogk-merchant .msg_status {
+  background-color: #a0c02b !important;
 }
 
 /*****************************
@@ -2177,7 +2210,9 @@ button.build-it_premium {
 }
 
 .ogl-tooltip .ogk-cargo {
-  width: 90px;
+  width: auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
 }
 .ogl-tooltip .ogk-cargo > div {
   margin: 2px;
@@ -3416,8 +3451,8 @@ button.build-it_premium {
 .moonlink {
   left: 0 !important;
   right: 0 !important;
-  width: 40px;
-  min-width: 40px;
+  width: 60px;
+  min-width: 60px;
 }
 
 .empire .moonlink {
@@ -3642,22 +3677,16 @@ button.build-it_premium {
 }
 
 .ogl-summary > .ogl-sum-symbol {
-  width: 45px;
+  width: 60px;
 }
 
-/* #rechts {
-  display: none;
-} */
+.ogl-summary > .ogl-sum-symbol:nth-child(3) {
+  padding-left: 5px;
+}
 
-#rechts #myPlanets .smallplanet a.moonlink {
+#rechts .smallplanet a.moonlink {
   margin-left: 5px !important;
 }
-/* 
-#rechts.ogk-hover {
-  position: absolute !important;
-  right: 0px;
-  transition: all 0.1s ease-in-out;
-} */
 
 #myPlanets {
   width: max-content !important;
@@ -3693,10 +3722,15 @@ button.build-it_premium {
   flex-direction: column;
   font-size: 11px;
   text-align: left;
-  width: 60px;
+  width: 50px;
   margin-left: 5px;
   margin-right: -5px;
 }
+
+.moonlink ~ .ogl-res {
+  width: 60px !important;
+}
+
 .ogi-invalidate span {
   color: #9466ec !important;
   font-style: italic !important;
@@ -4566,6 +4600,11 @@ body.ogame select {
   width: 25px;
   height: 20px;
   border: solid 1px #5f5d6b;
+}
+
+.ogl-fleet-table .ogl-fleet-ship {
+  display: flex;
+  margin: 0 auto;
 }
 
 .ogl-fleet-ship:hover {
@@ -5878,14 +5917,29 @@ resourceIcon.metal {
 }
 
 .ogl-fleetSpeed {
+  /* background: linear-gradient(to left, #248469, #b9801a, #a72525);
+  border-radius: 2px;
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.2), 0 0 0 1px #000;
+  color: #fff;
+  display: flex;
+  margin-top: 10px;
+  text-align: center; */
+}
+
+.ogl-fleetSpeed {
   background: linear-gradient(to left, #248469, #b9801a, #a72525);
   border-radius: 2px;
   box-shadow: inset 0 1px rgba(255, 255, 255, 0.2), 0 0 0 1px #000;
   color: #fff;
   display: grid;
   grid-template-columns: repeat(10, 1fr);
-  margin-top: 10px;
   text-align: center;
+}
+.ogl-fleetSpeed.first {
+  background: linear-gradient(to left, #b9801a, #a72525);
+}
+.ogl-fleetSpeed.second {
+  background: linear-gradient(to left, #248469, #b9801a);
 }
 
 .ogl-fleetSpeed > div {
@@ -5896,6 +5950,7 @@ resourceIcon.metal {
   position: relative;
   transition: all 0.2s;
   color: #9099a3;
+  min-width: 30px;
 }
 
 .ogl-fleetSpeed > div:hover {

@@ -287,6 +287,8 @@ class OGInfinity {
     this.json.options.kept = this.json.options.kept || {};
     this.json.options.defaultKept = this.json.options.defaultKept || {};
     this.json.options.hiddenTargets = this.json.options.hiddenTargets || {};
+    this.json.options.timeZone =
+      this.json.options.timeZone === false ? false : true;
 
     this.gameLang = document
       .querySelector('meta[name="ogame-language"]')
@@ -351,6 +353,10 @@ class OGInfinity {
     }
 
     document.querySelectorAll(".moonlink").forEach((elem) => {
+      elem.classList.add("tooltipRight");
+      elem.classList.remove("tooltipLeft");
+    });
+    document.querySelectorAll(".planetlink").forEach((elem) => {
       elem.classList.add("tooltipLeft");
       elem.classList.remove("tooltipRight");
     });
@@ -412,11 +418,13 @@ class OGInfinity {
   }
 
   timeZone() {
-    if (!this.json.timezoneDiff && timeZoneDiffSeconds) {
+    if (!this.json.timezoneDiff && window.timeZoneDiffSeconds !== undefined) {
       this.json.timezoneDiff = timeZoneDiffSeconds;
       this.saveData();
     }
-    timeDiff = timeDiff + this.json.timezoneDiff * 1000;
+    if (this.json.options.timeZone) {
+      timeDiff = timeDiff + this.json.timezoneDiff * 1000;
+    }
     let hourDiff = this.json.timezoneDiff / 60 / 60;
     hourDiff != 0 &&
       $(".ogk-ping").prepend(
@@ -1436,24 +1444,38 @@ class OGInfinity {
 
     let inputs = [];
 
-    [202, 203, 210, 204, 205, 206, 219, 207, 215, 211, 213, 218].forEach(
-      (id) => {
-        fleet.appendChild(
-          this.createDOM("a", {
-            class: "ogl-option ogl-fleet-ship ogl-fleet-" + id,
-          })
-        );
-        let input = fleet.appendChild(
-          this.createDOM("input", {
-            class: "ogl-formatInput",
-            type: "text",
-            data: id,
-            value: kept[id] || 0,
-          })
-        );
-        inputs.push(input);
-      }
-    );
+    [
+      202,
+      203,
+      210,
+      208,
+      209,
+      204,
+      205,
+      206,
+      219,
+      207,
+      215,
+      211,
+      213,
+      218,
+      214,
+    ].forEach((id) => {
+      fleet.appendChild(
+        this.createDOM("a", {
+          class: "ogl-option ogl-fleet-ship ogl-fleet-" + id,
+        })
+      );
+      let input = fleet.appendChild(
+        this.createDOM("input", {
+          class: "ogl-formatInput",
+          type: "text",
+          data: id,
+          value: kept[id] || 0,
+        })
+      );
+      inputs.push(input);
+    });
 
     if (!btn) {
       btn = box.appendChild(
@@ -2076,7 +2098,22 @@ class OGInfinity {
       });
     };
 
+    let changeTimeZone = () => {
+      document.querySelectorAll(".eventFleet").forEach((line) => {
+        let arrival = new Date(line.getAttribute("data-arrival-time") * 1000);
+        // console.log()
+        arrival = arrival.getTime();
+        line.querySelector(".arrivalTime").innerText = getFormatedDate(
+          arrival,
+          "[H]:[i]:[s]"
+        );
+      });
+    };
+
     let updateEventBox = () => {
+      // if (this.json.options.timeZone) {
+      changeTimeZone();
+      // }
       addColors();
       addOptions();
       addHover();
@@ -2909,7 +2946,7 @@ class OGInfinity {
             link.addEventListener("click", () => {
               let coords = this.current.coords.split(":");
               let json = {
-                "0": [
+                0: [
                   {
                     class: this.playerClass,
                     research: apiTechData,
@@ -3799,21 +3836,21 @@ class OGInfinity {
     }
 
     if (this.page == "messages") {
-      document.querySelectorAll(`div li.msg`).forEach((msg) => {
-        let date = msg.querySelector(".msg_date").innerText;
-        if (!msg.querySelector(".msg_date").classList.contains(".ogl-ready")) {
-          msg.querySelector(".msg_date").classList.add(".ogl-ready");
+      this.json.options.timeZone &&
+        document.querySelectorAll(`div li.msg`).forEach((msg) => {
+          let date = msg.querySelector(".msg_date").innerText;
+          if (
+            !msg.querySelector(".msg_date").classList.contains(".ogl-ready")
+          ) {
+            msg.querySelector(".msg_date").classList.add(".ogl-ready");
 
-          console.log(
-            this.dateStrToDate(date).getTime() +
-              Number(this.json.timezoneDiff * 1000)
-          );
-          msg.querySelector(".msg_date").innerText = getFormatedDate(
-            this.dateStrToDate(date).getTime() + this.json.timezoneDiff * 1000,
-            "[d].[m].[Y] [H]:[i]:[s]"
-          );
-        }
-      });
+            msg.querySelector(".msg_date").innerText = getFormatedDate(
+              this.dateStrToDate(date).getTime() +
+                this.json.timezoneDiff * 1000,
+              "[d].[m].[Y] [H]:[i]:[s]"
+            );
+          }
+        });
 
       if (document.querySelector("li[id=subtabs-nfFleet22].ui-state-active")) {
         let id = document
@@ -3882,38 +3919,42 @@ class OGInfinity {
               };
             }
             // Objects
-            let objectNode = content.querySelector("a");
-            if (objectNode) {
-              json.result = "Object";
-              json["object"] = objectNode.innerText;
-            }
 
-            // Resources
-            ressources.forEach((res, i) => {
-              res = res.replace("(", "\\(").replace(")", "\\)");
-              let regex = new RegExp(`${res} [0-9]{1,3}(.[0-9]{1,3})*`, "gm");
-
-              let found = textContent.match(regex);
-              if (found) {
-                let split = found[0].split(" ");
-                type = normalized[i];
-                sums.found[i] += Number(
-                  this.removeNumSeparator(split[split.length - 1])
-                );
+            if (type == "Unknown") {
+              let objectNode = content.querySelector("a");
+              if (objectNode) {
+                json.result = "Object";
+                json["object"] = objectNode.innerText;
               }
-            });
-            // Fleet
-            let fleetMatches = textContent.match(/.*: [1-9].*/gm);
-            fleetMatches &&
-              fleetMatches.forEach((result) => {
-                let split = result.split(": ");
-                type = "Fleet";
-                let id = this.json.shipNames[split[0]];
-                let count = Number(split[1]);
-                sums.fleet[id]
-                  ? (sums.fleet[id] += count)
-                  : (sums.fleet[id] = count);
+            }
+            if (type == "Unknown") {
+              // Resources
+              ressources.forEach((res, i) => {
+                if (textContent.includes(res)) {
+                  let regex = new RegExp(`[0-9]{1,3}(.[0-9]{1,3})*`, "gm");
+
+                  let found = textContent.match(regex);
+                  if (found) {
+                    type = normalized[i];
+                    sums.found[i] += Number(this.removeNumSeparator(found[0]));
+                  }
+                }
               });
+            }
+            if (type == "Unknown") {
+              // Fleet
+              let fleetMatches = textContent.match(/.*: [1-9].*/gm);
+              fleetMatches &&
+                fleetMatches.forEach((result) => {
+                  let split = result.split(": ");
+                  type = "Fleet";
+                  let id = this.json.shipNames[split[0]];
+                  let count = Number(split[1]);
+                  sums.fleet[id]
+                    ? (sums.fleet[id] += count)
+                    : (sums.fleet[id] = count);
+                });
+            }
 
             if (type != "Unknown") {
               sums.type[type] ? (sums.type[type] += 1) : (sums.type[type] = 1);
@@ -4355,15 +4396,29 @@ class OGInfinity {
 
   getFleetCost(ships) {
     let fleetRes = [0, 0, 0];
-    [202, 203, 210, 204, 205, 206, 219, 207, 215, 211, 213, 218].forEach(
-      (id) => {
-        if (ships[id]) {
-          fleetRes[0] += SHIP_COSTS[id][0] * ships[id] * 1000;
-          fleetRes[1] += SHIP_COSTS[id][1] * ships[id] * 1000;
-          fleetRes[2] += SHIP_COSTS[id][2] * ships[id] * 1000;
-        }
+    [
+      202,
+      203,
+      210,
+      208,
+      209,
+      204,
+      205,
+      206,
+      219,
+      207,
+      215,
+      211,
+      213,
+      218,
+      214,
+    ].forEach((id) => {
+      if (ships[id]) {
+        fleetRes[0] += SHIP_COSTS[id][0] * ships[id] * 1000;
+        fleetRes[1] += SHIP_COSTS[id][1] * ships[id] * 1000;
+        fleetRes[2] += SHIP_COSTS[id][2] * ships[id] * 1000;
       }
-    );
+    });
     return fleetRes;
   }
 
@@ -4509,16 +4564,44 @@ class OGInfinity {
         let dateStr = getFormatedDate(new Date(d).getTime(), "[d].[m].[y]");
         if (sums[dateStr]) {
           weekSums.fuel = sums[dateStr].fuel;
-          [202, 203, 210, 204, 205, 206, 219, 207, 215, 211, 213, 218].forEach(
-            (id) => {
-              weekSums.fleet[id] += sums[dateStr].fleet[id] || 0;
-            }
-          );
-          [202, 203, 210, 204, 205, 206, 219, 207, 215, 211, 213, 218].forEach(
-            (id) => {
-              weekSums.losses[id] += sums[dateStr].losses[id] || 0;
-            }
-          );
+          [
+            202,
+            203,
+            210,
+            208,
+            209,
+            204,
+            205,
+            206,
+            219,
+            207,
+            215,
+            211,
+            213,
+            218,
+            214,
+          ].forEach((id) => {
+            weekSums.fleet[id] += sums[dateStr].fleet[id] || 0;
+          });
+          [
+            202,
+            203,
+            210,
+            208,
+            209,
+            204,
+            205,
+            206,
+            219,
+            207,
+            215,
+            211,
+            213,
+            218,
+            214,
+          ].forEach((id) => {
+            weekSums.losses[id] += sums[dateStr].losses[id] || 0;
+          });
           sums[dateStr].found.forEach((value, index) => {
             weekSums.found[index] += sums[dateStr].found[index];
           });
@@ -4939,11 +5022,25 @@ class OGInfinity {
         let dateStr = getFormatedDate(new Date(d).getTime(), "[d].[m].[y]");
         if (sums[dateStr]) {
           weekSums.fuel += sums[dateStr].fuel;
-          [202, 203, 210, 204, 205, 206, 219, 207, 215, 211, 213, 218].forEach(
-            (id) => {
-              weekSums.losses[id] += sums[dateStr].losses[id] || 0;
-            }
-          );
+          [
+            202,
+            203,
+            210,
+            208,
+            209,
+            204,
+            205,
+            206,
+            219,
+            207,
+            215,
+            211,
+            213,
+            218,
+            214,
+          ].forEach((id) => {
+            weekSums.losses[id] += sums[dateStr].losses[id] || 0;
+          });
           sums[dateStr].loot.forEach((value, index) => {
             weekSums.loot[index] += sums[dateStr].loot[index];
           });
@@ -5490,6 +5587,7 @@ class OGInfinity {
               sums["Early"] || 0,
               sums["Bhole"] || 0,
               sums["Void"] || 0,
+              sums["Merchant"] || 0,
             ],
             label: "expeditions",
             backgroundColor: [
@@ -5505,6 +5603,7 @@ class OGInfinity {
               "#adadad",
               "#614bb1",
               "#344051",
+              "#a0c02b",
             ],
             borderColor: "#1b232c",
           },
@@ -5523,6 +5622,7 @@ class OGInfinity {
           "Early",
           "B. Hole",
           "Empty",
+          "Merchant",
         ],
       },
       options: {
@@ -6622,8 +6722,33 @@ class OGInfinity {
       let slider = briefing.appendChild(
         this.createDOM(
           "div",
-          { class: "ogl-fleetSpeed" },
+          { style: "margin-top: 10px" },
+          this.playerClass == PLAYER_CLASS_WARRIOR
+            ? `<div class="ogl-fleetSpeed first"><div data-step="1">05</div>
+          <div data-step="2">10</div>
+          <div data-step="3">15</div>
+          <div data-step="4">20</div>
+          <div data-step="5">25</div>
+          <div data-step="6">30</div>
+          <div data-step="7">35</div>
+          <div data-step="8">40</div>
+          <div data-step="9">45</div>
+          <div data-step="10">50</div>
+          </div>
+          <div class="ogl-fleetSpeed second">
+          <div data-step="11">55</div>
+          <div data-step="12">60</div>
+          <div data-step="13">65</div>
+          <div data-step="14">70</div>
+          <div data-step="15">75</div>
+          <div data-step="16">80</div>
+          <div data-step="17">85</div>
+          <div data-step="18">90</div>
+          <div data-step="19">95</div>
+          <div class="ogl-active" data-step="20">100</div>
+          </div>
           `
+            : `<div class="ogl-fleetSpeed">
         <div data-step="1">10</div>
         <div data-step="2">20</div>
         <div data-step="3">30</div>
@@ -6634,7 +6759,7 @@ class OGInfinity {
         <div data-step="8">80</div>
         <div data-step="9">90</div>
         <div class="ogl-active" data-step="10">100</div>
-        `
+        </div>`
         )
       );
 
@@ -10252,7 +10377,7 @@ class OGInfinity {
       this.createDOM(
         "th",
         {},
-        `<span class="ogl-option ogl-fleet-ship ogl-fleet-${this.json.options.spyFret}"></span>`
+        `<span style="display: flex;" class="ogl-option ogl-fleet-ship ogl-fleet-${this.json.options.spyFret}"></span>`
       )
     );
 
@@ -10472,7 +10597,7 @@ TOTAL: ${this.formatToUnits(report.total)}
 
         let coords = this.current.coords.split(":");
         let json = {
-          "0": [
+          0: [
             {
               class: this.playerClass,
               research: apiTechData,
@@ -11380,7 +11505,7 @@ TOTAL: ${this.formatToUnits(report.total)}
     btn.addEventListener("click", () => {
       let coords = this.current.coords.split(":");
       let json = {
-        "0": [
+        0: [
           {
             class: this.playerClass,
             research: apiTechData,
@@ -11637,10 +11762,37 @@ TOTAL: ${this.formatToUnits(report.total)}
 
       document.querySelector("#speedPercentage").classList.add("ogl-hidden");
 
-      let slider = this.createDOM("div", { class: "ogl-fleetSpeed" });
+      let slider = this.createDOM("div", {
+        class: "ogl-fleetSpeed",
+        style: "margin-top: 10px",
+      });
       document.querySelector("#fleetBriefingPart1").appendChild(slider);
 
-      slider.html(`
+      if (this.playerClass == PLAYER_CLASS_WARRIOR) {
+        slider.html(`
+        <div data-step="1">05</div>
+        <div data-step="2">10</div>
+        <div data-step="3">15</div>
+        <div data-step="4">20</div>
+        <div data-step="5">25</div>
+        <div data-step="6">30</div>
+        <div data-step="7">35</div>
+        <div data-step="8">40</div>
+        <div data-step="9">45</div>
+        <div data-step="10">50</div>
+        <div data-step="11">55</div>
+        <div data-step="12">60</div>
+        <div data-step="13">65</div>
+        <div data-step="14">70</div>
+        <div data-step="15">75</div>
+        <div data-step="16">80</div>
+        <div data-step="17">85</div>
+        <div data-step="18">90</div>
+        <div data-step="19">95</div>
+        <div class="ogl-active" data-step="20">100</div>
+        `);
+      } else {
+        slider.html(`
         <div data-step="1">10</div>
         <div data-step="2">20</div>
         <div data-step="3">30</div>
@@ -11652,7 +11804,7 @@ TOTAL: ${this.formatToUnits(report.total)}
         <div data-step="9">90</div>
         <div class="ogl-active" data-step="10">100</div>
         `);
-
+      }
       $(".ogl-fleetSpeed div").on("click", (event) => {
         $(`.ogl-fleetSpeed div`).removeClass("ogl-active");
         fleetDispatcher.speedPercent = event.target.getAttribute("data-step");
@@ -12007,6 +12159,31 @@ TOTAL: ${this.formatToUnits(report.total)}
     );
 
     dataDiv.appendChild(this.createDOM("hr"));
+
+    if (this.json.timezoneDiff != 0) {
+      let spanZone = dataDiv.appendChild(
+        this.createDOM(
+          "span",
+          {
+            style:
+              "display: flex;justify-content: space-between; align-items: center;margin-bottom: 10px",
+          },
+          "Change clocks to local time zone"
+        )
+      );
+      let timeZoneCheck = spanZone.appendChild(
+        this.createDOM("input", { type: "checkbox" })
+      );
+      timeZoneCheck.addEventListener("change", () => {
+        this.json.options.timeZone = timeZoneCheck.checked;
+        this.saveData();
+      });
+      if (this.json.options.timeZone) {
+        timeZoneCheck.checked = true;
+      }
+
+      dataDiv.appendChild(this.createDOM("hr"));
+    }
 
     dataDiv.appendChild(
       this.createDOM(

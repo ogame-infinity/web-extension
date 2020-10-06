@@ -461,18 +461,21 @@ fetch(url)
   });
 
 function getExpeditionType(message) {
-  let splits = message.split("\n");
-  message = splits[0];
+  let splits = message.split("\n\n");
   logbook = splits[splits.length - 1];
+  if (logbook.includes(":")) {
+    splits.pop();
+  }
+  message = splits.join("\n\n");
 
   // Checking lobbook entries
-  let busy = true;
-  for (let i in logbooks) {
-    let sim = similarity(logbook, i);
-    if (sim > 0.9) {
-      busy = false;
-    }
-  }
+  let busy = false;
+  // for (let i in logbooks) {
+  //   let sim = similarity(logbook, i);
+  //   if (sim > 0.9) {
+  //     busy = false;
+  //   }
+  // }
 
   for (let i in expeditionsMap) {
     let sim = similarity(message, i);
