@@ -6724,28 +6724,28 @@ class OGInfinity {
           "div",
           { style: "margin-top: 10px" },
           this.playerClass == PLAYER_CLASS_WARRIOR
-            ? `<div class="ogl-fleetSpeed first"><div data-step="1">05</div>
-          <div data-step="2">10</div>
-          <div data-step="3">15</div>
-          <div data-step="4">20</div>
-          <div data-step="5">25</div>
-          <div data-step="6">30</div>
-          <div data-step="7">35</div>
-          <div data-step="8">40</div>
-          <div data-step="9">45</div>
-          <div data-step="10">50</div>
+            ? `<div class="ogl-fleetSpeed first"><div data-step="0.5">05</div>
+          <div data-step="1.0">10</div>
+          <div data-step="1.5">15</div>
+          <div data-step="2.0">20</div>
+          <div data-step="2.5">25</div>
+          <div data-step="3.0">30</div>
+          <div data-step="3.5">35</div>
+          <div data-step="4.0">40</div>
+          <div data-step="4.5">45</div>
+          <div data-step="5.0">50</div>
           </div>
           <div class="ogl-fleetSpeed second">
-          <div data-step="11">55</div>
-          <div data-step="12">60</div>
-          <div data-step="13">65</div>
-          <div data-step="14">70</div>
-          <div data-step="15">75</div>
-          <div data-step="16">80</div>
-          <div data-step="17">85</div>
-          <div data-step="18">90</div>
-          <div data-step="19">95</div>
-          <div class="ogl-active" data-step="20">100</div>
+          <div data-step="5.5">55</div>
+          <div data-step="6.0">60</div>
+          <div data-step="6.5">65</div>
+          <div data-step="7.0">70</div>
+          <div data-step="7.5">75</div>
+          <div data-step="8.0">80</div>
+          <div data-step="8.5">85</div>
+          <div data-step="9.0">90</div>
+          <div data-step="9.5">95</div>
+          <div class="ogl-active" data-step="10">100</div>
           </div>
           `
             : `<div class="ogl-fleetSpeed">
@@ -11770,26 +11770,26 @@ TOTAL: ${this.formatToUnits(report.total)}
 
       if (this.playerClass == PLAYER_CLASS_WARRIOR) {
         slider.html(`
-        <div data-step="1">05</div>
-        <div data-step="2">10</div>
-        <div data-step="3">15</div>
-        <div data-step="4">20</div>
-        <div data-step="5">25</div>
-        <div data-step="6">30</div>
-        <div data-step="7">35</div>
-        <div data-step="8">40</div>
-        <div data-step="9">45</div>
-        <div data-step="10">50</div>
-        <div data-step="11">55</div>
-        <div data-step="12">60</div>
-        <div data-step="13">65</div>
-        <div data-step="14">70</div>
-        <div data-step="15">75</div>
-        <div data-step="16">80</div>
-        <div data-step="17">85</div>
-        <div data-step="18">90</div>
-        <div data-step="19">95</div>
-        <div class="ogl-active" data-step="20">100</div>
+        <div data-step="0.5">05</div>
+        <div data-step="1.0">10</div>
+        <div data-step="1.5">15</div>
+        <div data-step="2.0">20</div>
+        <div data-step="2.5">25</div>
+        <div data-step="3.0">30</div>
+        <div data-step="3.5">35</div>
+        <div data-step="4.0">40</div>
+        <div data-step="4.5">45</div>
+        <div data-step="5.0">50</div>
+        <div data-step="5.5">55</div>
+        <div data-step="6.0">60</div>
+        <div data-step="6.5">65</div>
+        <div data-step="7.0">70</div>
+        <div data-step="7.5">75</div>
+        <div data-step="8.0">80</div>
+        <div data-step="8.5">85</div>
+        <div data-step="9.0">90</div>
+        <div data-step="9.5">95</div>
+        <div class="ogl-active" data-step="10">100</div>
         `);
       } else {
         slider.html(`

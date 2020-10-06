@@ -1452,7 +1452,7 @@ div#banner_skyscraper {
   float: none;
 }
 #fleetBriefingPart1 .ogl-fleetSpeed {
-  width: fit-content !important;
+  width: max-content !important;
   grid-template-columns: repeat(20, 1fr);
 }
 #fleetBriefingPart1 .ogl-fleetSpeed > div {
