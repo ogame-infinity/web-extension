@@ -269,6 +269,7 @@ input[type="text"] {
   display: flex;
   width: 650px;
   justify-content: space-around;
+  overflow: scroll;
 }
 .ogl-settings > div {
   display: flex;
@@ -1367,7 +1368,7 @@ input[type="file"] {
   justify-content: center;
   align-items: center;
   margin-top: 5px;
-  width: 261px;
+  width: 271px;
 }
 .ogl-target-list .ogk-controls > div:first-child {
   padding: 20px 0px;
@@ -1434,7 +1435,7 @@ input[type="file"] {
 }
 
 div#banner_skyscraper {
-  left: 1130px !important;
+  left: 1150px !important;
 }
 
 /*****************************
@@ -1453,7 +1454,6 @@ div#banner_skyscraper {
 }
 #fleetBriefingPart1 .ogl-fleetSpeed {
   width: max-content !important;
-  grid-template-columns: repeat(20, 1fr);
 }
 #fleetBriefingPart1 .ogl-fleetSpeed > div {
   min-width: 30px;
@@ -2060,7 +2060,7 @@ button.build-it_premium {
 }
 
 #pageContent {
-  left: 40px !important;
+  left: 0px !important;
 }
 /*****************************
 * SPY TABLE
@@ -2145,8 +2145,9 @@ button.build-it_premium {
   text-decoration: none;
 }
 
-.ogl-spyTable a:hover {
-  color: orange;
+.ogl-spyTable td:not(.ogl-name) a:hover {
+  color: orange !important;
+  /* text-decoration: underline; */
 }
 
 .ogl-spyTable tr > *:nth-child(odd) {
@@ -2758,7 +2759,7 @@ button.build-it_premium {
 .ogl-planets-col {
   display: flex;
   flex-direction: column;
-  width: 261px;
+  width: 271px;
   align-items: center;
   margin-top: 15px;
 }
@@ -3474,6 +3475,10 @@ button.build-it_premium {
   outline-color: #fff;
 }
 
+.ogl-target {
+  border: dashed 1px !important;
+}
+
 .planetlink .ogl-timer,
 .moonlink .ogl-timer {
   background: #00692a;
@@ -3484,6 +3489,7 @@ button.build-it_premium {
   height: 5px;
   right: 1px;
   position: absolute;
+  /* top: 8px; */
   top: 1px;
   width: 5px;
 }
@@ -3496,6 +3502,32 @@ button.build-it_premium {
 .planetlink .ogl-short,
 .moonlink .ogl-short {
   background: #ab2a2a;
+}
+
+.smallplanet img {
+  display: block;
+  height: 16px;
+  top: 13px !important;
+  /* transition: top .2s; */
+  width: 16px;
+  /* background: #13181d; */
+  border-radius: 50% !important;
+  box-shadow: 0 0 0 1px #13181d !important;
+  height: 16px;
+  left: 73px !important;
+  margin: 0 !important;
+  position: absolute !important;
+  top: 12px !important;
+  width: 16px;
+  z-index: 2;
+}
+
+.smallplanet a:not(.active) img:hover {
+  box-shadow: 0 0 0 1px #d0813e !important;
+}
+
+.smallplanet .moonlink img {
+  left: 43px !important;
 }
 
 .planetlink .planetPic,
@@ -4265,7 +4297,7 @@ Global fix to center the page when planet overview is expender
 
 #pageContent {
   width: max-content !important;
-  min-width: 1120px !important;
+  min-width: 1130px !important;
 }
 
 #pageContent > #right {
@@ -5135,7 +5167,7 @@ div[data-marker]:hover {
 }
 
 .ogl-tableOptions:before {
-  content: "OGL options:";
+  content: "Options:";
   margin-right: 5px;
   vertical-align: top;
 }
@@ -5186,6 +5218,7 @@ div[data-marker]:hover {
     rgb(138, 138, 138) 50%
   );
   opacity: 0.5;
+  border-radius: 3px;
 }
 
 .ogl-harvestMission {
@@ -5231,6 +5264,7 @@ div[data-marker]:hover {
 
 .ogl-harvest {
   transform-origin: bottom right;
+  /* opacity: 0; */
 }
 
 .ogl-skip {
@@ -5931,7 +5965,7 @@ resourceIcon.metal {
   border-radius: 2px;
   box-shadow: inset 0 1px rgba(255, 255, 255, 0.2), 0 0 0 1px #000;
   color: #fff;
-  display: grid;
+  display: flex;
   grid-template-columns: repeat(10, 1fr);
   text-align: center;
 }
@@ -6122,7 +6156,7 @@ hr {
 }
 
 .ogl-dialogOverlay {
-  padding-top: 20vh;
+  padding-top: 10vh;
   /* align-items: center; */
   background: rgba(0, 0, 0, 0.7);
   bottom: 0;
@@ -6166,7 +6200,7 @@ hr {
 
 @media only screen and (max-height: 800px) {
   .ogl-dialogOverlay {
-    padding-top: 10vh;
+    padding-top: 0vh;
   }
 }
 @media only screen and (max-height: 600px) {
@@ -6380,6 +6414,7 @@ table.fleetinfo tr:nth-last-child(1),
 .icon_against,
 .icon_maximize,
 .icon_trash,
+.icon_plus,
 .ogl-pin,
 .ogl-mmorpgstats {
   background: currentColor !important;
@@ -6396,6 +6431,7 @@ table.fleetinfo tr:nth-last-child(1),
 .ogl-icon-attack.ogl-active,
 .close-tooltip.ogl-active,
 .icon_chat.ogl-active,
+.icon_plus.ogl-active,
 .icon_close.ogl-active,
 .icon_fastforward.ogl-active,
 .icon_user.ogl-active,
@@ -6412,7 +6448,7 @@ table.fleetinfo tr:nth-last-child(1),
 
 .ogl-icon-attack:hover,
 .close-tooltip:hover,
-.icon_chat:hover,
+.icon_chat:hover .icon_plus:hover,
 .icon_close:hover,
 .icon_fastforward:hover,
 .icon_user:hover,
@@ -6522,7 +6558,7 @@ table.fleetinfo tr:nth-last-child(1),
   left: 50%;
   position: absolute;
   top: 50%;
-  transform: translate(-50%, -50%) rotate(45deg);
+  transform: translate(-50%, -50%) rotate(0deg);
   width: 2px;
 }
 
@@ -6534,7 +6570,7 @@ table.fleetinfo tr:nth-last-child(1),
   left: 50%;
   position: absolute;
   top: 50%;
-  transform: translate(-50%, -50%) rotate(45deg);
+  transform: translate(-50%, -50%) rotate(90deg);
   width: 2px;
 }
 

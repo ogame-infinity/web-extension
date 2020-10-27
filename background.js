@@ -479,7 +479,7 @@ function getExpeditionType(message) {
 
   for (let i in expeditionsMap) {
     let sim = similarity(message, i);
-    if (sim > 0.9) {
+    if (sim > 0.6) {
       return { type: expeditionsMap[i], busy: busy };
     }
   }
