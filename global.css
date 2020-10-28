@@ -2003,6 +2003,11 @@ button.build-it_premium {
   background-color: #a0c02b !important;
 }
 
+.msg_new.ogk-void .msg_status,
+.msg.ogk-void .msg_status {
+  background-color: #22303a !important;
+}
+
 /*****************************
 * MESSAGING:  RC
 /****************************/

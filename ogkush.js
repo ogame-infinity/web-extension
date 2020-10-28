@@ -308,6 +308,15 @@ class OGInfinity {
   start() {
     this.updateServerSettings();
 
+    // parseInt(document.querySelector('input[name="spio_anz"]').value)
+
+    try {
+      if (spionageAmount != undefined) {
+        this.json.spyProbes = spionageAmount;
+        this.saveData();
+      }
+    } catch (e) {}
+
     if (!this.json.resNames) {
       this.json.resNames = [];
       this.json.resNames[0] = resourcesBar.resources.metal.tooltip.split(
@@ -393,7 +402,7 @@ class OGInfinity {
     this.keyboardActions();
     this.betterTooltip();
     this.utilities();
-    this.loopUtilities();
+    // this.loopUtilities();
     this.chat();
     this.uvlinks();
     this.flyingFleet();
@@ -2077,6 +2086,23 @@ class OGInfinity {
         });
     };
 
+    let changeSpy = () => {
+      document
+        .querySelectorAll("#eventContent .sendProbe a")
+        .forEach((elem) => {
+          let params = new URL(elem.href).searchParams;
+          elem.href = "#";
+          elem.setAttribute(
+            "onClick",
+            `sendShipsWithPopup(6,${params.get("galaxy")},${params.get(
+              "system"
+            )},${params.get("position")},${params.get("planetType")},${
+              this.json.spyProbes
+            }); return false;`
+          );
+        });
+    };
+
     let addHover = () => {
       document.querySelectorAll(".eventFleet").forEach((line) => {
         let previous =
@@ -2139,6 +2165,7 @@ class OGInfinity {
       // if (this.json.options.timeZone) {
       changeTimeZone();
       // }
+      changeSpy();
       addColors();
       addOptions();
       addHover();
@@ -12335,19 +12362,20 @@ TOTAL: ${this.formatToUnits(report.total)}
     }
   }
 
-  loopUtilities() {
-    this.FPSLoop("loopUtilities");
-    if (this.page == "galaxy") {
-      if (document.querySelector('a[onclick*="sendShips"')) {
-        let ships = document
-          .querySelector('a[onclick*="sendShips"')
-          .getAttribute("onclick")
-          .match(/\d+/g)
-          .map(Number);
-        if (ships[0] == 6) this.json.spyProbes = ships[5];
-      }
-    }
-  }
+  // loopUtilities() {
+  //   this.FPSLoop("loopUtilities");
+  //   if (this.page == "galaxy") {
+  //     if (document.querySelector('a[onclick*="sendShips"')) {
+  //       let ships = document
+  //         .querySelector('a[onclick*="sendShips"')
+  //         .getAttribute("onclick")
+  //         .match(/\d+/g)
+  //         .map(Number);
+  //       if (ships[0] == 6) this.json.spyProbes = ships[5];
+
+  //     }
+  //   }
+  // }
 
   getTranslatedText(id) {
     let text = {
