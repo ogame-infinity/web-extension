@@ -309,7 +309,6 @@ class OGInfinity {
     this.updateServerSettings();
 
     // parseInt(document.querySelector('input[name="spio_anz"]').value)
-
     try {
       if (spionageAmount != undefined) {
         this.json.spyProbes = spionageAmount;
@@ -433,6 +432,43 @@ class OGInfinity {
       }
     }
 
+    sendShips = function (
+      order,
+      galaxy,
+      system,
+      planet,
+      planettype,
+      shipCount
+    ) {
+      if (shipsendingDone == 1) {
+        shipsendingDone = 0;
+        let params = {
+          mission: order,
+          galaxy: galaxy,
+          system: system,
+          position: planet,
+          type: planettype,
+          shipCount: shipCount,
+          token: miniFleetToken,
+        };
+        $.ajax(miniFleetLink, {
+          data: params,
+          dataType: "json",
+          type: "POST",
+          success: function (data) {
+            if (!data.response) {
+              shipsendingDone = 1;
+              addToTable("Error", "error");
+            } else {
+              if (typeof data.newToken != "undefined") {
+                miniFleetToken = data.newToken;
+              }
+              displayMiniFleetMessage(data.response);
+            }
+          },
+        });
+      }
+    };
     // console.log(this.production(1, 33, false));
   }
 
@@ -1963,7 +1999,41 @@ class OGInfinity {
               }
             });
 
+          let added = [];
+          this.json.flying.ids &&
+            flying.ids.forEach((mov) => {
+              let found = false;
+              this.json.flying.ids.forEach((oldMov) => {
+                if (mov.id == oldMov.id) {
+                  found = true;
+                }
+              });
+              if (!found) {
+                added.push(mov);
+              }
+            });
+          // console.log(added);
+
+          let update = false;
+          added.forEach((movement) => {
+            if (
+              movement.type != 6 ||
+              (movement.metal &&
+                movement.metal + movement.crystal + movement.deuterium != 0)
+            ) {
+              update = true;
+            }
+          });
           gone.forEach((movement) => {
+            // let tot = movement.metal + movement.crystal + movement.deuterium;
+            // console.log(tot);
+            if (
+              movement.type != 6 ||
+              (movement.metal &&
+                movement.metal + movement.crystal + movement.deuterium != 0)
+            ) {
+              update = true;
+            }
             if (this.json.myRes[movement.dest]) {
               let found = false;
               this.planetList.forEach((planet) => {
@@ -1986,9 +2056,11 @@ class OGInfinity {
             }
           });
 
-          this.json.needsUpdate = true;
+          this.json.needsUpdate = update;
           this.saveData();
-          this.updateInfo();
+          if (update) {
+            this.updateInfo();
+          }
         }
 
         this.json.flying = flying;
@@ -8575,6 +8647,7 @@ class OGInfinity {
         id: id,
         origin: back ? dest : origin,
         dest: back ? origin : dest,
+        type: type,
       };
 
       // Market movements
@@ -11632,7 +11705,7 @@ TOTAL: ${this.formatToUnits(report.total)}
       // if (document.querySelector("#allornone")) {
       document.addEventListener("keydown", (event) => {
         if (event.keyCode == 78) {
-          actionSkip();
+          // actionSkip();
         }
       });
       // }
