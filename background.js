@@ -476,15 +476,24 @@ function getExpeditionType(message) {
   //     busy = false;
   //   }
   // }
-
+  let max = 0;
+  let similar = "";
+  let type = "";
   for (let i in expeditionsMap) {
     let sim = similarity(message, i);
-    if (sim > 0.6) {
-      return { type: expeditionsMap[i], busy: busy };
+    console.log(sim);
+    if (sim > max) {
+      max = sim;
+      similar = message;
+      type = expeditionsMap[i];
     }
   }
-
-  return { type: "Unknown", busy: busy };
+  console.log(max, message);
+  if (max > 0.35) {
+    return { type: type, busy: busy };
+  } else {
+    return { type: "Unknown", busy: busy };
+  }
 }
 
 let universes = {};

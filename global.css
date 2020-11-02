@@ -269,7 +269,7 @@ input[type="text"] {
   display: flex;
   width: 650px;
   justify-content: space-around;
-  overflow: scroll;
+  overflow: auto;
 }
 .ogl-settings > div {
   display: flex;
@@ -3910,8 +3910,17 @@ button.build-it_premium {
 .fleetDetails[data-mission-type="1"] .nextMission {
   color: #d43635 !important;
 }
+.fleetDetails[data-mission-type="2"] .timer,
+.fleetDetails[data-mission-type="2"] .nextTimer,
+.fleetDetails[data-mission-type="2"] .ogk-ships-count,
+.fleetDetails[data-mission-type="2"] .mission,
+.fleetDetails[data-mission-type="2"] .nextMission {
+  color: #d43635 !important;
+}
 .fleetDetails[data-mission-type="1"] .timer.friendly,
-.fleetDetails[data-mission-type="1"] .nextTimer.friendly {
+.fleetDetails[data-mission-type="1"] .nextTimer.friendly,
+.fleetDetails[data-mission-type="2"] .timer.friendly,
+.fleetDetails[data-mission-type="2"] .nextTimer.friendly {
   color: #9c0 !important;
 }
 

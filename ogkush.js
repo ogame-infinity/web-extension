@@ -316,6 +316,14 @@ class OGInfinity {
       }
     } catch (e) {}
 
+    // dataHelper
+    //   .getExpeditionType(
+    //     `Der Hilferuf, dem die Expedition folgte, stellte sich als böse Falle einiger arglistiger Sternen-Freibeuter heraus. Ein Gefecht war unvermeidlich.`
+    //   )
+    //   .then((type) => {
+    //     alert(type);
+    //   });
+
     if (!this.json.resNames) {
       this.json.resNames = [];
       this.json.resNames[0] = resourcesBar.resources.metal.tooltip.split(
@@ -387,7 +395,7 @@ class OGInfinity {
     this.neededCargo();
     this.preselectShips();
     this.harvest();
-    this.autoHarvest();
+    // this.autoHarvest();
     this.expedition();
     this.expeditionMessages();
     this.cleanupMessages();
@@ -469,7 +477,6 @@ class OGInfinity {
         });
       }
     };
-    // console.log(this.production(1, 33, false));
   }
 
   timeZone() {
@@ -1404,13 +1411,14 @@ class OGInfinity {
           callback();
 
           setTimeout(function () {
+            $("#sendFleet").removeAttr("disabled");
             window.location = data.redirectUrl;
           }, 50);
         }
         // request failed
         else {
+          $("#sendFleet").removeAttr("disabled");
           that.stopLoading();
-
           // @TODO display confirmation popup to infringe bashlimit rules
           if (
             data.responseArray &&
@@ -2046,12 +2054,15 @@ class OGInfinity {
                 this.json.myRes[movement.dest].metal += movement.metal;
                 this.json.myRes[movement.dest].crystal += movement.crystal;
                 this.json.myRes[movement.dest].deuterium += movement.deuterium;
+                this.saveData();
+                this.updateresourceDetail();
               } else {
                 let tot =
                   movement.metal + movement.crystal + movement.deuterium;
-                if (tot != 0) {
+                if (movement.metal && tot != 0) {
                   this.json.myRes[movement.dest].invalidate = true;
                 }
+                this.saveData();
               }
             }
           });
@@ -3992,6 +4003,7 @@ class OGInfinity {
     if (this.page == "messages") {
       this.json.options.timeZone &&
         document.querySelectorAll(`div li.msg`).forEach((msg) => {
+          if (!msg.querySelector(".msg_date")) return;
           let date = msg.querySelector(".msg_date").innerText;
           if (
             !msg.querySelector(".msg_date").classList.contains(".ogl-ready")
@@ -4074,42 +4086,42 @@ class OGInfinity {
             }
             // Objects
 
-            if (type == "Unknown") {
-              let objectNode = content.querySelector("a");
-              if (objectNode) {
-                json.result = "Object";
-                json["object"] = objectNode.innerText;
-                type = "Object";
-              }
+            // if (type == "Unknown") {
+            let objectNode = content.querySelector("a");
+            if (objectNode) {
+              json.result = "Object";
+              json["object"] = objectNode.innerText;
+              type = "Object";
             }
-            if (type == "Unknown") {
-              // Resources
-              ressources.forEach((res, i) => {
-                if (textContent.includes(res)) {
-                  let regex = new RegExp(`[0-9]{1,3}(.[0-9]{1,3})*`, "gm");
 
-                  let found = textContent.match(regex);
-                  if (found) {
-                    type = normalized[i];
-                    sums.found[i] += Number(this.removeNumSeparator(found[0]));
-                  }
+            // if (type == "Unknown") {
+            // Resources
+            ressources.forEach((res, i) => {
+              if (textContent.includes(res)) {
+                let regex = new RegExp(`[0-9]{1,3}(.[0-9]{1,3})*`, "gm");
+
+                let found = textContent.match(regex);
+                if (found) {
+                  type = normalized[i];
+                  sums.found[i] += Number(this.removeNumSeparator(found[0]));
                 }
+              }
+            });
+            // }
+            // if (type == "Unknown") {
+            // Fleet
+            let fleetMatches = textContent.match(/.*: [1-9].*/gm);
+            fleetMatches &&
+              fleetMatches.forEach((result) => {
+                let split = result.split(": ");
+                type = "Fleet";
+                let id = this.json.shipNames[split[0]];
+                let count = Number(split[1]);
+                sums.fleet[id]
+                  ? (sums.fleet[id] += count)
+                  : (sums.fleet[id] = count);
               });
-            }
-            if (type == "Unknown") {
-              // Fleet
-              let fleetMatches = textContent.match(/.*: [1-9].*/gm);
-              fleetMatches &&
-                fleetMatches.forEach((result) => {
-                  let split = result.split(": ");
-                  type = "Fleet";
-                  let id = this.json.shipNames[split[0]];
-                  let count = Number(split[1]);
-                  sums.fleet[id]
-                    ? (sums.fleet[id] += count)
-                    : (sums.fleet[id] = count);
-                });
-            }
+            // }
 
             if (type != "Unknown") {
               sums.type[type] ? (sums.type[type] += 1) : (sums.type[type] = 1);
@@ -8291,9 +8303,10 @@ class OGInfinity {
         this.saveData();
       };
 
-      document
-        .querySelector("#sendFleet")
-        .addEventListener("click", () => sendFleet());
+      // PLEASE USE THE onFleetSent callback ;)
+      // document
+      //   .querySelector("#sendFleet")
+      //   .addEventListener("click", () => sendFleet());
 
       document.addEventListener("keydown", (event) => {
         if (
@@ -8641,8 +8654,8 @@ class OGInfinity {
       let destIsMoon = document.querySelector(".destFleet .moon");
       let originIsMoon = document.querySelector(".originFleet .moon");
 
-      let origin = coords + (destIsMoon ? "M" : "P");
-      let dest = destCoords + (originIsMoon ? "M" : "P");
+      let origin = coords + (originIsMoon ? "M" : "P");
+      let dest = destCoords + (destIsMoon ? "M" : "P");
       let movement = {
         id: id,
         origin: back ? dest : origin,
@@ -8770,7 +8783,83 @@ class OGInfinity {
       cSumM = 0,
       dSumM = 0;
 
-    this.json.empire.forEach((planet) => {
+    let emulatedEmpire = [];
+    !this.commander &&
+      this.planetList.forEach((planet) => {
+        let coords = planet.querySelector(".planet-koords").textContent;
+        let id = planet.getAttribute("id").replace("planet-", "");
+        let moon = planet.querySelector(".moonlink");
+
+        let metal = 0;
+        let crystal = 0;
+        let deuterium = 0;
+        let metProd = 0,
+          criProd = 0,
+          deutProd = 0,
+          diff = 0;
+        let res = this.json.myRes[coords + "P"];
+        let moonRes = this.json.myRes[coords + "M"];
+
+        if (res) {
+          metal = res.metal;
+          crystal = res.crystal;
+          deuterium = res.deuterium;
+
+          let mines = this.json.myMines[coords];
+          if (mines && mines.metal && mines.temperature) {
+            diff = new Date().getTime() - new Date(res.lastUpdate).getTime();
+
+            diff = diff / 1000 / 60 / 60;
+
+            metProd = mines.metalProd;
+            criProd = mines.crystalProd;
+            deutProd = mines.deuteriumProd;
+
+            if (res.metalStorage > res.metal) {
+              metal = res.metal + metProd * diff;
+              metal = Math.min(metal, res.metalStorage);
+            } else {
+              metal = res.metal;
+            }
+            if (res.crystalStorage > res.crystal) {
+              crystal = res.crystal + criProd * diff;
+              crystal = Math.min(crystal, res.crystalStorage);
+            } else {
+              crystal = res.crystal;
+            }
+            if (res.deuteriumStorage > res.deuterium) {
+              deuterium = res.deuterium + deutProd * diff;
+              deuterium = Math.min(deuterium, res.deuteriumStorage);
+            } else {
+              deuterium = res.deuterium;
+            }
+          }
+        }
+
+        emulatedEmpire.push({
+          id: id,
+          metalStorage: (res && res.metalStorage) || 0,
+          metal: metal,
+          crystalStorage: (res && res.crystalStorage) || 0,
+          crystal: crystal,
+          deuteriumStorage: (res && res.deuteriumStorage) || 0,
+          deuterium: deuterium,
+          production: { hourly: [metProd, criProd, deutProd] },
+          invalidate: (res && res.invalidate) || false,
+          moon: moon && {
+            metal: (moonRes && moonRes.metal) || 0,
+            crystal: (moonRes && moonRes.crystal) || 0,
+            deuterium: (moonRes && moonRes.deuterium) || 0,
+            invalidate: (moonRes && moonRes.invalidate) || false,
+          },
+        });
+      });
+
+    let empire = this.json.empire;
+    if (emulatedEmpire.length != 0) {
+      empire = emulatedEmpire;
+    }
+    empire.forEach((planet) => {
       let planetNode = document.querySelector(`div[id=planet-${planet.id}]`);
 
       let isFullM = planet.metalStorage - planet.metal > 0 ? "" : " ogl-full";
@@ -8864,7 +8953,7 @@ class OGInfinity {
 
   resourceDetail() {
     let rechts = document.querySelector("#rechts");
-    this.isMobile &&
+    !this.isMobile &&
       rechts.addEventListener("mouseover", () => {
         let rect = rechts.getBoundingClientRect();
         if (rect.width + rect.x > window.innerWidth) {
@@ -8873,7 +8962,7 @@ class OGInfinity {
         }
       });
 
-    this.isMobile &&
+    !this.isMobile &&
       rechts.addEventListener("mouseout", (e) => {
         if (e.target.classList.contains("tooltipRight")) return;
         if (e.target.classList.contains("tooltipLeft")) return;
