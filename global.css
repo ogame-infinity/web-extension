@@ -2533,13 +2533,13 @@ button.build-it_premium {
   background-position: -2px -46px;
 }
 .ogk-stats .resourceIcon.crystal {
-  background-position: -46px -46px;
+  background-position: -36px -40px;
 }
 .ogk-stats .resourceIcon.deuterium {
-  background-position: -82px -46px;
+  background-position: -68px -40px;
 }
 .ogk-stats .resourceIcon.darkmatter {
-  background-position: -146px -122px;
+  background-position: -120px -100px;
   background-size: 300px;
 }
 
