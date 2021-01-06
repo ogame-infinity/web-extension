@@ -1985,15 +1985,14 @@ class OGInfinity {
         clearInterval(inter);
         updateEventBox();
       }
-    }, 100);
 
-    setInterval(() => {
       const notifications = this.notifiy.getCurrent();
       if(notifications.length){
-        console.log('DO IT', notifications);
+        console.log('Show notifications', notifications);
         notifications.forEach((n) => this.notifiy.show(n));
+        this.saveData();
       }
-    }, 1000);
+    }, 100);
   }
 
   expeditionImpact(show) {
@@ -9691,6 +9690,7 @@ TOTAL: ${this.formatToUnits(report.total)}
   }
 
   saveData() {
+    this.json.notifications = this.notifiy.data;
     localStorage.setItem('ogk-data', JSON.stringify(this.json));
   }
 
