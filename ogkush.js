@@ -1985,13 +1985,15 @@ class OGInfinity {
         clearInterval(inter);
         updateEventBox();
       }
+    }, 100);
 
+    setInterval(() => {
       const notifications = this.notifiy.getCurrent();
       if(notifications.length){
         console.log('DO IT', notifications);
         notifications.forEach((n) => this.notifiy.show(n));
       }
-    }, 100);
+    }, 1000);
   }
 
   expeditionImpact(show) {
