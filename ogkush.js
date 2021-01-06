@@ -10078,8 +10078,8 @@ TOTAL: ${this.formatToUnits(report.total)}
       cost[1] *= Math.pow(1.8, lvl - 1);
       cost[2] *= Math.pow(1.8, lvl - 1);
     } else if (id == 36) {
-      cost[0] *= Math.pow(5, lvl - 1) / 4;
-      cost[2] *= Math.pow(5, lvl - 1) / 4;
+      cost[0] *= Math.pow(5, lvl - 1);
+      cost[2] *= Math.pow(5, lvl - 1);
       cost[3] *= Math.ceil(Math.pow(2.5, lvl - 1));
     } else if (id == 33) {
       cost[1] *= Math.pow(2, lvl - 1);
