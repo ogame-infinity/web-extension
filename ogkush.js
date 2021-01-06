@@ -1,3 +1,5 @@
+import { OGINotifications, OGIMessage } from "./util/notifications.js";
+
 let keyPrefix = 'ogkush-';
 
 var dataHelper = (function() {
@@ -158,6 +160,7 @@ class OGInfinity {
   constructor() {
     this.commander = player.hasCommander;
     this.rawURL = new URL(window.location.href);
+    this.notifiy = new OGINotifications();
     this.page = this.rawURL.searchParams.get('component') ||
         this.rawURL.searchParams.get('page');
     if (document.querySelector('#characterclass .explorer')) {
@@ -205,6 +208,7 @@ class OGInfinity {
     let res = JSON.parse(localStorage.getItem('ogk-data'));
     // get data & init default values
     this.json = res || {};
+    this.notifiy.data = this.json.notifications || {}
 
     this.json.welcome = this.json.welcome === false ? false : true;
     this.json.empire = this.json.empire || [];
@@ -1127,8 +1131,8 @@ class OGInfinity {
                   that.playerClass == 3);
             } else if (that.page == 'supplies' || that.page == 'facilities') {
               let lvls = that.getRobotsNanites(technologyId, baseLvl, initTime);
-              robotics = lvls.robotics;
-              nanites = lvls.nanites;
+              robotics = lvls?.robotics;
+              nanites = lvls?.nanites;
             }
 
             updateResearchDetails(technologyId, baseLvl, tolvl);
@@ -1907,6 +1911,34 @@ class OGInfinity {
       });
     };
 
+    let addNotifications = () => {
+      document.querySelectorAll('.eventFleet').forEach((line) => {
+        const id = line.getAttribute('id'), 
+        notificationIcon = this.createDOM('td', {class: 'ogl-notification ' + (this.notifiy.exists(id) ? 'active' : '')}, null);
+        notificationIcon.addEventListener('click', (item) => {
+          const arrival = line.getAttribute('data-arrival-time'),
+            missionFleet = line.querySelector('.missionFleet img').getAttribute('title'),
+            coordsOrigin = line.querySelector('.coordsOrigin').innerText;
+
+          if(item.target.classList.contains('active')){
+            this.notifiy.remove(id);
+          }else {
+            this.notifiy.add(new OGIMessage(
+              id,
+              'Fleet',
+              missionFleet + ' - ' + coordsOrigin,
+              arrival * 1000,
+            ));
+          }
+
+          this.saveData();
+          item.target.classList.toggle("active");
+
+        });
+        line.appendChild(notificationIcon);
+      });
+    };
+
     let changeTimeZone = () => {
       document.querySelectorAll('.eventFleet').forEach((line) => {
         let arrival = new Date(line.getAttribute('data-arrival-time') * 1000);
@@ -1927,6 +1959,7 @@ class OGInfinity {
       addColors();
       addOptions();
       addHover();
+      addNotifications();
       addRefreshButton();
       this.expeditionImpact(this.json.options.eventBoxExps);
     };
@@ -1951,6 +1984,12 @@ class OGInfinity {
       if (toggleEvents.loaded) {
         clearInterval(inter);
         updateEventBox();
+      }
+
+      const notifications = this.notifiy.getCurrent();
+      if(notifications.length){
+        console.log('DO IT', notifications);
+        notifications.forEach((n) => this.notifiy.show(n));
       }
     }, 100);
   }
@@ -10093,7 +10132,7 @@ TOTAL: ${this.formatToUnits(report.total)}
 
     let time = (cost[0] + cost[1]) /
         (2500 * Math.max(4 - lvl / 2, 1) * (1 + robotic) * Math.pow(2, nanite));
-    if (id == 15 || id == 36 || id == 43) {
+    if (id == 15 || id == 36 || id == 43 || id == 42) {
       time = ((cost[0] + cost[1]) / 2500) * (1 / (1 + robotic)) *
           Math.pow(0.5, nanite);
     }
