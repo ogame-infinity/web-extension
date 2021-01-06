@@ -519,6 +519,9 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         });
       } else if (request.type == "get") {
         return sendResponse({ player: dataHelper.getPlayer(request.id) });
+      } else if (request.type == "notification") {
+        chrome.notifications.create('', request.message);
+        return sendResponse(request.message);
       }
     } else {
       universes[request.universe] = new DataHelper(request.universe);

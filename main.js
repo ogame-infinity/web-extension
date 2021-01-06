@@ -1,6 +1,10 @@
-function injectScript(path, cb) {
+function injectScript(path, cb, module=false) {
   var s = document.createElement('script');
   s.src = chrome.extension.getURL(path);
+  if(module){
+    s.type = 'module';
+  }
+
   (document.head || document.documentElement).appendChild(s);
   s.onload = () => {
     s.remove();
@@ -49,7 +53,7 @@ if (window.location.href.includes('highscore')) {
 
 
 window.addEventListener('DOMContentLoaded', (event) => {
-  injectScript('ogkush.js');
+  injectScript('ogkush.js', null, true);
 });
 
 document.addEventListener('ogi-chart', function(e) {
@@ -123,5 +127,12 @@ document.addEventListener('ogi-galaxy', function(e) {
 document.addEventListener('ogi-clear', function(e) {
   chrome.runtime.sendMessage(
       {type: 'clear', universe: UNIVERSE, changes: e.detail},
+      function(response) {});
+});
+
+document.addEventListener('ogi-notification', function(e) {
+  const msg = Object.assign({iconUrl: 'res/logo128.png'}, e.detail);
+  chrome.runtime.sendMessage(
+      {type: 'notification', universe: UNIVERSE, message: msg},
       function(response) {});
 });
