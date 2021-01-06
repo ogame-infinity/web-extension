@@ -3903,6 +3903,10 @@ button.build-it_premium {
   filter: sepia(70%) hue-rotate(-50deg) saturate(11) brightness(0.8);
 }
 
+.destinationPlanet.status_abbr_longinactive {
+  color: #717171 !important;
+}
+
 .fleetDetails[data-mission-type="1"] .timer,
 .fleetDetails[data-mission-type="1"] .nextTimer,
 .fleetDetails[data-mission-type="1"] .ogk-ships-count,
