@@ -1959,7 +1959,9 @@ class OGInfinity {
       addColors();
       addOptions();
       addHover();
-      addNotifications();
+      if(this.json.options.notifications){
+        addNotifications();
+      }
       addRefreshButton();
       this.expeditionImpact(this.json.options.eventBoxExps);
     };
@@ -11056,6 +11058,21 @@ TOTAL: ${this.formatToUnits(report.total)}
       if (this.json.options.timeZone) {
         timeZoneCheck.checked = true;
       }
+      
+      let spanNot = dataDiv.appendChild(this.createDOM(
+          'span', {
+            style:
+                'display: flex;justify-content: space-between; align-items: center;margin-bottom: 10px',
+          },
+          'Enable notifications'));
+      let notificationCheck =
+      spanNot.appendChild(this.createDOM('input', {type: 'checkbox'}));
+      notificationCheck.addEventListener('change', () => {
+        this.json.options.notifications = notificationCheck.checked;
+      });
+      if (this.json.options.notifications) {
+        notificationCheck.checked = true;
+      }
 
       dataDiv.appendChild(this.createDOM('hr'));
     }
@@ -11303,6 +11320,11 @@ TOTAL: ${this.formatToUnits(report.total)}
       saveBtn.addEventListener('click', () => {
         this.json.options.rvalLimit =
             parseInt(this.removeNumSeparator(rvalInput.value));
+
+        if(!this.json.options.notifications){
+          this.notifiy.clearAll();
+        }
+        
         this.saveData();
         document.querySelector('.ogl-dialog .close-tooltip').click();
       });
