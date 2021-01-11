@@ -10136,7 +10136,7 @@ TOTAL: ${this.formatToUnits(report.total)}
 
     let time = (cost[0] + cost[1]) /
         (2500 * Math.max(4 - lvl / 2, 1) * (1 + robotic) * Math.pow(2, nanite));
-    if (id == 15 || id == 36 || id == 43 || id == 42) {
+    if (id == 15 || id == 36 || id == 43 || id == 42 || id == 41) {
       time = ((cost[0] + cost[1]) / 2500) * (1 / (1 + robotic)) *
           Math.pow(0.5, nanite);
     }
