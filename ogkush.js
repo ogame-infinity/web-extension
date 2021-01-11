@@ -10097,6 +10097,9 @@ TOTAL: ${this.formatToUnits(report.total)}
       time = ((cost[0] + cost[1]) / 2500) * (1 / (1 + robotic)) *
           Math.pow(0.5, nanite);
     }
+    if (id == 41 || id == 42 ) {
+      time = (cost[0] + cost[1]) / (2500.0 * (1.0 + robotic) * Math.pow(2.0, nanite));
+    }
     time /= this.json.speed;
 
     return {
