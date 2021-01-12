@@ -204,6 +204,20 @@ input[type="text"] {
   background-size: 175px;
 }
 
+.ogl-notification {
+  display: inline-block;
+  margin: 2px 0px;
+  background-size: 16px;
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+  background-repeat: no-repeat;
+  background-image: url("chrome-extension://__MSG_@@extension_id__/res/notification.svg");
+}
+.ogl-notification.active {
+  background-image: url("chrome-extension://__MSG_@@extension_id__/res/notification_active.svg");
+}
+
 .ogk-keep-dialog h1 {
   font-weight: 800;
   color: #5d7fa4;

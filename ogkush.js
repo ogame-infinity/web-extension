@@ -1,4 +1,4 @@
-let keyPrefix = "ogkush-";
+import { OGINotifications, OGIMessage } from "./util/notifications.js";
 
 var dataHelper = (function () {
   var requestId = 0;
@@ -158,6 +158,7 @@ class OGInfinity {
   constructor() {
     this.commander = player.hasCommander;
     this.rawURL = new URL(window.location.href);
+    this.notifiy = new OGINotifications();
     this.page =
       this.rawURL.searchParams.get("component") ||
       this.rawURL.searchParams.get("page");
@@ -210,6 +211,7 @@ class OGInfinity {
     let res = JSON.parse(localStorage.getItem("ogk-data"));
     // get data & init default values
     this.json = res || {};
+    this.notifiy.data = this.json.notifications || {};
 
     this.json.welcome = this.json.welcome === false ? false : true;
     this.json.empire = this.json.empire || [];
@@ -1334,8 +1336,8 @@ class OGInfinity {
               );
             } else if (that.page == "supplies" || that.page == "facilities") {
               let lvls = that.getRobotsNanites(technologyId, baseLvl, initTime);
-              robotics = lvls.robotics;
-              nanites = lvls.nanites;
+              robotics = lvls?.robotics;
+              nanites = lvls?.nanites;
             }
 
             updateResearchDetails(technologyId, baseLvl, tolvl);
@@ -2232,6 +2234,44 @@ class OGInfinity {
       });
     };
 
+    let addNotifications = () => {
+      document.querySelectorAll(".eventFleet").forEach((line) => {
+        const id = line.getAttribute("id"),
+          notificationIcon = this.createDOM(
+            "td",
+            {
+              class:
+                "ogl-notification " + (this.notifiy.exists(id) ? "active" : ""),
+            },
+            null
+          );
+        notificationIcon.addEventListener("click", (item) => {
+          const arrival = line.getAttribute("data-arrival-time"),
+            missionFleet = line
+              .querySelector(".missionFleet img")
+              .getAttribute("title"),
+            coordsOrigin = line.querySelector(".coordsOrigin").innerText;
+
+          if (item.target.classList.contains("active")) {
+            this.notifiy.remove(id);
+          } else {
+            this.notifiy.add(
+              new OGIMessage(
+                id,
+                "Fleet",
+                missionFleet + " - " + coordsOrigin,
+                arrival * 1000
+              )
+            );
+          }
+
+          this.saveData();
+          item.target.classList.toggle("active");
+        });
+        line.appendChild(notificationIcon);
+      });
+    };
+
     let changeTimeZone = () => {
       document.querySelectorAll(".eventFleet").forEach((line) => {
         let arrival = new Date(line.getAttribute("data-arrival-time") * 1000);
@@ -2254,6 +2294,9 @@ class OGInfinity {
       addColors();
       addOptions();
       addHover();
+      if (this.json.options.notifications) {
+        addNotifications();
+      }
       addRefreshButton();
       this.expeditionImpact(this.json.options.eventBoxExps);
     };
@@ -2282,6 +2325,13 @@ class OGInfinity {
       if (toggleEvents.loaded) {
         clearInterval(inter);
         updateEventBox();
+      }
+
+      const notifications = this.notifiy.getCurrent();
+      if (notifications.length) {
+        console.log("Show notifications", notifications);
+        notifications.forEach((n) => this.notifiy.show(n));
+        this.saveData();
       }
     }, 100);
   }
@@ -11246,6 +11296,7 @@ TOTAL: ${this.formatToUnits(report.total)}
   }
 
   saveData() {
+    this.json.notifications = this.notifiy.data;
     localStorage.setItem("ogk-data", JSON.stringify(this.json));
   }
 
@@ -11691,7 +11742,7 @@ TOTAL: ${this.formatToUnits(report.total)}
     let time =
       (cost[0] + cost[1]) /
       (2500 * Math.max(4 - lvl / 2, 1) * (1 + robotic) * Math.pow(2, nanite));
-    if (id == 15 || id == 36 || id == 43) {
+    if (id == 15 || id == 36 || id == 43 || id == 42 || id == 41) {
       time =
         ((cost[0] + cost[1]) / 2500) *
         (1 / (1 + robotic)) *
@@ -12704,6 +12755,26 @@ TOTAL: ${this.formatToUnits(report.total)}
         timeZoneCheck.checked = true;
       }
 
+      let spanNot = dataDiv.appendChild(
+        this.createDOM(
+          "span",
+          {
+            style:
+              "display: flex;justify-content: space-between; align-items: center;margin-bottom: 10px",
+          },
+          "Enable notifications"
+        )
+      );
+      let notificationCheck = spanNot.appendChild(
+        this.createDOM("input", { type: "checkbox" })
+      );
+      notificationCheck.addEventListener("change", () => {
+        this.json.options.notifications = notificationCheck.checked;
+      });
+      if (this.json.options.notifications) {
+        notificationCheck.checked = true;
+      }
+
       dataDiv.appendChild(this.createDOM("hr"));
     }
 
@@ -13038,6 +13109,11 @@ TOTAL: ${this.formatToUnits(report.total)}
       this.json.options.rvalLimit = parseInt(
         this.removeNumSeparator(rvalInput.value)
       );
+
+      if (!this.json.options.notifications) {
+        this.notifiy.clearAll();
+      }
+
       this.saveData();
       document.querySelector(".ogl-dialog .close-tooltip").click();
     });
