@@ -2703,7 +2703,7 @@ class OGInfinity {
               };
               let base64 = btoa(JSON.stringify(json));
               window.open(
-                  `https://trashsim.universeview.be/${this.gameLang}?SR_KEY=${
+                  `https://trashsim.universeview.be/en?SR_KEY=${
                       key}#prefill=${base64}`,
                   '_blank',
                   `location=yes,scrollbars=yes,status=yes,width=${
@@ -2717,7 +2717,7 @@ class OGInfinity {
             link.addEventListener(
                 'click',
                 () => window.open(
-                    `https://ogotcha.universeview.be/${this.gameLang}?CR_KEY=${
+                    `https://ogotcha.universeview.be/en?CR_KEY=${
                         key}`,
                     '_blank',
                     `location=yes,scrollbars=yes,status=yes,width=${
@@ -9416,7 +9416,7 @@ TOTAL: ${this.formatToUnits(report.total)}
 
         let base64 = btoa(JSON.stringify(json));
         window.open(
-            `https://trashsim.universeview.be/${this.gameLang}?SR_KEY=${
+            `https://trashsim.universeview.be/en?SR_KEY=${
                 report.apiKey}#prefill=${base64}`,
             '_blank',
             `location=yes,scrollbars=yes,status=yes,width=${
@@ -10429,7 +10429,7 @@ TOTAL: ${this.formatToUnits(report.total)}
 
       let base64 = btoa(JSON.stringify(json));
       window.open(
-          `https://trashsim.universeview.be/${this.gameLang}?#prefill=${
+          `https://trashsim.universeview.be/en?#prefill=${
               base64}`,
           '_blank',
           `location=yes,scrollbars=yes,status=yes,width=${
