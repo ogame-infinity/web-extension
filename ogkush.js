@@ -9693,10 +9693,10 @@ class OGInfinity {
   }
 
   generateIgnoreLink(playerId) {
-    return `https://s169-fr.ogame.gameforge.com/game/index.php?page=ignorelist&action=1&id=${playerId}`;
+    return `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=ignorelist&action=1&id=${playerId}`;
   }
   generateBuddyLink(playerId) {
-    return `https://s169-fr.ogame.gameforge.com/game/index.php?page=ingame&component=buddies&action=7&id=${playerId}&ajax=1`;
+    return `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=ingame&component=buddies&action=7&id=${playerId}&ajax=1`;
   }
 
   stalk(sender, player, delay) {
