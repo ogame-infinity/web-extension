@@ -3314,6 +3314,11 @@ class OGInfinity {
     });
 
     statsBtn.addEventListener("click", () => {
+      if(this.json.options.disableautofetchempire)
+      {
+        this.json.options.autofetchempire=true;
+        this.updateEmpireData();
+      }
       this.loading();
 
       let inter = setInterval(() => {
