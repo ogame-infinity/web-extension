@@ -1874,9 +1874,9 @@ class OGInfinity {
         this.saveData();
       });
 
-      if (this.mode == 1 || this.mode == 2) {
-        plusSvg.style.display = "none";
-      }
+ //     if (this.mode == 1 || this.mode == 2) {
+ //       plusSvg.style.display = "none";
+ //     }
     }
   }
 
