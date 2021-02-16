@@ -1052,7 +1052,7 @@ class OGInfinity {
           [0, 1, 2].forEach((i) => {
             if (missing[i]) {
               that.json.missing[coords][i] =
-                that.json.missing[coords][i] - parseInt(missing[i]);
+                that.json.missing[coords][i] - (parseInt(missing[i]) - 10);
             }
           });
 
