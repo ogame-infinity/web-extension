@@ -280,9 +280,13 @@ class OGInfinity {
     this.json.options.foreignMission = this.json.options.foreignMission || 3;
     this.json.options.expeditionMission =
       this.json.options.expeditionMission || 15;
-
     this.json.options.activitytimers =
       this.json.options.activitytimers === true ? true : false;
+// disableautofetch empire
+    this.json.options.disableautofetchempire =
+      this.json.options.disableautofetchempire === true ? true : false;
+    this.json.options.autofetchempire =
+      this.json.options.disableautofetchempire === true ? false : true;
     this.json.options.spyFilter = this.json.options.spyFilter || "DATE";
     this.json.options.rvalLimit =
       this.json.options.rvalLimit || 400000 * this.json.speed;
@@ -3312,6 +3316,11 @@ class OGInfinity {
           this.warningCommander();
           return;
         }
+        if(this.json.options.disableautofetchempire)
+        {
+            this.json.options.autofetchempire=true;
+            this.updateEmpireData();
+        }
         this.loading();
 
         let inter = setInterval(() => {
@@ -3327,6 +3336,11 @@ class OGInfinity {
       //   this.warningCommander();
       //   return;
       // }
+      if(this.json.options.disableautofetchempire)
+      {
+         this.json.options.autofetchempire=true;
+         this.updateEmpireData();
+      }
       let active = document.querySelector(
         ".ogl-option.ogl-active:not(.ogl-overview-icon)"
       );
@@ -3350,6 +3364,11 @@ class OGInfinity {
     });
 
     statsBtn.addEventListener("click", () => {
+      if(this.json.options.disableautofetchempire)
+      {
+        this.json.options.autofetchempire=true;
+        this.updateEmpireData();
+      }
       this.loading();
 
       let inter = setInterval(() => {
@@ -9329,6 +9348,7 @@ class OGInfinity {
   }
 
   updateInfo() {
+    if (this.json.options.autofetchempire==false) return;
     if (!this.commander) return;
     if (this.isLoading) return;
     this.isLoading = true;
@@ -13086,6 +13106,29 @@ TOTAL: ${this.formatToUnits(report.total)}
     });
     if (this.json.options.activitytimers) {
       timerCheck.checked = true;
+    }
+    //Disable commander auto fetch
+    settingDiv.appendChild(this.createDOM("hr"));
+
+    span = settingDiv.appendChild(
+      this.createDOM(
+        "span",
+        {
+          style:
+            "display: flex;justify-content: space-between; align-items: center;",
+        },
+        "Disable auto fetch Empire (Commander only)"
+      )
+    );
+    let disableautofetchempirebox = span.appendChild(
+      this.createDOM("input", { type: "checkbox" })
+    );
+    disableautofetchempirebox.addEventListener("change", () => {
+      this.json.options.disableautofetchempire = disableautofetchempirebox.checked;
+      this.saveData();
+    });
+    if (this.json.options.disableautofetchempire) {
+      disableautofetchempirebox.checked = true;
     }
 
     settingDiv.appendChild(this.createDOM("hr"));
