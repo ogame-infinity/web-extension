@@ -736,7 +736,8 @@ class OGInfinity {
             techno = that.research(
                 technoId, i, labs, technocrat, that.playerClass == 3);
           } else if (that.page == 'supplies' || that.page == 'facilities') {
-            techno = that.building(technoId, i, robotics, nanites);
+            techno = that.build
+            ing(technoId, i, robotics, nanites);
           }
 
           resSum[0] += techno.cost[0];
@@ -2548,6 +2549,10 @@ class OGInfinity {
       let eventList = document.querySelector('.event_list');
       if (eventList) {
         clearInterval(inter);
+
+        if (total == null || total == 0) {
+          total = 1
+        }
         document.querySelector('.event_list')
             .appendChild(this.createDOM(
                 'span', {
@@ -11079,20 +11084,21 @@ TOTAL: ${this.formatToUnits(report.total)}
         timeZoneCheck.checked = true;
       }
 
-      let spanNot = dataDiv.appendChild(this.createDOM(
-          'span', {
-            style:
-                'display: flex;justify-content: space-between; align-items: center;margin-bottom: 10px',
-          },
-          'Enable notifications'));
-      let notificationCheck =
-          spanNot.appendChild(this.createDOM('input', {type: 'checkbox'}));
-      notificationCheck.addEventListener('change', () => {
-        this.json.options.notifications = notificationCheck.checked;
-      });
-      if (this.json.options.notifications) {
-        notificationCheck.checked = true;
-      }
+      // let spanNot = dataDiv.appendChild(this.createDOM(
+      //     'span', {
+      //       style:
+      //           'display: flex;justify-content: space-between; align-items:
+      //           center;margin-bottom: 10px',
+      //     },
+      //     'Enable notifications'));
+      // let notificationCheck =
+      //     spanNot.appendChild(this.createDOM('input', {type: 'checkbox'}));
+      // notificationCheck.addEventListener('change', () => {
+      //   this.json.options.notifications = notificationCheck.checked;
+      // });
+      // if (this.json.options.notifications) {
+      //   notificationCheck.checked = true;
+      // }
 
       dataDiv.appendChild(this.createDOM('hr'));
     }

@@ -17,12 +17,13 @@ echo "$MAIN_JS_FILE_NAME minified"
 terser $CONTENT_JS_FILE_NAME > ./dist/$CONTENT_JS_FILE_NAME
 echo "$CONTENT_JS_FILE_NAME minified"
 terser $BG_JS_FILE_NAME > ./dist/$BG_JS_FILE_NAME
-echo "$JS_FILE_NAME minified"
+echo "$BG_JS_FILE_NAME  minified"
 
 
 echo "Minification complete!"
 
 cp -r res/ dist/res
+cp -r util/ dist/util
 cp -r libs/ dist/libs
 cp  $MANIFEST_FILE_NAME ./dist/$MANIFEST_FILE_NAME
 
