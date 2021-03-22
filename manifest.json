@@ -29,7 +29,7 @@
     "256": "res/logo512.png",
     "512": "res/logo512.png"
   },
-  "permissions": ["storage", "https://*.ogame.gameforge.com/game/*", "notifications"],
+  "permissions": ["storage", "https://*.ogame.gameforge.com/game/*"],
   "background": {
     "scripts": ["background.js"]
   }
