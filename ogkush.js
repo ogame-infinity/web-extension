@@ -4873,7 +4873,7 @@ class OGInfinity {
       total += sums.harvest[0] + sums.harvest[1];
       total += sums.found[0] + sums.found[1] + sums.found[2];
       total += sums.adjust[0] + sums.adjust[1] + sums.adjust[2];
-      total -= sums.fuel;
+      total += sums.fuel;
 
       return total;
     };
@@ -5321,7 +5321,7 @@ class OGInfinity {
       total += sums.harvest[0] + sums.harvest[1];
       total += sums.loot[0] + sums.loot[1] + sums.loot[2];
       total += sums.adjust[0] + sums.adjust[1] + sums.adjust[2];
-      total -= sums.fuel;
+      total += sums.fuel;
       return total;
     };
 
