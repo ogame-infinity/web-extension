@@ -3153,8 +3153,7 @@ class OGInfinity {
               let base64 = btoa(JSON.stringify(json));
               window.open(
                 `https://trashsim.universeview.be/${this.gameLang}?SR_KEY=${key}#prefill=${base64}`,
-                "_blank",
-                `location=yes,scrollbars=yes,status=yes,width=${screen.availWidth},height=${screen.availHeight}`
+                "_blank"
               );
             });
           } else if (key.startsWith("cr")) {
@@ -11060,8 +11059,7 @@ TOTAL: ${this.formatToUnits(report.total)}
         let base64 = btoa(JSON.stringify(json));
         window.open(
           `https://trashsim.universeview.be/${this.gameLang}?SR_KEY=${report.apiKey}#prefill=${base64}`,
-          "_blank",
-          `location=yes,scrollbars=yes,status=yes,width=${screen.availWidth},height=${screen.availHeight}`
+          "_blank"
         );
       });
 
@@ -12118,8 +12116,7 @@ TOTAL: ${this.formatToUnits(report.total)}
       let base64 = btoa(JSON.stringify(json));
       window.open(
         `https://trashsim.universeview.be/${this.gameLang}?#prefill=${base64}`,
-        "_blank",
-        `location=yes,scrollbars=yes,status=yes,width=${screen.availWidth},height=${screen.availHeight}`
+        "_blank"
       );
     });
   }
