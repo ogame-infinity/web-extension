@@ -3153,8 +3153,7 @@ class OGInfinity {
               let base64 = btoa(JSON.stringify(json));
               window.open(
                 `https://trashsim.universeview.be/${this.gameLang}?SR_KEY=${key}#prefill=${base64}`,
-                "_blank",
-                `location=yes,scrollbars=yes,status=yes,width=${screen.availWidth},height=${screen.availHeight}`
+                "_blank"
               );
             });
           } else if (key.startsWith("cr")) {
@@ -11060,8 +11059,7 @@ TOTAL: ${this.formatToUnits(report.total)}
         let base64 = btoa(JSON.stringify(json));
         window.open(
           `https://trashsim.universeview.be/${this.gameLang}?SR_KEY=${report.apiKey}#prefill=${base64}`,
-          "_blank",
-          `location=yes,scrollbars=yes,status=yes,width=${screen.availWidth},height=${screen.availHeight}`
+          "_blank"
         );
       });
 
@@ -11747,8 +11745,8 @@ TOTAL: ${this.formatToUnits(report.total)}
       cost[1] *= Math.pow(1.8, lvl - 1);
       cost[2] *= Math.pow(1.8, lvl - 1);
     } else if (id == 36) {
-      cost[0] *= Math.pow(5, lvl - 1) / 4;
-      cost[2] *= Math.pow(5, lvl - 1) / 4;
+      cost[0] *= Math.pow(5, lvl - 1);
+      cost[2] *= Math.pow(5, lvl - 1);
       cost[3] *= Math.ceil(Math.pow(2.5, lvl - 1));
     } else if (id == 33) {
       cost[1] *= Math.pow(2, lvl - 1);
@@ -12118,8 +12116,7 @@ TOTAL: ${this.formatToUnits(report.total)}
       let base64 = btoa(JSON.stringify(json));
       window.open(
         `https://trashsim.universeview.be/${this.gameLang}?#prefill=${base64}`,
-        "_blank",
-        `location=yes,scrollbars=yes,status=yes,width=${screen.availWidth},height=${screen.availHeight}`
+        "_blank"
       );
     });
   }
