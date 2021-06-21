@@ -10574,18 +10574,18 @@ class OGInfinity {
       report.detail = msg.querySelector(".msg_actions a.fright").href;
       report.delete = msg.querySelector(".msg_head .fright a .icon_refuse");
       report.fleet =
-        data[4].querySelectorAll("span").length > 0
+        data[5].querySelectorAll("span").length > 0
           ? this.cleanValue(
-              data[4]
+              data[5]
                 .querySelectorAll("span.ctn")[0]
                 .textContent.replace(/(\D*)/, "")
                 .split(" ")[0]
             )
           : "No Data";
       report.defense =
-        data[4].querySelectorAll("span").length > 1
+        data[5].querySelectorAll("span").length > 1
           ? this.cleanValue(
-              data[4]
+              data[5]
                 .querySelectorAll("span.ctn")[1]
                 .textContent.replace(/(\D*)/, "")
                 .split(" ")[0]
@@ -10595,18 +10595,18 @@ class OGInfinity {
       report.cleanDate = cleanDate;
       report.date =
         hours < 1 ? Math.floor(mins) + " min" : Math.floor(hours) + "h";
-      report.loot = data[3]
+      report.loot = data[4]
         .querySelector(".ctn")
         .textContent.replace(/(\D*)/, "")
         .replace(/%/, "");
       report.metal = this.cleanValue(
-        data[2].querySelectorAll(".resspan")[0].textContent.replace(/(\D*)/, "")
+        data[3].querySelectorAll(".resspan")[0].textContent.replace(/(\D*)/, "")
       );
       report.crystal = this.cleanValue(
-        data[2].querySelectorAll(".resspan")[1].textContent.replace(/(\D*)/, "")
+        data[3].querySelectorAll(".resspan")[1].textContent.replace(/(\D*)/, "")
       );
       report.deut = this.cleanValue(
-        data[2].querySelectorAll(".resspan")[2].textContent.replace(/(\D*)/, "")
+        data[3].querySelectorAll(".resspan")[2].textContent.replace(/(\D*)/, "")
       );
       report.total = report.metal + report.crystal + report.deut;
       report.renta = Math.round((report.total * report.loot) / 100);
