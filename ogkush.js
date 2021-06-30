@@ -1,4 +1,4 @@
-import { OGIMessage, OGINotifications } from "./util/notifications.js";
+// import { OGIMessage, OGINotifications } from "./util/notifications.js";
 
 var dataHelper = (function () {
   var requestId = 0;
@@ -158,7 +158,7 @@ class OGInfinity {
   constructor() {
     this.commander = player.hasCommander;
     this.rawURL = new URL(window.location.href);
-    this.notifiy = new OGINotifications();
+    // this.notifiy = new OGINotifications();
     this.page =
       this.rawURL.searchParams.get("component") ||
       this.rawURL.searchParams.get("page");
@@ -211,7 +211,7 @@ class OGInfinity {
     let res = JSON.parse(localStorage.getItem("ogk-data"));
     // get data & init default values
     this.json = res || {};
-    this.notifiy.data = this.json.notifications || {};
+    // this.notifiy.data = this.json.notifications || {};
 
     this.json.welcome = this.json.welcome === false ? false : true;
     this.json.empire = this.json.empire || [];
@@ -2298,9 +2298,9 @@ class OGInfinity {
       addColors();
       addOptions();
       addHover();
-      if (this.json.options.notifications) {
-        addNotifications();
-      }
+      // if (this.json.options.notifications) {
+      //   addNotifications();
+      // }
       addRefreshButton();
       this.expeditionImpact(this.json.options.eventBoxExps);
     };
@@ -2331,12 +2331,12 @@ class OGInfinity {
         updateEventBox();
       }
 
-      const notifications = this.notifiy.getCurrent();
-      if (notifications.length) {
-        console.log("Show notifications", notifications);
-        notifications.forEach((n) => this.notifiy.show(n));
-        this.saveData();
-      }
+      // const notifications = this.notifiy.getCurrent();
+      // if (notifications.length) {
+      //   console.log("Show notifications", notifications);
+      //   notifications.forEach((n) => this.notifiy.show(n));
+      //   this.saveData();
+      // }
     }, 100);
   }
 
@@ -11315,7 +11315,7 @@ TOTAL: ${this.formatToUnits(report.total)}
   }
 
   saveData() {
-    this.json.notifications = this.notifiy.data;
+    // this.json.notifications = this.notifiy.data;
     localStorage.setItem("ogk-data", JSON.stringify(this.json));
   }
 
@@ -13148,9 +13148,9 @@ TOTAL: ${this.formatToUnits(report.total)}
         this.removeNumSeparator(rvalInput.value)
       );
 
-      if (!this.json.options.notifications) {
-        this.notifiy.clearAll();
-      }
+      // if (!this.json.options.notifications) {
+      //   this.notifiy.clearAll();
+      // }
 
       this.saveData();
       document.querySelector(".ogl-dialog .close-tooltip").click();
