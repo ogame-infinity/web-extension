@@ -1895,7 +1895,7 @@ class OGInfinity {
       .then((xml) => {
         this.json.topScore = xml.querySelector("topScore").innerHTML;
         this.json.speed = xml.querySelector("speed").innerHTML;
-        this.json.speedFleet = xml.querySelector("speedFleet").innerHTML;
+        this.json.speedFleet = xml.querySelector("speedFleetWar").innerHTML;
         this.json.researchDivisor = xml.querySelector(
           "researchDurationDivisor"
         ).innerHTML;
