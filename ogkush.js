@@ -1895,14 +1895,14 @@ class OGInfinity {
       .then((xml) => {
         this.json.topScore = xml.querySelector("topScore").innerHTML;
         this.json.speed = xml.querySelector("speed").innerHTML;
-        this.json.speedFleet = xml.querySelector("speedFleetWar").innerHTML;
+        this.json.speedFleetWar = xml.querySelector("speedFleetWar").innerHTML;
         this.json.researchDivisor = xml.querySelector(
           "researchDurationDivisor"
         ).innerHTML;
 
         this.json.trashsimSettings = {
-          speed: xml.querySelector("speedFleet").innerHTML,
-          speed_fleet: xml.querySelector("speedFleet").innerHTML,
+          speed: xml.querySelector("speedFleetWar").innerHTML,
+          speed_fleet: xml.querySelector("speedFleetWar").innerHTML,
           galaxies: xml.querySelector("galaxies").innerHTML,
           systems: xml.querySelector("systems").innerHTML,
           rapid_fire: xml.querySelector("rapidFire").innerHTML,
@@ -2706,7 +2706,7 @@ class OGInfinity {
 
           let updateCounter = () => {
             let diff = (new Date() - time) / 1000 / 60;
-            let refreshTime = jumpTimes[gateLevel - 1] / this.json.speedFleet;
+            let refreshTime = jumpTimes[gateLevel - 1] / this.json.speedFleetWar;
             let count = Math.round(refreshTime - diff);
             counter.innerText = count + "'";
             if (count > 0) {
