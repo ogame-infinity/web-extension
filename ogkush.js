@@ -1677,14 +1677,14 @@ class OGInfinity {
     ) {
       // let old = fleetDispatcher.hasValidTarget;
 
-      $("#shortcuts .combatunits").on("change", () => {
-        let splits = $("#shortcuts .combatunits").val().split("#");
-        unions.forEach((union) => {
-          if (union.id == splits[splits.length - 1]) {
-            this.initUnionCombat(union);
-          }
-        });
-      });
+      // $("#shortcuts .combatunits").on("change", () => {
+      //   let splits = $("#shortcuts .combatunits").val().split("#");
+      //   unions.forEach((union) => {
+      //     if (union.id == splits[splits.length - 1]) {
+      //       this.initUnionCombat(union);
+      //     }
+      //   });
+      // });
 
       this.onFleetSent(() => {
         let pos = document.querySelector("#position").value;
