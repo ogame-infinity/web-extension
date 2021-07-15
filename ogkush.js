@@ -3784,7 +3784,7 @@ class OGInfinity {
           this.json.myMines[i].crystalProd || this.production(2, crystal, true);
         dprod +=
           this.json.myMines[i].deuteriumProd ||
-          this.production(3, deuterium, true);
+          this.production(3, deut, true);
       }
     }
 

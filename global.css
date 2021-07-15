@@ -1472,6 +1472,9 @@ div#banner_skyscraper {
 #naviActions {
   margin-top: 30px;
 }
+#fleet2 div#mission .percentageBarWrapper {
+  z-index: -1;
+}
 
 
 #fleetBriefingPart1 .ogl-fleetSpeed {
