@@ -1466,6 +1466,14 @@ div#banner_skyscraper {
 #fleetBriefingPart1_2 li:first-of-type .value {
   float: none;
 }
+#mission .border5px {
+  max-height: 155px;
+}
+#naviActions {
+  margin-top: 30px;
+}
+
+
 #fleetBriefingPart1 .ogl-fleetSpeed {
   width: max-content !important;
 }

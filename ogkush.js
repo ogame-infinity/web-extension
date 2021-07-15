@@ -13037,7 +13037,7 @@ TOTAL: ${this.formatToUnits(report.total)}
 
       let slider = this.createDOM("div", {
         class: "ogl-fleetSpeed",
-        style: "margin-top: 10px",
+        style: "margin-top: 50px",
       });
       document.querySelector("#fleetBriefingPart1").appendChild(slider);
 
