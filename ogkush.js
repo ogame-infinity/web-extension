@@ -9175,10 +9175,14 @@ class OGInfinity {
             // inputs[0].value = coords[0];
             // inputs[1].value = coords[1];
             // inputs[2].value = 16;
-            fleetDispatcher.targetPlanet.galaxy = coords[0]
-            fleetDispatcher.targetPlanet.system = coords[1]
-            fleetDispatcher.targetPlanet.position = 16
-
+            fleetDispatcher.targetPlanet.galaxy = coords[0];
+            fleetDispatcher.targetPlanet.system = coords[1];
+            fleetDispatcher.targetPlanet.type = 0;
+            fleetDispatcher.targetPlanet.position = 16;
+            fleetDispatcher.refreshTarget();
+            fleetDispatcher.updateTarget();
+            fleetDispatcher.selectMission(15);
+            fleetDispatcher.refreshMissions();
             // document.querySelector(".ogl-planet-icon").click();
             this.expedition = true;
 
@@ -9217,11 +9221,12 @@ class OGInfinity {
       btn.addEventListener("click", () => {
         let container = this.openPlanetList((planet) => {
           fleetDispatcher.targetPlanet = planet;
-          fleetDispatcher.refresh();
+          fleetDispatcher.refreshTarget();
+          fleetDispatcher.updateTarget();
           document
             .querySelector(".ogl-dialogOverlay")
             .classList.remove("ogl-active");
-          document.querySelector("#continueToFleet3").focus();
+//          document.querySelector("#continueToFleet3").focus();
         });
         this.popup(false, container);
       });
