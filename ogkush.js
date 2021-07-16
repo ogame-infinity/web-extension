@@ -13449,7 +13449,7 @@ TOTAL: ${this.formatToUnits(report.total)}
 //        this.json.speedFleetWar
 //        this.json.speedFleetPeaceful
 //        this.json.speedFleetHolding
-    let srvDatasBtn = this.createDOM("button", { class: "btn_blue save" }, "Update");
+    let srvDatasBtn = this.createDOM("button", { class: "btn_blue" }, "Update");
     srvDatas.appendChild(srvDatasBtn);
     srvDatasBtn.addEventListener("click", () => {
       this.json.updateSettings = true;
