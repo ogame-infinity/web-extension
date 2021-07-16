@@ -362,7 +362,7 @@ class OGInfinity {
         if (tech[0] == 114) this.json.tech114 = tech[1];
       });
 
-      console.log(this.json.apiTechData);
+      // console.log(this.json.apiTechData);
 
       this.json.ptFret =
         fleetDispatcher.fleetHelper.shipsData[202].baseCargoCapacity;
@@ -1994,7 +1994,7 @@ class OGInfinity {
       if (document.querySelector("#eventboxLoading").style.display == "none") {
         clearInterval(interval);
         let flying = this.getFlyingRes();
-        console.log(flying.ids);
+        // console.log(flying.ids);
         if (
           JSON.stringify(this.json.flying.ids) != JSON.stringify(flying.ids)
         ) {
@@ -4470,11 +4470,11 @@ class OGInfinity {
 
   loading() {
     let svg = `<svg width="200px" height="100px" viewBox="0 0 187.3 93.7" preserveAspectRatio="xMidYMid meet">
-                <path stroke="#3c536c" id="outline" fill="none" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" 
-                  d="M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-13.3,7.2-22.1,17.1 				
+                <path stroke="#3c536c" id="outline" fill="none" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"
+                  d="M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-13.3,7.2-22.1,17.1
                     c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z" />
                 <path id="outline-bg" opacity="0.1" fill="none" stroke="#eee" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
-                M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-13.3,7.2-22.1,17.1 				
+                M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-13.3,7.2-22.1,17.1
                 c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z" />
               </svg>`;
 
@@ -7284,7 +7284,7 @@ class OGInfinity {
         positionInput.value = position;
 
         // alert(galaxy, system)
-        
+
         fleetDispatcher.targetPlanet.galaxy = galaxy
         fleetDispatcher.targetPlanet.system = system
         fleetDispatcher.targetPlanet.position = position
@@ -7308,7 +7308,7 @@ class OGInfinity {
       systemInput.addEventListener("click", () => {
         systemInput.value = "";
       });
-      
+
       positionInput.addEventListener('focusout', () => {
         udapte()
       })
@@ -7348,15 +7348,15 @@ class OGInfinity {
         let galaxy = clampInt(getValue($('#galaxy').val()), 1, this.fleetHelper.MAX_GALAXY, true)
         let system = clampInt(getValue($('#system').val()), 1, this.fleetHelper.MAX_SYSTEM, true)
         let position = clampInt(getValue($('#position').val()), 1, this.fleetHelper.MAX_POSITION, true)
-      
+
         this.targetPlanet.galaxy = galaxy
         this.targetPlanet.system = system
         this.targetPlanet.position = position
-      
+
         if (this.targetPlanet.position === this.fleetHelper.EXPEDITION_POSITION) {
           this.targetPlanet.type = this.fleetHelper.PLANETTYPE_PLANET
         }
-      
+
         clearTimeout(this.fetchTargetPlayerDataTimeout)
         if (fetch) {
           let that = this
@@ -7388,7 +7388,7 @@ class OGInfinity {
         if (fleetDispatcher.isMissionAvailable()) {
           alert(missions)
         }
-        
+
 
       }
 
@@ -7953,7 +7953,7 @@ class OGInfinity {
       //       clearTimeout(timeout);
       //       timeout = setTimeout(() => {
       //         fleetDispatcher.updateTarget();
-              
+
       //         // fleetDispatcher.trySubmitFleet1();
       //       }, 50);
       //     }
@@ -8083,15 +8083,15 @@ class OGInfinity {
       //   let galaxy = clampInt(getValue($('#galaxy').val()), 1, this.fleetHelper.MAX_GALAXY, true)
       //   let system = clampInt(getValue($('#system').val()), 1, this.fleetHelper.MAX_SYSTEM, true)
       //   let position = clampInt(getValue($('#position').val()), 1, this.fleetHelper.MAX_POSITION, true)
-      
+
       //   this.targetPlanet.galaxy = galaxy
       //   this.targetPlanet.system = system
       //   this.targetPlanet.position = position
-      
+
       //   if (this.targetPlanet.position === this.fleetHelper.EXPEDITION_POSITION) {
       //     this.targetPlanet.type = this.fleetHelper.PLANETTYPE_PLANET
       //   }
-      
+
       //   clearTimeout(this.fetchTargetPlayerDataTimeout)
       //   if (fetch) {
       //     let that = this
@@ -10037,11 +10037,11 @@ class OGInfinity {
     this.isLoading = true;
 
     let svg = `<svg width="80px" height="30px" viewBox="0 0 187.3 93.7" preserveAspectRatio="xMidYMid meet">
-                <path stroke="#3c536c" id="outline" fill="none" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" 
-                  d="M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-13.3,7.2-22.1,17.1 				
+                <path stroke="#3c536c" id="outline" fill="none" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"
+                  d="M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-13.3,7.2-22.1,17.1
                     c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z" />
                 <path id="outline-bg" opacity="0.1" fill="none" stroke="#eee" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
-                M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-13.3,7.2-22.1,17.1 				
+                M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-13.3,7.2-22.1,17.1
                 c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z" />
 				      </svg>`;
     document
@@ -10459,7 +10459,7 @@ class OGInfinity {
       finalPlayer = player;
       let content = this.createDOM("div");
       content.html(`
-      <h1>${player.name} 
+      <h1>${player.name}
         <a href="${
           this.generateHiscoreLink(player.id) || ""
         }" class="ogl-ranking">
@@ -11373,13 +11373,13 @@ class OGInfinity {
         .querySelector("#subtabs-nfFleet20")
         .getAttribute("aria-controls");
       pagination = document.querySelector("#" + tab + " .pagination");
-      console.log(pagination);
+      // console.log(pagination);
     } else {
       tab = document
         .querySelector("#tabs-nfFavorites")
         .getAttribute("aria-controls");
       pagination = document.querySelector("#" + tab + " .pagination");
-      console.log(pagination);
+      // console.log(pagination);
     }
 
     let tableOptions = this.createDOM("div", { class: "ogl-tableOptions" });
@@ -11797,7 +11797,7 @@ TOTAL: ${this.formatToUnits(report.total)}
         let div = this.createDOM("div");
         div.html(`
           <div style="width: 75px">Missing </div>
-          
+
           <hr>
           <div class="ogl-metal">M: ${this.formatToUnits(
             Math.max(0, missing[0])
@@ -12276,8 +12276,8 @@ TOTAL: ${this.formatToUnits(report.total)}
     let geologist = prod * geologistFactor;
     let bonus = prod * percentBonus;
     let miner = (this.playerClass == PLAYER_CLASS_MINER ? 1 : 0) * 0.25 * prod;
-    console.log((this.playerClass == PLAYER_CLASS_MINER ? 1 : 1) * 0.25 * prod);
-    console.log(maxCrawlerCount, crawlers, crawlerBonus);
+    // console.log((this.playerClass == PLAYER_CLASS_MINER ? 1 : 1) * 0.25 * prod);
+    // console.log(maxCrawlerCount, crawlers, crawlerBonus);
 
     let totalProd =
       initProd + prod + geologist + plasma + crawlers + miner + bonus;
@@ -12353,10 +12353,10 @@ TOTAL: ${this.formatToUnits(report.total)}
     for (let i = 0; i < 15; i++) {
       for (let j = 0; j < 25; j++) {
         let newTime = this.building(id, lvl, j, i).time;
-        console.log(
+        /*console.log(
           newTime,
           formatTimeWrapper(newTime * 60 * 60, 2, true, " ", false, "")
-        );
+        );*/
         if (
           time ==
             formatTimeWrapper(newTime * 60 * 60, 2, true, " ", false, "") ||
@@ -12374,10 +12374,10 @@ TOTAL: ${this.formatToUnits(report.total)}
   getLabs(id, lvl, time, technocrat, explorer) {
     for (let i = 0; i < 300; i++) {
       let newTime = this.research(id, lvl, i, technocrat, explorer).time;
-      console.log(
+      /*console.log(
         newTime,
         formatTimeWrapper(newTime * 60 * 60, 2, true, " ", false, "")
-      );
+      );*/
       if (
         time == formatTimeWrapper(newTime * 60 * 60, 2, true, " ", false, "") ||
         time ==
@@ -13402,7 +13402,7 @@ TOTAL: ${this.formatToUnits(report.total)}
       this.createDOM(
         "div",
         { class: "ogi-checkbox" },
-        `Bug reporting 
+        `Bug reporting
         <a target="_blank" href="https://discord.gg/9aMdQgk"> Here </span>`
       )
     );
@@ -13410,7 +13410,7 @@ TOTAL: ${this.formatToUnits(report.total)}
       this.createDOM(
         "div",
         { class: "ogi-checkbox" },
-        `Feature request  
+        `Feature request
         <a target="_blank" href="https://discord.gg/9aMdQgk"> Here </span>`
       )
     );
