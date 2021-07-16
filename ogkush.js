@@ -1887,7 +1887,7 @@ class OGInfinity {
   }
 
   updateServerSettings() {
-    if (this.json.trashsimSettings) return;
+    if (this.json.trashsimSettings && ! this.json.updateSettings) return;
     let settingsUrl = `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/api/serverData.xml`;
     return fetch(settingsUrl)
       .then((rep) => rep.text())
@@ -1896,6 +1896,8 @@ class OGInfinity {
         this.json.topScore = xml.querySelector("topScore").innerHTML;
         this.json.speed = xml.querySelector("speed").innerHTML;
         this.json.speedFleetWar = xml.querySelector("speedFleetWar").innerHTML;
+        this.json.speedFleetPeaceful = xml.querySelector("speedFleetPeaceful").innerHTML;
+        this.json.speedFleetHolding = xml.querySelector("speedFleetHolding").innerHTML;
         this.json.researchDivisor = xml.querySelector(
           "researchDurationDivisor"
         ).innerHTML;
@@ -13430,6 +13432,27 @@ TOTAL: ${this.formatToUnits(report.total)}
       `<a class="bmc-button" target="_blank" href="https://www.buymeacoffee.com/ogameinfinity"><img src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" alt="Buy me a coffee"><span>Buy me a coffee</span></a>`
     );
 
+// UPDATE SERVER SETTINGS
+    dataDiv.appendChild(this.createDOM("hr"));
+
+    let srvDatas = dataDiv.appendChild(
+      this.createDOM(
+        "span",
+        {
+          style:
+            "display: flex;justify-content: space-between; align-items: center;",
+        },
+        "Ogame Infinity Server Settings : <br/>Top Score : "+ this.formatToUnits(this.json.topScore)+"<br/>Eco Speed : "+ this.json.speed+"<br/>Fleet Speed War: "+ this.json.speedFleetWar+"<br/>Fleet Speed Peaceful: "+ this.json.speedFleetPeaceful+"<br/>Fleet Speed Holding: "+this.json.speedFleetHolding
+      )
+    );
+
+    let srvDatasBtn = this.createDOM("button", { class: "btn_blue" }, "Update");
+    srvDatas.appendChild(srvDatasBtn);
+    srvDatasBtn.addEventListener("click", () => {
+      this.json.updateSettings = true;
+      this.updateServerSettings();
+      document.querySelector(".ogl-dialog .close-tooltip").click();
+    });
     dataDiv.appendChild(this.createDOM("hr"));
 
     if (this.json.timezoneDiff != 0) {
