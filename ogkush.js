@@ -13442,13 +13442,10 @@ TOTAL: ${this.formatToUnits(report.total)}
           style:
             "display: flex;justify-content: space-between; align-items: center;",
         },
-        "Current caract : <br/>Top Score : "+ this.formatToUnits(this.json.topScore)+"<br/>Eco Speed : "+ this.json.speed+"<br/>Fleet Speed War: "+ this.json.speedFleetWar+"<br/>Fleet Speed Peaceful: "+ this.json.speedFleetPeaceful+"<br/>Fleet Speed Holding: "+this.json.speedFleetHolding
+        "Ogame Infinity Server Settings : <br/>Top Score : "+ this.formatToUnits(this.json.topScore)+"<br/>Eco Speed : "+ this.json.speed+"<br/>Fleet Speed War: "+ this.json.speedFleetWar+"<br/>Fleet Speed Peaceful: "+ this.json.speedFleetPeaceful+"<br/>Fleet Speed Holding: "+this.json.speedFleetHolding
       )
     );
-//
-//        this.json.speedFleetWar
-//        this.json.speedFleetPeaceful
-//        this.json.speedFleetHolding
+
     let srvDatasBtn = this.createDOM("button", { class: "btn_blue" }, "Update");
     srvDatas.appendChild(srvDatasBtn);
     srvDatasBtn.addEventListener("click", () => {
