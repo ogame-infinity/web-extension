@@ -692,8 +692,7 @@ class OGInfinity {
         deut =
           (this.json.myMines[coords] && this.json.myMines[coords].deuterium) ||
           "?";
-      }
-	    
+      }	    
 
       let div = this.createDOM("div", { class: "ogl-mines" });
       div.textContent = `${metal}-${crystal}-${deut}`;
