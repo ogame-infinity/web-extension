@@ -693,6 +693,7 @@ class OGInfinity {
           (this.json.myMines[coords] && this.json.myMines[coords].deuterium) ||
           "?";
       }
+	    
 
       let div = this.createDOM("div", { class: "ogl-mines" });
       div.textContent = `${metal}-${crystal}-${deut}`;
@@ -1386,7 +1387,7 @@ class OGInfinity {
   }
 
   onFleetSent(callback) {
-    FleetDispatcher.prototype.submitFleet3 = function (force) {
+    FleetDispatcher.prototype.submitFleet2 = function (force) {
       force = force || false;
 
       let that = this;
