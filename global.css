@@ -2239,7 +2239,7 @@ button.build-it_premium {
 .ogl-tooltip .ogk-cargo {
   width: auto;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
 }
 .ogl-tooltip .ogk-cargo > div {
   margin: 2px;
