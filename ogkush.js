@@ -3621,6 +3621,30 @@ class OGInfinity {
         "(" + dotted(honorScore) + ")"
       )
     );
+	
+	//<div class="characterclass explorer small sprite" style="margin-top:-3px; margin-left: 10px;"></div>
+	let playerClassName;
+	switch(this.playerClass){
+      case PLAYER_CLASS_MINER:
+        playerClassName = "miner";
+        break;
+      case PLAYER_CLASS_WARRIOR:
+        playerClassName = "warrior";
+        break;
+      case PLAYER_CLASS_EXPLORER:
+        playerClassName = "explorer";
+	    break;
+      default:
+		playerClassName = "";
+	}
+	
+    playerDiv.appendChild(
+      this.createDOM(
+        "div",
+        { class: "characterclass small sprite " + playerClassName , style : "margin-top: -2px;margin-left: 10px;" },
+      )
+    );
+	
     let stats = playerDiv.appendChild(
       this.createDOM("a", { class: "ogl-mmorpgstats" })
     );
