@@ -726,6 +726,11 @@ class OGInfinity {
             .querySelector('.technology[data-technology="122"] .level')
             .getAttribute("data-value")
         );
+        this.json.tech124 = Number(
+          document
+            .querySelector('.technology[data-technology="124"] .level')
+            .getAttribute("data-value")
+        );
       }
 
       let currentEnergy = this.removeNumSeparator(
@@ -4013,8 +4018,9 @@ class OGInfinity {
 
       let body = this.tabs({
         General: this.generalStats.bind(this, player),
+		Production : this.minesStats.bind(this),
         Expeditions: this.expeditionStats.bind(this),
-        Combats: this.combatStats.bind(this),
+        Combats: this.combatStats.bind(this)
       });
 
       this.popup(null, body);
@@ -6494,6 +6500,280 @@ class OGInfinity {
     return content;
   }
 
+  minesStats() {
+    let content = this.createDOM("div", { class: "ogl-mines-content" });
+    let table = content.appendChild(
+      this.createDOM("table", { class: "ogl-fleet-table" })
+    );
+
+    let header = table.appendChild(this.createDOM("tr"));
+    header.appendChild(this.createDOM("th"));
+    let metalRow = table.appendChild(this.createDOM("tr"));
+    let crystalRow = table.appendChild(this.createDOM("tr"));
+    let deutRow = table.appendChild(this.createDOM("tr"));
+	//let resbuggy = table.appendChild(this.createDOM("tr"));
+    let nrjRow = table.appendChild(this.createDOM("tr"));
+
+    metalRow.appendChild(
+      this.createDOM(
+        "td",
+        {},
+        '<div class="ogl-option resourceIcon metal"></div>'
+      )
+    );
+    crystalRow.appendChild(
+      this.createDOM(
+        "td",
+        {},
+        '<div class="ogl-option resourceIcon crystal"></div>'
+      )
+    );
+    deutRow.appendChild(
+      this.createDOM(
+        "td",
+        {},
+        '<div class="ogl-option resourceIcon deuterium"></div>'
+      )
+    );
+    /*resbuggy.appendChild(
+      this.createDOM(
+        "td",
+        {},
+        '<div class="ogl-option icon sprite sprite_tiny resbuggy"></div>'
+      )
+    );*/
+    nrjRow.appendChild(
+      this.createDOM(
+        "td",
+        {},
+        '<div class="ogl-option resourceIcon energy"></div>'
+      )
+    );
+	
+	let sum = 0;
+	
+	let mlvl = 0;
+	let clvl = 0;
+	let dlvl = 0;
+	
+	let mprod = 0;
+	let cprod = 0;
+	let dprod = 0;
+
+	this.planetList.forEach((planet) => {
+		
+      sum += 1;
+		
+      let coords = planet.querySelector(".planet-koords").textContent;
+		
+      let current = false;
+      if (coords == this.current.coords) {
+        current = true;
+      }
+	  
+      mlvl += Number(this.json.myMines[coords].metal);
+      clvl += Number(this.json.myMines[coords].crystal);
+      dlvl += Number(this.json.myMines[coords].deuterium);
+	  
+      mprod += this.json.myMines[coords].metalProd;
+      cprod += this.json.myMines[coords].crystalProd;
+      dprod += this.json.myMines[coords].deuteriumProd;
+	  
+	  planet.name = planet.querySelector(".planet-name").textContent;
+	  planet.coordinates = coords;
+	  planet.fieldUsed = 0;
+	  planet.fieldMax = 0;
+
+      let link = `?page=ingame&component=supplies&cp=${planet.id}`;
+      header.appendChild(
+        this.createDOM(
+          "th",
+          {},
+          `<p>${planet.name}</p> <a href="${link}" class="ogl-fleet-coords">${planet.coordinates}</a>`
+        )
+      );
+      let td = metalRow.appendChild(this.createDOM("td"));
+      td.appendChild(this.createDOM("div", { class: "ogl-metal" }, this.json.myMines[coords].metal));
+      td.appendChild(
+        this.createDOM(
+          "div",
+          { class: "ogl-metal" },
+          this.formatToUnits(this.json.myMines[coords].metalProd)
+        )
+      );
+      td.appendChild(
+        this.createDOM(
+          "div",
+          { class: "ogl-metal" },
+          this.formatToUnits(this.json.myMines[coords].metalProd*24)
+        )
+      );
+      td.appendChild(
+        this.createDOM(
+          "div",
+          { class: "ogl-metal" },
+          this.formatToUnits(this.json.myMines[coords].metalProd*24*7)
+        )
+      );
+      if (current) td.classList.add("ogl-current");
+
+      td = crystalRow.appendChild(this.createDOM("td"));
+      td.appendChild(
+        this.createDOM("div", { class: "ogl-crystal" }, this.json.myMines[coords].crystal)
+      );
+      td.appendChild(
+        this.createDOM(
+          "div",
+          { class: "ogl-crystal" },
+          this.formatToUnits(this.json.myMines[coords].crystalProd)
+        )
+      );
+      td.appendChild(
+        this.createDOM(
+          "div",
+          { class: "ogl-crystal" },
+          this.formatToUnits(this.json.myMines[coords].crystalProd*24)
+        )
+      );
+      td.appendChild(
+        this.createDOM(
+          "div",
+          { class: "ogl-crystal" },
+          this.formatToUnits(this.json.myMines[coords].crystalProd*24*7)
+        )
+      );
+      if (current) td.classList.add("ogl-current");
+
+      td = deutRow.appendChild(this.createDOM("td"));
+      td.appendChild(this.createDOM("div", { class: "ogl-deut" }, this.json.myMines[coords].deuterium));
+      td.appendChild(
+        this.createDOM(
+          "div",
+          { class: "ogl-deut" },
+          this.formatToUnits(this.json.myMines[coords].deuteriumProd)
+        )
+      );
+      td.appendChild(
+        this.createDOM(
+          "div",
+          { class: "ogl-deut" },
+          this.formatToUnits(this.json.myMines[coords].deuteriumProd*24)
+        )
+      );
+      td.appendChild(
+        this.createDOM(
+          "div",
+          { class: "ogl-deut" },
+          this.formatToUnits(this.json.myMines[coords].deuteriumProd*24*7)
+        )
+      );
+      if (current) td.classList.add("ogl-current");
+
+      td = nrjRow.appendChild(this.createDOM("td"));
+      //td.appendChild(this.createDOM("div", { class: "ogl-energy" }, planet[4]));
+      let diff = this.json.myMines[coords].energy;
+      td.appendChild(
+        this.createDOM(
+          "div",
+          { class: "ogl-energy " + (diff >= 0 ? "undermark" : "overmark") },
+          this.formatToUnits(diff)
+        )
+      );
+	  //td = resbuggy.appendChild(this.createDOM("td"));
+	  //td.appendChild(this.createDOM("div",{ class: "ogl-energy " },this.formatToUnits(this.json.myMines[coords].crawlers)));
+	  
+      if (current) td.classList.add("ogl-current");
+    });
+
+    mlvl = mlvl / sum;
+    clvl = clvl / sum;
+    dlvl = dlvl / sum;
+
+    header.appendChild(this.createDOM("th", { class: "ogl-sum-symbol" }, "Σ"));
+
+    let td = metalRow.appendChild(this.createDOM("td"));
+    td.appendChild(
+      this.createDOM(
+        "div",
+        { class: "ogl-metal" }, mlvl.toFixed(1)
+      )
+    );
+    td.appendChild(
+      this.createDOM(
+        "div",
+        { class: "ogl-metal" }, this.formatToUnits(mprod)
+      )
+    );
+    td.appendChild(
+      this.createDOM(
+        "div",
+        { class: "ogl-metal" }, this.formatToUnits(mprod*24)
+      )
+    );
+    td.appendChild(
+      this.createDOM(
+        "div",
+        { class: "ogl-metal" }, this.formatToUnits(mprod*24*7)
+      )
+    );
+
+    td = crystalRow.appendChild(this.createDOM("td"));
+    td.appendChild(
+      this.createDOM(
+        "div",
+        { class: "ogl-crystal" }, clvl.toFixed(1)
+      )
+    );
+    td.appendChild(
+      this.createDOM(
+        "div",
+        { class: "ogl-crystal" }, this.formatToUnits(cprod)
+      )
+    );
+    td.appendChild(
+      this.createDOM(
+        "div",
+        { class: "ogl-crystal" }, this.formatToUnits(cprod*24)
+      )
+    );
+    td.appendChild(
+      this.createDOM(
+        "div",
+        { class: "ogl-crystal" }, this.formatToUnits(cprod*24*7)
+      )
+    );
+
+    td = deutRow.appendChild(this.createDOM("td"));
+    td.appendChild(
+      this.createDOM(
+        "div",
+        { class: "ogl-deut" }, dlvl.toFixed(1)
+      )
+    );
+    td.appendChild(
+      this.createDOM(
+        "div",
+        { class: "ogl-deut" }, this.formatToUnits(dprod)
+      )
+    );
+    td.appendChild(
+      this.createDOM(
+        "div",
+        { class: "ogl-deut" }, this.formatToUnits(dprod*24)
+      )
+    );
+    td.appendChild(
+      this.createDOM(
+        "div",
+        { class: "ogl-deut" }, this.formatToUnits(dprod*24*7)
+      )
+    );
+
+    td = nrjRow.appendChild(this.createDOM("td"));
+
+    return content;
+  }
+  
   generateGalaxyLink(galaxy, system, position) {
     return `?page=ingame&component=galaxy&galaxy=${galaxy}&system=${system}&position=${position}`;
   }
