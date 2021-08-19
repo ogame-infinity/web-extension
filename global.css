@@ -3239,6 +3239,7 @@ button.build-it_premium {
   height: 22px;
   width: 22px;
   position: sticky;
+  float: left;
 }
 
 .ogl-option:after {
@@ -4707,6 +4708,12 @@ body.ogame select {
 .ogl-tech-111 {
   background-position: 67% 68.5% !important;
 }
+.ogl-tech-124 {
+  background-position: 51.3% 68.3% !important;
+}
+.ogl-tech-122 {
+  background-position: 22.6% 68.4% !important;
+}
 
 .ogl-fleet-203 {
   background-position: 46.9% 51.5% !important;
@@ -4722,6 +4729,9 @@ body.ogame select {
 }
 .ogl-fleet-210 {
   background-position: 62.9% 52.5% !important;
+}
+.ogl-fleet-212 {
+  background-position: 67.9% 51.8% !important;
 }
 .ogl-fleet-204 {
   background-position: 0.9% 52% !important;
