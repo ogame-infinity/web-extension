@@ -660,7 +660,7 @@ class OGInfinity {
         deuteriumProd: deuteriumProd,
         crawlers: crawlers,
         temperature: mines ? mines.temperature : undefined,
-        energy: parseInt(document.querySelector("#resources_energy").innerText),
+        energy: parseInt(document.querySelector("#resources_energy").innerText.replaceAll(".", ""))
       };
 
       this.json.myMines[this.current.coords] = mines;
@@ -4175,8 +4175,8 @@ class OGInfinity {
             // if (type == "Unknown") {
             let objectNode = content.querySelector("a");
             if (objectNode) {
-              json.result = "Object";
-              json["object"] = objectNode.innerText;
+              this.json.result = "Object";
+              this.json["object"] = objectNode.innerText;
               type = "Object";
             }
 
