@@ -1382,7 +1382,7 @@ input[type="file"] {
   justify-content: center;
   align-items: center;
   margin-top: 5px;
-  width: 271px;
+  width: 286px;
 }
 .ogl-target-list .ogk-controls > div:first-child {
   padding: 20px 0px;
@@ -2785,7 +2785,7 @@ button.build-it_premium {
 .ogl-planets-col {
   display: flex;
   flex-direction: column;
-  width: 271px;
+  width: 286px;
   align-items: center;
   margin-top: 15px;
 }
@@ -3471,7 +3471,7 @@ button.build-it_premium {
 
 .planetlink {
   left: 0 !important;
-  width: 90px;
+  width: 105px;
   min-width: 90px;
 }
 
@@ -3569,7 +3569,7 @@ button.build-it_premium {
   top: 3px !important;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 75px;
+  width: 105px;
   text-align: left;
 }
 
@@ -4336,7 +4336,7 @@ Global fix to center the page when planet overview is expender
 
 #pageContent {
   width: max-content !important;
-  min-width: 1130px !important;
+  min-width: 1145px !important;
 }
 
 #pageContent > #right {
