@@ -5572,7 +5572,7 @@ class OGInfinity {
 
     let inputs = [];
 
-    [202, 203, 210, 204, 205, 206, 219, 207, 215, 211, 213, 218].forEach(
+    [202, 203, 210, 204, 205, 206, 219, 207, 215, 211, 213, 218, 214].forEach(
       (id) => {
         fleet.appendChild(
           this.createDOM("a", {
