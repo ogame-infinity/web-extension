@@ -6595,6 +6595,15 @@ class OGInfinity {
         current = true;
       }
 	  
+	  this.json.myMines[coords] = this.json.myMines[coords] || {};
+	  this.json.myMines[coords].metal = this.json.myMines[coords].metal || 0;
+	  this.json.myMines[coords].crystal = this.json.myMines[coords].crystal || 0;
+	  this.json.myMines[coords].deuterium = this.json.myMines[coords].deuterium || 0;
+	  this.json.myMines[coords].metalProd = this.json.myMines[coords].metalProd || 0;
+	  this.json.myMines[coords].crystalProd = this.json.myMines[coords].crystalProd || 0;
+	  this.json.myMines[coords].deuteriumProd = this.json.myMines[coords].deuteriumProd || 0;
+	  this.json.myMines[coords].energy = this.json.myMines[coords].energy || 0;
+	  
       mlvl += Number(this.json.myMines[coords].metal);
       clvl += Number(this.json.myMines[coords].crystal);
       dlvl += Number(this.json.myMines[coords].deuterium);
