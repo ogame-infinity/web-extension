@@ -10122,19 +10122,25 @@ class OGInfinity {
       let crystalRess = planetNode.querySelectorAll(".ogl-crystal");
       let deutRess = planetNode.querySelectorAll(".ogl-deut");
 
-      metalRess[0].innerText = this.formatToUnits(planet.metal);
-      crystalRess[0].innerText = this.formatToUnits(planet.crystal);
-      deutRess[0].innerText = this.formatToUnits(planet.deuterium);
+      if (metalRess.length > 0)
+        metalRess[0].innerText = this.formatToUnits(planet.metal);
+      if (crystalRess.length > 0)
+        crystalRess[0].innerText = this.formatToUnits(planet.crystal);
+      if (deutRess.length > 0)
+        deutRess[0].innerText = this.formatToUnits(planet.deuterium);
 
-      metalRess[0].classList = "ogl-metal " + isFullM + isaFullM;
-      crystalRess[0].classList = "ogl-crystal " + isFullC + isaFullC;
-      deutRess[0].classList = "ogl-deut " + isFullD + isaFullD;
+      if (metalRess.length > 0)
+        metalRess[0].classList = "ogl-metal " + isFullM + isaFullM;
+      if (crystalRess.length > 0)
+        crystalRess[0].classList = "ogl-crystal " + isFullC + isaFullC;
+      if (deutRess.length > 0)
+        deutRess[0].classList = "ogl-deut " + isFullD + isaFullD;
 
       mSumP += planet.metal;
       cSumP += planet.crystal;
       dSumP += planet.deuterium;
 
-      if (planet.moon != undefined && metalRess[1]) {
+      if (planet.moon != undefined && metalRess.length > 0 && metalRess[1]) {
         metalRess[1].innerText = this.formatToUnits(planet.moon.metal);
         crystalRess[1].innerText = this.formatToUnits(planet.moon.crystal);
         deutRess[1].innerText = this.formatToUnits(planet.moon.deuterium);
