@@ -256,6 +256,8 @@ class OGInfinity {
     this.json.tech114 = this.json.tech114 || 0;
     this.json.tech113 = this.json.tech113 || 0;
     this.json.tech122 = this.json.tech122 || 0;
+	this.json.tech124 = this.json.tech124 || 0;
+	this.json.tech108 = this.json.tech108 || 0;
     this.json.tchat = this.json.tchat || false;
     this.json.lastResUpdate = this.json.lastResUpdate || new Date();
     this.json.myRes = this.json.myRes || {};
@@ -729,6 +731,11 @@ class OGInfinity {
         this.json.tech124 = Number(
           document
             .querySelector('.technology[data-technology="124"] .level')
+            .getAttribute("data-value")
+        );
+        this.json.tech108 = Number(
+          document
+            .querySelector('.technology[data-technology="108"] .level')
             .getAttribute("data-value")
         );
       }
@@ -3745,11 +3752,25 @@ class OGInfinity {
         )
       );
     }
+	
+    div.appendChild(this.createDOM("span", {}, "Computer"));
+    div.appendChild(
+      this.createDOM("a", {
+        class: "ogl-option ogl-fleet-ship ogl-tech-" + 108,
+      })
+    );
+    div.appendChild(
+      this.createDOM(
+        "span",
+        {},
+        `<strong>${this.json.tech108 || 0}</strong>`
+      )
+    );
 
     let fleetTech = techDetail.appendChild(
       this.createDOM("div", { class: "ogk-tech" })
     );
-    // 114 missing
+
     [115, 117, 118, 109, 110, 111].forEach((id) => {
       if (id == 115) fleetTech.appendChild(this.createDOM("div", {}, "Speed "));
       if (id == 109)
@@ -3913,6 +3934,48 @@ class OGInfinity {
     prod.appendChild(
       this.createDOM("span", { class: "ogl-deut" }, `${dotted(dprod * 24 * 7)}`)
     );
+	
+	prod.appendChild(this.createDOM("span"));
+	
+	let innerAstro = prod.appendChild(
+      this.createDOM("span", { style: "display: flex; align-items: center; margin-left: auto; margin-top: 10px;" })
+    );	
+	innerAstro.appendChild(
+      this.createDOM("span", {}, "Astro")
+    );
+	innerAstro.appendChild(
+      this.createDOM("a", {class: "ogl-option ogl-fleet-ship ogl-tech-124", style:"margin-left: 5px; margin-right: 5px;"})
+    );
+	innerAstro.appendChild(
+      this.createDOM("span", {}, `<strong>${this.json.tech124 || 0}</strong>`)
+    );
+	
+	let innerEnergy = prod.appendChild(
+      this.createDOM("span", { style: "display: flex; align-items: center; margin-left: auto; margin-top: 10px;" })
+    );	
+	innerEnergy.appendChild(
+      this.createDOM("span", {}, "Energy")
+    );
+	innerEnergy.appendChild(
+      this.createDOM("a", {class: "ogl-option ogl-fleet-ship ogl-tech-113", style:"margin-left: 5px; margin-right: 5px;"})
+    );
+	innerEnergy.appendChild(
+      this.createDOM("span", {}, `<strong>${this.json.tech113 || 0}</strong>`)
+    );
+	
+	let innerPlasma = prod.appendChild(
+      this.createDOM("span", { style: "display: flex; align-items: center; margin-left: auto; margin-top: 10px;" })
+    );	
+	innerPlasma.appendChild(
+      this.createDOM("span", {}, "Plasma")
+    );
+	innerPlasma.appendChild(
+      this.createDOM("a", {class: "ogl-option ogl-fleet-ship ogl-tech-122", style:"margin-left: 5px; margin-right: 5px;"})
+    );
+	innerPlasma.appendChild(
+      this.createDOM("span", {}, `<strong>${this.json.tech122 || 0}</strong>`)
+    );
+
 
     let fleetDetail = details.appendChild(
       this.createDOM("div", { class: "ogk-box" })
