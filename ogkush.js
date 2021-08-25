@@ -9081,10 +9081,22 @@ class OGInfinity {
       let updateShips = (e) => {
         let amount = e.target.nextElementSibling.getAttribute("amount");
         this.selectShips(Number(e.target.getAttribute("tech-id")), amount);
-		fleetDispatcher.refreshTarget();
-		fleetDispatcher.updateTarget();
-		fleetDispatcher.fetchTargetPlayerData();
+	    	fleetDispatcher.refreshTarget();
+		    fleetDispatcher.updateTarget();
+		    fleetDispatcher.fetchTargetPlayerData();
       };
+
+      let updateMissions = (e) => {
+        setTimeout(function(){ 
+          fleetDispatcher.refreshTarget();
+          fleetDispatcher.updateTarget();
+          fleetDispatcher.fetchTargetPlayerData();
+          }, 0);
+      };  
+
+      document.querySelectorAll("input.ogl-formatInput").forEach((input) => {
+        input.addEventListener("keyup", updateMissions);
+      });
 
       ptBtn.addEventListener("click", updateShips);
       gtBtn.addEventListener("click", updateShips);
