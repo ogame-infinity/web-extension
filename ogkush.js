@@ -256,6 +256,8 @@ class OGInfinity {
     this.json.tech114 = this.json.tech114 || 0;
     this.json.tech113 = this.json.tech113 || 0;
     this.json.tech122 = this.json.tech122 || 0;
+	this.json.tech124 = this.json.tech124 || 0;
+	this.json.tech108 = this.json.tech108 || 0;
     this.json.tchat = this.json.tchat || false;
     this.json.lastResUpdate = this.json.lastResUpdate || new Date();
     this.json.myRes = this.json.myRes || {};
@@ -428,12 +430,14 @@ class OGInfinity {
     this.jumpGate();
     this.topBarUtilities();
     this.fleetDispatcher();
-    // this.betterFleetDispatcher();
+    this.betterFleetDispatcher();
     this.technoDetail();
     this.updateEmpireData();
     this.onGalaxyUpdate();
     this.timeZone();
 
+	this.expedition = false;
+	
     let storage = this.getLocalStorageSize();
     if (storage.total > 4.5) {
       // this.settings();
@@ -658,7 +662,7 @@ class OGInfinity {
         deuteriumProd: deuteriumProd,
         crawlers: crawlers,
         temperature: mines ? mines.temperature : undefined,
-        energy: parseInt(document.querySelector("#resources_energy").innerText),
+        energy: parseInt(document.querySelector("#resources_energy").innerText.replaceAll(".", ""))
       };
 
       this.json.myMines[this.current.coords] = mines;
@@ -692,7 +696,7 @@ class OGInfinity {
         deut =
           (this.json.myMines[coords] && this.json.myMines[coords].deuterium) ||
           "?";
-      }	    
+      }
 
       let div = this.createDOM("div", { class: "ogl-mines" });
       div.textContent = `${metal}-${crystal}-${deut}`;
@@ -722,6 +726,16 @@ class OGInfinity {
         this.json.tech122 = Number(
           document
             .querySelector('.technology[data-technology="122"] .level')
+            .getAttribute("data-value")
+        );
+        this.json.tech124 = Number(
+          document
+            .querySelector('.technology[data-technology="124"] .level')
+            .getAttribute("data-value")
+        );
+        this.json.tech108 = Number(
+          document
+            .querySelector('.technology[data-technology="108"] .level')
             .getAttribute("data-value")
         );
       }
@@ -1778,6 +1792,8 @@ class OGInfinity {
             Math.max(0, ship.number - (kept[ship.id] || 0))
           );
         });
+		let elem = document.querySelector(".ogl-planet-icon.ogl-active") || document.querySelector(".ogl-moon-icon.ogl-active") || document.querySelector(".ogl-debris-icon.ogl-active");
+		if(elem)elem.click();
       });
 
       let svgButtons = this.createDOM("div", { class: "ogl-dispatch-icons" });
@@ -2240,7 +2256,7 @@ class OGInfinity {
       });
     };
 
-    let addNotifications = () => {
+    /*let addNotifications = () => {
       document.querySelectorAll(".eventFleet").forEach((line) => {
         const id = line.getAttribute("id"),
           notificationIcon = this.createDOM(
@@ -2276,7 +2292,7 @@ class OGInfinity {
         });
         line.appendChild(notificationIcon);
       });
-    };
+    };*/
 
     let changeTimeZone = () => {
       document.querySelectorAll(".eventFleet").forEach((line) => {
@@ -3612,6 +3628,30 @@ class OGInfinity {
         "(" + dotted(honorScore) + ")"
       )
     );
+	
+	//<div class="characterclass explorer small sprite" style="margin-top:-3px; margin-left: 10px;"></div>
+	let playerClassName;
+	switch(this.playerClass){
+      case PLAYER_CLASS_MINER:
+        playerClassName = "miner";
+        break;
+      case PLAYER_CLASS_WARRIOR:
+        playerClassName = "warrior";
+        break;
+      case PLAYER_CLASS_EXPLORER:
+        playerClassName = "explorer";
+	    break;
+      default:
+		playerClassName = "";
+	}
+	
+    playerDiv.appendChild(
+      this.createDOM(
+        "div",
+        { class: "characterclass small sprite " + playerClassName , style : "margin-top: -2px;margin-left: 10px;" },
+      )
+    );
+	
     let stats = playerDiv.appendChild(
       this.createDOM("a", { class: "ogl-mmorpgstats" })
     );
@@ -3712,11 +3752,25 @@ class OGInfinity {
         )
       );
     }
+	
+    div.appendChild(this.createDOM("span", {}, "Computer"));
+    div.appendChild(
+      this.createDOM("a", {
+        class: "ogl-option ogl-fleet-ship ogl-tech-" + 108,
+      })
+    );
+    div.appendChild(
+      this.createDOM(
+        "span",
+        {},
+        `<strong>${this.json.tech108 || 0}</strong>`
+      )
+    );
 
     let fleetTech = techDetail.appendChild(
       this.createDOM("div", { class: "ogk-tech" })
     );
-    // 114 missing
+
     [115, 117, 118, 109, 110, 111].forEach((id) => {
       if (id == 115) fleetTech.appendChild(this.createDOM("div", {}, "Speed "));
       if (id == 109)
@@ -3880,6 +3934,48 @@ class OGInfinity {
     prod.appendChild(
       this.createDOM("span", { class: "ogl-deut" }, `${dotted(dprod * 24 * 7)}`)
     );
+	
+	prod.appendChild(this.createDOM("span"));
+	
+	let innerAstro = prod.appendChild(
+      this.createDOM("span", { style: "display: flex; align-items: center; margin-left: auto; margin-top: 10px;" })
+    );	
+	innerAstro.appendChild(
+      this.createDOM("span", {}, "Astro")
+    );
+	innerAstro.appendChild(
+      this.createDOM("a", {class: "ogl-option ogl-fleet-ship ogl-tech-124", style:"margin-left: 5px; margin-right: 5px;"})
+    );
+	innerAstro.appendChild(
+      this.createDOM("span", {}, `<strong>${this.json.tech124 || 0}</strong>`)
+    );
+	
+	let innerEnergy = prod.appendChild(
+      this.createDOM("span", { style: "display: flex; align-items: center; margin-left: auto; margin-top: 10px;" })
+    );	
+	innerEnergy.appendChild(
+      this.createDOM("span", {}, "Energy")
+    );
+	innerEnergy.appendChild(
+      this.createDOM("a", {class: "ogl-option ogl-fleet-ship ogl-tech-113", style:"margin-left: 5px; margin-right: 5px;"})
+    );
+	innerEnergy.appendChild(
+      this.createDOM("span", {}, `<strong>${this.json.tech113 || 0}</strong>`)
+    );
+	
+	let innerPlasma = prod.appendChild(
+      this.createDOM("span", { style: "display: flex; align-items: center; margin-left: auto; margin-top: 10px;" })
+    );	
+	innerPlasma.appendChild(
+      this.createDOM("span", {}, "Plasma")
+    );
+	innerPlasma.appendChild(
+      this.createDOM("a", {class: "ogl-option ogl-fleet-ship ogl-tech-122", style:"margin-left: 5px; margin-right: 5px;"})
+    );
+	innerPlasma.appendChild(
+      this.createDOM("span", {}, `<strong>${this.json.tech122 || 0}</strong>`)
+    );
+
 
     let fleetDetail = details.appendChild(
       this.createDOM("div", { class: "ogk-box" })
@@ -4009,8 +4105,9 @@ class OGInfinity {
 
       let body = this.tabs({
         General: this.generalStats.bind(this, player),
+		Production : this.minesStats.bind(this),
         Expeditions: this.expeditionStats.bind(this),
-        Combats: this.combatStats.bind(this),
+        Combats: this.combatStats.bind(this)
       });
 
       this.popup(null, body);
@@ -4165,8 +4262,8 @@ class OGInfinity {
             // if (type == "Unknown") {
             let objectNode = content.querySelector("a");
             if (objectNode) {
-              json.result = "Object";
-              json["object"] = objectNode.innerText;
+              this.json.result = "Object";
+              this.json["object"] = objectNode.innerText;
               type = "Object";
             }
 
@@ -5538,7 +5635,7 @@ class OGInfinity {
 
     let inputs = [];
 
-    [202, 203, 210, 204, 205, 206, 219, 207, 215, 211, 213, 218].forEach(
+    [202, 203, 210, 204, 205, 206, 219, 207, 215, 211, 213, 218, 214].forEach(
       (id) => {
         fleet.appendChild(
           this.createDOM("a", {
@@ -6490,6 +6587,289 @@ class OGInfinity {
     return content;
   }
 
+  minesStats() {
+    let content = this.createDOM("div", { class: "ogl-mines-content" });
+    let table = content.appendChild(
+      this.createDOM("table", { class: "ogl-fleet-table" })
+    );
+
+    let header = table.appendChild(this.createDOM("tr"));
+    header.appendChild(this.createDOM("th"));
+    let metalRow = table.appendChild(this.createDOM("tr"));
+    let crystalRow = table.appendChild(this.createDOM("tr"));
+    let deutRow = table.appendChild(this.createDOM("tr"));
+	//let resbuggy = table.appendChild(this.createDOM("tr"));
+    let nrjRow = table.appendChild(this.createDOM("tr"));
+
+    metalRow.appendChild(
+      this.createDOM(
+        "td",
+        {},
+        '<div class="ogl-option resourceIcon metal"></div>'
+      )
+    );
+    crystalRow.appendChild(
+      this.createDOM(
+        "td",
+        {},
+        '<div class="ogl-option resourceIcon crystal"></div>'
+      )
+    );
+    deutRow.appendChild(
+      this.createDOM(
+        "td",
+        {},
+        '<div class="ogl-option resourceIcon deuterium"></div>'
+      )
+    );
+    /*resbuggy.appendChild(
+      this.createDOM(
+        "td",
+        {},
+        '<div class="ogl-option icon sprite sprite_tiny resbuggy"></div>'
+      )
+    );*/
+    nrjRow.appendChild(
+      this.createDOM(
+        "td",
+        {},
+        '<div class="ogl-option resourceIcon energy"></div>'
+      )
+    );
+	
+	let sum = 0;
+	
+	let mlvl = 0;
+	let clvl = 0;
+	let dlvl = 0;
+	
+	let mprod = 0;
+	let cprod = 0;
+	let dprod = 0;
+
+	this.planetList.forEach((planet) => {
+		
+      sum += 1;
+		
+      let coords = planet.querySelector(".planet-koords").textContent;
+		
+      let current = false;
+      if (coords == this.current.coords) {
+        current = true;
+      }
+	  
+	  this.json.myMines[coords] = this.json.myMines[coords] || {};
+	  this.json.myMines[coords].metal = this.json.myMines[coords].metal || 0;
+	  this.json.myMines[coords].crystal = this.json.myMines[coords].crystal || 0;
+	  this.json.myMines[coords].deuterium = this.json.myMines[coords].deuterium || 0;
+	  this.json.myMines[coords].metalProd = this.json.myMines[coords].metalProd || 0;
+	  this.json.myMines[coords].crystalProd = this.json.myMines[coords].crystalProd || 0;
+	  this.json.myMines[coords].deuteriumProd = this.json.myMines[coords].deuteriumProd || 0;
+	  this.json.myMines[coords].energy = this.json.myMines[coords].energy || 0;
+	  
+      mlvl += Number(this.json.myMines[coords].metal);
+      clvl += Number(this.json.myMines[coords].crystal);
+      dlvl += Number(this.json.myMines[coords].deuterium);
+	  
+      mprod += this.json.myMines[coords].metalProd;
+      cprod += this.json.myMines[coords].crystalProd;
+      dprod += this.json.myMines[coords].deuteriumProd;
+	  
+	  planet.name = planet.querySelector(".planet-name").textContent;
+	  planet.coordinates = coords;
+	  planet.fieldUsed = 0;
+	  planet.fieldMax = 0;
+
+      let link = `?page=ingame&component=supplies&cp=${planet.id}`;
+      header.appendChild(
+        this.createDOM(
+          "th",
+          {},
+          `<p>${planet.name}</p> <a href="${link}" class="ogl-fleet-coords">${planet.coordinates}</a>`
+        )
+      );
+      let td = metalRow.appendChild(this.createDOM("td"));
+      td.appendChild(this.createDOM("div", { class: "ogl-metal" }, this.json.myMines[coords].metal));
+      td.appendChild(
+        this.createDOM(
+          "div",
+          { class: "ogl-metal" },
+          this.formatToUnits(this.json.myMines[coords].metalProd)
+        )
+      );
+      td.appendChild(
+        this.createDOM(
+          "div",
+          { class: "ogl-metal" },
+          this.formatToUnits(this.json.myMines[coords].metalProd*24)
+        )
+      );
+      td.appendChild(
+        this.createDOM(
+          "div",
+          { class: "ogl-metal" },
+          this.formatToUnits(this.json.myMines[coords].metalProd*24*7)
+        )
+      );
+      if (current) td.classList.add("ogl-current");
+
+      td = crystalRow.appendChild(this.createDOM("td"));
+      td.appendChild(
+        this.createDOM("div", { class: "ogl-crystal" }, this.json.myMines[coords].crystal)
+      );
+      td.appendChild(
+        this.createDOM(
+          "div",
+          { class: "ogl-crystal" },
+          this.formatToUnits(this.json.myMines[coords].crystalProd)
+        )
+      );
+      td.appendChild(
+        this.createDOM(
+          "div",
+          { class: "ogl-crystal" },
+          this.formatToUnits(this.json.myMines[coords].crystalProd*24)
+        )
+      );
+      td.appendChild(
+        this.createDOM(
+          "div",
+          { class: "ogl-crystal" },
+          this.formatToUnits(this.json.myMines[coords].crystalProd*24*7)
+        )
+      );
+      if (current) td.classList.add("ogl-current");
+
+      td = deutRow.appendChild(this.createDOM("td"));
+      td.appendChild(this.createDOM("div", { class: "ogl-deut" }, this.json.myMines[coords].deuterium));
+      td.appendChild(
+        this.createDOM(
+          "div",
+          { class: "ogl-deut" },
+          this.formatToUnits(this.json.myMines[coords].deuteriumProd)
+        )
+      );
+      td.appendChild(
+        this.createDOM(
+          "div",
+          { class: "ogl-deut" },
+          this.formatToUnits(this.json.myMines[coords].deuteriumProd*24)
+        )
+      );
+      td.appendChild(
+        this.createDOM(
+          "div",
+          { class: "ogl-deut" },
+          this.formatToUnits(this.json.myMines[coords].deuteriumProd*24*7)
+        )
+      );
+      if (current) td.classList.add("ogl-current");
+
+      td = nrjRow.appendChild(this.createDOM("td"));
+      //td.appendChild(this.createDOM("div", { class: "ogl-energy" }, planet[4]));
+      let diff = this.json.myMines[coords].energy;
+      td.appendChild(
+        this.createDOM(
+          "div",
+          { class: "ogl-energy " + (diff >= 0 ? "undermark" : "overmark") },
+          this.formatToUnits(diff)
+        )
+      );
+	  //td = resbuggy.appendChild(this.createDOM("td"));
+	  //td.appendChild(this.createDOM("div",{ class: "ogl-energy " },this.formatToUnits(this.json.myMines[coords].crawlers)));
+	  
+      if (current) td.classList.add("ogl-current");
+    });
+
+    mlvl = mlvl / sum;
+    clvl = clvl / sum;
+    dlvl = dlvl / sum;
+
+    header.appendChild(this.createDOM("th", { class: "ogl-sum-symbol" }, "Σ"));
+
+    let td = metalRow.appendChild(this.createDOM("td"));
+    td.appendChild(
+      this.createDOM(
+        "div",
+        { class: "ogl-metal" }, mlvl.toFixed(1)
+      )
+    );
+    td.appendChild(
+      this.createDOM(
+        "div",
+        { class: "ogl-metal" }, this.formatToUnits(mprod)
+      )
+    );
+    td.appendChild(
+      this.createDOM(
+        "div",
+        { class: "ogl-metal" }, this.formatToUnits(mprod*24)
+      )
+    );
+    td.appendChild(
+      this.createDOM(
+        "div",
+        { class: "ogl-metal" }, this.formatToUnits(mprod*24*7)
+      )
+    );
+
+    td = crystalRow.appendChild(this.createDOM("td"));
+    td.appendChild(
+      this.createDOM(
+        "div",
+        { class: "ogl-crystal" }, clvl.toFixed(1)
+      )
+    );
+    td.appendChild(
+      this.createDOM(
+        "div",
+        { class: "ogl-crystal" }, this.formatToUnits(cprod)
+      )
+    );
+    td.appendChild(
+      this.createDOM(
+        "div",
+        { class: "ogl-crystal" }, this.formatToUnits(cprod*24)
+      )
+    );
+    td.appendChild(
+      this.createDOM(
+        "div",
+        { class: "ogl-crystal" }, this.formatToUnits(cprod*24*7)
+      )
+    );
+
+    td = deutRow.appendChild(this.createDOM("td"));
+    td.appendChild(
+      this.createDOM(
+        "div",
+        { class: "ogl-deut" }, dlvl.toFixed(1)
+      )
+    );
+    td.appendChild(
+      this.createDOM(
+        "div",
+        { class: "ogl-deut" }, this.formatToUnits(dprod)
+      )
+    );
+    td.appendChild(
+      this.createDOM(
+        "div",
+        { class: "ogl-deut" }, this.formatToUnits(dprod*24)
+      )
+    );
+    td.appendChild(
+      this.createDOM(
+        "div",
+        { class: "ogl-deut" }, this.formatToUnits(dprod*24*7)
+      )
+    );
+
+    td = nrjRow.appendChild(this.createDOM("td"));
+
+    return content;
+  }
+  
   generateGalaxyLink(galaxy, system, position) {
     return `?page=ingame&component=galaxy&galaxy=${galaxy}&system=${system}&position=${position}`;
   }
@@ -6893,7 +7273,7 @@ class OGInfinity {
             .querySelector(".ogl-dialogOverlay")
             .classList.remove("ogl-active");
           update(true);
-          fleetDispatcher.focusSubmitFleet1();
+          //fleetDispatcher.focusSubmitFleet1();
         });
         this.popup(false, container);
       });
@@ -6974,11 +7354,11 @@ class OGInfinity {
           `.ogl-fleetSpeed div[data-step="${fleetDispatcher.speedPercent}"]`
         ).addClass("ogl-active");
         update(false);
-        if (fleetDispatcher.currentPage == "fleet1") {
+        /*if (fleetDispatcher.currentPage == "fleet1") {
           fleetDispatcher.focusSubmitFleet1();
         } else {
           fleetDispatcher.focusSubmitFleet2();
-        }
+        }*/
       });
 
       $(".ogl-fleetSpeed div").on("mouseover", (event) => {
@@ -7341,1440 +7721,1586 @@ class OGInfinity {
       document.querySelector("#civilships") &&
       fleetDispatcher.shipsOnPlanet.length != 0
     ) {
+      let metalAvailable = Math.max(0, fleetDispatcher.metalOnPlanet);
+      let crystalAvailable = Math.max(0, fleetDispatcher.crystalOnPlanet);
+      let deutAvailable = Math.max(0, fleetDispatcher.deuteriumOnPlanet);
 
-      this.buildDispatcherUI();
+      let needCargo = (fret) => {
+        let metal = Number(metalFiller.value.split(".").join(""));
+        if (metal > metalAvailable) metalFiller.value = metalAvailable;
 
-      FleetDispatcher.prototype.updateTarget = function (fetch = true) {
-        let galaxy = clampInt(getValue($('#galaxy').val()), 1, this.fleetHelper.MAX_GALAXY, true)
-        let system = clampInt(getValue($('#system').val()), 1, this.fleetHelper.MAX_SYSTEM, true)
-        let position = clampInt(getValue($('#position').val()), 1, this.fleetHelper.MAX_POSITION, true)
+        let crystal = Number(crystalFiller.value.split(".").join(""));
+        if (crystal > crystalAvailable) crystalFiller.value = crystalAvailable;
 
-        this.targetPlanet.galaxy = galaxy
-        this.targetPlanet.system = system
-        this.targetPlanet.position = position
+        let deut = Number(deutFiller.value.split(".").join(""));
+        if (deut > deutAvailable)
+          deutFiller.value = Math.max(
+            0,
+            deutAvailable - fleetDispatcher.getConsumption()
+          );
 
-        if (this.targetPlanet.position === this.fleetHelper.EXPEDITION_POSITION) {
-          this.targetPlanet.type = this.fleetHelper.PLANETTYPE_PLANET
+        let amount = this.calcNeededShips({
+          fret: fret,
+          resources:
+            Math.min(metal, metalAvailable) +
+            Math.min(crystal, crystalAvailable) +
+            Math.min(deut, deutAvailable),
+        });
+        return amount;
+      };
+
+      let dispatch = document
+        .querySelector("#shipsChosen")
+        .appendChild(this.createDOM("div", { class: "ogl-dispatch" }));
+
+      if (!this.json.options.dispatcher) {
+        dispatch.style.display = "none";
+      }
+
+      let destination = dispatch.appendChild(
+        this.createDOM("div", { class: "ogl-dest" })
+      );
+      let resDiv = dispatch.appendChild(this.createDOM("div"));
+      let actions = resDiv.appendChild(
+        this.createDOM("div", { class: "ogl-transport" })
+      );
+      let coords = destination.appendChild(
+        this.createDOM("div", { class: "ogl-coords" })
+      );
+
+      let warning = coords.appendChild(
+        this.createDOM("a", {
+          class: "ogl-warning tooltipRight",
+          "data-title": "Error : current planet/moon...",
+        })
+      );
+
+      let galaxyInput = coords.appendChild(
+        this.createDOM("input", {
+          id: "galaxyInput",
+          type: "text",
+          pattern: "[0-9]*",
+          value: fleetDispatcher.targetPlanet.galaxy,
+        })
+      );
+      let systemInput = coords.appendChild(
+        this.createDOM("input", {
+          id: "systemInput",
+          type: "text",
+          pattern: "[0-9]*",
+          value: fleetDispatcher.targetPlanet.system,
+        })
+      );
+      let positionInput = coords.appendChild(
+        this.createDOM("input", {
+          id: "positionInput",
+          type: "text",
+          pattern: "[0-9]*",
+          value: fleetDispatcher.targetPlanet.position,
+        })
+      );
+      let planet = coords.appendChild(
+        this.createDOM("a", { class: "ogl-planet-icon" })
+      );
+      let moon = coords.appendChild(
+        this.createDOM("a", { class: "ogl-moon-icon" })
+      );
+      let debris = coords.appendChild(
+        this.createDOM("a", { class: "ogl-debris-icon" })
+      );
+
+      planet.addEventListener("click", () => {
+        fleetDispatcher.targetPlanet.type = fleetDispatcher.fleetHelper.PLANETTYPE_PLANET;
+		fleetDispatcher.fetchTargetPlayerData();
+        update(true);
+        //fleetDispatcher.focusSubmitFleet1();
+      });
+
+      moon.addEventListener("click", () => {
+        fleetDispatcher.targetPlanet.type = fleetDispatcher.fleetHelper.PLANETTYPE_MOON;
+		fleetDispatcher.fetchTargetPlayerData();
+        update(true);
+        //fleetDispatcher.focusSubmitFleet1();
+      });
+      debris.addEventListener("click", () => {
+        fleetDispatcher.targetPlanet.type = fleetDispatcher.fleetHelper.PLANETTYPE_DEBRIS;
+		fleetDispatcher.fetchTargetPlayerData();
+        update(true);
+        //fleetDispatcher.focusSubmitFleet1();
+      });
+	  
+	  let that = this;
+	  
+              that.overwriteFleetDispatcher('focusSubmitFleet1', false, () =>
+			  {
+				  if(!this.expedition){				   
+					fleetDispatcher.refreshTarget();
+					fleetDispatcher.updateTarget();
+					fleetDispatcher.fetchTargetPlayerData();
+				  }
+			  });
+			  
+              let auxAjaxFailed = false;
+			
+              that.overwriteFleetDispatcher('setTargetPlayerNameOnStatusBarFleet', false, () =>
+			  {
+				  auxAjaxFailed = true;
+			  });
+			  
+			  
+              that.overwriteFleetDispatcher('stopLoading', false, () =>
+              //that.overwriteFleetDispatcher('setTargetPlanet', false, () =>
+				{
+					
+					let missions = fleetDispatcher.getAvailableMissions();
+					
+					 let warning = document.getElementsByClassName("ogl-warning tooltipRight")[0];
+					 let arrivalDiv = document.getElementsByClassName("ogl-arrival-time")[0]
+					 let returnDiv = document.getElementsByClassName("ogl-return-time")[0];
+					 let durationDiv = document.getElementsByClassName("ogl-duration")[0];
+					 let consDiv = document.getElementsByClassName("ogl-info")[0].lastChild;
+					 
+					 let missionsDiv = document.getElementsByClassName("ogl-missions")[0];
+					
+					  let iconsDiv;
+					  
+					  if(auxAjaxFailed){
+						  missionsDiv.html(`<span style="color: #9099a3"> No missions... </span>`);
+						  warning.style.visibility = "visible";
+						  warning.setAttribute("data-title", "Error : No missions available");
+						  auxAjaxFailed = false;
+					  }  
+					  else if (missions.length == 0 || !fleetDispatcher.hasShipsSelected()) {
+						missionsDiv.html(`<span style="color: #9099a3"> No missions... </span>`);
+						warning.style.visibility = "visible";
+						warning.setAttribute("data-title", "Error : No ships selected");
+					  } else {
+						warning.style.visibility = "hidden";
+						
+						missionsDiv.html(
+						  "<span>" +
+							fleetDispatcher.targetPlayerRankIcon +
+							`<span class="status_abbr_${fleetDispatcher.targetPlayerColorClass}">${fleetDispatcher.targetPlayerName}</span>` +
+							"</span>"
+						);
+
+						if (missionsDiv.innerText == "") {
+						  if (fleetDispatcher.targetPlanet.name == "?")
+							fleetDispatcher.targetPlanet.name = "Unknown";
+						  missionsDiv.html(
+							"<span>" + fleetDispatcher.targetPlanet.name + "</span>"
+						  );
+						}
+						
+						iconsDiv = missionsDiv.appendChild(this.createDOM("div"));
+						
+						  let defaultMission;
+						  
+						  missions.forEach((index) => {
+							iconsDiv.appendChild(
+							  this.createDOM("div", {
+								class: `ogl-mission-${index} ogl-mission-icon`,
+								mission: index,
+							  })
+							);
+							
+
+							if (missions.length == 1) {
+							  defaultMission = index;
+							} else {
+								
+								if(fleetDispatcher.mission == 0 || !missions.includes(fleetDispatcher.mission)){
+									
+									if(index == 15){
+										defaultMission = that.json.options.expeditionMission == 15 ? 15 : 6;
+									} else if(fleetDispatcher.targetIsBuddyOrAllyMember){
+										defaultMission = that.json.options.harvestMission;
+									} else{
+										defaultMission = that.json.options.foreignMission;
+									}
+								}else{
+									defaultMission = fleetDispatcher.mission;
+								}
+
+							}
+						  });
+						  
+						  let icon = document.querySelectorAll(`div[mission="${defaultMission}"]`)[0];
+						  if(icon && icon != null){
+							icon.classList.add("ogl-active");
+						  }
+						  
+						  fleetDispatcher.selectMission(Number(defaultMission));
+						  
+						  $(".ogl-mission-icon").on("click", (e) => {
+							$(".ogl-mission-icon").removeClass("ogl-active");
+							fleetDispatcher.selectMission(Number(e.target.getAttribute("mission"))
+							);
+							e.target.classList.add("ogl-active");
+							update(false);
+						  });
+						update(false);
+					  }
+
+				});
+
+      let planetList = coords.appendChild(
+        this.createDOM(
+          "div",
+          { class: "ogl-homes" },
+          `<svg height="12px" viewBox="0 0 512 512" width="12px"><path fill="white" d="m498.195312 222.695312c-.011718-.011718-.023437-.023437-.035156-.035156l-208.855468-208.847656c-8.902344-8.90625-20.738282-13.8125-33.328126-13.8125-12.589843 0-24.425781 4.902344-33.332031 13.808594l-208.746093 208.742187c-.070313.070313-.140626.144531-.210938.214844-18.28125 18.386719-18.25 48.21875.089844 66.558594 8.378906 8.382812 19.445312 13.238281 31.277344 13.746093.480468.046876.964843.070313 1.453124.070313h8.324219v153.699219c0 30.414062 24.746094 55.160156 55.167969 55.160156h81.710938c8.28125 0 15-6.714844 15-15v-120.5c0-13.878906 11.289062-25.167969 25.167968-25.167969h48.195313c13.878906 0 25.167969 11.289063 25.167969 25.167969v120.5c0 8.285156 6.714843 15 15 15h81.710937c30.421875 0 55.167969-24.746094 55.167969-55.160156v-153.699219h7.71875c12.585937 0 24.421875-4.902344 33.332031-13.808594 18.359375-18.371093 18.367187-48.253906.023437-66.636719zm0 0"/></svg>`
+        )
+      );
+
+      if (unions.length != 0) {
+        let unionsBtn = coords.appendChild(
+          this.createDOM(
+            "div",
+            { class: "ogl-union-btn" },
+            '<img src="https://gf3.geo.gfsrv.net/cdn56/2ff25995f98351834db4b5aa048c68.gif" height="16" width="16"></img>'
+          )
+        );
+        unionsBtn.addEventListener("click", () => {
+          let container = this.createDOM("div", {
+            class: "ogl-quickLinks",
+            style: "display: flex;flex-direction:column",
+          });
+          for (let i in unions) {
+            let union = unions[i];
+            let unionDiv = container.appendChild(
+              this.createDOM(
+                "div",
+                { class: "ogl-quickPlanet" },
+                `${union.name} [${union.galaxy}:${union.system}:${
+                  union.planet
+                }] ${union.planettype == 1 ? "P" : "M"}`
+              )
+            );
+            unionDiv.addEventListener("click", () => {
+              fleetDispatcher.union = union.id;
+              fleetDispatcher.targetPlanet.position = union.planet;
+              fleetDispatcher.targetPlanet.system = union.system;
+              fleetDispatcher.targetPlanet.galaxy = union.galaxy;
+              fleetDispatcher.targetPlanet.type = union.planettype;
+
+              galaxyInput.value = fleetDispatcher.targetPlanet.galaxy;
+              systemInput.value = fleetDispatcher.targetPlanet.system;
+              positionInput.value = fleetDispatcher.targetPlanet.position;
+              document.querySelector(".ogl-dialog .close-tooltip").click();
+              update(true);
+              this.initUnionCombat(union);
+            });
+          }
+
+          this.popup(false, container);
+
+          // that.selectCombatUnion($(e.currentTarget));
+          // that.updateTarget();
+          // that.refresh();
+          // that.focusSubmitFleet2();
+        });
+      }
+
+      planetList.addEventListener("click", () => {
+        let container = this.openPlanetList((planet) => {
+          fleetDispatcher.targetPlanet = planet;
+          fleetDispatcher.refresh();
+          galaxyInput.value = fleetDispatcher.targetPlanet.galaxy;
+          systemInput.value = fleetDispatcher.targetPlanet.system;
+          positionInput.value = fleetDispatcher.targetPlanet.position;
+
+          document.querySelector(".ogl-dialogOverlay").classList.remove("ogl-active");
+		  fleetDispatcher.refreshTarget();
+		  fleetDispatcher.updateTarget();
+		  fleetDispatcher.fetchTargetPlayerData();
+		  
+          update(true);
+          //fleetDispatcher.focusSubmitFleet1();
+        });
+        this.popup(false, container);
+      });
+
+      let briefing = destination.appendChild(
+        this.createDOM("div", { style: "flex-direction: column" })
+      );
+      let info = briefing.appendChild(
+        this.createDOM("div", { class: "ogl-info" })
+      );
+
+      info.appendChild(this.createDOM("div", {}, "Arrival"));
+      let arrivalDiv = info.appendChild(
+        this.createDOM("div", { class: "ogl-arrival-time" })
+      );
+      info.appendChild(this.createDOM("div", {}, "Duration"));
+      let durationDiv = info.appendChild(
+        this.createDOM("div", { class: "ogl-duration" })
+      );
+      info.appendChild(this.createDOM("div", {}, "Return"));
+      let returnDiv = info.appendChild(
+        this.createDOM("div", { class: "ogl-return-time" })
+      );
+      returnDiv.style.visibility = "hidden";
+      info.appendChild(this.createDOM("div", {}, "Consumption"));
+      let consDiv = info.appendChild(
+        this.createDOM("div", { class: "undermark" })
+      );
+
+      let slider = briefing.appendChild(
+        this.createDOM(
+          "div",
+          { style: "margin-top: 10px" },
+          this.playerClass == PLAYER_CLASS_WARRIOR
+            ? `<div class="ogl-fleetSpeed first"><div data-step="0.5">05</div>
+          <div data-step="1">10</div>
+          <div data-step="1.5">15</div>
+          <div data-step="2">20</div>
+          <div data-step="2.5">25</div>
+          <div data-step="3">30</div>
+          <div data-step="3.5">35</div>
+          <div data-step="4">40</div>
+          <div data-step="4.5">45</div>
+          <div data-step="5">50</div>
+          </div>
+          <div class="ogl-fleetSpeed second">
+          <div data-step="5.5">55</div>
+          <div data-step="6">60</div>
+          <div data-step="6.5">65</div>
+          <div data-step="7">70</div>
+          <div data-step="7.5">75</div>
+          <div data-step="8">80</div>
+          <div data-step="8.5">85</div>
+          <div data-step="9">90</div>
+          <div data-step="9.5">95</div>
+          <div class="ogl-active" data-step="10">100</div>
+          </div>
+          `
+            : `<div class="ogl-fleetSpeed">
+        <div data-step="1">10</div>
+        <div data-step="2">20</div>
+        <div data-step="3">30</div>
+        <div data-step="4">40</div>
+        <div data-step="5">50</div>
+        <div data-step="6">60</div>
+        <div data-step="7">70</div>
+        <div data-step="8">80</div>
+        <div data-step="9">90</div>
+        <div class="ogl-active" data-step="10">100</div>
+        </div>`
+        )
+      );
+
+      $(".ogl-fleetSpeed div").on("click", (event) => {
+        $(`.ogl-fleetSpeed div`).removeClass("ogl-active");
+        fleetDispatcher.speedPercent = event.target.getAttribute("data-step");
+        $(
+          `.ogl-fleetSpeed div[data-step="${fleetDispatcher.speedPercent}"]`
+        ).addClass("ogl-active");
+        update(false);
+        /*if (fleetDispatcher.currentPage == "fleet1") {
+          fleetDispatcher.focusSubmitFleet1();
+        } else {
+          fleetDispatcher.focusSendFleet();
+        }*/
+      });
+
+      $(".ogl-fleetSpeed div").on("mouseover", (event) => {
+        fleetDispatcher.speedPercent = event.target.getAttribute("data-step");
+
+        let old = deutLeft.innerText;
+        update(false);
+        if (deutLeft.innerText != old) {
+          deutLeft.classList.add("middlemark");
+        }
+      });
+
+      $(".ogl-fleetSpeed div").on("mouseout", (event) => {
+        fleetDispatcher.speedPercent = slider
+          .querySelector(".ogl-active")
+          .getAttribute("data-step");
+        let middle = deutLeft.classList.contains("middlemark");
+        update(false);
+        if (middle) {
+          deutLeft.classList.add("middlemark");
+        }
+      });
+
+      let missionsDiv = destination.appendChild(
+        this.createDOM("div", { class: "ogl-missions", id: "missionsDiv" })
+      );
+      missionsDiv.html(`<span style="color: #9099a3"> No missions... </span>`);
+
+      let switchToPage = fleetDispatcher.switchToPage.bind(fleetDispatcher);
+      let refresh = fleetDispatcher.refresh.bind(fleetDispatcher);
+
+      let resetShips = fleetDispatcher.resetShips.bind(fleetDispatcher);
+      let selectShip = fleetDispatcher.selectShip.bind(fleetDispatcher);
+      fleetDispatcher.selectShip = (shipId, number) => {
+        selectShip(shipId, number);
+		if(fleetDispatcher.mission == 0){fleetDispatcher.selectMission(3);}
+        update(true);
+        onResChange(2);
+        onResChange(1);
+        onResChange(0);
+      };
+      fleetDispatcher.resetShips = () => {
+        resetShips();
+        update(true);
+        onResChange(2);
+        onResChange(1);
+        onResChange(0);
+      };
+
+      let isDefaultMission = (index) => {
+        if (this.rawURL.searchParams.get(`mission`) == 1) {
+          if (index == 1) {
+            return true;
+          } else {
+            return false;
+          }
+        }
+        if (this.rawURL.searchParams.get(`mission`) == 3) {
+          if (index == 3) {
+            return true;
+          } else {
+            return false;
+          }
         }
 
-        clearTimeout(this.fetchTargetPlayerDataTimeout)
-        if (fetch) {
-          let that = this
-          this.fetchTargetPlayerDataTimeout = setTimeout(() => {
-            that.deferred.push($.Deferred());
-            // check if this is the only target fetch in queue or there are other pending calls
-            if (that.deferred.length === 1) {
-              that.fetchTargetPlayerData()
+        if (index == 3) {
+          if (
+            fleetDispatcher.targetPlayerId == playerId &&
+            this.json.options.harvestMission == 3
+          ) {
+            return true;
+          } else if (this.json.options.foreignMission == 3) {
+            return true;
+          }
+        }
+        if (
+          index == 1 &&
+          (this.mode == 4 || this.json.options.foreignMission == 1)
+        ) {
+          return true;
+        }
+        if (index == 4 && this.json.options.harvestMission == 4) {
+          return true;
+        }
+        if (
+          index == 15 &&
+          (this.json.options.expeditionMission == 15 || this.expedition)
+        ) {
+          this.expedition = false;
+          return true;
+        }
+
+        if (
+          index == 6 &&
+          this.json.options.expeditionMission == 6 &&
+          !this.expedition
+        ) {
+          return true;
+        }
+        return false;
+      };
+
+      fleetDispatcher.switchToPage = (page) => {
+        if (!(fleetDispatcher.currentPage == "fleet1" && page == "fleet3")) {
+          switchToPage(page);
+          if (fleetDispatcher.currentPage == "fleet3") {
+            if (fleetDispatcher.mission == 0) {
+              let missionIcons = document.querySelectorAll("#missions .on a");
+              let mission = 0;
+              if (missionIcons.length == 1) {
+                missionIcons[0].click();
+              } else {
+                missionIcons.forEach((elem) => {
+                  mission = elem.getAttribute("data-mission");
+                  if (isDefaultMission(mission)) {
+                    elem.click();
+                  }
+                });
+              }
             }
-            that.deferred[that.deferred.length - 1]
-              .done(() => {
-                if (that.deferred.length !== 0) {
-                  that.fetchTargetPlayerData()
-                }
+          }
+        } else {
+          document.querySelector("#continueToFleet2").style.filter = "none";
+          if (fleetDispatcher.shipsToSend.length == 0) {
+            document
+              .querySelector(".ogl-dispatch .ogl-missions")
+              .html(`<span style="color: #9099a3"> No missions... </span>`);
+
+            warning.style.visibility = "visible";
+
+            warning.setAttribute("data-title", "Error : No ships selected");
+            return;
+          }
+
+          fleetDispatcher.mission = 0;
+
+          let missions = fleetDispatcher.getAvailableMissions();
+
+          let iconsDiv;
+          if (missions.length == 0) {
+            missionsDiv.html(
+              `<span style="color: #9099a3"> No missions... </span>`
+            );
+          } else {
+            warning.style.visibility = "hidden";
+            missionsDiv.html(
+              "<span>" +
+                fleetDispatcher.targetPlayerRankIcon +
+                `<span class="status_abbr_${fleetDispatcher.targetPlayerColorClass}">${fleetDispatcher.targetPlayerName}</span>` +
+                "</span>"
+            );
+
+            if (missionsDiv.innerText == "") {
+              if (fleetDispatcher.targetPlanet.name == "?")
+                fleetDispatcher.targetPlanet.name = "Unknown";
+              missionsDiv.html(
+                "<span>" + fleetDispatcher.targetPlanet.name + "</span>"
+              );
+            }
+            iconsDiv = missionsDiv.appendChild(this.createDOM("div"));
+          }
+
+          let defaultMish = 0;
+          let union = false;
+
+          missions.forEach((index) => {
+            iconsDiv.appendChild(
+              this.createDOM("div", {
+                class: `ogl-mission-${index} ogl-mission-icon`,
+                mission: index,
               })
-          }, 500)
+            );
+
+            if (missions.length == 1) {
+              defaultMish = index;
+            } else {
+              if (isDefaultMission(index)) {
+                defaultMish = index;
+              }
+              if (index == 2) {
+                union = true;
+              }
+            }
+          });
+
+          if (union) {
+            defaultMish = 2;
+          }
+          let icon = document.querySelector(
+            `.ogl-missions .ogl-mission-${defaultMish}`
+          );
+          icon.classList.add("ogl-active");
+          fleetDispatcher.selectMission(Number(defaultMish));
+          $(".ogl-mission-icon").on("click", (e) => {
+            $(".ogl-mission-icon").removeClass("ogl-active");
+            fleetDispatcher.selectMission(
+              Number(e.target.getAttribute("mission"))
+            );
+            e.target.classList.add("ogl-active");
+            update(false);
+          });
         }
+        update(false);
+      };
+
+      let displayErrors = fleetDispatcher.displayErrors;
+      let error;
+      fleetDispatcher.displayErrors = function (errors) {
+        document
+          .querySelector(".ogl-dispatch .ogl-missions")
+          .html(`<span style="color: #9099a3"> No missions... </span>`);
+
+        fleetDispatcher.selectMission(0);
+        warning.style.visibility = "visible";
+        document.querySelector("#continueToFleet2").style.filter =
+          "hue-rotate(-50deg)";
+
+        warning.setAttribute("data-title", errors[0].message);
+        error = errors[0].message;
+        if (fleetDispatcher.currentPage == "fleet1") return;
+        displayErrors(errors);
+      };
+
+      let fleet = JSON.stringify(
+        fleetDispatcher.shipsToSend.map((elem) => {
+          return elem.id;
+        })
+      );
+      let targetPlanet = JSON.stringify(fleetDispatcher.targetPlanet);
+      let interval;
+      let timeout;
+      let firstLoad = true;
+      let update = (submit) => {
+        if (fleetDispatcher.currentPage == "fleet1") {
+          let galaxy = clampInt(
+            galaxyInput.value,
+            1,
+            fleetDispatcher.fleetHelper.MAX_GALAXY,
+            true
+          );
+          galaxyInput.value = galaxy;
+          let system = clampInt(
+            systemInput.value,
+            1,
+            fleetDispatcher.fleetHelper.MAX_SYSTEM,
+            true
+          );
+          systemInput.value = system;
+          let position = clampInt(
+            positionInput.value,
+            1,
+            fleetDispatcher.fleetHelper.MAX_POSITION,
+            true
+          );
+          positionInput.value = position;
+
+          fleetDispatcher.targetPlanet.galaxy = galaxy;
+          fleetDispatcher.targetPlanet.system = system;
+          fleetDispatcher.targetPlanet.position = position;
+        } else {
+          galaxyInput.value = fleetDispatcher.targetPlanet.galaxy;
+          systemInput.value = fleetDispatcher.targetPlanet.system;
+          positionInput.value = fleetDispatcher.targetPlanet.position;
+        }
+
+        // if (
+        //   fleetDispatcher.targetPlanet.position ===
+        //   fleetDispatcher.fleetHelper.EXPEDITION_POSITION
+        // ) {
+        //   fleetDispatcher.targetPlanet.type =
+        //     fleetDispatcher.fleetHelper.PLANETTYPE_PLANET;
+        // }
+
+        if (fleetDispatcher.mission == 4 || fleetDispatcher.mission == 0) {
+          returnDiv.style.visibility = "hidden";
+        } else {
+          returnDiv.style.visibility = "visible";
+        }
+
+        if (submit) {
+          let newFleet = JSON.stringify(
+            fleetDispatcher.shipsToSend.map((elem) => {
+              return elem.id;
+            })
+          );
+          let newTargetPlanet = JSON.stringify(fleetDispatcher.targetPlanet);
+
+          if (
+            newFleet != fleet ||
+            targetPlanet != newTargetPlanet ||
+            firstLoad
+          ) {
+            firstLoad = false;
+            warning.style.visibility = "hidden";
+            fleet = newFleet;
+            targetPlanet = newTargetPlanet;
+            clearTimeout(timeout);
+            /*
+			timeout = setTimeout(() => {
+              fleetDispatcher.trySubmitFleet2();
+            }, 50);
+			*/
+          }
+        }
+
+        planet.classList.remove("ogl-active");
+        moon.classList.remove("ogl-active");
+        debris.classList.remove("ogl-active");
+
+        if (
+          fleetDispatcher.targetPlanet.type ==
+          fleetDispatcher.fleetHelper.PLANETTYPE_PLANET
+        ) {
+          planet.classList.add("ogl-active");
+        }
+        if (
+          fleetDispatcher.targetPlanet.type ==
+          fleetDispatcher.fleetHelper.PLANETTYPE_MOON
+        ) {
+          moon.classList.add("ogl-active");
+        }
+        if (
+          fleetDispatcher.targetPlanet.type ==
+          fleetDispatcher.fleetHelper.PLANETTYPE_DEBRIS
+        ) {
+          debris.classList.add("ogl-active");
+        }
+
+        if (interval) clearInterval(interval);
+
+        let reset = (noShips) => {
+          durationDiv.html("-");
+          consDiv.innerText = "-";
+          arrivalDiv.innerText = "-";
+          returnDiv.innerText = "-";
+
+          document
+            .querySelector(".ogl-dispatch .ogl-missions")
+            .html(`<span style="color: #9099a3"> No missions... </span>`);
+
+          warning.style.visibility = "visible";
+          warning.setAttribute("data-title", "Error : current planet/moon...");
+          if (noShips) {
+            warning.setAttribute("data-title", "Error : No ships selected...");
+          }
+          document.querySelector("#continueToFleet2").style.filter =
+            "hue-rotate(-50deg)";
+        };
+
+        if (!fleetDispatcher.hasShipsSelected()) {
+          reset(true);
+          return;
+        }
+        if (this.current.coords == fleetDispatcher.targetPlanet.galaxy + ":" + fleetDispatcher.targetPlanet.system + ":" + fleetDispatcher.targetPlanet.position) {
+          if (this.current.isMoon && fleetDispatcher.targetPlanet.type == fleetDispatcher.fleetHelper.PLANETTYPE_MOON ) {
+            reset();
+            return;
+          } else if ( !this.current.isMoon && fleetDispatcher.targetPlanet.type == fleetDispatcher.fleetHelper.PLANETTYPE_PLANET) {
+            reset();
+            return;
+          }
+        }
+		
+        if (fleetDispatcher.mission == 0) {
+          reset();
+          return;
+        }
+		
+        let icon = document.querySelectorAll(`div[mission="${fleetDispatcher.mission}"]`)[0];
+        if(icon && icon != null){
+			$(".ogl-mission-icon").removeClass("ogl-active");
+			icon.classList.add("ogl-active");
+        }
+
+        durationDiv.html("<strong>" + formatTime(fleetDispatcher.getDuration()+(fleetDispatcher.mission == 15 ? 3600 : 0)) + "</strong>");
+        consDiv.innerText = fleetDispatcher
+          .getConsumption()
+          .toLocaleString("de-DE");
+        if (fleetDispatcher.getConsumption() > deutAvailable) {
+          consDiv.classList.add("overmark");
+          if (!error) {
+            warning.style.visibility = "visible";
+            warning.setAttribute(
+              "data-title",
+              "Error : No enough deuterium..."
+            );
+            document.querySelector("#continueToFleet2").style.filter =
+              "hue-rotate(-50deg)";
+          }
+        } else {
+          if (!error) {
+            warning.style.visibility = "hidden";
+            document.querySelector("#continueToFleet2").style.filter = "none";
+          }
+          consDiv.classList.remove("overmark");
+        }
+
+        interval = setInterval(() => {
+          arrivalDiv.html(
+            getFormatedDate(
+              new Date(serverTime).getTime() +
+                fleetDispatcher.getDuration() * 1000,
+              "<strong> [G]:[i]:[s] </strong> - [d].[m]"
+            )
+          );
+
+          returnDiv.html(
+            getFormatedDate(
+              new Date(serverTime).getTime() +
+                2 * fleetDispatcher.getDuration() * 1000 + (fleetDispatcher.mission == 15 ? 3600 : 0) * 1000,
+              "<strong> [G]:[i]:[s] </strong> - [d].[m]"
+            )
+          );
+        }, 100);
+
+        onResChange(2);
+        onResChange(1);
+        onResChange(0);
+        refreshRes();
+      };
+
+      galaxyInput.addEventListener("click", () => {
+        galaxyInput.value = "";
+      });
+      systemInput.addEventListener("click", () => {
+        systemInput.value = "";
+      });
+      positionInput.addEventListener("click", () => {
+        positionInput.value = "";
+      });
+	  
+      function debounce(func, wait, immediate) {
+          var timeout;
+          return function() {
+              var context = this, args = arguments;
+              var later = function() {
+                  timeout = null;
+                  if (!immediate) func.apply(context, args);
+              };
+              var callNow = immediate && !timeout;
+              clearTimeout(timeout);
+              timeout = setTimeout(later, wait);
+              if (callNow) func.apply(context, args);
+          };
+      };
+
+      var myEfficientFn = debounce(function() {
+		  fleetDispatcher.targetPlanet.galaxy = galaxyInput.value;
+		  fleetDispatcher.targetPlanet.system = systemInput.value;
+		  fleetDispatcher.targetPlanet.position = positionInput.value;
+		  fleetDispatcher.refreshTarget();
+		  fleetDispatcher.updateTarget();
+		  fleetDispatcher.fetchTargetPlayerData();
+		  update(true);
+      }, 500);
+
+      galaxyInput.addEventListener('keyup', myEfficientFn);
+      systemInput.addEventListener('keyup', myEfficientFn);
+      positionInput.addEventListener('keyup', myEfficientFn);
+	  
+      let resFiller = actions.appendChild(
+        this.createDOM("div", { class: "ogl-res-filler" })
+      );
+
+      let metalBtn = resFiller.appendChild(this.createDOM("div"));
+      metalBtn.appendChild(
+        this.createDOM("div", { class: "resourceIcon metal" })
+      );
+      let metalFiller = metalBtn.appendChild(
+        this.createDOM("input", { type: "text" })
+      );
+      let metalLeft = metalBtn.appendChild(this.createDOM("span", {}, "-"));
+      let metalReal = metalBtn.appendChild(
+        this.createDOM("span", { class: "ogk-real-cargo ogk-metal" }, "-")
+      );
+      let btns = metalBtn.appendChild(
+        this.createDOM("div", { class: "ogl-actions" })
+      );
+
+      let selectMinMetal = btns.appendChild(
+        this.createDOM("img", {
+          src:
+            "https://gf2.geo.gfsrv.net/cdn10/45494a6e18d52e5c60c8fb56dfbcc4.gif",
+        })
+      );
+      let selectMostMetal = btns.appendChild(
+        this.createDOM("a", { class: "select-most-min" })
+      );
+      let selectMaxMetal = btns.appendChild(
+        this.createDOM("img", {
+          src:
+            "https://gf3.geo.gfsrv.net/cdnea/fa0c8ee62604e3af52e6ef297faf3c.gif",
+        })
+      );
+
+      let crystalBtn = resFiller.appendChild(this.createDOM("div"));
+      crystalBtn.appendChild(
+        this.createDOM("div", { class: "resourceIcon crystal" })
+      );
+      let crystalFiller = crystalBtn.appendChild(
+        this.createDOM("input", { type: "text" })
+      );
+      let crystalLeft = crystalBtn.appendChild(this.createDOM("span", {}, "-"));
+      let crystalReal = crystalBtn.appendChild(
+        this.createDOM("span", { class: "ogk-real-cargo ogk-crystal" }, "-")
+      );
+      let crystalBtns = crystalBtn.appendChild(
+        this.createDOM("div", { class: "ogl-actions" })
+      );
+
+      let selectMinCrystal = crystalBtns.appendChild(
+        this.createDOM("img", {
+          src:
+            "https://gf2.geo.gfsrv.net/cdn10/45494a6e18d52e5c60c8fb56dfbcc4.gif",
+        })
+      );
+      let selectMostCrystal = crystalBtns.appendChild(
+        this.createDOM("a", { class: "select-most-min" })
+      );
+      let selectMaxCrystal = crystalBtns.appendChild(
+        this.createDOM("img", {
+          src:
+            "https://gf3.geo.gfsrv.net/cdnea/fa0c8ee62604e3af52e6ef297faf3c.gif",
+        })
+      );
+
+      let deutBtn = resFiller.appendChild(this.createDOM("div"));
+      deutBtn.appendChild(
+        this.createDOM("div", { class: "resourceIcon deuterium" })
+      );
+      let deutFiller = deutBtn.appendChild(
+        this.createDOM("input", { type: "text" })
+      );
+      let deutLeft = deutBtn.appendChild(this.createDOM("span", {}, "-"));
+      let deutReal = deutBtn.appendChild(
+        this.createDOM("span", { class: "ogk-real-cargo ogk-deut" }, "-")
+      );
+      let deutBtns = deutBtn.appendChild(
+        this.createDOM("div", { class: "ogl-actions" })
+      );
+
+      let selectMinDeut = deutBtns.appendChild(
+        this.createDOM("img", {
+          src:
+            "https://gf2.geo.gfsrv.net/cdn10/45494a6e18d52e5c60c8fb56dfbcc4.gif",
+        })
+      );
+      let selectMostDeut = deutBtns.appendChild(
+        this.createDOM("a", { class: "select-most-min" })
+      );
+      let selectMaxDeut = deutBtns.appendChild(
+        this.createDOM("img", {
+          src:
+            "https://gf3.geo.gfsrv.net/cdnea/fa0c8ee62604e3af52e6ef297faf3c.gif",
+        })
+      );
+
+      $("#selectMinMetal").after(
+        this.createDOM("a", { id: "selectMostMetal", class: "select-most-min" })
+      );
+      $("#selectMinCrystal").after(
+        this.createDOM("a", {
+          id: "selectMostCrystal",
+          class: "select-most-min",
+        })
+      );
+      $("#selectMinDeuterium").after(
+        this.createDOM("a", {
+          id: "selectMostDeuterium",
+          class: "select-most-min",
+        })
+      );
+
+      $("#selectMaxMetal").after(
+        this.createDOM("span", { class: "ogi-metalLeft" }, "-")
+      );
+      $("#selectMaxCrystal").after(
+        this.createDOM("span", { class: "ogi-crystalLeft" }, "-")
+      );
+      $("#selectMaxDeuterium").after(
+        this.createDOM("span", { class: "ogi-deuteriumLeft" }, "-")
+      );
+
+      $("#allresources").after(this.createDOM("a", { class: "select-most" }));
+      $("#allresources").after(
+        this.createDOM("a", { class: "send_none" }, "<a></a>")
+      );
+      $("#loadAllResources .select-most").on("click", () => {
+        $("#selectMinDeuterium").click();
+        $("#selectMinCrystal").click();
+        $("#selectMinMetal").click();
+        $("#selectMostDeuterium").click();
+        $("#selectMostCrystal").click();
+        $("#selectMostMetal").click();
+      });
+	  
+	  $("#selectMinMetal").on("click", () => {
+	   setTimeout(function() {
+		metalFiller.value = fleetDispatcher.cargoMetal;
+		refreshRes();
+	   }, 100);
+      });
+	  
+	  $("#selectMaxMetal").on("click", () => {
+	   setTimeout(function() {
+		metalFiller.value = fleetDispatcher.cargoMetal;
+		refreshRes();
+	   }, 100);
+      });
+	  
+	  $("#selectMinCrystal").on("click", () => {
+	   setTimeout(function() {
+		crystalFiller.value = fleetDispatcher.cargoCrystal;
+		refreshRes();
+	   }, 100);
+      });
+	  
+	  $("#selectMaxCrystal").on("click", () => {
+	   setTimeout(function() {
+		crystalFiller.value = fleetDispatcher.cargoCrystal;
+		refreshRes();
+	   }, 100);
+      });
+	  
+	  $("#selectMinDeuterium").on("click", () => {
+	   setTimeout(function() {
+		deutFiller.value = fleetDispatcher.cargoDeuterium;
+		refreshRes();
+	   }, 100);
+      });
+	  
+	  $("#selectMaxDeuterium").on("click", () => {
+	   setTimeout(function() {
+		deutFiller.value = fleetDispatcher.cargoDeuterium;
+		refreshRes();
+	   }, 100);
+      });
+	  
+      $("#allresources").on("click", () => {
+	   setTimeout(function() {
+		metalFiller.value = fleetDispatcher.cargoMetal;
+		crystalFiller.value = fleetDispatcher.cargoCrystal;
+		deutFiller.value = fleetDispatcher.cargoDeuterium;
+		refreshRes();
+	   }, 100);
+	   
+      });
+
+      $("#loadAllResources .send_none").on("click", () => {
+        $("#selectMinDeuterium").click();
+        $("#selectMinCrystal").click();
+        $("#selectMinMetal").click();
+		metalFiller.value = 0;
+		crystalFiller.value = 0;
+		deutFiller.value = 0;
+		refreshRes();
+      });
+	  
+	  document.querySelector("input[id=metal]").addEventListener("keyup", (e) => {	  
+		let val = that.removeNumSeparator(document.querySelector("input#metal").value);
+        let capacity = fleetDispatcher.getFreeCargoSpace();
+        fleetDispatcher.cargoMetal = Math.min(
+			Math.min(val, capacity + fleetDispatcher.cargoMetal),
+			Math.max(0, metalAvailable)
+		);
+		metalFiller.value = fleetDispatcher.cargoMetal;
+        fleetDispatcher.refresh();
+		refreshRes();
+      });
+	  document.querySelector("input[id=crystal]").addEventListener("keyup", (e) => {
+		let val = that.removeNumSeparator(document.querySelector("input#crystal").value);
+        let capacity = fleetDispatcher.getFreeCargoSpace();
+        fleetDispatcher.cargoCrystal = Math.min(
+			Math.min(val, capacity + fleetDispatcher.cargoCrystal),
+			Math.max(0, crystalAvailable)
+		);
+		crystalFiller.value = fleetDispatcher.cargoCrystal;
+        fleetDispatcher.refresh();
+		refreshRes();
+      });
+	  document.querySelector("input[id=deuterium]").addEventListener("keyup", (e) => {
+		let val = that.removeNumSeparator(document.querySelector("input#deuterium").value);
+        let capacity = fleetDispatcher.getFreeCargoSpace();
+        fleetDispatcher.cargoDeuterium = Math.min(
+			Math.min(val, capacity + fleetDispatcher.cargoDeuterium),
+			Math.max(0, deutAvailable)
+		);
+		deutFiller.value = fleetDispatcher.cargoDeuterium;
+        fleetDispatcher.refresh();
+		refreshRes();
+      });
+
+      let firstResRefresh = true;
+      let refreshRes = () => {
+        let mLeft = document.querySelector(".res_wrap .ogi-metalLeft");
+        let cLeft = document.querySelector(".res_wrap .ogi-crystalLeft");
+        let dLeft = document.querySelector(".res_wrap .ogi-deuteriumLeft");
+
+        if (firstResRefresh && fleetDispatcher.currentPage == "fleet1") {
+          firstResRefresh = false;
+          if (deutLeft.classList.contains("overmark")) {
+            dLeft.classList.add("overmark");
+          } else if (deutLeft.classList.contains("middlemark")) {
+            dLeft.classList.add("middlemark");
+          }
+          if (metalLeft.classList.contains("overmark")) {
+            mLeft.classList.add("overmark");
+          }
+          if (crystalLeft.classList.contains("overmark")) {
+            cLeft.classList.add("overmark");
+          }
+
+          mLeft.innerText = metalLeft.innerText;
+          cLeft.innerText = crystalLeft.innerText;
+          dLeft.innerText = deutLeft.innerText;
+        } else {
+          cLeft.classList.remove("overmark");
+          mLeft.classList.remove("overmark");
+          dLeft.classList.remove("overmark");
+          dLeft.classList.remove("middlemark");
+
+          let val = this.removeNumSeparator(
+            document.querySelector("input#metal").value
+          );
+          mLeft.innerText = Math.max(0, metalAvailable - val).toLocaleString(
+            "de-DE"
+          );
+          val = this.removeNumSeparator(
+            document.querySelector("input#crystal").value
+          );
+          cLeft.innerText = Math.max(0, crystalAvailable - val).toLocaleString(
+            "de-DE"
+          );
+          val = this.removeNumSeparator(
+            document.querySelector("input#deuterium").value
+          );
+          dLeft.innerText = Math.max(
+            0,
+            deutAvailable - fleetDispatcher.getConsumption() - val
+          ).toLocaleString("de-DE");
+        }
+      };
+
+      let kept =
+        this.json.options.kept[
+          this.current.coords + this.current.isMoon ? "M" : "P"
+        ] || this.json.options.defaultKept;
+
+      $("#selectMostMetal").on("click", () => {
+        let capacity = fleetDispatcher.getFreeCargoSpace();
+        let cargo = Math.min(capacity, metalAvailable - (kept[0] || 0));
+        fleetDispatcher.cargoMetal = Math.min(
+			fleetDispatcher.cargoMetal + capacity,
+			Math.max(0, metalAvailable - (kept[0] || 0))
+		);
+		metalFiller.value = fleetDispatcher.cargoMetal;
+        fleetDispatcher.refresh();
+		refreshRes();
+        //fleetDispatcher.focusSubmitFleet3();
+      });
+      $("#selectMostCrystal").on("click", () => {
+        let capacity = fleetDispatcher.getFreeCargoSpace();
+        fleetDispatcher.cargoCrystal = Math.min(
+          fleetDispatcher.cargoCrystal + capacity,
+          Math.max(0, crystalAvailable - (kept[1] || 0))
+        );
+		crystalFiller.value = fleetDispatcher.cargoCrystal;
+        fleetDispatcher.refresh();
+		refreshRes();
+        //fleetDispatcher.focusSubmitFleet3();
+      });
+      $("#selectMostDeuterium").on("click", () => {
+        let capacity = fleetDispatcher.getFreeCargoSpace();
+        fleetDispatcher.cargoDeuterium = Math.min(
+          fleetDispatcher.cargoDeuterium + capacity,
+          Math.max(0, deutAvailable - fleetDispatcher.getConsumption() - (kept[2] || 0)
+          )
+        );
+		deutFiller.value = fleetDispatcher.cargoDeuterium;
+        fleetDispatcher.refresh();
+		refreshRes();
+        //fleetDispatcher.focusSubmitFleet3();
+      });
+      $("#backToFleet2").on("click", () => {
+        firstResRefresh = true;
+      });
+      $("#backToFleet1").on("click", () => {
+        update(true);
+      });
+
+      let load = this.createDOM("div", { class: "ogl-cargo" });
+
+      let selectMostRes = load.appendChild(
+        this.createDOM("a", { class: "select-most" })
+      );
+      let selectAllRes = load.appendChild(
+        this.createDOM("a", { class: "sendall" })
+      );
+      let selectNoRes = load.appendChild(
+        this.createDOM("a", { class: "send_none" }, `<a></a>`)
+      );
+
+      selectNoRes.addEventListener("click", () => {
+        selectMinDeut.click();
+        selectMinCrystal.click();
+        selectMinMetal.click();
+      });
+      selectAllRes.addEventListener("click", () => {
+        selectMaxDeut.click();
+        selectMaxCrystal.click();
+        selectMaxMetal.click();
+      });
+      selectMostRes.addEventListener("click", () => {
+        selectMostDeut.click();
+        selectMostCrystal.click();
+        selectMostMetal.click();
+      });
+
+      let bar = load.appendChild(this.createDOM("div", {}));
+      bar.html(
+        `<div class="fleft bar_container" data-current-amount="0" data-capacity="0">
+        <div class="filllevel_bar"></div>
+        </div>
+        <div>
+        <span class="undermark">0</span>
+        / <span>0</span>
+        </div>`
+      );
+
+      let settings = load.appendChild(
+        this.createDOM(
+          "div",
+          { class: "ogl-setting-icon" },
+          `<img src="https://gf3.geo.gfsrv.net/cdne7/1f57d944fff38ee51d49c027f574ef.gif" width="16" height="16" >`
+        )
+      );
+      settings.addEventListener("click", () => {
+        this.popup(
+          null,
+          this.keepOnPlanetDialog(
+            this.current.coords + (this.current.isMoon ? "M" : "P")
+          )
+        );
+      });
+
+      let updateCargo = () => {
+        let total =
+          Number(this.removeNumSeparator(metalFiller.value)) +
+          Number(this.removeNumSeparator(crystalFiller.value)) +
+          Number(this.removeNumSeparator(deutFiller.value));
+
+        let freeSpace = fleetDispatcher.getCargoCapacity() - total;
+        bar.html(
+          `<div class="fleft bar_container" data-current-amount="0" data-capacity="0">
+        <div class="filllevel_bar"></div>
+        </div>
+        <div>
+        <span class="${
+          freeSpace >= 0 ? "undermark" : "overmark"
+        }">${freeSpace.toLocaleString("de-DE")} </span>
+        / <span> ${fleetDispatcher
+          .getCargoCapacity()
+          .toLocaleString("de-DE")}</span>
+        </div>`
+        );
+
+        let filler = document.querySelector(".ogl-cargo .filllevel_bar");
+        let percent =
+          100 - (freeSpace / fleetDispatcher.getCargoCapacity()) * 100;
+
+        if (percent > 100) {
+          percent = 100;
+        }
+
+        filler.style.width = percent + "%";
+        if (percent < 80) {
+          filler.classList.add("filllevel_undermark");
+        } else if (percent > 80 && percent < 100) {
+          filler.classList.add("filllevel_middlemark");
+        } else {
+          filler.classList.add("filllevel_overmark");
+        }
+      };
+
+      resDiv.appendChild(load);
+
+      selectMinMetal.addEventListener("click", () => {
+        metalFiller.value = 0;
+        onResChange(0);
+      });
+      selectMaxMetal.addEventListener("click", () => {
+        metalFiller.value = metalAvailable;
+        onResChange(0);
+      });
+      selectMostMetal.addEventListener("click", () => {
+        metalFiller.value = Math.max(0, metalAvailable - (kept[0] || 0));
+        onResChange(0);
+      });
+      selectMinCrystal.addEventListener("click", () => {
+        crystalFiller.value = 0;
+        onResChange(1);
+      });
+      selectMaxCrystal.addEventListener("click", () => {
+        crystalFiller.value = crystalAvailable;
+        onResChange(1);
+      });
+      selectMostCrystal.addEventListener("click", () => {
+        crystalFiller.value = Math.max(0, crystalAvailable - (kept[1] || 0));
+        onResChange(1);
+      });
+      selectMinDeut.addEventListener("click", () => {
+        deutFiller.value = 0;
+        onResChange(2);
+      });
+      selectMaxDeut.addEventListener("click", () => {
+        deutFiller.value = Math.max(
+          0,
+          deutAvailable - fleetDispatcher.getConsumption()
+        );
+        onResChange(2);
+      });
+      selectMostDeut.addEventListener("click", () => {
+        deutFiller.value = Math.max(
+          0,
+          deutAvailable - fleetDispatcher.getConsumption() - (kept[2] || 0)
+        );
+        onResChange(2);
+      });
+
+      let transport = actions.appendChild(
+        this.createDOM("div", { class: "ogl-res-transport" })
+      );
+
+      let ptBtn = transport.appendChild(
+        this.createDOM("a", {
+          "tech-id": 202,
+          class: "ogl-option ogl-fleet-ship ogl-fleet-202",
+        })
+      );
+      let ptNum = transport.appendChild(this.createDOM("span", {}, "-"));
+
+      let gtBtn = transport.appendChild(
+        this.createDOM("a", {
+          "tech-id": 203,
+          class: "ogl-option ogl-fleet-ship ogl-fleet-203",
+        })
+      );
+      let gtNum = transport.appendChild(this.createDOM("span", {}, "-"));
+
+      let pfBtn = transport.appendChild(
+        this.createDOM("a", {
+          "tech-id": 219,
+          class: "ogl-option ogl-fleet-ship ogl-fleet-219",
+        })
+      );
+      let pfNum = transport.appendChild(this.createDOM("span", {}, "-"));
+
+      let cyBtn = transport.appendChild(
+        this.createDOM("a", {
+          "tech-id": 209,
+          class: "ogl-option ogl-fleet-ship ogl-fleet-209",
+        })
+      );
+      let cyNum = transport.appendChild(this.createDOM("span", {}, "-"));
+
+      let pbBtn;
+      let pbNum;
+      if (this.json.pbFret != 0) {
+        pbBtn = transport.appendChild(
+          this.createDOM("a", {
+            "tech-id": 210,
+            class: "ogl-option ogl-fleet-ship ogl-fleet-210",
+          })
+        );
+        pbNum = transport.appendChild(this.createDOM("span", {}, "-"));
       }
 
-      FleetDispatcher.prototype.refreshFleet2 = function () {
-        this.refreshNavigationFleet2()
-        this.refreshTarget()
-        this.refreshBriefing()
-        this.refreshCargo()
-        this.refreshPriorities()
+      let updateShips = (e) => {
+        let amount = e.target.nextElementSibling.getAttribute("amount");
+        this.selectShips(Number(e.target.getAttribute("tech-id")), amount);
+		fleetDispatcher.refreshTarget();
+		fleetDispatcher.updateTarget();
+		fleetDispatcher.fetchTargetPlayerData();
+      };
 
-        // alert("test")
-        let missions = fleetDispatcher.getAvailableMissions();
-        if (fleetDispatcher.isMissionAvailable()) {
-          alert(missions)
+      ptBtn.addEventListener("click", updateShips);
+      gtBtn.addEventListener("click", updateShips);
+      pfBtn.addEventListener("click", updateShips);
+      cyBtn.addEventListener("click", updateShips);
+      if (pbBtn) pbBtn.addEventListener("click", updateShips);
+
+      let onResChange = (index) => {
+        let capacity = fleetDispatcher.getCargoCapacity();
+        if (capacity == 0) {
+          fleetDispatcher.resetCargo();
         }
 
+        let filled = this.removeNumSeparator(deutFiller.value);
+        let deut = Math.min(
+          this.removeNumSeparator(deutFiller.value),
+          capacity,
+          deutAvailable - fleetDispatcher.getConsumption()
+        );
 
+        if (index == 2) {
+          fleetDispatcher.cargoDeuterium = Math.min(
+            deut,
+            fleetDispatcher.cargoDeuterium + fleetDispatcher.getFreeCargoSpace()
+          );
+
+          let old = deutLeft.innerText;
+
+          deutLeft.innerText = (
+            deutAvailable -
+            fleetDispatcher.getConsumption() -
+            fleetDispatcher.cargoDeuterium
+          ).toLocaleString("de-DE");
+
+          if (old != deutLeft.innerText || deutLeft.innerText == "0") {
+            deutLeft.classList.remove("middlemark");
+          }
+
+          if (
+            fleetDispatcher.getFreeCargoSpace() == 0 &&
+            deutLeft.innerText != "0"
+          ) {
+            deutLeft.classList.add("overmark");
+            deutReal.innerText = Math.max(
+              0,
+              fleetDispatcher.cargoDeuterium
+            ).toLocaleString("de-DE");
+          } else {
+            deutLeft.classList.remove("overmark");
+            deutReal.innerText = "-";
+          }
+
+          if (
+            filled >
+            Math.max(0, deutAvailable - fleetDispatcher.getConsumption())
+          ) {
+            deutFiller.value = (
+              deutAvailable - fleetDispatcher.getConsumption()
+            ).toLocaleString("de-DE");
+          }
+        } else if (index == 1) {
+          filled = this.removeNumSeparator(crystalFiller.value);
+          let crystal = Math.min(
+            this.removeNumSeparator(crystalFiller.value),
+            capacity,
+            crystalAvailable
+          );
+
+          fleetDispatcher.cargoCrystal = Math.min(
+            crystal,
+            fleetDispatcher.cargoCrystal + fleetDispatcher.getFreeCargoSpace()
+          );
+          crystalLeft.innerText = (
+            crystalAvailable - fleetDispatcher.cargoCrystal
+          ).toLocaleString("de-DE");
+
+          if (
+            fleetDispatcher.getFreeCargoSpace() == 0 &&
+            crystalLeft.innerText != "0"
+          ) {
+            crystalLeft.classList.add("overmark");
+            crystalReal.innerText = Math.max(
+              0,
+              fleetDispatcher.cargoCrystal
+            ).toLocaleString("de-DE");
+          } else {
+            crystalLeft.classList.remove("overmark");
+            crystalReal.innerText = "-";
+          }
+        } else if (index == 0) {
+          filled = this.removeNumSeparator(metalFiller.value);
+          let metal = Math.min(
+            this.removeNumSeparator(metalFiller.value),
+            capacity,
+            metalAvailable
+          );
+
+          fleetDispatcher.cargoMetal = Math.min(
+            metal,
+            fleetDispatcher.cargoMetal + fleetDispatcher.getFreeCargoSpace()
+          );
+          metalLeft.innerText = (
+            metalAvailable - fleetDispatcher.cargoMetal
+          ).toLocaleString("de-DE");
+
+          if (
+            fleetDispatcher.getFreeCargoSpace() == 0 &&
+            metalLeft.innerText != "0"
+          ) {
+            metalLeft.classList.add("overmark");
+            metalReal.innerText = Math.max(
+              0,
+              fleetDispatcher.cargoMetal
+            ).toLocaleString("de-DE");
+          } else {
+            metalLeft.classList.remove("overmark");
+            metalReal.innerText = "-";
+          }
+        }
+
+        let ships = {};
+        fleetDispatcher.shipsOnPlanet.forEach((elem) => {
+          ships[elem.id] = elem.number;
+        });
+        ptNum.classList.remove("overmark");
+        gtNum.classList.remove("overmark");
+        pfNum.classList.remove("overmark");
+        cyNum.classList.remove("overmark");
+        if (pbNum) pbNum.classList.remove("overmark");
+
+        let amount = needCargo(202);
+        //ptNum.innerText = this.formatToUnits(amount);
+		ptNum.innerText = amount.toLocaleString("de-DE");
+        ptNum.setAttribute("amount", amount);
+        if (amount > (ships[202] || 0)) ptNum.classList.add("overmark");
+
+        amount = needCargo(203);
+        //gtNum.innerText = this.formatToUnits(amount);
+		gtNum.innerText = amount.toLocaleString("de-DE");
+        gtNum.setAttribute("amount", amount);
+        if (amount > (ships[203] || 0)) gtNum.classList.add("overmark");
+
+        amount = needCargo(219);
+        //pfNum.innerText = this.formatToUnits(amount);
+		pfNum.innerText = amount.toLocaleString("de-DE");
+        pfNum.setAttribute("amount", amount);
+        if (amount > (ships[219] || 0)) pfNum.classList.add("overmark");
+
+        amount = needCargo(209);
+        //cyNum.innerText = this.formatToUnits(amount);
+		cyNum.innerText = amount.toLocaleString("de-DE");
+        cyNum.setAttribute("amount", amount);
+        if (amount > (ships[209] || 0)) cyNum.classList.add("overmark");
+
+        if (pbBtn) {
+          amount = needCargo(210);
+          //pbNum.innerText = this.formatToUnits(amount);
+		  pbNum.innerText = amount.toLocaleString("de-DE");
+          pbNum.setAttribute("amount", amount);
+          if (amount > (ships[210] || 0)) pbNum.classList.add("overmark");
+        }
+
+        updateCargo();
+      };
+
+      metalFiller.addEventListener("keyup", (e) => {
+        onResChange(0);
+        e.target.focus();
+      });
+      crystalFiller.addEventListener("keyup", (e) => {
+        onResChange(1);
+        e.target.focus();
+      });
+      deutFiller.addEventListener("keyup", (e) => {
+        onResChange(2);
+        e.target.focus();
+      });
+
+      if (this.mode == 2 || this.mode == 1) {
+        if (this.mode == 1) {
+          metalFiller.value = metalAvailable;
+          crystalFiller.value = crystalAvailable;
+          deutFiller.value = deutAvailable;
+        } else if (this.mode == 2) {
+          let coords =
+            fleetDispatcher.targetPlanet.galaxy +
+            ":" +
+            fleetDispatcher.targetPlanet.system +
+            ":" +
+            fleetDispatcher.targetPlanet.position;
+          coords +=
+            fleetDispatcher.targetPlanet.type ==
+            fleetDispatcher.fleetHelper.PLANETTYPE_MOON
+              ? "M"
+              : "P";
+          let missing = this.json.missing[coords];
+          if (missing) {
+            metalFiller.value = Math.min(
+              missing[0],
+              fleetDispatcher.metalOnPlanet
+            );
+            crystalFiller.value = Math.min(
+              missing[1],
+              fleetDispatcher.crystalOnPlanet
+            );
+            deutFiller.value = Math.min(
+              missing[2],
+              fleetDispatcher.deuteriumOnPlanet
+            );
+          }
+        }
+        onResChange(2);
+        onResChange(1);
+        onResChange(0);
       }
-
-
-      return
-
-      // let metalAvailable = Math.max(0, fleetDispatcher.metalOnPlanet);
-      // let crystalAvailable = Math.max(0, fleetDispatcher.crystalOnPlanet);
-      // let deutAvailable = Math.max(0, fleetDispatcher.deuteriumOnPlanet);
-
-      // let needCargo = (fret) => {
-      //   let metal = Number(metalFiller.value.split(".").join(""));
-      //   if (metal > metalAvailable) metalFiller.value = metalAvailable;
-
-      //   let crystal = Number(crystalFiller.value.split(".").join(""));
-      //   if (crystal > crystalAvailable) crystalFiller.value = crystalAvailable;
-
-      //   let deut = Number(deutFiller.value.split(".").join(""));
-      //   if (deut > deutAvailable)
-      //     deutFiller.value = Math.max(
-      //       0,
-      //       deutAvailable - fleetDispatcher.getConsumption()
-      //     );
-
-      //   let amount = this.calcNeededShips({
-      //     fret: fret,
-      //     resources:
-      //       Math.min(metal, metalAvailable) +
-      //       Math.min(crystal, crystalAvailable) +
-      //       Math.min(deut, deutAvailable),
-      //   });
-      //   return amount;
-      // };
-
-      // let dispatch = document
-      //   .querySelector("#shipsChosen")
-      //   .appendChild(this.createDOM("div", { class: "ogl-dispatch" }));
-
-      // if (!this.json.options.dispatcher) {
-      //   dispatch.style.display = "none";
-      // }
-
-      // let destination = dispatch.appendChild(
-      //   this.createDOM("div", { class: "ogl-dest" })
-      // );
-      // let resDiv = dispatch.appendChild(this.createDOM("div"));
-      // let actions = resDiv.appendChild(
-      //   this.createDOM("div", { class: "ogl-transport" })
-      // );
-      // let coords = destination.appendChild(
-      //   this.createDOM("div", { class: "ogl-coords" })
-      // );
-
-      // let warning = coords.appendChild(
-      //   this.createDOM("a", {
-      //     class: "ogl-warning tooltipRight",
-      //     "data-title": "Error : current planet/moon...",
-      //   })
-      // );
-
-      // let galaxyInput = coords.appendChild(
-      //   this.createDOM("input", {
-      //     type: "text",
-      //     pattern: "[0-9]*",
-      //     value: fleetDispatcher.targetPlanet.galaxy,
-      //   })
-      // );
-      // let systemInput = coords.appendChild(
-      //   this.createDOM("input", {
-      //     type: "text",
-      //     pattern: "[0-9]*",
-      //     value: fleetDispatcher.targetPlanet.system,
-      //   })
-      // );
-      // let positionInput = coords.appendChild(
-      //   this.createDOM("input", {
-      //     type: "text",
-      //     pattern: "[0-9]*",
-      //     value: fleetDispatcher.targetPlanet.position,
-      //   })
-      // );
-      // let planet = coords.appendChild(
-      //   this.createDOM("a", { class: "ogl-planet-icon" })
-      // );
-      // let moon = coords.appendChild(
-      //   this.createDOM("a", { class: "ogl-moon-icon" })
-      // );
-      // let debris = coords.appendChild(
-      //   this.createDOM("a", { class: "ogl-debris-icon" })
-      // );
-
-      // planet.addEventListener("click", () => {
-      //   fleetDispatcher.targetPlanet.type =
-      //     fleetDispatcher.fleetHelper.PLANETTYPE_PLANET;
-      //   update(true);
-      //   fleetDispatcher.focusSubmitFleet1();
-      // });
-
-      // moon.addEventListener("click", () => {
-      //   fleetDispatcher.targetPlanet.type =
-      //     fleetDispatcher.fleetHelper.PLANETTYPE_MOON;
-      //   update(true);
-      //   fleetDispatcher.focusSubmitFleet1();
-      // });
-      // debris.addEventListener("click", () => {
-      //   fleetDispatcher.targetPlanet.type =
-      //     fleetDispatcher.fleetHelper.PLANETTYPE_DEBRIS;
-      //   update(true);
-      //   fleetDispatcher.focusSubmitFleet1();
-      // });
-
-      // let planetList = coords.appendChild(
-      //   this.createDOM(
-      //     "div",
-      //     { class: "ogl-homes" },
-      //     `<svg height="12px" viewBox="0 0 512 512" width="12px"><path fill="white" d="m498.195312 222.695312c-.011718-.011718-.023437-.023437-.035156-.035156l-208.855468-208.847656c-8.902344-8.90625-20.738282-13.8125-33.328126-13.8125-12.589843 0-24.425781 4.902344-33.332031 13.808594l-208.746093 208.742187c-.070313.070313-.140626.144531-.210938.214844-18.28125 18.386719-18.25 48.21875.089844 66.558594 8.378906 8.382812 19.445312 13.238281 31.277344 13.746093.480468.046876.964843.070313 1.453124.070313h8.324219v153.699219c0 30.414062 24.746094 55.160156 55.167969 55.160156h81.710938c8.28125 0 15-6.714844 15-15v-120.5c0-13.878906 11.289062-25.167969 25.167968-25.167969h48.195313c13.878906 0 25.167969 11.289063 25.167969 25.167969v120.5c0 8.285156 6.714843 15 15 15h81.710937c30.421875 0 55.167969-24.746094 55.167969-55.160156v-153.699219h7.71875c12.585937 0 24.421875-4.902344 33.332031-13.808594 18.359375-18.371093 18.367187-48.253906.023437-66.636719zm0 0"/></svg>`
-      //   )
-      // );
-
-      // if (unions.length != 0) {
-      //   let unionsBtn = coords.appendChild(
-      //     this.createDOM(
-      //       "div",
-      //       { class: "ogl-union-btn" },
-      //       '<img src="https://gf3.geo.gfsrv.net/cdn56/2ff25995f98351834db4b5aa048c68.gif" height="16" width="16"></img>'
-      //     )
-      //   );
-      //   unionsBtn.addEventListener("click", () => {
-      //     let container = this.createDOM("div", {
-      //       class: "ogl-quickLinks",
-      //       style: "display: flex;flex-direction:column",
-      //     });
-      //     for (let i in unions) {
-      //       let union = unions[i];
-      //       let unionDiv = container.appendChild(
-      //         this.createDOM(
-      //           "div",
-      //           { class: "ogl-quickPlanet" },
-      //           `${union.name} [${union.galaxy}:${union.system}:${
-      //             union.planet
-      //           }] ${union.planettype == 1 ? "P" : "M"}`
-      //         )
-      //       );
-      //       unionDiv.addEventListener("click", () => {
-      //         fleetDispatcher.union = union.id;
-      //         fleetDispatcher.targetPlanet.position = union.planet;
-      //         fleetDispatcher.targetPlanet.system = union.system;
-      //         fleetDispatcher.targetPlanet.galaxy = union.galaxy;
-      //         fleetDispatcher.targetPlanet.type = union.planettype;
-
-      //         galaxyInput.value = fleetDispatcher.targetPlanet.galaxy;
-      //         systemInput.value = fleetDispatcher.targetPlanet.system;
-      //         positionInput.value = fleetDispatcher.targetPlanet.position;
-      //         document.querySelector(".ogl-dialog .close-tooltip").click();
-      //         update(true);
-      //         this.initUnionCombat(union);
-      //       });
-      //     }
-
-      //     this.popup(false, container);
-
-      //     //   hat.selectCombatUnion($(e.currentTarget));
-      //     // that.updateTarget();
-      //     // that.refresh();
-      //     // that.focusSubmitFleet2();
-      //   });
-      // }
-
-      // planetList.addEventListener("click", () => {
-      //   let container = this.openPlanetList((planet) => {
-      //     fleetDispatcher.targetPlanet = planet;
-      //     fleetDispatcher.refresh();
-      //     galaxyInput.value = fleetDispatcher.targetPlanet.galaxy;
-      //     systemInput.value = fleetDispatcher.targetPlanet.system;
-      //     positionInput.value = fleetDispatcher.targetPlanet.position;
-
-      //     document
-      //       .querySelector(".ogl-dialogOverlay")
-      //       .classList.remove("ogl-active");
-      //     update(true);
-      //     fleetDispatcher.focusSubmitFleet1();
-      //   });
-      //   this.popup(false, container);
-      // });
-
-      // let briefing = destination.appendChild(
-      //   this.createDOM("div", { style: "flex-direction: column" })
-      // );
-      // let info = briefing.appendChild(
-      //   this.createDOM("div", { class: "ogl-info" })
-      // );
-
-      // info.appendChild(this.createDOM("div", {}, "Arrival"));
-      // let arrivalDiv = info.appendChild(
-      //   this.createDOM("div", { class: "ogl-arrival-time" })
-      // );
-      // info.appendChild(this.createDOM("div", {}, "Duration"));
-      // let durationDiv = info.appendChild(
-      //   this.createDOM("div", { class: "ogl-duration" })
-      // );
-      // info.appendChild(this.createDOM("div", {}, "Return"));
-      // let returnDiv = info.appendChild(
-      //   this.createDOM("div", { class: "ogl-return-time" })
-      // );
-      // returnDiv.style.visibility = "hidden";
-      // info.appendChild(this.createDOM("div", {}, "Consumption"));
-      // let consDiv = info.appendChild(
-      //   this.createDOM("div", { class: "undermark" })
-      // );
-
-      // let slider = briefing.appendChild(
-      //   this.createDOM(
-      //     "div",
-      //     { style: "margin-top: 10px" },
-      //     this.playerClass == PLAYER_CLASS_WARRIOR
-      //       ? `<div class="ogl-fleetSpeed first"><div data-step="0.5">05</div>
-      //     <div data-step="1">10</div>
-      //     <div data-step="1.5">15</div>
-      //     <div data-step="2">20</div>
-      //     <div data-step="2.5">25</div>
-      //     <div data-step="3">30</div>
-      //     <div data-step="3.5">35</div>
-      //     <div data-step="4">40</div>
-      //     <div data-step="4.5">45</div>
-      //     <div data-step="5">50</div>
-      //     </div>
-      //     <div class="ogl-fleetSpeed second">
-      //     <div data-step="5.5">55</div>
-      //     <div data-step="6">60</div>
-      //     <div data-step="6.5">65</div>
-      //     <div data-step="7">70</div>
-      //     <div data-step="7.5">75</div>
-      //     <div data-step="8">80</div>
-      //     <div data-step="8.5">85</div>
-      //     <div data-step="9">90</div>
-      //     <div data-step="9.5">95</div>
-      //     <div class="ogl-active" data-step="10">100</div>
-      //     </div>
-      //     `
-      //       : `<div class="ogl-fleetSpeed">
-      //   <div data-step="1">10</div>
-      //   <div data-step="2">20</div>
-      //   <div data-step="3">30</div>
-      //   <div data-step="4">40</div>
-      //   <div data-step="5">50</div>
-      //   <div data-step="6">60</div>
-      //   <div data-step="7">70</div>
-      //   <div data-step="8">80</div>
-      //   <div data-step="9">90</div>
-      //   <div class="ogl-active" data-step="10">100</div>
-      //   </div>`
-      //   )
-      // );
-
-      // $(".ogl-fleetSpeed div").on("click", (event) => {
-      //   $(`.ogl-fleetSpeed div`).removeClass("ogl-active");
-      //   fleetDispatcher.speedPercent = event.target.getAttribute("data-step");
-      //   $(
-      //     `.ogl-fleetSpeed div[data-step="${fleetDispatcher.speedPercent}"]`
-      //   ).addClass("ogl-active");
-      //   update(false);
-      //   if (fleetDispatcher.currentPage == "fleet1") {
-      //     fleetDispatcher.focusSubmitFleet1();
-      //   } else {
-      //     fleetDispatcher.focusSubmitFleet2();
-      //   }
-      // });
-
-      // $(".ogl-fleetSpeed div").on("mouseover", (event) => {
-      //   fleetDispatcher.speedPercent = event.target.getAttribute("data-step");
-
-      //   let old = deutLeft.innerText;
-      //   update(false);
-      //   if (deutLeft.innerText != old) {
-      //     deutLeft.classList.add("middlemark");
-      //   }
-      // });
-
-      // $(".ogl-fleetSpeed div").on("mouseout", (event) => {
-      //   fleetDispatcher.speedPercent = slider
-      //     .querySelector(".ogl-active")
-      //     .getAttribute("data-step");
-      //   let middle = deutLeft.classList.contains("middlemark");
-      //   update(false);
-      //   if (middle) {
-      //     deutLeft.classList.add("middlemark");
-      //   }
-      // });
-
-      // let missionsDiv = destination.appendChild(
-      //   this.createDOM("div", { class: "ogl-missions" })
-      // );
-      // missionsDiv.html(`<span style="color: #9099a3"> No missions... </span>`);
-
-      // let switchToPage = fleetDispatcher.switchToPage.bind(fleetDispatcher);
-      // let refresh = fleetDispatcher.refresh.bind(fleetDispatcher);
-
-      // let resetShips = fleetDispatcher.resetShips.bind(fleetDispatcher);
-      // let selectShip = fleetDispatcher.selectShip.bind(fleetDispatcher);
-      // fleetDispatcher.selectShip = (shipId, number) => {
-      //   selectShip(shipId, number);
-      //   update(true);
-      //   onResChange(2);
-      //   onResChange(1);
-      //   onResChange(0);
-      // };
-      // fleetDispatcher.resetShips = () => {
-      //   resetShips();
-      //   update(true);
-      //   onResChange(2);
-      //   onResChange(1);
-      //   onResChange(0);
-      // };
-
-      // let isDefaultMission = (index) => {
-      //   if (this.rawURL.searchParams.get(`mission`) == 1) {
-      //     if (index == 1) {
-      //       return true;
-      //     } else {
-      //       return false;
-      //     }
-      //   }
-      //   if (this.rawURL.searchParams.get(`mission`) == 3) {
-      //     if (index == 3) {
-      //       return true;
-      //     } else {
-      //       return false;
-      //     }
-      //   }
-
-      //   if (index == 3) {
-      //     if (
-      //       fleetDispatcher.targetPlayerId == playerId &&
-      //       this.json.options.harvestMission == 3
-      //     ) {
-      //       return true;
-      //     } else if (this.json.options.foreignMission == 3) {
-      //       return true;
-      //     }
-      //   }
-      //   if (
-      //     index == 1 &&
-      //     (this.mode == 4 || this.json.options.foreignMission == 1)
-      //   ) {
-      //     return true;
-      //   }
-      //   if (index == 4 && this.json.options.harvestMission == 4) {
-      //     return true;
-      //   }
-      //   if (
-      //     index == 15 &&
-      //     (this.json.options.expeditionMission == 15 || this.expedition)
-      //   ) {
-      //     this.expedition = false;
-      //     return true;
-      //   }
-
-      //   if (
-      //     index == 6 &&
-      //     this.json.options.expeditionMission == 6 &&
-      //     !this.expedition
-      //   ) {
-      //     return true;
-      //   }
-      //   return false;
-      // };
-
-      // fleetDispatcher.switchToPage = (page) => {
-      //   // if (!(fleetDispatcher.currentPage == "fleet1" && page == "fleet3")) {
-      //     // switchToPage(page);
-      //     // if (fleetDispatcher.currentPage == "fleet3") {
-      //     //   if (fleetDispatcher.mission == 0) {
-      //     //     let missionIcons = document.querySelectorAll("#missions .on a");
-      //     //     let mission = 0;
-      //     //     if (missionIcons.length == 1) {
-      //     //       missionIcons[0].click();
-      //     //     } else {
-      //     //       missionIcons.forEach((elem) => {
-      //     //         mission = elem.getAttribute("data-mission");
-      //     //         if (isDefaultMission(mission)) {
-      //     //           elem.click();
-      //     //         }
-      //     //       });
-      //     //     }
-      //     //   }
-      //     // }
-      //   // } else {
-      //     document.querySelector("#continueToFleet2").style.filter = "none";
-      //     if (fleetDispatcher.shipsToSend.length == 0) {
-      //       document
-      //         .querySelector(".ogl-dispatch .ogl-missions")
-      //         .html(`<span style="color: #9099a3"> No missions... </span>`);
-
-      //       warning.style.visibility = "visible";
-
-      //       warning.setAttribute("data-title", "Error : No ships selected");
-      //       return;
-      //     }
-
-      //     fleetDispatcher.mission = 0;
-
-      //     let missions = fleetDispatcher.getAvailableMissions();
-
-      //     let iconsDiv;
-      //     if (missions.length == 0) {
-      //       missionsDiv.html(
-      //         `<span style="color: #9099a3"> No missions... </span>`
-      //       );
-      //     } else {
-      //       warning.style.visibility = "hidden";
-      //       missionsDiv.html(
-      //         "<span>" +
-      //           fleetDispatcher.targetPlayerRankIcon +
-      //           `<span class="status_abbr_${fleetDispatcher.targetPlayerColorClass}">${fleetDispatcher.targetPlayerName}</span>` +
-      //           "</span>"
-      //       );
-
-      //       if (missionsDiv.innerText == "") {
-      //         if (fleetDispatcher.targetPlanet.name == "?")
-      //           fleetDispatcher.targetPlanet.name = "Unknown";
-      //         missionsDiv.html(
-      //           "<span>" + fleetDispatcher.targetPlanet.name + "</span>"
-      //         );
-      //       }
-      //       iconsDiv = missionsDiv.appendChild(this.createDOM("div"));
-      //     }
-
-      //     let defaultMish = 0;
-      //     let union = false;
-
-      //     missions.forEach((index) => {
-      //       iconsDiv.appendChild(
-      //         this.createDOM("div", {
-      //           class: `ogl-mission-${index} ogl-mission-icon`,
-      //           mission: index,
-      //         })
-      //       );
-
-      //       if (missions.length == 1) {
-      //         defaultMish = index;
-      //       } else {
-      //         if (isDefaultMission(index)) {
-      //           defaultMish = index;
-      //         }
-      //         if (index == 2) {
-      //           union = true;
-      //         }
-      //       }
-      //     });
-
-      //     if (union) {
-      //       defaultMish = 2;
-      //     }
-      //     let icon = document.querySelector(
-      //       `.ogl-missions .ogl-mission-${defaultMish}`
-      //     );
-      //     icon.classList.add("ogl-active");
-      //     fleetDispatcher.selectMission(Number(defaultMish));
-      //     $(".ogl-mission-icon").on("click", (e) => {
-      //       $(".ogl-mission-icon").removeClass("ogl-active");
-      //       fleetDispatcher.selectMission(
-      //         Number(e.target.getAttribute("mission"))
-      //       );
-      //       e.target.classList.add("ogl-active");
-      //       update(false);
-      //     });
-      //   // }
-      //   update(false);
-      // };
-
-      // let displayErrors = fleetDispatcher.displayErrors;
-      // let error;
-      // fleetDispatcher.displayErrors = function (errors) {
-      //   document
-      //     .querySelector(".ogl-dispatch .ogl-missions")
-      //     .html(`<span style="color: #9099a3"> No missions... </span>`);
-
-      //   fleetDispatcher.selectMission(0);
-      //   warning.style.visibility = "visible";
-      //   document.querySelector("#continueToFleet2").style.filter =
-      //     "hue-rotate(-50deg)";
-
-      //   warning.setAttribute("data-title", errors[0].message);
-      //   error = errors[0].message;
-      //   if (fleetDispatcher.currentPage == "fleet1") return;
-      //   displayErrors(errors);
-      // };
-
-      // let fleet = JSON.stringify(
-      //   fleetDispatcher.shipsToSend.map((elem) => {
-      //     return elem.id;
-      //   })
-      // );
-      // let targetPlanet = JSON.stringify(fleetDispatcher.targetPlanet);
-      // let interval;
-      // let timeout;
-      // let firstLoad = true;
-      // let update = (submit) => {
-      //   if (fleetDispatcher.currentPage == "fleet1") {
-      //     let galaxy = clampInt(
-      //       galaxyInput.value,
-      //       1,
-      //       fleetDispatcher.fleetHelper.MAX_GALAXY,
-      //       true
-      //     );
-      //     galaxyInput.value = galaxy;
-      //     let system = clampInt(
-      //       systemInput.value,
-      //       1,
-      //       fleetDispatcher.fleetHelper.MAX_SYSTEM,
-      //       true
-      //     );
-      //     systemInput.value = system;
-      //     let position = clampInt(
-      //       positionInput.value,
-      //       1,
-      //       fleetDispatcher.fleetHelper.MAX_POSITION,
-      //       true
-      //     );
-      //     positionInput.value = position;
-
-      //     fleetDispatcher.targetPlanet.galaxy = galaxy;
-      //     fleetDispatcher.targetPlanet.system = system;
-      //     fleetDispatcher.targetPlanet.position = position;
-      //   } else {
-      //     galaxyInput.value = fleetDispatcher.targetPlanet.galaxy;
-      //     systemInput.value = fleetDispatcher.targetPlanet.system;
-      //     positionInput.value = fleetDispatcher.targetPlanet.position;
-      //   }
-
-      //   // if (
-      //   //   fleetDispatcher.targetPlanet.position ===
-      //   //   fleetDispatcher.fleetHelper.EXPEDITION_POSITION
-      //   // ) {
-      //   //   fleetDispatcher.targetPlanet.type =
-      //   //     fleetDispatcher.fleetHelper.PLANETTYPE_PLANET;
-      //   // }
-
-      //   if (fleetDispatcher.mission == 4 || fleetDispatcher.mission == 0) {
-      //     returnDiv.style.visibility = "hidden";
-      //   } else {
-      //     returnDiv.style.visibility = "visible";
-      //   }
-
-      //   if (submit) {
-      //     let newFleet = JSON.stringify(
-      //       fleetDispatcher.shipsToSend.map((elem) => {
-      //         return elem.id;
-      //       })
-      //     );
-      //     let newTargetPlanet = JSON.stringify(fleetDispatcher.targetPlanet);
-
-      //     if (
-      //       newFleet != fleet ||
-      //       targetPlanet != newTargetPlanet ||
-      //       firstLoad
-      //     ) {
-      //       firstLoad = false;
-      //       warning.style.visibility = "hidden";
-      //       fleet = newFleet;
-      //       targetPlanet = newTargetPlanet;
-      //       clearTimeout(timeout);
-      //       timeout = setTimeout(() => {
-      //         fleetDispatcher.updateTarget();
-
-      //         // fleetDispatcher.trySubmitFleet1();
-      //       }, 50);
-      //     }
-      //   }
-
-      //   planet.classList.remove("ogl-active");
-      //   moon.classList.remove("ogl-active");
-      //   debris.classList.remove("ogl-active");
-
-      //   if (
-      //     fleetDispatcher.targetPlanet.type ==
-      //     fleetDispatcher.fleetHelper.PLANETTYPE_PLANET
-      //   ) {
-      //     planet.classList.add("ogl-active");
-      //   }
-      //   if (
-      //     fleetDispatcher.targetPlanet.type ==
-      //     fleetDispatcher.fleetHelper.PLANETTYPE_MOON
-      //   ) {
-      //     moon.classList.add("ogl-active");
-      //   }
-      //   if (
-      //     fleetDispatcher.targetPlanet.type ==
-      //     fleetDispatcher.fleetHelper.PLANETTYPE_DEBRIS
-      //   ) {
-      //     debris.classList.add("ogl-active");
-      //   }
-      //   if (interval) clearInterval(interval);
-
-      //   let reset = (noShips) => {
-      //     durationDiv.html("-");
-      //     consDiv.innerText = "-";
-      //     arrivalDiv.innerText = "-";
-      //     returnDiv.innerText = "-";
-
-      //     document
-      //       .querySelector(".ogl-dispatch .ogl-missions")
-      //       .html(`<span style="color: #9099a3"> No missions... </span>`);
-
-      //     warning.style.visibility = "visible";
-      //     warning.setAttribute("data-title", "Error : current planet/moon...");
-      //     if (noShips) {
-      //       warning.setAttribute("data-title", "Error : No ships selected...");
-      //     }
-      //     document.querySelector("#continueToFleet2").style.filter =
-      //       "hue-rotate(-50deg)";
-      //   };
-
-      //   if (!fleetDispatcher.hasShipsSelected()) {
-      //     reset(true);
-      //     return;
-      //   }
-      //   if (
-      //     this.current.coords ==
-      //     fleetDispatcher.targetPlanet.galaxy +
-      //       ":" +
-      //       fleetDispatcher.targetPlanet.system +
-      //       ":" +
-      //       fleetDispatcher.targetPlanet.position
-      //   ) {
-      //     if (
-      //       this.current.isMoon &&
-      //       fleetDispatcher.targetPlanet.type ==
-      //         fleetDispatcher.fleetHelper.PLANETTYPE_MOON
-      //     ) {
-      //       reset();
-      //       return;
-      //     } else if (
-      //       !this.current.isMoon &&
-      //       fleetDispatcher.targetPlanet.type ==
-      //         fleetDispatcher.fleetHelper.PLANETTYPE_PLANET
-      //     ) {
-      //       reset();
-      //       return;
-      //     }
-      //   }
-
-      //   durationDiv.html(
-      //     "<strong>" + formatTime(fleetDispatcher.getDuration()) + "</strong>"
-      //   );
-      //   consDiv.innerText = fleetDispatcher
-      //     .getConsumption()
-      //     .toLocaleString("de-DE");
-      //   if (fleetDispatcher.getConsumption() > deutAvailable) {
-      //     consDiv.classList.add("overmark");
-      //     if (!error) {
-      //       warning.style.visibility = "visible";
-      //       warning.setAttribute(
-      //         "data-title",
-      //         "Error : No enough deuterium..."
-      //       );
-      //       document.querySelector("#continueToFleet2").style.filter =
-      //         "hue-rotate(-50deg)";
-      //     }
-      //   } else {
-      //     if (!error) {
-      //       warning.style.visibility = "hidden";
-      //       document.querySelector("#continueToFleet2").style.filter = "none";
-      //     }
-      //     consDiv.classList.remove("overmark");
-      //   }
-
-      //   interval = setInterval(() => {
-      //     arrivalDiv.html(
-      //       getFormatedDate(
-      //         new Date(serverTime).getTime() +
-      //           fleetDispatcher.getDuration() * 1000,
-      //         "<strong> [G]:[i]:[s] </strong> - [d].[m]"
-      //       )
-      //     );
-
-      //     returnDiv.html(
-      //       getFormatedDate(
-      //         new Date(serverTime).getTime() +
-      //           2 * fleetDispatcher.getDuration() * 1000,
-      //         "<strong> [G]:[i]:[s] </strong> - [d].[m]"
-      //       )
-      //     );
-      //   }, 100);
-
-      //   onResChange(2);
-      //   onResChange(1);
-      //   onResChange(0);
-      // };
-
-      // FleetDispatcher.prototype.updateTarget = function (fetch = true) {
-      //   let galaxy = clampInt(getValue($('#galaxy').val()), 1, this.fleetHelper.MAX_GALAXY, true)
-      //   let system = clampInt(getValue($('#system').val()), 1, this.fleetHelper.MAX_SYSTEM, true)
-      //   let position = clampInt(getValue($('#position').val()), 1, this.fleetHelper.MAX_POSITION, true)
-
-      //   this.targetPlanet.galaxy = galaxy
-      //   this.targetPlanet.system = system
-      //   this.targetPlanet.position = position
-
-      //   if (this.targetPlanet.position === this.fleetHelper.EXPEDITION_POSITION) {
-      //     this.targetPlanet.type = this.fleetHelper.PLANETTYPE_PLANET
-      //   }
-
-      //   clearTimeout(this.fetchTargetPlayerDataTimeout)
-      //   if (fetch) {
-      //     let that = this
-      //     this.fetchTargetPlayerDataTimeout = setTimeout(() => {
-      //       that.deferred.push($.Deferred());
-      //       // check if this is the only target fetch in queue or there are other pending calls
-      //       if (that.deferred.length === 1) {
-      //         that.fetchTargetPlayerData()
-      //         fleetDispatcher.switchToPage()
-      //       }
-      //       that.deferred[that.deferred.length - 1]
-      //         .done(() => {
-      //           if (that.deferred.length !== 0) {
-      //             that.fetchTargetPlayerData()
-      //             fleetDispatcher.switchToPage()
-      //           }
-      //         })
-      //     }, 500)
-      //   }
-      // }
-
-      // galaxyInput.addEventListener("click", () => {
-      //   galaxyInput.value = "";
-      // });
-      // systemInput.addEventListener("click", () => {
-      //   systemInput.value = "";
-      // });
-      // positionInput.addEventListener("click", () => {
-      //   positionInput.value = "";
-      // });
-      // galaxyInput.addEventListener("keyup", (e) => {
-      //   update(true);
-      // });
-      // systemInput.addEventListener("keyup", (e) => {
-      //   update(true);
-      // });
-      // positionInput.addEventListener("keyup", (e) => {
-      //   update(true);
-      // });
-
-      // let resFiller = actions.appendChild(
-      //   this.createDOM("div", { class: "ogl-res-filler" })
-      // );
-
-      // let metalBtn = resFiller.appendChild(this.createDOM("div"));
-      // metalBtn.appendChild(
-      //   this.createDOM("div", { class: "resourceIcon metal" })
-      // );
-      // let metalFiller = metalBtn.appendChild(
-      //   this.createDOM("input", { type: "text" })
-      // );
-      // let metalLeft = metalBtn.appendChild(this.createDOM("span", {}, "-"));
-      // let metalReal = metalBtn.appendChild(
-      //   this.createDOM("span", { class: "ogk-real-cargo ogk-metal" }, "-")
-      // );
-      // let btns = metalBtn.appendChild(
-      //   this.createDOM("div", { class: "ogl-actions" })
-      // );
-
-      // let selectMinMetal = btns.appendChild(
-      //   this.createDOM("img", {
-      //     src:
-      //       "https://gf2.geo.gfsrv.net/cdn10/45494a6e18d52e5c60c8fb56dfbcc4.gif",
-      //   })
-      // );
-      // let selectMostMetal = btns.appendChild(
-      //   this.createDOM("a", { class: "select-most-min" })
-      // );
-      // let selectMaxMetal = btns.appendChild(
-      //   this.createDOM("img", {
-      //     src:
-      //       "https://gf3.geo.gfsrv.net/cdnea/fa0c8ee62604e3af52e6ef297faf3c.gif",
-      //   })
-      // );
-
-      // let crystalBtn = resFiller.appendChild(this.createDOM("div"));
-      // crystalBtn.appendChild(
-      //   this.createDOM("div", { class: "resourceIcon crystal" })
-      // );
-      // let crystalFiller = crystalBtn.appendChild(
-      //   this.createDOM("input", { type: "text" })
-      // );
-      // let crystalLeft = crystalBtn.appendChild(this.createDOM("span", {}, "-"));
-      // let crystalReal = crystalBtn.appendChild(
-      //   this.createDOM("span", { class: "ogk-real-cargo ogk-crystal" }, "-")
-      // );
-      // let crystalBtns = crystalBtn.appendChild(
-      //   this.createDOM("div", { class: "ogl-actions" })
-      // );
-
-      // let selectMinCrystal = crystalBtns.appendChild(
-      //   this.createDOM("img", {
-      //     src:
-      //       "https://gf2.geo.gfsrv.net/cdn10/45494a6e18d52e5c60c8fb56dfbcc4.gif",
-      //   })
-      // );
-      // let selectMostCrystal = crystalBtns.appendChild(
-      //   this.createDOM("a", { class: "select-most-min" })
-      // );
-      // let selectMaxCrystal = crystalBtns.appendChild(
-      //   this.createDOM("img", {
-      //     src:
-      //       "https://gf3.geo.gfsrv.net/cdnea/fa0c8ee62604e3af52e6ef297faf3c.gif",
-      //   })
-      // );
-
-      // let deutBtn = resFiller.appendChild(this.createDOM("div"));
-      // deutBtn.appendChild(
-      //   this.createDOM("div", { class: "resourceIcon deuterium" })
-      // );
-      // let deutFiller = deutBtn.appendChild(
-      //   this.createDOM("input", { type: "text" })
-      // );
-      // let deutLeft = deutBtn.appendChild(this.createDOM("span", {}, "-"));
-      // let deutReal = deutBtn.appendChild(
-      //   this.createDOM("span", { class: "ogk-real-cargo ogk-deut" }, "-")
-      // );
-      // let deutBtns = deutBtn.appendChild(
-      //   this.createDOM("div", { class: "ogl-actions" })
-      // );
-
-      // let selectMinDeut = deutBtns.appendChild(
-      //   this.createDOM("img", {
-      //     src:
-      //       "https://gf2.geo.gfsrv.net/cdn10/45494a6e18d52e5c60c8fb56dfbcc4.gif",
-      //   })
-      // );
-      // let selectMostDeut = deutBtns.appendChild(
-      //   this.createDOM("a", { class: "select-most-min" })
-      // );
-      // let selectMaxDeut = deutBtns.appendChild(
-      //   this.createDOM("img", {
-      //     src:
-      //       "https://gf3.geo.gfsrv.net/cdnea/fa0c8ee62604e3af52e6ef297faf3c.gif",
-      //   })
-      // );
-
-      // $("#selectMinMetal").after(
-      //   this.createDOM("a", { id: "selectMostMetal", class: "select-most-min" })
-      // );
-      // $("#selectMinCrystal").after(
-      //   this.createDOM("a", {
-      //     id: "selectMostCrystal",
-      //     class: "select-most-min",
-      //   })
-      // );
-      // $("#selectMinDeuterium").after(
-      //   this.createDOM("a", {
-      //     id: "selectMostDeuterium",
-      //     class: "select-most-min",
-      //   })
-      // );
-
-      // $("#selectMaxMetal").after(
-      //   this.createDOM("span", { class: "ogi-metalLeft" }, "-")
-      // );
-      // $("#selectMaxCrystal").after(
-      //   this.createDOM("span", { class: "ogi-crystalLeft" }, "-")
-      // );
-      // $("#selectMaxDeuterium").after(
-      //   this.createDOM("span", { class: "ogi-deuteriumLeft" }, "-")
-      // );
-
-      // $("#allresources").after(this.createDOM("a", { class: "select-most" }));
-      // $("#allresources").after(
-      //   this.createDOM("a", { class: "send_none" }, "<a></a>")
-      // );
-      // $("#loadAllResources .select-most").on("click", () => {
-      //   $("#selectMinDeuterium").click();
-      //   $("#selectMinCrystal").click();
-      //   $("#selectMinMetal").click();
-      //   $("#selectMostDeuterium").click();
-      //   $("#selectMostCrystal").click();
-      //   $("#selectMostMetal").click();
-      // });
-
-      // $("#loadAllResources .send_none").on("click", () => {
-      //   $("#selectMinDeuterium").click();
-      //   $("#selectMinCrystal").click();
-      //   $("#selectMinMetal").click();
-      // });
-
-      // let firstResRefresh = true;
-      // let refreshRes = () => {
-      //   let mLeft = document.querySelector(".res_wrap .ogi-metalLeft");
-      //   let cLeft = document.querySelector(".res_wrap .ogi-crystalLeft");
-      //   let dLeft = document.querySelector(".res_wrap .ogi-deuteriumLeft");
-
-      //   if (firstResRefresh) {
-      //     firstResRefresh = false;
-      //     if (deutLeft.classList.contains("overmark")) {
-      //       dLeft.classList.add("overmark");
-      //     } else if (deutLeft.classList.contains("middlemark")) {
-      //       dLeft.classList.add("middlemark");
-      //     }
-      //     if (metalLeft.classList.contains("overmark")) {
-      //       mLeft.classList.add("overmark");
-      //     }
-      //     if (crystalLeft.classList.contains("overmark")) {
-      //       cLeft.classList.add("overmark");
-      //     }
-
-      //     mLeft.innerText = metalLeft.innerText;
-      //     cLeft.innerText = crystalLeft.innerText;
-      //     dLeft.innerText = deutLeft.innerText;
-      //   } else {
-      //     cLeft.classList.remove("overmark");
-      //     mLeft.classList.remove("overmark");
-      //     dLeft.classList.remove("overmark");
-      //     dLeft.classList.remove("middlemark");
-
-      //     let val = this.removeNumSeparator(
-      //       document.querySelector("input#metal").value
-      //     );
-      //     mLeft.innerText = Math.max(0, metalAvailable - val).toLocaleString(
-      //       "de-DE"
-      //     );
-      //     val = this.removeNumSeparator(
-      //       document.querySelector("input#crystal").value
-      //     );
-      //     cLeft.innerText = Math.max(0, crystalAvailable - val).toLocaleString(
-      //       "de-DE"
-      //     );
-      //     val = this.removeNumSeparator(
-      //       document.querySelector("input#deuterium").value
-      //     );
-      //     dLeft.innerText = Math.max(
-      //       0,
-      //       deutAvailable - fleetDispatcher.getConsumption() - val
-      //     ).toLocaleString("de-DE");
-      //   }
-      // };
-      // let focusSubmitFleet3 = fleetDispatcher.focusSubmitFleet3;
-      // fleetDispatcher.focusSubmitFleet3 = () => {
-      //   refreshRes();
-      //   focusSubmitFleet3();
-      // };
-
-      // let kept =
-      //   this.json.options.kept[
-      //     this.current.coords + this.current.isMoon ? "M" : "P"
-      //   ] || this.json.options.defaultKept;
-
-      // $("#selectMostMetal").on("click", () => {
-      //   let capacity = fleetDispatcher.getFreeCargoSpace();
-      //   let cargo = Math.min(capacity, metalAvailable - (kept[0] || 0));
-      //   fleetDispatcher.cargoMetal = Math.min(
-      //     capacity,
-      //     Math.max(0, metalAvailable - (kept[0] || 0))
-      //   );
-      //   fleetDispatcher.refresh();
-      //   fleetDispatcher.focusSubmitFleet3();
-      // });
-      // $("#selectMostCrystal").on("click", () => {
-      //   let capacity = fleetDispatcher.getFreeCargoSpace();
-      //   fleetDispatcher.cargoCrystal = Math.min(
-      //     capacity,
-      //     Math.max(0, crystalAvailable - (kept[1] || 0))
-      //   );
-      //   fleetDispatcher.refresh();
-      //   fleetDispatcher.focusSubmitFleet3();
-      // });
-      // $("#selectMostDeuterium").on("click", () => {
-      //   let capacity = fleetDispatcher.getFreeCargoSpace();
-      //   fleetDispatcher.cargoDeuterium = Math.min(
-      //     capacity,
-      //     Math.max(
-      //       0,
-      //       deutAvailable - fleetDispatcher.getConsumption() - (kept[2] || 0)
-      //     )
-      //   );
-      //   fleetDispatcher.refresh();
-      //   fleetDispatcher.focusSubmitFleet3();
-      // });
-      // $("#backToFleet2").on("click", () => {
-      //   firstResRefresh = true;
-      // });
-      // $("#backToFleet1").on("click", () => {
-      //   update(true);
-      // });
-
-      // let load = this.createDOM("div", { class: "ogl-cargo" });
-
-      // let selectMostRes = load.appendChild(
-      //   this.createDOM("a", { class: "select-most" })
-      // );
-      // let selectAllRes = load.appendChild(
-      //   this.createDOM("a", { class: "sendall" })
-      // );
-      // let selectNoRes = load.appendChild(
-      //   this.createDOM("a", { class: "send_none" }, `<a></a>`)
-      // );
-
-      // selectNoRes.addEventListener("click", () => {
-      //   selectMinDeut.click();
-      //   selectMinCrystal.click();
-      //   selectMinMetal.click();
-      // });
-      // selectAllRes.addEventListener("click", () => {
-      //   selectMaxDeut.click();
-      //   selectMaxCrystal.click();
-      //   selectMaxMetal.click();
-      // });
-      // selectMostRes.addEventListener("click", () => {
-      //   selectMostDeut.click();
-      //   selectMostCrystal.click();
-      //   selectMostMetal.click();
-      // });
-
-      // let bar = load.appendChild(this.createDOM("div", {}));
-      // bar.html(
-      //   `<div class="fleft bar_container" data-current-amount="0" data-capacity="0">
-      //   <div class="filllevel_bar"></div>
-      //   </div>
-      //   <div>
-      //   <span class="undermark">0</span>
-      //   / <span>0</span>
-      //   </div>`
-      // );
-
-      // let settings = load.appendChild(
-      //   this.createDOM(
-      //     "div",
-      //     { class: "ogl-setting-icon" },
-      //     `<img src="https://gf3.geo.gfsrv.net/cdne7/1f57d944fff38ee51d49c027f574ef.gif" width="16" height="16" >`
-      //   )
-      // );
-      // settings.addEventListener("click", () => {
-      //   this.popup(
-      //     null,
-      //     this.keepOnPlanetDialog(
-      //       this.current.coords + (this.current.isMoon ? "M" : "P")
-      //     )
-      //   );
-      // });
-
-      // let updateCargo = () => {
-      //   let total =
-      //     Number(this.removeNumSeparator(metalFiller.value)) +
-      //     Number(this.removeNumSeparator(crystalFiller.value)) +
-      //     Number(this.removeNumSeparator(deutFiller.value));
-
-      //   let freeSpace = fleetDispatcher.getCargoCapacity() - total;
-      //   bar.html(
-      //     `<div class="fleft bar_container" data-current-amount="0" data-capacity="0">
-      //   <div class="filllevel_bar"></div>
-      //   </div>
-      //   <div>
-      //   <span class="${
-      //     freeSpace >= 0 ? "undermark" : "overmark"
-      //   }">${freeSpace.toLocaleString("de-DE")} </span>
-      //   / <span> ${fleetDispatcher
-      //     .getCargoCapacity()
-      //     .toLocaleString("de-DE")}</span>
-      //   </div>`
-      //   );
-
-      //   let filler = document.querySelector(".ogl-cargo .filllevel_bar");
-      //   let percent =
-      //     100 - (freeSpace / fleetDispatcher.getCargoCapacity()) * 100;
-
-      //   if (percent > 100) {
-      //     percent = 100;
-      //   }
-
-      //   filler.style.width = percent + "%";
-      //   if (percent < 80) {
-      //     filler.classList.add("filllevel_undermark");
-      //   } else if (percent > 80 && percent < 100) {
-      //     filler.classList.add("filllevel_middlemark");
-      //   } else {
-      //     filler.classList.add("filllevel_overmark");
-      //   }
-      // };
-
-      // resDiv.appendChild(load);
-
-      // selectMinMetal.addEventListener("click", () => {
-      //   metalFiller.value = 0;
-      //   onResChange(0);
-      // });
-      // selectMaxMetal.addEventListener("click", () => {
-      //   metalFiller.value = metalAvailable;
-      //   onResChange(0);
-      // });
-      // selectMostMetal.addEventListener("click", () => {
-      //   metalFiller.value = Math.max(0, metalAvailable - (kept[0] || 0));
-      //   onResChange(0);
-      // });
-      // selectMinCrystal.addEventListener("click", () => {
-      //   crystalFiller.value = 0;
-      //   onResChange(1);
-      // });
-      // selectMaxCrystal.addEventListener("click", () => {
-      //   crystalFiller.value = crystalAvailable;
-      //   onResChange(1);
-      // });
-      // selectMostCrystal.addEventListener("click", () => {
-      //   crystalFiller.value = Math.max(0, crystalAvailable - (kept[1] || 0));
-      //   onResChange(1);
-      // });
-      // selectMinDeut.addEventListener("click", () => {
-      //   deutFiller.value = 0;
-      //   onResChange(2);
-      // });
-      // selectMaxDeut.addEventListener("click", () => {
-      //   deutFiller.value = Math.max(
-      //     0,
-      //     deutAvailable - fleetDispatcher.getConsumption()
-      //   );
-      //   onResChange(2);
-      // });
-      // selectMostDeut.addEventListener("click", () => {
-      //   deutFiller.value = Math.max(
-      //     0,
-      //     deutAvailable - fleetDispatcher.getConsumption() - (kept[2] || 0)
-      //   );
-      //   onResChange(2);
-      // });
-
-      // let transport = actions.appendChild(
-      //   this.createDOM("div", { class: "ogl-res-transport" })
-      // );
-
-      // let ptBtn = transport.appendChild(
-      //   this.createDOM("a", {
-      //     "tech-id": 202,
-      //     class: "ogl-option ogl-fleet-ship ogl-fleet-202",
-      //   })
-      // );
-      // let ptNum = transport.appendChild(this.createDOM("span", {}, "-"));
-
-      // let gtBtn = transport.appendChild(
-      //   this.createDOM("a", {
-      //     "tech-id": 203,
-      //     class: "ogl-option ogl-fleet-ship ogl-fleet-203",
-      //   })
-      // );
-      // let gtNum = transport.appendChild(this.createDOM("span", {}, "-"));
-
-      // let pfBtn = transport.appendChild(
-      //   this.createDOM("a", {
-      //     "tech-id": 219,
-      //     class: "ogl-option ogl-fleet-ship ogl-fleet-219",
-      //   })
-      // );
-      // let pfNum = transport.appendChild(this.createDOM("span", {}, "-"));
-
-      // let cyBtn = transport.appendChild(
-      //   this.createDOM("a", {
-      //     "tech-id": 209,
-      //     class: "ogl-option ogl-fleet-ship ogl-fleet-209",
-      //   })
-      // );
-      // let cyNum = transport.appendChild(this.createDOM("span", {}, "-"));
-
-      // let pbBtn;
-      // let pbNum;
-      // if (this.json.pbFret != 0) {
-      //   pbBtn = transport.appendChild(
-      //     this.createDOM("a", {
-      //       "tech-id": 210,
-      //       class: "ogl-option ogl-fleet-ship ogl-fleet-210",
-      //     })
-      //   );
-      //   pbNum = transport.appendChild(this.createDOM("span", {}, "-"));
-      // }
-
-      // let updateShips = (e) => {
-      //   let amount = e.target.nextElementSibling.getAttribute("amount");
-      //   this.selectShips(Number(e.target.getAttribute("tech-id")), amount);
-      // };
-
-      // ptBtn.addEventListener("click", updateShips);
-      // gtBtn.addEventListener("click", updateShips);
-      // pfBtn.addEventListener("click", updateShips);
-      // cyBtn.addEventListener("click", updateShips);
-      // if (pbBtn) pbBtn.addEventListener("click", updateShips);
-
-      // let onResChange = (index) => {
-      //   let capacity = fleetDispatcher.getCargoCapacity();
-      //   if (capacity == 0) {
-      //     fleetDispatcher.resetCargo();
-      //   }
-
-      //   let filled = this.removeNumSeparator(deutFiller.value);
-      //   let deut = Math.min(
-      //     this.removeNumSeparator(deutFiller.value),
-      //     capacity,
-      //     deutAvailable - fleetDispatcher.getConsumption()
-      //   );
-
-      //   if (index == 2) {
-      //     fleetDispatcher.cargoDeuterium = Math.min(
-      //       deut,
-      //       fleetDispatcher.cargoDeuterium + fleetDispatcher.getFreeCargoSpace()
-      //     );
-
-      //     let old = deutLeft.innerText;
-
-      //     deutLeft.innerText = (
-      //       deutAvailable -
-      //       fleetDispatcher.getConsumption() -
-      //       fleetDispatcher.cargoDeuterium
-      //     ).toLocaleString("de-DE");
-
-      //     if (old != deutLeft.innerText || deutLeft.innerText == "0") {
-      //       deutLeft.classList.remove("middlemark");
-      //     }
-
-      //     if (
-      //       fleetDispatcher.getFreeCargoSpace() == 0 &&
-      //       deutLeft.innerText != "0"
-      //     ) {
-      //       deutLeft.classList.add("overmark");
-      //       deutReal.innerText = Math.max(
-      //         0,
-      //         fleetDispatcher.cargoDeuterium
-      //       ).toLocaleString("de-DE");
-      //     } else {
-      //       deutLeft.classList.remove("overmark");
-      //       deutReal.innerText = "-";
-      //     }
-
-      //     if (
-      //       filled >
-      //       Math.max(0, deutAvailable - fleetDispatcher.getConsumption())
-      //     ) {
-      //       deutFiller.value = (
-      //         deutAvailable - fleetDispatcher.getConsumption()
-      //       ).toLocaleString("de-DE");
-      //     }
-      //   } else if (index == 1) {
-      //     filled = this.removeNumSeparator(crystalFiller.value);
-      //     let crystal = Math.min(
-      //       this.removeNumSeparator(crystalFiller.value),
-      //       capacity,
-      //       crystalAvailable
-      //     );
-
-      //     fleetDispatcher.cargoCrystal = Math.min(
-      //       crystal,
-      //       fleetDispatcher.cargoCrystal + fleetDispatcher.getFreeCargoSpace()
-      //     );
-      //     crystalLeft.innerText = (
-      //       crystalAvailable - fleetDispatcher.cargoCrystal
-      //     ).toLocaleString("de-DE");
-
-      //     if (
-      //       fleetDispatcher.getFreeCargoSpace() == 0 &&
-      //       crystalLeft.innerText != "0"
-      //     ) {
-      //       crystalLeft.classList.add("overmark");
-      //       crystalReal.innerText = Math.max(
-      //         0,
-      //         fleetDispatcher.cargoCrystal
-      //       ).toLocaleString("de-DE");
-      //     } else {
-      //       crystalLeft.classList.remove("overmark");
-      //       crystalReal.innerText = "-";
-      //     }
-      //   } else if (index == 0) {
-      //     filled = this.removeNumSeparator(metalFiller.value);
-      //     let metal = Math.min(
-      //       this.removeNumSeparator(metalFiller.value),
-      //       capacity,
-      //       metalAvailable
-      //     );
-
-      //     fleetDispatcher.cargoMetal = Math.min(
-      //       metal,
-      //       fleetDispatcher.cargoMetal + fleetDispatcher.getFreeCargoSpace()
-      //     );
-      //     metalLeft.innerText = (
-      //       metalAvailable - fleetDispatcher.cargoMetal
-      //     ).toLocaleString("de-DE");
-
-      //     if (
-      //       fleetDispatcher.getFreeCargoSpace() == 0 &&
-      //       metalLeft.innerText != "0"
-      //     ) {
-      //       metalLeft.classList.add("overmark");
-      //       metalReal.innerText = Math.max(
-      //         0,
-      //         fleetDispatcher.cargoMetal
-      //       ).toLocaleString("de-DE");
-      //     } else {
-      //       metalLeft.classList.remove("overmark");
-      //       metalReal.innerText = "-";
-      //     }
-      //   }
-
-      //   let ships = {};
-      //   fleetDispatcher.shipsOnPlanet.forEach((elem) => {
-      //     ships[elem.id] = elem.number;
-      //   });
-      //   ptNum.classList.remove("overmark");
-      //   gtNum.classList.remove("overmark");
-      //   pfNum.classList.remove("overmark");
-      //   cyNum.classList.remove("overmark");
-      //   if (pbNum) pbNum.classList.remove("overmark");
-
-      //   let amount = needCargo(202);
-      //   ptNum.innerText = this.formatToUnits(amount);
-      //   ptNum.setAttribute("amount", amount);
-      //   if (amount > (ships[202] || 0)) ptNum.classList.add("overmark");
-
-      //   amount = needCargo(203);
-      //   gtNum.innerText = this.formatToUnits(amount);
-      //   gtNum.setAttribute("amount", amount);
-      //   if (amount > (ships[203] || 0)) gtNum.classList.add("overmark");
-
-      //   amount = needCargo(219);
-      //   pfNum.innerText = this.formatToUnits(amount);
-      //   pfNum.setAttribute("amount", amount);
-      //   if (amount > (ships[219] || 0)) pfNum.classList.add("overmark");
-
-      //   amount = needCargo(209);
-      //   cyNum.innerText = this.formatToUnits(amount);
-      //   cyNum.setAttribute("amount", amount);
-      //   if (amount > (ships[209] || 0)) cyNum.classList.add("overmark");
-
-      //   if (pbBtn) {
-      //     amount = needCargo(210);
-      //     pbNum.innerText = this.formatToUnits(amount);
-      //     pbNum.setAttribute("amount", amount);
-      //     if (amount > (ships[210] || 0)) pbNum.classList.add("overmark");
-      //   }
-
-      //   updateCargo();
-      // };
-
-      // metalFiller.addEventListener("keyup", (e) => {
-      //   onResChange(0);
-      //   e.target.focus();
-      // });
-      // crystalFiller.addEventListener("keyup", (e) => {
-      //   onResChange(1);
-      //   e.target.focus();
-      // });
-      // deutFiller.addEventListener("keyup", (e) => {
-      //   onResChange(2);
-      //   e.target.focus();
-      // });
-
-      // if (this.mode == 2 || this.mode == 1) {
-      //   if (this.mode == 1) {
-      //     metalFiller.value = metalAvailable;
-      //     crystalFiller.value = crystalAvailable;
-      //     deutFiller.value = deutAvailable;
-      //   } else if (this.mode == 2) {
-      //     let coords =
-      //       fleetDispatcher.targetPlanet.galaxy +
-      //       ":" +
-      //       fleetDispatcher.targetPlanet.system +
-      //       ":" +
-      //       fleetDispatcher.targetPlanet.position;
-      //     coords +=
-      //       fleetDispatcher.targetPlanet.type ==
-      //       fleetDispatcher.fleetHelper.PLANETTYPE_MOON
-      //         ? "M"
-      //         : "P";
-      //     let missing = this.json.missing[coords];
-      //     if (missing) {
-      //       metalFiller.value = Math.min(
-      //         missing[0],
-      //         fleetDispatcher.metalOnPlanet
-      //       );
-      //       crystalFiller.value = Math.min(
-      //         missing[1],
-      //         fleetDispatcher.crystalOnPlanet
-      //       );
-      //       deutFiller.value = Math.min(
-      //         missing[2],
-      //         fleetDispatcher.deuteriumOnPlanet
-      //       );
-      //     }
-      //   }
-      //   onResChange(2);
-      //   onResChange(1);
-      //   onResChange(0);
-      // }
-      // update(false);
+      update(false);
     }
   }
 
@@ -9151,11 +9677,24 @@ class OGInfinity {
 
         [ptExpe, gtExpe].forEach((btn) => {
           btn.addEventListener("click", () => {
+			this.expedition = true;					   
             document.querySelector("#resetall").click();
-
-            let type = btn == ptExpe ? 202 : 203;
-            let count = btn == ptExpe ? maxPT : maxGT;
-
+			
+            let type;
+			let count;
+			switch(btn){
+				case ptExpe:
+					type = 202;
+					count = maxPT;
+					break;
+				case gtExpe:
+					type = 203;
+					count = maxGT;
+					break;
+				default:
+					//nothing
+			}
+			
             let prio = [218, 213, 211, 215, 207];
             let bigship = 0;
 
@@ -9174,19 +9713,9 @@ class OGInfinity {
 
             let inputs = document.querySelectorAll(".ogl-coords input");
 
-            // inputs[0].value = coords[0];
-            // inputs[1].value = coords[1];
-            // inputs[2].value = 16;
-            fleetDispatcher.targetPlanet.galaxy = coords[0];
-            fleetDispatcher.targetPlanet.system = coords[1];
-            fleetDispatcher.targetPlanet.type = 0;
-            fleetDispatcher.targetPlanet.position = 16;
-            fleetDispatcher.refreshTarget();
-            fleetDispatcher.updateTarget();
-            fleetDispatcher.selectMission(15);
-            fleetDispatcher.refreshMissions();
-            // document.querySelector(".ogl-planet-icon").click();
-            this.expedition = true;
+            inputs[0].value = coords[0];
+            inputs[1].value = coords[1];
+            inputs[2].value = 16;
 
             shipsOnPlanet.forEach((ship) => {
               if (ship.id == type) this.selectShips(ship.id, count);
@@ -9194,8 +9723,20 @@ class OGInfinity {
               else if (ship.id == 210) this.selectShips(ship.id, 1);
               else if (ship.id == 219) this.selectShips(ship.id, 1);
             });
+			
+            fleetDispatcher.targetPlanet.type = 1;
+            fleetDispatcher.targetPlanet.position = 16;
+            fleetDispatcher.refreshTarget();
+            fleetDispatcher.updateTarget();
 
-            fleetDispatcher.refresh();
+			fleetDispatcher.fetchTargetPlayerData();
+	
+			fleetDispatcher.refresh();
+			
+			document.querySelector(".ogl-moon-icon").classList.remove("ogl-active");
+			document.querySelector(".ogl-planet-icon").classList.add("ogl-active");
+
+			this.expedition = false;
           });
         });
       });
@@ -9228,7 +9769,7 @@ class OGInfinity {
           document
             .querySelector(".ogl-dialogOverlay")
             .classList.remove("ogl-active");
-//          document.querySelector("#continueToFleet3").focus();
+          //document.querySelector("#continueToFleet3").focus();
         });
         this.popup(false, container);
       });
@@ -9644,19 +10185,25 @@ class OGInfinity {
       let crystalRess = planetNode.querySelectorAll(".ogl-crystal");
       let deutRess = planetNode.querySelectorAll(".ogl-deut");
 
-      metalRess[0].innerText = this.formatToUnits(planet.metal);
-      crystalRess[0].innerText = this.formatToUnits(planet.crystal);
-      deutRess[0].innerText = this.formatToUnits(planet.deuterium);
+      if (metalRess.length > 0)
+        metalRess[0].innerText = this.formatToUnits(planet.metal);
+      if (crystalRess.length > 0)
+        crystalRess[0].innerText = this.formatToUnits(planet.crystal);
+      if (deutRess.length > 0)
+        deutRess[0].innerText = this.formatToUnits(planet.deuterium);
 
-      metalRess[0].classList = "ogl-metal " + isFullM + isaFullM;
-      crystalRess[0].classList = "ogl-crystal " + isFullC + isaFullC;
-      deutRess[0].classList = "ogl-deut " + isFullD + isaFullD;
+      if (metalRess.length > 0)
+        metalRess[0].classList = "ogl-metal " + isFullM + isaFullM;
+      if (crystalRess.length > 0)
+        crystalRess[0].classList = "ogl-crystal " + isFullC + isaFullC;
+      if (deutRess.length > 0)
+        deutRess[0].classList = "ogl-deut " + isFullD + isaFullD;
 
       mSumP += planet.metal;
       cSumP += planet.crystal;
       dSumP += planet.deuterium;
 
-      if (planet.moon != undefined && metalRess[1]) {
+      if (planet.moon != undefined && metalRess.length > 0 && metalRess[1]) {
         metalRess[1].innerText = this.formatToUnits(planet.moon.metal);
         crystalRess[1].innerText = this.formatToUnits(planet.moon.crystal);
         deutRess[1].innerText = this.formatToUnits(planet.moon.deuterium);
@@ -11016,7 +11563,7 @@ class OGInfinity {
           watchlistBtn.addEventListener("click", () => {
             sideStalk.empty();
             sideStalk.appendChild(
-              this.createDOM("div", { class: "title" }, "Historic")
+              this.createDOM("div", { class: "title" }, "Historic " + this.json.sideStalk.length + "/10")
             );
             sideStalk.appendChild(this.createDOM("hr"));
             this.json.sideStalk
@@ -11929,7 +12476,7 @@ TOTAL: ${this.formatToUnits(report.total)}
 
           fleetDispatcher.selectShip(shipID, amount);
           fleetDispatcher.refresh();
-          fleetDispatcher.focusSubmitFleet1();
+          //fleetDispatcher.focusSubmitFleet1();
         }
       });
     }
@@ -11944,7 +12491,7 @@ TOTAL: ${this.formatToUnits(report.total)}
         if (param) {
           this.selectShips(ship.id, param);
           fleetDispatcher.refresh();
-          fleetDispatcher.focusSubmitFleet1();
+          //fleetDispatcher.focusSubmitFleet1();
         }
       });
     }
@@ -12563,10 +13110,11 @@ TOTAL: ${this.formatToUnits(report.total)}
           if (fleetDispatcher.currentPage == "fleet1") {
             fleetDispatcher.trySubmitFleet1();
           } else if (fleetDispatcher.currentPage == "fleet2") {
+			fleetDispatcher.speedPercent = document.querySelector(".ogl-fleetSpeed").querySelector(".ogl-active").getAttribute("data-step");
             fleetDispatcher.trySubmitFleet2();
-          } else if (fleetDispatcher.currentPage == "fleet3") {
+          } /*else if (fleetDispatcher.currentPage == "fleet3") {
             fleetDispatcher.trySubmitFleet3();
-          }
+          }*/
 
           event.preventDefault();
           event.stopPropagation();
@@ -13022,6 +13570,19 @@ TOTAL: ${this.formatToUnits(report.total)}
     };
   }
 
+  overwriteFleetDispatcher(functionName, param, callback, callbackAfter)
+    {
+        let old = fleetDispatcher[functionName];
+
+        fleetDispatcher[functionName] = function(param)
+        {
+            let state;
+            if(callback) state = callback();
+            if(state != 'canceled') old.call(fleetDispatcher, param);
+            callbackAfter && callbackAfter();
+        }
+
+    }
   utilities() {
     // fix top tooltips
     document
@@ -13035,49 +13596,48 @@ TOTAL: ${this.formatToUnits(report.total)}
     if (this.page == "fleetdispatch") {
       // speed slider
 
-      document.querySelector("#speedPercentage").classList.add("ogl-hidden");
-
+      document.querySelector(".percentageBarWrapper").classList.add("ogl-hidden");
       let slider = this.createDOM("div", {
         class: "ogl-fleetSpeed",
-        style: "margin-top: 50px",
+        style: "margin-top: 10px; margin-left: 10px; margin-right: 10px; display: flex; grid-column: 1/3;",
       });
-      document.querySelector("#fleetBriefingPart1").appendChild(slider);
+      document.querySelector('div[id="mission"]').appendChild(slider);
 
       if (this.playerClass == PLAYER_CLASS_WARRIOR) {
         slider.html(`
-        <div data-step="0.5">05</div>
-        <div data-step="1">10</div>
-        <div data-step="1.5">15</div>
-        <div data-step="2">20</div>
-        <div data-step="2.5">25</div>
-        <div data-step="3">30</div>
-        <div data-step="3.5">35</div>
-        <div data-step="4">40</div>
-        <div data-step="4.5">45</div>
-        <div data-step="5">50</div>
-        <div data-step="5.5">55</div>
-        <div data-step="6">60</div>
-        <div data-step="6.5">65</div>
-        <div data-step="7">70</div>
-        <div data-step="7.5">75</div>
-        <div data-step="8">80</div>
-        <div data-step="8.5">85</div>
-        <div data-step="9">90</div>
-        <div data-step="9.5">95</div>
-        <div class="ogl-active" data-step="10">100</div>
+        <div data-step="0.5" style="width: 31px;">05</div>
+        <div data-step="1" style="width: 31px;">10</div>
+        <div data-step="1.5" style="width: 31px;">15</div>
+        <div data-step="2" style="width: 31px;">20</div>
+        <div data-step="2.5" style="width: 31px;">25</div>
+        <div data-step="3" style="width: 31px;">30</div>
+        <div data-step="3.5" style="width: 31px;">35</div>
+        <div data-step="4" style="width: 31px;">40</div>
+        <div data-step="4.5" style="width: 31px;">45</div>
+        <div data-step="5" style="width: 31px;">50</div>
+        <div data-step="5.5" style="width: 31px;">55</div>
+        <div data-step="6" style="width: 31px;">60</div>
+        <div data-step="6.5" style="width: 31px;">65</div>
+        <div data-step="7" style="width: 31px;">70</div>
+        <div data-step="7.5" style="width: 31px;">75</div>
+        <div data-step="8" style="width: 31px;">80</div>
+        <div data-step="8.5" style="width: 31px;">85</div>
+        <div data-step="9" style="width: 31px;">90</div>
+        <div data-step="9.5" style="width: 31px;">95</div>
+        <div class="ogl-active" data-step="10" style="width: 31px;">100</div>
         `);
       } else {
         slider.html(`
-        <div data-step="1">10</div>
-        <div data-step="2">20</div>
-        <div data-step="3">30</div>
-        <div data-step="4">40</div>
-        <div data-step="5">50</div>
-        <div data-step="6">60</div>
-        <div data-step="7">70</div>
-        <div data-step="8">80</div>
-        <div data-step="9">90</div>
-        <div class="ogl-active" data-step="10">100</div>
+        <div data-step="1" style="width: 62px;">10</div>
+        <div data-step="2" style="width: 62px;">20</div>
+        <div data-step="3" style="width: 62px;">30</div>
+        <div data-step="4" style="width: 62px;">40</div>
+        <div data-step="5" style="width: 62px;">50</div>
+        <div data-step="6" style="width: 62px;">60</div>
+        <div data-step="7" style="width: 62px;">70</div>
+        <div data-step="8" style="width: 62px;">80</div>
+        <div data-step="9" style="width: 62px;">90</div>
+        <div class="ogl-active" data-step="10" style="width: 62px;">100</div>
         `);
       }
       $(".ogl-fleetSpeed div").on("click", (event) => {

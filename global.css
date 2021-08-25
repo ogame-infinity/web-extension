@@ -534,20 +534,20 @@ input[type="text"] {
 #selectMinCrystal,
 #selectMinDeuterium {
   position: relative;
-  left: -50px;
+  left: -65px;
 }
 
 #selectMaxMetal,
 #selectMaxCrystal,
 #selectMaxDeuterium {
   position: relative;
-  left: -52px;
+  left: -67px;
 }
 #selectMostMetal,
 #selectMostCrystal,
 #selectMostDeuterium {
   position: relative;
-  left: -51px;
+  left: -66px;
 }
 
 .ogl-dest .ogl-planet-icon {
@@ -986,7 +986,7 @@ input[type="text"] {
 }
 
 .ogl-dest .ogl-coords input:last-of-type {
-  width: 15px !important;
+  width: 20px !important;
   margin-left: 5px;
   margin-right: 5px;
 }
@@ -1382,7 +1382,7 @@ input[type="file"] {
   justify-content: center;
   align-items: center;
   margin-top: 5px;
-  width: 271px;
+  width: 286px;
 }
 .ogl-target-list .ogk-controls > div:first-child {
   padding: 20px 0px;
@@ -1469,19 +1469,15 @@ div#banner_skyscraper {
 #mission .border5px {
   max-height: 155px;
 }
-#naviActions {
-  margin-top: 30px;
-}
 #fleet2 div#mission .percentageBarWrapper {
   z-index: -1;
 }
-
 
 #fleetBriefingPart1 .ogl-fleetSpeed {
   width: max-content !important;
 }
 #fleetBriefingPart1 .ogl-fleetSpeed > div {
-  min-width: 30px;
+  min-width: 60px;
 }
 
 #fleet2 .ogk-delay {
@@ -2243,7 +2239,7 @@ button.build-it_premium {
 .ogl-tooltip .ogk-cargo {
   width: auto;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
 }
 .ogl-tooltip .ogk-cargo > div {
   margin: 2px;
@@ -2789,7 +2785,7 @@ button.build-it_premium {
 .ogl-planets-col {
   display: flex;
   flex-direction: column;
-  width: 271px;
+  width: 286px;
   align-items: center;
   margin-top: 15px;
 }
@@ -3243,6 +3239,7 @@ button.build-it_premium {
   height: 22px;
   width: 22px;
   position: sticky;
+  float: left;
 }
 
 .ogl-option:after {
@@ -3475,7 +3472,7 @@ button.build-it_premium {
 
 .planetlink {
   left: 0 !important;
-  width: 90px;
+  width: 105px;
   min-width: 90px;
 }
 
@@ -3573,7 +3570,7 @@ button.build-it_premium {
   top: 3px !important;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 75px;
+  width: 105px;
   text-align: left;
 }
 
@@ -4340,7 +4337,7 @@ Global fix to center the page when planet overview is expender
 
 #pageContent {
   width: max-content !important;
-  min-width: 1130px !important;
+  min-width: 1145px !important;
 }
 
 #pageContent > #right {
@@ -4690,6 +4687,9 @@ body.ogame select {
   color: #da961a;
 }
 
+.ogl-tech-113 {
+  background-position: 0.6% 68.2% !important;
+}
 .ogl-tech-114 {
   background-position: 17% 68.3% !important;
 }
@@ -4702,6 +4702,9 @@ body.ogame select {
 .ogl-tech-118 {
   background-position: 37% 68.5% !important;
 }
+.ogl-tech-108 {
+  background-position: 47.3% 68.5% !important;
+}
 .ogl-tech-109 {
   background-position: 73% 68.5% !important;
 }
@@ -4710,6 +4713,12 @@ body.ogame select {
 }
 .ogl-tech-111 {
   background-position: 67% 68.5% !important;
+}
+.ogl-tech-124 {
+  background-position: 51.3% 68.3% !important;
+}
+.ogl-tech-122 {
+  background-position: 22.6% 68.4% !important;
 }
 
 .ogl-fleet-203 {
@@ -4726,6 +4735,9 @@ body.ogame select {
 }
 .ogl-fleet-210 {
   background-position: 62.9% 52.5% !important;
+}
+.ogl-fleet-212 {
+  background-position: 67.9% 51.8% !important;
 }
 .ogl-fleet-204 {
   background-position: 0.9% 52% !important;
@@ -6886,4 +6898,28 @@ table.fleetinfo tr:nth-last-child(1),
 
 .expeditionDebrisSlotBox a:hover {
   color: orange;
+}
+
+ul.fleetBriefing {
+    margin: 5px 0 5px 20px !important;
+}
+
+#naviActions {
+    padding: 10px 20px !important;
+    position: relative !important;
+    z-index: 2 !important;
+}
+
+a#backToFleet1 {
+    margin-top: 5px !important;
+    margin-left: 5px !important;
+    float: left !important;
+}
+
+#fleet2 #buttonz ul li {
+    padding-top: 1px !important;
+}
+
+span.resbuttons {
+    display: none !important;
 }
