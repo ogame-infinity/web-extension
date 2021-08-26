@@ -9077,22 +9077,40 @@ class OGInfinity {
         );
         pbNum = transport.appendChild(this.createDOM("span", {}, "-"));
       }
-
+/*
       let updateShips = (e) => {
         let amount = e.target.nextElementSibling.getAttribute("amount");
         this.selectShips(Number(e.target.getAttribute("tech-id")), amount);
-	    	fleetDispatcher.refreshTarget();
-		    fleetDispatcher.updateTarget();
-		    fleetDispatcher.fetchTargetPlayerData();
+        setTimeout(function(){
+          fleetDispatcher.refreshTarget();
+          fleetDispatcher.updateTarget();
+          fleetDispatcher.fetchTargetPlayerData();
+        }, 0);
       };
 
       let updateMissions = (e) => {
-        setTimeout(function(){ 
+    //    alert('keyup');
+        setTimeout(function(){
           fleetDispatcher.refreshTarget();
           fleetDispatcher.updateTarget();
           fleetDispatcher.fetchTargetPlayerData();
           }, 0);
       };  
+*/
+// debounce handles multiple calls once , ie when typing numbers too fast
+      var updateShips = debounce(function() {
+        let amount = e.target.nextElementSibling.getAttribute("amount");
+        this.selectShips(Number(e.target.getAttribute("tech-id")), amount);
+          fleetDispatcher.refreshTarget();
+          fleetDispatcher.updateTarget();
+          fleetDispatcher.fetchTargetPlayerData();
+      }, 200);
+
+      var updateMissions = debounce(function() {
+              fleetDispatcher.refreshTarget();
+              fleetDispatcher.updateTarget();
+              fleetDispatcher.fetchTargetPlayerData();
+      }, 200);  
 
       document.querySelectorAll("input.ogl-formatInput").forEach((input) => {
         input.addEventListener("keyup", updateMissions);
