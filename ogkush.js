@@ -9098,13 +9098,11 @@ class OGInfinity {
       };  
 */
 // debounce handles multiple calls once , ie when typing numbers too fast
-      var updateShips = debounce(function() {
+      let updateShips = (e) => {
         let amount = e.target.nextElementSibling.getAttribute("amount");
         this.selectShips(Number(e.target.getAttribute("tech-id")), amount);
-          fleetDispatcher.refreshTarget();
-          fleetDispatcher.updateTarget();
-          fleetDispatcher.fetchTargetPlayerData();
-      }, 200);
+        updateMissions();
+      };
 
       var updateMissions = debounce(function() {
               fleetDispatcher.refreshTarget();
@@ -12500,6 +12498,7 @@ TOTAL: ${this.formatToUnits(report.total)}
 
   selectShips(shipID, amount) {
     if (this.page == "fleetdispatch") {
+  //    alert("ship: "+shipID+" count : "+amount)
       fleetDispatcher.shipsOnPlanet.forEach((ship) => {
         if (ship.id == shipID) {
           if (amount > ship.number) amount = ship.number;
