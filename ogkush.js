@@ -4598,11 +4598,9 @@ class OGInfinity {
     let defBtn = header.appendChild(
       this.createDOM("span", { class: "ogl-tab" }, "Defense")
     );
-	/*
     let minesBtn = header.appendChild(
       this.createDOM("span", { class: "ogl-tab" }, "Mines")
     );
-	*/
 
     let body = this.createDOM("div");
     body.appendChild(header);
@@ -4611,7 +4609,7 @@ class OGInfinity {
     let tabListener = (e) => {
       fleetBtn.classList.remove("ogl-active");
       defBtn.classList.remove("ogl-active");
-      /*
+
 	  minesBtn.classList.remove("ogl-active");
       body.children[1].remove();
 
@@ -4621,20 +4619,16 @@ class OGInfinity {
       } else if (e.target.innerText == "Defense") {
         defBtn.classList.add("ogl-active");
         body.appendChild(this.defenseOverview());
-      } 
-	  /*
-	  else {
+      }else {
         minesBtn.classList.add("ogl-active");
         body.appendChild(this.minesOverview());
       }
-	  */
+
     };
 
     fleetBtn.addEventListener("click", tabListener);
     defBtn.addEventListener("click", tabListener);
-    /*
 	minesBtn.addEventListener("click", tabListener);
-    */
 
     this.popup(null, body);
   }
@@ -6343,7 +6337,6 @@ class OGInfinity {
     }
   }
 
-  /*
   minesOverview() {
     let content = this.createDOM("div", { class: "ogl-mines-content" });
     let table = content.appendChild(
@@ -6605,7 +6598,6 @@ class OGInfinity {
 
     return content;
   }
-  */
 
   minesStats() {
     let content = this.createDOM("div", { class: "ogl-mines-content" });
