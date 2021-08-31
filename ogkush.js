@@ -584,8 +584,12 @@ class OGInfinity {
       });
       if (this.json.myMines[this.current.coords]) {
         this.json.myMines[this.current.coords].temperature = maxTemp;
+		this.json.myMines[this.current.coords].fieldUsed = textContent[1].split("<span>").splice(1, 2)[0].replace("</span>/", "").replace("</span>)", "");
+		this.json.myMines[this.current.coords].fieldMax = textContent[1].split("<span>").splice(1, 2)[1].replace("</span>/", "").replace("</span>)", "");
       } else {
         this.json.myMines[this.current.coords] = { temperature: maxTemp };
+		this.json.myMines[this.current.coords] = { fieldUsed: textContent[1].split("<span>").splice(1, 2)[0].replace("</span>/", "").replace("</span>)", "") };
+		this.json.myMines[this.current.coords] = { fieldMax: textContent[1].split("<span>").splice(1, 2)[1].replace("</span>/", "").replace("</span>)", "") };
       }
     }
 
@@ -3818,16 +3822,21 @@ class OGInfinity {
       });
       sum = this.json.empire.length;
     } else {
-      for (let i in this.json.myMines) {
-        if (!this.json.myMines[i].metal) continue;
+      
+      this.planetList.forEach((planet) => {
+		  
+        let coords = planet.querySelector(".planet-koords").textContent;
+		  
+        if (!this.json.myMines[coords] || !this.json.myMines[coords].metal) return;
+		
         let metal = Number(
-          this.json.myMines[i].metal.replace("(", "").replace(")", "")
+          this.json.myMines[coords].metal.replace("(", "").replace(")", "")
         );
         let crystal = Number(
-          this.json.myMines[i].crystal.replace("(", "").replace(")", "")
+          this.json.myMines[coords].crystal.replace("(", "").replace(")", "")
         );
         let deut = Number(
-          this.json.myMines[i].deuterium.replace("(", "").replace(")", "")
+          this.json.myMines[coords].deuterium.replace("(", "").replace(")", "")
         );
 
         sum += 1;
@@ -3835,13 +3844,14 @@ class OGInfinity {
         clvl += crystal;
         dlvl += deut;
         mprod +=
-          this.json.myMines[i].metalProd || this.production(1, metal, true);
+          this.json.myMines[coords].metalProd || this.production(1, metal, true);
         cprod +=
-          this.json.myMines[i].crystalProd || this.production(2, crystal, true);
+          this.json.myMines[coords].crystalProd || this.production(2, crystal, true);
         dprod +=
-          this.json.myMines[i].deuteriumProd ||
+          this.json.myMines[coords].deuteriumProd ||
           this.production(3, deut, true);
-      }
+      });
+	  
     }
 
     mlvl = mlvl / sum;
@@ -4588,9 +4598,11 @@ class OGInfinity {
     let defBtn = header.appendChild(
       this.createDOM("span", { class: "ogl-tab" }, "Defense")
     );
+	/*
     let minesBtn = header.appendChild(
       this.createDOM("span", { class: "ogl-tab" }, "Mines")
     );
+	*/
 
     let body = this.createDOM("div");
     body.appendChild(header);
@@ -4599,7 +4611,8 @@ class OGInfinity {
     let tabListener = (e) => {
       fleetBtn.classList.remove("ogl-active");
       defBtn.classList.remove("ogl-active");
-      minesBtn.classList.remove("ogl-active");
+      /*
+	  minesBtn.classList.remove("ogl-active");
       body.children[1].remove();
 
       if (e.target.innerText == "Fleet") {
@@ -4608,15 +4621,20 @@ class OGInfinity {
       } else if (e.target.innerText == "Defense") {
         defBtn.classList.add("ogl-active");
         body.appendChild(this.defenseOverview());
-      } else {
+      } 
+	  /*
+	  else {
         minesBtn.classList.add("ogl-active");
         body.appendChild(this.minesOverview());
       }
+	  */
     };
 
     fleetBtn.addEventListener("click", tabListener);
     defBtn.addEventListener("click", tabListener);
-    minesBtn.addEventListener("click", tabListener);
+    /*
+	minesBtn.addEventListener("click", tabListener);
+    */
 
     this.popup(null, body);
   }
@@ -6325,6 +6343,7 @@ class OGInfinity {
     }
   }
 
+  /*
   minesOverview() {
     let content = this.createDOM("div", { class: "ogl-mines-content" });
     let table = content.appendChild(
@@ -6586,6 +6605,7 @@ class OGInfinity {
 
     return content;
   }
+  */
 
   minesStats() {
     let content = this.createDOM("div", { class: "ogl-mines-content" });
@@ -6677,15 +6697,16 @@ class OGInfinity {
 	  
 	  planet.name = planet.querySelector(".planet-name").textContent;
 	  planet.coordinates = coords;
-	  planet.fieldUsed = 0;
-	  planet.fieldMax = 0;
+	  planet.fieldUsed = this.json.myMines[coords].fieldUsed || 0;
+	  planet.fieldMax = this.json.myMines[coords].fieldMax || 0;
+	  planet.temperature = this.json.myMines[coords].temperature || 0;
 
       let link = `?page=ingame&component=supplies&cp=${planet.id}`;
       header.appendChild(
         this.createDOM(
           "th",
           {},
-          `<p>${planet.name}</p> <a href="${link}" class="ogl-fleet-coords">${planet.coordinates}</a>`
+		  `<p>${planet.name}</p> <a href="${link}" class="ogl-fleet-coords">${planet.coordinates}</a> <span class="ogl-planet-fields">${planet.fieldUsed} / ${planet.fieldMax}</span><br><span class="ogl-planet-temperature">${planet.temperature}ºC</span>`
         )
       );
       let td = metalRow.appendChild(this.createDOM("td"));
@@ -6771,7 +6792,10 @@ class OGInfinity {
       td.appendChild(
         this.createDOM(
           "div",
-          { class: "ogl-energy " + (diff >= 0 ? "undermark" : "overmark") },
+          {
+			  class: "ogl-energy " + (diff >= 0 ? "undermark" : "overmark"),
+			  style: "font-size: 18px;"
+		  },
           this.formatToUnits(diff)
         )
       );
