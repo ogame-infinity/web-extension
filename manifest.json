@@ -7,6 +7,7 @@
 
   "content_scripts": [
     {
+      "exclude_matches": ["https://*.ogame.gameforge.com/game/admin2/*"],
       "matches": ["https://*.ogame.gameforge.com/game/*"],
       "js": ["main.js"],
       "css": ["global.css"],
