@@ -7831,25 +7831,40 @@ class OGInfinity {
 	  
 	  let that = this;
 	  
-              that.overwriteFleetDispatcher('focusSubmitFleet1', false, () =>
+              this.overwriteFleetDispatcher('focusSubmitFleet1', false, () =>
 			  {
 				  if(!this.expedition){				   
 					fleetDispatcher.refreshTarget();
 					fleetDispatcher.updateTarget();
-					fleetDispatcher.fetchTargetPlayerData();
+					
+					clearTimeout(fleetDispatcher.fetchTargetPlayerDataTimeout);
+					
+					fleetDispatcher.fetchTargetPlayerDataTimeout = setTimeout(() => {
+					  fleetDispatcher.deferred.push($.Deferred()); // check if this is the only target fetch in queue or there are other pending calls
+
+					  if (fleetDispatcher.deferred.length === 1) {
+						fleetDispatcher.fetchTargetPlayerData();
+					  }
+
+					  fleetDispatcher.deferred[fleetDispatcher.deferred.length - 1].done(() => {
+						if (fleetDispatcher.deferred.length !== 0) {
+						  fleetDispatcher.fetchTargetPlayerData();
+						}
+					  });
+					}, 500);
+					
 				  }
 			  });
 			  
               let auxAjaxFailed = false;
 			
-              that.overwriteFleetDispatcher('setTargetPlayerNameOnStatusBarFleet', false, () =>
+              this.overwriteFleetDispatcher('setTargetPlayerNameOnStatusBarFleet', false, () =>
 			  {
 				  auxAjaxFailed = true;
 			  });
 			  
 			  
-              that.overwriteFleetDispatcher('stopLoading', false, () =>
-              //that.overwriteFleetDispatcher('setTargetPlanet', false, () =>
+              this.overwriteFleetDispatcher('stopLoading', false, () =>
 				{
 					
 					let missions = fleetDispatcher.getAvailableMissions();
