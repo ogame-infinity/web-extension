@@ -14522,6 +14522,10 @@ TOTAL: ${this.formatToUnits(report.total)}
 
 (async () => {
   let ogKush = new OGInfinity();
-  await ogKush.init();
-  ogKush.start();
+//  alert("test");
+  setTimeout(function () {
+    ogKush.init();
+    ogKush.start();
+  }, 0);
+
 })();
