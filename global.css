@@ -4410,6 +4410,11 @@ a.btn:active,
   font-style: italic;
 }
 
+.ogl-mines-content .ogl-planet-temperature {
+  font-size: 10px;
+  font-style: normal;
+}
+
 .ogl-mines-content .ogl-fleet-table tr:not(:first-child):hover {
   background: inherit;
 }
