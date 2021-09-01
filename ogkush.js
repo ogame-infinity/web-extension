@@ -1620,23 +1620,27 @@ class OGInfinity {
     if (this.unionInterval) {
       clearInterval(this.unionInterval);
     } else {
-      this.delayDiv = document
+/*      this.delayDiv = document
         .querySelector(".briefing h2")
         .appendChild(this.createDOM("span", { class: "ogk-delay" }));
       this.delayDiv2 = document
         .querySelector("#roundup ul")
         .appendChild(this.createDOM("div", { class: "ogk-delay" }));
-      this.delayDiv3 = document
+ */
+   // Time shown below Fleet 1 "Next" Button
+        this.delayDiv3 = document
         .querySelector("#continueToFleet2")
         .appendChild(this.createDOM("div", { class: "ogk-delay" }));
       this.delayTimeDiv = document
-        .querySelector("#fleetBriefingPart1_2 li:first-of-type .value")
+        .querySelector("#fleetBriefingPart1 li:first-of-type .value")
         .appendChild(this.createDOM("div", { class: "undermark" }));
       this.delayTimeDiv2 = document
-        .querySelector("#fleet3 #arrivalTime")
+        .querySelector("#fleet2 #arrivalTime")
         .parentElement.appendChild(
           this.createDOM("div", { class: "undermark" })
         );
+
+   // Time shown on Fleet 1 Dispatcher     
       this.delayTimeDiv3 = document
         .querySelector("#fleet1 .ogl-info")
         .appendChild(
@@ -1658,11 +1662,11 @@ class OGInfinity {
       end = maxDelay / 1000 - flighDiff;
       let abs = Math.abs(end);
 
-      this.delayDiv.innerText =
+ /*     this.delayDiv.innerText =
         end > 0 ? getFormatedTime(abs) : getFormatedTime(0);
       this.delayDiv2.innerText =
         end > 0 ? getFormatedTime(abs) : getFormatedTime(0);
-      this.delayDiv3.innerText =
+ */     this.delayDiv3.innerText =
         end > 0 ? getFormatedTime(abs) : getFormatedTime(0);
 
       let format = getFormatedTime(flighDiff >= 0 ? flighDiff : 0);
