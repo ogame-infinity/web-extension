@@ -671,7 +671,9 @@ class OGInfinity {
         deuteriumProd: deuteriumProd,
         crawlers: crawlers,
         temperature: mines ? mines.temperature : undefined,
-        energy: parseInt(document.querySelector("#resources_energy").innerText.replaceAll(".", ""))
+        energy: parseInt(document.querySelector("#resources_energy").innerText.replaceAll(".", "")),
+		fieldUsed: this.json.myMines[this.current.coords].fieldUsed || 0,
+		fieldMax: this.json.myMines[this.current.coords].fieldMax || 0												
       };
 
       this.json.myMines[this.current.coords] = mines;
