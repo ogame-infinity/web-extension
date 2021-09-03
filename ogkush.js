@@ -673,7 +673,7 @@ class OGInfinity {
         temperature: mines ? mines.temperature : undefined,
         energy: parseInt(document.querySelector("#resources_energy").innerText.replaceAll(".", "")),
 		fieldUsed: this.json.myMines[this.current.coords].fieldUsed || 0,
-		fieldMax: this.json.myMines[this.current.coords].fieldMax || 0												
+		fieldMax: this.json.myMines[this.current.coords].fieldMax || 0
       };
 
       this.json.myMines[this.current.coords] = mines;
@@ -13206,15 +13206,15 @@ TOTAL: ${this.formatToUnits(report.total)}
       document.addEventListener("keydown", (event) => {
         if (event.keyCode == 13) {
           if (fleetDispatcher.currentPage == "fleet1") {
-            //fleetDispatcher.trySubmitFleet1();
+            document.querySelector("#continueToFleet2").click();
           } else if (fleetDispatcher.currentPage == "fleet2") {
 			fleetDispatcher.speedPercent = document.querySelector(".ogl-fleetSpeed").querySelector(".ogl-active").getAttribute("data-step");
-            fleetDispatcher.trySubmitFleet2();
-			event.preventDefault();
+            document.querySelector("#sendFleet").click();
           } /*else if (fleetDispatcher.currentPage == "fleet3") {
             fleetDispatcher.trySubmitFleet3();
           }*/
-
+			
+          event.preventDefault();
           event.stopPropagation();
         }
       });
