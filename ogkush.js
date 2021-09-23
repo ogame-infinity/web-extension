@@ -1630,10 +1630,7 @@ class OGInfinity {
 /*      this.delayDiv = document
         .querySelector(".briefing h2")
         .appendChild(this.createDOM("span", { class: "ogk-delay" }));
-      this.delayDiv2 = document
-        .querySelector("#roundup ul")
-        .appendChild(this.createDOM("div", { class: "ogk-delay" }));
- */
+ */     
    // Time shown below Fleet 1 "Next" Button
         this.delayDiv3 = document
         .querySelector("#continueToFleet2")
@@ -1646,6 +1643,11 @@ class OGInfinity {
         .parentElement.appendChild(
           this.createDOM("div", { class: "undermark" })
         );
+
+        this.delayDiv2 = document
+        .querySelector("#missionNameWrapper")
+        .appendChild(this.createDOM("div", { class: "ogk-delay" }));
+  
 
    // Time shown on Fleet 1 Dispatcher     
       this.delayTimeDiv3 = document
@@ -1670,11 +1672,13 @@ class OGInfinity {
       let abs = Math.abs(end);
 
  /*     this.delayDiv.innerText =
-        end > 0 ? getFormatedTime(abs) : getFormatedTime(0);
+        end > 0 ? "Time to send "+getFormatedTime(abs) : "Too late to join "+getFormatedTime(0);
+*/
       this.delayDiv2.innerText =
-        end > 0 ? getFormatedTime(abs) : getFormatedTime(0);
- */     this.delayDiv3.innerText =
-        end > 0 ? getFormatedTime(abs) : getFormatedTime(0);
+        end > 0 ? "Time to send "+getFormatedTime(abs) : "Too late to join "+getFormatedTime(0);
+
+      this.delayDiv3.innerText =
+        end > 0 ? "Time to send "+getFormatedTime(abs) : "Too late to join "+getFormatedTime(0);
 
       let format = getFormatedTime(flighDiff >= 0 ? flighDiff : 0);
       this.delayTimeDiv.innerText = "+" + format;
