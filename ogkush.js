@@ -1675,11 +1675,25 @@ class OGInfinity {
         end > 0 ? "Time to send "+getFormatedTime(abs) : "Too late to join "+getFormatedTime(0);
 */
       this.delayDiv2.innerText =
-        end > 0 ? "Time to send "+getFormatedTime(abs) : "Too late to join "+getFormatedTime(0);
+        end > 0 ? "Time to join "+getFormatedTime(abs) : "Too late to join !"+getFormatedTime(abs);
 
       this.delayDiv3.innerText =
-        end > 0 ? "Time to send "+getFormatedTime(abs) : "Too late to join "+getFormatedTime(0);
+        end > 0 ? "Time to join "+getFormatedTime(abs) : "Too late to join "+getFormatedTime(abs);
 
+        if (end > 0)
+        {
+ //         this.delayDiv2.classList.add("ogk-delay-ontime")
+ //         this.delayDiv2.classList.add("ogk-delay-ontime")
+//          alert("trying");
+          this.delayDiv2.setAttribute('style','color:"green !important"');
+          this.delayDiv2.setAttribute('style','color:"green !important"');
+        }
+        else
+        {
+          this.delayDiv2.classList.remove("ogk-delay-ontime");
+          this.delayDiv2.classList.remove("ogk-delay-ontime");
+        }
+        
       let format = getFormatedTime(flighDiff >= 0 ? flighDiff : 0);
       this.delayTimeDiv.innerText = "+" + format;
       this.delayTimeDiv2.innerText = "+" + format;
@@ -8061,6 +8075,12 @@ class OGInfinity {
               systemInput.value = fleetDispatcher.targetPlanet.system;
               positionInput.value = fleetDispatcher.targetPlanet.position;
               document.querySelector(".ogl-dialog .close-tooltip").click();
+              fleetDispatcher.updateTarget();
+              setTimeout(() => {
+                fleetDispatcher.fetchTargetPlayerData();
+                fleetDispatcher.selectMission(2);
+              }, 50);
+              
               update(true);
               this.initUnionCombat(union);
             });
