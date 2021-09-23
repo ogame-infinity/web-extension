@@ -584,12 +584,17 @@ class OGInfinity {
       });
       if (this.json.myMines[this.current.coords]) {
         this.json.myMines[this.current.coords].temperature = maxTemp;
-		this.json.myMines[this.current.coords].fieldUsed = textContent[1].split("<span>").splice(1, 2)[0].replace("</span>/", "").replace("</span>)", "");
-		this.json.myMines[this.current.coords].fieldMax = textContent[1].split("<span>").splice(1, 2)[1].replace("</span>/", "").replace("</span>)", "");
+		if(!this.current.isMoon){
+			this.json.myMines[this.current.coords].fieldUsed = textContent[1].split("<span>").splice(1, 2)[0].replace("</span>/", "").replace("</span>)", "");
+			this.json.myMines[this.current.coords].fieldMax = textContent[1].split("<span>").splice(1, 2)[1].replace("</span>/", "").replace("</span>)", "");
+		}
+		
       } else {
         this.json.myMines[this.current.coords] = { temperature: maxTemp };
-		this.json.myMines[this.current.coords] = { fieldUsed: textContent[1].split("<span>").splice(1, 2)[0].replace("</span>/", "").replace("</span>)", "") };
-		this.json.myMines[this.current.coords] = { fieldMax: textContent[1].split("<span>").splice(1, 2)[1].replace("</span>/", "").replace("</span>)", "") };
+		if(!this.current.isMoon){
+			this.json.myMines[this.current.coords] = { fieldUsed: textContent[1].split("<span>").splice(1, 2)[0].replace("</span>/", "").replace("</span>)", "") };
+			this.json.myMines[this.current.coords] = { fieldMax: textContent[1].split("<span>").splice(1, 2)[1].replace("</span>/", "").replace("</span>)", "") };
+		}
       }
     }
 
@@ -666,7 +671,9 @@ class OGInfinity {
         deuteriumProd: deuteriumProd,
         crawlers: crawlers,
         temperature: mines ? mines.temperature : undefined,
-        energy: parseInt(document.querySelector("#resources_energy").innerText.replaceAll(".", ""))
+        energy: parseInt(document.querySelector("#resources_energy").innerText.replaceAll(".", "")),
+		fieldUsed: this.json.myMines[this.current.coords].fieldUsed || 0,
+		fieldMax: this.json.myMines[this.current.coords].fieldMax || 0
       };
 
       this.json.myMines[this.current.coords] = mines;
@@ -4613,7 +4620,6 @@ class OGInfinity {
     let tabListener = (e) => {
       fleetBtn.classList.remove("ogl-active");
       defBtn.classList.remove("ogl-active");
-
 	  minesBtn.classList.remove("ogl-active");
       body.children[1].remove();
 
@@ -6687,9 +6693,9 @@ class OGInfinity {
       clvl += Number(this.json.myMines[coords].crystal);
       dlvl += Number(this.json.myMines[coords].deuterium);
 	  
-      mprod += this.json.myMines[coords].metalProd;
-      cprod += this.json.myMines[coords].crystalProd;
-      dprod += this.json.myMines[coords].deuteriumProd;
+      mprod += this.json.myMines[coords].metalProd || this.production(1, this.json.myMines[coords].metal, true);
+      cprod += this.json.myMines[coords].crystalProd || this.production(2, this.json.myMines[coords].crystal, true);
+      dprod += this.json.myMines[coords].deuteriumProd || this.production(3, this.json.myMines[coords].deuterium, true);
 	  
 	  planet.name = planet.querySelector(".planet-name").textContent;
 	  planet.coordinates = coords;
@@ -6711,21 +6717,21 @@ class OGInfinity {
         this.createDOM(
           "div",
           { class: "ogl-metal" },
-          this.formatToUnits(this.json.myMines[coords].metalProd)
+          this.formatToUnits(this.json.myMines[coords].metalProd || this.production(1, this.json.myMines[coords].metal, true))
         )
       );
       td.appendChild(
         this.createDOM(
           "div",
           { class: "ogl-metal" },
-          this.formatToUnits(this.json.myMines[coords].metalProd*24)
+          this.formatToUnits((this.json.myMines[coords].metalProd || this.production(1, this.json.myMines[coords].metal, true))*24)
         )
       );
       td.appendChild(
         this.createDOM(
           "div",
           { class: "ogl-metal" },
-          this.formatToUnits(this.json.myMines[coords].metalProd*24*7)
+          this.formatToUnits((this.json.myMines[coords].metalProd || this.production(1, this.json.myMines[coords].metal, true))*24*7)
         )
       );
       if (current) td.classList.add("ogl-current");
@@ -6738,21 +6744,21 @@ class OGInfinity {
         this.createDOM(
           "div",
           { class: "ogl-crystal" },
-          this.formatToUnits(this.json.myMines[coords].crystalProd)
+          this.formatToUnits(this.json.myMines[coords].crystalProd || this.production(2, this.json.myMines[coords].crystal, true))
         )
       );
       td.appendChild(
         this.createDOM(
           "div",
           { class: "ogl-crystal" },
-          this.formatToUnits(this.json.myMines[coords].crystalProd*24)
+          this.formatToUnits((this.json.myMines[coords].crystalProd || this.production(2, this.json.myMines[coords].crystal, true))*24)
         )
       );
       td.appendChild(
         this.createDOM(
           "div",
           { class: "ogl-crystal" },
-          this.formatToUnits(this.json.myMines[coords].crystalProd*24*7)
+          this.formatToUnits((this.json.myMines[coords].crystalProd || this.production(2, this.json.myMines[coords].crystal, true))*24*7)
         )
       );
       if (current) td.classList.add("ogl-current");
@@ -6763,21 +6769,21 @@ class OGInfinity {
         this.createDOM(
           "div",
           { class: "ogl-deut" },
-          this.formatToUnits(this.json.myMines[coords].deuteriumProd)
+          this.formatToUnits(this.json.myMines[coords].deuteriumProd || this.production(3, this.json.myMines[coords].deuterium, true))
         )
       );
       td.appendChild(
         this.createDOM(
           "div",
           { class: "ogl-deut" },
-          this.formatToUnits(this.json.myMines[coords].deuteriumProd*24)
+          this.formatToUnits((this.json.myMines[coords].deuteriumProd || this.production(3, this.json.myMines[coords].deuterium, true))*24)
         )
       );
       td.appendChild(
         this.createDOM(
           "div",
           { class: "ogl-deut" },
-          this.formatToUnits(this.json.myMines[coords].deuteriumProd*24*7)
+          this.formatToUnits((this.json.myMines[coords].deuteriumProd || this.production(3, this.json.myMines[coords].deuterium, true))*24*7)
         )
       );
       if (current) td.classList.add("ogl-current");
@@ -6889,7 +6895,7 @@ class OGInfinity {
 
     return content;
   }
-  
+
   generateGalaxyLink(galaxy, system, position) {
     return `?page=ingame&component=galaxy&galaxy=${galaxy}&system=${system}&position=${position}`;
   }
@@ -7849,6 +7855,35 @@ class OGInfinity {
         //fleetDispatcher.focusSubmitFleet1();
       });
 	  
+	  /*
+      let elem = $('#fleet1');
+      elem.on('click', '#continueToFleet2', async function (e) {
+        console.log("TESTE xxx");
+      });
+	  */
+	  
+	  let trySubmitFleet1 = fleetDispatcher.trySubmitFleet1.bind(fleetDispatcher);
+      fleetDispatcher.trySubmitFleet1 = () => {
+        
+		
+					clearTimeout(fleetDispatcher.fetchTargetPlayerDataTimeout);
+					
+					fleetDispatcher.fetchTargetPlayerDataTimeout = setTimeout(() => {
+					  fleetDispatcher.deferred.push($.Deferred()); // check if this is the only target fetch in queue or there are other pending calls
+
+					  if (fleetDispatcher.deferred.length === 1) {
+						trySubmitFleet1();
+					  }
+
+					  fleetDispatcher.deferred[fleetDispatcher.deferred.length - 1].done(() => {
+						if (fleetDispatcher.deferred.length !== 0) {
+						  trySubmitFleet1();
+						}
+					  });
+					}, 250);
+		
+      };
+	  
 	  let that = this;
 	  
               this.overwriteFleetDispatcher('focusSubmitFleet1', false, () =>
@@ -8348,7 +8383,7 @@ class OGInfinity {
           .querySelector(".ogl-dispatch .ogl-missions")
           .html(`<span style="color: #9099a3"> No missions... </span>`);
 
-        fleetDispatcher.selectMission(0);
+		//fleetDispatcher.selectMission(0);
         warning.style.visibility = "visible";
         document.querySelector("#continueToFleet2").style.filter =
           "hue-rotate(-50deg)";
@@ -12407,7 +12442,6 @@ TOTAL: ${this.formatToUnits(report.total)}
         let div = this.createDOM("div");
         div.html(`
           <div style="width: 75px">Missing </div>
-
           <hr>
           <div class="ogl-metal">M: ${this.formatToUnits(
             Math.max(0, missing[0])
@@ -13172,14 +13206,14 @@ TOTAL: ${this.formatToUnits(report.total)}
       document.addEventListener("keydown", (event) => {
         if (event.keyCode == 13) {
           if (fleetDispatcher.currentPage == "fleet1") {
-            fleetDispatcher.trySubmitFleet1();
+            document.querySelector("#continueToFleet2").click();
           } else if (fleetDispatcher.currentPage == "fleet2") {
 			fleetDispatcher.speedPercent = document.querySelector(".ogl-fleetSpeed").querySelector(".ogl-active").getAttribute("data-step");
-            fleetDispatcher.trySubmitFleet2();
+            document.querySelector("#sendFleet").click();
           } /*else if (fleetDispatcher.currentPage == "fleet3") {
             fleetDispatcher.trySubmitFleet3();
           }*/
-
+			
           event.preventDefault();
           event.stopPropagation();
         }
@@ -13647,6 +13681,7 @@ TOTAL: ${this.formatToUnits(report.total)}
         }
 
     }
+	
   utilities() {
     // fix top tooltips
     document
