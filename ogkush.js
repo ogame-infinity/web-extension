@@ -11201,7 +11201,12 @@ class OGInfinity {
         }
         let splits = next.getAttribute("data-coords").split(":");
 
-        loadContent(splits[0], splits[1]);
+
+        if (isMobile) {
+          loadContent(splits[0], splits[1]);
+        } else {
+          loadContentNew(splits[0], splits[1]);
+        }
 
         if (!first) first = active;
         e.preventDefault();
