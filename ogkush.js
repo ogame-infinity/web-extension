@@ -2485,6 +2485,24 @@ class OGInfinity {
       this.keepTooltip = false;
       callback(galaxy, system);
     };
+
+    let rc = renderContentGalaxy;
+    renderContentGalaxy = (b) => {
+      rc(b);
+      if (!this.keepTooltip) {
+        document.querySelector(".ogl-tooltip") &&
+          document.querySelector(".ogl-tooltip").classList.remove("ogl-active");
+        if (timeout) clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          this.fixRedirectGalaxy();
+          timeout = null;
+        }, 200);
+      }
+      this.keepTooltip = false;
+      callback(galaxy, system);
+    };
+
+
     let inter = setInterval(() => {
       if (window.loadGalaxy) {
         clearInterval(inter);
