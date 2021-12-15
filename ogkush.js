@@ -2490,7 +2490,11 @@ class OGInfinity {
         clearInterval(inter);
         loadContent = window.loadGalaxy;
 
-        loadContent(galaxy, system);
+        if (isMobile) {
+          loadContent(galaxy, system);
+        } else {
+          loadContentNew(galaxy, system);
+        }
       }
     }, 1);
   }
