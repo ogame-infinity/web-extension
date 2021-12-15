@@ -2521,10 +2521,10 @@ class OGInfinity {
     document
       .querySelectorAll("#galaxytable tbody .allytag")
       .forEach((element, index) => {
-        let moon = element.parentNode.querySelector(".moon.tooltipRel")
+        let moon = element.parentNode.querySelector(".cellMoon .tooltipRel")
           ? true
           : false;
-        let playerDiv = element.parentNode.querySelector(".playername > a");
+        let playerDiv = element.parentNode.querySelector(".cellPlayerName > a");
         let id =
           (playerDiv && playerDiv.getAttribute("rel").replace("player", "")) ||
           99999;
@@ -2541,7 +2541,7 @@ class OGInfinity {
       .querySelectorAll("#galaxytable tbody tr")
       .forEach((element, index) => {
         let coords = galaxy + ":" + system + ":" + Number(index + 1);
-        let playerDiv = element.querySelector(".playername > a");
+        let playerDiv = element.querySelector(".cellPlayerName > a");
         if (!playerDiv) return;
         let id = playerDiv.getAttribute("rel").replace("player", "");
         if (this.json.markers[coords]) {
@@ -2558,7 +2558,7 @@ class OGInfinity {
               this.json.markers[coords].color
             );
             this.json.markers[coords].moon = element.querySelector(
-              ".moon.tooltipRel"
+              ".cellMoon .tooltipRel"
             )
               ? true
               : false;
@@ -2582,7 +2582,7 @@ class OGInfinity {
         planetAct = timer ? Number(timer.textContent.trim()) : 61;
       }
     }
-    if (moon.getAttribute("rel")) {
+    if (moon.children.length != 0) {
       if (moon.querySelector(".activity.minute15")) {
         moonAct = 0;
       } else {
@@ -2681,7 +2681,7 @@ class OGInfinity {
     let exists = false;
     let changes = [];
     let resets = [];
-    document.querySelectorAll(".row").forEach((row, index) => {
+    document.querySelectorAll(".galaxyRow.ctContentRow").forEach((row, index) => {
       let coords = galaxy + ":" + system + ":" + Number(index + 1);
       let target = document.querySelector(
         `.ogl-target-list .ogl-stalkPlanets [data-coords="${coords}"]`
@@ -2690,7 +2690,7 @@ class OGInfinity {
         this.updateSideActivity(target, this.getActivity(row));
       }
 
-      let playerDiv = row.querySelector(".playername div");
+      let playerDiv = row.querySelector(".cellPlayerName div");
       if (playerDiv) {
         exists = true;
         let id = playerDiv.getAttribute("id").replace("player", "");
@@ -2699,7 +2699,7 @@ class OGInfinity {
         changes.push({
           id: id,
           name: name,
-          moon: row.querySelector(".moon.tooltipRel") ? true : false,
+          moon: row.querySelector(".cellMoon .tooltipRel") ? true : false,
           coords: coords,
         });
 
@@ -2723,7 +2723,7 @@ class OGInfinity {
             // dataHelper
             //   .getPlayer(sided[0].parentElement.getAttribute("player-id"))
             //   .then((player) => {
-            //     this.stalk(row.querySelector(".playername"), player);
+            //     this.stalk(row.querySelector(".cellPlayerName"), player);
             //   });
             // console.log(this.rawURL.searchParams.get("galaxy"));
             // loadContent(this.rawURL.searchParams.get('galaxy'),this.rawURL.searchParams.get('system'))
@@ -2731,7 +2731,7 @@ class OGInfinity {
           this.activities[coords] = this.getActivity(row);
           changes.push({
             id: sided[0].parentElement.getAttribute("player-id"),
-            moon: row.querySelector(".moon.tooltipRel") ? true : false,
+            moon: row.querySelector(".cellMoon .tooltipRel") ? true : false,
             coords: coords,
             deleted: true,
           });
@@ -11755,7 +11755,7 @@ class OGInfinity {
     if (this.page == "galaxy") {
       this.FPSLoop("checkDebris");
 
-      document.querySelectorAll(".debris").forEach((element) => {
+      document.querySelectorAll(".cellDebris").forEach((element) => {
         let debris = element.querySelector(".ListLinks");
         if (debris && !debris.classList.contains("ogl-debrisReady")) {
           debris.classList.add("ogl-debrisReady");
@@ -13515,7 +13515,7 @@ TOTAL: ${this.formatToUnits(report.total)}
         positions.forEach((position) => {
           if (!position.classList.contains("ogi-ready")) {
             position.classList.add("ogi-ready");
-            let playerDiv = position.querySelector(".playername");
+            let playerDiv = position.querySelector(".cellPlayerName");
 
             let countDiv = position.querySelector(".score.tooltip");
             if (countDiv) {
