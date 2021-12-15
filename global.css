@@ -3159,9 +3159,13 @@ button.build-it_premium {
 * GALAXY
 /****************************/
 
-/* .row[class*="filtered"] .playername {
+/* .galaxyRow[class*="filtered"] .playername {
   pointer-events: none;
 } */
+
+#galaxyContent .galaxyRow {
+   gap: 0px 0px !important;
+}
 
 /*****************************
 * ICONS
