@@ -1,3 +1,9 @@
+#galaxyContent .ctContentRow .cellDebris .debris_1 {
+    background: url('')  !important;
+}
+
+
+
 #planetList .activity.showMinutes {
   font-size: 8px;
   width: min-content;
