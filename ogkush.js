@@ -2059,13 +2059,7 @@ class OGInfinity {
     let inter = setInterval(() => {
       if (window.loadGalaxy) {
         clearInterval(inter);
-        loadContent = window.loadGalaxy;
-
-        if (isMobile) {
-          loadContent(galaxy, system);
-        } else {
-          loadContentNew(galaxy, system);
-        }
+        submitForm();
       }
     }, 1);
   }
@@ -9214,11 +9208,10 @@ class OGInfinity {
         }
         let splits = next.getAttribute("data-coords").split(":");
 
-	 galaxy = $("#galaxy_input").val(splits[0]);
-	 system = $("#system_input").val(splits[1]);
-	submitForm();
+        galaxy = $("#galaxy_input").val(splits[0]);
+        system = $("#system_input").val(splits[1]);
+        submitForm();
 
-        
         if (!first) first = active;
         e.preventDefault();
         e.stopPropagation();
@@ -9365,6 +9358,7 @@ class OGInfinity {
     });
 
     a.addEventListener("click", () => {
+      if ($("#galaxyLoading").is(":visible")) return;
       let link = `?page=ingame&component=galaxy&galaxy=${coords[0]}&system=${coords[1]}&position=${coords[2]}`;
       link = "https://" + window.location.host + window.location.pathname + link;
 
@@ -9472,6 +9466,7 @@ class OGInfinity {
       // });
 
       a.addEventListener("click", (event) => {
+        if ($("#galaxyLoading").is(":visible")) return;
         let link = `?page=ingame&component=galaxy&galaxy=${coords[0]}&system=${coords[1]}&position=${coords[2]}`;
         link = "https://" + window.location.host + window.location.pathname + link;
 
@@ -9586,17 +9581,17 @@ class OGInfinity {
         let first = true;
         actBtn &&
           actBtn.addEventListener("click", () => {
-            if (first) planets[0].click();
-
-            while (planets[index] && planets[index].classList.contains("ogl-active")) index++;
-            if (planets[index]) planets[index].click();
-
-            index++;
-            if (index >= planets.length) {
-              index = 0;
-              this.activities = {};
+            if ($("#galaxyLoading").is(":visible")) return;
+            let active = sideStalk.querySelectorAll(`a.ogl-active`);
+            let next = active[active.length - 1].nextElementSibling;
+            if (!next.getAttribute("data-coords")) {
+              next = sideStalk.querySelectorAll(".ogl-stalkPlanets a")[0];
             }
-            first = false;
+            let splits = next.getAttribute("data-coords").split(":");
+
+            galaxy = $("#galaxy_input").val(splits[0]);
+            system = $("#system_input").val(splits[1]);
+            submitForm();
           });
 
         watchlistBtn &&
