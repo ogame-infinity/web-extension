@@ -4,9 +4,7 @@
 
 window.onerror = () => {};
 
-chrome.browserAction.onClicked.addListener(() => {
-  chrome.tabs.create({ url: "https://lobby.ogame.gameforge.com/" });
-});
+chrome.browserAction.onClicked.addListener(() => {});
 
 class DataHelper {
   constructor(universe) {
