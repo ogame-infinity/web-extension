@@ -417,7 +417,7 @@ class OGInfinity {
           position: planet,
           type: planettype,
           shipCount: shipCount,
-          token: miniFleetToken,
+          token: token,
         };
         $.ajax(miniFleetLink, {
           data: params,
@@ -428,8 +428,8 @@ class OGInfinity {
               shipsendingDone = 1;
               addToTable("Error", "error");
             } else {
-              if (typeof data.newToken != "undefined") {
-                miniFleetToken = data.newToken;
+              if (typeof data.newAjaxToken != "undefined") {
+                token = data.newAjaxToken;
               }
               displayMiniFleetMessage(data.response);
             }
@@ -7591,7 +7591,7 @@ class OGInfinity {
           fleetDispatcher.updateTarget();
           fleetDispatcher.fetchTargetPlayerData();
           }, 0);
-      };  
+      };
 */
       // debounce handles multiple calls once , ie when typing numbers too fast
       let updateShips = (e) => {
