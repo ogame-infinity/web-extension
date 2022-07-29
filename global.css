@@ -3346,19 +3346,26 @@ a.build-it_premium, button.build-it_premium {
 }
 
 .smallplanet img {
-    display: block;
-    height: 16px;
-    top: 13px !important;
-    width: 16px;
-    border-radius: 50% !important;
-    box-shadow: 0 0 0 1px #13181d !important;
-    height: 16px;
-    left: 73px !important;
-    margin: 0 !important;
-    position: absolute !important;
-    top: 12px !important;
-    width: 16px;
-    z-index: 2
+  display: block;
+  height: 25px;
+  width: 25px;
+  top: 13px !important;
+  transition: top .2s;
+  /* background: #13181d; */
+  border-radius: 50% !important;
+  box-shadow: 0 0 0 1px #13181d !important;
+  left: 73px !important;
+  margin: 0 !important;
+  position: absolute !important;
+  top: 8px !important;
+  left: 82px !important;
+  top: 22px !important;
+  z-index: 2;
+}
+
+#planetbarcomponent #rechts #myPlanets .smallplanet a.wreckFieldIcon {
+    top: 25px !important;
+    left: 65px !important;
 }
 
 .smallplanet a:not(.active) img:hover {
@@ -3369,9 +3376,9 @@ a.build-it_premium, button.build-it_premium {
     left: 43px !important
 }
 
-.moonlink img, .planetlink .planetPic {
+/* .moonlink img, .planetlink .planetPic {
     display: none
-}
+} */
 
 .planetlink .planet-name {
     color: #fff !important;
