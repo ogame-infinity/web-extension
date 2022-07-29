@@ -6388,20 +6388,15 @@ class OGInfinity {
     };
     this.planetList.forEach((planet) => {
       let coords = planet.querySelector(".planet-koords").textContent.split(":");
-      let btn = planet.querySelector(".planetPic");
       if (this.current.coords != coords.join(":") || this.current.isMoon) {
-        btn.classList.add("ogl-harvest");
-        btn.addEventListener("click", (event) => btnAction(event, coords, 1));
-      } else {
-        btn.classList.add("hidden");
+        let btn = planet
+          .querySelector(".planetlink .planetPic")
+          .addEventListener("click", (event) => btnAction(event, coords, 1));
       }
-      let moon = planet.querySelector(".moonlink");
+      let moon = planet.querySelector(".moonlink .icon-moon");
       if (moon) {
         if (this.current.coords == coords.join(":") && this.current.isMoon) return;
-        let btn = planet
-          .querySelector(".moonlink")
-          .appendChild(this.createDOM("button", { class: "ogl-harvest ogl-moon" }));
-        btn.addEventListener("click", (event) => btnAction(event, coords, 3));
+        planet.querySelector(".moonlink").addEventListener("click", (event) => btnAction(event, coords, 3));
       }
     });
   }
