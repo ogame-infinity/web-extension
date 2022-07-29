@@ -1,37 +1,41 @@
 {
-   "action": {
-      "default_icon": {
-         "32": "res/logo128.png"
-      },
-      "default_title": "Ogame Infinity"
-   },
-   "background": {
-      "service_worker": "background.js"
-   },
-   "content_scripts": [ {
-      "css": [ "global.css" ],
-      "exclude_matches": [ "https://*.ogame.gameforge.com/game/admin2/*" ],
-      "js": [ "main.js" ],
-      "matches": [ "https://*.ogame.gameforge.com/game/*" ],
+  "action": {
+    "default_icon": {
+      "32": "res/logo128.png"
+    },
+    "default_title": "Ogame Infinity"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "css": ["global.css"],
+      "exclude_matches": ["https://*.ogame.gameforge.com/game/admin2/*"],
+      "js": ["main.js"],
+      "matches": ["https://*.ogame.gameforge.com/game/*"],
       "run_at": "document_start"
-   } ],
-   "description": "OGI - To Ogame's infinity and beyond! (Refix for ogame V8)",
-   "host_permissions": [ "https://*.ogame.gameforge.com/game/*" ],
-   "icons": {
-      "128": "res/logo128.png",
-      "256": "res/logo512.png",
-      "32": "res/logo128.png",
-      "512": "res/logo512.png"
-   },
-   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAh9hF2LyvjWdtM2vKNkJVu92wmat7bWTHzQCO7BzidA/swsfGLzj3j+Q6eFeNs28iKaCz26/YWPZzKyroZFFC9k+8JKdx94DDBoh9puL2wg1PWCT1fCTQe8Ux525U+upoK56pEgKqlInmHvZv/2bYngmuNQ74H3W/3oJRTF8RNycmNVJ9o8nQFEom7rRCY3qaln6yHAPH9C6KOgjuRduE4xHvBoAeCm181GaYKaQ+zws8qcs0TGt42pHgdYcbYz8QfGb59UaRS+Mo6AOvqkgl3wRlhgSIClx7jcXYuo4z90CAr8wW5NnjwPyz8NysvNWjgKGc6wp1bC+/ZFm3P9lk2QIDAQAB",
-   "manifest_version": 3,
-   "name": "Ogame Infinity (Dark Edition)",
-   "permissions": [ "storage", "unlimitedStorage" ],
-   "update_url": "https://clients2.google.com/service/update2/crx",
-   "version": "2.0.8",
-   "web_accessible_resources": [ {
-      "extension_ids": [ "mhfbpacbhjchkjeopjfgdhckepclcfll" ],
-      "matches": [ "\u003Call_urls>" ],
-      "resources": [ "ogkush.js", "main.js", "main-utilities.js", "libs/*", "res/*", "util/*" ]
-   } ]
+    }
+  ],
+  "description": "OGI - To Ogame's infinity and beyond!",
+  "host_permissions": ["https://*.ogame.gameforge.com/game/*"],
+  "icons": {
+    "128": "res/logo128.png",
+    "256": "res/logo512.png",
+    "32": "res/logo128.png",
+    "512": "res/logo512.png"
+  },
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAh9hF2LyvjWdtM2vKNkJVu92wmat7bWTHzQCO7BzidA/swsfGLzj3j+Q6eFeNs28iKaCz26/YWPZzKyroZFFC9k+8JKdx94DDBoh9puL2wg1PWCT1fCTQe8Ux525U+upoK56pEgKqlInmHvZv/2bYngmuNQ74H3W/3oJRTF8RNycmNVJ9o8nQFEom7rRCY3qaln6yHAPH9C6KOgjuRduE4xHvBoAeCm181GaYKaQ+zws8qcs0TGt42pHgdYcbYz8QfGb59UaRS+Mo6AOvqkgl3wRlhgSIClx7jcXYuo4z90CAr8wW5NnjwPyz8NysvNWjgKGc6wp1bC+/ZFm3P9lk2QIDAQAB",
+  "manifest_version": 3,
+  "name": "Ogame Infinity (Dark Edition)",
+  "permissions": ["storage", "unlimitedStorage"],
+  "update_url": "https://clients2.google.com/service/update2/crx",
+  "version": "2.0.8",
+  "web_accessible_resources": [
+    {
+      "extension_ids": ["mhfbpacbhjchkjeopjfgdhckepclcfll"],
+      "matches": ["\u003Call_urls>"],
+      "resources": ["ogkush.js", "main.js", "main-utilities.js", "libs/*", "res/*", "util/*"]
+    }
+  ]
 }
