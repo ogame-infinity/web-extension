@@ -6393,10 +6393,10 @@ class OGInfinity {
           .querySelector(".planetlink .planetPic")
           .addEventListener("click", (event) => btnAction(event, coords, 1));
       }
-      let moon = planet.querySelector(".moonlink .icon-moon");
+      let moon = planet.querySelector(".moonlink");
       if (moon) {
         if (this.current.coords == coords.join(":") && this.current.isMoon) return;
-        planet.querySelector(".moonlink").addEventListener("click", (event) => btnAction(event, coords, 3));
+        planet.querySelector(".moonlink .icon-moon").addEventListener("click", (event) => btnAction(event, coords, 3));
       }
     });
   }
