@@ -450,7 +450,6 @@ function injectScript(path, cb, module = false) {
 }
 
 window.addEventListener("DOMContentLoaded", (event) => {
-  injectScript("main-utilities.js", null, true);
   injectScript("ogkush.js", null, true);
 });
 document.addEventListener("ogi-chart", function (e) {
