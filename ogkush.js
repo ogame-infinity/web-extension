@@ -406,37 +406,6 @@ class OGInfinity {
         window.location.href = `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=ingame&component=fleetdispatch`;
       }
     }
-
-    sendShips = function (order, galaxy, system, planet, planettype, shipCount) {
-      if (shipsendingDone == 1) {
-        shipsendingDone = 0;
-        let params = {
-          mission: order,
-          galaxy: galaxy,
-          system: system,
-          position: planet,
-          type: planettype,
-          shipCount: shipCount,
-          token: miniFleetToken,
-        };
-        $.ajax(miniFleetLink, {
-          data: params,
-          dataType: "json",
-          type: "POST",
-          success: function (data) {
-            if (!data.response) {
-              shipsendingDone = 1;
-              addToTable("Error", "error");
-            } else {
-              if (typeof data.newToken != "undefined") {
-                miniFleetToken = data.newToken;
-              }
-              displayMiniFleetMessage(data.response);
-            }
-          },
-        });
-      }
-    };
   }
 
   timeZone() {
