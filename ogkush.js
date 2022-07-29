@@ -6388,11 +6388,12 @@ class OGInfinity {
     };
     this.planetList.forEach((planet) => {
       let coords = planet.querySelector(".planet-koords").textContent.split(":");
+      let btn = planet.querySelector(".planetPic");
       if (this.current.coords != coords.join(":") || this.current.isMoon) {
-        let btn = planet
-          .querySelector(".planetlink")
-          .appendChild(this.createDOM("div", { class: "ogl-harvest ogl-planet" }));
+        btn.classList.add("ogl-harvest");
         btn.addEventListener("click", (event) => btnAction(event, coords, 1));
+      } else {
+        btn.classList.add("hidden");
       }
       let moon = planet.querySelector(".moonlink");
       if (moon) {

@@ -3373,6 +3373,7 @@ a.build-it_premium, button.build-it_premium {
 }
 
 .smallplanet .moonlink img {
+    display: block;
     left: 43px !important
 }
 
