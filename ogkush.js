@@ -1692,8 +1692,9 @@ class OGInfinity {
       callback(galaxy, system);
     };
     let inter = setInterval(() => {
-      if (window.loadGalaxy) {
+      if (document.querySelector(".ogl-colors")) {
         clearInterval(inter);
+      } else {
         submitForm();
       }
     }, 1);
