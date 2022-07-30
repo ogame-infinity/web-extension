@@ -3377,6 +3377,20 @@ a.build-it_premium, button.build-it_premium {
     left: 43px !important
 }
 
+#galaxyHeader .btn_blue {
+    height: 18px !important;
+    line-height: 14px !important;
+    max-width: 94px;
+    min-width: 20px !important;
+    overflow: hidden;
+    padding: 0 2px !important;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+#expeditionbutton:before {
+    margin: 0px -5px 0 0px !important;
+    position: relative !important;
+}
 /* .moonlink img, .planetlink .planetPic {
     display: none
 } */
