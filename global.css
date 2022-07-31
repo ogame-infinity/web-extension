@@ -359,6 +359,9 @@ input[type=text], input[type=password] {
     justify-content: space-around;
     overflow: auto
 }
+.ogl-settings a {
+    cursor: pointer !important;
+}
 
 .ogl-settings > div {
     display: flex;

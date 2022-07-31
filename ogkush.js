@@ -244,6 +244,7 @@ class OGInfinity {
     this.json.options.foreignMission = this.json.options.foreignMission || 3;
     this.json.options.expeditionMission = this.json.options.expeditionMission || 15;
     this.json.options.activitytimers = this.json.options.activitytimers === true ? true : false;
+    this.json.options.planetIcons = this.json.options.planetIcons === true ? true : false;
     this.json.options.disableautofetchempire = this.json.options.disableautofetchempire === true ? true : false;
     this.json.options.autofetchempire = this.json.options.disableautofetchempire === true ? false : true;
     this.json.options.spyFilter = this.json.options.spyFilter || "DATE";
@@ -9542,41 +9543,106 @@ class OGInfinity {
     let container = this.createDOM("div", { class: "ogl-dialogContainer ogl-settings" });
     let dataDiv = container.appendChild(this.createDOM("div", {}));
     dataDiv.appendChild(this.createDOM("div", { class: "ogk-logo" }));
+
     dataDiv.appendChild(
       this.createDOM(
         "div",
         { class: "ogi-checkbox" },
-        `Bug reporting\n        <a target="_blank" href="https://discord.gg/9aMdQgk"> Here </span>`
+        `<strong class="undermark">Contribute or bug report</strong>\n        <a target="_blank" href="https://discord.gg/9aMdQgk"> Discord </span>`
       )
     );
-    dataDiv.appendChild(
+    // dataDiv.appendChild(
+    //   this.createDOM(
+    //     "div",
+    //     { style: "margin-bottom: 3px" },
+    //     `<a target="_blank" class="undermark" href="https://discord.gg/9aMdQgk"> Contributing/Bug reporting<br/></span>`
+    //   )
+    // );
+    let optiondiv = dataDiv.appendChild(this.createDOM("hr"));
+    optiondiv = dataDiv.appendChild(
       this.createDOM(
-        "div",
-        { class: "ogi-checkbox" },
-        `Feature request\n        <a target="_blank" href="https://discord.gg/9aMdQgk"> Here </span>`
+        "span",
+        { style: "display: flex;justify-content: space-between; align-items: center;" },
+        "Show activity timers"
       )
     );
-    dataDiv.appendChild(
-      this.createDOM(
-        "p",
-        { style: "max-width: 250px; margin-top: 10px; font-style: italic; margin: 20px 0px 11px 0px" },
-        "If you like it please leave a review. And if you're feeling generous :) You can also..."
-      )
-    );
-    let di = dataDiv.appendChild(this.createDOM("div", { style: "margin: 10px 0px 0px 38px" }));
-    di.html(
-      `<a class="bmc-button" target="_blank" href="https://www.buymeacoffee.com/DarkInfinity"><img src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" alt="Buy me a coffee"><span>Buy me a coffee</span></a>`
-    );
-    let di2 = dataDiv.appendChild(this.createDOM("div", { style: "margin: 0px 0px 20px 38px;" }));
-    di2.html(
-      '<a style="color: #485f93;" target="_blank" href="https://www.buymeacoffee.com/ogameinfinity">Buy Cofee to creator</a>'
-    );
+    let timerCheck = optiondiv.appendChild(this.createDOM("input", { type: "checkbox" }));
+    timerCheck.addEventListener("change", () => {
+      this.json.options.activitytimers = timerCheck.checked;
+      this.saveData();
+    });
+    if (this.json.options.activitytimers) {
+      timerCheck.checked = true;
+    }
+
     dataDiv.appendChild(this.createDOM("hr"));
+    // optiondiv = dataDiv.appendChild(
+    //   this.createDOM(
+    //     "span",
+    //     { style: "display: flex;justify-content: space-between; align-items: center;" },
+    //     "Show planet icons"
+    //   )
+    // );
+    // let planetIconsCheck = optiondiv.appendChild(this.createDOM("input", { type: "checkbox" }));
+    // planetIconsCheck.addEventListener("change", () => {
+    //   this.json.options.planetIcons = planetIconsCheck.checked;
+    //   this.saveData();
+    // });
+    // if (this.json.options.planetIcons) {
+    //   planetIconsCheck.checked = true;
+    // }
+    // dataDiv.appendChild(this.createDOM("hr"));
+    optiondiv = dataDiv.appendChild(
+      this.createDOM(
+        "span",
+        { style: "display: flex;justify-content: space-between; align-items: center;" },
+        "Disable auto fetch Empire (Commander only)"
+      )
+    );
+    let disableautofetchempirebox = optiondiv.appendChild(this.createDOM("input", { type: "checkbox" }));
+    disableautofetchempirebox.addEventListener("change", () => {
+      this.json.options.disableautofetchempire = disableautofetchempirebox.checked;
+      this.saveData();
+    });
+    if (this.json.options.disableautofetchempire) {
+      disableautofetchempirebox.checked = true;
+    }
+    dataDiv.appendChild(this.createDOM("hr"));
+
+    optiondiv = dataDiv.appendChild(
+      this.createDOM("span", {}, '<a href="https://ptre.chez.gg/" target="_blank">PTRE</a> Teamkey')
+    );
+    let ptreInput = optiondiv.appendChild(
+      this.createDOM("input", {
+        type: "password",
+        class: "ogl-ptreTeamKey tooltip",
+        value: this.json.options.ptreTK ?? "",
+        placeholder: "TM-XXXX-XXXX-XXXX-XXXX",
+      })
+    );
+
+    // dataDiv.appendChild(
+    //   this.createDOM(
+    //     "p",
+    //     { style: "max-width: 250px; margin-top: 10px; font-style: italic; margin: 20px 0px 11px 0px" },
+    //     "If you like it please leave a review."
+    //   )
+    // );
+    // let di = dataDiv.appendChild(this.createDOM("div", { style: "margin: 10px 0px 0px 38px" }));
+    // di.html(
+    //   `<a class="bmc-button" target="_blank" href="https://www.buymeacoffee.com/DarkInfinity"><img src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" alt="Buy me a coffee"><span>Buy me a coffee</span></a>`
+    // );
+    // let di2 = dataDiv.appendChild(this.createDOM("div", { style: "margin: 0px 0px 20px 38px;" }));
+    // di2.html(
+    //   '<a style="color: #485f93;" target="_blank" href="https://www.buymeacoffee.com/ogameinfinity">Buy Cofee to creator</a>'
+    // );
+    dataDiv.appendChild(this.createDOM("hr"));
+    dataDiv.appendChild(this.createDOM("h1", {}, `Server settings`));
     let srvDatas = dataDiv.appendChild(
       this.createDOM(
         "span",
         { style: "display: flex;justify-content: space-between; align-items: center;" },
-        "Ogame Infinity Server Settings : <br/>Top Score : " +
+        "Server Settings : <br/>Top Score : " +
           this.formatToUnits(this.json.topScore) +
           "<br/>Eco Speed : " +
           this.json.speed +
@@ -9820,41 +9886,11 @@ class OGInfinity {
       expe6.classList.remove("ogl-active");
       this.json.options.expeditionMission = 0;
     });
+
     settingDiv.appendChild(this.createDOM("hr"));
-    span = settingDiv.appendChild(
-      this.createDOM(
-        "span",
-        { style: "display: flex;justify-content: space-between; align-items: center;" },
-        "Show activity timers"
-      )
-    );
-    let timerCheck = span.appendChild(this.createDOM("input", { type: "checkbox" }));
-    timerCheck.addEventListener("change", () => {
-      this.json.options.activitytimers = timerCheck.checked;
-      this.saveData();
-    });
-    if (this.json.options.activitytimers) {
-      timerCheck.checked = true;
-    }
-    settingDiv.appendChild(this.createDOM("hr"));
-    span = settingDiv.appendChild(
-      this.createDOM(
-        "span",
-        { style: "display: flex;justify-content: space-between; align-items: center;" },
-        "Disable auto fetch Empire (Commander only)"
-      )
-    );
-    let disableautofetchempirebox = span.appendChild(this.createDOM("input", { type: "checkbox" }));
-    disableautofetchempirebox.addEventListener("change", () => {
-      this.json.options.disableautofetchempire = disableautofetchempirebox.checked;
-      this.saveData();
-    });
-    if (this.json.options.disableautofetchempire) {
-      disableautofetchempirebox.checked = true;
-    }
-    settingDiv.appendChild(this.createDOM("hr"));
-    span = settingDiv.appendChild(this.createDOM("span", {}, "Rentability value"));
-    let rvalInput = span.appendChild(
+
+    optiondiv = settingDiv.appendChild(this.createDOM("span", {}, "Rentability value"));
+    let rvalInput = optiondiv.appendChild(
       this.createDOM("input", {
         type: "text",
         class: "ogl-rvalInput ogl-formatInput tooltip",
@@ -9863,18 +9899,7 @@ class OGInfinity {
       })
     );
     settingDiv.appendChild(this.createDOM("hr"));
-    span = settingDiv.appendChild(
-      this.createDOM("span", {}, '<a href="https://ptre.chez.gg/" target="_blank">PTRE</a> Teamkey')
-    );
-    let ptreInput = span.appendChild(
-      this.createDOM("input", {
-        type: "password",
-        class: "ogl-ptreTeamKey tooltip",
-        value: this.json.options.ptreTK ?? "",
-        placeholder: "TM-XXXX-XXXX-XXXX-XXXX",
-      })
-    );
-    settingDiv.appendChild(this.createDOM("hr"));
+
     settingDiv.appendChild(saveBtn);
     saveBtn.addEventListener("click", () => {
       this.json.options.rvalLimit = parseInt(this.removeNumSeparator(rvalInput.value));
