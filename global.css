@@ -3182,6 +3182,14 @@ a.build-it_premium, button.build-it_premium {
     opacity: .8
 }
 
+#galaxyContent .cellPlanetName {
+    max-width: 145px;
+}
+
+#galaxyContent .ctContentRow .cellMoon .moon, #galaxyContent .ctContentRow .cellMoon .moon_a, #galaxyContent .ctContentRow .cellMoon .moon_c, #galaxyContent .ctContentRow .cellDebris .debris_1 {
+    text-align: center;
+}
+
 .ogk-gate-counter {
     opacity: .75;
     font-size: 14px;

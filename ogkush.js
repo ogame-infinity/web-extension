@@ -1657,11 +1657,21 @@ class OGInfinity {
     let timeout;
     let previousSystem = null;
     let callback = () => {
+      console.log("cb")
       this.addGalaxyMarkers();
       this.addGalaxyTooltips();
       this.highlightTarget();
       this.scan();
     };
+
+    // let inter = setInterval(() => {
+    //   if (document.readyState == "complete" && !document.querySelector(".ogl-colors")) {
+    //     clearInterval(inter);
+    //     console.log("clear");
+    //     callback(galaxy, system);
+    //   } 
+    // }, 20);
+
     let dc = displayContentGalaxy;
     displayContentGalaxy = (b) => {
       dc(b);
@@ -1691,13 +1701,10 @@ class OGInfinity {
       this.keepTooltip = false;
       callback(galaxy, system);
     };
-    let inter = setInterval(() => {
-      if (document.querySelector(".ogl-colors")) {
-        clearInterval(inter);
-      } else {
-        submitForm();
-      }
-    }, 1);
+
+    setTimeout(function() { if(!document.querySelector(".ogl-colors")) {
+      callback(galaxy, system); }}, 500);
+    
   }
 
   addGalaxyMarkers() {
@@ -1901,8 +1908,6 @@ class OGInfinity {
         // PTRE activities
         if (
           this.json.options.ptreTK &&
-          this.json.options.ptreTK &&
-          planetId > -1 &&
           playerId > -1 &&
           (this.json.sideStalk.indexOf(playerId) > -1 || this.markedPlayers.indexOf(playerId) > -1)
         ) {
@@ -9123,8 +9128,9 @@ class OGInfinity {
           }
         });
       };
-      addTooltip();
+      
       initHighscoreContent = () => {
+        console.log("here")
         let active = document.querySelector(".stat_filter.active");
         let type = 0;
         if (active) {
@@ -9161,13 +9167,16 @@ class OGInfinity {
         $(window).unbind("resize.highscoreTop").bind("resize.highscoreTop", positionScrollButton);
         addTooltip();
       };
+
       history.scrollRestoration = "manual";
       let type = this.rawURL.searchParams.get("type");
       if (type) {
         $(".stat_filter").removeClass("active");
         $(`.stat_filter[rel=${type}]`).addClass("active");
       }
-      initHighscoreContent();
+      
+      setTimeout(function() { if(!document.querySelector(".playername.ogl-tooltipInit")) {
+        addTooltip(); }}, 500);
     }
   }
 
@@ -9974,7 +9983,10 @@ class AutoQueue extends Queue {
   }
 }
 
+
+
 (async () => {
+  
   let ogKush = new OGInfinity();
   setTimeout(function () {
     ogKush.init();
