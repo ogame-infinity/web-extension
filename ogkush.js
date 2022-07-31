@@ -1657,7 +1657,7 @@ class OGInfinity {
     let timeout;
     let previousSystem = null;
     let callback = () => {
-      console.log("cb")
+      console.log("cb");
       this.addGalaxyMarkers();
       this.addGalaxyTooltips();
       this.highlightTarget();
@@ -1669,7 +1669,7 @@ class OGInfinity {
     //     clearInterval(inter);
     //     console.log("clear");
     //     callback(galaxy, system);
-    //   } 
+    //   }
     // }, 20);
 
     let dc = displayContentGalaxy;
@@ -1702,9 +1702,11 @@ class OGInfinity {
       callback(galaxy, system);
     };
 
-    setTimeout(function() { if(!document.querySelector(".ogl-colors")) {
-      callback(galaxy, system); }}, 500);
-    
+    setTimeout(function () {
+      if (!document.querySelector(".ogl-colors")) {
+        callback(galaxy, system);
+      }
+    }, 500);
   }
 
   addGalaxyMarkers() {
@@ -4355,10 +4357,22 @@ class OGInfinity {
       }"\n                    class="ogl-ranking">#${player.points.position || "b"}\n                  </a>`;
       controlRow.appendChild(this.createDOM("span", {}, name));
       let btns = controlRow.appendChild(this.createDOM("div"));
-      let pinBtn = btns.appendChild(this.createDOM("a", { class: "ogl-pin" }));
+
+      if (this.json.options.ptreTK) {
+        let ptreLink = btns.appendChild(this.createDOM("a", { class: "ogl-ptre" }));
+        ptreLink.textContent = "P";
+        ptreLink.addEventListener("click", () => {
+          window.open(
+            this.generatePTRELink(player.id),
+            "_blank",
+            `location=yes,scrollbars=yes,status=yes,width=${screen.availWidth},height=${screen.availHeight}`
+          );
+        });
+      }
+
       let stats = btns.appendChild(this.createDOM("a", { class: "ogl-mmorpgstats" }));
-      let ptreLink = btns.appendChild(this.createDOM("a", { class: "ogl-ptre" }));
-      ptreLink.textContent = "P";
+      let pinBtn = btns.appendChild(this.createDOM("a", { class: "ogl-pin" }));
+
       let chat = btns.appendChild(this.createDOM("a", { class: "icon icon_chat" }));
       pinBtn.addEventListener("click", () => {
         this.sideStalk(player.id);
@@ -4369,13 +4383,6 @@ class OGInfinity {
       stats.addEventListener("click", () => {
         window.open(
           this.generateMMORPGLink(player.id),
-          "_blank",
-          `location=yes,scrollbars=yes,status=yes,width=${screen.availWidth},height=${screen.availHeight}`
-        );
-      });
-      ptreLink.addEventListener("click", () => {
-        window.open(
-          this.generatePTRELink(player.id),
           "_blank",
           `location=yes,scrollbars=yes,status=yes,width=${screen.availWidth},height=${screen.availHeight}`
         );
@@ -7537,15 +7544,17 @@ class OGInfinity {
       stats.addEventListener("click", () => {
         window.open(this.generateMMORPGLink(player.id), "_blank");
       });
-      let ptreLink = content.appendChild(this.createDOM("a", { class: "ogl-ptre" }));
-      ptreLink.textContent = "P";
-      ptreLink.addEventListener("click", () => {
-        window.open(
-          this.generatePTRELink(player.id),
-          "_blank",
-          `location=yes,scrollbars=yes,status=yes,width=${screen.availWidth},height=${screen.availHeight}`
-        );
-      });
+      if (this.json.options.ptreTK) {
+        let ptreLink = content.appendChild(this.createDOM("a", { class: "ogl-ptre" }));
+        ptreLink.textContent = "P";
+        ptreLink.addEventListener("click", () => {
+          window.open(
+            this.generatePTRELink(player.id),
+            "_blank",
+            `location=yes,scrollbars=yes,status=yes,width=${screen.availWidth},height=${screen.availHeight}`
+          );
+        });
+      }
       player.planets.forEach((planet) => {
         if (this.activities) {
           delete this.activities[planet.coords];
@@ -7795,9 +7804,11 @@ class OGInfinity {
       } else {
         watchlistBtn = sideStalk.appendChild(this.createDOM("a", { class: "ogl-text-btn" }, "h"));
         actBtn = sideStalk.appendChild(this.createDOM("a", { class: "ogl-text-btn" }, "&#9888"));
-        ptreBtn = sideStalk.appendChild(
-          this.createDOM("a", { class: "ogl-text-btn ogl-ptre-acti tooltip", title: "Display PTRE data" }, "PTRE")
-        );
+        if (this.json.options.ptreTK) {
+          ptreBtn = sideStalk.appendChild(
+            this.createDOM("a", { class: "ogl-text-btn ogl-ptre-acti tooltip", title: "Display PTRE data" }, "PTRE")
+          );
+        }
         let closeBtn = sideStalk.appendChild(this.createDOM("a", { class: "close-tooltip" }));
         closeBtn.addEventListener("click", () => {
           this.json.options.sideStalkVisible = false;
@@ -9128,9 +9139,9 @@ class OGInfinity {
           }
         });
       };
-      
+
       initHighscoreContent = () => {
-        console.log("here")
+        console.log("here");
         let active = document.querySelector(".stat_filter.active");
         let type = 0;
         if (active) {
@@ -9174,9 +9185,12 @@ class OGInfinity {
         $(".stat_filter").removeClass("active");
         $(`.stat_filter[rel=${type}]`).addClass("active");
       }
-      
-      setTimeout(function() { if(!document.querySelector(".playername.ogl-tooltipInit")) {
-        addTooltip(); }}, 500);
+
+      setTimeout(function () {
+        if (!document.querySelector(".playername.ogl-tooltipInit")) {
+          addTooltip();
+        }
+      }, 500);
     }
   }
 
@@ -9983,10 +9997,7 @@ class AutoQueue extends Queue {
   }
 }
 
-
-
 (async () => {
-  
   let ogKush = new OGInfinity();
   setTimeout(function () {
     ogKush.init();

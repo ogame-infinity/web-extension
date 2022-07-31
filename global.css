@@ -1161,11 +1161,12 @@ input[type=text], input[type=password] {
 
 .ogi-actions {
     display: inline-flex;
-    justify-content: center
+    justify-content: center;
+    margin-left: 5px;
 }
 
 .ogi-actions a {
-    margin-right: 5px !important
+    margin-right: 5px !important;
 }
 
 .ogl-spyTable td.ogi-new {
@@ -5668,20 +5669,24 @@ hr {
 
 .ogl-tooltip .ogl-pin {
     position: absolute;
-    right: 26px;
+    right: 40px;
     top: 7px
 }
 
 .ogl-tooltip .ogl-ptre {
     position: absolute;
-    right: 45px;
+    right: 78px;
     top: 7px
 }
 
 .ogl-tooltip .ogl-mmorpgstats {
     position: absolute;
-    right: 64px;
+    right: 59px;
     top: 7px
+}
+
+.ogl-tooltip h1 {
+    margin-left: 5px;
 }
 
 .ogl-tooltip .ogl-ranking {
@@ -6021,7 +6026,7 @@ table.fleetinfo tr:nth-child(odd) {
 	color: #813383 !important
 }
 
-.close-tooltip:hover, .icon_against:hover, .icon_chat:hover .icon_plus:hover, .icon_close:hover, .icon_eye:hover, .icon_fastforward:hover, .icon_maximize:hover, .icon_missile:hover, .icon_trash:hover, .icon_user:hover, .ogl-icon-attack:hover, .ogl-mmorpgstats:hover, .ogl-pin:hover, .ogl-tableOptions .icon:hover {
+.close-tooltip:hover, .icon_against:hover, .icon_chat:hover, .icon_plus:hover, .icon_close:hover, .icon_eye:hover, .icon_fastforward:hover, .icon_maximize:hover, .icon_missile:hover, .icon_trash:hover, .icon_user:hover, .ogl-icon-attack:hover, .ogl-mmorpgstats:hover, .ogl-pin:hover, .ogl-tableOptions .icon:hover {
 	color: #c75817 !important
 }
 
