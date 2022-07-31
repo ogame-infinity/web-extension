@@ -2379,10 +2379,10 @@ a.build-it_premium, button.build-it_premium {
 #highscoreContent .ally-tag a {
     color: #6f9fc8 !important;
 }
-#highscoreContent a:hover {
-    color: #ededed !important;
+#highscoreContent a:hover span {
+    text-decoration: none !important;
+    color: rgb(208, 129, 62) !important;
 }
-
 .ogk-stats h1 {
     display: flex;
     font-size: 18px;
