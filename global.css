@@ -2373,14 +2373,13 @@ a.build-it_premium, button.build-it_premium {
 }
 
 #highscoreContent a:link, #highscoreContent a:visited {
-    color: #ededed !important;
+    text-decoration: none !important;
 }
 
 #highscoreContent .ally-tag a {
     color: #6f9fc8 !important;
 }
 #highscoreContent a:hover span {
-    text-decoration: none !important;
     color: rgb(208, 129, 62) !important;
 }
 .ogk-stats h1 {
