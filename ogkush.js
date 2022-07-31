@@ -4332,26 +4332,27 @@ class OGInfinity {
     return `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=highscore&searchRelId=${playerid}`;
   }
 
+  getPlayerStatus(status, noob) {
+    if (status == "") {
+      if (noob) return "status_abbr_noob";
+      return "status_abbr_active";
+    }
+    if (status.includes("b")) return "status_abbr_banned";
+    if (status.includes("v")) return "status_abbr_vacation";
+    if (status.includes("i")) return "status_abbr_inactive";
+    if (status.includes("I")) return "status_abbr_longinactive";
+    if (status.includes("o")) return "status_abbr_outlaw";
+  }
+
   playerSearch(show, name) {
-    let getStatus = (status, noob) => {
-      if (status == "") {
-        if (noob) return "status_abbr_noob";
-        return "status_abbr_active";
-      }
-      if (status.includes("b")) return "status_abbr_banned";
-      if (status.includes("v")) return "status_abbr_vacation";
-      if (status.includes("i")) return "status_abbr_inactive";
-      if (status.includes("I")) return "status_abbr_longinactive";
-      if (status.includes("o")) return "status_abbr_outlaw";
-    };
     let renderPlayerInfo = (player) => {
       this.json.playerSearch = player.name;
       this.saveData();
       let planetsColumn = this.createDOM("div", { class: "ogl-planets-col" });
       let controlRow = planetsColumn.appendChild(this.createDOM("div", { class: "ogl-search-controls" }));
-      let name = `<span class="ogl-${player.status}">${
-        player.name
-      }</span> ${status}\n                  <a target="_self"\n                    href="https://s${this.universe}-${
+      let name = `<span>${player.name}</span> <span class="${this.getPlayerStatus(
+        player.status
+      )}"></span>\n                  <a target="_self"\n                    href="https://s${this.universe}-${
         this.gameLang
       }.ogame.gameforge.com/game/index.php?page=highscore&searchRelId=${
         player.id
@@ -4436,7 +4437,7 @@ class OGInfinity {
         let playerNode = this.createDOM("div", { class: "ogl-player-div" });
         let name = this.createDOM(
           "span",
-          { class: getStatus(player.status, noob) },
+          { class: this.getPlayerStatus(player.status, noob) },
           `${player.name} ${player.status == "" ? "" : "(" + player.status + ") "}`
         );
         playerNode.appendChild(
@@ -7479,7 +7480,7 @@ class OGInfinity {
       finalPlayer = player;
       let content = this.createDOM("div");
       content.html(
-        `\n      <h1>${player.name}\n        <a href="${
+        `\n      <h1 class="${this.getPlayerStatus(player.status)}">${player.name}\n        <a href="${
           this.generateHiscoreLink(player.id) || ""
         }" class="ogl-ranking">\n          #${
           player.points.position || "b"
@@ -7765,17 +7766,6 @@ class OGInfinity {
   }
 
   sideStalk(playerid) {
-    let getStatus = (status, noob) => {
-      if (status == "") {
-        if (noob) return "status_abbr_noob";
-        return "status_abbr_active";
-      }
-      if (status.includes("b")) return "status_abbr_banned";
-      if (status.includes("v")) return "status_abbr_vacation";
-      if (status.includes("i")) return "status_abbr_inactive";
-      if (status.includes("I")) return "status_abbr_longinactive";
-      if (status.includes("o")) return "status_abbr_outlaw";
-    };
     if (playerid) {
       this.json.sideStalk.forEach((e, i, o) => {
         if (e == playerid) o.splice(i, 1);
@@ -7818,7 +7808,9 @@ class OGInfinity {
         });
       }
       dataHelper.getPlayer(playerid).then((player) => {
-        sideStalk.appendChild(this.createDOM("div", { class: "ogi-title " + getStatus(player.status) }, player.name));
+        sideStalk.appendChild(
+          this.createDOM("div", { class: "ogi-title " + this.getPlayerStatus(player.status) }, player.name)
+        );
         sideStalk.appendChild(this.createDOM("hr"));
         let container = sideStalk.appendChild(
           this.createDOM("div", { class: "ogl-stalkPlanets", "player-id": player.id })
@@ -7854,7 +7846,9 @@ class OGInfinity {
               .forEach((id) => {
                 dataHelper.getPlayer(id).then((player) => {
                   let playerDiv = sideStalk.appendChild(this.createDOM("div", { class: "ogl-player" }));
-                  playerDiv.appendChild(this.createDOM("span", { class: getStatus(player.status) }, player.name));
+                  playerDiv.appendChild(
+                    this.createDOM("span", { class: this.getPlayerStatus(player.status) }, player.name)
+                  );
                   playerDiv.appendChild(this.createDOM("span", {}, "#" + player.points.position));
                   playerDiv.addEventListener("click", () => {
                     this.sideStalk(player.id);
@@ -9131,9 +9125,13 @@ class OGInfinity {
             if (mail) {
               let id = mail.getAttribute("data-playerid");
               dataHelper.getPlayer(id).then((p) => {
-                if (p.status && p.status.includes("v")) {
-                  playerDiv.html(`<span class="status_abbr_vacation">${p.name}</span> ${status}`);
+                // if (p.status && p.status.includes("v")) {
+                let statusClass = this.getPlayerStatus(p.status);
+                if (playerDiv.getAttribute("class").includes("status_abbr_honorableTarget")) {
+                  statusClass = "status_abbr_honorableTarget";
                 }
+                playerDiv.html(`<span class="${statusClass}">${p.name}</span>`);
+                // }
                 this.stalk(playerDiv, p);
               });
             }
