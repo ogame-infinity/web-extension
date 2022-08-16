@@ -2434,6 +2434,7 @@ class OGInfinity {
         return;
       }
       if (this.json.options.empire) {
+        document.querySelector("#planetList").classList.remove("moon-construction-sum");
         document.querySelector(".ogl-overview-icon").classList.remove("ogl-active");
         document.querySelectorAll(".ogl-summary, .ogl-res").forEach((elem) => elem.remove());
         this.json.options.empire = false;
@@ -7032,6 +7033,7 @@ class OGInfinity {
     }
     document.querySelector(".ogl-overview-icon").classList.add("ogl-active");
     let list = document.querySelector("#planetList");
+    list.classList.add("moon-construction-sum");
     let flying = this.createDOM("div", { class: "ogl-res" });
     flying.appendChild(this.createDOM("span", { class: "ogl-metal" }, this.formatToUnits(this.json.flying.metal)));
     flying.appendChild(this.createDOM("span", { class: "ogl-crystal" }, this.formatToUnits(this.json.flying.crystal)));

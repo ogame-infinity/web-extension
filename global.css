@@ -3554,15 +3554,20 @@ a.build-it_premium, button.build-it_premium {
 
 .smallplanet .constructionIcon {
     bottom: 2px !important;
-    left: auto !important;
-    right: 110px !important;
+    left: 72px !important;
+    right: unset !important;
     top: auto !important;
     z-index: 10
 }
 
 .smallplanet .constructionIcon.moon {
-    left: auto !important;
-    right: 15px !important
+    left: 145px !important;
+    right: unset !important
+}
+
+.moon-construction-sum .smallplanet .constructionIcon.moon {
+    left: 194px !important;
+    right: unset !important
 }
 
 .smallplanet .alert {
@@ -3584,7 +3589,7 @@ a.build-it_premium, button.build-it_premium {
 }
 
 .ogl-summary > .ogl-sum-symbol:first-child {
-    width: 90px
+    width: 105px
 }
 
 .ogl-summary > .ogl-sum-symbol {
