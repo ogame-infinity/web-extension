@@ -637,9 +637,9 @@ class OGInfinity {
       }
 
       let currentRes = [
-        document.querySelector("#resources_metal").innerText.split(".").join(""),
-        document.querySelector("#resources_crystal").innerText.split(".").join(""),
-        document.querySelector("#resources_deuterium").innerText.split(".").join(""),
+        document.querySelector("#resources_metal").getAttribute("data-raw"),
+        document.querySelector("#resources_crystal").getAttribute("data-raw"),
+        document.querySelector("#resources_deuterium").getAttribute("data-raw"),
       ];
       let technocrat = document.querySelector(".technocrat.on") ? true : false;
       let labs = 0;
