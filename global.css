@@ -2515,27 +2515,25 @@ a.build-it_premium, button.build-it_premium {
 .ogk-stats .resourceIcon {
     border-radius: 5px;
     width: 30px;
-    background-position: -1px -124px;
     height: 20px;
-    background-size: 200px;
+    background-size: 434px;
     margin-right: 10px
 }
 
 .ogk-stats .resourceIcon.metal {
-    background-position: -2px -46px
+    background-position: -1px -109px;
 }
 
 .ogk-stats .resourceIcon.crystal {
-    background-position: -36px -40px
+    background-position: -34px -109px;
 }
 
 .ogk-stats .resourceIcon.deuterium {
-    background-position: -68px -40px
+    background-position: -66px -109px;
 }
 
 .ogk-stats .resourceIcon.darkmatter {
-    background-position: -120px -100px;
-    background-size: 300px
+    background-position: -131px -109px;
 }
 
 .ogk-grid .resourceIcon {
