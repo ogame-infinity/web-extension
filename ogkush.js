@@ -5371,13 +5371,12 @@ class OGInfinity {
       this.overwriteFleetDispatcher("setTargetPlayerNameOnStatusBarFleet", false, () => {
         auxAjaxFailed = true;
       });
+
+      const preChoosenMission = fleetDispatcher.mission;
+      const hasPreChoosenMission = preChoosenMission != 0;
       this.overwriteFleetDispatcher("stopLoading", false, () => {
         let missions = fleetDispatcher.getAvailableMissions();
         let warning = document.getElementsByClassName("ogl-warning tooltipRight")[0];
-        let arrivalDiv = document.getElementsByClassName("ogl-arrival-time")[0];
-        let returnDiv = document.getElementsByClassName("ogl-return-time")[0];
-        let durationDiv = document.getElementsByClassName("ogl-duration")[0];
-        let consDiv = document.getElementsByClassName("ogl-info")[0].lastChild;
         let missionsDiv = document.getElementsByClassName("ogl-missions")[0];
         let iconsDiv;
         if (auxAjaxFailed) {
@@ -5402,27 +5401,25 @@ class OGInfinity {
             missionsDiv.html("<span>" + fleetDispatcher.targetPlanet.name + "</span>");
           }
           iconsDiv = missionsDiv.appendChild(this.createDOM("div"));
-          let defaultMission;
           missions.forEach((index) => {
             iconsDiv.appendChild(
               this.createDOM("div", { class: `ogl-mission-${index} ogl-mission-icon`, mission: index })
             );
-            if (missions.length == 1) {
-              defaultMission = index;
-            } else {
-              if (fleetDispatcher.mission == 0 || !missions.includes(fleetDispatcher.mission)) {
-                if (index == 15) {
-                  defaultMission = that.json.options.expeditionMission == 15 ? 15 : 6;
-                } else if (fleetDispatcher.targetIsBuddyOrAllyMember) {
-                  defaultMission = that.json.options.harvestMission;
-                } else {
-                  defaultMission = that.json.options.foreignMission;
-                }
-              } else {
-                defaultMission = fleetDispatcher.mission;
-              }
-            }
           });
+
+          let defaultMission;
+          if (missions.length == 1) {
+            defaultMission = missions[0];
+          } else if (hasPreChoosenMission && missions.includes(preChoosenMission)) {
+            defaultMission = preChoosenMission;
+          } else if (missions.includes(15)) {
+            defaultMission = that.json.options.expeditionMission == 15 ? 15 : 6;
+          } else if (fleetDispatcher.targetIsBuddyOrAllyMember || playerId === fleetDispatcher.targetPlayerId) {
+            defaultMission = that.json.options.harvestMission;
+          } else {
+            defaultMission = that.json.options.foreignMission;
+          }
+
           let icon = document.querySelectorAll(`div[mission="${defaultMission}"]`)[0];
           if (icon && icon != null) {
             icon.classList.add("ogl-active");
@@ -5553,9 +5550,6 @@ class OGInfinity {
       let selectShip = fleetDispatcher.selectShip.bind(fleetDispatcher);
       fleetDispatcher.selectShip = (shipId, number) => {
         selectShip(shipId, number);
-        if (fleetDispatcher.mission == 0) {
-          fleetDispatcher.selectMission(3);
-        }
         update(true);
         onResChange(2);
         onResChange(1);
