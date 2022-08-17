@@ -35,7 +35,8 @@ jobs:
       - name: Packaging 
         run: ./packaging.sh 1.5.3
         
-      - uses: Klemensas/chrome-extension-upload-action@$1.4.1
+      - name: Chrome publishing
+        uses: Passiverecords/chrome-extension-upload-action@1.4.1
         with:
          refresh-token: ${{ secrets.chrome_refresh }}
          client-id: ${{ secrets.chrome_clientid }}
