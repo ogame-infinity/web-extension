@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: Version number ?
+        description: Version number?
         required: true
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -31,9 +31,6 @@ jobs:
                 
       - name: Packaging 
         run: ./packaging.sh ${{ github.event.inputs.version }}
-        
-      - name: testing
-        run: echo ${{ secrets.chrome_refresh }} and ${{ secrets.chrome_secret }}
         
       - name: Chrome publishing
         uses: Passiverecords/chrome-extension-upload-action@1.4.1
