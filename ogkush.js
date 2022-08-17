@@ -8260,7 +8260,17 @@ class OGInfinity {
       let opt = line.appendChild(this.createDOM("td", { class: "ogl-spyOptions" }));
       opt.appendChild(this.createDOM("button", { class: "icon icon_maximize overlay", href: report.detail }));
       let simulateBtn = opt.appendChild(this.createDOM("a", { class: "ogl-text-btn" }, "T"));
-      let ptreBtn = opt.appendChild(this.createDOM("a", { class: "ogl-text-btn" }, "P"));
+      if (this.json.options.ptreTK) {
+        let ptreBtn = opt.appendChild(this.createDOM("a", { class: "ogl-text-btn" }, "P"));
+        ptreBtn.addEventListener("click", () => {
+          this.getJSON(
+            `https://ptre.chez.gg/scripts/oglight_import.php?team_key=${this.json.options.ptreTK}&sr_id=${report.apiKey}`,
+            (result) => {
+              fadeBox(result.message_verbose, result.code != 1);
+            }
+          );
+        });
+      }
       let attackBtn = opt.appendChild(this.createDOM("a", { class: "icon ogl-icon-attack" }, "T"));
       attackBtn.addEventListener("click", () => {
         let fleetLink = `?page=ingame&component=fleetdispatch&galaxy=${splittedCoords[0]}&system=${splittedCoords[1]}&position=${splittedCoords[2]}&type=${report.type}&mission=1&oglMode=4`;
@@ -8288,14 +8298,7 @@ class OGInfinity {
         );
       });
 
-      ptreBtn.addEventListener("click", () => {
-        this.getJSON(
-          `https://ptre.chez.gg/scripts/oglight_import.php?team_key=${this.json.options.ptreTK}&sr_id=${report.apiKey}`,
-          (result) => {
-            fadeBox(result.message_verbose, result.code != 1);
-          }
-        );
-      });
+      
 
       opt.appendChild(this.createDOM("button", { class: "icon icon_eye", onclick: report.spy }));
       let deleteBtn = opt.appendChild(this.createDOM("button", { class: "icon icon_trash" }));

@@ -1623,17 +1623,17 @@ strong {
     font-weight: 700 !important
 }
 
-#resources_metal {
+#resources_metal, .resource.metal {
     font-weight: 800;
     color: #ffaacca1 !important
 }
 
-#resources_crystal {
+#resources_crystal, .resource.crystal {
     font-weight: 800;
     color: #73e5ffc7 !important
 }
 
-#resources_deuterium {
+#resources_deuterium, .resource.deuterium {
     font-weight: 800;
     color: #a6e0b0 !important
 }
@@ -1860,7 +1860,7 @@ a.build-it_premium, button.build-it_premium {
 }
 
 #technologydetails .ogk-titles {
-    left: -44px;
+    left: -54px;
     position: absolute;
     top: 29px
 }
@@ -1869,9 +1869,9 @@ a.build-it_premium, button.build-it_premium {
     display: none !important
 }
 
-#technologydetails .resource.insufficient {
+/* #technologydetails .resource.insufficient {
     color: #fff !important
-}
+} */
 
 .shipyard .ogl-fleetInfo {
     padding: 15px 0
@@ -1918,7 +1918,7 @@ a.build-it_premium, button.build-it_premium {
 
 #technologydetails .costs {
     top: 40px !important;
-    left: 50px !important
+    left: 60px !important
 }
 
 #technologydetails .resource.icon {
