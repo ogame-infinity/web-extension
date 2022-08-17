@@ -38,7 +38,7 @@ jobs:
          refresh-token: ${{ secrets.chrome_refresh }}
          client-id: ${{ secrets.chrome_clientid }}
          client-secret: ${{ secrets.chrome_secret }}
-         file-name: './dist/ogi-${{ github.event.inputs.version }}-chrome.zip'
+         file-name: './dist/ogi-v${{ github.event.inputs.version }}-chrome.zip'
          app-id: ${{ secrets.chrome_appid }}
          publish: false
           
