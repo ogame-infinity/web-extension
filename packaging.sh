@@ -28,14 +28,12 @@ cp -r libs/ dist/libs
 cp  $MANIFEST_FILE_NAME ./dist/$MANIFEST_FILE_NAME
 
 cd ./dist
-sed -i "s/VERSION/$1/g" $MANIFEST_FILE_NAME
+sed -i "s/VERSION/$1/g" "$MANIFEST_FILE_NAME"
 
 zip -qr -X "ogi-v$1-chrome.zip" * 
 echo "Packing zip for chrome complete!"
 
 # Modifing chrome-extension:// to moz-extension://
-sed -i  "s/chrome/moz/g" $CSS_FILE_NAME
+sed -i "s/chrome/moz/g" "$CSS_FILE_NAME"
 zip -qrm -X "ogi-v$1-firefox.zip" * -x "ogi-v$1-chrome.zip"
 echo "Packing zip for firefox complete!"
-
-cd ..
