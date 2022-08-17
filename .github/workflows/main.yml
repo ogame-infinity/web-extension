@@ -32,6 +32,9 @@ jobs:
       - name: Packaging 
         run: ./packaging.sh ${{ github.event.inputs.version }}
         
+      - name: testing
+        run: echo ${{ secrets.chrome_refresh }} and ${{ secrets.chrome_secret }}
+        
       - name: Chrome publishing
         uses: Passiverecords/chrome-extension-upload-action@1.4.1
         with:
