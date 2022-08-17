@@ -31,7 +31,10 @@ jobs:
                 
       - name: Packaging 
         run: ./packaging.sh ${{ github.event.inputs.version }}
-         echo manifest.json
+
+      - name: Test 
+        run: cat manifest.json
+
         
       - name: Chrome publishing
         uses: Passiverecords/chrome-extension-upload-action@1.4.1
