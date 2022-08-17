@@ -1,12 +1,14 @@
 /* fallback */
-@font-face {
+/* @font-face {
     font-family: 'Material Icons';
     font-style: normal;
     font-weight: 400;
     src: local('Material Icons'), local('MaterialIcons-Regular'), url("chrome-extension://__MSG_@@extension_id__/res/fonts/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2") format('woff2');
-}
+} */
 
-.icon:not(.sprite):not(.resource), .material-icons {
+
+
+/* .icon:not(.sprite):not(.resource), .material-icons {
     direction: ltr;
     display: inline-block;
     font-family: 'Material Icons' !important;
@@ -22,7 +24,7 @@
     word-wrap: normal;
     -webkit-font-feature-settings: 'liga';
     -webkit-font-smoothing: antialiased;
-}
+} */
 
 :root {
     /* primary  */
@@ -4643,7 +4645,8 @@ div.activity.showMinutes {
     width: 85px !important;
 }
 #galaxyContent .ctContentRow .cellAction {
-    gap: 4px !important;
+    width: 95px !important;    
+    gap: 1px !important;
 }
 
 #galaxyContent .allytag {

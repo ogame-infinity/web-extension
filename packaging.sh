@@ -28,7 +28,7 @@ cp -r libs/ dist/libs
 cp  $MANIFEST_FILE_NAME ./dist/$MANIFEST_FILE_NAME
 
 cd ./dist
-sed -i "s/VERSION/$1/g" "$MANIFEST_FILE_NAME"
+sed -i "s/12345/$1/g" "$MANIFEST_FILE_NAME"
 
 zip -qr -X "ogi-v$1-chrome.zip" * 
 echo "Packing zip for chrome complete!"
