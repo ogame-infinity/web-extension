@@ -5550,6 +5550,9 @@ class OGInfinity {
       let selectShip = fleetDispatcher.selectShip.bind(fleetDispatcher);
       fleetDispatcher.selectShip = (shipId, number) => {
         selectShip(shipId, number);
+        if (fleetDispatcher.mission == 0) {
+          fleetDispatcher.selectMission(3);
+        }
         update(true);
         onResChange(2);
         onResChange(1);
