@@ -160,23 +160,30 @@ div#banner_skyscraper {
     font-weight: 800 !important
 }
 
-.technology .icon .amount, .technology .icon .level {
+.technology .icon .amount,
+.technology .icon .level {
     background: linear-gradient(#1d2732, #131c24) !important
 }
 
-#resources .res_wrap:first-child input[type=text], .metal + input[type=text], input[type=text].metal {
+#resources .res_wrap:first-child input[type=text],
+.metal+input[type=text],
+input[type=text].metal {
     color: #ffaacca1 !important;
     border: solid 1px rgb(58 72 86) !important;
     box-shadow: none !important
 }
 
-#resources .res_wrap:nth-child(2) input[type=text], .crystal ~ input[type=text], input[type=text].crystal {
+#resources .res_wrap:nth-child(2) input[type=text],
+.crystal~input[type=text],
+input[type=text].crystal {
     color: #73e5ffc7 !important;
     border: solid 1px rgb(58 72 86) !important;
     box-shadow: none !important
 }
 
-#resources .res_wrap:nth-child(3) input[type=text], .deuterium ~ input[type=text], input[type=text].deuterium {
+#resources .res_wrap:nth-child(3) input[type=text],
+.deuterium~input[type=text],
+input[type=text].deuterium {
     color: #a6e0b0 !important;
     border: solid 1px rgb(58 72 86) !important;
     box-shadow: none !important
@@ -186,11 +193,13 @@ input[disabled] {
     filter: grayscale(1)
 }
 
-input[type=text]::selection, input[type=password]::selection {
+input[type=text]::selection,
+input[type=password]::selection {
     background-color: #a2a2a2
 }
 
-input[type=text], input[type=password] {
+input[type=text],
+input[type=password] {
     background: -webkit-linear-gradient(top, #0d151b 0, #1f2a35 100%) !important;
     color: #bbb !important;
     border: solid 1px rgb(58 72 86) !important;
@@ -216,18 +225,21 @@ input[type=text], input[type=password] {
     height: 23px
 }
 
-.ogl-sideStalk .ogl-stalkPlanets .ogl-moon, .ogl-sideStalk .ogl-stalkPlanets .ogl-planet {
+.ogl-sideStalk .ogl-stalkPlanets .ogl-moon,
+.ogl-sideStalk .ogl-stalkPlanets .ogl-planet {
     transform: scale(.75);
     opacity: .75
 }
 
-.ogl-sideStalk .ogl-stalkPlanets .ogl-moon-act.active, .ogl-sideStalk .ogl-stalkPlanets .ogl-moon-act.showMinutes {
+.ogl-sideStalk .ogl-stalkPlanets .ogl-moon-act.active,
+.ogl-sideStalk .ogl-stalkPlanets .ogl-moon-act.showMinutes {
     opacity: .75;
     top: 1px;
     transform: scale(.9)
 }
 
-.ogl-sideStalk .ogl-stalkPlanets .ogl-planet-act.active, .ogl-sideStalk .ogl-stalkPlanets .ogl-planet-act.showMinutes {
+.ogl-sideStalk .ogl-stalkPlanets .ogl-planet-act.active,
+.ogl-sideStalk .ogl-stalkPlanets .ogl-planet-act.showMinutes {
     opacity: .75;
     transform: scale(.9)
 }
@@ -236,7 +248,8 @@ input[type=text], input[type=password] {
     right: 7px
 }
 
-.ogl-sideStalk .ogl-stalkPlanets .ogl-moon-hover, .ogl-sideStalk .ogl-stalkPlanets .ogl-planet-hover {
+.ogl-sideStalk .ogl-stalkPlanets .ogl-moon-hover,
+.ogl-sideStalk .ogl-stalkPlanets .ogl-planet-hover {
     top: 2px
 }
 
@@ -361,11 +374,12 @@ input[type=text], input[type=password] {
     justify-content: space-around;
     overflow: auto
 }
+
 .ogl-settings a {
     cursor: pointer !important;
 }
 
-.ogl-settings > div {
+.ogl-settings>div {
     display: flex;
     flex-direction: column;
     justify-content: space-between
@@ -382,11 +396,12 @@ input[type=text], input[type=password] {
     font-size: 12px
 }
 
-.ogl-settings > div:first-child, .ogl-settings > div:last-child {
+.ogl-settings>div:first-child,
+.ogl-settings>div:last-child {
     padding: 10px
 }
 
-.ogl-settings > div:last-child {
+.ogl-settings>div:last-child {
     display: flex;
     flex-direction: column
 }
@@ -401,16 +416,16 @@ input[type=text], input[type=password] {
     width: 100px !important
 }
 
-
+.ogl-settings .ogl-pantryKey,
 .ogl-settings .ogl-ptreTeamKey {
-	cursor: auto !important;
-	float: right;
-	height: 18px;
-	line-height: 16px;
-	padding: 0 4px;
-	text-align: center;
-	vertical-align: middle;
-	width: 180px !important
+    cursor: auto !important;
+    float: right;
+    height: 18px;
+    line-height: 16px !important;
+    padding: 0 4px;
+    text-align: center;
+    vertical-align: middle;
+    width: 180px !important
 }
 
 
@@ -429,7 +444,7 @@ input[type=text], input[type=password] {
 }
 
 .fleetStatus .ogl-backLast {
-    margin-left: 25px;
+    margin-left: 25px
 }
 
 .fleetStatus .ogl-backLast .icon_link {
@@ -451,50 +466,71 @@ input[type=text], input[type=password] {
     color: #9099a3
 }
 
-.fleetStatus .fleft:first-of-type .advice, .fleetStatus .fleft:nth-of-type(2) .advice {
+.fleetStatus .fleft:first-of-type .advice,
+.fleetStatus .fleft:nth-of-type(2) .advice {
     font-size: 11px;
     font-weight: 800;
     color: #ddd;
     line-height: 27px !important
 }
 
-#shipsChosen .sprite.recycler, #shipsChosen .sprite_after.recycler::after, #shipsChosen .sprite_before.recycler::before {
+#shipsChosen .sprite.recycler,
+#shipsChosen .sprite_after.recycler::after,
+#shipsChosen .sprite_before.recycler::before {
     background-position: 57.89% 52.12%
 }
 
-#shipsChosen .sprite.espionageProbe, #shipsChosen .sprite_after.espionageProbe::after, #shipsChosen .sprite_before.espionageProbe::before {
+#shipsChosen .sprite.espionageProbe,
+#shipsChosen .sprite_after.espionageProbe::after,
+#shipsChosen .sprite_before.espionageProbe::before {
     background-position: 63.15% 52.72%
 }
 
-#shipsChosen .sprite.transporterSmall, #shipsChosen .sprite_after.transporterSmall::after, #shipsChosen .sprite_before.transporterSmall::before {
+#shipsChosen .sprite.transporterSmall,
+#shipsChosen .sprite_after.transporterSmall::after,
+#shipsChosen .sprite_before.transporterSmall::before {
     background-position: 42.1% 52.12%
 }
 
-#shipsChosen .sprite.fighterLight, #shipsChosen .sprite_after.fighterLight::after, #shipsChosen .sprite_before.fighterLight::before {
+#shipsChosen .sprite.fighterLight,
+#shipsChosen .sprite_after.fighterLight::after,
+#shipsChosen .sprite_before.fighterLight::before {
     background-position: 0 52.22%
 }
 
-#shipsChosen .sprite.fighterHeavy, #shipsChosen .sprite_after.fighterHeavy::after, #shipsChosen .sprite_before.fighterHeavy::before {
+#shipsChosen .sprite.fighterHeavy,
+#shipsChosen .sprite_after.fighterHeavy::after,
+#shipsChosen .sprite_before.fighterHeavy::before {
     background-position: 5.25% 52.22%
 }
 
-#shipsChosen .sprite.cruiser, #shipsChosen .sprite_after.cruiser::after, #shipsChosen .sprite_before.cruiser::before {
+#shipsChosen .sprite.cruiser,
+#shipsChosen .sprite_after.cruiser::after,
+#shipsChosen .sprite_before.cruiser::before {
     background-position: 10.53% 52.1%
 }
 
-#shipsChosen .sprite.interceptor, #shipsChosen .sprite_after.interceptor::after, #shipsChosen .sprite_before.interceptor::before {
+#shipsChosen .sprite.interceptor,
+#shipsChosen .sprite_after.interceptor::after,
+#shipsChosen .sprite_before.interceptor::before {
     background-position: 21.05% 51.99%
 }
 
-#shipsChosen .sprite.reaper, #shipsChosen .sprite_after.reaper::after, #shipsChosen .sprite_before.reaper::before {
+#shipsChosen .sprite.reaper,
+#shipsChosen .sprite_after.reaper::after,
+#shipsChosen .sprite_before.reaper::before {
     background-position: 73.68% 52.12%
 }
 
-#shipsChosen .sprite.explorer, #shipsChosen .sprite_after.explorer::after, #shipsChosen .sprite_before.explorer::before {
+#shipsChosen .sprite.explorer,
+#shipsChosen .sprite_after.explorer::after,
+#shipsChosen .sprite_before.explorer::before {
     background-position: 78.94% 52%
 }
 
-#shipsChosen .sprite.colonyShip, #shipsChosen .sprite_after.colonyShip::after, #shipsChosen .sprite_before.colonyShip::before {
+#shipsChosen .sprite.colonyShip,
+#shipsChosen .sprite_after.colonyShip::after,
+#shipsChosen .sprite_before.colonyShip::before {
     background-position: 52.62% 52.12%
 }
 
@@ -603,7 +639,7 @@ input[type=text], input[type=password] {
     color: #ccc
 }
 
-.ogl-res-filler > div {
+.ogl-res-filler>div {
     position: relative;
     margin-bottom: 10px;
     width: 160px;
@@ -616,17 +652,23 @@ input[type=text], input[type=password] {
     padding-bottom: 3px
 }
 
-#selectMinCrystal, #selectMinDeuterium, #selectMinMetal {
+#selectMinCrystal,
+#selectMinDeuterium,
+#selectMinMetal {
     position: relative;
     left: -65px
 }
 
-#selectMaxCrystal, #selectMaxDeuterium, #selectMaxMetal {
+#selectMaxCrystal,
+#selectMaxDeuterium,
+#selectMaxMetal {
     position: relative;
     left: -67px
 }
 
-#selectMostCrystal, #selectMostDeuterium, #selectMostMetal {
+#selectMostCrystal,
+#selectMostDeuterium,
+#selectMostMetal {
     position: relative;
     left: -66px
 }
@@ -663,12 +705,18 @@ input[type=text], input[type=password] {
     opacity: .4
 }
 
-.ogl-dest .ogl-debris-icon.ogl-active, .ogl-dest .ogl-debris-icon:hover, .ogl-dest .ogl-moon-icon.ogl-active, .ogl-dest .ogl-moon-icon:hover, .ogl-dest .ogl-planet-icon.ogl-active, .ogl-dest .ogl-planet-icon:hover {
+.ogl-dest .ogl-debris-icon.ogl-active,
+.ogl-dest .ogl-debris-icon:hover,
+.ogl-dest .ogl-moon-icon.ogl-active,
+.ogl-dest .ogl-moon-icon:hover,
+.ogl-dest .ogl-planet-icon.ogl-active,
+.ogl-dest .ogl-planet-icon:hover {
     filter: brightness(150%);
     opacity: 1
 }
 
-.ogl-dest .ogl-debris-icon.ogl-active, .ogl-dest .ogl-debris-icon:hover {
+.ogl-dest .ogl-debris-icon.ogl-active,
+.ogl-dest .ogl-debris-icon:hover {
     opacity: .85 !important
 }
 
@@ -686,7 +734,7 @@ input[type=text], input[type=password] {
     margin-right: 3px
 }
 
-.ogl-dispatch > div:last-child {
+.ogl-dispatch>div:last-child {
     margin-bottom: 0
 }
 
@@ -705,7 +753,7 @@ input[type=text], input[type=password] {
     height: 130px;
     display: grid;
     grid-gap: 3px;
-    grid-template-columns:1fr 2fr;
+    grid-template-columns: 1fr 2fr;
     align-items: center;
     border-radius: 5px;
     background: -webkit-linear-gradient(top, #0d151b 0, #1f2a35 100%);
@@ -752,7 +800,8 @@ input[type=text], input[type=password] {
     font-style: italic
 }
 
-.ogl-dest .ogl-arrival-time strong, .ogl-dest .ogl-return-time strong {
+.ogl-dest .ogl-arrival-time strong,
+.ogl-dest .ogl-return-time strong {
     font-style: normal
 }
 
@@ -777,7 +826,8 @@ input[type=text], input[type=password] {
     opacity: .8
 }
 
-.ogl-settings .ogl-mission-icon.ogl-active, .ogl-settings .ogl-mission-icon:hover {
+.ogl-settings .ogl-mission-icon.ogl-active,
+.ogl-settings .ogl-mission-icon:hover {
     opacity: 1
 }
 
@@ -789,7 +839,9 @@ input[type=text], input[type=password] {
     filter: brightness(115%)
 }
 
-.ogl-mission-icon.ogl-active, .ogl-mission-icon.ogl-active:hover, .ogl-mission-icon:hover {
+.ogl-mission-icon.ogl-active,
+.ogl-mission-icon.ogl-active:hover,
+.ogl-mission-icon:hover {
     filter: none
 }
 
@@ -797,7 +849,8 @@ input[type=text], input[type=password] {
     background-position: 0 0 !important
 }
 
-.ogl-mission-icon.ogl-mission-15.ogl-active, .ogl-mission-icon.ogl-mission-15:hover {
+.ogl-mission-icon.ogl-mission-15.ogl-active,
+.ogl-mission-icon.ogl-mission-15:hover {
     background-position: 0 -20px !important
 }
 
@@ -809,7 +862,8 @@ input[type=text], input[type=password] {
     background-position: -40px 0 !important
 }
 
-.ogl-mission-icon.ogl-mission-7.ogl-active, .ogl-mission-icon.ogl-mission-7:hover {
+.ogl-mission-icon.ogl-mission-7.ogl-active,
+.ogl-mission-icon.ogl-mission-7:hover {
     background-position: -40px -20px !important
 }
 
@@ -821,7 +875,8 @@ input[type=text], input[type=password] {
     background-position: -80px 0 !important
 }
 
-.ogl-mission-icon.ogl-mission-8.ogl-active, .ogl-mission-icon.ogl-mission-8:hover {
+.ogl-mission-icon.ogl-mission-8.ogl-active,
+.ogl-mission-icon.ogl-mission-8:hover {
     background-position: -80px -20px !important
 }
 
@@ -833,7 +888,8 @@ input[type=text], input[type=password] {
     background-position: -100px 0 !important
 }
 
-.ogl-mission-icon.ogl-mission-3.ogl-active, .ogl-mission-icon.ogl-mission-3:hover {
+.ogl-mission-icon.ogl-mission-3.ogl-active,
+.ogl-mission-icon.ogl-mission-3:hover {
     background-position: -100px -20px !important
 }
 
@@ -845,7 +901,8 @@ input[type=text], input[type=password] {
     background-position: -60px 0 !important
 }
 
-.ogl-mission-icon.ogl-mission-4.ogl-active, .ogl-mission-icon.ogl-mission-4:hover {
+.ogl-mission-icon.ogl-mission-4.ogl-active,
+.ogl-mission-icon.ogl-mission-4:hover {
     background-position: -60px -20px !important
 }
 
@@ -857,7 +914,8 @@ input[type=text], input[type=password] {
     background-position: -120px 0 !important
 }
 
-.ogl-mission-icon.ogl-mission-6.ogl-active, .ogl-mission-icon.ogl-mission-6:hover {
+.ogl-mission-icon.ogl-mission-6.ogl-active,
+.ogl-mission-icon.ogl-mission-6:hover {
     background-position: -120px -20px !important
 }
 
@@ -869,7 +927,8 @@ input[type=text], input[type=password] {
     background-position: -140px 0 !important
 }
 
-.ogl-mission-icon.ogl-mission-5.ogl-active, .ogl-mission-icon.ogl-mission-5:hover {
+.ogl-mission-icon.ogl-mission-5.ogl-active,
+.ogl-mission-icon.ogl-mission-5:hover {
     background-position: -140px -20px !important
 }
 
@@ -881,7 +940,8 @@ input[type=text], input[type=password] {
     background-position: -160px 0 !important
 }
 
-.ogl-mission-icon.ogl-mission-1.ogl-active, .ogl-mission-icon.ogl-mission-1:hover {
+.ogl-mission-icon.ogl-mission-1.ogl-active,
+.ogl-mission-icon.ogl-mission-1:hover {
     background-position: -160px -20px !important
 }
 
@@ -893,7 +953,8 @@ input[type=text], input[type=password] {
     background-position: -200px 0 !important
 }
 
-.ogl-mission-icon.ogl-mission-2.ogl-active, .ogl-mission-icon.ogl-mission-2:hover {
+.ogl-mission-icon.ogl-mission-2.ogl-active,
+.ogl-mission-icon.ogl-mission-2:hover {
     background-position: -200px -20px !important
 }
 
@@ -905,7 +966,8 @@ input[type=text], input[type=password] {
     background-position: -180px 0 !important
 }
 
-.ogl-mission-icon.ogl-mission-9.ogl-active, .ogl-mission-icon.ogl-mission-9:hover {
+.ogl-mission-icon.ogl-mission-9.ogl-active,
+.ogl-mission-icon.ogl-mission-9:hover {
     background-position: -180px -20px !important
 }
 
@@ -916,7 +978,7 @@ input[type=text], input[type=password] {
 .ogl-dest .ogl-info {
     position: relative;
     display: grid;
-    grid-template-columns:1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     justify-content: space-between;
     align-content: space-between;
     gap: 5px;
@@ -944,29 +1006,39 @@ input[type=text], input[type=password] {
     filter: brightness(150%)
 }
 
-.ogl-cargo .send_none, .ogl-cargo .sendall {
+.ogl-cargo .send_none,
+.ogl-cargo .sendall {
     margin-left: -5px
 }
 
-.ogl-cargo .select-most, .ogl-cargo .sendall, .ogl-res-filler .ogl-actions *, .res a {
+.ogl-cargo .select-most,
+.ogl-cargo .sendall,
+.ogl-res-filler .ogl-actions *,
+.res a {
     opacity: 1;
     filter: grayscale(1)
 }
 
-.allornonewrap #sendall, .allornonewrap .select-most {
+.allornonewrap #sendall,
+.allornonewrap .select-most {
     filter: grayscale(1) !important
 }
 
-.allornonewrap .select-most:hover, .allornonewrap .sendall:hover {
+.allornonewrap .select-most:hover,
+.allornonewrap .sendall:hover {
     filter: none !important
 }
 
-.ogl-cargo .select-most:hover, .ogl-cargo .sendall:hover, .ogl-res-filler .ogl-actions a:hover, .ogl-res-filler .ogl-actions img:hover, .res a:hover {
+.ogl-cargo .select-most:hover,
+.ogl-cargo .sendall:hover,
+.ogl-res-filler .ogl-actions a:hover,
+.ogl-res-filler .ogl-actions img:hover,
+.res a:hover {
     opacity: 1;
     filter: none
 }
 
-.ogl-cargo > div {
+.ogl-cargo>div {
     display: flex;
     flex-direction: column;
     align-items: center
@@ -979,7 +1051,7 @@ input[type=text], input[type=password] {
     width: 155px
 }
 
-.ogl-cargo .bar_container + div {
+.ogl-cargo .bar_container+div {
     position: relative;
     top: 4px;
     font-size: 10px
@@ -993,7 +1065,7 @@ input[type=text], input[type=password] {
     transform: scale(.75)
 }
 
-.ogl-dest > div {
+.ogl-dest>div {
     width: 0;
     margin-bottom: 5px;
     width: 300px;
@@ -1009,11 +1081,11 @@ input[type=text], input[type=password] {
     background: linear-gradient(0deg, #1a232d, transparent)
 }
 
-.ogl-dest > div:nth-child(2) {
+.ogl-dest>div:nth-child(2) {
     margin-bottom: 10px
 }
 
-.ogl-dest > div:last-child {
+.ogl-dest>div:last-child {
     margin-bottom: 0
 }
 
@@ -1127,7 +1199,9 @@ input[type=text], input[type=password] {
     margin: 0
 }
 
-.res .ogi-crystalLeft, .res .ogi-deuteriumLeft, .res .ogi-metalLeft {
+.res .ogi-crystalLeft,
+.res .ogi-deuteriumLeft,
+.res .ogi-metalLeft {
     font-size: 10px;
     position: relative;
     top: -15px;
@@ -1171,7 +1245,7 @@ input[type=text], input[type=password] {
 }
 
 .ogi-actions a {
-    margin-right: 5px !important;
+    margin-right: 5px !important
 }
 
 .ogl-spyTable td.ogi-new {
@@ -1254,7 +1328,8 @@ input[type=text], input[type=password] {
     color: #5d7fa4 !important
 }
 
-.ogi-checkbox a:hover, .ogi-checkbox a:hover .overmark {
+.ogi-checkbox a:hover,
+.ogi-checkbox a:hover .overmark {
     color: #daa520 !important
 }
 
@@ -1347,7 +1422,8 @@ input[type=file] {
     background-repeat: no-repeat
 }
 
-.destFleet, .originFleet {
+.destFleet,
+.originFleet {
     max-width: 100px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1368,7 +1444,9 @@ input[type=file] {
     background: 0 0 !important
 }
 
-#star, #star1, #star2 {
+#star,
+#star1,
+#star2 {
     display: none
 }
 
@@ -1388,7 +1466,7 @@ input[type=file] {
 }
 
 .ogl-target-list .ogl-stalkPlanets {
-    grid-template-columns:repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     padding: 5px
 }
 
@@ -1401,7 +1479,7 @@ input[type=file] {
     width: 286px
 }
 
-.ogl-target-list .ogk-controls > div:first-child {
+.ogl-target-list .ogk-controls>div:first-child {
     padding: 20px 0
 }
 
@@ -1414,7 +1492,8 @@ input[type=file] {
     z-index: 100000000000000 !important
 }
 
-.detailsOpened .fedAttack, .detailsOpened .sendMail {
+.detailsOpened .fedAttack,
+.detailsOpened .sendMail {
     top: 23px !important
 }
 
@@ -1425,7 +1504,7 @@ input[type=file] {
 .ogk-stats .ogk-top {
     display: grid;
     padding: 0 25px;
-    grid-template-columns:1.5fr 1fr 1fr 1fr;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
     gap: 5px;
     margin-bottom: 25px
 }
@@ -1487,14 +1566,16 @@ div#banner_skyscraper {
     width: max-content !important
 }
 
-#fleetBriefingPart1 .ogl-fleetSpeed > div {
+#fleetBriefingPart1 .ogl-fleetSpeed>div {
     min-width: 60px
 }
 
 #fleet2 .ogk-delay {
     color: #d43635 !important;
     font-size: 11px;
-    right: 8px;
+    padding-top: 3px;
+    right: 18px;
+    font-weight: 700;
     position: absolute
 }
 
@@ -1579,7 +1660,7 @@ div#banner_skyscraper {
     margin-left: 25px
 }
 
-.ogk-scroll-wrapper > span {
+.ogk-scroll-wrapper>span {
     cursor: pointer;
     display: inline-block;
     margin: 0 5px;
@@ -1598,26 +1679,26 @@ div#banner_skyscraper {
     color: #bd3c43 !important
 }
 
-.ogk-scroll-wrapper > span:last-of-type {
+.ogk-scroll-wrapper>span:last-of-type {
     border: solid 2px #8b5617;
     border-bottom: none;
     box-sizing: border-box;
     min-height: 10px
 }
 
-.ogk-scroll-wrapper > span:last-of-type.ogk-active.ogk-minus {
+.ogk-scroll-wrapper>span:last-of-type.ogk-active.ogk-minus {
     border-color: #8b5617
 }
 
-.ogk-scroll-wrapper > span.ogk-active {
+.ogk-scroll-wrapper>span.ogk-active {
     background: #38485d !important
 }
 
-.ogk-scroll-wrapper > span.ogk-minus {
+.ogk-scroll-wrapper>span.ogk-minus {
     background: #682428
 }
 
-.ogk-scroll-wrapper > span:hover {
+.ogk-scroll-wrapper>span:hover {
     background-color: #38485d !important
 }
 
@@ -1625,17 +1706,20 @@ strong {
     font-weight: 700 !important
 }
 
-#resources_metal, .resource.metal {
+#resources_metal,
+.resource.metal {
     font-weight: 800;
     color: #ffaacca1 !important
 }
 
-#resources_crystal, .resource.crystal {
+#resources_crystal,
+.resource.crystal {
     font-weight: 800;
     color: #73e5ffc7 !important
 }
 
-#resources_deuterium, .resource.deuterium {
+#resources_deuterium,
+.resource.deuterium {
     font-weight: 800;
     color: #a6e0b0 !important
 }
@@ -1664,19 +1748,27 @@ strong {
     opacity: .8
 }
 
-.ogl-search-content .mCSB_scrollTools_vertical, .ogl-target-list .mCSB_scrollTools_vertical, .sprite .mCSB_scrollTools_vertical {
+.ogl-search-content .mCSB_scrollTools_vertical,
+.ogl-target-list .mCSB_scrollTools_vertical,
+.sprite .mCSB_scrollTools_vertical {
     opacity: 0 !important
 }
 
-.ogl-search-content .mCSB_container:hover ~ .mCSB_scrollTools_vertical, .ogl-target-list .mCSB_container:hover ~ .mCSB_scrollTools_vertical, .sprite .mCSB_container:hover ~ .mCSB_scrollTools_vertical {
+.ogl-search-content .mCSB_container:hover~.mCSB_scrollTools_vertical,
+.ogl-target-list .mCSB_container:hover~.mCSB_scrollTools_vertical,
+.sprite .mCSB_container:hover~.mCSB_scrollTools_vertical {
     opacity: .5 !important
 }
 
-.ogl-search-content .mCSB_inside > .mCSB_container, .ogl-target-list .mCSB_inside > .mCSB_container, .sprite .mCSB_inside > .mCSB_container {
+.ogl-search-content .mCSB_inside>.mCSB_container,
+.ogl-target-list .mCSB_inside>.mCSB_container,
+.sprite .mCSB_inside>.mCSB_container {
     margin-right: 0 !important
 }
 
-.ogl-search-content .mCSB_draggerRail, .ogl-target-list .mCSB_draggerRail, .sprite .ogl-search-content .mCSB_draggerRail {
+.ogl-search-content .mCSB_draggerRail,
+.ogl-target-list .mCSB_draggerRail,
+.sprite .ogl-search-content .mCSB_draggerRail {
     display: none !important
 }
 
@@ -1689,7 +1781,8 @@ strong {
     padding: 0 15px
 }
 
-.expSlots, .fleetSlots {
+.expSlots,
+.fleetSlots {
     font-size: 11px;
     font-weight: 800
 }
@@ -1741,11 +1834,12 @@ strong {
     color: #ffd700eb !important
 }
 
-#technologydetails .information > ul li:only-child {
+#technologydetails .information>ul li:only-child {
     margin-bottom: 10px
 }
 
-#technologydetails .ogk-sum, #technologydetails .ogk-sum .ogl-date {
+#technologydetails .ogk-sum,
+#technologydetails .ogk-sum .ogl-date {
     color: #cec452 !important
 }
 
@@ -1797,7 +1891,7 @@ strong {
     background: 0 0 !important
 }
 
-#technologydetails > .sprite {
+#technologydetails>.sprite {
     height: 199px !important;
     display: flex !important;
     align-items: start;
@@ -1846,14 +1940,16 @@ strong {
     display: none !important
 }
 
-a.build-it_premium, button.build-it_premium {
+a.build-it_premium,
+button.build-it_premium {
     width: 150px !important;
     background: transparent url("https://gf1.geo.gfsrv.net/cdnfc/35658d707df040ae66b71215d187c1.png") -30px 0 no-repeat !important;
     border-radius: 5px;
     padding: 0 !important
 }
 
-#technologydetails button.build-it_premium span, #technologydetails button.build-it_premium:disabled span {
+#technologydetails button.build-it_premium span,
+#technologydetails button.build-it_premium:disabled span {
     padding-left: 0 !important
 }
 
@@ -1871,20 +1967,17 @@ a.build-it_premium, button.build-it_premium {
     display: none !important
 }
 
-/* #technologydetails .resource.insufficient {
-    color: #fff !important
-} */
 
 .shipyard .ogl-fleetInfo {
     padding: 15px 0
 }
 
-#technologydetails .information > ul li {
+#technologydetails .information>ul li {
     width: 285px !important;
     margin-bottom: 2px !important
 }
 
-#technologydetails .information > ul li:only-child {
+#technologydetails .information>ul li:only-child {
     margin-bottom: 15px !important
 }
 
@@ -1909,11 +2002,11 @@ a.build-it_premium, button.build-it_premium {
     background: #141e27 !important
 }
 
-#technologydetails > .description {
+#technologydetails>.description {
     background: #0e1014 !important
 }
 
-#technologydetails > .description .txt_box {
+#technologydetails>.description .txt_box {
     padding-left: 10px !important;
     width: 90% !important
 }
@@ -1925,10 +2018,11 @@ a.build-it_premium, button.build-it_premium {
 
 #technologydetails .resource.icon {
     height: 75px !important;
+    width: 60px !important;
     margin: 0 2px
 }
 
-#technologydetails .information > ul:first-of-type {
+#technologydetails .information>ul:first-of-type {
     height: 83px;
     align-items: end;
     display: flex;
@@ -1939,7 +2033,7 @@ a.build-it_premium, button.build-it_premium {
     width: auto !important
 }
 
-#technologydetails .information > ul:first-of-type strong {
+#technologydetails .information>ul:first-of-type strong {
     font-weight: 100 !important
 }
 
@@ -1954,59 +2048,73 @@ a.build-it_premium, button.build-it_premium {
     padding: 13px 0
 }
 
-.msg.ogk-metal .msg_status, .msg_new.ogk-metal .msg_status {
+.msg.ogk-metal .msg_status,
+.msg_new.ogk-metal .msg_status {
     background-color: #ffaacca1 !important
 }
 
-.msg.ogk-crystal .msg_status, .msg_new.ogk-crystal .msg_status {
+.msg.ogk-crystal .msg_status,
+.msg_new.ogk-crystal .msg_status {
     background-color: #73e5ffc7 !important
 }
 
-.msg.ogk-deuterium .msg_status, .msg_new.ogk-deuterium .msg_status {
+.msg.ogk-deuterium .msg_status,
+.msg_new.ogk-deuterium .msg_status {
     background-color: #a6e0b0 !important
 }
 
-.msg.ogk-am .msg_status, .msg_new.ogk-am .msg_status {
+.msg.ogk-am .msg_status,
+.msg_new.ogk-am .msg_status {
     background-color: #ddd !important
 }
 
-.msg.ogk-object .msg_status, .msg_new.ogk-object .msg_status {
+.msg.ogk-object .msg_status,
+.msg_new.ogk-object .msg_status {
     background-color: #c08931 !important
 }
 
-.msg.ogk-fleet .msg_status, .msg_new.ogk-fleet .msg_status {
+.msg.ogk-fleet .msg_status,
+.msg_new.ogk-fleet .msg_status {
     background-color: #782c2f !important
 }
 
-.msg.ogk-aliens .msg_status, .msg_new.ogk-aliens .msg_status {
+.msg.ogk-aliens .msg_status,
+.msg_new.ogk-aliens .msg_status {
     background-color: #1e6900 !important
 }
 
-.msg.ogk-pirates .msg_status, .msg_new.ogk-pirates .msg_status {
+.msg.ogk-pirates .msg_status,
+.msg_new.ogk-pirates .msg_status {
     background-color: #734a26 !important
 }
 
-.msg.ogk-late .msg_status, .msg_new.ogk-late .msg_status {
+.msg.ogk-late .msg_status,
+.msg_new.ogk-late .msg_status {
     background-color: #656565 !important
 }
 
-.msg.ogk-early .msg_status, .msg_new.ogk-early .msg_status {
+.msg.ogk-early .msg_status,
+.msg_new.ogk-early .msg_status {
     background-color: #adadad !important
 }
 
-.msg.ogk-bhole .msg_status, .msg_new.ogk-bhole .msg_status {
+.msg.ogk-bhole .msg_status,
+.msg_new.ogk-bhole .msg_status {
     background-color: #614bb1 !important
 }
 
-.msg.ogk-merchant .msg_status, .msg_new.ogk-merchant .msg_status {
+.msg.ogk-merchant .msg_status,
+.msg_new.ogk-merchant .msg_status {
     background-color: #a0c02b !important
 }
 
-.msg.ogk-merchant .msg_status, .msg_new.ogk-merchant .msg_status {
+.msg.ogk-merchant .msg_status,
+.msg_new.ogk-merchant .msg_status {
     background-color: #a0c02b !important
 }
 
-.msg.ogk-void .msg_status, .msg_new.ogk-void .msg_status {
+.msg.ogk-void .msg_status,
+.msg_new.ogk-void .msg_status {
     background-color: #22303a !important
 }
 
@@ -2014,7 +2122,8 @@ a.build-it_premium, button.build-it_premium {
     padding-left: 1px
 }
 
-.msg, .msg_status {
+.msg,
+.msg_status {
     border-radius: 5px 0 0 5px
 }
 
@@ -2027,31 +2136,38 @@ a.build-it_premium, button.build-it_premium {
     background-image: none !important
 }
 
-.msg.ogk-expedition .msg_status, .msg_new.ogk-expedition .msg_status {
+.msg.ogk-expedition .msg_status,
+.msg_new.ogk-expedition .msg_status {
     background-color: #3b5994 !important
 }
 
-.msg.ogk-harvest .msg_status, .msg_new.ogk-harvest .msg_status {
+.msg.ogk-harvest .msg_status,
+.msg_new.ogk-harvest .msg_status {
     background-color: #0d6e2c !important
 }
 
-.msg.ogk-combat .msg_status, .msg_new.ogk-combat .msg_status {
+.msg.ogk-combat .msg_status,
+.msg_new.ogk-combat .msg_status {
     background-color: #d43635ba !important
 }
 
-.msg.ogk-combat-win .msg_status, .msg_new.ogk-combat-wib .msg_status {
+.msg.ogk-combat-win .msg_status,
+.msg_new.ogk-combat-wib .msg_status {
     background-color: #92b820bf !important
 }
 
-.msg.ogk-combat-probes .msg_status, .msg_new.ogk-combat-probes .msg_status {
+.msg.ogk-combat-probes .msg_status,
+.msg_new.ogk-combat-probes .msg_status {
     background-color: #bd9b2f !important
 }
 
-.msg.ogk-combat-contact, .msg.ogk-combat-probes {
+.msg.ogk-combat-contact,
+.msg.ogk-combat-probes {
     opacity: .75
 }
 
-.msg.ogk-combat-draw .msg_status, .msg_new.ogk-combat-draw .msg_status {
+.msg.ogk-combat-draw .msg_status,
+.msg_new.ogk-combat-draw .msg_status {
     background-color: #d29d00d9 !important
 }
 
@@ -2087,7 +2203,8 @@ a.build-it_premium, button.build-it_premium {
     box-shadow: inset 0 -40px rgba(0, 0, 0, .2)
 }
 
-.ogl-spyTable td, .ogl-spyTable th {
+.ogl-spyTable td,
+.ogl-spyTable th {
     color: #8193a2;
     height: 26px;
     margin: auto;
@@ -2109,7 +2226,8 @@ a.build-it_premium, button.build-it_premium {
     cursor: pointer
 }
 
-.ogl-spyTable th[data-filter].ogl-active, .ogl-spyTable th[data-filter]:hover {
+.ogl-spyTable th[data-filter].ogl-active,
+.ogl-spyTable th[data-filter]:hover {
     background: #862f88;
     color: #fff
 }
@@ -2144,7 +2262,7 @@ a.build-it_premium, button.build-it_premium {
     color: orange !important
 }
 
-.ogl-spyTable tr > :nth-child(odd) {
+.ogl-spyTable tr> :nth-child(odd) {
     box-shadow: inset 0 -40px rgba(0, 0, 0, .2)
 }
 
@@ -2163,7 +2281,8 @@ a.build-it_premium, button.build-it_premium {
     margin: 0 1px
 }
 
-.ogl-spyTable .ogl-attacked td, .ogl-spyTable .ogl-attacked td:not(.ogl-spyOptions) a {
+.ogl-spyTable .ogl-attacked td,
+.ogl-spyTable .ogl-attacked td:not(.ogl-spyOptions) a {
     color: #f49cf5 !important
 }
 
@@ -2206,10 +2325,10 @@ a.build-it_premium, button.build-it_premium {
 .ogl-tooltip .ogk-cargo {
     width: auto;
     display: grid;
-    grid-template-columns:repeat(3, 1fr)
+    grid-template-columns: repeat(3, 1fr)
 }
 
-.ogl-tooltip .ogk-cargo > div {
+.ogl-tooltip .ogk-cargo>div {
     margin: 2px
 }
 
@@ -2217,7 +2336,8 @@ a.build-it_premium, button.build-it_premium {
     display: flex
 }
 
-.ogk-stats .ogl-mmorpgstats, .ogk-stats .ogl-ptre {
+.ogk-stats .ogl-mmorpgstats,
+.ogk-stats .ogl-ptre {
     margin-left: 15px
 }
 
@@ -2236,7 +2356,7 @@ a.build-it_premium, button.build-it_premium {
 
 .ogk-stats .ogk-details .ogk-grid {
     display: grid;
-    grid-template-columns:1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     align-items: center;
     grid-row-gap: 10px;
     width: inherit;
@@ -2244,7 +2364,7 @@ a.build-it_premium, button.build-it_premium {
 }
 
 .ogk-stats .ogk-details .ogk-grid.ogk-am {
-    grid-template-columns:1fr 1fr 1fr 1fr 1fr
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr
 }
 
 .ogk-stats .ogk-details .ogk-grid span {
@@ -2282,7 +2402,7 @@ a.build-it_premium, button.build-it_premium {
 
 .ogk-adjust-grid {
     display: grid;
-    grid-template-columns:0fr 1fr;
+    grid-template-columns: 0fr 1fr;
     gap: 10px;
     align-items: center;
     margin-bottom: 20px;
@@ -2305,14 +2425,14 @@ a.build-it_premium, button.build-it_premium {
 
 .ogk-bhole-grid {
     display: grid;
-    grid-template-columns:0fr 1fr 0fr 1fr;
+    grid-template-columns: 0fr 1fr 0fr 1fr;
     gap: 8px 10px;
     align-items: center;
     margin-bottom: 20px
 }
 
 .ogk-stats .ogk-box .ogk-grid-adjust {
-    grid-template-columns:1fr 1fr
+    grid-template-columns: 1fr 1fr
 }
 
 .ogk-stats .ogk-details .ogk-box:nth-of-type(2) {
@@ -2357,13 +2477,13 @@ a.build-it_premium, button.build-it_premium {
 
 .ogk-stats .ogk-details .ogk-fleet {
     display: grid;
-    grid-template-columns:repeat(4, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     grid-gap: 5px;
     min-width: 450px;
     justify-items: baseline
 }
 
-.ogk-stats .ogk-details .ogk-fleet > div {
+.ogk-stats .ogk-details .ogk-fleet>div {
     display: flex;
     align-items: center
 }
@@ -2374,16 +2494,19 @@ a.build-it_premium, button.build-it_premium {
     margin-right: 10px
 }
 
-#highscoreContent a:link, #highscoreContent a:visited {
+#highscoreContent a:link,
+#highscoreContent a:visited {
     text-decoration: none !important;
 }
 
 #highscoreContent .ally-tag a {
     color: #6f9fc8 !important;
 }
+
 #highscoreContent a:hover span {
     color: rgb(208, 129, 62) !important;
 }
+
 .ogk-stats h1 {
     display: flex;
     font-size: 18px;
@@ -2411,7 +2534,8 @@ a.build-it_premium, button.build-it_premium {
     transform: scale(1.2)
 }
 
-.ogk-stats h1 .overmark, .ogk-stats h1 .undermark {
+.ogk-stats h1 .overmark,
+.ogk-stats h1 .undermark {
     margin-left: 10px;
     font-size: 13px;
     line-height: 14px
@@ -2450,7 +2574,10 @@ a.build-it_premium, button.build-it_premium {
     font-size: 13px
 }
 
-.ogk-stats .ogl-ecoIcon, .ogk-stats .ogl-fleetIcon, .ogk-stats .ogl-fleetIcon.grey, .ogk-stats .ogl-techIcon {
+.ogk-stats .ogl-ecoIcon,
+.ogk-stats .ogl-fleetIcon,
+.ogk-stats .ogl-fleetIcon.grey,
+.ogk-stats .ogl-techIcon {
     transform: scale(1.25);
     float: none
 }
@@ -2468,7 +2595,7 @@ a.build-it_premium, button.build-it_premium {
 
 .ogk-stats .ogk-mines {
     display: grid;
-    grid-template-columns:2fr 5fr 5fr 5fr;
+    grid-template-columns: 2fr 5fr 5fr 5fr;
     align-items: center;
     grid-row-gap: 10px;
     width: inherit;
@@ -2477,13 +2604,13 @@ a.build-it_premium, button.build-it_premium {
 
 .ogk-stats .ogk-tech {
     display: grid;
-    grid-template-columns:2fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr;
     align-items: center;
     gap: 5px
 }
 
 .ogk-stats .ogk-tech:nth-of-type(1) {
-    grid-template-columns:3fr 1fr 1fr
+    grid-template-columns: 3fr 1fr 1fr
 }
 
 .ogk-stats .ogk-commander {
@@ -2517,6 +2644,7 @@ a.build-it_premium, button.build-it_premium {
 .ogk-stats .resourceIcon {
     border-radius: 5px;
     width: 30px;
+    background-position: -1px -124px;
     height: 20px;
     background-size: 434px;
     margin-right: 10px
@@ -2542,7 +2670,8 @@ a.build-it_premium, button.build-it_premium {
     margin-right: 0
 }
 
-.ogk-grid p, .ogk-mines p {
+.ogk-grid p,
+.ogk-mines p {
     width: 100% !important;
     text-align: left !important
 }
@@ -2584,7 +2713,8 @@ a.build-it_premium, button.build-it_premium {
     height: 0 !important
 }
 
-#fleetdispatchcomponent .c-left, #fleetdispatchcomponent .c-right {
+#fleetdispatchcomponent .c-left,
+#fleetdispatchcomponent .c-right {
     display: none
 }
 
@@ -2614,30 +2744,34 @@ a.build-it_premium, button.build-it_premium {
     12.5% {
         stroke-dasharray: 33.98873px, 242.77666px;
         stroke-dashoffset: -26.70543px
-	}
+    }
+
     43.75% {
         stroke-dasharray: 84.97183px, 242.77666px;
         stroke-dashoffset: -84.97183px
-	}
+    }
+
     100% {
         stroke-dasharray: 2.42777px, 242.77666px;
         stroke-dashoffset: -240.34889px
-	}
+    }
 }
 
 @keyframes anim {
     12.5% {
         stroke-dasharray: 33.98873px, 242.77666px;
         stroke-dashoffset: -26.70543px
-	}
+    }
+
     43.75% {
         stroke-dasharray: 84.97183px, 242.77666px;
         stroke-dashoffset: -84.97183px
-	}
+    }
+
     100% {
         stroke-dasharray: 2.42777px, 242.77666px;
         stroke-dashoffset: -240.34889px
-	}
+    }
 }
 
 .ogl-search-content .ogl-techIcon {
@@ -2668,16 +2802,16 @@ a.build-it_premium, button.build-it_premium {
 
 .ogl-detailRank {
     display: grid;
-    grid-template-columns:repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     line-height: 16px;
     width: 100%
 }
 
 .ogl-tooltip .ogl-detailRank {
-    grid-template-columns:repeat(3, 1fr)
+    grid-template-columns: repeat(3, 1fr)
 }
 
-.ogl-detailRank > div {
+.ogl-detailRank>div {
     padding: 5px
 }
 
@@ -2699,7 +2833,8 @@ a.build-it_premium, button.build-it_premium {
     animation: fadeIn ease .4s
 }
 
-.ogl-planets-col, .ogl-search-col {
+.ogl-planets-col,
+.ogl-search-col {
     display: flex;
     flex-direction: column;
     width: 286px;
@@ -2724,7 +2859,7 @@ a.build-it_premium, button.build-it_premium {
 .ogl-planets-col .ogl-stalkPlanets {
     min-height: 0 !important;
     min-width: 0 !important;
-    grid-template-columns:repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     height: 100%
 }
 
@@ -2744,7 +2879,8 @@ a.build-it_premium, button.build-it_premium {
     float: right
 }
 
-.ogl-search-result > .ogl-player-div:focus, .ogl-search-result > .ogl-player-div:hover {
+.ogl-search-result>.ogl-player-div:focus,
+.ogl-search-result>.ogl-player-div:hover {
     border: 1px solid #3c536d
 }
 
@@ -2752,7 +2888,7 @@ a.build-it_premium, button.build-it_premium {
     border: 1px solid #3c536d
 }
 
-.ogl-search-result > div > a {
+.ogl-search-result>div>a {
     text-align: right;
     float: right
 }
@@ -2773,7 +2909,8 @@ a.build-it_premium, button.build-it_premium {
     width: 245px !important
 }
 
-#shipsChosen .technology input[type=number], #shipsChosen .technology input[type=text] {
+#shipsChosen .technology input[type=number],
+#shipsChosen .technology input[type=text] {
     font-weight: 800;
     height: 20px;
     bottom: -20px !important
@@ -2802,13 +2939,14 @@ a.build-it_premium, button.build-it_premium {
     padding: 0 0 0 2px !important
 }
 
-.technology input[type=number], .technology input[type=text] {
+.technology input[type=number],
+.technology input[type=text] {
     font-weight: 800;
     height: 20px;
     bottom: -20px !important
 }
 
-.ogl-search-controls > div {
+.ogl-search-controls>div {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-gap: 3px
@@ -2904,7 +3042,7 @@ a.build-it_premium, button.build-it_premium {
 .ogk-keyhelp {
     display: grid;
     grid-gap: 10px;
-    grid-template-columns:repeat(2, 30px 1fr 48px);
+    grid-template-columns: repeat(2, 30px 1fr 48px);
     align-items: center;
     padding: 15px;
     background: #0d1117;
@@ -2935,7 +3073,7 @@ a.build-it_premium, button.build-it_premium {
     border-left: none
 }
 
-.ogl-fleet-table td:first-child > div {
+.ogl-fleet-table td:first-child>div {
     padding: 0 !important
 }
 
@@ -2950,11 +3088,11 @@ a.build-it_premium, button.build-it_premium {
     z-index: 10
 }
 
-.ogl-sideStalk > a {
+.ogl-sideStalk>a {
     opacity: .5
 }
 
-.ogl-sideStalk:hover > a {
+.ogl-sideStalk:hover>a {
     opacity: 1
 }
 
@@ -2999,7 +3137,8 @@ a.build-it_premium, button.build-it_premium {
     border-color: #3c536d
 }
 
-.ogl-sideStalk .ogi-ranking, .ogl-sideStalk .ogl-player span:last-child {
+.ogl-sideStalk .ogi-ranking,
+.ogl-sideStalk .ogl-player span:last-child {
     font-size: 10px;
     color: #e6648e !important;
     float: right;
@@ -3108,7 +3247,11 @@ a.build-it_premium, button.build-it_premium {
     width: 100%
 }
 
-.ogl-defenseIcon, .ogl-ecoIcon, .ogl-fleetIcon, .ogl-techIcon, .ogl-totalIcon {
+.ogl-defenseIcon,
+.ogl-ecoIcon,
+.ogl-fleetIcon,
+.ogl-techIcon,
+.ogl-totalIcon {
     background: url("https://gf3.geo.gfsrv.net/cdne9/1fd57fa51cdb81035382943e635348.gif") no-repeat;
     background-position: 100% 0 !important;
     background-size: calc(16px * 6) !important;
@@ -3200,7 +3343,10 @@ a.build-it_premium, button.build-it_premium {
     max-width: 145px;
 }
 
-#galaxyContent .ctContentRow .cellMoon .moon, #galaxyContent .ctContentRow .cellMoon .moon_a, #galaxyContent .ctContentRow .cellMoon .moon_c, #galaxyContent .ctContentRow .cellDebris .debris_1 {
+#galaxyContent .ctContentRow .cellMoon .moon,
+#galaxyContent .ctContentRow .cellMoon .moon_a,
+#galaxyContent .ctContentRow .cellMoon .moon_c,
+#galaxyContent .ctContentRow .cellDebris .debris_1 {
     text-align: center;
 }
 
@@ -3212,7 +3358,8 @@ a.build-it_premium, button.build-it_premium {
     padding-top: 7px
 }
 
-.ogl-fly-summary, .ogl-full-summary {
+.ogl-fly-summary,
+.ogl-full-summary {
     font-weight: 800;
     align-items: center;
     justify-content: space-around;
@@ -3244,7 +3391,8 @@ a.build-it_premium, button.build-it_premium {
     top: 3px
 }
 
-.ogl-moon-act.active, .ogl-planet-act.active {
+.ogl-moon-act.active,
+.ogl-planet-act.active {
     background-color: transparent !important;
     background: url(https://gf1.geo.gfsrv.net/cdn6f/91ad13c8f9a7e9390085d12adde508.png) no-repeat 0 -819px;
     display: inline-block;
@@ -3299,7 +3447,8 @@ a.build-it_premium, button.build-it_premium {
     margin-bottom: 0 !important
 }
 
-.moonlink, .planetlink {
+.moonlink,
+.planetlink {
     position: relative !important;
     background: linear-gradient(to right, #1c2b38 45%, #090e13);
     background-position: 0 !important;
@@ -3330,15 +3479,18 @@ a.build-it_premium, button.build-it_premium {
     left: 0 !important
 }
 
-.moonlink:hover, .planetlink:hover {
+.moonlink:hover,
+.planetlink:hover {
     background: linear-gradient(to right, #633311, #090e13)
 }
 
-.moonlink.active, .planetlink.active {
+.moonlink.active,
+.planetlink.active {
     background: linear-gradient(to right, #886c1a, #090e13)
 }
 
-.moonlink.ogl-target, .planetlink.ogl-target {
+.moonlink.ogl-target,
+.planetlink.ogl-target {
     outline-color: #fff
 }
 
@@ -3346,7 +3498,8 @@ a.build-it_premium, button.build-it_premium {
     border: dashed 1px !important
 }
 
-.moonlink .ogl-timer, .planetlink .ogl-timer {
+.moonlink .ogl-timer,
+.planetlink .ogl-timer {
     background: #00692a;
     border: 1px solid #121a23;
     border-radius: 50%;
@@ -3359,35 +3512,36 @@ a.build-it_premium, button.build-it_premium {
     width: 5px
 }
 
-.moonlink .ogl-medium, .planetlink .ogl-medium {
+.moonlink .ogl-medium,
+.planetlink .ogl-medium {
     background: #ce9021
 }
 
-.moonlink .ogl-short, .planetlink .ogl-short {
+.moonlink .ogl-short,
+.planetlink .ogl-short {
     background: #ab2a2a
 }
 
 .smallplanet img {
-  display: block;
-  height: 25px;
-  width: 25px;
-  top: 13px !important;
-  transition: top .2s;
-  /* background: #13181d; */
-  border-radius: 50% !important;
-  box-shadow: 0 0 0 1px #13181d !important;
-  left: 73px !important;
-  margin: 0 !important;
-  position: absolute !important;
-  top: 8px !important;
-  left: 82px !important;
-  top: 22px !important;
-  z-index: 2;
+    display: block;
+    height: 25px;
+    width: 25px;
+    top: 13px !important;
+    transition: top .2s;
+    border-radius: 50% !important;
+    box-shadow: 0 0 0 1px #13181d !important;
+    left: 73px !important;
+    margin: 0 !important;
+    position: absolute !important;
+    top: 8px !important;
+    left: 82px !important;
+    top: 22px !important;
+    z-index: 2
 }
 
 #planetbarcomponent #rechts #myPlanets .smallplanet a.wreckFieldIcon {
     top: 25px !important;
-    left: 65px !important;
+    left: 65px !important
 }
 
 .smallplanet a:not(.active) img:hover {
@@ -3400,22 +3554,30 @@ a.build-it_premium, button.build-it_premium {
 }
 
 #galaxyHeader .btn_blue {
-    height: 18px !important;
+    height: 15px !important;
     line-height: 14px !important;
-    max-width: 94px;
+    max-width: 91px;
     min-width: 20px !important;
     overflow: hidden;
-    padding: 0 2px !important;
+    padding: 1px 9px !important;
+    font-weight: 400;
     text-overflow: ellipsis;
-    white-space: nowrap;
+    white-space: nowrap
 }
+
+#galaxyHeader .btn_blue:not(:hover) {
+    border-color: rgb(0 132 141 / 45%) !important;
+    background: #002c58 !important
+}
+
+#galaxyHeader .btn_blue img {
+    margin-right: 4px !important
+}
+
 #expeditionbutton:before {
-    margin: 0px -5px 0 0px !important;
+    margin: 0px -5px 0px 0px !important;
     position: relative !important;
 }
-/* .moonlink img, .planetlink .planetPic {
-    display: none
-} */
 
 .planetlink .planet-name {
     color: #fff !important;
@@ -3429,7 +3591,8 @@ a.build-it_premium, button.build-it_premium {
     text-align: left
 }
 
-#planetbarcomponent #rechts .planet-koords, #planetbarcomponent #rechts .planet-name {
+#planetbarcomponent #rechts .planet-koords,
+#planetbarcomponent #rechts .planet-name {
     margin-top: 4px !important
 }
 
@@ -3452,7 +3615,9 @@ a.build-it_premium, button.build-it_premium {
     color: #ffbfc9 !important
 }
 
-.planetlink .ogl-mines, .planetlink .planet-koords, .planetlink .planet-name {
+.planetlink .ogl-mines,
+.planetlink .planet-koords,
+.planetlink .planet-name {
     font-size: 12px !important;
     left: 5px !important
 }
@@ -3465,7 +3630,8 @@ a.build-it_premium, button.build-it_premium {
     margin-top: 5px
 }
 
-.ogl-moon, .ogl-planet {
+.ogl-moon,
+.ogl-planet {
     background: #3c536d;
     border-radius: 12px;
     bottom: 2px;
@@ -3524,13 +3690,15 @@ a.build-it_premium, button.build-it_premium {
     margin-right: 7px
 }
 
-.ogl-fleet-table .ogl-moon, .ogl-fleet-table .ogl-planet {
+.ogl-fleet-table .ogl-moon,
+.ogl-fleet-table .ogl-planet {
     display: inline-block;
     position: relative;
     margin-top: 7px
 }
 
-.moonlink .ogl-moon:hover, .ogl-fleet-table .ogl-moon:hover {
+.moonlink .ogl-moon:hover,
+.ogl-fleet-table .ogl-moon:hover {
     box-shadow: inset -.5em -.2em gold !important
 }
 
@@ -3588,15 +3756,15 @@ a.build-it_premium, button.build-it_premium {
     padding: 5px
 }
 
-.ogl-summary > .ogl-sum-symbol:first-child {
+.ogl-summary>.ogl-sum-symbol:first-child {
     width: 105px
 }
 
-.ogl-summary > .ogl-sum-symbol {
+.ogl-summary>.ogl-sum-symbol {
     width: 60px
 }
 
-.ogl-summary > .ogl-sum-symbol:nth-child(3) {
+.ogl-summary>.ogl-sum-symbol:nth-child(3) {
     padding-left: 5px
 }
 
@@ -3608,11 +3776,13 @@ a.build-it_premium, button.build-it_premium {
     width: max-content !important
 }
 
-#planetbarcomponent #rechts .smallplanet, #rechts .smallplanet {
+#planetbarcomponent #rechts .smallplanet,
+#rechts .smallplanet {
     margin: 0 0 5px 0 !important
 }
 
-#planetbarcomponent #rechts .smallplanet:only-child, #rechts .smallplanet:only-child {
+#planetbarcomponent #rechts .smallplanet:only-child,
+#rechts .smallplanet:only-child {
     margin: 0 !important
 }
 
@@ -3620,12 +3790,14 @@ a.build-it_premium, button.build-it_premium {
     margin: 0 !important
 }
 
-#cutty, #planetList, #rechts {
+#cutty,
+#planetList,
+#rechts {
     min-width: 136px;
     width: max-content !important
 }
 
-#cutty > div {
+#cutty>div {
     width: auto !important
 }
 
@@ -3639,7 +3811,7 @@ a.build-it_premium, button.build-it_premium {
     margin-right: -5px
 }
 
-.moonlink ~ .ogl-res {
+.moonlink~.ogl-res {
     width: 60px !important
 }
 
@@ -3748,7 +3920,8 @@ a.build-it_premium, button.build-it_premium {
     font-weight: 800
 }
 
-.fleetDetails .destinationPlanet, .fleetDetails .originPlanet {
+.fleetDetails .destinationPlanet,
+.fleetDetails .originPlanet {
     font-size: 11px
 }
 
@@ -3768,67 +3941,118 @@ a.build-it_premium, button.build-it_premium {
     color: #717171 !important
 }
 
-.fleetDetails[data-mission-type="1"] .mission, .fleetDetails[data-mission-type="1"] .nextMission, .fleetDetails[data-mission-type="1"] .nextTimer, .fleetDetails[data-mission-type="1"] .ogk-ships-count, .fleetDetails[data-mission-type="1"] .timer {
+.fleetDetails[data-mission-type="1"] .mission,
+.fleetDetails[data-mission-type="1"] .nextMission,
+.fleetDetails[data-mission-type="1"] .nextTimer,
+.fleetDetails[data-mission-type="1"] .ogk-ships-count,
+.fleetDetails[data-mission-type="1"] .timer {
     color: #d43635 !important
 }
 
-.fleetDetails[data-mission-type="2"] .mission, .fleetDetails[data-mission-type="2"] .nextMission, .fleetDetails[data-mission-type="2"] .nextTimer, .fleetDetails[data-mission-type="2"] .ogk-ships-count, .fleetDetails[data-mission-type="2"] .timer {
+.fleetDetails[data-mission-type="2"] .mission,
+.fleetDetails[data-mission-type="2"] .nextMission,
+.fleetDetails[data-mission-type="2"] .nextTimer,
+.fleetDetails[data-mission-type="2"] .ogk-ships-count,
+.fleetDetails[data-mission-type="2"] .timer {
     color: #d43635 !important
 }
 
-.fleetDetails[data-mission-type="1"] .nextTimer.friendly, .fleetDetails[data-mission-type="1"] .timer.friendly, .fleetDetails[data-mission-type="2"] .nextTimer.friendly, .fleetDetails[data-mission-type="2"] .timer.friendly {
+.fleetDetails[data-mission-type="1"] .nextTimer.friendly,
+.fleetDetails[data-mission-type="1"] .timer.friendly,
+.fleetDetails[data-mission-type="2"] .nextTimer.friendly,
+.fleetDetails[data-mission-type="2"] .timer.friendly {
     color: #9c0 !important
 }
 
-.fleetDetails[data-mission-type="3"] .mission, .fleetDetails[data-mission-type="3"] .nextMission, .fleetDetails[data-mission-type="3"] .nextTimer, .fleetDetails[data-mission-type="3"] .ogk-ships-count, .fleetDetails[data-mission-type="3"] .timer {
+.fleetDetails[data-mission-type="3"] .mission,
+.fleetDetails[data-mission-type="3"] .nextMission,
+.fleetDetails[data-mission-type="3"] .nextTimer,
+.fleetDetails[data-mission-type="3"] .ogk-ships-count,
+.fleetDetails[data-mission-type="3"] .timer {
     color: #7ead3d !important
 }
 
-.fleetDetails[data-mission-type="3"] .nextTimer.neutral, .fleetDetails[data-mission-type="3"] .timer.neutral {
+.fleetDetails[data-mission-type="3"] .nextTimer.neutral,
+.fleetDetails[data-mission-type="3"] .timer.neutral {
     color: #d29d00 !important
 }
 
-.fleetDetails[data-mission-type="4"] .mission, .fleetDetails[data-mission-type="4"] .nextMission, .fleetDetails[data-mission-type="4"] .nextTimer, .fleetDetails[data-mission-type="4"] .ogk-ships-count, .fleetDetails[data-mission-type="4"] .timer {
+.fleetDetails[data-mission-type="4"] .mission,
+.fleetDetails[data-mission-type="4"] .nextMission,
+.fleetDetails[data-mission-type="4"] .nextTimer,
+.fleetDetails[data-mission-type="4"] .ogk-ships-count,
+.fleetDetails[data-mission-type="4"] .timer {
     color: #34a37b !important
 }
 
-.fleetDetails[data-mission-type="5"] .mission, .fleetDetails[data-mission-type="5"] .nextMission, .fleetDetails[data-mission-type="5"] .nextTimer, .fleetDetails[data-mission-type="5"] .ogk-ships-count, .fleetDetails[data-mission-type="5"] .timer {
+.fleetDetails[data-mission-type="5"] .mission,
+.fleetDetails[data-mission-type="5"] .nextMission,
+.fleetDetails[data-mission-type="5"] .nextTimer,
+.fleetDetails[data-mission-type="5"] .ogk-ships-count,
+.fleetDetails[data-mission-type="5"] .timer {
     color: #e6913e !important
 }
 
-.fleetDetails[data-mission-type="5"] .nextTimer.friendly, .fleetDetails[data-mission-type="5"] .timer.friendly {
+.fleetDetails[data-mission-type="5"] .nextTimer.friendly,
+.fleetDetails[data-mission-type="5"] .timer.friendly {
     color: #9c0 !important
 }
 
-.fleetDetails[data-mission-type="6"] .mission, .fleetDetails[data-mission-type="6"] .nextMission, .fleetDetails[data-mission-type="6"] .nextTimer, .fleetDetails[data-mission-type="6"] .ogk-ships-count, .fleetDetails[data-mission-type="6"] .timer {
+.fleetDetails[data-mission-type="6"] .mission,
+.fleetDetails[data-mission-type="6"] .nextMission,
+.fleetDetails[data-mission-type="6"] .nextTimer,
+.fleetDetails[data-mission-type="6"] .ogk-ships-count,
+.fleetDetails[data-mission-type="6"] .timer {
     color: #bd9b2f !important
 }
 
-.fleetDetails[data-mission-type="6"] .nextTimer.hostile, .fleetDetails[data-mission-type="6"] .timer.hostile {
+.fleetDetails[data-mission-type="6"] .nextTimer.hostile,
+.fleetDetails[data-mission-type="6"] .timer.hostile {
     color: #d43635 !important
 }
 
-.fleetDetails[data-mission-type="7"] .mission, .fleetDetails[data-mission-type="7"] .nextMission, .fleetDetails[data-mission-type="7"] .nextTimer, .fleetDetails[data-mission-type="7"] .ogk-ships-count, .fleetDetails[data-mission-type="7"] .timer {
+.fleetDetails[data-mission-type="7"] .mission,
+.fleetDetails[data-mission-type="7"] .nextMission,
+.fleetDetails[data-mission-type="7"] .nextTimer,
+.fleetDetails[data-mission-type="7"] .ogk-ships-count,
+.fleetDetails[data-mission-type="7"] .timer {
     color: #29b7ba !important
 }
 
-.fleetDetails[data-mission-type="8"] .mission, .fleetDetails[data-mission-type="8"] .nextMission, .fleetDetails[data-mission-type="8"] .nextTimer, .fleetDetails[data-mission-type="8"] .ogk-ships-count, .fleetDetails[data-mission-type="8"] .timer {
+.fleetDetails[data-mission-type="8"] .mission,
+.fleetDetails[data-mission-type="8"] .nextMission,
+.fleetDetails[data-mission-type="8"] .nextTimer,
+.fleetDetails[data-mission-type="8"] .ogk-ships-count,
+.fleetDetails[data-mission-type="8"] .timer {
     color: #00842a !important
 }
 
-.fleetDetails[data-mission-type="9"] .mission, .fleetDetails[data-mission-type="9"] .nextMission, .fleetDetails[data-mission-type="9"] .nextTimer, .fleetDetails[data-mission-type="9"] .ogk-ships-count, .fleetDetails[data-mission-type="9"] .timer {
+.fleetDetails[data-mission-type="9"] .mission,
+.fleetDetails[data-mission-type="9"] .nextMission,
+.fleetDetails[data-mission-type="9"] .nextTimer,
+.fleetDetails[data-mission-type="9"] .ogk-ships-count,
+.fleetDetails[data-mission-type="9"] .timer {
     color: #a52136 !important
 }
 
-.fleetDetails[data-mission-type="9"] .nextTimer.friendly, .fleetDetails[data-mission-type="9"] .timer.friendly {
+.fleetDetails[data-mission-type="9"] .nextTimer.friendly,
+.fleetDetails[data-mission-type="9"] .timer.friendly {
     color: #9c0 !important
 }
 
-.fleetDetails[data-mission-type="15"] .mission, .fleetDetails[data-mission-type="15"] .nextMission, .fleetDetails[data-mission-type="15"] .nextTimer, .fleetDetails[data-mission-type="15"] .ogk-ships-count, .fleetDetails[data-mission-type="15"] .timer {
+.fleetDetails[data-mission-type="15"] .mission,
+.fleetDetails[data-mission-type="15"] .nextMission,
+.fleetDetails[data-mission-type="15"] .nextTimer,
+.fleetDetails[data-mission-type="15"] .ogk-ships-count,
+.fleetDetails[data-mission-type="15"] .timer {
     color: #4162a5 !important
 }
 
-.fleetDetails[data-mission-type="16"] .mission, .fleetDetails[data-mission-type="16"] .nextMission, .fleetDetails[data-mission-type="16"] .nextTimer, .fleetDetails[data-mission-type="16"] .ogk-ships-count, .fleetDetails[data-mission-type="16"] .timer {
+.fleetDetails[data-mission-type="16"] .mission,
+.fleetDetails[data-mission-type="16"] .nextMission,
+.fleetDetails[data-mission-type="16"] .nextTimer,
+.fleetDetails[data-mission-type="16"] .ogk-ships-count,
+.fleetDetails[data-mission-type="16"] .timer {
     color: #68a6b2 !important
 }
 
@@ -3836,16 +4060,19 @@ a.build-it_premium, button.build-it_premium {
     background: #1b262f !important
 }
 
-.fleetDetails[data-mission-type] .absTime, .fleetDetails[data-mission-type] .nextabsTime {
+.fleetDetails[data-mission-type] .absTime,
+.fleetDetails[data-mission-type] .nextabsTime {
     font-size: 11px
 }
 
-.fleetDetails[data-mission-type] .nextTimer, .fleetDetails[data-mission-type] .timer {
+.fleetDetails[data-mission-type] .nextTimer,
+.fleetDetails[data-mission-type] .timer {
     font-weight: 800;
     font-size: 11px
 }
 
-.eventFleet[data-mission-type="1"] .friendly, .eventFleet[data-mission-type="1"] .neutral {
+.eventFleet[data-mission-type="1"] .friendly,
+.eventFleet[data-mission-type="1"] .neutral {
     color: #9c0 !important
 }
 
@@ -3853,7 +4080,8 @@ a.build-it_premium, button.build-it_premium {
     color: #d43635 !important
 }
 
-.eventFleet[data-mission-type="3"] .friendly, .eventFleet[data-mission-type="3"] .hostile {
+.eventFleet[data-mission-type="3"] .friendly,
+.eventFleet[data-mission-type="3"] .hostile {
     color: #7ead3d !important
 }
 
@@ -3861,11 +4089,14 @@ a.build-it_premium, button.build-it_premium {
     color: #d29d00 !important
 }
 
-.eventFleet[data-mission-type="4"] .friendly, .eventFleet[data-mission-type="4"] .hostile, .eventFleet[data-mission-type="4"] .neutral {
+.eventFleet[data-mission-type="4"] .friendly,
+.eventFleet[data-mission-type="4"] .hostile,
+.eventFleet[data-mission-type="4"] .neutral {
     color: #34a37b !important
 }
 
-.eventFleet[data-mission-type="5"] .hostile, .eventFleet[data-mission-type="5"] .neutral {
+.eventFleet[data-mission-type="5"] .hostile,
+.eventFleet[data-mission-type="5"] .neutral {
     color: #e6913e !important
 }
 
@@ -3873,7 +4104,8 @@ a.build-it_premium, button.build-it_premium {
     color: #9c0 !important
 }
 
-.eventFleet[data-mission-type="6"] .friendly, .eventFleet[data-mission-type="6"] .neutral {
+.eventFleet[data-mission-type="6"] .friendly,
+.eventFleet[data-mission-type="6"] .neutral {
     color: #bd9b2f !important
 }
 
@@ -3881,15 +4113,20 @@ a.build-it_premium, button.build-it_premium {
     color: #d43635 !important
 }
 
-.eventFleet[data-mission-type="7"] .friendly, .eventFleet[data-mission-type="7"] .hostile, .eventFleet[data-mission-type="7"] .neutral {
+.eventFleet[data-mission-type="7"] .friendly,
+.eventFleet[data-mission-type="7"] .hostile,
+.eventFleet[data-mission-type="7"] .neutral {
     color: #29b7ba !important
 }
 
-.eventFleet[data-mission-type="8"] .friendly, .eventFleet[data-mission-type="8"] .hostile, .eventFleet[data-mission-type="8"] .neutral {
+.eventFleet[data-mission-type="8"] .friendly,
+.eventFleet[data-mission-type="8"] .hostile,
+.eventFleet[data-mission-type="8"] .neutral {
     color: #00842a !important
 }
 
-.eventFleet[data-mission-type="9"] .hostile, .eventFleet[data-mission-type="9"] .neutral {
+.eventFleet[data-mission-type="9"] .hostile,
+.eventFleet[data-mission-type="9"] .neutral {
     color: #a52136 !important
 }
 
@@ -3897,11 +4134,15 @@ a.build-it_premium, button.build-it_premium {
     color: #9c0 !important
 }
 
-.eventFleet[data-mission-type="15"] .friendly, .eventFleet[data-mission-type="15"] .hostile, .eventFleet[data-mission-type="15"] .neutral {
+.eventFleet[data-mission-type="15"] .friendly,
+.eventFleet[data-mission-type="15"] .hostile,
+.eventFleet[data-mission-type="15"] .neutral {
     color: #4162a5 !important
 }
 
-.eventFleet[data-mission-type="16"] .friendly, .eventFleet[data-mission-type="16"] .hostile, .eventFleet[data-mission-type="16"] .neutral {
+.eventFleet[data-mission-type="16"] .friendly,
+.eventFleet[data-mission-type="16"] .hostile,
+.eventFleet[data-mission-type="16"] .neutral {
     color: #68a6b2 !important
 }
 
@@ -3917,15 +4158,20 @@ a.build-it_premium, button.build-it_premium {
     opacity: .5
 }
 
-.destinationCoords a, .destinationCoords a:link, .originCoords a, .originCoords a:link {
+.destinationCoords a,
+.destinationCoords a:link,
+.originCoords a,
+.originCoords a:link {
     font-size: 11px !important
 }
 
-.eventFleet, .eventFleet .tooltip {
+.eventFleet,
+.eventFleet .tooltip {
     color: #8c9eaa !important
 }
 
-.eventFleet .icon_movement, .eventFleet .icon_movement_reserve {
+.eventFleet .icon_movement,
+.eventFleet .icon_movement_reserve {
     position: relative;
     top: 4px
 }
@@ -3938,12 +4184,12 @@ a.build-it_premium, button.build-it_premium {
     box-shadow: 0 0 0 0 #0d1014
 }
 
-#eventContent .eventFleet > td:not([class*=icon_movement]) {
+#eventContent .eventFleet>td:not([class*=icon_movement]) {
     padding: 2px;
     border-top: 1px solid rgb(51, 51, 51, .5)
 }
 
-#eventContent .eventF leet[data-return-flight=true] > td:not([class*=icon_movement]) {
+#eventContent .eventF leet[data-return-flight=true]>td:not([class*=icon_movement]) {
     border-top: 1px solid #333
 }
 
@@ -3979,7 +4225,8 @@ a.build-it_premium, button.build-it_premium {
     color: #4162a5 !important
 }
 
-.eventFleet .arrivalTime, .eventFleet .countDown {
+.eventFleet .arrivalTime,
+.eventFleet .countDown {
     text-align: left;
     text-indent: 5px
 }
@@ -4078,7 +4325,7 @@ small {
     min-width: 1145px !important
 }
 
-#pageContent > #right {
+#pageContent>#right {
     float: left !important;
     width: max-content !important
 }
@@ -4112,7 +4359,7 @@ span.espionageDefText {
     padding: 15px
 }
 
-.ogl-mines-content td > div:first-child {
+.ogl-mines-content td>div:first-child {
     padding: 5px;
     font-size: 20px
 }
@@ -4146,7 +4393,8 @@ span.espionageDefText {
     box-shadow: inherit
 }
 
-.ogl-moon-div.ogl-active:hover > .ogl-moon-hover, .ogl-planet-div:hover > .ogl-planet-hover {
+.ogl-moon-div.ogl-active:hover>.ogl-moon-hover,
+.ogl-planet-div:hover>.ogl-planet-hover {
     display: flex;
     width: 100px;
     transition: width 2s;
@@ -4164,46 +4412,51 @@ span.espionageDefText {
 @keyframes fadeIn {
     0% {
         opacity: 0
-	}
+    }
+
     100% {
         opacity: 1
-	}
+    }
 }
 
 @-moz-keyframes fadeIn {
     0% {
         opacity: 0
-	}
+    }
+
     100% {
         opacity: 1
-	}
+    }
 }
 
 @-webkit-keyframes fadeIn {
     0% {
         opacity: 0
-	}
+    }
+
     100% {
         opacity: 1
-	}
+    }
 }
 
 @-o-keyframes fadeIn {
     0% {
         opacity: 0
-	}
+    }
+
     100% {
         opacity: 1
-	}
+    }
 }
 
 @-ms-keyframes fadeIn {
     0% {
         opacity: 0
-	}
+    }
+
     100% {
         opacity: 1
-	}
+    }
 }
 
 .ogl-planet-hover:hover {
@@ -4220,7 +4473,8 @@ span.espionageDefText {
     box-shadow: inherit
 }
 
-.ogl-moon-hover, .ogl-planet-hover {
+.ogl-moon-hover,
+.ogl-planet-hover {
     background: inherit;
     box-shadow: inherit;
     position: absolute;
@@ -4283,7 +4537,7 @@ body.ogame select {
     margin-bottom: 100px
 }
 
-#siteFooter > * {
+#siteFooter>* {
     opacity: .5
 }
 
@@ -4292,7 +4546,8 @@ body.ogame select {
     width: 80px
 }
 
-.ogl-fleet-table td:first-child, .ogl-fleet-table td:last-child {
+.ogl-fleet-table td:first-child,
+.ogl-fleet-table td:last-child {
     font-weight: 800;
     color: #537797 !important
 }
@@ -4314,7 +4569,7 @@ body.ogame select {
     border: solid 1px #da961a
 }
 
-.ogl-fleet-ship:hover + span {
+.ogl-fleet-ship:hover+span {
     color: #da961a
 }
 
@@ -4567,7 +4822,9 @@ body.ogame select {
     background-color: currentColor
 }
 
-#galaxyContent .fleetAction, #galaxyContent div.activity.minute15, #galaxyContent div.activity.showMinutes {
+#galaxyContent .fleetAction,
+#galaxyContent div.activity.minute15,
+#galaxyContent div.activity.showMinutes {
     pointer-events: none
 }
 
@@ -4610,42 +4867,39 @@ div.activity.showMinutes {
     width: 190px !important
 }
 
-#galaxyContent .playername > a {
+#galaxyContent .playername>a {
     display: inline-block
 }
 
-#galaxyContent .cellPlayerName .status_abbr_longinactive, .ogl-spyTable .status_abbr_longinactive {
+#galaxyContent .cellPlayerName .status_abbr_longinactive,
+.ogl-spyTable .status_abbr_longinactive {
     color: #6e6e6e !important
 }
 
-#galaxyContent .cellPlayerName .status_abbr_inactive, .ogl-spyTable .status_abbr_inactive {
+#galaxyContent .cellPlayerName .status_abbr_inactive,
+.ogl-spyTable .status_abbr_inactive {
     color: #888 !important
 }
 
 #galaxyContent .galaxyRow[class*="filtered_filter"] {
-    opacity: 0.2 !important;
+    opacity: 0.2 !important
 }
-    
+
 #galaxyContent .empty_filter .ogl-colors {
     pointer-events: none;
-    opacity: 0.5;
-} 
+    opacity: 0.5
+}
 
 .ogl-disabled {
     pointer-events: none;
 }
-#galaxyContent .cellPlayerName span {
-	/* display: inline-block;
-        overflow: hidden;
-        vertical-align: top;
-	white-space: nowrap */
-}
 
-#galaxyContent .cellAction{
+#galaxyContent .cellAction {
     width: 85px !important;
 }
+
 #galaxyContent .ctContentRow .cellAction {
-    width: 95px !important;    
+    width: 95px !important;
     gap: 1px !important;
 }
 
@@ -4667,12 +4921,14 @@ div.activity.showMinutes {
     width: 100% !important
 }
 
-#galaxyContent .galaxyRow[class*=filtered_filter], #galaxyContent .galaxyRow[data-marked=gray] {
+#galaxyContent .galaxyRow[class*=filtered_filter],
+#galaxyContent .galaxyRow[data-marked=gray] {
     background: 0 0;
-    /* opacity: 1 !important */
 }
 
-.ogl-stalkPlanets [data-marked=gray], .galaxyRow[class*=filtered_filter] td, tr[data-marked=gray] .galaxyCell {
+.ogl-stalkPlanets [data-marked=gray],
+.galaxyRow[class*=filtered_filter] td,
+tr[data-marked=gray] .galaxyCell {
     opacity: .2 !important
 }
 
@@ -4685,7 +4941,9 @@ div.activity.showMinutes {
     opacity: 1 !important
 }
 
-#galaxyContent .ogl-highlighted .cellAlliance, #galaxyContent .ogl-highlighted .cellPlanetName, #galaxyContent .ogl-highlighted .cellPlayerName {
+#galaxyContent .ogl-highlighted .cellAlliance,
+#galaxyContent .ogl-highlighted .cellPlanetName,
+#galaxyContent .ogl-highlighted .cellPlayerName {
     border-bottom: 1px solid #ccc !important;
     border-top: 1px solid #ccc !important
 }
@@ -4693,7 +4951,7 @@ div.activity.showMinutes {
 #galaxyContent .cellAlliance {
     justify-content: start !important;
     width: 91px !important;
-    margin-left: 4px;
+    margin-left: 4px
 }
 
 .ogl-colors {
@@ -4713,7 +4971,8 @@ div.activity.showMinutes {
     box-shadow: inset 0 50px rgba(255, 255, 255, .1), inset 0 5px 5px rgba(0, 0, 0, .7)
 }
 
-[data-marked] .ogl-colors, div[data-marker] {
+[data-marked] .ogl-colors,
+div[data-marker] {
     background: currentColor;
     border: 2px solid currentColor;
     border-radius: 50%;
@@ -4741,44 +5000,62 @@ div.activity.showMinutes {
     border-radius: 6px;
     display: grid;
     grid-gap: 10px;
-    grid-template-columns:repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     padding: 10px
 }
 
-[data-marked] .ogl-colors, div[data-marker].ogl-active, div[data-marker]:hover {
+[data-marked] .ogl-colors,
+div[data-marker].ogl-active,
+div[data-marker]:hover {
     box-shadow: inset 0 50px rgba(0, 0, 0, .3), inset 0 5px 5px rgba(0, 0, 0, .3)
 }
 
-[data-marked=red] .ogl-colors, [data-marker=red], [data-toggle=red] {
+[data-marked=red] .ogl-colors,
+[data-marker=red],
+[data-toggle=red] {
     color: #ab2727 !important
 }
 
-[data-marked=yellow] .ogl-colors, [data-marker=yellow], [data-toggle=yellow] {
+[data-marked=yellow] .ogl-colors,
+[data-marker=yellow],
+[data-toggle=yellow] {
     color: #f3de4c !important;
     color: #d4be27 !important
 }
 
-[data-marked=green] .ogl-colors, [data-marker=green], [data-toggle=green] {
+[data-marked=green] .ogl-colors,
+[data-marker=green],
+[data-toggle=green] {
     color: #31af9d !important
 }
 
-[data-marked=blue] .ogl-colors, [data-marker=blue], [data-toggle=blue] {
+[data-marked=blue] .ogl-colors,
+[data-marker=blue],
+[data-toggle=blue] {
     color: #435f92 !important
 }
 
-[data-marked=violet] .ogl-colors, [data-marker=violet], [data-toggle=violet] {
+[data-marked=violet] .ogl-colors,
+[data-marker=violet],
+[data-toggle=violet] {
     color: #a833da !important
 }
 
-[data-marked=gray] .ogl-colors, [data-marker=gray], [data-toggle=gray] {
+[data-marked=gray] .ogl-colors,
+[data-marker=gray],
+[data-toggle=gray] {
     color: #8a8a8a !important
 }
 
-[data-marked=brown] .ogl-colors, [data-marker=brown], [data-toggle=brown] {
+[data-marked=brown] .ogl-colors,
+[data-marker=brown],
+[data-toggle=brown] {
     color: #8b4513 !important
 }
 
-[data-marked=orange] .ogl-colors, [data-marker=orange], [data-toggle=orange] {
+[data-marked=orange] .ogl-colors,
+[data-marker=orange],
+[data-toggle=orange] {
     color: #ff6347 !important
 }
 
@@ -4835,13 +5112,13 @@ div.activity.showMinutes {
     background: #5d3d77 !important
 }
 
-    .ogl-spyTable tr[data-marked=orange] {
-        background: #be613c !important
-    }
+.ogl-spyTable tr[data-marked=orange] {
+    background: #be613c !important
+}
 
-    .ogl-spyTable tr[data-marked=brown] {
-        background: #432a18 !important
-    }
+.ogl-spyTable tr[data-marked=brown] {
+    background: #432a18 !important
+}
 
 
 #galaxyContent .galaxyRow[data-marked=red] div[class*=PlayerName] {
@@ -4901,7 +5178,9 @@ div.activity.showMinutes {
 }
 
 
-#galaxyContent .galaxyRow[data-marked] div[class*=Alliance], #galaxyContent .galaxyRow[data-marked] td[class*=PlanetName], #galaxyContent .galaxyRow[data-marked] div[class*=PlayerName] {
+#galaxyContent .galaxyRow[data-marked] div[class*=Alliance],
+#galaxyContent .galaxyRow[data-marked] td[class*=PlanetName],
+#galaxyContent .galaxyRow[data-marked] div[class*=PlayerName] {
     box-shadow: inset 0 50px 0 rgba(0, 0, 0, .5)
 }
 
@@ -4929,7 +5208,7 @@ div.activity.showMinutes {
     vertical-align: top
 }
 
-.ogl-tableOptions > * {
+.ogl-tableOptions>* {
     float: right !important
 }
 
@@ -5085,12 +5364,14 @@ div.activity.showMinutes {
     width: 14px
 }
 
-.ogl-ranking, .ogl-stalk h1 a {
+.ogl-ranking,
+.ogl-stalk h1 a {
     color: #e6648e !important;
     font-size: 10px
 }
 
-.ogl-ranking:hover, .ogl-stalk h1 a:hover {
+.ogl-ranking:hover,
+.ogl-stalk h1 a:hover {
     color: orange !important;
     text-decoration: underline !important
 }
@@ -5103,11 +5384,11 @@ div.activity.showMinutes {
     margin-top: 10px;
     display: grid;
     grid-gap: 3px;
-    grid-template-columns:repeat(4, 1fr)
+    grid-template-columns: repeat(4, 1fr)
 }
 
 .ogl-tooltip .ogl-stalkPlanets {
-    grid-template-columns:repeat(3, 1fr)
+    grid-template-columns: repeat(3, 1fr)
 }
 
 .ogl-sideStalk .ogl-stalkPlanets {
@@ -5115,7 +5396,7 @@ div.activity.showMinutes {
     margin-top: 0
 }
 
-.ogl-stalkPlanets > a {
+.ogl-stalkPlanets>a {
     background: #1e2123;
     border: 2px solid #2f2f2f;
     border-radius: 3px;
@@ -5150,7 +5431,7 @@ div.activity.showMinutes {
     color: #d43635
 }
 
-.ogl-stalkPlanets > a.ogl-main.ogl-activity i {
+.ogl-stalkPlanets>a.ogl-main.ogl-activity i {
     display: none
 }
 
@@ -5159,13 +5440,14 @@ div.activity.showMinutes {
     box-shadow: inset 0 50px 0 rgba(0, 0, 0, .6)
 }
 
-.ogl-stalkPlanets > a.ogl-active {
+.ogl-stalkPlanets>a.ogl-active {
     border: 2px solid #3c536d
 }
 
 .ogl-stalkPlanets [data-marked]:not([data-marked=gray]).ogl-active:not(.ptre_updated) {
     border: 2px solid #3c536d !important
 }
+
 .ogl-stalkPlanets [data-marked]:not([data-marked=gray]).ogl-active.ptre_updated {
     border-right: 2px solid #3c536d !important;
     border-top: 2px solid #3c536d !important;
@@ -5174,23 +5456,23 @@ div.activity.showMinutes {
 
 
 
-    .ogl-stalkPlanets > a:hover:not(.ptre_updated) {
-        border: 2px solid #ff5722 !important;
-        border: 2px solid #3c536d !important;
-    }
+.ogl-stalkPlanets>a:hover:not(.ptre_updated) {
+    border: 2px solid #ff5722 !important;
+    border: 2px solid #3c536d !important;
+}
 
-.ogl-stalkPlanets > a:hover.ptre_updated {
+.ogl-stalkPlanets>a:hover.ptre_updated {
     border-top: 2px solid #3c536d !important;
     border-bottom: 2px solid #3c536d !important;
     border-right: 2px solid #3c536d !important;
 }
-        
 
 
-        .ogl-stalkPlanets.ogl-stalkList a {
-            opacity: 1 !important;
-            text-align: center
-        }
+
+.ogl-stalkPlanets.ogl-stalkList a {
+    opacity: 1 !important;
+    text-align: center
+}
 
 .ogl-stalkPlanets .ogl-moon {
     bottom: 3px;
@@ -5268,7 +5550,7 @@ div.activity.showMinutes {
     filter: sepia(100%) hue-rotate(-50deg) saturate(10)
 }
 
-.ogl-lock > span {
+.ogl-lock>span {
     display: inline-block;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -5304,7 +5586,7 @@ div.activity.showMinutes {
     background: #0d1014;
     border-radius: 5px;
     display: grid !important;
-    grid-template-columns:repeat(5, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     padding: 5px !important;
     width: 150px !important
 }
@@ -5345,7 +5627,8 @@ div.activity.showMinutes {
     border-radius: 5px
 }
 
-.ogl-icon-gt:hover, .ogl-icon-pt:hover {
+.ogl-icon-gt:hover,
+.ogl-icon-pt:hover {
     border: 1px solid orange
 }
 
@@ -5390,11 +5673,11 @@ div.activity.showMinutes {
     box-sizing: border-box;
     display: grid;
     grid-gap: 1px;
-    grid-template-columns:auto 40px;
+    grid-template-columns: auto 40px;
     user-select: none
 }
 
-.ogl-quickLinks > div {
+.ogl-quickLinks>div {
     background-color: #13181d;
     box-shadow: inset 0 1px rgba(255, 255, 255, .05);
     color: #96a0a2 !important;
@@ -5409,7 +5692,8 @@ div.activity.showMinutes {
     padding: 0 8px
 }
 
-.ogl-quickMoon.ogl-current, .ogl-quickPlanet.ogl-current {
+.ogl-quickMoon.ogl-current,
+.ogl-quickPlanet.ogl-current {
     pointer-events: none
 }
 
@@ -5422,7 +5706,8 @@ div.activity.showMinutes {
     background-color: #3c1212 !important
 }
 
-.ogl-quickMoon:not(.ogl-quickEmpty):hover, .ogl-quickPlanet:not(.ogl-quickEmpty):hover {
+.ogl-quickMoon:not(.ogl-quickEmpty):hover,
+.ogl-quickPlanet:not(.ogl-quickEmpty):hover {
     background: rgba(255, 94, 0, .18) !important;
     color: #ffa330 !important;
     outline: 1px solid #ad5b16;
@@ -5477,13 +5762,13 @@ div.activity.showMinutes {
     right: 40px !important
 }
 
-.maincontent .ogl-shortHeader + #technologydetails_wrapper {
+.maincontent .ogl-shortHeader+#technologydetails_wrapper {
     display: none !important;
     margin-top: -48px !important;
     position: relative !important
 }
 
-.maincontent .ogl-shortHeader + #technologydetails_wrapper.slide-up {
+.maincontent .ogl-shortHeader+#technologydetails_wrapper.slide-up {
     display: block !important
 }
 
@@ -5497,7 +5782,8 @@ div.activity.showMinutes {
     width: 23px
 }
 
-.ogl-shortHeader .toggleHeader, .shortHeader .toggleHeader {
+.ogl-shortHeader .toggleHeader,
+.shortHeader .toggleHeader {
     background: url("https://gf1.geo.gfsrv.net/cdn0b/d55059f8c9bab5ebf9e8a3563f26d1.gif") no-repeat 0 0 !important
 }
 
@@ -5544,12 +5830,17 @@ resourceIcon.metal {
     box-shadow: inset 0 5px #d748e8, inset 0 1px #ce5fca, inset 0 -1px #de47da
 }
 
-.res #selectMaxCrystal, .res #selectMaxDeuterium, .res #selectMaxMetal, .res #selectMinCrystal, .res #selectMinDeuterium, .res #selectMinMetal {
+.res #selectMaxCrystal,
+.res #selectMaxDeuterium,
+.res #selectMaxMetal,
+.res #selectMinCrystal,
+.res #selectMinDeuterium,
+.res #selectMinMetal {
     cursor: pointer
 }
 
 .ogl-stalkPlanets {
-    grid-template-columns:repeat(1, 1fr)
+    grid-template-columns: repeat(1, 1fr)
 }
 
 .ogl-stalkPlanets a {
@@ -5579,19 +5870,21 @@ resourceIcon.metal {
     margin-bottom: 10px
 }
 
-.ogl-flyingGrid > div {
+.ogl-flyingGrid>div {
     display: grid;
     grid-gap: 10px;
-    grid-template-columns:repeat(4, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     overflow-y: auto
 }
 
-.ogl-flyingGrid > div > div {
+.ogl-flyingGrid>div>div {
     background: #0f1317;
     padding: 10px
 }
 
-.ogl-flyingGrid .ogl-crystal span, .ogl-flyingGrid .ogl-deut span, .ogl-flyingGrid .ogl-metal span {
+.ogl-flyingGrid .ogl-crystal span,
+.ogl-flyingGrid .ogl-deut span,
+.ogl-flyingGrid .ogl-metal span {
     display: inline-block;
     margin-right: 10px;
     width: 20px
@@ -5613,7 +5906,7 @@ resourceIcon.metal {
     box-shadow: inset 0 1px rgba(255, 255, 255, .2), 0 0 0 1px #000;
     color: #fff;
     display: flex;
-    grid-template-columns:repeat(10, 1fr);
+    grid-template-columns: repeat(10, 1fr);
     text-align: center
 }
 
@@ -5625,7 +5918,7 @@ resourceIcon.metal {
     background: linear-gradient(to left, #248469, #b9801a)
 }
 
-.ogl-fleetSpeed > div {
+.ogl-fleetSpeed>div {
     background: #252d3e;
     box-shadow: inset -2px 0 7px rgba(0, 0, 0, .7);
     cursor: pointer;
@@ -5636,12 +5929,12 @@ resourceIcon.metal {
     min-width: 30px
 }
 
-.ogl-fleetSpeed > div:hover {
+.ogl-fleetSpeed>div:hover {
     opacity: .5;
     color: #fff
 }
 
-.ogl-fleetSpeed > div.ogl-active {
+.ogl-fleetSpeed>div.ogl-active {
     background: 0 0;
     opacity: 1;
     color: #fff
@@ -5681,7 +5974,9 @@ hr {
     width: 100%
 }
 
-.ogl-search-content .ogl-date, .ogl-sideStalk .ogl-date, .ogl-tooltip .ogl-date {
+.ogl-search-content .ogl-date,
+.ogl-sideStalk .ogl-date,
+.ogl-tooltip .ogl-date {
     color: #61768e !important;
     font-size: 10px
 }
@@ -5713,7 +6008,9 @@ hr {
     right: auto !important
 }
 
-.ogl-tooltip .icon_against, .ogl-tooltip .icon_chat, .ogl-tooltip .icon_user {
+.ogl-tooltip .icon_against,
+.ogl-tooltip .icon_chat,
+.ogl-tooltip .icon_user {
     margin-right: 0
 }
 
@@ -5809,18 +6106,18 @@ hr {
     display: none;
 }
 
-    .ogl-dialogOverlay.ogl-active {
-        align-items: center;
-        background: rgba(0,0,0,.7);
-        display: flex;
-        justify-content: center;
-        left: 0;
-        position: fixed;
-        top: 0;
-        height: 100%;
-        width: 100%;
-        z-index: 10000;
-    }
+.ogl-dialogOverlay.ogl-active {
+    align-items: center;
+    background: rgba(0, 0, 0, .7);
+    display: flex;
+    justify-content: center;
+    left: 0;
+    position: fixed;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 10000;
+}
 
 .ogl-dialog {
     background: #262e39;
@@ -5848,17 +6145,17 @@ hr {
 @media only screen and (max-height: 800px) {
     .ogl-dialogOverlay {
         padding-top: 0
-	}
+    }
 }
 
 @media only screen and (max-height: 600px) {
     .ogl-dialogOverlay {
         padding-top: 0
-	}
+    }
 }
 
 .ogl-dialogContent .ogl-stalkPlanets {
-    grid-template-columns:repeat(4, 1fr) !important;
+    grid-template-columns: repeat(4, 1fr) !important;
     align-content: start;
     background: #0d1117;
     padding: 10px;
@@ -5903,7 +6200,9 @@ hr {
     opacity: .2
 }
 
-.ogl-colorHidden, .ogl-galaxyHidden, .ogl-systemHidden {
+.ogl-colorHidden,
+.ogl-galaxyHidden,
+.ogl-systemHidden {
     display: none !important
 }
 
@@ -5943,7 +6242,8 @@ hr {
     color: #ff7c7c
 }
 
-.ogl-fleetInfo div, .ogl-fleetInfo li {
+.ogl-fleetInfo div,
+.ogl-fleetInfo li {
     display: flex;
     justify-content: space-between
 }
@@ -5987,7 +6287,8 @@ table.fleetinfo {
     width: max-content !important
 }
 
-table.fleetinfo tr td, table.fleetinfo tr th {
+table.fleetinfo tr td,
+table.fleetinfo tr th {
     padding: 2px 5px
 }
 
@@ -5999,16 +6300,19 @@ table.fleetinfo tr:nth-child(odd) {
     box-shadow: inset 0 50px rgba(0, 0, 0, .4)
 }
 
-.ogl-metal, table.fleetinfo tr:nth-last-child(3) {
+.ogl-metal,
+table.fleetinfo tr:nth-last-child(3) {
     color: #af866a;
     color: #ffaacca1
 }
 
-.ogl-crystal, table.fleetinfo tr:nth-last-child(2) {
+.ogl-crystal,
+table.fleetinfo tr:nth-last-child(2) {
     color: #73e5ffc7
 }
 
-.ogl-deut, table.fleetinfo tr:nth-last-child(1) {
+.ogl-deut,
+table.fleetinfo tr:nth-last-child(1) {
     color: #a6e0b0
 }
 
@@ -6029,7 +6333,20 @@ table.fleetinfo tr:nth-child(odd) {
     border: 1px solid #e06c29 !important
 }
 
-.close-tooltip, .icon_against, .icon_chat, .icon_close, .icon_eye, .icon_fastforward, .icon_maximize, .icon_missile, .icon_plus, .icon_trash, .icon_user, .ogl-icon-attack, .ogl-mmorpgstats, .ogl-pin {
+.close-tooltip,
+.icon_against,
+.icon_chat,
+.icon_close,
+.icon_eye,
+.icon_fastforward,
+.icon_maximize,
+.icon_missile,
+.icon_plus,
+.icon_trash,
+.icon_user,
+.ogl-icon-attack,
+.ogl-mmorpgstats,
+.ogl-pin {
     background: currentColor !important;
     color: #485f93 !important;
     cursor: pointer;
@@ -6041,12 +6358,40 @@ table.fleetinfo tr:nth-child(odd) {
     width: 16px
 }
 
-.close-tooltip.ogl-active, .icon_against.ogl-active, .icon_chat.ogl-active, .icon_close.ogl-active, .icon_eye.ogl-active, .icon_fastforward.ogl-active, .icon_maximize.ogl-active, .icon_missile.ogl-active, .icon_plus.ogl-active, .icon_trash.ogl-active, .icon_user.ogl-active, .ogl-icon-attack.ogl-active, .ogl-mmorpgstats.ogl-active, .ogl-pin.ogl-active, .ogl-tableOptions .icon.ogl-active {
-	color: #813383 !important
+.close-tooltip.ogl-active,
+.icon_against.ogl-active,
+.icon_chat.ogl-active,
+.icon_close.ogl-active,
+.icon_eye.ogl-active,
+.icon_fastforward.ogl-active,
+.icon_maximize.ogl-active,
+.icon_missile.ogl-active,
+.icon_plus.ogl-active,
+.icon_trash.ogl-active,
+.icon_user.ogl-active,
+.ogl-icon-attack.ogl-active,
+.ogl-mmorpgstats.ogl-active,
+.ogl-pin.ogl-active,
+.ogl-tableOptions .icon.ogl-active {
+    color: #813383 !important
 }
 
-.close-tooltip:hover, .icon_against:hover, .icon_chat:hover, .icon_plus:hover, .icon_close:hover, .icon_eye:hover, .icon_fastforward:hover, .icon_maximize:hover, .icon_missile:hover, .icon_trash:hover, .icon_user:hover, .ogl-icon-attack:hover, .ogl-mmorpgstats:hover, .ogl-pin:hover, .ogl-tableOptions .icon:hover {
-	color: #c75817 !important
+.close-tooltip:hover,
+.icon_against:hover,
+.icon_chat:hover,
+.icon_plus:hover,
+.icon_close:hover,
+.icon_eye:hover,
+.icon_fastforward:hover,
+.icon_maximize:hover,
+.icon_missile:hover,
+.icon_trash:hover,
+.icon_user:hover,
+.ogl-icon-attack:hover,
+.ogl-mmorpgstats:hover,
+.ogl-pin:hover,
+.ogl-tableOptions .icon:hover {
+    color: #c75817 !important
 }
 
 .ogl-icon-attack:before {
@@ -6160,7 +6505,8 @@ table.fleetinfo tr:nth-child(odd) {
     width: 2px
 }
 
-.close-tooltip:before, .icon_close:before {
+.close-tooltip:before,
+.icon_close:before {
     background: #fff;
     content: "";
     display: block;
@@ -6172,7 +6518,8 @@ table.fleetinfo tr:nth-child(odd) {
     width: 2px
 }
 
-.close-tooltip:after, .icon_close:after {
+.close-tooltip:after,
+.icon_close:after {
     background: #fff;
     content: "";
     display: block;
@@ -6291,6 +6638,81 @@ table.fleetinfo tr:nth-child(odd) {
     transform: translate(-50%, -50%) rotate(-45deg);
     width: 2px
 }
+.ogi-toast {
+    z-index: 10000;
+    display: flex;
+    flex-flow: row wrap;
+    position: fixed;
+    top: 25px;
+    left: -600px;
+    width: 300px;
+    min-height: 50px;
+    background-color: #1c2b38d1;
+    transition: all .8s linear;
+    border: 1px solid;
+    border-radius: 2px;
+    padding: 3px
+}
+
+.ogi-toast.toast-show {
+    left: 20px;
+    animation-delay: 0s
+}
+
+.ogi-toast-error {
+    color: red;
+    border-color: red
+}
+
+.ogi-toast-info {
+    color: #06cef9;
+    border-color: #06cef9
+}
+
+.ogi-toast-success {
+    color: #00ff80;
+    border-color: #00ff80
+}
+
+.ogi-toast-warning {
+    color: #d25b00;
+    border-color: #d25b00
+}
+
+.ogi-toast-title {
+    display: flex;
+    flex-flow: row wrap;
+    border-bottom: 1px solid #1c2730;
+    width: 100%;
+    height: 30px;
+    padding-top: 5px;
+    padding-left: 5px
+}
+
+.ogi-toast-container {
+    display: flex;
+    flex-flow: row wrap
+}
+
+.ogi-toast-logo {
+    display: flex;
+    font-size: 50px;
+    margin-top: auto;
+    margin-bottom: auto
+}
+
+.ogi-toast-logo i {
+    margin: auto
+}
+
+.ogi-toast-body {
+    display: flex;
+    flex-wrap: wrap;
+    width: 220px;
+    margin-left: 10px;
+    margin-top: auto;
+    margin-bottom: auto
+}
 
 .ogl-pin:before {
     border-left: 3px solid transparent;
@@ -6361,31 +6783,31 @@ table.fleetinfo tr:nth-child(odd) {
     background: rgb(72, 95, 147);
     border-radius: 2px;
     border-top: 1px solid rgb(91, 110, 158);
-	
+
 }
 
 .ogl-ptre:hover {
-	background-color: #c75817 !important;
-	border-color: #c75817 !important;
+    background-color: #c75817 !important;
+    border-color: #c75817 !important;
 }
 
 .icon_maximize:before {
-	border: 1px solid #fff;
-	box-sizing: border-box;
-	content: "";
-	display: block;
-	height: 6px;
-	left: 60%;
-	position: absolute;
-	top: 45%;
-	transform: translate(-50%, -50%);
-	width: 6px
+    border: 1px solid #fff;
+    box-sizing: border-box;
+    content: "";
+    display: block;
+    height: 6px;
+    left: 60%;
+    position: absolute;
+    top: 45%;
+    transform: translate(-50%, -50%);
+    width: 6px
 }
 
 
 
 .ogl-ptre-acti {
-	text-align:center;
+    text-align: center;
     width: 35px;
 }
 
@@ -6436,19 +6858,19 @@ table.fleetinfo tr:nth-child(odd) {
 .expeditionDebrisSlotBox {
     align-items: center;
     display: grid;
-    grid-template-columns:20% auto auto auto
+    grid-template-columns: 20% auto auto auto
 }
 
 .expeditionDebrisSlotBox li {
     list-style: none
 }
 
-.expeditionDebrisSlotBox > img {
+.expeditionDebrisSlotBox>img {
     float: right;
     justify-self: center
 }
 
-.expeditionDebrisSlotBox > div {
+.expeditionDebrisSlotBox>div {
     line-height: 1.6;
     text-align: left
 }
@@ -6520,35 +6942,35 @@ span.resbuttons {
     width: 0;
 }
 
-    .ptreContent [data-check].ogl_active {
-        background: none;
-        box-shadow: inset 0 0 0 3px currentColor;
-    }
+.ptreContent [data-check].ogl_active {
+    background: none;
+    box-shadow: inset 0 0 0 3px currentColor;
+}
 
-.ptreActivities > span {
+.ptreActivities>span {
     color: var(--red2);
 }
 
-.ptreActivities > div {
+.ptreActivities>div {
     display: grid;
     grid-gap: 5px;
     grid-template-columns: repeat(12, 1fr);
 }
 
-    .ptreActivities > div > * {
-        align-items: center;
-        background: var(--p2);
-        color: #656f78;
-        display: grid;
-        grid-gap: 5px;
-        grid-template-rows: 18px auto;
-        padding: 5px 3px;
-    }
+.ptreActivities>div>* {
+    align-items: center;
+    background: var(--p2);
+    color: #656f78;
+    display: grid;
+    grid-gap: 5px;
+    grid-template-rows: 18px auto;
+    padding: 5px 3px;
+}
 
-        .ptreActivities > div > * > * {
-            display: inline-block;
-            margin: auto;
-        }
+.ptreActivities>div>*>* {
+    display: inline-block;
+    margin: auto;
+}
 
 .ptreActivities .ptreDotStats {
     height: 30px;
@@ -6566,7 +6988,7 @@ span.resbuttons {
 }
 
 .ptre_updated {
-    border-left: 2px rgb(0,139,0) solid !important;
+    border-left: 2px rgb(0, 139, 0) solid !important;
 }
 
 
@@ -6587,20 +7009,19 @@ span.resbuttons {
     user-select: none !important;
 }
 
-    .ogl_button:hover {
-        filter: brightness(1.3) !important;
-    }
+.ogl_button:hover {
+    filter: brightness(1.3) !important;
+}
 
 .ogl_fleet {
     color: var(--fleet) !important;
 }
 
-.splitLine
-{
-    background:var(--p4) !important;
-    border:none !important;
-    height:2px !important;
-    margin:9px 0 !important;
+.splitLine {
+    background: var(--p4) !important;
+    border: none !important;
+    height: 2px !important;
+    margin: 9px 0 !important;
 }
 
 /* SPytable MOD*/
@@ -6609,9 +7030,11 @@ span.resbuttons {
     width: 665px !important;
 }
 
-#contentWrapper, #contentWrapper #buttonz {
+#contentWrapper,
+#contentWrapper #buttonz {
     width: 715px !important;
 }
+
 #contentWrapper #buttonz .content {
     background-size: 715px !important;
 }
@@ -6623,6 +7046,7 @@ span.resbuttons {
 #eventFooter {
     background-size: 707px !important;
 }
+
 #eventContent {
     background-size: 700px !important;
 }
@@ -6630,6 +7054,127 @@ span.resbuttons {
 #buttonz .header {
     background-size: 715px !important;
 }
+
 .trash_box {
-        left: -654px !important;
+    left: -654px !important;
+}.ogi-loader-container {
+    position: relative
+}
+
+.ogi-loader-text {
+    vertical-align: middle;
+    margin-left: 25px;
+    font-size: 10px;
+    color: #00dcffcc
+}
+
+#ogi-pantry-sync {
+    margin-left: 8px;
+    padding-bottom: 8px
+}
+
+.ogi-loader {
+    transform: rotateZ(45deg);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    color: #254aff
+}
+
+.ogi-loader:after,
+.ogi-loader:before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: inherit;
+    height: inherit;
+    border-radius: 50%;
+    transform: rotateX(70deg);
+    animation: 1s spin linear infinite
+}
+
+.ogi-loader:after {
+    color: rgb(42, 127, 255, .92);
+    transform: rotateY(70deg);
+    animation-delay: .4s
+}
+
+@keyframes rotate {
+    0% {
+        transform: translate(-50%, -50%) rotateZ(0)
+    }
+
+    100% {
+        transform: translate(-50%, -50%) rotateZ(360deg)
+    }
+}
+
+@keyframes rotateccw {
+    0% {
+        transform: translate(-50%, -50%) rotate(0)
+    }
+
+    100% {
+        transform: translate(-50%, -50%) rotate(-360deg)
+    }
+}
+
+@keyframes spin {
+
+    0%,
+    100% {
+        box-shadow: .2em 0 0 0 currentcolor
+    }
+
+    12% {
+        box-shadow: .2em .2em 0 0 currentcolor
+    }
+
+    25% {
+        box-shadow: 0 .2em 0 0 currentcolor
+    }
+
+    37% {
+        box-shadow: -.2em .2em 0 0 currentcolor
+    }
+
+    50% {
+        box-shadow: -.2em 0 0 0 currentcolor
+    }
+
+    62% {
+        box-shadow: -.2em -.2em 0 0 currentcolor
+    }
+
+    75% {
+        box-shadow: 0 -.2em 0 0 currentcolor
+    }
+
+    87% {
+        box-shadow: .2em -.2em 0 0 currentcolor
+    }
+}
+
+#resourcesbarcomponent {
+    position: relative;
+    position: absolute;
+    top: 20px !important;
+    left: 195px !important;
+    width: 480px !important;
+    height: 50px !important;
+    float: left
+}
+
+#galaxyContent .ctContentRow .cellAction .buddyrequest {
+    display: none
+}
+
+#technologydetails .technology_tree {
+    opacity: .85 !important;
+    background-color: transparent !important;
+    position: relative !important;
+    top: 0 !important;
+    margin-left: 25px !important
 }
