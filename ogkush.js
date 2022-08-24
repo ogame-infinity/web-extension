@@ -1099,7 +1099,7 @@ class OGInfinity {
                 that.createDOM("div", { class: "ogk-tech-controls" })
               );
             lock = infoDiv.appendChild(
-              that.createDOM("a", { class: "icon icon_lock" })
+              that.createDOM("a", { class: "icon icon_lock", title: "Lock missing resources", })
             );
             lock.addEventListener("click", () => {
               lockListener();
@@ -1222,7 +1222,7 @@ class OGInfinity {
               .querySelector(".txt_box .details")
               .cloneNode(true);
             lock = infoDiv.appendChild(
-              that.createDOM("a", { class: "icon icon_lock" })
+              that.createDOM("a", { class: "icon icon_lock", title: "Lock missing resources", })
             );
             lock.addEventListener("click", () => {
               lockListener();
