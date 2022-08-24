@@ -8544,7 +8544,8 @@ class OGInfinity {
     }
     if (value == 0) precision = 0;
     else if (value < 1e3) precision = 0;
-    else precision = 1;
+    else if (value < 1e6) precision = 1;
+    else precision = 2;
     if (isNaN(value)) return value;
     const abbrev = [
       "",
