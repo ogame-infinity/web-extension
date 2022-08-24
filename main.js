@@ -4,7 +4,6 @@ class DataHelper {
     this.names = {};
     this.loading = false;
   }
-
   init() {
     return new Promise(async (resolve, reject) => {
       chrome.storage.local.get("ogi-scanned-" + this.universe, (result) => {
@@ -22,7 +21,6 @@ class DataHelper {
       });
     });
   }
-
   clearData() {
     this.scannedPlanets = {};
     this.scannedPlayers = {};
@@ -32,7 +30,6 @@ class DataHelper {
     this.saveData();
     this.update();
   }
-
   filter(name, alliance) {
     let possible = [];
     if (alliance) {
@@ -55,7 +52,6 @@ class DataHelper {
     }
     return possible;
   }
-
   getPlayer(id) {
     if (isNaN(Number(id))) {
       id = this.names[id];
@@ -68,7 +64,6 @@ class DataHelper {
       }
     }
     let response = {};
-
     let player = this.players[id];
     let scannedPlanets = this.scannedPlanets[id];
     let scannedPlayer = this.scannedPlayers[id];
@@ -89,12 +84,7 @@ class DataHelper {
       response.military = { ...player.military } || { score: 0, position: 0 };
       response.research = { ...player.research } || { score: 0, position: 0 };
       response.economy = { ...player.economy } || { score: 0, position: 0 };
-      response.def = -(
-        response.points.score -
-        response.economy.score -
-        response.research.score -
-        response.military.score
-      );
+      response.def = -(response.points.score - response.economy.score - response.research.score - response.military.score);
       response.economy.score = response.economy.score - response.def;
       response.military.score = response.military.score - response.def;
       response.lastUpdate = this.lastPlanetsUpdate;
@@ -124,10 +114,8 @@ class DataHelper {
     response.topScore = this.topScore;
     return response;
   }
-
   scan(system, ptreKey = null, serverTime = null) {
     let ptrePosition = {};
-
     system.forEach((row) => {
       let sameOld = false;
       if (!this.scannedPlanets[row.id]) {
@@ -148,7 +136,6 @@ class DataHelper {
           }
         });
       }
-
       if (ptreKey && (!known || row.deleted)) {
         ptrePosition[row.coords] = {};
         ptrePosition[row.coords].id = row.planetId || -1;
@@ -162,7 +149,6 @@ class DataHelper {
           ptrePosition[row.coords].moon.id = row.moonId || -1;
         }
       }
-
       if (!known) {
         this.scannedPlanets[row.id][row.coords] = row.moon;
         if (ptreKey && row.id) {
@@ -196,29 +182,21 @@ class DataHelper {
           ptrePosition[row.coords].old_rank = player?.points?.position || -1;
           ptrePosition[row.coords].old_score = player?.points?.score || -1;
           ptrePosition[row.coords].old_fleet = player?.military?.ships || -1;
-          //debugger;
         }
       }
     });
     this.saveData();
     if (Object.keys(ptrePosition).length > 0) {
-      //debugger;
       this.updatePtreGalaxy(ptrePosition);
     }
   }
-
   updatePtreGalaxy(ptrePosition) {
-    fetch("https://ptre.chez.gg/scripts/api_galaxy_import_infos.php?tool=oglight", {
-      priority: "low",
-      method: "POST",
-      body: JSON.stringify(ptrePosition),
-    })
+    fetch("https://ptre.chez.gg/scripts/api_galaxy_import_infos.php?tool=oglight", { priority: "low", method: "POST", body: JSON.stringify(ptrePosition) })
       .then((response) => response.json())
       .then((data) => {
         if (data.code != 1) console.log("Can't send data to PTRE");
       });
   }
-
   saveData() {
     chrome.storage.local.set({
       [`ogi-scanned-${this.universe}`]: JSON.stringify({
@@ -229,7 +207,6 @@ class DataHelper {
       }),
     });
   }
-
   async update() {
     if (this.loading) return;
     if (isNaN(this.lastUpdate) || new Date() - this.lastUpdate > 5 * 60 * 1e3) {
@@ -252,21 +229,17 @@ class DataHelper {
       console.log("Last ogame's data update was: " + this.lastUpdate);
     }
   }
-
   _fetchXML(url) {
     return fetch(url)
       .then((rep) => rep.text())
       .then((str) => new window.DOMParser().parseFromString(str, "text/xml"))
       .then((xml) => xml);
   }
-
   _updateHighscore(players) {
     let types = ["points", "economy", "research", "military"];
     let promises = [];
     types.forEach((type, index) => {
-      let p = this._fetchXML(
-        `https://${this.universe}.ogame.gameforge.com/api/highscore.xml?category=1&type=` + index
-      ).then((xml) => {
+      let p = this._fetchXML(`https://${this.universe}.ogame.gameforge.com/api/highscore.xml?category=1&type=` + index).then((xml) => {
         Array.from(xml.querySelectorAll("player")).forEach((player) => {
           let playerid = player.getAttribute("id");
           if (!players[playerid]) {
@@ -287,7 +260,6 @@ class DataHelper {
     });
     return Promise.all(promises).then(() => players);
   }
-
   _updatePlayers(players) {
     return fetch(`https://${this.universe}.ogame.gameforge.com/api/players.xml`)
       .then((rep) => rep.text())
@@ -319,7 +291,6 @@ class DataHelper {
         return players;
       });
   }
-
   _updatePlanets(players) {
     return fetch(`https://${this.universe}.ogame.gameforge.com/api/universe.xml`)
       .then((rep) => rep.text())
@@ -332,12 +303,7 @@ class DataHelper {
         }
         Array.from(xml.querySelectorAll("planet")).forEach((planet, index) => {
           let moon = planet.firstChild;
-          let planetjson = {
-            id: planet.getAttribute("id"),
-            name: planet.getAttribute("name"),
-            coords: planet.getAttribute("coords"),
-            moon: moon ? true : false,
-          };
+          let planetjson = { id: planet.getAttribute("id"), name: planet.getAttribute("name"), coords: planet.getAttribute("coords"), moon: moon ? true : false };
           let player = players[planet.getAttribute("player")];
           if (player) {
             player.planets.push(planetjson);
@@ -368,7 +334,6 @@ class DataHelper {
         return players;
       });
   }
-
   _updateAlliances(players) {
     return fetch(`https://${this.universe}.ogame.gameforge.com/api/alliances.xml`)
       .then((rep) => rep.text())
@@ -386,14 +351,11 @@ class DataHelper {
       });
   }
 }
-
 const UNIVERSE = window.location.host.split(".")[0];
 let universes = {};
 let currentUniverse = null;
 let dataHelper = null;
-
 if (!universes[UNIVERSE] || Object.keys(universes[UNIVERSE]) === 0) {
-  //chrome.storage.local.clear()
   chrome.storage.local.get([UNIVERSE], function (data) {
     if (data && Object.keys(data).length > 0) {
       try {
@@ -411,7 +373,6 @@ if (!universes[UNIVERSE] || Object.keys(universes[UNIVERSE]) === 0) {
     processData();
   });
 }
-
 function processData() {
   if (dataHelper) {
     universes[UNIVERSE] = dataHelper;
@@ -425,7 +386,6 @@ function processData() {
         tempSaveData.lastUpdate = universes[UNIVERSE].lastUpdate.toJSON();
         tempSaveData.lastPlanetsUpdate = universes[UNIVERSE].lastPlanetsUpdate.toJSON();
         tempSaveData.lastPlayersUpdate = universes[UNIVERSE].lastPlayersUpdate.toJSON();
-
         chrome.storage.local.set({ [UNIVERSE]: tempSaveData }, function (at) {});
       });
       dataHelper = universes[UNIVERSE];
@@ -435,7 +395,6 @@ function processData() {
     }
   });
 }
-
 function injectScript(path, cb, module = false) {
   var s = document.createElement("script");
   s.src = chrome.runtime.getURL(path);
@@ -448,7 +407,6 @@ function injectScript(path, cb, module = false) {
     cb && cb();
   };
 }
-
 window.addEventListener("DOMContentLoaded", (event) => {
   injectScript("ogkush.js", null, true);
 });
@@ -457,7 +415,6 @@ document.addEventListener("ogi-chart", function (e) {
     injectScript("libs/chartjs-plugin-labels.js");
   });
 });
-
 window.addEventListener(
   "ogi-expedition",
   function (evt) {
@@ -474,7 +431,6 @@ window.addEventListener(
   },
   true
 );
-
 window.addEventListener(
   "ogi-players",
   function (evt) {
@@ -491,7 +447,6 @@ window.addEventListener(
   },
   false
 );
-
 window.addEventListener(
   "ogi-filter",
   function (evt) {
@@ -516,7 +471,6 @@ document.addEventListener("ogi-notification", function (e) {
   const msg = Object.assign({ iconUrl: "res/logo128.png" }, e.detail);
   chrome.runtime.sendMessage({ type: "notification", universe: UNIVERSE, message: msg }, function (response) {});
 });
-
 function editDistance(s1, s2) {
   s1 = s1.toLowerCase();
   s2 = s2.toLowerCase();
@@ -538,7 +492,6 @@ function editDistance(s1, s2) {
   }
   return costs[s2.length];
 }
-
 function similarity(s1, s2) {
   var longer = s1;
   var shorter = s2;
@@ -552,7 +505,6 @@ function similarity(s1, s2) {
   }
   return (longerLength - editDistance(longer, shorter)) / parseFloat(longerLength);
 }
-
 const url = chrome.runtime.getURL("res/expeditions.tsv");
 let expeditionsMap = {};
 let logbooks = {};
@@ -574,7 +526,6 @@ fetch(url)
       }
     }
   });
-
 function getExpeditionType(message) {
   let splits = message.split("\n\n");
   logbook = splits[splits.length - 1];
@@ -594,7 +545,6 @@ function getExpeditionType(message) {
       type = expeditionsMap[i];
     }
   }
-  //console.log(max, message);
   if (max > 0.35) {
     return { type: type, busy: busy };
   } else {
