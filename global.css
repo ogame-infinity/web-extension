@@ -1947,11 +1947,9 @@ a.build-it_premium, button.build-it_premium {
     display: flex;
     width: 100%;
     position: inherit;
-    top: 50px;
-    right: 0;
     justify-content: space-around;
-    background: #1c2934a3;
-    padding: 13px 0
+    background: linear-gradient(to bottom, #1c2934a3 30%, #000000a3 70%, transparent);
+    padding: 70px 0
 }
 
 .msg.ogk-metal .msg_status, .msg_new.ogk-metal .msg_status {
@@ -4956,7 +4954,8 @@ div.activity.showMinutes {
 
 .ogl-harvestOptions {
     display: flex;
-    justify-content: space-between;
+    justify-content: right;
+    gap: 0.5em;
     min-height: 24px;
     background: #171e25;
     box-shadow: inset 0 1px rgba(255, 255, 255, .07);

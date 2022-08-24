@@ -881,7 +881,7 @@ class OGInfinity {
             let infoDiv = document
               .querySelector("#technologydetails .sprite")
               .appendChild(that.createDOM("div", { class: "ogk-tech-controls" }));
-            lock = infoDiv.appendChild(that.createDOM("a", { class: "icon icon_lock" }));
+            lock = infoDiv.appendChild(that.createDOM("a", { class: "icon icon_lock", title: "Lock missing resources"}));
             lock.addEventListener("click", () => {
               lockListener();
             });
@@ -960,7 +960,7 @@ class OGInfinity {
             let lvlFromTo = titleDiv.appendChild(that.createDOM("div", {}, ``));
             titleDiv.appendChild(that.createDOM("div", {}, "Missing"));
             let helpNode = document.querySelector(".txt_box .details").cloneNode(true);
-            lock = infoDiv.appendChild(that.createDOM("a", { class: "icon icon_lock" }));
+            lock = infoDiv.appendChild(that.createDOM("a", { class: "icon icon_lock", title: "Lock missing resources"}));
             lock.addEventListener("click", () => {
               lockListener();
             });
