@@ -7188,8 +7188,6 @@ class OGInfinity {
         }
       );
 
-      const preChoosenMission = fleetDispatcher.mission;
-      const hasPreChoosenMission = preChoosenMission != 0;
       this.overwriteFleetDispatcher("stopLoading", false, () => {
         let missions = fleetDispatcher.getAvailableMissions();
         let warning = document.getElementsByClassName(
@@ -7243,7 +7241,13 @@ class OGInfinity {
               defaultMission = missions[0];
             } else if (selectedMission) {
               defaultMission = selectedMission;
-            } else if (fleetDispatcher.targetIsBuddyOrAllyMember === true) {
+            } else if (
+              fleetDispatcher.targetIsBuddyOrAllyMember === true ||
+              fleetDispatcher.getOwnPlanetName(
+                fleetDispatcher.targetPlanet,
+                fleetDispatcher.targetPlanet.type
+              )
+            ) {
               defaultMission = that.json.options.harvestMission;
             } else if (fleetDispatcher.targetPlanet.position === 16) {
               defaultMission = that.json.options.expeditionMission;
