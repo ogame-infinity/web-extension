@@ -4085,6 +4085,7 @@ class OGInfinity {
           } else {
             this.combats[id] = true;
             this.fetchAndConvertRC(id).then((cr) => {
+              if(cr === null) return
               let date = getFormatedDate(cr.timestamp, "[d].[m].[y]");
               if (cr.coordinates.position == 16) {
                 if (!this.json.expeditionSums[date]) {
@@ -4313,12 +4314,13 @@ class OGInfinity {
   }
 
   fetchAndConvertRC(messageId) {
-    return fetch(
-      `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=messages&messageId=${messageId}&tabid=21&ajax=1`
-    )
+    const url = `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=messages&messageId=${messageId}&tabid=21&ajax=1`
+    return fetch(url)
       .then((rep) => rep.text())
       .then((str) => {
-        let begin = str.indexOf("JSON('") + 6;
+        const beginText = "JSON('";
+        if(str.indexOf(beginText) == -1) return null
+        let begin = str.indexOf(beginText) + 6;
         let end = str.indexOf("');");
         let json = JSON.parse(str.substr(begin, end - begin));
         let combatIds = [];
