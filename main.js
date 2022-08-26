@@ -89,12 +89,7 @@ class DataHelper {
       response.military = { ...player.military } || { score: 0, position: 0 };
       response.research = { ...player.research } || { score: 0, position: 0 };
       response.economy = { ...player.economy } || { score: 0, position: 0 };
-      response.def = -(
-        response.points.score -
-        response.economy.score -
-        response.research.score -
-        response.military.score
-      );
+      response.def = -(response.points.score - response.economy.score - response.research.score - response.military.score);
       response.economy.score = response.economy.score - response.def;
       response.military.score = response.military.score - response.def;
       response.lastUpdate = this.lastPlanetsUpdate;
@@ -264,9 +259,7 @@ class DataHelper {
     let types = ["points", "economy", "research", "military"];
     let promises = [];
     types.forEach((type, index) => {
-      let p = this._fetchXML(
-        `https://${this.universe}.ogame.gameforge.com/api/highscore.xml?category=1&type=` + index
-      ).then((xml) => {
+      let p = this._fetchXML(`https://${this.universe}.ogame.gameforge.com/api/highscore.xml?category=1&type=` + index).then((xml) => {
         Array.from(xml.querySelectorAll("player")).forEach((player) => {
           let playerid = player.getAttribute("id");
           if (!players[playerid]) {
