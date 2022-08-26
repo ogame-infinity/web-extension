@@ -1,12 +1,13 @@
 {
   "name": "Ogame Infinity",
-  "version": "1",
+  "version": "12345",
   "manifest_version": 2,
   "description": "OGI - To Ogame's infinity and beyond!",
   "homepage_url": "https://ogameinfinity.com",
 
   "content_scripts": [
     {
+      "exclude_matches": ["https://*.ogame.gameforge.com/game/admin2/*"],
       "matches": ["https://*.ogame.gameforge.com/game/*"],
       "js": ["main.js"],
       "css": ["global.css"],
