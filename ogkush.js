@@ -5930,7 +5930,9 @@ class OGInfinity {
             deutReal.innerText = Math.max(0, fleetDispatcher.cargoDeuterium).toLocaleString("de-DE");
           } else {
             deutLeft.classList.remove("overmark");
-            deutReal.innerText = deutAvailable - fleetDispatcher.getConsumption();
+            let currentDeut = deutAvailable - fleetDispatcher.getConsumption();
+            deutReal.innerText = currentDeut.toLocaleString("de-DE");
+
           }
           if (filled > Math.max(0, deutAvailable - fleetDispatcher.getConsumption())) {
             deutFiller.value = (deutAvailable - fleetDispatcher.getConsumption()).toLocaleString("de-DE");
@@ -5945,7 +5947,7 @@ class OGInfinity {
             crystalReal.innerText = Math.max(0, fleetDispatcher.cargoCrystal).toLocaleString("de-DE");
           } else {
             crystalLeft.classList.remove("overmark");
-            crystalReal.innerText = crystalAvailable;
+            crystalReal.innerText = crystalAvailable.toLocaleString("de-DE");
           }
         } else if (index == 0) {
           filled = this.removeNumSeparator(metalFiller.value);
@@ -5957,7 +5959,7 @@ class OGInfinity {
             metalReal.innerText = Math.max(0, fleetDispatcher.cargoMetal).toLocaleString("de-DE");
           } else {
             metalLeft.classList.remove("overmark");
-            metalReal.innerText = metalAvailable;
+            metalReal.innerText = metalAvailable.toLocaleString("de-DE");
           }
         }
         let ships = {};
