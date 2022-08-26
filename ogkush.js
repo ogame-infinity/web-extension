@@ -10439,6 +10439,10 @@ class OGInfinity {
         let first = true;
         actBtn &&
           actBtn.addEventListener("click", () => {
+            if (this.page != "galaxy") {
+              let coords = document.querySelector(`.ogl-stalkPlanets a.ogl-main`).getAttribute("data-coords").split(":");
+              location.href = `?page=ingame&component=galaxy&galaxy=${coords[0]}&system=${coords[1]}&position=${coords[2]}`
+            }
             if ($("#galaxyLoading").is(":visible")) return;
             let active = sideStalk.querySelectorAll(`a.ogl-active`);
             let next =
