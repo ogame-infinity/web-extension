@@ -2225,7 +2225,7 @@ class OGInfinity {
         let inter = setInterval(() => {
           if (!this.isLoading) {
             clearInterval(inter);
-            this.overview();
+            this.overview(true);
           }
         }, 20);
       });
@@ -3153,7 +3153,7 @@ class OGInfinity {
     this.popup(null, body);
   }
 
-  overview() {
+  overview(forcePlanetView=false) {
     let header = this.createDOM("div", { class: "ogl-tabs" });
     let fleetBtn = header.appendChild(this.createDOM("span", { class: "ogl-tab ogl-active" }, "Fleet"));
     let defBtn = header.appendChild(this.createDOM("span", { class: "ogl-tab" }, "Defense"));
@@ -3181,6 +3181,12 @@ class OGInfinity {
     defBtn.addEventListener("click", tabListener);
     minesBtn.addEventListener("click", tabListener);
     this.popup(null, body);
+
+    // Force the planet view to be displayed instead of the moon view.
+    if(forcePlanetView){
+      setTimeout( () => { document.querySelector(".ogl-fleet-content .ogl-planet").click()}, 10 )
+    }
+
   }
 
   fetchAndConvertRC(messageId) {
@@ -4586,6 +4592,7 @@ class OGInfinity {
       table.appendChild(row);
     });
     content.appendChild(table);
+
     return content;
   }
 
