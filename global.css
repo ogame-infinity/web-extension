@@ -222,7 +222,6 @@ input[type="password"] {
   background-color: rgb(72, 95, 147);
   color: white;
   padding: 0 4px;
-  border: 1px solid black;
   border-radius: 3px;
   font-size: 1em;
   right: 10px;
