@@ -4624,7 +4624,7 @@ class OGInfinity {
     td.appendChild(moonIcon);
     row.appendChild(td);
     this.json.empire.forEach((planet) => {
-      let link = `?page=ingame&component=defenses&cp=${moon ? planet.moon.id : planet.id}`;
+      let link = `?page=ingame&component=defenses&cp=${moon && planet.moon ? planet.moon.id : planet.id}`;
       row.appendChild(this.createDOM("th", {}, `<p>${planet.name}</p> <a class="ogl-fleet-coords" href="${link}">${planet.coordinates}</span>`));
     });
     row.appendChild(this.createDOM("th", { class: "ogl-sum-symbol" }, "Σ"));
