@@ -221,7 +221,7 @@ input[type="password"] {
 .ogl-sideStalk .ogi-sideStalk-closeBtn {
   background-color: rgb(72, 95, 147);
   color: white;
-  padding: 0 2px;
+  padding: 0 4px;
   border: 1px solid black;
   border-radius: 3px;
   font-size: 1em;

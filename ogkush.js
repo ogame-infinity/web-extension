@@ -7422,7 +7422,7 @@ class OGInfinity {
             )
           );
         }
-        let closeBtn = sideStalk.appendChild(this.createDOM("span", { class: "ogi-sideStalk-closeBtn" }, "▲"));
+        let closeBtn = sideStalk.appendChild(this.createDOM("span", { class: "ogi-sideStalk-closeBtn" }, "-"));
         closeBtn.addEventListener("click", () => {
           this.json.options.sideStalkVisible = false;
           this.saveData();
