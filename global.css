@@ -219,16 +219,10 @@ input[type="password"] {
 }
 
 .ogl-sideStalk .ogi-sideStalk-closeBtn {
-  background-color: rgb(72, 95, 147);
-  color: white;
-  padding: 0 4px;
-  border-radius: 3px;
-  font-size: 1em;
   right: 10px;
   top: 10px;
   position: absolute;
-  cursor: pointer;
-  opacity: 0.7;
+  opacity: 0.50;
 }
 
 .ogl-sideStalk:hover .ogi-sideStalk-closeBtn {

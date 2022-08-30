@@ -7409,8 +7409,8 @@ class OGInfinity {
           this.sideStalk();
         });
       } else {
-        watchlistBtn = sideStalk.appendChild(this.createDOM("a", { class: "ogl-text-btn" }, "h"));
-        actBtn = sideStalk.appendChild(this.createDOM("a", { class: "ogl-text-btn" }, "&#9888"));
+        watchlistBtn = sideStalk.appendChild(this.createDOM("a", { class: "ogl-text-btn", title: "Go back"}, "h"));
+        actBtn = sideStalk.appendChild(this.createDOM("a", { class: "ogl-text-btn", title: ""}, "🌌"));
         if (this.json.options.ptreTK) {
           ptreBtn = sideStalk.appendChild(
             this.createDOM(
@@ -7423,7 +7423,7 @@ class OGInfinity {
             )
           );
         }
-        let closeBtn = sideStalk.appendChild(this.createDOM("span", { class: "ogi-sideStalk-closeBtn" }, "-"));
+        let closeBtn = sideStalk.appendChild(this.createDOM("span", { class: "ogl-text-btn ogi-sideStalk-closeBtn", title: "Collapse side stalker" }, "-"));
         closeBtn.addEventListener("click", () => {
           this.json.options.sideStalkVisible = false;
           this.saveData();
