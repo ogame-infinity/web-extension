@@ -6278,6 +6278,7 @@ class OGInfinity {
             fleetDispatcher.updateTarget();
             fleetDispatcher.fetchTargetPlayerData();
             fleetDispatcher.refresh();
+            document.querySelector("#expeditiontime").value = this.json.options.expeditionDefaultTime || 1;
             document.querySelector(".ogl-moon-icon").classList.remove("ogl-active");
             document.querySelector(".ogl-planet-icon").classList.add("ogl-active");
             this.expedition = false;
@@ -9338,6 +9339,7 @@ class OGInfinity {
       23: ["Technologie hyperespace", "Hyperspace technology"],
       24: ["Seuil rentabilité", "Rentability threshold"],
       25: ["Quantité de ressources à garder", "Resources amount to keep"],
+      26: ["Nombre d'heures par défaut pour les expéditions (1-16)", "Number of hours by default for the expéditions (1-16)"],
     };
     let line = this.gameLang == "fr" ? 0 : 1;
     return '<span class="ogl-translated">' + text[id][line] + "</span>";
@@ -9711,6 +9713,17 @@ class OGInfinity {
         title: this.getTranslatedText(6),
       })
     );
+
+    optiondiv = settingDiv.appendChild(this.createDOM("span", {}, "Default expedition time"));
+    let expeditionDefaultTime = optiondiv.appendChild(
+      this.createDOM("input", {
+        type: "text",
+        class: "ogl-rvalInput ogl-formatInput tooltip",
+        value: this.json.options.expeditionDefaultTime,
+        title: this.getTranslatedText(26),
+      })
+    );
+
     settingDiv.appendChild(this.createDOM("hr"));
 
     settingDiv.appendChild(saveBtn);
@@ -9718,6 +9731,7 @@ class OGInfinity {
       this.json.options.rvalLimit = parseInt(this.removeNumSeparator(rvalInput.value));
       this.json.options.ptreTK = ptreInput.value;
       this.json.options.pantryKey = pantryInput.value;
+      this.json.options.expeditionDefaultTime = Math.max(1, Math.min(expeditionDefaultTime.value, 16));
       this.saveData();
       document.querySelector(".ogl-dialog .close-tooltip").click();
     });
