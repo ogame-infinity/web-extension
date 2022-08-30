@@ -7409,8 +7409,8 @@ class OGInfinity {
           this.sideStalk();
         });
       } else {
-        watchlistBtn = sideStalk.appendChild(this.createDOM("a", { class: "ogl-text-btn", title: "Go back"}, "h"));
-        actBtn = sideStalk.appendChild(this.createDOM("a", { class: "ogl-text-btn", title: ""}, "🌌"));
+        watchlistBtn = sideStalk.appendChild(this.createDOM("a", { class: "ogl-text-btn", title: "Go back"}, "⏴"));
+        actBtn = sideStalk.appendChild(this.createDOM("a", { class: "ogl-text-btn", title: ""}, "✵"));
         if (this.json.options.ptreTK) {
           ptreBtn = sideStalk.appendChild(
             this.createDOM(
