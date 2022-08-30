@@ -7422,7 +7422,7 @@ class OGInfinity {
             )
           );
         }
-        let closeBtn = sideStalk.appendChild(this.createDOM("a", { class: "close-tooltip" }));
+        let closeBtn = sideStalk.appendChild(this.createDOM("span", { class: "ogi-sideStalk-closeBtn" }, "▲"));
         closeBtn.addEventListener("click", () => {
           this.json.options.sideStalkVisible = false;
           this.saveData();
@@ -7430,7 +7430,7 @@ class OGInfinity {
         });
       }
       dataHelper.getPlayer(playerid).then((player) => {
-        sideStalk.appendChild(this.createDOM("div", { class: "ogi-title " + this.getPlayerStatus(player.status) }, player.name));
+        sideStalk.appendChild(this.createDOM("div", { style: "cursor: pointer", class: "ogi-title " + this.getPlayerStatus(player.status) }, player.name));
         sideStalk.appendChild(this.createDOM("hr"));
         let container = sideStalk.appendChild(
           this.createDOM("div", {
