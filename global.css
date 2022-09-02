@@ -218,6 +218,17 @@ input[type="password"] {
   font-size: 9px !important;
 }
 
+.ogl-sideStalk .ogi-sideStalk-closeBtn {
+  right: 10px;
+  top: 10px;
+  position: absolute;
+  opacity: 0.50;
+}
+
+.ogl-sideStalk:hover .ogi-sideStalk-closeBtn {
+  opacity: 1;
+}
+
 .ogl-sideStalk .ogl-stalkPlanets a {
   height: 23px;
 }

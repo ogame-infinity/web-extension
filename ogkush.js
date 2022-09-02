@@ -2225,7 +2225,7 @@ class OGInfinity {
         let inter = setInterval(() => {
           if (!this.isLoading) {
             clearInterval(inter);
-            this.overview();
+            this.overview(true);
           }
         }, 20);
       });
@@ -3153,7 +3153,7 @@ class OGInfinity {
     this.popup(null, body);
   }
 
-  overview() {
+  overview(forcePlanetView=false) {
     let header = this.createDOM("div", { class: "ogl-tabs" });
     let fleetBtn = header.appendChild(this.createDOM("span", { class: "ogl-tab ogl-active" }, "Fleet"));
     let defBtn = header.appendChild(this.createDOM("span", { class: "ogl-tab" }, "Defense"));
@@ -3181,6 +3181,12 @@ class OGInfinity {
     defBtn.addEventListener("click", tabListener);
     minesBtn.addEventListener("click", tabListener);
     this.popup(null, body);
+
+    // Force the planet view to be displayed instead of the moon view.
+    if(forcePlanetView){
+      setTimeout( () => { document.querySelector(".ogl-fleet-content .ogl-planet").click()}, 10 )
+    }
+
   }
 
   fetchAndConvertRC(messageId) {
@@ -4586,6 +4592,7 @@ class OGInfinity {
       table.appendChild(row);
     });
     content.appendChild(table);
+
     return content;
   }
 
@@ -4617,7 +4624,7 @@ class OGInfinity {
     td.appendChild(moonIcon);
     row.appendChild(td);
     this.json.empire.forEach((planet) => {
-      let link = `?page=ingame&component=defenses&cp=${moon ? planet.moon.id : planet.id}`;
+      let link = `?page=ingame&component=defenses&cp=${moon && planet.moon ? planet.moon.id : planet.id}`;
       row.appendChild(this.createDOM("th", {}, `<p>${planet.name}</p> <a class="ogl-fleet-coords" href="${link}">${planet.coordinates}</span>`));
     });
     row.appendChild(this.createDOM("th", { class: "ogl-sum-symbol" }, "Σ"));
@@ -6271,6 +6278,7 @@ class OGInfinity {
             fleetDispatcher.updateTarget();
             fleetDispatcher.fetchTargetPlayerData();
             fleetDispatcher.refresh();
+            document.querySelector("#expeditiontime").value = this.json.options.expeditionDefaultTime || 1;
             document.querySelector(".ogl-moon-icon").classList.remove("ogl-active");
             document.querySelector(".ogl-planet-icon").classList.add("ogl-active");
             this.expedition = false;
@@ -7401,8 +7409,8 @@ class OGInfinity {
           this.sideStalk();
         });
       } else {
-        watchlistBtn = sideStalk.appendChild(this.createDOM("a", { class: "ogl-text-btn" }, "h"));
-        actBtn = sideStalk.appendChild(this.createDOM("a", { class: "ogl-text-btn" }, "&#9888"));
+        watchlistBtn = sideStalk.appendChild(this.createDOM("a", { class: "ogl-text-btn", title: "History"}, "&larr;"));
+        actBtn = sideStalk.appendChild(this.createDOM("a", { class: "ogl-text-btn icon-eye", title: ""}, ""));
         if (this.json.options.ptreTK) {
           ptreBtn = sideStalk.appendChild(
             this.createDOM(
@@ -7415,7 +7423,7 @@ class OGInfinity {
             )
           );
         }
-        let closeBtn = sideStalk.appendChild(this.createDOM("a", { class: "close-tooltip" }));
+        let closeBtn = sideStalk.appendChild(this.createDOM("span", { class: "ogl-text-btn ogi-sideStalk-closeBtn", title: "Minimize" }, "&#8211;"));
         closeBtn.addEventListener("click", () => {
           this.json.options.sideStalkVisible = false;
           this.saveData();
@@ -7423,7 +7431,7 @@ class OGInfinity {
         });
       }
       dataHelper.getPlayer(playerid).then((player) => {
-        sideStalk.appendChild(this.createDOM("div", { class: "ogi-title " + this.getPlayerStatus(player.status) }, player.name));
+        sideStalk.appendChild(this.createDOM("div", { style: "cursor: pointer", class: "ogi-title " + this.getPlayerStatus(player.status) }, player.name));
         sideStalk.appendChild(this.createDOM("hr"));
         let container = sideStalk.appendChild(
           this.createDOM("div", {
@@ -9331,6 +9339,7 @@ class OGInfinity {
       23: ["Technologie hyperespace", "Hyperspace technology"],
       24: ["Seuil rentabilité", "Rentability threshold"],
       25: ["Quantité de ressources à garder", "Resources amount to keep"],
+      26: ["Nombre d'heures par défaut pour les expéditions (1-16)", "Number of hours by default for the expéditions (1-16)"],
     };
     let line = this.gameLang == "fr" ? 0 : 1;
     return '<span class="ogl-translated">' + text[id][line] + "</span>";
@@ -9704,6 +9713,17 @@ class OGInfinity {
         title: this.getTranslatedText(6),
       })
     );
+
+    optiondiv = settingDiv.appendChild(this.createDOM("span", {}, "Default expedition time"));
+    let expeditionDefaultTime = optiondiv.appendChild(
+      this.createDOM("input", {
+        type: "text",
+        class: "ogl-rvalInput ogl-formatInput tooltip",
+        value: this.json.options.expeditionDefaultTime,
+        title: this.getTranslatedText(26),
+      })
+    );
+
     settingDiv.appendChild(this.createDOM("hr"));
 
     settingDiv.appendChild(saveBtn);
@@ -9711,6 +9731,7 @@ class OGInfinity {
       this.json.options.rvalLimit = parseInt(this.removeNumSeparator(rvalInput.value));
       this.json.options.ptreTK = ptreInput.value;
       this.json.options.pantryKey = pantryInput.value;
+      this.json.options.expeditionDefaultTime = Math.max(1, Math.min(expeditionDefaultTime.value, 16));
       this.saveData();
       document.querySelector(".ogl-dialog .close-tooltip").click();
     });
