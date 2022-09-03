@@ -3153,7 +3153,7 @@ class OGInfinity {
     this.popup(null, body);
   }
 
-  overview(forcePlanetView=false) {
+  overview(forcePlanetView = false) {
     let header = this.createDOM("div", { class: "ogl-tabs" });
     let fleetBtn = header.appendChild(this.createDOM("span", { class: "ogl-tab ogl-active" }, "Fleet"));
     let defBtn = header.appendChild(this.createDOM("span", { class: "ogl-tab" }, "Defense"));
@@ -3183,10 +3183,11 @@ class OGInfinity {
     this.popup(null, body);
 
     // Force the planet view to be displayed instead of the moon view.
-    if(forcePlanetView){
-      setTimeout( () => { document.querySelector(".ogl-fleet-content .ogl-planet").click()}, 10 )
+    if (forcePlanetView) {
+      setTimeout(() => {
+        document.querySelector(".ogl-fleet-content .ogl-planet").click();
+      }, 10);
     }
-
   }
 
   fetchAndConvertRC(messageId) {
@@ -5939,7 +5940,6 @@ class OGInfinity {
             deutLeft.classList.remove("overmark");
             let currentDeut = deutAvailable - fleetDispatcher.getConsumption();
             deutReal.innerText = currentDeut.toLocaleString("de-DE");
-
           }
           if (filled > Math.max(0, deutAvailable - fleetDispatcher.getConsumption())) {
             deutFiller.value = (deutAvailable - fleetDispatcher.getConsumption()).toLocaleString("de-DE");
@@ -7409,8 +7409,8 @@ class OGInfinity {
           this.sideStalk();
         });
       } else {
-        watchlistBtn = sideStalk.appendChild(this.createDOM("a", { class: "ogl-text-btn", title: "History"}, "&larr;"));
-        actBtn = sideStalk.appendChild(this.createDOM("a", { class: "ogl-text-btn icon-eye", title: ""}, ""));
+        watchlistBtn = sideStalk.appendChild(this.createDOM("a", { class: "ogl-text-btn", title: "History" }, "&larr;"));
+        actBtn = sideStalk.appendChild(this.createDOM("a", { class: "ogl-text-btn icon-eye", title: "" }, ""));
         if (this.json.options.ptreTK) {
           ptreBtn = sideStalk.appendChild(
             this.createDOM(
@@ -8178,15 +8178,16 @@ class OGInfinity {
   async checkPantrySync(pantryKey) {
     let lastPantrySync = null;
     let lastLocalSync = this.json.pantrySync;
+    let pantrySyncObj = null;
     if (!pantryKey || (lastLocalSync && Date.now() - lastLocalSync < 180000)) {
       return;
     }
-    let syncRequest = await fetch(`https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-sync`, { priority: "high", method: "GET" }).catch(() => {
+    let syncRequest = await fetch(`https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-mainSync`, { priority: "high", method: "GET" }).catch(() => {
       return;
     });
     if (syncRequest?.ok) {
       try {
-        let pantrySyncObj = await syncRequest?.json();
+        pantrySyncObj = await syncRequest?.json();
         lastPantrySync = pantrySyncObj?.pantrySync;
       } catch {}
     } else {
@@ -8195,15 +8196,18 @@ class OGInfinity {
         return;
       }
     }
+
+    let lastPantryTry = sessionStorage.getItem("lastPantryTry") ? parseInt(sessionStorage.getItem("lastPantryTry")) : 0;
     if (!lastPantrySync || isNaN(lastPantrySync) || (lastLocalSync && lastLocalSync >= lastPantrySync && Date.now() - lastLocalSync > 300000)) {
-      this.pantrySync(pantryKey, 0);
-    } else if (!lastLocalSync || isNaN(lastLocalSync) || lastLocalSync < lastPantrySync) {
-      this.pantrySync(pantryKey, 1);
+      this.pantrySync(pantryKey, pantrySyncObj, 0);
+    } else if ((!lastLocalSync || isNaN(lastLocalSync) || lastLocalSync < lastPantrySync) && Date.now() - lastPantryTry > 10100) {
+      sessionStorage.setItem("lastPantryTry", Date.now());
+      this.pantrySync(pantryKey, pantrySyncObj, 1);
     }
   }
-  async pantrySync(pantryKey, action = 1) {
+  async pantrySync(pantryKey, mainSyncObj, action = 1) {
     if (!pantryKey) return;
-    const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+    //const delay = (ms) => new Promise((res) => setTimeout(res, ms));
     const pantryHeaders = new Headers({ "Content-Type": "application/json" });
     let success = true;
     let errorCode = null;
@@ -8225,36 +8229,29 @@ class OGInfinity {
       let combatJsonObj = {};
       let combatsSumsJsonObj = {};
       let harvestJsonObj = {};
-      let targetsJsonObj = {};
-      let settingsJsonObj = {};
+      let mainSyncJsonObj = {};
       let pantrySync = { pantrySync: Date.now() };
       expeJsonObj.expeditions = await this.getObjLastElements(this?.json?.expeditions, 5000);
       expeSumsJsonObj.expeditionSums = this?.json?.expeditionSums;
       combatJsonObj.combats = await this.getObjLastElements(this?.json?.combats, 5000);
       combatsSumsJsonObj.combatsSums = this?.json?.combatsSums;
       harvestJsonObj.harvests = this?.json?.harvests;
-      targetsJsonObj.markers = this?.json?.markers;
-      targetsJsonObj.sideStalk = this?.json?.sideStalk;
-      targetsJsonObj.targetTabs = this?.json?.targetTabs;
-      settingsJsonObj.options = this?.json?.options;
-      settingsJsonObj.searchHistory = this?.json?.searchHistory;
-      settingsJsonObj.search = this?.json?.search;
-      settingsJsonObj.sideStalk = this?.json?.sideStalk;
-      settingsJsonObj.locked = this?.json?.locked;
-      settingsJsonObj.missing = this?.json?.missing;
-      const targetsRequest = fetch(`https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-targets`, {
+      mainSyncJsonObj.options = this?.json?.options;
+      mainSyncJsonObj.searchHistory = this?.json?.searchHistory;
+      mainSyncJsonObj.search = this?.json?.search;
+      mainSyncJsonObj.sideStalk = this?.json?.sideStalk;
+      mainSyncJsonObj.locked = this?.json?.locked;
+      mainSyncJsonObj.markers = this?.json?.markers;
+      mainSyncJsonObj.sideStargetTabstalk = this?.json?.targetTabs;
+      mainSyncJsonObj.missing = this?.json?.missing;
+      mainSyncJsonObj.pantrySync = mainSyncObj?.pantrySync;
+
+      const mainSyncRequest = fetch(`https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-mainSync`, {
         priority: "low",
         method: "POST",
         headers: pantryHeaders,
-        body: JSON.stringify(targetsJsonObj),
+        body: JSON.stringify(mainSyncJsonObj),
       });
-      const otherSettingsRequest = fetch(`https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-settings`, {
-        priority: "low",
-        method: "POST",
-        headers: pantryHeaders,
-        body: JSON.stringify(settingsJsonObj),
-      });
-      await delay(1500);
       const expeRequest = fetch(`https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-expeditions`, {
         priority: "low",
         method: "POST",
@@ -8267,7 +8264,6 @@ class OGInfinity {
         headers: pantryHeaders,
         body: JSON.stringify(expeSumsJsonObj),
       });
-      await delay(1500);
       const combatRequest = fetch(`https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-combats`, {
         priority: "low",
         method: "POST",
@@ -8280,14 +8276,13 @@ class OGInfinity {
         headers: pantryHeaders,
         body: JSON.stringify(combatsSumsJsonObj),
       });
-      await delay(1500);
       const harvestRequest = fetch(`https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-harvests`, {
         priority: "low",
         method: "POST",
         headers: pantryHeaders,
         body: JSON.stringify(harvestJsonObj),
       });
-      Promise.allSettled([targetsRequest, otherSettingsRequest, expeRequest, expeSumsRequest, combatRequest, combatSumsRequest, harvestRequest]).then(async (requestsPromises) => {
+      Promise.allSettled([mainSyncRequest, expeRequest, expeSumsRequest, combatRequest, combatSumsRequest, harvestRequest]).then(async (requestsPromises) => {
         document.getElementById("ogi-pantry-sync").remove();
         for (let i = 0; i < requestsPromises.length; i++) {
           if (requestsPromises[i].status === "rejected") {
@@ -8303,9 +8298,9 @@ class OGInfinity {
           }
         }
         if (success) {
-          fetch(`https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-sync`, {
+          fetch(`https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-mainSync`, {
             priority: "low",
-            method: "POST",
+            method: "PUT",
             headers: pantryHeaders,
             body: JSON.stringify(pantrySync),
           }).then((res) => {
@@ -8318,18 +8313,17 @@ class OGInfinity {
         }
       });
     } else {
-      const targetsRequest = fetch(`https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-targets`, { priority: "high", method: "GET" });
-      const otherSettingsRequest = fetch(`https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-settings`, { priority: "high", method: "GET" });
-      await delay(1500);
       const expeRequest = fetch(`https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-expeditions`, { priority: "high", method: "GET" });
       const expeSumsRequest = fetch(`https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-expeditionSums`, { priority: "high", method: "GET" });
-      await delay(1500);
       const combatRequest = fetch(`https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-combats`, { priority: "high", method: "GET" });
       const combatSumsRequest = fetch(`https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-combatSums`, { priority: "high", method: "GET" });
-      await delay(1500);
       const harvestRequest = fetch(`https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-harvests`, { priority: "high", method: "GET" });
-      await Promise.allSettled([targetsRequest, otherSettingsRequest, expeRequest, expeSumsRequest, combatRequest, combatSumsRequest, harvestRequest]).then(async (requestsPromises) => {
-        let cloudConsolidated = {};
+      await Promise.allSettled([expeRequest, expeSumsRequest, combatRequest, combatSumsRequest, harvestRequest]).then(async (requestsPromises) => {
+        let cloudConsolidated = {
+          markers: mainSyncObj?.markers,
+          options: mainSyncObj?.options,
+          searchHistory: mainSyncObj?.searchHistory,
+        };
         document.getElementById("ogi-pantry-sync").remove();
         for (let i = 0; i < requestsPromises.length; i++) {
           if (requestsPromises[i].status === "rejected") {
@@ -8368,7 +8362,7 @@ class OGInfinity {
             ...this.json.harvests,
             ...cloudConsolidated.harvests,
           };
-          this.json.targets = cloudConsolidated?.targets || this.json.targets;
+          this.json.markers = cloudConsolidated?.markers || this.json.markers;
           this.json.options = cloudConsolidated?.options || this.json.options;
           this.json.searchHistory = cloudConsolidated?.searchHistory || this.json.searchHistory;
           this.json.pantrySync = Date.now();
@@ -8376,6 +8370,7 @@ class OGInfinity {
           console.info("[OGInfinity] - Pantry synchronisation complete");
           let toastText = `OGInfinity - Pantry synchronisation complete.`;
           this.showToast(toastText, "success", "done", null, 3500);
+          sessionStorage.removeItem("lastPantryTry");
         }
       });
     }
@@ -8396,6 +8391,7 @@ class OGInfinity {
       this.showToast(toastText, "warning", "warning", null, 3500);
     }
   }
+
   showToast(text, type = "info", icon = "info", title = null, duration = 3500) {
     let totalduration = duration + 2000;
     let toastHtml = this.createDOM("div", {
@@ -8433,6 +8429,7 @@ class OGInfinity {
       }, totalduration);
     }, 300);
   }
+
   createDOM(element, options, content) {
     let e = document.createElement(element);
     for (var key in options) {
