@@ -255,7 +255,6 @@ class OGInfinity {
     } else {
       this.univerviewLang = "en";
     }
-    console.log(this.univerviewLang);
 
     try {
       if (spionageAmount != undefined) {
@@ -1477,7 +1476,6 @@ class OGInfinity {
     let timeout;
     let previousSystem = null;
     let callback = () => {
-      console.log("cb");
       this.addGalaxyMarkers();
       this.addGalaxyTooltips();
       this.highlightTarget();
@@ -3153,7 +3151,7 @@ class OGInfinity {
     this.popup(null, body);
   }
 
-  overview(forcePlanetView=false) {
+  overview(forcePlanetView = false) {
     let header = this.createDOM("div", { class: "ogl-tabs" });
     let fleetBtn = header.appendChild(this.createDOM("span", { class: "ogl-tab ogl-active" }, "Fleet"));
     let defBtn = header.appendChild(this.createDOM("span", { class: "ogl-tab" }, "Defense"));
@@ -3183,10 +3181,11 @@ class OGInfinity {
     this.popup(null, body);
 
     // Force the planet view to be displayed instead of the moon view.
-    if(forcePlanetView){
-      setTimeout( () => { document.querySelector(".ogl-fleet-content .ogl-planet").click()}, 10 )
+    if (forcePlanetView) {
+      setTimeout(() => {
+        document.querySelector(".ogl-fleet-content .ogl-planet").click();
+      }, 10);
     }
-
   }
 
   fetchAndConvertRC(messageId) {
@@ -4997,7 +4996,12 @@ class OGInfinity {
       let metalAvailable = Math.max(0, fleetDispatcher.metalOnPlanet);
       let crystalAvailable = Math.max(0, fleetDispatcher.crystalOnPlanet);
       let deutAvailable = Math.max(0, fleetDispatcher.deuteriumOnPlanet);
+      let fleetPageParameters = new URLSearchParams(window.location.search);
       let selectedMission = null;
+      if (fleetPageParameters.has("type") && fleetPageParameters.has("mission")) {
+        if (fleetDispatcher.mission) selectedMission = fleetDispatcher.mission;
+      }
+
       let needCargo = (fret) => {
         let metal = Number(metalFiller.value.split(".").join(""));
         if (metal > metalAvailable) metalFiller.value = metalAvailable;
@@ -5137,13 +5141,20 @@ class OGInfinity {
               })
             );
           });
-          if (fleetDispatcher.currentPage == "fleet1" && missions.length > 0) {
+
+          if (fleetDispatcher.currentPage == "fleet1" || (fleetDispatcher.currentPage == "fleet2" && missions.length > 0)) {
+            if (!missions.includes(selectedMission)) {
+              selectedMission = null;
+            }
+
             if (missions.length == 1) {
               defaultMission = missions[0];
             } else if (selectedMission) {
               defaultMission = selectedMission;
-            } else if (fleetDispatcher.targetIsBuddyOrAllyMember === true || fleetDispatcher.getOwnPlanetName(fleetDispatcher.targetPlanet, fleetDispatcher.targetPlanet.type)) {
+            } else if (fleetDispatcher.getOwnPlanetName(fleetDispatcher.targetPlanet, fleetDispatcher.targetPlanet.type)) {
               defaultMission = that.json.options.harvestMission;
+            } else if (fleetDispatcher.targetIsBuddyOrAllyMember === true) {
+              defaultMission = 3;
             } else if (fleetDispatcher.targetPlanet.position === 16) {
               defaultMission = that.json.options.expeditionMission;
             } else {
@@ -5520,6 +5531,7 @@ class OGInfinity {
         onResChange(0);
         refreshRes();
       };
+
       galaxyInput.addEventListener("click", () => {
         galaxyInput.value = "";
       });
@@ -5774,6 +5786,9 @@ class OGInfinity {
         firstResRefresh = true;
       });
       $("#backToFleet1").on("click", () => {
+        if (fleetDispatcher.mission != 0) {
+          selectedMission = fleetDispatcher.mission;
+        }
         update(true);
       });
       let load = this.createDOM("div", { class: "ogl-cargo" });
@@ -5939,7 +5954,6 @@ class OGInfinity {
             deutLeft.classList.remove("overmark");
             let currentDeut = deutAvailable - fleetDispatcher.getConsumption();
             deutReal.innerText = currentDeut.toLocaleString("de-DE");
-
           }
           if (filled > Math.max(0, deutAvailable - fleetDispatcher.getConsumption())) {
             deutFiller.value = (deutAvailable - fleetDispatcher.getConsumption()).toLocaleString("de-DE");
@@ -7409,8 +7423,8 @@ class OGInfinity {
           this.sideStalk();
         });
       } else {
-        watchlistBtn = sideStalk.appendChild(this.createDOM("a", { class: "ogl-text-btn", title: "History"}, "&larr;"));
-        actBtn = sideStalk.appendChild(this.createDOM("a", { class: "ogl-text-btn icon-eye", title: ""}, ""));
+        watchlistBtn = sideStalk.appendChild(this.createDOM("a", { class: "ogl-text-btn", title: "History" }, "&larr;"));
+        actBtn = sideStalk.appendChild(this.createDOM("a", { class: "ogl-text-btn icon-eye", title: "" }, ""));
         if (this.json.options.ptreTK) {
           ptreBtn = sideStalk.appendChild(
             this.createDOM(
