@@ -164,7 +164,7 @@ div#banner_skyscraper {
   background: linear-gradient(#1d2732, #131c24) !important;
 }
 
-#resources .res_wrap:first-child input[type="text"],
+#resources .res_wrap:nth-child(2) input[type="text"],
 .metal + input[type="text"],
 input[type="text"].metal {
   color: #ffaacca1 !important;
@@ -172,7 +172,7 @@ input[type="text"].metal {
   box-shadow: none !important;
 }
 
-#resources .res_wrap:nth-child(2) input[type="text"],
+#resources .res_wrap:nth-child(3) input[type="text"],
 .crystal ~ input[type="text"],
 input[type="text"].crystal {
   color: #73e5ffc7 !important;
@@ -180,7 +180,7 @@ input[type="text"].crystal {
   box-shadow: none !important;
 }
 
-#resources .res_wrap:nth-child(3) input[type="text"],
+#resources .res_wrap:nth-child(4) input[type="text"],
 .deuterium ~ input[type="text"],
 input[type="text"].deuterium {
   color: #a6e0b0 !important;
