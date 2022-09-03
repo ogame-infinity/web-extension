@@ -146,7 +146,9 @@
 }
 
 div#banner_skyscraper {
-  top: 0 !important;
+  position: absolute;
+  top: 7.5em !important;
+  left: 1160px !important;
 }
 
 #galaxyContent td {
@@ -1533,10 +1535,6 @@ input[type="file"] {
   margin-bottom: 0;
   padding-top: 20px;
   font-weight: 800;
-}
-
-div#banner_skyscraper {
-  left: 1150px !important;
 }
 
 #fleetBriefingPart1_2 li:first-of-type {
@@ -3254,7 +3252,7 @@ button.build-it_premium {
   float: left;
   height: 16px;
   image-rendering: crisp-edges;
-  image-rendering: -moz-crisp-edges;
+  image-rendering: -chrome-crisp-edges;
   image-rendering: -webkit-optimize-contrast;
   margin-right: 10px;
   margin-left: 7px;
@@ -4397,7 +4395,7 @@ span.espionageDefText {
 .fade-in {
   animation: fadeIn ease 1s;
   -webkit-animation: fadeIn ease 10s;
-  -moz-animation: fadeIn ease 10s;
+  -chrome-animation: fadeIn ease 10s;
   -o-animation: fadeIn ease 10s;
   -ms-animation: fadeIn ease 10s;
 }
@@ -4412,7 +4410,7 @@ span.espionageDefText {
   }
 }
 
-@-moz-keyframes fadeIn {
+@-chrome-keyframes fadeIn {
   0% {
     opacity: 0;
   }
@@ -4827,7 +4825,7 @@ div.activity.showMinutes {
   color: #ffa800;
   padding: 0 1px 1px 0;
   border: 1px solid #ffa800;
-  -moz-border-radius: 3px;
+  -chrome-border-radius: 3px;
   -webkit-border-radius: 3px;
   -khtml-border-radius: 3px;
   border-radius: 3px;
