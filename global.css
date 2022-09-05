@@ -220,14 +220,16 @@ input[type="password"] {
   font-size: 9px !important;
 }
 
-.ogl-sideStalk .ogi-sideStalk-closeBtn {
+.ogl-sideStalk .ogi-sideStalk-minBtn {
+  display: inline;
   right: 10px;
   top: 10px;
   position: absolute;
   opacity: 0.50;
+  vertical-align: middle;
 }
 
-.ogl-sideStalk:hover .ogi-sideStalk-closeBtn {
+.ogl-sideStalk:hover .ogi-sideStalk-minBtn {
   opacity: 1;
 }
 
