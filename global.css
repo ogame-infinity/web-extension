@@ -4523,6 +4523,10 @@ span.espionageDefText {
   height: 15px;
 }
 
+.ogl-sideStalk .ogl-text-btn.material-icons {
+  line-height: 14px !important;
+}
+
 .ogl-text-btn:hover {
   background: #c75817;
   color: #fff !important;
