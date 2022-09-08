@@ -336,6 +336,7 @@ class OGInfinity {
     this.updateEmpireData();
     this.onGalaxyUpdate();
     this.timeZone();
+    this.updatePlanetsExpeditions();
     this.expedition = false;
 
     let storage = this.getLocalStorageSize();
@@ -9805,6 +9806,100 @@ class OGInfinity {
       }
     });
     this.popup(false, container);
+  }
+
+  updateFlyings(){
+    const FLYING_PER_PLANETS = {}
+    const eventTable = document.getElementById("eventContent");
+    const rows = eventTable.querySelectorAll("tr");
+    rows.forEach( (row) => {
+      const cols = row.querySelectorAll("td");
+
+      const flying = {}
+      flying.arrivalTime = cols[1].innerText;
+      flying.missionFleetIcon = cols[2].querySelector("img").src;
+
+      // Get the mission title by removing the suffix "own fleet" and the "return" suffix (eg: "(R)")
+      flying.missionFleetTitle = cols[2].querySelector("img").title.trim();
+      if(flying.missionFleetTitle.includes("|")) flying.missionFleetTitle = flying.missionFleetTitle.split("|")[1].trim()
+      if(flying.missionFleetTitle.includes("(")) flying.missionFleetTitle = flying.missionFleetTitle.split("(")[0].trim()
+
+      flying.origin = cols[3].innerText.trim()
+      flying.originCoords = cols[4].innerText.replace("[", "").replace("]", "").trim();
+      flying.originLink = cols[4].querySelector("a").href;
+      flying.fleetCount = cols[5].innerText;
+
+      // Get the direction
+      flying.direction = Array.from(cols[6].classList).includes("icon_movement") ? "go" : "back";
+      
+      // Get the direction image (no used as of today, but we never know)
+      const styleDirection = window.getComputedStyle(cols[6]).getPropertyValue("background");
+      flying.directionIcon = styleDirection.substring(styleDirection.indexOf("url(\"")+5, styleDirection.indexOf('")'))
+
+      flying.dest = cols[7].innerText.trim()
+      flying.destCoords = cols[8].innerText.replace("[", "").replace("]", "").trim()
+      flying.destLink = cols[8].querySelector("a").href;
+      if(!FLYING_PER_PLANETS[flying.originCoords]) FLYING_PER_PLANETS[flying.originCoords] = {}
+      if(!FLYING_PER_PLANETS[flying.originCoords][flying.missionFleetTitle]) {
+        FLYING_PER_PLANETS[flying.originCoords][flying.missionFleetTitle] = {
+          icon: flying.missionFleetIcon,
+          data: []
+        }
+      }
+      FLYING_PER_PLANETS[flying.originCoords][flying.missionFleetTitle].data.push(flying)
+    } )
+    this.json.flyingFleetPerPlanets = FLYING_PER_PLANETS;
+  }
+
+  updatePlanetsExpeditions(){
+    this.updateFlyings();
+    if(this.json.flyingFleetPerPlanets){
+      const planetList = document.getElementById("planetList").children;
+      Array.from(planetList).forEach( (planet) => {
+        const planetKoordsEl = planet.querySelector(".planet-koords")
+        if(planetKoordsEl){
+          const planetKoords = planetKoordsEl.innerText;
+          Object.keys(this.json.flyingFleetPerPlanets).forEach( (key) => {
+            if(planetKoords === key){
+              const movements = this.json.flyingFleetPerPlanets[key]
+              const div = document.createElement("div")
+              const sizeDiv = 18;
+              div.style = `
+                position: absolute !important;
+                left: -${sizeDiv+7}px !important;
+                top: 0px !important;
+                width: ${sizeDiv+5}px;
+                height: ${sizeDiv+5}px;
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                direction: rtl;
+              `
+              planetKoordsEl.parentNode.parentNode.appendChild(div)
+              Object.keys(movements).forEach( (movementKey, i) => {
+                if(i < 8){
+                  const nbrMovements = Object.keys(movements).length
+                  const movement = movements[movementKey]
+                  let size = sizeDiv;
+                  if(nbrMovements > 2){
+                    size = size / 2
+                  }
+                  const img = document.createElement("img")
+                  img.src = movement.icon
+                  img.style = `position: initial !important; width: ${size}px; height: ${size}px; margin: 1px !important;`;
+                  img.title = ""
+                  movement.data.forEach( (m) => {
+                    const symbolDirection = m.direction === "go" ? "🡒" : "🡐"
+                    img.title += `${m.missionFleetTitle}: ${m.origin}[${m.originCoords}] ${symbolDirection} ${m.dest}[${m.destCoords}] @${m.arrivalTime}\n`
+                  })
+                  div.appendChild(img)
+                }
+              })
+            }
+          })
+        }
+      })
+    }
   }
 }
 
