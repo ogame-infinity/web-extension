@@ -336,6 +336,7 @@ class OGInfinity {
     this.updateEmpireData();
     this.onGalaxyUpdate();
     this.timeZone();
+    this.updateFlyings();
     this.updatePlanetsExpeditions();
     this.expedition = false;
 
@@ -9852,7 +9853,6 @@ class OGInfinity {
   }
 
   updatePlanetsExpeditions(){
-    this.updateFlyings();
     if(this.json.flyingFleetPerPlanets){
       const planetList = document.getElementById("planetList").children;
       Array.from(planetList).forEach( (planet) => {
