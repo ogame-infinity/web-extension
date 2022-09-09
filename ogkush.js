@@ -8562,8 +8562,8 @@ class OGInfinity {
   }
 
   cleanValue(value) {
-    let sep = LocalizationStrings["thousandSeperator"];
-    let dec = LocalizationStrings["decimalPoint"];
+    let sep = LocalizationStrings["decimalPoint"];
+    let dec = LocalizationStrings["thousandSeperator"];
     let reg = new RegExp(`${dec}([^${dec}]*)$`, "g");
     let factor = 1;
     if (value.indexOf(LocalizationStrings["unitMilliard"]) > -1) {
@@ -8584,7 +8584,7 @@ class OGInfinity {
   }
 
   removeNumSeparator(str) {
-    return str.replace(new RegExp(`\\${LocalizationStrings["thousandSeperator"]}`, "g"), "");
+    return str.replace(new RegExp(`\\${LocalizationStrings["decimalPoint"]}`, "g"), "");
   }
 
   consumption(id, lvl) {
