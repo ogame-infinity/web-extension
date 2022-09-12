@@ -48,7 +48,7 @@ var dataHelper = (function () {
 
   return { getExpeditionType: expedition, getPlayer: Get, filter: filter };
 })();
-let dotted = (value) => parseInt(value).toLocaleString("de-DE");
+let dotted = (value) => parseInt(value).toLocaleString("en-EN");
 let redirect = localStorage.getItem("ogl-redirect");
 if (redirect && redirect.indexOf("https") > -1) {
   localStorage.setItem("ogl-redirect", false);
@@ -636,13 +636,13 @@ class OGInfinity {
             let baseCons = that.consumption(technoId, baselvl - 1);
             let currentCons = that.consumption(technoId, tolvl);
             let diff = currentEnergy - (currentCons - baseCons);
-            consDiv.html(`<span>${(currentCons - baseCons).toLocaleString("de-DE")}<span class="${diff < 0 ? "overmark" : "undermark"}"> (${diff.toLocaleString("de-DE")})</span></span>`);
-            prodDiv.html(`<strong>Production :</strong> <span class="value">${parseInt(baseProd).toLocaleString("de-DE")} <span class="bonus"> (+${parseInt(baseProd - currentProd).toLocaleString("de-DE")})</span></span>`);
+            consDiv.html(`<span>${(currentCons - baseCons).toLocaleString("en-EN")}<span class="${diff < 0 ? "overmark" : "undermark"}"> (${diff.toLocaleString("en-EN")})</span></span>`);
+            prodDiv.html(`<strong>Production :</strong> <span class="value">${parseInt(baseProd).toLocaleString("en-EN")} <span class="bonus"> (+${parseInt(baseProd - currentProd).toLocaleString("en-EN")})</span></span>`);
           }
           if (energyDiv) {
             let currentProd = that.production(technoId, baselvl - 1, false);
             let baseProd = that.production(technoId, tolvl, false);
-            energyDiv.html(`<span class="value">${parseInt(baseProd).toLocaleString("de-DE")} <span class="bonus"> (+${parseInt(baseProd - currentProd).toLocaleString("de-DE")})</span></span>`);
+            energyDiv.html(`<span class="value">${parseInt(baseProd).toLocaleString("en-EN")} <span class="bonus"> (+${parseInt(baseProd - currentProd).toLocaleString("en-EN")})</span></span>`);
           }
         }
         timeDiv.innerText = formatTimeWrapper(techno.time * 60 * 60, 2, true, " ", false, "");
@@ -660,7 +660,7 @@ class OGInfinity {
         if (techno.cost[0] != 0) {
           let metal = document.querySelector(".costs .metal");
           metal.innerText = that.formatToUnits(techno.cost[0]);
-          metal.setAttribute("data-title", parseInt(techno.cost[0]).toLocaleString("de-DE"));
+          metal.setAttribute("data-title", parseInt(techno.cost[0]).toLocaleString("en-EN"));
           if (baselvl != tolvl) {
             metal.appendChild(that.createDOM("li", { class: "ogk-sum" }, that.formatToUnits(resSum[0])));
           }
@@ -670,7 +670,7 @@ class OGInfinity {
         if (techno.cost[1] != 0) {
           let crystal = document.querySelector(".costs .crystal");
           crystal.innerText = that.formatToUnits(techno.cost[1]);
-          crystal.setAttribute("data-title", parseInt(techno.cost[1]).toLocaleString("de-DE"));
+          crystal.setAttribute("data-title", parseInt(techno.cost[1]).toLocaleString("en-EN"));
           if (baselvl != tolvl) {
             crystal.appendChild(that.createDOM("li", { class: "ogk-sum" }, that.formatToUnits(resSum[1])));
           }
@@ -680,7 +680,7 @@ class OGInfinity {
         if (techno.cost[2] != 0) {
           let deuterium = document.querySelector(".costs .deuterium");
           deuterium.innerText = that.formatToUnits(techno.cost[2]);
-          deuterium.setAttribute("data-title", parseInt(techno.cost[2]).toLocaleString("de-DE"));
+          deuterium.setAttribute("data-title", parseInt(techno.cost[2]).toLocaleString("en-EN"));
           if (baselvl != tolvl) {
             deuterium.appendChild(that.createDOM("li", { class: "ogk-sum" }, that.formatToUnits(resSum[2])));
           }
@@ -691,7 +691,7 @@ class OGInfinity {
           let energy = document.querySelector(".costs .energy");
           if (energy) {
             energy.innerText = that.formatToUnits(techno.cost[3]);
-            energy.setAttribute("data-title", parseInt(techno.cost[3]).toLocaleString("de-DE"));
+            energy.setAttribute("data-title", parseInt(techno.cost[3]).toLocaleString("en-EN"));
             if (baselvl != tolvl) {
               energy.appendChild(that.createDOM("li", { class: "ogk-sum" }, that.formatToUnits(resSum[3])));
             }
@@ -794,10 +794,10 @@ class OGInfinity {
               timeDiv.appendChild(that.createDOM("div", { class: "ogl-date" }, getFormatedDate(finishDate.getTime(), "<strong>[d].[m]</strong> - [G]:[i]:[s]")));
               if (technologyId == 212) {
                 let diff = Number(currentEnergy) + value * base;
-                energyDiv.html((value * base).toLocaleString("de-DE") + `<span class="${diff < 0 ? "overmark" : "undermark"}"> (${diff.toLocaleString("de-DE")})</span>`);
+                energyDiv.html((value * base).toLocaleString("en-EN") + `<span class="${diff < 0 ? "overmark" : "undermark"}"> (${diff.toLocaleString("en-EN")})</span>`);
               } else if (technologyId == 217) {
                 let diff = Number(currentEnergy) - value * base;
-                energyDiv.html((value * base).toLocaleString("de-DE") + `<span class="${diff < 0 ? "overmark" : "undermark"}"> (${diff.toLocaleString("de-DE")})</span>`);
+                energyDiv.html((value * base).toLocaleString("en-EN") + `<span class="${diff < 0 ? "overmark" : "undermark"}"> (${diff.toLocaleString("en-EN")})</span>`);
               }
               lockListener = () => {
                 let coords = that.current.coords + (that.current.isMoon ? "M" : "P");
@@ -1121,7 +1121,7 @@ class OGInfinity {
         document.querySelectorAll("#shipsChosen .technology").forEach((elem) => {
           elem.classList.add("ogi-transparent");
           let id = elem.getAttribute("data-technology");
-          elem.appendChild(this.createDOM("span", { class: "ogi-speed" }, fleetDispatcher.fleetHelper.shipsData[id].speed.toLocaleString("de-DE")));
+          elem.appendChild(this.createDOM("span", { class: "ogi-speed" }, fleetDispatcher.fleetHelper.shipsData[id].speed.toLocaleString("en-EN")));
         });
       });
       svg.addEventListener("mouseout", () => {
@@ -4192,7 +4192,7 @@ class OGInfinity {
       });
 
       let detailRank = planetsColumn.appendChild(this.createDOM("div", { class: "ogl-detailRank" }));
-      let dotted = (value) => parseInt(value).toLocaleString("de-DE");
+      let dotted = (value) => parseInt(value).toLocaleString("en-EN");
       detailRank.html(
         `\n          <div><div class="ogl-totalIcon"></div> ${this.formatToUnits(player.points.score)} <small>pts</small></div>\n          <div><div class="ogl-ecoIcon"></div> ${this.formatToUnits(
           player.economy.score
@@ -5507,7 +5507,7 @@ class OGInfinity {
           icon.classList.add("ogl-active");
         }
         durationDiv.html("<strong>" + formatTime(fleetDispatcher.getDuration() + (fleetDispatcher.mission == 15 ? 3600 : 0)) + "</strong>");
-        consDiv.innerText = fleetDispatcher.getConsumption().toLocaleString("de-DE");
+        consDiv.innerText = fleetDispatcher.getConsumption().toLocaleString("en-EN");
         if (fleetDispatcher.getConsumption() > deutAvailable) {
           consDiv.classList.add("overmark");
           if (!error) {
@@ -5752,11 +5752,11 @@ class OGInfinity {
           dLeft.classList.remove("overmark");
           dLeft.classList.remove("middlemark");
           let val = this.removeNumSeparator(document.querySelector("input#metal").value);
-          mLeft.innerText = Math.max(0, metalAvailable - val).toLocaleString("de-DE");
+          mLeft.innerText = Math.max(0, metalAvailable - val).toLocaleString("en-EN");
           val = this.removeNumSeparator(document.querySelector("input#crystal").value);
-          cLeft.innerText = Math.max(0, crystalAvailable - val).toLocaleString("de-DE");
+          cLeft.innerText = Math.max(0, crystalAvailable - val).toLocaleString("en-EN");
           val = this.removeNumSeparator(document.querySelector("input#deuterium").value);
-          dLeft.innerText = Math.max(0, deutAvailable - fleetDispatcher.getConsumption() - val).toLocaleString("de-DE");
+          dLeft.innerText = Math.max(0, deutAvailable - fleetDispatcher.getConsumption() - val).toLocaleString("en-EN");
         }
       };
       let kept = this.json.options.kept[this.current.coords + this.current.isMoon ? "M" : "P"] || this.json.options.defaultKept;
@@ -5821,8 +5821,8 @@ class OGInfinity {
         let freeSpace = fleetDispatcher.getCargoCapacity() - total;
         bar.html(
           `<div class="fleft bar_container" data-current-amount="0" data-capacity="0">\n        <div class="filllevel_bar"></div>\n        </div>\n        <div>\n        <span class="${freeSpace >= 0 ? "undermark" : "overmark"}">${freeSpace.toLocaleString(
-            "de-DE"
-          )} </span>\n        / <span> ${fleetDispatcher.getCargoCapacity().toLocaleString("de-DE")}</span>\n        </div>`
+            "en-EN"
+          )} </span>\n        / <span> ${fleetDispatcher.getCargoCapacity().toLocaleString("en-EN")}</span>\n        </div>`
         );
         let filler = document.querySelector(".ogl-cargo .filllevel_bar");
         let percent = 100 - (freeSpace / fleetDispatcher.getCargoCapacity()) * 100;
@@ -5943,44 +5943,44 @@ class OGInfinity {
         if (index == 2) {
           fleetDispatcher.cargoDeuterium = Math.min(deut, fleetDispatcher.cargoDeuterium + fleetDispatcher.getFreeCargoSpace());
           let old = deutLeft.innerText;
-          deutLeft.innerText = (deutAvailable - fleetDispatcher.getConsumption() - fleetDispatcher.cargoDeuterium).toLocaleString("de-DE");
+          deutLeft.innerText = (deutAvailable - fleetDispatcher.getConsumption() - fleetDispatcher.cargoDeuterium).toLocaleString("en-EN");
           if (old != deutLeft.innerText || deutLeft.innerText == "0") {
             deutLeft.classList.remove("middlemark");
           }
           if (fleetDispatcher.getFreeCargoSpace() == 0 && deutLeft.innerText != "0") {
             deutLeft.classList.add("overmark");
-            deutReal.innerText = Math.max(0, fleetDispatcher.cargoDeuterium).toLocaleString("de-DE");
+            deutReal.innerText = Math.max(0, fleetDispatcher.cargoDeuterium).toLocaleString("en-EN");
           } else {
             deutLeft.classList.remove("overmark");
             let currentDeut = deutAvailable - fleetDispatcher.getConsumption();
-            deutReal.innerText = currentDeut.toLocaleString("de-DE");
+            deutReal.innerText = currentDeut.toLocaleString("en-EN");
           }
           if (filled > Math.max(0, deutAvailable - fleetDispatcher.getConsumption())) {
-            deutFiller.value = (deutAvailable - fleetDispatcher.getConsumption()).toLocaleString("de-DE");
+            deutFiller.value = (deutAvailable - fleetDispatcher.getConsumption()).toLocaleString("en-EN");
           }
         } else if (index == 1) {
           filled = this.removeNumSeparator(crystalFiller.value);
           let crystal = Math.min(this.removeNumSeparator(crystalFiller.value), capacity, crystalAvailable);
           fleetDispatcher.cargoCrystal = Math.min(crystal, fleetDispatcher.cargoCrystal + fleetDispatcher.getFreeCargoSpace());
-          crystalLeft.innerText = (crystalAvailable - fleetDispatcher.cargoCrystal).toLocaleString("de-DE");
+          crystalLeft.innerText = (crystalAvailable - fleetDispatcher.cargoCrystal).toLocaleString("en-EN");
           if (fleetDispatcher.getFreeCargoSpace() == 0 && crystalLeft.innerText != "0") {
             crystalLeft.classList.add("overmark");
-            crystalReal.innerText = Math.max(0, fleetDispatcher.cargoCrystal).toLocaleString("de-DE");
+            crystalReal.innerText = Math.max(0, fleetDispatcher.cargoCrystal).toLocaleString("en-EN");
           } else {
             crystalLeft.classList.remove("overmark");
-            crystalReal.innerText = crystalAvailable.toLocaleString("de-DE");
+            crystalReal.innerText = crystalAvailable.toLocaleString("en-EN");
           }
         } else if (index == 0) {
           filled = this.removeNumSeparator(metalFiller.value);
           let metal = Math.min(this.removeNumSeparator(metalFiller.value), capacity, metalAvailable);
           fleetDispatcher.cargoMetal = Math.min(metal, fleetDispatcher.cargoMetal + fleetDispatcher.getFreeCargoSpace());
-          metalLeft.innerText = (metalAvailable - fleetDispatcher.cargoMetal).toLocaleString("de-DE");
+          metalLeft.innerText = (metalAvailable - fleetDispatcher.cargoMetal).toLocaleString("en-EN");
           if (fleetDispatcher.getFreeCargoSpace() == 0 && metalLeft.innerText != "0") {
             metalLeft.classList.add("overmark");
-            metalReal.innerText = Math.max(0, fleetDispatcher.cargoMetal).toLocaleString("de-DE");
+            metalReal.innerText = Math.max(0, fleetDispatcher.cargoMetal).toLocaleString("en-EN");
           } else {
             metalLeft.classList.remove("overmark");
-            metalReal.innerText = metalAvailable.toLocaleString("de-DE");
+            metalReal.innerText = metalAvailable.toLocaleString("en-EN");
           }
         }
         let ships = {};
@@ -5993,24 +5993,24 @@ class OGInfinity {
         cyNum.classList.remove("overmark");
         if (pbNum) pbNum.classList.remove("overmark");
         let amount = needCargo(202);
-        ptNum.innerText = amount.toLocaleString("de-DE");
+        ptNum.innerText = amount.toLocaleString("en-EN");
         ptNum.setAttribute("amount", amount);
         if (amount > (ships[202] || 0)) ptNum.classList.add("overmark");
         amount = needCargo(203);
-        gtNum.innerText = amount.toLocaleString("de-DE");
+        gtNum.innerText = amount.toLocaleString("en-EN");
         gtNum.setAttribute("amount", amount);
         if (amount > (ships[203] || 0)) gtNum.classList.add("overmark");
         amount = needCargo(219);
-        pfNum.innerText = amount.toLocaleString("de-DE");
+        pfNum.innerText = amount.toLocaleString("en-EN");
         pfNum.setAttribute("amount", amount);
         if (amount > (ships[219] || 0)) pfNum.classList.add("overmark");
         amount = needCargo(209);
-        cyNum.innerText = amount.toLocaleString("de-DE");
+        cyNum.innerText = amount.toLocaleString("en-EN");
         cyNum.setAttribute("amount", amount);
         if (amount > (ships[209] || 0)) cyNum.classList.add("overmark");
         if (pbBtn) {
           amount = needCargo(210);
-          pbNum.innerText = amount.toLocaleString("de-DE");
+          pbNum.innerText = amount.toLocaleString("en-EN");
           pbNum.setAttribute("amount", amount);
           if (amount > (ships[210] || 0)) pbNum.classList.add("overmark");
         }
@@ -6066,7 +6066,7 @@ class OGInfinity {
             fret: ship.id,
             resources: total,
           });
-          let span = this.createDOM("span", { class: "ogl-needed" }, amount.toLocaleString("de-DE"));
+          let span = this.createDOM("span", { class: "ogl-needed" }, amount.toLocaleString("en-EN"));
           document.querySelector(`.technology[data-technology="${ship.id}"]`).appendChild(span);
           span.addEventListener("click", (event) => {
             event.stopPropagation();
@@ -7891,7 +7891,7 @@ class OGInfinity {
           {
             href: "https://" + window.location.host + window.location.pathname + fleetLink,
           },
-          shipCount.toLocaleString("de-DE")
+          shipCount.toLocaleString("en-EN")
         )
       );
       let colorsContainer = line.appendChild(this.createDOM("td"));
@@ -8099,7 +8099,7 @@ class OGInfinity {
     document.querySelectorAll("input.ogl-formatInput").forEach((input) => {
       if (input.value == "-") return;
       if (input.value == "NaN") input.value = "";
-      if (input.value) input.value = parseInt(this.removeNumSeparator(input.value, true)).toLocaleString("de-DE");
+      if (input.value) input.value = parseInt(this.removeNumSeparator(input.value, true)).toLocaleString("en-EN");
     });
   }
 
@@ -8473,8 +8473,8 @@ class OGInfinity {
   }
 
   cleanValue(value) {
-    let sep = LocalizationStrings["decimalPoint"];
-    let dec = LocalizationStrings["thousandSeperator"];
+    let sep = LocalizationStrings["thousandSeperator"];
+    let dec = LocalizationStrings["decimalPoint"];
     let reg = new RegExp(`${dec}([^${dec}]*)$`, "g");
     let factor = 1;
     if (value.indexOf(LocalizationStrings["unitMilliard"]) > -1) {
@@ -8495,7 +8495,7 @@ class OGInfinity {
   }
 
   removeNumSeparator(str) {
-    return str.replace(new RegExp(`\\${LocalizationStrings["decimalPoint"]}`, "g"), "");
+    return str.replace(new RegExp(`\\${LocalizationStrings["thousandSeperator"]}`, "g"), "");
   }
 
   consumption(id, lvl) {
@@ -9207,9 +9207,9 @@ class OGInfinity {
       });
       let data = fleetDispatcher.fleetHelper.shipsData;
       for (let id in data) {
-        let infos = `\n            <div class="ogl-fleetInfo">\n                ${data[id].name}\n                <hr>\n                <div><span>Fret</span>${data[id].cargoCapacity.toLocaleString("de-DE")}</div>\n                <div><span>${this.getTranslatedText(
+        let infos = `\n            <div class="ogl-fleetInfo">\n                ${data[id].name}\n                <hr>\n                <div><span>Fret</span>${data[id].cargoCapacity.toLocaleString("en-EN")}</div>\n                <div><span>${this.getTranslatedText(
           19
-        )}</span>${data[id].speed.toLocaleString("de-DE")}</div>\n                <div><span>Conso</span>${data[id].fuelConsumption.toLocaleString("de-DE")}</div>\n            </div>`;
+        )}</span>${data[id].speed.toLocaleString("en-EN")}</div>\n                <div><span>Conso</span>${data[id].fuelConsumption.toLocaleString("en-EN")}</div>\n            </div>`;
         let ship = document.querySelector(`.technology[data-technology="${id}"]`);
         if (ship) {
           ship.setAttribute("data-title", infos);
