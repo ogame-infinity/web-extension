@@ -9243,18 +9243,18 @@ class OGInfinity {
         let backed = [0, 0, 0];
         values.forEach((value, index) => {
           if (index == values.length - 1) {
-            backed[2] = Number(value.innerText.split(".").join(""));
+            backed[2] = Number(value.innerText.split(LocalizationStrings["thousandSeperator"]).join(""));
             return;
           }
           if (index == values.length - 2) {
-            backed[1] = Number(value.innerText.split(".").join(""));
+            backed[1] = Number(value.innerText.split(LocalizationStrings["thousandSeperator"]).join(""));
             return;
           }
           if (index == values.length - 3) {
-            backed[0] = Number(value.innerText.split(".").join(""));
+            backed[0] = Number(value.innerText.split(LocalizationStrings["thousandSeperator"]).join(""));
             return;
           }
-          fleetCount += Number(value.innerText.split(".").join(""));
+          fleetCount += Number(value.innerText.split(LocalizationStrings["thousandSeperator"]).join(""));
         });
         let destination = fleet.querySelector(".destinationCoords a").innerText.slice(1, -1);
         let coords = destination + (fleet.querySelector(".destinationData moon") ? "M" : "P");
