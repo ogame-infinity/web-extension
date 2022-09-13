@@ -7657,7 +7657,7 @@ class OGInfinity {
       report.crystal = this.cleanValue(data[3].querySelectorAll(".resspan")[1].textContent.replace(/(\D*)/, ""));
       report.deut = this.cleanValue(data[3].querySelectorAll(".resspan")[2].textContent.replace(/(\D*)/, ""));
       report.total = report.metal + report.crystal + report.deut;
-      report.renta = Math.round(report.total);
+      report.renta = Math.round((report.total * report.loot) / 100);
       report.apiKey = msg.querySelector(".icon_apikey").getAttribute("title") || msg.querySelector(".icon_apikey").getAttribute("data-title");
       report.apiKey = report.apiKey.split("'")[1];
       report.pb = this.calcNeededShips({
