@@ -8143,7 +8143,6 @@ class OGInfinity {
 
   calcNeededShips(options) {
     options = options || {};
-    let resources = [this.removeNumSeparator(document.querySelector("#resources_metal").textContent), this.removeNumSeparator(document.querySelector("#resources_crystal").textContent), this.removeNumSeparator(document.querySelector("#resources_deuterium").textContent)];
     let resources = [this.removeNumSeparator(document.querySelector("#resources_metal").getAttribute("data-raw")), this.removeNumSeparator(document.querySelector("#resources_crystal").getAttribute("data-raw")), this.removeNumSeparator(document.querySelector("#resources_deuterium").getAttribute("data-raw"))];
     resources = resources.reduce((a, b) => parseInt(a) + parseInt(b));
     if (options.resources || options.resources == 0) resources = options.resources;
