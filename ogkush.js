@@ -5003,11 +5003,11 @@ class OGInfinity {
       }
 
       let needCargo = (fret) => {
-        let metal = Number(metalFiller.value.split(".").join(""));
+        let metal = Number(metalFiller.value.split(LocalizationStrings["thousandSeperator"]).join(""));
         if (metal > metalAvailable) metalFiller.value = metalAvailable;
-        let crystal = Number(crystalFiller.value.split(".").join(""));
+        let crystal = Number(crystalFiller.value.split(LocalizationStrings["thousandSeperator"]).join(""));
         if (crystal > crystalAvailable) crystalFiller.value = crystalAvailable;
-        let deut = Number(deutFiller.value.split(".").join(""));
+        let deut = Number(deutFiller.value.split(LocalizationStrings["thousandSeperator"]).join(""));
         if (deut > deutAvailable) deutFiller.value = Math.max(0, deutAvailable - fleetDispatcher.getConsumption());
         let amount = this.calcNeededShips({
           fret: fret,
@@ -8144,6 +8144,7 @@ class OGInfinity {
   calcNeededShips(options) {
     options = options || {};
     let resources = [this.removeNumSeparator(document.querySelector("#resources_metal").textContent), this.removeNumSeparator(document.querySelector("#resources_crystal").textContent), this.removeNumSeparator(document.querySelector("#resources_deuterium").textContent)];
+    let resources = [this.removeNumSeparator(document.querySelector("#resources_metal").getAttribute("data-raw")), this.removeNumSeparator(document.querySelector("#resources_crystal").getAttribute("data-raw")), this.removeNumSeparator(document.querySelector("#resources_deuterium").getAttribute("data-raw"))];
     resources = resources.reduce((a, b) => parseInt(a) + parseInt(b));
     if (options.resources || options.resources == 0) resources = options.resources;
     let type = options.fret || this.json.options.fret;
@@ -8489,7 +8490,7 @@ class OGInfinity {
       factor = 1e3;
     }
     value = value.split(sep).join("");
-    return parseInt(value.replace("|", ".") * factor);
+    return parseInt(value.replace("|", sep) * factor);
   }
 
   removeNumSeparator(str) {
