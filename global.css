@@ -3085,9 +3085,9 @@ button.build-it_premium {
   background: #171d23;
   outline: 1px solid #000;
   padding: 10px;
-  min-width: 125px;
-  margin: 10px 0 0 10px;
-  width: max-content;
+  margin: 10px 0 10px 0;
+  box-sizing: border-box;
+  width: 165px;
   position: relative;
   z-index: 10;
 }
@@ -3107,7 +3107,7 @@ button.build-it_premium {
 .ogl-sideStalk .ogi-title {
   font-size: 11px;
   display: block;
-  width: 120px;
+  width: 100%;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
@@ -5419,7 +5419,7 @@ div[data-marker]:hover {
   text-align: left !important;
   align-items: center;
   display: flex;
-  width: 120px;
+  width: 100%;
   justify-self: center;
 }
 
