@@ -550,7 +550,7 @@ class OGInfinity {
   }
 
   technoDetail() {
-    if (this.page == "research" || this.page == "supplies" || this.page == "facilities" || this.page == "shipyard" || this.page == "defenses") {
+    if (this.page == "research" || this.page == "supplies" || this.page == "facilities" || this.page == "shipyard" || this.page == "defenses" || this.page == "lfbuildings") {
       let nanites = 0;
       let robotics = 0;
       let lock;
@@ -769,7 +769,7 @@ class OGInfinity {
             titleDiv.appendChild(that.createDOM("div", {}, "Missing"));
             let resDivs = [costDiv.querySelector(".metal"), costDiv.querySelector(".crystal"), costDiv.querySelector(".deuterium")];
             let baseCost = [resDivs[0] ? resDivs[0].getAttribute("data-value") : 0, resDivs[1] ? resDivs[1].getAttribute("data-value") : 0, resDivs[2] ? resDivs[2].getAttribute("data-value") : 0];
-            let infoDiv = document.querySelector("#technologydetails .sprite").appendChild(that.createDOM("div", { class: "ogk-tech-controls" }));
+            let infoDiv = document.querySelector("#technologydetails .sprite_large").appendChild(that.createDOM("div", { class: "ogk-tech-controls" }));
             lock = infoDiv.appendChild(that.createDOM("a", { class: "icon icon_lock" }));
             lock.addEventListener("click", () => {
               lockListener();
@@ -828,7 +828,7 @@ class OGInfinity {
                 updateShipDetails(Number(input.getAttribute("max")));
               });
           } else {
-            let infoDiv = document.querySelector("#technologydetails .sprite").appendChild(that.createDOM("div", { class: "ogk-tech-controls" }));
+            let infoDiv = document.querySelector("#technologydetails .sprite_large").appendChild(that.createDOM("div", { class: "ogk-tech-controls" }));
             let baseLvl = Number(document.querySelector(".level").getAttribute("data-value"));
             let tolvl = baseLvl;
             let lvl = titleDiv.appendChild(that.createDOM("div", {}, `Lvl <strong>${baseLvl}</strong>`));
