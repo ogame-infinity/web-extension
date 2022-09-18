@@ -65,9 +65,6 @@ if ( commaSeparator.indexOf(locale) !== -1) {
     separatorLang = "de-DE"
   }
 
-console.log("parsing lang: " + separatorLang);
-console.log("banner lang: " + locale);
-
 (function goodbyeTipped() {
   if (typeof Tipped !== "undefined") {
     Tipped = {
