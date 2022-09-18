@@ -48,12 +48,26 @@ var dataHelper = (function () {
 
   return { getExpeditionType: expedition, getPlayer: Get, filter: filter };
 })();
-let dotted = (value) => parseInt(value).toLocaleString("de-DE");
+let dotted = (value) => parseInt(value).toLocaleString(separatorLang);
 let redirect = localStorage.getItem("ogl-redirect");
 if (redirect && redirect.indexOf("https") > -1) {
   localStorage.setItem("ogl-redirect", false);
   window.location.href = redirect;
 }
+
+let commaSeparator = ['en-US', 'en-GB'];
+let locale = document.getElementById('cookiebanner').getAttribute('data-locale');
+let separatorLang;
+
+if ( commaSeparator.indexOf(locale) !== -1) {
+    separatorLang = "en-US"
+  } else {
+    separatorLang = "de-DE"
+  }
+
+console.log("parsing lang: " + separatorLang);
+console.log("banner lang: " + locale);
+
 (function goodbyeTipped() {
   if (typeof Tipped !== "undefined") {
     Tipped = {
@@ -4192,7 +4206,7 @@ class OGInfinity {
       });
 
       let detailRank = planetsColumn.appendChild(this.createDOM("div", { class: "ogl-detailRank" }));
-      let dotted = (value) => parseInt(value).toLocaleString("de-DE");
+      let dotted = (value) => parseInt(value).toLocaleString(separatorLang);
       detailRank.html(
         `\n          <div><div class="ogl-totalIcon"></div> ${this.formatToUnits(player.points.score)} <small>pts</small></div>\n          <div><div class="ogl-ecoIcon"></div> ${this.formatToUnits(
           player.economy.score
@@ -5507,7 +5521,7 @@ class OGInfinity {
           icon.classList.add("ogl-active");
         }
         durationDiv.html("<strong>" + formatTime(fleetDispatcher.getDuration() + (fleetDispatcher.mission == 15 ? 3600 : 0)) + "</strong>");
-        consDiv.innerText = fleetDispatcher.getConsumption().toLocaleString("de-DE");
+        consDiv.innerText = fleetDispatcher.getConsumption().toLocaleString(separatorLang);
         if (fleetDispatcher.getConsumption() > deutAvailable) {
           consDiv.classList.add("overmark");
           if (!error) {
@@ -5752,11 +5766,11 @@ class OGInfinity {
           dLeft.classList.remove("overmark");
           dLeft.classList.remove("middlemark");
           let val = this.removeNumSeparator(document.querySelector("input#metal").value);
-          mLeft.innerText = Math.max(0, metalAvailable - val).toLocaleString("de-DE");
+          mLeft.innerText = Math.max(0, metalAvailable - val).toLocaleString(separatorLang);
           val = this.removeNumSeparator(document.querySelector("input#crystal").value);
-          cLeft.innerText = Math.max(0, crystalAvailable - val).toLocaleString("de-DE");
+          cLeft.innerText = Math.max(0, crystalAvailable - val).toLocaleString(separatorLang);
           val = this.removeNumSeparator(document.querySelector("input#deuterium").value);
-          dLeft.innerText = Math.max(0, deutAvailable - fleetDispatcher.getConsumption() - val).toLocaleString("de-DE");
+          dLeft.innerText = Math.max(0, deutAvailable - fleetDispatcher.getConsumption() - val).toLocaleString(separatorLang);
         }
       };
       let kept = this.json.options.kept[this.current.coords + this.current.isMoon ? "M" : "P"] || this.json.options.defaultKept;
@@ -5941,44 +5955,44 @@ class OGInfinity {
         if (index == 2) {
           fleetDispatcher.cargoDeuterium = Math.min(deut, fleetDispatcher.cargoDeuterium + fleetDispatcher.getFreeCargoSpace());
           let old = deutLeft.innerText;
-          deutLeft.innerText = (deutAvailable - fleetDispatcher.getConsumption() - fleetDispatcher.cargoDeuterium).toLocaleString("de-DE");
+          deutLeft.innerText = (deutAvailable - fleetDispatcher.getConsumption() - fleetDispatcher.cargoDeuterium).toLocaleString(separatorLang);
           if (old != deutLeft.innerText || deutLeft.innerText == "0") {
             deutLeft.classList.remove("middlemark");
           }
           if (fleetDispatcher.getFreeCargoSpace() == 0 && deutLeft.innerText != "0") {
             deutLeft.classList.add("overmark");
-            deutReal.innerText = Math.max(0, fleetDispatcher.cargoDeuterium).toLocaleString("de-DE");
+            deutReal.innerText = Math.max(0, fleetDispatcher.cargoDeuterium).toLocaleString(separatorLang);
           } else {
             deutLeft.classList.remove("overmark");
             let currentDeut = deutAvailable - fleetDispatcher.getConsumption();
-            deutReal.innerText = currentDeut.toLocaleString("de-DE");
+            deutReal.innerText = currentDeut.toLocaleString(separatorLang);
           }
           if (filled > Math.max(0, deutAvailable - fleetDispatcher.getConsumption())) {
-            deutFiller.value = (deutAvailable - fleetDispatcher.getConsumption()).toLocaleString("de-DE");
+            deutFiller.value = (deutAvailable - fleetDispatcher.getConsumption()).toLocaleString(separatorLang);
           }
         } else if (index == 1) {
           filled = this.removeNumSeparator(crystalFiller.value);
           let crystal = Math.min(this.removeNumSeparator(crystalFiller.value), capacity, crystalAvailable);
           fleetDispatcher.cargoCrystal = Math.min(crystal, fleetDispatcher.cargoCrystal + fleetDispatcher.getFreeCargoSpace());
-          crystalLeft.innerText = (crystalAvailable - fleetDispatcher.cargoCrystal).toLocaleString("de-DE");
+          crystalLeft.innerText = (crystalAvailable - fleetDispatcher.cargoCrystal).toLocaleString(separatorLang);
           if (fleetDispatcher.getFreeCargoSpace() == 0 && crystalLeft.innerText != "0") {
             crystalLeft.classList.add("overmark");
-            crystalReal.innerText = Math.max(0, fleetDispatcher.cargoCrystal).toLocaleString("de-DE");
+            crystalReal.innerText = Math.max(0, fleetDispatcher.cargoCrystal).toLocaleString(separatorLang);
           } else {
             crystalLeft.classList.remove("overmark");
-            crystalReal.innerText = crystalAvailable.toLocaleString("de-DE");
+            crystalReal.innerText = crystalAvailable.toLocaleString(separatorLang);
           }
         } else if (index == 0) {
           filled = this.removeNumSeparator(metalFiller.value);
           let metal = Math.min(this.removeNumSeparator(metalFiller.value), capacity, metalAvailable);
           fleetDispatcher.cargoMetal = Math.min(metal, fleetDispatcher.cargoMetal + fleetDispatcher.getFreeCargoSpace());
-          metalLeft.innerText = (metalAvailable - fleetDispatcher.cargoMetal).toLocaleString("de-DE");
+          metalLeft.innerText = (metalAvailable - fleetDispatcher.cargoMetal).toLocaleString(separatorLang);
           if (fleetDispatcher.getFreeCargoSpace() == 0 && metalLeft.innerText != "0") {
             metalLeft.classList.add("overmark");
-            metalReal.innerText = Math.max(0, fleetDispatcher.cargoMetal).toLocaleString("de-DE");
+            metalReal.innerText = Math.max(0, fleetDispatcher.cargoMetal).toLocaleString(separatorLang);
           } else {
             metalLeft.classList.remove("overmark");
-            metalReal.innerText = metalAvailable.toLocaleString("de-DE");
+            metalReal.innerText = metalAvailable.toLocaleString(separatorLang);
           }
         }
         let ships = {};
@@ -5991,24 +6005,24 @@ class OGInfinity {
         cyNum.classList.remove("overmark");
         if (pbNum) pbNum.classList.remove("overmark");
         let amount = needCargo(202);
-        ptNum.innerText = amount.toLocaleString("de-DE");
+        ptNum.innerText = amount.toLocaleString(separatorLang);
         ptNum.setAttribute("amount", amount);
         if (amount > (ships[202] || 0)) ptNum.classList.add("overmark");
         amount = needCargo(203);
-        gtNum.innerText = amount.toLocaleString("de-DE");
+        gtNum.innerText = amount.toLocaleString(separatorLang);
         gtNum.setAttribute("amount", amount);
         if (amount > (ships[203] || 0)) gtNum.classList.add("overmark");
         amount = needCargo(219);
-        pfNum.innerText = amount.toLocaleString("de-DE");
+        pfNum.innerText = amount.toLocaleString(separatorLang);
         pfNum.setAttribute("amount", amount);
         if (amount > (ships[219] || 0)) pfNum.classList.add("overmark");
         amount = needCargo(209);
-        cyNum.innerText = amount.toLocaleString("de-DE");
+        cyNum.innerText = amount.toLocaleString(separatorLang);
         cyNum.setAttribute("amount", amount);
         if (amount > (ships[209] || 0)) cyNum.classList.add("overmark");
         if (pbBtn) {
           amount = needCargo(210);
-          pbNum.innerText = amount.toLocaleString("de-DE");
+          pbNum.innerText = amount.toLocaleString(separatorLang);
           pbNum.setAttribute("amount", amount);
           if (amount > (ships[210] || 0)) pbNum.classList.add("overmark");
         }
@@ -8097,7 +8111,7 @@ class OGInfinity {
     document.querySelectorAll("input.ogl-formatInput").forEach((input) => {
       if (input.value == "-") return;
       if (input.value == "NaN") input.value = "";
-      if (input.value) input.value = parseInt(this.removeNumSeparator(input.value, true)).toLocaleString("de-DE");
+      if (input.value) input.value = parseInt(this.removeNumSeparator(input.value, true)).toLocaleString(separatorLang);
     });
   }
 
