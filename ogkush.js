@@ -9739,7 +9739,7 @@ class OGInfinity {
       })
     );
     
-    let fleetActivity = settingDiv.appendChild(this.createDOM("div", { class: "ogi-checkbox" }, `<label for="fleet-activity">Display fleet activity</label>\n        <input type="checkbox" id="fleet-activity" name="fleet-activity" ${this.json.options.fleetActivity ? "checked" : ""}>`));
+    let fleetActivity = settingDiv.appendChild(this.createDOM("div", { class: "ogi-checkbox" }, `<label for="fleet-activity">Display planets fleet activity</label>\n        <input type="checkbox" id="fleet-activity" name="fleet-activity" ${this.json.options.fleetActivity ? "checked" : ""}>`));
     settingDiv.querySelector("#fleet-activity").addEventListener("click", (e)=> {
       const isChecked = e.currentTarget.checked;
       this.json.options.fleetActivity = isChecked;
