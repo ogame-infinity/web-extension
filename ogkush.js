@@ -337,7 +337,7 @@ class OGInfinity {
     this.onGalaxyUpdate();
     this.timeZone();
     this.updateFlyings();
-    this.updatePlanetsExpeditions();
+    this.updatePlanets_FleetActivity();
     this.expedition = false;
 
     let storage = this.getLocalStorageSize();
@@ -9726,6 +9726,8 @@ class OGInfinity {
         title: this.getTranslatedText(6),
       })
     );
+    
+    settingDiv.appendChild(this.createDOM("hr"));
 
     optiondiv = settingDiv.appendChild(this.createDOM("span", {}, "Default expedition time"));
     let expeditionDefaultTime = optiondiv.appendChild(
@@ -9736,6 +9738,13 @@ class OGInfinity {
         title: this.getTranslatedText(26),
       })
     );
+    
+    let fleetActivity = settingDiv.appendChild(this.createDOM("div", { class: "ogi-checkbox" }, `<label for="fleet-activity">Display fleet activity</label>\n        <input type="checkbox" id="fleet-activity" name="fleet-activity" ${this.json.options.fleetActivity ? "checked" : ""}>`));
+    settingDiv.querySelector("#fleet-activity").addEventListener("click", (e)=> {
+      const isChecked = e.currentTarget.checked;
+      this.json.options.fleetActivity = isChecked;
+    })
+
 
     settingDiv.appendChild(this.createDOM("hr"));
 
@@ -9852,8 +9861,8 @@ class OGInfinity {
     this.json.flyingFleetPerPlanets = FLYING_PER_PLANETS;
   }
 
-  updatePlanetsExpeditions(){
-    if(this.json.flyingFleetPerPlanets){
+  updatePlanets_FleetActivity(){
+    if(this.json.flyingFleetPerPlanets && this.json.options.fleetActivity){
       const planetList = document.getElementById("planetList").children;
       Array.from(planetList).forEach( (planet) => {
         const planetKoordsEl = planet.querySelector(".planet-koords")
