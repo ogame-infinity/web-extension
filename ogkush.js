@@ -9850,7 +9850,7 @@ class OGInfinity {
 
       // Get the direction
       flying.direction = Array.from(cols[6].classList).includes("icon_movement") ? "go" : "back";
-      
+ 
       // Get the direction image (no used as of today, but we never know)
       const styleDirection = window.getComputedStyle(cols[6]).getPropertyValue("background");
       flying.directionIcon = styleDirection.substring(styleDirection.indexOf("url(\"")+5, styleDirection.indexOf('")'))
@@ -9867,19 +9867,19 @@ class OGInfinity {
       }
       FLYING_PER_PLANETS[flying.originCoords][flying.missionFleetTitle].data.push(flying)
     } )
-    this.json.flyingFleetPerPlanets = FLYING_PER_PLANETS;
+    this.flyingFleetPerPlanets = FLYING_PER_PLANETS;
   }
 
   updatePlanets_FleetActivity(){
-    if(this.json.flyingFleetPerPlanets && this.json.options.fleetActivity){
+    if(this.flyingFleetPerPlanets && this.json.options.fleetActivity){
       const planetList = document.getElementById("planetList").children;
       Array.from(planetList).forEach( (planet) => {
         const planetKoordsEl = planet.querySelector(".planet-koords")
         if(planetKoordsEl){
           const planetKoords = planetKoordsEl.innerText;
-          Object.keys(this.json.flyingFleetPerPlanets).forEach( (key) => {
+          Object.keys(this.flyingFleetPerPlanets).forEach( (key) => {
             if(planetKoords === key){
-              const movements = this.json.flyingFleetPerPlanets[key]
+              const movements = this.flyingFleetPerPlanets[key]
               const div = document.createElement("div")
               const sizeDiv = 18;
               div.style = `
@@ -9906,9 +9906,10 @@ class OGInfinity {
                   img.src = movement.icon
                   img.style = `position: initial !important; width: ${size}px; height: ${size}px; margin: 1px !important;`;
                   img.title = ""
-                  movement.data.forEach( (m) => {
+                  movement.data.forEach( (m, i) => {
                     const symbolDirection = m.direction === "go" ? "🡒" : "🡐"
-                    img.title += `${m.missionFleetTitle}: ${m.origin}[${m.originCoords}] ${symbolDirection} ${m.dest}[${m.destCoords}] @${m.arrivalTime}\n`
+                    const isLast = i == movement.data.length-1
+                    img.title += `${m.missionFleetTitle}: ${m.origin}[${m.originCoords}] ${symbolDirection} ${m.dest}[${m.destCoords}] @${m.arrivalTime}${!isLast ? "\n" : ""}`
                   })
                   div.appendChild(img)
                 }
