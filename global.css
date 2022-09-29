@@ -148,7 +148,13 @@
 div#banner_skyscraper {
   position: absolute;
   top: 7.5em !important;
-  left: 1160px !important;
+  left: auto !important;
+  right: -130px !important;
+  /*left: 1160px !important;*/
+}
+
+div#banner_skyscraper.fix-banner {
+  top: -4.5em !important;
 }
 
 #galaxyContent td {
