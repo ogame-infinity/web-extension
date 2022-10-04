@@ -9927,7 +9927,7 @@ class OGInfinity {
       const CODE = e.code;
 
       // Bind arrow up and down to add or subscract for ogl-formatInput
-      if(CODE === "ArrowUp" || CODE === "ArrowDown"){
+      if(CODE === "ArrowUp" || CODE === "ArrowDown" || CODE === "KeyK"){
         if(element.classList && element.classList.contains("ogl-formatInput")){
           const value = Number(element.value.replaceAll(/[,.']/g, ""))
           const add = e.ctrlKey ? 100 : (e.shiftKey ? 10 : 1);
@@ -9937,6 +9937,9 @@ class OGInfinity {
                break;
             case "ArrowDown":
                element.value = Math.max(value - add, 0);
+               break;
+            case "KeyK":
+               element.value = value * 1000;
                break;
           }
         }

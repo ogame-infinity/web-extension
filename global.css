@@ -3,7 +3,7 @@
   font-family: "Material Icons";
   font-style: normal;
   font-weight: 400;
-  src: local("Material Icons"), local("MaterialIcons-Regular"), url("chrome-extension://__MSG_@@extension_id__/res/fonts/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2") format("woff2");
+  src: local("Material Icons"), local("MaterialIcons-Regular"), url("moz-extension://__MSG_@@extension_id__/res/fonts/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2") format("woff2");
 }
 
 .icon:not(.sprite):not(.resource):not(.lifeformsprite),
@@ -299,7 +299,7 @@ input[type="password"] {
 .ogk-logo {
   width: 175px;
   height: 71px;
-  background: url("chrome-extension://__MSG_@@extension_id__/res/logo-text.png");
+  background: url("moz-extension://__MSG_@@extension_id__/res/logo-text.png");
   background-size: 175px;
 }
 
@@ -311,11 +311,11 @@ input[type="password"] {
   height: 14px;
   cursor: pointer;
   background-repeat: no-repeat;
-  background-image: url("chrome-extension://__MSG_@@extension_id__/res/notification.svg");
+  background-image: url("moz-extension://__MSG_@@extension_id__/res/notification.svg");
 }
 
 .ogl-notification.active {
-  background-image: url("chrome-extension://__MSG_@@extension_id__/res/notification_active.svg");
+  background-image: url("moz-extension://__MSG_@@extension_id__/res/notification_active.svg");
 }
 
 .ogk-keep-dialog h1 {
@@ -340,7 +340,7 @@ input[type="password"] {
 
 @font-face {
   font-family: Sterilict;
-  src: url("chrome-extension://__MSG_@@extension_id__/res/Sterilict.ttf");
+  src: url("moz-extension://__MSG_@@extension_id__/res/Sterilict.ttf");
 }
 
 .bmc-button {
@@ -688,7 +688,7 @@ input[type="password"] {
   width: 27px;
   height: 27px;
   margin-left: 5px;
-  background: url("chrome-extension://__MSG_@@extension_id__/res/planet.png") no-repeat left top;
+  background: url("moz-extension://__MSG_@@extension_id__/res/planet.png") no-repeat left top;
   background-size: 25px 22px;
   margin-top: 4px;
   opacity: 0.6;
@@ -698,7 +698,7 @@ input[type="password"] {
   width: 27px;
   height: 27px;
   margin-left: 5px;
-  background: url("chrome-extension://__MSG_@@extension_id__/res/moon.png") no-repeat left top;
+  background: url("moz-extension://__MSG_@@extension_id__/res/moon.png") no-repeat left top;
   background-size: 27px 24px;
   margin-top: 2px;
   margin-left: -1px;
@@ -709,7 +709,7 @@ input[type="password"] {
   width: 27px;
   height: 27px;
   margin-left: 5px;
-  background: url("chrome-extension://__MSG_@@extension_id__/res/debris.gif") no-repeat left top;
+  background: url("moz-extension://__MSG_@@extension_id__/res/debris.gif") no-repeat left top;
   background-size: 20px 21px;
   margin-top: 5px;
   margin-left: 3px;
@@ -1107,13 +1107,13 @@ input[type="password"] {
   top: 6px;
   left: 226px;
   background-size: 12px;
-  background: url("chrome-extension://__MSG_@@extension_id__/res/warning.gif") no-repeat left top;
+  background: url("moz-extension://__MSG_@@extension_id__/res/warning.gif") no-repeat left top;
 }
 
 .ogl-dest .ogl-coords .ogl-warning {
   width: 12px;
   height: 12px;
-  background: url("chrome-extension://__MSG_@@extension_id__/res/warning.gif") no-repeat left top;
+  background: url("moz-extension://__MSG_@@extension_id__/res/warning.gif") no-repeat left top;
   margin-right: 9px;
   margin-top: 1px;
 }
@@ -1295,7 +1295,7 @@ input[type="password"] {
 }
 
 .select-most-min {
-  background: url("chrome-extension://__MSG_@@extension_id__/res/select_most.gif") no-repeat left top;
+  background: url("moz-extension://__MSG_@@extension_id__/res/select_most.gif") no-repeat left top;
   display: inline-block;
   height: 11px;
   width: 14px;
@@ -1304,7 +1304,7 @@ input[type="password"] {
 }
 
 .select-most {
-  background: url("chrome-extension://__MSG_@@extension_id__/res/select_most.jpg") no-repeat left top;
+  background: url("moz-extension://__MSG_@@extension_id__/res/select_most.jpg") no-repeat left top;
   display: block;
   float: left;
   height: 32px;
@@ -1427,7 +1427,7 @@ input[type="file"] {
 }
 
 .ogl-syncOption {
-  background: url("chrome-extension://__MSG_@@extension_id__/res/settings.png");
+  background: url("moz-extension://__MSG_@@extension_id__/res/settings.png");
   background-position: 4px 4px;
   background-size: 15px;
   background-repeat: no-repeat;
@@ -3196,27 +3196,27 @@ button.build-it_premium {
 }
 
 .ogl-overview-icon {
-  background: url("chrome-extension://__MSG_@@extension_id__/res/menuicons.png") 161px -92px;
+  background: url("moz-extension://__MSG_@@extension_id__/res/menuicons.png") 161px -92px;
   background-size: calc(23px * 14) !important;
 }
 
 .ogl-statistics-icon {
-  background: url("chrome-extension://__MSG_@@extension_id__/res/menuicons.png") 184px -92px;
+  background: url("moz-extension://__MSG_@@extension_id__/res/menuicons.png") 184px -92px;
   background-size: calc(23px * 14) !important;
 }
 
 .ogl-fleet-icon {
-  background: url("chrome-extension://__MSG_@@extension_id__/res/menuicons.png") -92px -23px;
+  background: url("moz-extension://__MSG_@@extension_id__/res/menuicons.png") -92px -23px;
   background-size: calc(23px * 14) !important;
 }
 
 .ogl-search-icon {
-  background: url("chrome-extension://__MSG_@@extension_id__/res/menuicons.png") 0 -24px;
+  background: url("moz-extension://__MSG_@@extension_id__/res/menuicons.png") 0 -24px;
   background-size: calc(23px * 14) !important;
 }
 
 .ogl-empire-icon {
-  background: url("chrome-extension://__MSG_@@extension_id__/res/menuicons.png") -46px -24px;
+  background: url("moz-extension://__MSG_@@extension_id__/res/menuicons.png") -46px -24px;
   background-size: calc(23px * 14) !important;
 }
 
@@ -3265,7 +3265,7 @@ button.build-it_premium {
   float: left;
   height: 16px;
   image-rendering: crisp-edges;
-  image-rendering: -chrome-crisp-edges;
+  image-rendering: -moz-crisp-edges;
   image-rendering: -webkit-optimize-contrast;
   margin-right: 10px;
   margin-left: 7px;
@@ -3868,7 +3868,7 @@ button.build-it_premium {
   display: inline-block;
   height: 26px;
   padding-left: 26px;
-  background: url("chrome-extension://__MSG_@@extension_id__/res/uv-buttons.png") 0 -52px;
+  background: url("moz-extension://__MSG_@@extension_id__/res/uv-buttons.png") 0 -52px;
   background-position: 0 -52px;
 }
 
@@ -3880,7 +3880,7 @@ button.build-it_premium {
   display: inline-block;
   height: 26px;
   width: 26px;
-  background: url("chrome-extension://__MSG_@@extension_id__/res/uv-buttons.png") 0 0;
+  background: url("moz-extension://__MSG_@@extension_id__/res/uv-buttons.png") 0 0;
   background-position: 0 0;
 }
 
@@ -4408,7 +4408,7 @@ span.espionageDefText {
 .fade-in {
   animation: fadeIn ease 1s;
   -webkit-animation: fadeIn ease 10s;
-  -chrome-animation: fadeIn ease 10s;
+  -moz-animation: fadeIn ease 10s;
   -o-animation: fadeIn ease 10s;
   -ms-animation: fadeIn ease 10s;
 }
@@ -4423,7 +4423,7 @@ span.espionageDefText {
   }
 }
 
-@-chrome-keyframes fadeIn {
+@-moz-keyframes fadeIn {
   0% {
     opacity: 0;
   }
@@ -4842,7 +4842,7 @@ div.activity.showMinutes {
   color: #ffa800;
   padding: 0 1px 1px 0;
   border: 1px solid #ffa800;
-  -chrome-border-radius: 3px;
+  -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
   -khtml-border-radius: 3px;
   border-radius: 3px;
