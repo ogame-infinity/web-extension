@@ -314,6 +314,9 @@ class OGInfinity {
     });
     this.saveData();
     document.querySelector("#pageContent").style.width = "1200px";
+    
+    this.listenKeyboard();
+
     this.sideOptions();
     this.minesLevel();
     this.resourceDetail();
@@ -1170,6 +1173,15 @@ class OGInfinity {
         this.saveData();
       });
     }
+
+    // Add updateMissions methods
+    fleetDispatcher.updateMissions = debounce( () => {
+      if(!fleetDispatcher.NO_UPDATE_MISSIONS){
+        fleetDispatcher.refreshTarget();
+        fleetDispatcher.updateTarget();
+        fleetDispatcher.fetchTargetPlayerData();
+      }
+    }, 200);
   }
 
   updateServerSettings() {
@@ -5555,21 +5567,6 @@ class OGInfinity {
         positionInput.value = "";
       });
 
-      function debounce(func, wait, immediate) {
-        var timeout;
-        return function () {
-          var context = this,
-            args = arguments;
-          var later = function () {
-            timeout = null;
-            if (!immediate) func.apply(context, args);
-          };
-          var callNow = immediate && !timeout;
-          clearTimeout(timeout);
-          timeout = setTimeout(later, wait);
-          if (callNow) func.apply(context, args);
-        };
-      }
 
       var myEfficientFn = debounce(function () {
         fleetDispatcher.targetPlanet.galaxy = galaxyInput.value;
@@ -5929,15 +5926,10 @@ class OGInfinity {
       let updateShips = (e) => {
         let amount = e.target.nextElementSibling.getAttribute("amount");
         this.selectShips(Number(e.target.getAttribute("tech-id")), amount);
-        updateMissions();
+        fleetDispatcher.updateMissions();
       };
-      var updateMissions = debounce(function () {
-        fleetDispatcher.refreshTarget();
-        fleetDispatcher.updateTarget();
-        fleetDispatcher.fetchTargetPlayerData();
-      }, 200);
       document.querySelectorAll("input.ogl-formatInput").forEach((input) => {
-        input.addEventListener("keyup", updateMissions);
+        input.addEventListener("keyup", fleetDispatcher.updateMissions);
       });
       ptBtn.addEventListener("click", updateShips);
       gtBtn.addEventListener("click", updateShips);
@@ -9920,6 +9912,61 @@ class OGInfinity {
       })
     }
   }
+
+  listenKeyboard(){
+    window.addEventListener("keydown", (e) => {
+      const element = document.activeElement;
+      if(!element) return
+
+      /**
+       * Make sure that the debounce from fleetDispatcher.updateMissions
+       * does not conflict with us.
+       */
+      fleetDispatcher.NO_UPDATE_MISSIONS = true;
+
+      const CODE = e.code;
+
+      // Bind arrow up and down to add or subscract for ogl-formatInput
+      if(CODE === "ArrowUp" || CODE === "ArrowDown" || CODE === "KeyK"){
+        if(element.classList && element.classList.contains("ogl-formatInput")){
+          const value = Number(element.value.replaceAll(/[,.']/g, ""))
+          const add = e.ctrlKey ? 100 : (e.shiftKey ? 10 : 1);
+          switch(CODE){
+            case "ArrowUp":
+               element.value = value + add;
+               break;
+            case "ArrowDown":
+               element.value = Math.max(value - add, 0);
+               break;
+            case "KeyK":
+               element.value = value * 1000;
+               break;
+          }
+        }
+      }
+
+      debounce( () => {
+        fleetDispatcher.NO_UPDATE_MISSIONS = false;
+      }, 500);
+    })
+  }
+}
+
+// General debounce function
+const debounce = function(func, wait, immediate) {
+  var timeout;
+  return function () {
+    var context = this,
+      args = arguments;
+    var later = function () {
+      timeout = null;
+      if (!immediate) func.apply(context, args);
+    };
+    var callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) func.apply(context, args);
+  };
 }
 
 class Queue {
