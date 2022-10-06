@@ -409,6 +409,10 @@ class OGInfinity {
     if (this.json.options.pantryKey) {
       this.checkPantrySync(this.json.options.pantryKey);
     }
+
+    /*Fix banner styles for messages, premium and shop page*/
+    if( this.page=="messages" || this.page=="premium" || this.page=="shop" )
+        document.querySelector("#banner_skyscraper").classList.add("fix-banner")
   }
 
   timeZone() {
