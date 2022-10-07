@@ -9947,6 +9947,12 @@ class OGInfinity {
                break;
           }
         }
+      } else if (CODE == "KeyG"){
+        element.value = element.value.replaceAll("0", "") + "000000000";
+      } else if (CODE == "KeyM"){
+        element.value = element.value.replaceAll("0", "") + "000000";
+      } else if (CODE == "KeyK"){
+        element.value = element.value.replaceAll("0", "") + "000";
       }
 
       debounce( () => {
