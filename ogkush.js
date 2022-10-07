@@ -9931,8 +9931,8 @@ class OGInfinity {
       const CODE = e.code;
 
       // Bind arrow up and down to add or subscract for ogl-formatInput
-      if(CODE === "ArrowUp" || CODE === "ArrowDown" || CODE === "KeyK"){
-        if(element.classList && element.classList.contains("ogl-formatInput")){
+      if(element.classList && element.classList.contains("ogl-formatInput")){
+        if(CODE === "ArrowUp" || CODE === "ArrowDown" || CODE === "KeyK"){
           const value = Number(element.value.replaceAll(/[,.']/g, ""))
           const add = e.ctrlKey ? 100 : (e.shiftKey ? 10 : 1);
           switch(CODE){
