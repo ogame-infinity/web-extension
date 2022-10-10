@@ -7744,6 +7744,7 @@ class OGInfinity {
       pagination = document.querySelector("#" + tab + " .pagination");
     }
     let tableOptions = this.createDOM("div", { class: "ogl-tableOptions" });
+    if(!pagination) return // Make sure pagination exists, else let's stop
     pagination.parentNode.insertBefore(tableOptions, pagination);
     let enableTable = tableOptions.appendChild(
       this.createDOM("button", {
