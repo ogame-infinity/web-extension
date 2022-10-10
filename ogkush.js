@@ -1176,16 +1176,16 @@ class OGInfinity {
         }
         this.saveData();
       });
-    }
 
-    // Add updateMissions methods
-    fleetDispatcher.updateMissions = debounce( () => {
-      if(!fleetDispatcher.NO_UPDATE_MISSIONS){
-        fleetDispatcher.refreshTarget();
-        fleetDispatcher.updateTarget();
-        fleetDispatcher.fetchTargetPlayerData();
-      }
-    }, 200);
+      // Add updateMissions methods
+      fleetDispatcher.updateMissions = debounce( () => {
+        if(!fleetDispatcher.NO_UPDATE_MISSIONS){
+          fleetDispatcher.refreshTarget();
+          fleetDispatcher.updateTarget();
+          fleetDispatcher.fetchTargetPlayerData();
+        }
+      }, 200);
+    }
   }
 
   updateServerSettings() {
