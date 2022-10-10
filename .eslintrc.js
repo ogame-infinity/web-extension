@@ -20,7 +20,7 @@ module.exports = {
         'no-prototype-builtins': 0,
         'indent': [
             'error',
-            4
+            2
         ],
         'linebreak-style': [
             'error',

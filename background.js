@@ -3,10 +3,10 @@
 // }));
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.type == 'notification') {
-        chrome.notifications.create('', request.message);
-        return sendResponse(request.message);
-    }
+  if (request.type == 'notification') {
+    chrome.notifications.create('', request.message);
+    return sendResponse(request.message);
+  }
 });
 
 /*
