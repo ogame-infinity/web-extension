@@ -4,7 +4,8 @@
   "description": "This extension provides a set additional features for OGame.",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "npx prettier --write *.js"
   },
   "repository": {
     "type": "git",
@@ -25,5 +26,8 @@
   "bugs": {
     "url": "https://github.com/ogame-infinity/web-extension/issues"
   },
-  "homepage": "https://github.com/ogame-infinity/web-extension#readme"
+  "homepage": "https://github.com/ogame-infinity/web-extension#readme",
+  "devDependencies": {
+    "prettier": "2.7.1"
+  }
 }
