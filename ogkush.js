@@ -525,7 +525,7 @@ class OGInfinity {
       let crystal = document.querySelector(".technology.crystalMine .level").getAttribute("data-value");
       let deut = document.querySelector(".technology.deuteriumSynthesizer .level").getAttribute("data-value");
       let crawlers = document.querySelector(".technology.resbuggy .amount").getAttribute("data-value");
-      let mines = this.json.myMines[this.current.coords];
+      let mines = this.json.myMines && this.current.coords ? this.json.myMines[this.current.coords] : {};
       mines = {
         metal: metal,
         metalProd: metalProd,
@@ -536,8 +536,8 @@ class OGInfinity {
         crawlers: crawlers,
         temperature: mines ? mines.temperature : undefined,
         energy: parseInt(document.querySelector("#resources_energy").innerText.replaceAll(".", "")),
-        fieldUsed: this.json.myMines[this.current.coords].fieldUsed || 0,
-        fieldMax: this.json.myMines[this.current.coords].fieldMax || 0,
+        fieldUsed: mines.fieldUsed,
+        fieldMax: mines.fieldMax,
       };
       this.json.myMines[this.current.coords] = mines;
       this.saveData();
