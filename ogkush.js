@@ -9926,7 +9926,9 @@ class OGInfinity {
        * Make sure that the debounce from fleetDispatcher.updateMissions
        * does not conflict with us.
        */
-      fleetDispatcher.NO_UPDATE_MISSIONS = true;
+      if(window.fleetDispatcher ) {
+        fleetDispatcher.NO_UPDATE_MISSIONS = true;
+      }
 
       const CODE = e.code;
 
@@ -9952,7 +9954,9 @@ class OGInfinity {
       }
 
       debounce( () => {
-        fleetDispatcher.NO_UPDATE_MISSIONS = false;
+        if(window.fleetDispatcher ) {
+          fleetDispatcher.NO_UPDATE_MISSIONS = false;
+        }
       }, 500);
     })
   }
