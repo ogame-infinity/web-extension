@@ -1,0 +1,29 @@
+{
+  "name": "ogame-infinity",
+  "version": "2.1.1",
+  "description": "This extension provides a set additional features for OGame.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/ogame-infinity/web-extension.git"
+  },
+  "keywords": [
+    "ogame",
+    "infinity",
+    "features",
+    "plugin",
+    "extension",
+    "chrome",
+    "edge",
+    "browser"
+  ],
+  "author": "alexisfasquel",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ogame-infinity/web-extension/issues"
+  },
+  "homepage": "https://github.com/ogame-infinity/web-extension#readme"
+}
