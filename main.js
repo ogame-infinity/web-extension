@@ -547,7 +547,7 @@ window.addEventListener(
       );
     });
   },
-  false
+  10
 );
 
 window.addEventListener(
