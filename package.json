@@ -4,7 +4,9 @@
   "description": "This extension provides a set additional features for OGame.",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "npx prettier --write *.js",
+    "lint": "npx eslint --fix *.js"
   },
   "repository": {
     "type": "git",
@@ -25,5 +27,11 @@
   "bugs": {
     "url": "https://github.com/ogame-infinity/web-extension/issues"
   },
-  "homepage": "https://github.com/ogame-infinity/web-extension#readme"
+  "homepage": "https://github.com/ogame-infinity/web-extension#readme",
+  "devDependencies": {
+    "eslint": "^8.25.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "prettier": "2.7.1"
+  }
 }
