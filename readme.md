@@ -28,6 +28,14 @@ Did you fix it already? Please fork the latest `master` branch and raise a Pull 
 | Improvement | `improvement/name_of_improvement` |
 | Feature     | `feature/name_of_feature`         |
 
+## Code formatting
+
+Please install the tools once by running: `npm install`
+
+Then, make sure to format the code according to our rules before doing any new *commit*/*pull request* by using the following command:
+
+`npm run format`
+
 ## Automatic packaging and deployment
 
 GitHub actions are used to automatically package and deploy new updates. 
