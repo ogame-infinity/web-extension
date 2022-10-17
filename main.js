@@ -535,6 +535,10 @@ window.addEventListener(
   'ogi-players',
   function (evt) {
     setTimeout(() => {
+      if(!dataHelper){
+        console.warn("No data helper in ogi-players, returning...");
+        return
+      }
       let request = evt.detail;
       let response = { player: dataHelper.getPlayer(evt.detail.id) };
       var clone = response;
