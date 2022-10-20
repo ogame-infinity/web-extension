@@ -276,7 +276,11 @@ input[type="password"] {
 }
 
 .ogl-stalkPlanets .ogl-moon-hover {
-  width: 75px !important;
+  width: 100px !important;
+}
+
+.ogl-target-list .ogl-stalkPlanets .ogl-moon-hover {
+  width: 95px !important;
 }
 
 .ogl-stalkPlanets .ogl-moon-hover .icon_eye {
