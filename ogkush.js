@@ -3043,12 +3043,12 @@ class OGInfinity {
       })
     );
     let empireBtn;
-      (empireBtn = harvestOptions.appendChild(
-        this.createDOM('div', {
-          class: 'ogl-option ogl-empire-icon tooltip',
-          title: 'Overview',
-        })
-      ));
+    empireBtn = harvestOptions.appendChild(
+      this.createDOM('div', {
+        class: 'ogl-option ogl-empire-icon tooltip',
+        title: 'Overview',
+      })
+    );
     let overViewBtn = harvestOptions.appendChild(
       this.createDOM('div', {
         class: 'ogl-option ogl-overview-icon tooltip',
@@ -3438,11 +3438,7 @@ class OGInfinity {
       })
     );
     div.appendChild(
-      this.createDOM(
-        'span',
-        {},
-        `<strong>${this.json.empire[0][114]}</strong>`
-      )
+      this.createDOM('span', {}, `<strong>${this.json.empire[0][114]}</strong>`)
     );
     div.appendChild(this.createDOM('span', {}, 'Computer'));
     div.appendChild(
@@ -3633,8 +3629,7 @@ class OGInfinity {
     let cyclos = 0;
     let totalSum = 0;
     [
-      202, 203, 208, 209, 210, 204, 205, 206, 219, 207, 215, 211, 213, 218,
-      214,
+      202, 203, 208, 209, 210, 204, 205, 206, 219, 207, 215, 211, 213, 218, 214,
     ].forEach((id) => {
       let flyingCount = flying.fleet[id];
       let sum = 0;
@@ -3674,8 +3669,7 @@ class OGInfinity {
         `Fleet: <strong>${dotted(totalSum)}</strong> <small>ships</small>`
       )
     );
-    let rcpower =
-      (((this.json.empire[0][114] * 5) / 100) * 2e4 + 2e4) * cyclos;
+    let rcpower = (((this.json.empire[0][114] * 5) / 100) * 2e4 + 2e4) * cyclos;
     fleetInfo.appendChild(
       this.createDOM(
         'span',
@@ -4275,7 +4269,8 @@ class OGInfinity {
   }
 
   loading() {
-    let svg = '<svg width="200px" height="100px" viewBox="0 0 187.3 93.7" preserveAspectRatio="xMidYMid meet">\n                <path stroke="#3c536c" id="outline" fill="none" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"\n                  d="M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-13.3,7.2-22.1,17.1\n                    c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z" />\n                <path id="outline-bg" opacity="0.1" fill="none" stroke="#eee" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="\n                M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-13.3,7.2-22.1,17.1\n                c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z" />\n              </svg>';
+    let svg =
+      '<svg width="200px" height="100px" viewBox="0 0 187.3 93.7" preserveAspectRatio="xMidYMid meet">\n                <path stroke="#3c536c" id="outline" fill="none" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"\n                  d="M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-13.3,7.2-22.1,17.1\n                    c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z" />\n                <path id="outline-bg" opacity="0.1" fill="none" stroke="#eee" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="\n                M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-13.3,7.2-22.1,17.1\n                c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z" />\n              </svg>';
     let body = this.createDOM('div');
     body.html(svg);
     this.popup(null, body);
@@ -9490,7 +9485,8 @@ class OGInfinity {
     if (this.json.options.autofetchempire == false) return;
     if (this.isLoading) return;
     this.isLoading = true;
-    let svg = '<svg width="80px" height="30px" viewBox="0 0 187.3 93.7" preserveAspectRatio="xMidYMid meet">\n                <path stroke="#3c536c" id="outline" fill="none" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"\n                  d="M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-13.3,7.2-22.1,17.1\n                    c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z" />\n                <path id="outline-bg" opacity="0.1" fill="none" stroke="#eee" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="\n                M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-13.3,7.2-22.1,17.1\n                c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z" />\n\t\t\t\t      </svg>';
+    let svg =
+      '<svg width="80px" height="30px" viewBox="0 0 187.3 93.7" preserveAspectRatio="xMidYMid meet">\n                <path stroke="#3c536c" id="outline" fill="none" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"\n                  d="M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-13.3,7.2-22.1,17.1\n                    c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z" />\n                <path id="outline-bg" opacity="0.1" fill="none" stroke="#eee" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="\n                M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-13.3,7.2-22.1,17.1\n                c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z" />\n\t\t\t\t      </svg>';
     document
       .querySelector('#countColonies')
       .appendChild(this.createDOM('div', { class: 'spinner' }, svg));
@@ -12941,28 +12937,28 @@ class OGInfinity {
     //   planetIconsCheck.checked = true;
     // }
     // dataDiv.appendChild(this.createDOM("hr"));
-    optiondiv = dataDiv.appendChild(
-      this.createDOM(
-        'span',
-        {
-          style:
-            'display: flex;justify-content: space-between; align-items: center;',
-        },
-        'Disable auto fetch Empire (Commander only)'
-      )
-    );
-    let disableautofetchempirebox = optiondiv.appendChild(
-      this.createDOM('input', { type: 'checkbox' })
-    );
-    disableautofetchempirebox.addEventListener('change', () => {
-      this.json.options.disableautofetchempire =
-        disableautofetchempirebox.checked;
-      this.saveData();
-    });
-    if (this.json.options.disableautofetchempire) {
-      disableautofetchempirebox.checked = true;
-    }
-    dataDiv.appendChild(this.createDOM('hr'));
+    // optiondiv = dataDiv.appendChild(
+    //   this.createDOM(
+    //     'span',
+    //     {
+    //       style:
+    //         'display: flex;justify-content: space-between; align-items: center;',
+    //     },
+    //     'Disable auto fetch Empire (Commander only)'
+    //   )
+    // );
+    // let disableautofetchempirebox = optiondiv.appendChild(
+    //   this.createDOM('input', { type: 'checkbox' })
+    // );
+    // disableautofetchempirebox.addEventListener('change', () => {
+    //   this.json.options.disableautofetchempire =
+    //     disableautofetchempirebox.checked;
+    //   this.saveData();
+    // });
+    // if (this.json.options.disableautofetchempire) {
+    //   disableautofetchempirebox.checked = true;
+    // }
+    // dataDiv.appendChild(this.createDOM('hr'));
 
     optiondiv = dataDiv.appendChild(
       this.createDOM(
@@ -13344,6 +13340,8 @@ class OGInfinity {
         title: this.getTranslatedText(26),
       })
     );
+
+    settingDiv.appendChild(this.createDOM('hr'));
 
     let fleetActivity = settingDiv.appendChild(
       this.createDOM(
