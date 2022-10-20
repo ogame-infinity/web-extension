@@ -11662,7 +11662,7 @@ class OGInfinity {
     loaderText.textContent = 'Syncing Pantry ...';
     loadPantrySync.append(loadIcon);
     loadPantrySync.append(loaderText);
-    menuDiv.prepend(loadPantrySync);
+    menuDiv.append(loadPantrySync);
     if (action === 0) {
       let expeJsonObj = {};
       let expeSumsJsonObj = {};
