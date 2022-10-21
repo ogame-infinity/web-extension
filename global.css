@@ -5251,7 +5251,7 @@ div[data-marker]:hover {
 
 .ogl-harvestOptions {
   display: flex;
-  justify-content: space-between;
+  justify-content: right;
   gap: 0.5em;
   min-height: 24px;
   background: #171e25;
