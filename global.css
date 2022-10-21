@@ -276,7 +276,11 @@ input[type="password"] {
 }
 
 .ogl-stalkPlanets .ogl-moon-hover {
-  width: 75px !important;
+  width: 100px !important;
+}
+
+.ogl-target-list .ogl-stalkPlanets .ogl-moon-hover {
+  width: 95px !important;
 }
 
 .ogl-stalkPlanets .ogl-moon-hover .icon_eye {
@@ -5247,7 +5251,7 @@ div[data-marker]:hover {
 
 .ogl-harvestOptions {
   display: flex;
-  justify-content: space-between;
+  justify-content: right;
   gap: 0.5em;
   min-height: 24px;
   background: #171e25;
@@ -7072,7 +7076,7 @@ span.resbuttons {
 
 #ogi-pantry-sync {
   margin-left: 8px;
-  padding-bottom: 8px;
+  padding: 8px 0;
 }
 
 .ogi-loader {
