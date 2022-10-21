@@ -5251,7 +5251,7 @@ div[data-marker]:hover {
 
 .ogl-harvestOptions {
   display: flex;
-  justify-content: space-between;
+  justify-content: right;
   gap: 0.5em;
   min-height: 24px;
   background: #171e25;
@@ -7076,7 +7076,7 @@ span.resbuttons {
 
 #ogi-pantry-sync {
   margin-left: 8px;
-  padding-bottom: 8px;
+  padding: 8px 0;
 }
 
 .ogi-loader {
