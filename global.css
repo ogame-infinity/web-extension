@@ -279,7 +279,7 @@ input[type="password"] {
   width: 95px !important;
 }
 
-.ogl-stalkPlanets .ogl-moon-hover .icon_eye {
+.ogl-planets-col .ogl-stalkPlanets .ogl-moon-hover .icon_eye {
   margin-right: 3px;
 }
 
@@ -4411,6 +4411,10 @@ span.espionageDefText {
   animation: fadeIn ease 0.4s;
 }
 
+.ogl-moon-div.ogl-active:hover .ogl-moon-hover{
+  width: 110px !important;
+}
+
 .fade-in {
   animation: fadeIn ease 1s;
   -webkit-animation: fadeIn ease 10s;
@@ -6442,9 +6446,8 @@ table.fleetinfo tr:nth-last-child(1) {
   margin-right: 8px;
 }
 
-.ogl-moon-hover .icon_eye {
-  margin-left: 8px;
-  margin-right: 0;
+.ogl-sideStalk .ogl-stalkPlanets .ogl-moon-hover .icon_eye {
+  margin-right: -31px;
 }
 
 .ogl-stalkPlanets .icon_eye:hover {
