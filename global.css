@@ -275,16 +275,12 @@ input[type="password"] {
   margin-right: -2px;
 }
 
-.ogl-stalkPlanets .ogl-moon-hover {
-  width: 100px !important;
-}
-
 .ogl-target-list .ogl-stalkPlanets .ogl-moon-hover {
   width: 95px !important;
 }
 
 .ogl-stalkPlanets .ogl-moon-hover .icon_eye {
-  margin-left: -2px;
+  margin-right: 3px;
 }
 
 .ogk-welcome .mmoflag {
@@ -4410,7 +4406,7 @@ span.espionageDefText {
 .ogl-moon-div.ogl-active:hover > .ogl-moon-hover,
 .ogl-planet-div:hover > .ogl-planet-hover {
   display: flex;
-  width: 100px;
+  width: 69px;
   transition: width 2s;
   animation: fadeIn ease 0.4s;
 }
@@ -4504,7 +4500,7 @@ span.espionageDefText {
 .ogl-moon-hover {
   left: 32px;
   justify-content: flex-end;
-  width: 79px !important;
+  width: 100%
 }
 
 .ogl-sideStalk .ogl-stalkPlanets .close-tooltip {
