@@ -10664,12 +10664,27 @@ class OGInfinity {
         .textContent.replace(/(\D*)/, '')
         .replace(/%/, '');
       let regexp = /(?<number>[0-9.,]*)(?<magnitude>[a-zA-Z*])?/;
-      let dirtyLootVal = data[3].querySelectorAll('.resspan')[0].textContent.replace(/(\D*)/, '');
-      report.metal = this.calcOrderOfMagnitude(dirtyLootVal.match(regexp).groups.number, dirtyLootVal.match(regexp).groups.magnitude)
-      dirtyLootVal = data[3].querySelectorAll('.resspan')[1].textContent.replace(/(\D*)/, '');
-      report.crystal = this.calcOrderOfMagnitude(dirtyLootVal.match(regexp).groups.number, dirtyLootVal.match(regexp).groups.magnitude)
-      dirtyLootVal = data[3].querySelectorAll('.resspan')[2].textContent.replace(/(\D*)/, '');
-      report.deut = this.calcOrderOfMagnitude(dirtyLootVal.match(regexp).groups.number, dirtyLootVal.match(regexp).groups.magnitude)
+      let dirtyLootVal = data[3]
+        .querySelectorAll('.resspan')[0]
+        .textContent.replace(/(\D*)/, '');
+      report.metal = this.calcOrderOfMagnitude(
+        dirtyLootVal.match(regexp).groups.number,
+        dirtyLootVal.match(regexp).groups.magnitude
+      );
+      dirtyLootVal = data[3]
+        .querySelectorAll('.resspan')[1]
+        .textContent.replace(/(\D*)/, '');
+      report.crystal = this.calcOrderOfMagnitude(
+        dirtyLootVal.match(regexp).groups.number,
+        dirtyLootVal.match(regexp).groups.magnitude
+      );
+      dirtyLootVal = data[3]
+        .querySelectorAll('.resspan')[2]
+        .textContent.replace(/(\D*)/, '');
+      report.deut = this.calcOrderOfMagnitude(
+        dirtyLootVal.match(regexp).groups.number,
+        dirtyLootVal.match(regexp).groups.magnitude
+      );
       report.total = report.metal + report.crystal + report.deut;
       report.renta = Math.round((report.total * report.loot) / 100);
       report.apiKey =
@@ -11316,21 +11331,23 @@ class OGInfinity {
   calcOrderOfMagnitude(number, magnitude, localize = false) {
     let calculatedValue = this.cleanValue(number);
     switch (magnitude) {
-      case 'K':
-        calculatedValue *= 1000
-        break;
-      case 'M':
-        calculatedValue *= 1000000
-        break;
-      case 'B':
-        calculatedValue *= 1000000000
-        break;
-      case 'T':
-        calculatedValue *= 1000000000000
-        break;
-      default:
+    case 'K':
+      calculatedValue *= 1000;
+      break;
+    case 'M':
+      calculatedValue *= 1000000;
+      break;
+    case 'B':
+      calculatedValue *= 1000000000;
+      break;
+    case 'T':
+      calculatedValue *= 1000000000000;
+      break;
+    default:
     }
-    return Number((localize ? calculatedValue.toLocaleString(separatorLang) : calculatedValue));
+    return Number(
+      localize ? calculatedValue.toLocaleString(separatorLang) : calculatedValue
+    );
   }
 
   calcNeededShips(options) {
