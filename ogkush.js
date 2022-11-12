@@ -12096,16 +12096,16 @@ return duration;
 }
 
   building(id, lvl, robotic, nanite) {
-    let currentRace = 0;
-    if (document.getElementsByClassName('lifeform1')) {
-      currentRace = 1;
-    } else if (document.getElementsByClassName('lifeform2')) {
-      currentRace = 2;
-    } else if (document.getElementsByClassName('lifeform3')) {
-      currentRace = 3;
-    } else {
-      currentRace = 4;
-    }
+    let currentMRC = 0;
+    let currentMegalith = 0;
+    this.json.empire.forEach((planet) => {
+      if(planet.coordinates.slice(1, -1)) {
+        currentMRC = planet["12111"];
+        currentMegalith = planet["12108"];
+      }
+});
+
+    let prodBuildings = [1, 2, 3, 11101, 11102, 12101, 12102, 13101, 13102, 14101, 14102];
 
     let baseCost = {
       1: [60, 15, 0],
@@ -12398,6 +12398,23 @@ let lfIDCSV = `11101
         // let crystalCost = document.querySelector(".costs").childNodes[3].querySelector('.crystal').getAttribute('data-value');
         // let deutCost = document.querySelector(".costs").childNodes[3].querySelector('.deuterium') ? document.querySelector(".costs").childNodes[3].querySelector('.deuterium').getAttribute('data-value') : 0;
         cost = [metalCost, crystalCost, deutCost];
+        let reduction = [0, 0, 0];
+        //#lnx MRC REDUCTION FOR ROCKTAL
+        if (prodBuildings.includes(id)) {
+          reduction[0] = 0.5/100*currentMRC*cost[0];
+          reduction[1] = 0.5/100*currentMRC*cost[1];
+          reduction[2] = 0.5/100*currentMRC*cost[2];
+        }
+        //#lnx MEGALITH REDUCTION FOR ROCKTAL
+        if (id<=12112 && id >= 12101) {
+          reduction[0] += currentMegalith/100*cost[0];
+          reduction[1] += currentMegalith/100*cost[1];
+          reduction[2] += currentMegalith/100*cost[2];
+        }
+        cost[0] -= reduction[0];
+        cost[1] -= reduction[1];
+        cost[2] -= reduction[2];
+
           let dur = document.querySelector(".build_duration").childNodes[3].getAttribute('datetime');
           time = moment.duration(dur).asSeconds()/60/60;
           return { time: time, cost: cost };
@@ -12437,6 +12454,13 @@ let lfIDCSV = `11101
           Math.pow(0.5, nanite);
       }
     }
+    //#lnx MRC REDUCTION FOR ROCKTAL
+    if (prodBuildings.includes(id)) {
+      cost[0] = cost[0] - (0.5/100*currentMRC*cost[0]);
+      cost[1] = cost[1] - (0.5/100*currentMRC*cost[1]);
+      cost[2] = cost[2] - (0.5/100*currentMRC*cost[2]);
+    }
+
     time /= this.json.speed;
     return { time: time, cost: cost };
   }
