@@ -1,6 +1,7 @@
 var dataHelper = (function () {
   var requestId = 0;
 
+
   function expedition(message) {
     let rid = requestId++;
     return new Promise(function (resolve, reject) {
@@ -166,6 +167,11 @@ let ALLY_CLASS_NONE = 0;
 
 class OGInfinity {
   constructor() {
+    var s = document.createElement("script");
+    s.type = "text/javascript";
+    s.src = "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js";
+    $("head").append(s);
+
     this.commander = player.hasCommander;
     this.rawURL = new URL(window.location.href);
     this.page =
@@ -717,13 +723,15 @@ class OGInfinity {
   }
 
   technoDetail() {
+    console.log(this.page);
     if (
       this.page == 'research' ||
       this.page == 'supplies' ||
       this.page == 'facilities' ||
       this.page == 'shipyard' ||
       this.page == 'defenses' ||
-      this.page == 'lfbuildings'
+      this.page == 'lfbuildings' ||
+      this.page == 'lfresearch'
     ) {
       let nanites = 0;
       let robotics = 0;
@@ -797,7 +805,7 @@ class OGInfinity {
               technocrat,
               that.playerClass == 3
             );
-          } else if (that.page == 'supplies' || that.page == 'facilities') {
+          } else if (that.page == 'supplies' || that.page == 'facilities' || that.page == 'lfbuildings' || that.page == 'lfresearch') {
             techno = that.building(technoId, i, robotics, nanites);
           }
           resSum[0] += techno.cost[0];
@@ -807,6 +815,7 @@ class OGInfinity {
           timeSum += techno.time;
         }
         let techno;
+
         if (that.page == 'research') {
           techno = that.research(
             technoId,
@@ -815,7 +824,7 @@ class OGInfinity {
             technocrat,
             that.playerClass == 3
           );
-        } else if (that.page == 'supplies' || that.page == 'facilities') {
+        } else if (that.page == 'supplies' || that.page == 'facilities' || that.page == 'lfbuildings' || that.page == 'lfresearch') {
           techno = that.building(technoId, tolvl, robotics, nanites);
         }
         resSum[0] += techno.cost[0];
@@ -1332,7 +1341,7 @@ class OGInfinity {
                 technocrat,
                 that.playerClass == 3
               );
-            } else if (that.page == 'supplies' || that.page == 'facilities') {
+            } else if (that.page == 'supplies' || that.page == 'facilities' || that.page == 'lfbuildings' || that.page == 'lfresearch') {
               let lvls = that.getRobotsNanites(technologyId, baseLvl, initTime);
               robotics = lvls.robotics | undefined;
               nanites = lvls.nanites | undefined;
@@ -12019,7 +12028,85 @@ class OGInfinity {
     }
   }
 
+ convertDuration(t){
+//dividing period from time
+var x = t.split('T'),
+  duration = '',
+  time = {},
+  period = {},
+  //just shortcuts
+  s = 'string',
+  v = 'variables',
+  l = 'letters',
+  // store the information about ISO8601 duration format and the divided strings
+  d = {
+      period: {
+          string: x[0].substring(1,x[0].length),
+          len: 4,
+          // years, months, weeks, days
+          letters: ['Y', 'M', 'W', 'D'],
+          variables: {}
+      },
+      time: {
+          string: x[1],
+          len: 3,
+          // hours, minutes, seconds
+          letters: ['H', 'M', 'S'],
+          variables: {}
+      }
+  };
+//in case the duration is a multiple of one day
+if (!d.time.string) {
+  d.time.string = '';
+}
+
+for (var i in d) {
+  var len = d[i].len;
+  for (var j = 0; j < len; j++) {
+      d[i][s] = d[i][s].split(d[i][l][j]);
+      if (d[i][s].length>1) {
+          d[i][v][d[i][l][j]] = parseInt(d[i][s][0], 10);
+          d[i][s] = d[i][s][1];
+      } else {
+          d[i][v][d[i][l][j]] = 0;
+          d[i][s] = d[i][s][0];
+      }
+  }
+}
+period = d.period.variables;
+time = d.time.variables;
+time.H +=   24 * period.D +
+                      24 * 7 * period.W +
+                      24 * 7 * 4 * period.M +
+                      24 * 7 * 4 * 12 * period.Y;
+
+if (time.H) {
+  duration = time.H + ':';
+  if (time.M < 10) {
+      time.M = '0' + time.M;
+  }
+}
+
+if (time.S < 10) {
+  time.S = '0' + time.S;
+}
+
+duration += time.M + ':' + time.S;
+return duration;
+}
+
   building(id, lvl, robotic, nanite) {
+    let currentMRC = 0;
+    let currentMegalith = 0;
+    this.json.empire.forEach((planet) => {
+      if(planet.coordinates.slice(1, -1)) {
+        currentMRC = planet["12111"];
+        currentMegalith = planet["12108"];
+      }
+});
+
+    let prodBuildings = [1, 2, 3, 11101, 11102, 12101, 12102, 13101, 13102, 14101, 14102];
+
     let baseCost = {
       1: [60, 15, 0],
       2: [48, 24, 0],
@@ -12039,41 +12126,341 @@ class OGInfinity {
       44: [2e4, 2e4, 1e3],
       41: [2e4, 4e4, 2e4],
       42: [2e4, 4e4, 2e4],
-      43: [2e6, 4e6, 2e6],
+      43: [2e6, 4e6, 2e6]
     };
-    let cost = baseCost[id];
-    if (id == 1 || id == 3 || id == 4) {
-      cost[0] *= Math.pow(1.5, lvl - 1);
-      cost[1] *= Math.pow(1.5, lvl - 1);
-    } else if (id == 2) {
-      cost[0] *= Math.pow(1.6, lvl - 1);
-      cost[1] *= Math.pow(1.6, lvl - 1);
-    } else if (id == 12) {
-      cost[0] *= Math.pow(1.8, lvl - 1);
-      cost[1] *= Math.pow(1.8, lvl - 1);
-      cost[2] *= Math.pow(1.8, lvl - 1);
-    } else if (id == 36) {
-      cost[0] *= Math.pow(5, lvl - 1);
-      cost[2] *= Math.pow(5, lvl - 1);
-      cost[3] *= Math.ceil(Math.pow(2.5, lvl - 1));
-    } else if (id == 33) {
-      cost[1] *= Math.pow(2, lvl - 1);
-      cost[2] *= Math.pow(2, lvl - 1);
-      cost[3] *= Math.pow(2, lvl - 1);
+    let time;
+    let cost;
+    if (id <= 14218 && id >= 11101) {
+      let lfValCSV = `7,2,0,1.2,1.2,0
+      5,2,0,1.23,1.23,0
+      20000,25000,10000,1.3,1.3,1.3
+      5000,3200,1500,1.7,1.7,1.7
+      50000,40000,50000,1.7,1.7,1.7
+      9000,6000,3000,1.5,1.5,1.5
+      25000,13000,7000,1.09,1.09,1.09
+      50000,25000,15000,1.5,1.5,1.5
+      75000,20000,25000,1.09,1.09,1.09
+      150000,30000,15000,1.12,1.12,1.12
+      80000,35000,60000,1.5,1.5,1.5
+      250000,125000,125000,1.2,1.2,1.2
+      5000,2500,500,1.3,1.3,1.3
+      7000,10000,5000,1.5,1.5,1.5
+      15000,10000,5000,1.3,1.3,1.3
+      20000,15000,7500,1.3,1.3,1.3
+      25000,20000,10000,1.2,1.2,1.2
+      35000,25000,15000,1.5,1.5,1.5
+      70000,40000,20000,1.3,1.3,1.3
+      80000,50000,20000,1.5,1.5,1.5
+      320000,240000,100000,1.5,1.5,1.5
+      320000,240000,100000,1.5,1.5,1.5
+      120000,30000,25000,1.5,1.5,1.5
+      100000,40000,30000,1.3,1.3,1.3
+      200000,100000,100000,1.3,1.3,1.3
+      160000,120000,50000,1.5,1.5,1.5
+      160000,120000,50000,1.5,1.5,1.5
+      320000,240000,100000,1.5,1.5,1.5
+      300000,180000,120000,1.5,1.5,1.5
+      500000,300000,200000,1.3,1.3,1.3
+      9,3,0,1.2,1.2,0
+      7,2,0,1.2,1.2,0
+      40000,10000,15000,1.3,1.3,1.3
+      5000,3800,1000,1.7,1.7,1.7
+      50000,40000,50000,1.65,1.65,1.65
+      10000,8000,1000,1.4,1.4,1.4
+      20000,15000,10000,1.2,1.2,1.2
+      50000,35000,15000,1.5,1.5,1.5
+      85000,44000,25000,1.4,1.4,1.4
+      120000,50000,20000,1.4,1.4,1.4
+      250000,150000,100000,1.8,1.8,1.8
+      250000,125000,125000,1.5,1.5,1.5
+      10000,6000,1000,1.5,1.5,1.5
+      7500,12500,5000,1.5,1.5,1.5
+      15000,10000,5000,1.5,1.5,1.5
+      20000,15000,7500,1.3,1.3,1.3
+      25000,20000,10000,1.5,1.5,1.5
+      50000,50000,20000,1.5,1.5,1.5
+      70000,40000,20000,1.5,1.5,1.5
+      160000,120000,50000,1.5,1.5,1.5
+      75000,55000,25000,1.5,1.5,1.5
+      85000,40000,35000,1.5,1.5,1.5
+      120000,30000,25000,1.5,1.5,1.5
+      100000,40000,30000,1.5,1.5,1.5
+      200000,100000,100000,1.2,1.2,1.2
+      220000,110000,110000,1.3,1.3,1.3
+      240000,120000,120000,1.3,1.3,1.3
+      250000,250000,250000,1.4,1.4,1.4
+      500000,300000,200000,1.5,1.5,1.5
+      300000,180000,120000,1.7,1.7,1.7
+      6,2,0,1.21,1.21,0
+      5,2,0,1.18,1.18,0
+      30000,20000,10000,1.3,1.3,1.3
+      5000,3800,1000,1.8,1.8,1.8
+      50000,40000,50000,1.8,1.8,1.8
+      7500,7000,1000,1.3,1.3,1.3
+      35000,15000,10000,1.5,1.5,1.5
+      50000,20000,30000,1.07,1.07,1.07
+      100000,10000,3000,1.14,1.14,1.14
+      100000,40000,20000,1.5,1.5,1.5
+      55000,50000,30000,1.5,1.5,1.5
+      250000,125000,125000,1.4,1.4,1.4
+      10000,6000,1000,1.5,1.5,1.5
+      7500,12500,5000,1.3,1.3,1.3
+      15000,10000,5000,1.5,1.5,1.5
+      20000,15000,7500,1.3,1.3,1.3
+      160000,120000,50000,1.5,1.5,1.5
+      50000,50000,20000,1.5,1.5,1.5
+      70000,40000,20000,1.3,1.3,1.3
+      160000,120000,50000,1.5,1.5,1.5
+      160000,120000,50000,1.5,1.5,1.5
+      85000,40000,35000,1.2,1.2,1.2
+      120000,30000,25000,1.3,1.3,1.3
+      160000,120000,50000,1.5,1.5,1.5
+      200000,100000,100000,1.5,1.5,1.5
+      160000,120000,50000,1.5,1.5,1.5
+      320000,240000,100000,1.5,1.5,1.5
+      320000,240000,100000,1.5,1.5,1.5
+      500000,300000,200000,1.5,1.5,1.5
+      300000,180000,120000,1.7,1.7,1.7
+      4,3,0,1.21,1.21,0
+      6,3,0,1.21,1.21,0
+      20000,20000,30000,1.3,1.3,1.3
+      7500,5000,800,1.8,1.8,1.8
+      60000,30000,50000,1.8,1.8,1.8
+      8500,5000,3000,1.25,1.25,1.25
+      15000,15000,20000,1.2,1.2,1.2
+      75000,25000,30000,1.05,1.05,1.05
+      87500,25000,30000,1.2,1.2,1.2
+      150000,30000,30000,1.5,1.5,1.5
+      75000,50000,55000,1.2,1.2,1.2
+      500000,250000,250000,1.4,1.4,1.4
+      10000,6000,1000,1.5,1.5,1.5
+      7500,12500,5000,1.5,1.5,1.5
+      15000,10000,5000,1.5,1.5,1.5
+      20000,15000,7500,1.5,1.5,1.5
+      25000,20000,10000,1.5,1.5,1.5
+      50000,50000,20000,1.3,1.3,1.3
+      70000,40000,20000,1.5,1.5,1.5
+      80000,50000,20000,1.2,1.2,1.2
+      320000,240000,100000,1.5,1.5,1.5
+      85000,40000,35000,1.2,1.2,1.2
+      120000,30000,25000,1.5,1.5,1.5
+      100000,40000,30000,1.5,1.5,1.5
+      200000,100000,100000,1.5,1.5,1.5
+      160000,120000,50000,1.5,1.5,1.5
+      240000,120000,120000,1.5,1.5,1.5
+      320000,240000,100000,1.5,1.5,1.5
+      500000,300000,200000,1.5,1.5,1.5
+      300000,180000,120000,1.7,1.7,1.7
+`;
+
+let lfIDCSV = `11101
+11102
+11103
+11104
+11105
+11106
+11107
+11108
+11109
+11110
+11111
+11112
+11201
+11202
+11203
+11204
+11205
+11206
+11207
+11208
+11209
+11210
+11211
+11212
+11213
+11214
+11215
+11216
+11217
+11218
+12101
+12102
+12103
+12104
+12105
+12106
+12107
+12108
+12109
+12110
+12111
+12112
+12201
+12202
+12203
+12204
+12205
+12206
+12207
+12208
+12209
+12210
+12211
+12212
+12213
+12214
+12215
+12216
+12217
+12218
+13101
+13102
+13103
+13104
+13105
+13106
+13107
+13108
+13109
+13110
+13111
+13112
+13201
+13202
+13203
+13204
+13205
+13206
+13207
+13208
+13209
+13210
+13211
+13212
+13213
+13214
+13215
+13216
+13217
+13218
+14101
+14102
+14103
+14104
+14105
+14106
+14107
+14108
+14109
+14110
+14111
+14112
+14201
+14202
+14203
+14204
+14205
+14206
+14207
+14208
+14209
+14210
+14211
+14212
+14213
+14214
+14215
+14216
+14217
+14218`;
+
+  let LFIDArray = lfIDCSV.split('\n');
+
+    let csvData = lfValCSV.split('\n');
+    let LFDict = {};
+    for (let i = 0; i < LFIDArray.length; i++) {
+      LFDict[LFIDArray[i]] = csvData[i].split(',');
+    }
+        var metalTotalCost = 0;
+        var crystalTotalCost = 0;
+        var deutTotalCost = 0;
+
+        var metalBaseCost = parseInt(LFDict[id][0]);
+        var crystalBaseCost = parseInt(LFDict[id][1]);
+        var deutBaseCost = parseInt(LFDict[id][2]);
+        var metalInc = parseFloat(LFDict[id][3]);
+        var crystalInc = parseFloat(LFDict[id][4]);
+        var deutInc = parseFloat(LFDict[id][5]);
+        var metalCost = parseInt(Math.floor(metalBaseCost * lvl * metalInc**(lvl-1)));
+        var crystalCost = parseInt(Math.floor(crystalBaseCost * lvl * crystalInc**(lvl-1)));
+        var deutCost = parseInt(Math.floor(deutBaseCost * lvl * deutInc**(lvl-1)));
+        // let metalCost = document.querySelector(".costs").childNodes[3].querySelector('.metal').getAttribute('data-value');
+        // let crystalCost = document.querySelector(".costs").childNodes[3].querySelector('.crystal').getAttribute('data-value');
+        // let deutCost = document.querySelector(".costs").childNodes[3].querySelector('.deuterium') ? document.querySelector(".costs").childNodes[3].querySelector('.deuterium').getAttribute('data-value') : 0;
+        cost = [metalCost, crystalCost, deutCost];
+        let reduction = [0, 0, 0];
+        //#lnx MRC REDUCTION FOR ROCKTAL
+        if (prodBuildings.includes(id)) {
+          reduction[0] = 0.5/100*currentMRC*cost[0];
+          reduction[1] = 0.5/100*currentMRC*cost[1];
+          reduction[2] = 0.5/100*currentMRC*cost[2];
+        }
+        //#lnx MEGALITH REDUCTION FOR ROCKTAL
+        if (id<=12112 && id >= 12101) {
+          reduction[0] += currentMegalith/100*cost[0];
+          reduction[1] += currentMegalith/100*cost[1];
+          reduction[2] += currentMegalith/100*cost[2];
+        }
+        cost[0] -= reduction[0];
+        cost[1] -= reduction[1];
+        cost[2] -= reduction[2];
+
+          let dur = document.querySelector(".build_duration").childNodes[3].getAttribute('datetime');
+          time = moment.duration(dur).asSeconds()/60/60;
+          return { time: time, cost: cost };
+
     } else {
-      cost[0] *= Math.pow(2, lvl - 1);
-      cost[1] *= Math.pow(2, lvl - 1);
-      cost[2] *= Math.pow(2, lvl - 1);
-    }
-    let time =
-      (cost[0] + cost[1]) /
-      (2500 * Math.max(4 - lvl / 2, 1) * (1 + robotic) * Math.pow(2, nanite));
-    if (id == 15 || id == 36 || id == 43 || id == 42 || id == 41) {
+      cost = baseCost[id];
+      if (id == 1 || id == 3 || id == 4) {
+        cost[0] *= Math.pow(1.5, lvl - 1);
+        cost[1] *= Math.pow(1.5, lvl - 1);
+      } else if (id == 2) {
+        cost[0] *= Math.pow(1.6, lvl - 1);
+        cost[1] *= Math.pow(1.6, lvl - 1);
+      } else if (id == 12) {
+        cost[0] *= Math.pow(1.8, lvl - 1);
+        cost[1] *= Math.pow(1.8, lvl - 1);
+        cost[2] *= Math.pow(1.8, lvl - 1);
+      } else if (id == 36) {
+        cost[0] *= Math.pow(5, lvl - 1);
+        cost[2] *= Math.pow(5, lvl - 1);
+        cost[3] *= Math.ceil(Math.pow(2.5, lvl - 1));
+      } else if (id == 33) {
+        cost[1] *= Math.pow(2, lvl - 1);
+        cost[2] *= Math.pow(2, lvl - 1);
+        cost[3] *= Math.pow(2, lvl - 1);
+      } else {
+        cost[0] *= Math.pow(2, lvl - 1);
+        cost[1] *= Math.pow(2, lvl - 1);
+        cost[2] *= Math.pow(2, lvl - 1);
+      }
       time =
-        ((cost[0] + cost[1]) / 2500) *
-        (1 / (1 + robotic)) *
-        Math.pow(0.5, nanite);
+        (cost[0] + cost[1]) /
+        (2500 * Math.max(4 - lvl / 2, 1) * (1 + robotic) * Math.pow(2, nanite));
+      if (id == 15 || id == 36 || id == 43 || id == 42 || id == 41) {
+        time =
+          ((cost[0] + cost[1]) / 2500) *
+          (1 / (1 + robotic)) *
+          Math.pow(0.5, nanite);
+      }
     }
+    //#lnx MRC REDUCTION FOR ROCKTAL
+    if (prodBuildings.includes(id)) {
+      cost[0] = cost[0] - (0.5/100*currentMRC*cost[0]);
+      cost[1] = cost[1] - (0.5/100*currentMRC*cost[1]);
+      cost[2] = cost[2] - (0.5/100*currentMRC*cost[2]);
+    }
+
     time /= this.json.speed;
     return { time: time, cost: cost };
   }
