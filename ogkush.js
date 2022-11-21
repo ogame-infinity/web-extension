@@ -2593,7 +2593,7 @@ class OGInfinity {
         (mainPlanet && mainPlanet.coords === coords) || false;
     }
 
-    fetch('https://ptre.chez.gg/scripts/oglight_import_player_activity.php', {
+    fetch('https://ptre.chez.gg/scripts/oglight_import_player_activity.php?tool=infinity', {
       priority: 'low',
       method: 'POST',
       body: JSON.stringify(ptreJSON),
@@ -3749,7 +3749,7 @@ class OGInfinity {
 
     let cleanPlayerName = encodeURIComponent(player.name);
     this.getJSON(
-      `https://ptre.chez.gg/scripts/oglight_get_player_infos.php?team_key=${this.json.options.ptreTK}&pseudo=${cleanPlayerName}&player_id=${player.id}&input_frame=${frame}`,
+      `https://ptre.chez.gg/scripts/oglight_get_player_infos.php?tool=infinity&team_key=${this.json.options.ptreTK}&pseudo=${cleanPlayerName}&player_id=${player.id}&input_frame=${frame}`,
       (result) => {
         if (result.code == 1) {
           let arrData =
@@ -10743,7 +10743,7 @@ class OGInfinity {
       this.sortTable(this.reportList);
     }
     if (Object.keys(ptreJSON).length > 0) {
-      fetch('https://ptre.chez.gg/scripts/oglight_import_player_activity.php', {
+      fetch('https://ptre.chez.gg/scripts/oglight_import_player_activity.php?tool=infinity', {
         method: 'POST',
         body: JSON.stringify(ptreJSON),
       })
@@ -11068,7 +11068,7 @@ class OGInfinity {
         );
         ptreBtn.addEventListener('click', () => {
           this.getJSON(
-            `https://ptre.chez.gg/scripts/oglight_import.php?team_key=${this.json.options.ptreTK}&sr_id=${report.apiKey}`,
+            `https://ptre.chez.gg/scripts/oglight_import.php?tool=infinity&team_key=${this.json.options.ptreTK}&sr_id=${report.apiKey}`,
             (result) => {
               fadeBox(result.message_verbose, result.code != 1);
             }

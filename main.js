@@ -227,7 +227,7 @@ class DataHelper {
 
   updatePtreGalaxy(ptrePosition) {
     fetch(
-      'https://ptre.chez.gg/scripts/api_galaxy_import_infos.php?tool=oglight',
+      'https://ptre.chez.gg/scripts/api_galaxy_import_infos.php?tool=infinity',
       {
         priority: 'low',
         method: 'POST',
