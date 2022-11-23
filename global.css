@@ -4415,6 +4415,14 @@ span.espionageDefText {
   width: 110px !important;
 }
 
+.ogl-tooltip.ogl-active .ogl-stalkPlanets .ogl-moon-div.ogl-active:hover .ogl-moon-hover {
+    width: 74px !important;
+}
+
+.mCSB_container .ogl-stalkPlanets .ogl-moon-div.ogl-active:hover .ogl-moon-hover {
+    width: 100px !important;
+}
+
 .fade-in {
   animation: fadeIn ease 1s;
   -webkit-animation: fadeIn ease 10s;
@@ -6447,7 +6455,7 @@ table.fleetinfo tr:nth-last-child(1) {
 }
 
 .ogl-sideStalk .ogl-stalkPlanets .ogl-moon-hover .icon_eye {
-  margin-right: -31px;
+  margin-right: 3px;
 }
 
 .ogl-stalkPlanets .icon_eye:hover {
