@@ -11774,7 +11774,7 @@ class OGInfinity {
       factor = 1e3;
     }
     value = value.split(sep).join('');
-    return parseInt(value.replace('|', sep) * factor);
+    return parseInt(value.replace('|', '.') * factor);
   }
 
   removeNumSeparator(str) {
