@@ -12065,8 +12065,8 @@ return duration;
     let currentMegalith = 0;
     this.json.empire.forEach((planet) => {
       if(planet.coordinates.slice(1, -1)) {
-        currentMRC = planet["12111"];
-        currentMegalith = planet["12108"];
+        currentMRC = planet["12111"] ? planet["12111"] : 0;
+        currentMegalith = planet["12108"] ? planet["12108"] : 0;
       }
 });
 
