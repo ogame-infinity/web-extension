@@ -63,6 +63,8 @@ class DataHelper {
   }
 
   getPlayer(id) {
+    if (this.players === undefined) return
+
     if (isNaN(Number(id))) {
       id = this.names[id];
       if (!id) {
