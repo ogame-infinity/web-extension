@@ -3,6 +3,7 @@ class DataHelper {
     this.universe = universe;
     this.names = {};
     this.loading = false;
+    this.hasLoaded = false;
   }
 
   init() {
@@ -266,6 +267,7 @@ class DataHelper {
           this.lastUpdate = new Date();
           this.players = players;
           this.loading = false;
+          this.hasLoaded = true;
         })
         .catch((err) => {
           this.loading = false;
@@ -536,7 +538,7 @@ window.addEventListener(
 window.addEventListener(
   'ogi-players',
   function (evt) {
-    if (!dataHelper) {
+    if (!dataHelper || !dataHelper.hasLoaded) {
       console.warn('No data helper in ogi-players, returning...');
       return;
     }
