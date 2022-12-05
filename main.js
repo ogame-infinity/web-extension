@@ -63,75 +63,83 @@ class DataHelper {
     return possible;
   }
 
-  getPlayer(id) {
-    if (this.players === undefined) return
-
-    if (isNaN(Number(id))) {
-      id = this.names[id];
-      if (!id) {
+  getPlayer(nameOrId) {
+    var id;
+    if (isNaN(Number(nameOrId))) {
+      let name = nameOrId;
+      if (this.names !== undefined && Object.keys(this.names).contains(name)) {
+        id = this.names[name];
+      } else {
         for (let scannedId in this.scannedPlayers) {
-          if (this.scannedPlayers.name == id) {
+          if (this.scannedPlayers.name == name) {
             id = scannedId;
+            break;
           }
         }
       }
+    } else {
+      id = nameOrId;
     }
-    let response = {};
+    return id;
+  }
 
-    let player = this.players[id];
-    let scannedPlanets = this.scannedPlanets[id];
-    let scannedPlayer = this.scannedPlayers[id];
-    response.id = id;
-    response.planets = [];
-    response.alliance = '';
-    response.status = '';
-    response.military = { score: 0, position: 0, ships: 0 };
-    response.economy = { score: 0, position: 0 };
-    response.points = { score: 0, position: 0 };
-    response.research = { score: 0, position: 0 };
-    response.def = 0;
-    if (player) {
-      response.name = player.name || '';
-      response.alliance = player.alliance || '';
-      response.status = player.status || '';
-      response.points = { ...player.points } || { score: 0, position: 0 };
-      response.military = { ...player.military } || { score: 0, position: 0 };
-      response.research = { ...player.research } || { score: 0, position: 0 };
-      response.economy = { ...player.economy } || { score: 0, position: 0 };
-      response.def = -(
-        response.points.score -
-        response.economy.score -
-        response.research.score -
-        response.military.score
+  getPlayerById(id) {
+    let player = {};
+    player.id = id;
+    player.name = '';
+    player.planets = [];
+    player.alliance = '';
+    player.status = '';
+    player.military = { score: 0, position: 0, ships: 0 };
+    player.economy = { score: 0, position: 0 };
+    player.points = { score: 0, position: 0 };
+    player.research = { score: 0, position: 0 };
+    player.def = 0;
+    if (this.players !== undefined && Object.keys(this.players).contains(id) && typeof this.players[id] !== 'undefined') {
+      // TODO: maybe there is a better way to copy player data here
+      let localPlayer = this.players[id];
+      player.name = localPlayer.name;
+      player.alliance = localPlayer.alliance || '';
+      player.status = localPlayer.status || '';
+      player.points = { ...localPlayer.points } || { score: 0, position: 0 };
+      player.military = { ...localPlayer.military } || { score: 0, position: 0 };
+      player.research = { ...localPlayer.research } || { score: 0, position: 0 };
+      player.economy = { ...localPlayer.economy } || { score: 0, position: 0 };
+      player.def = -(
+        localPlayer.points.score -
+        localPlayer.economy.score -
+        localPlayer.research.score -
+        localPlayer.military.score
       );
-      response.economy.score = response.economy.score - response.def;
-      response.military.score = response.military.score - response.def;
-      response.lastUpdate = this.lastPlanetsUpdate;
+      player.economy.score = player.economy.score - localPlayer.def;
+      player.military.score = player.military.score - localPlayer.def;
+      player.lastUpdate = this.lastPlanetsUpdate;
       player.planets.forEach((planet) => {
-        response.planets.push(planet);
+        player.planets.push(planet);
       });
     }
-    if (scannedPlayer) {
-      response.name = scannedPlayer;
+    else if (this.scannedPlayers !== undefined && Object.keys(this.scannedPlayers).contains(id) && typeof this.scannedPlayers[id] !== 'undefined') {
+      player.name = this.scannedPlayers[id];
     }
-    if (scannedPlanets) {
+    if (this.scannedPlanets !== undefined && Object.keys(this.scannedPlanets).contains(id) && typeof this.scannedPlanets[id] !== 'undefined') {
+      let scannedPlanets = this.scannedPlanets[id];
       for (let [coords, moon] of Object.entries(scannedPlanets)) {
         let isMain = false;
-        response.planets.forEach((planet, index) => {
+        player.planets.forEach((planet, index) => {
           if (coords == planet.coords) {
             isMain = planet.isMain;
-            response.planets.splice(index, 1);
+            player.planets.splice(index, 1);
           }
         });
         let pla = { coords: coords, moon: moon, isMain: isMain, scanned: true };
         if (moon == null) {
           pla.deleted = true;
         }
-        response.planets.push(pla);
+        player.planets.push(pla);
       }
     }
-    response.topScore = this.topScore;
-    return response;
+    player.topScore = this.topScore;
+    return player;
   }
 
   scan(system, ptreKey = null, serverTime = null) {
