@@ -535,23 +535,35 @@ window.addEventListener(
   true
 );
 
+function ogiPlayersResponse(evt, retryNumber = 0) {
+  if (!dataHelper || !dataHelper.hasLoaded) {
+    if (retryNumber < 10) {
+      console.info('Retrying ogiPlayersResponse', retryNumber);
+      setTimeout(() => {
+        ogiPlayersResponse(evt, retryNumber + 1)
+      }, 200);  
+    } else {
+      console.error('Cant ogiPlayersResponse');
+    }
+    return;
+  }
+
+  let request = evt.detail;
+  let response = { player: dataHelper.getPlayer(evt.detail.id) };
+  var clone = response;
+  if (navigator.userAgent.indexOf('Firefox') > 0) {
+    clone = cloneInto(response, document.defaultView);
+  }
+  clone.requestId = request.requestId;
+  window.dispatchEvent(
+    new CustomEvent('ogi-players-rep', { detail: clone })
+  );
+}
+
 window.addEventListener(
   'ogi-players',
   function (evt) {
-    if (!dataHelper || !dataHelper.hasLoaded) {
-      console.warn('No data helper in ogi-players, returning...');
-      return;
-    }
-    let request = evt.detail;
-    let response = { player: dataHelper.getPlayer(evt.detail.id) };
-    var clone = response;
-    if (navigator.userAgent.indexOf('Firefox') > 0) {
-      clone = cloneInto(response, document.defaultView);
-    }
-    clone.requestId = request.requestId;
-    window.dispatchEvent(
-      new CustomEvent('ogi-players-rep', { detail: clone })
-    );
+    ogiPlayersResponse(evt)
   },
   false
 );
