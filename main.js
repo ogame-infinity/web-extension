@@ -534,22 +534,20 @@ window.addEventListener(
 window.addEventListener(
   'ogi-players',
   function (evt) {
-    setTimeout(() => {
-      if (!dataHelper) {
-        console.warn('No data helper in ogi-players, returning...');
-        return;
-      }
-      let request = evt.detail;
-      let response = { player: dataHelper.getPlayer(evt.detail.id) };
-      var clone = response;
-      if (navigator.userAgent.indexOf('Firefox') > 0) {
-        clone = cloneInto(response, document.defaultView);
-      }
-      clone.requestId = request.requestId;
-      window.dispatchEvent(
-        new CustomEvent('ogi-players-rep', { detail: clone })
-      );
-    });
+    if (!dataHelper) {
+      console.warn('No data helper in ogi-players, returning...');
+      return;
+    }
+    let request = evt.detail;
+    let response = { player: dataHelper.getPlayer(evt.detail.id) };
+    var clone = response;
+    if (navigator.userAgent.indexOf('Firefox') > 0) {
+      clone = cloneInto(response, document.defaultView);
+    }
+    clone.requestId = request.requestId;
+    window.dispatchEvent(
+      new CustomEvent('ogi-players-rep', { detail: clone })
+    );
   },
   false
 );
