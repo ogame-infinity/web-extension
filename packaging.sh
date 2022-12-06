@@ -4,6 +4,7 @@ rm -R ./dist
 mkdir ./dist
 
 MANIFEST_FILE_NAME="manifest.json"
+MANIFEST_FILE_NAME_V2="manifestv2.json"
 CSS_FILE_NAME="global.css"
 MAIN_JS_FILE_NAME="main.js"
 CONTENT_JS_FILE_NAME="ogkush.js"
@@ -38,6 +39,7 @@ cp ../$MAIN_JS_FILE_NAME ./$MAIN_JS_FILE_NAME
 cp ../$CONTENT_JS_FILE_NAME ./$CONTENT_JS_FILE_NAME
 cp ../$BG_JS_FILE_NAME ./$BG_JS_FILE_NAME
 cp ../$CSS_FILE_NAME ./$CSS_FILE_NAME
+cp ../$MANIFEST_FILE_NAME_V2 ./$MANIFEST_FILE_NAME
 
 # Modifing chrome-extension:// to moz-extension://
 sed -i "s/chrome/moz/g" "$CSS_FILE_NAME"
