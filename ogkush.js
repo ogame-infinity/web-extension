@@ -166,12 +166,6 @@ let ALLY_CLASS_NONE = 0;
 
 class OGInfinity {
   constructor() {
-    var s = document.createElement("script");
-    s.type = "text/javascript";
-    s.src =
-      "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js";
-    $("head").append(s);
-
     this.commander = player.hasCommander;
     this.rawURL = new URL(window.location.href);
     this.page =
@@ -723,7 +717,6 @@ class OGInfinity {
   }
 
   technoDetail() {
-    console.log(this.page);
     if (
       this.page == "research" ||
       this.page == "supplies" ||
