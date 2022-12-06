@@ -1,37 +1,40 @@
 {
-  "name": "Ogame Infinity",
-  "version": "12345",
-  "manifest_version": 2,
-  "description": "OGI - To Ogame's infinity and beyond!",
-  "homepage_url": "https://ogameinfinity.com",
-
+  "action": {
+    "default_icon": {
+      "32": "res/logo128.png"
+    },
+    "default_title": "Ogame Infinity"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
   "content_scripts": [
     {
-      "exclude_matches": ["https://*.ogame.gameforge.com/game/admin2/*"],
-      "matches": ["https://*.ogame.gameforge.com/game/*"],
-      "js": ["main.js"],
       "css": ["global.css"],
+      "exclude_matches": ["https://*.ogame.gameforge.com/game/admin2/*"],
+      "js": ["main.js"],
+      "matches": ["https://*.ogame.gameforge.com/game/*"],
       "run_at": "document_start"
     }
   ],
-
-  "web_accessible_resources": ["ogkush.js", "libs/*", "res/*", "util/*"],
-
-  "browser_action": {
-    "default_title": "Ogame Infinity",
-    "default_icon": {
-      "32": "res/logo128.png"
-    }
-  },
-
+  "description": "OGI - To Ogame's infinity and beyond!",
+  "host_permissions": ["https://*.ogame.gameforge.com/game/*"],
   "icons": {
-    "32": "res/logo128.png",
     "128": "res/logo128.png",
     "256": "res/logo512.png",
+    "32": "res/logo128.png",
     "512": "res/logo512.png"
   },
-  "permissions": ["storage", "https://*.ogame.gameforge.com/game/*"],
-  "background": {
-    "scripts": ["background.js"]
-  }
+  "manifest_version": 3,
+  "name": "Ogame Infinity",
+  "permissions": ["storage", "unlimitedStorage"],
+  "update_url": "https://clients2.google.com/service/update2/crx",
+  "version": "12345",
+  "web_accessible_resources": [
+    {
+      "extension_ids": ["hfojakphgokgpbnejoobfamojbgolcbo"],
+      "matches": ["<all_urls>"],
+      "resources": ["ogkush.js", "main.js", "main-utilities.js", "libs/*", "res/*", "util/*"]
+    }
+  ]
 }
