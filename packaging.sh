@@ -33,7 +33,7 @@ sed -i "s/12345/$1/g" "$MANIFEST_FILE_NAME"
 
 zip -qr -X "ogi-chrome.zip" * 
 echo "Packing zip for chrome complete!"
-/usr/local/opt/gnu-sed/libexec/gnubin/sed -i '31d' $MANIFEST_FILE_NAME
+sed -i '31d' $MANIFEST_FILE_NAME
 
 zip -qr -X "ogi-edge.zip" * -x "ogi-chrome.zip"
 echo "Packing zip for edge complete!"
