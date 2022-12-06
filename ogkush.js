@@ -57,7 +57,9 @@ if (redirect && redirect.indexOf("https") > -1) {
   window.location.href = redirect;
 }
 
-let commaSeparator = ["en-US", "en-GB"];
+
+let commaSeparator = ['en-US', 'en-GB', 'ro-RO'];
+
 let locale = document
   .getElementById("cookiebanner")
   .getAttribute("data-locale");
