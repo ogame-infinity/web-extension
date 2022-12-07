@@ -34,7 +34,7 @@
     {
       "extension_ids": ["hfojakphgokgpbnejoobfamojbgolcbo"],
       "matches": ["<all_urls>"],
-      "resources": ["ogkush.js", "main.js", "main-utilities.js", "libs/*", "res/*", "util/*"]
+      "resources": ["ogkush.js", "main.js", "libs/*", "res/*", "util/*"]
     }
   ]
 }

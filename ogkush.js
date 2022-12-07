@@ -57,8 +57,7 @@ if (redirect && redirect.indexOf("https") > -1) {
   window.location.href = redirect;
 }
 
-
-let commaSeparator = ['en-US', 'en-GB', 'ro-RO'];
+let commaSeparator = ["en-US", "en-GB", "ro-RO"];
 
 let locale = document
   .getElementById("cookiebanner")
@@ -105,14 +104,7 @@ Element.prototype.empty = function (e) {
   while (this.firstChild) this.removeChild(this.firstChild);
 };
 Element.prototype.html = function (html) {
-  const parser = new DOMParser();
-  const parsed = parser.parseFromString(html, "text/html");
-  const tags = parsed.getElementsByTagName("body");
-  this.innerHTML = "";
-  let nodes = tags[0].childNodes;
-  for (let i = 0; i < nodes.length; i++) {
-    this.appendChild(nodes[i].cloneNode(true));
-  }
+  this.innerHTML = DOMPurify.sanitize(html);
 };
 let SHIP_COSTS = {
   202: [2, 2, 0],
@@ -12081,7 +12073,7 @@ class OGInfinity {
     let currentMRC = 0;
     let currentMegalith = 0;
     this.json.empire.forEach((planet) => {
-      if(planet.coordinates.slice(1, -1) == this.current.coords) {
+      if (planet.coordinates.slice(1, -1) == this.current.coords) {
         currentMRC = planet["12111"] ? planet["12111"] : 0;
         currentMegalith = planet["12108"] ? planet["12108"] : 0;
       }
