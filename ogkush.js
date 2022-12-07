@@ -12081,7 +12081,7 @@ class OGInfinity {
     let currentMRC = 0;
     let currentMegalith = 0;
     this.json.empire.forEach((planet) => {
-      if (planet.coordinates.slice(1, -1)) {
+      if(planet.coordinates.slice(1, -1) == this.current.coords) {
         currentMRC = planet["12111"] ? planet["12111"] : 0;
         currentMegalith = planet["12108"] ? planet["12108"] : 0;
       }
