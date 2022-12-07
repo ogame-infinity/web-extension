@@ -7,10 +7,10 @@ class DataHelper {
 
   init() {
     return new Promise(async (resolve, reject) => {
-      chrome.storage.local.get('ogi-scanned-' + this.universe, (result) => {
+      chrome.storage.local.get("ogi-scanned-" + this.universe, (result) => {
         let json;
         try {
-          json = JSON.parse(result['ogi-scanned-' + this.universe]);
+          json = JSON.parse(result["ogi-scanned-" + this.universe]);
         } catch (error) {
           json = {};
         }
@@ -80,17 +80,17 @@ class DataHelper {
     let scannedPlayer = this.scannedPlayers[id];
     response.id = id;
     response.planets = [];
-    response.alliance = '';
-    response.status = '';
+    response.alliance = "";
+    response.status = "";
     response.military = { score: 0, position: 0, ships: 0 };
     response.economy = { score: 0, position: 0 };
     response.points = { score: 0, position: 0 };
     response.research = { score: 0, position: 0 };
     response.def = 0;
     if (player) {
-      response.name = player.name || '';
-      response.alliance = player.alliance || '';
-      response.status = player.status || '';
+      response.name = player.name || "";
+      response.alliance = player.alliance || "";
+      response.status = player.status || "";
       response.points = { ...player.points } || { score: 0, position: 0 };
       response.military = { ...player.military } || { score: 0, position: 0 };
       response.research = { ...player.research } || { score: 0, position: 0 };
@@ -159,9 +159,9 @@ class DataHelper {
         ptrePosition[row.coords] = {};
         ptrePosition[row.coords].id = row.planetId || -1;
         ptrePosition[row.coords].teamkey = ptreKey;
-        ptrePosition[row.coords].galaxy = row.coords.split(':')[0];
-        ptrePosition[row.coords].system = row.coords.split(':')[1];
-        ptrePosition[row.coords].position = row.coords.split(':')[2];
+        ptrePosition[row.coords].galaxy = row.coords.split(":")[0];
+        ptrePosition[row.coords].system = row.coords.split(":")[1];
+        ptrePosition[row.coords].position = row.coords.split(":")[2];
         ptrePosition[row.coords].timestamp_ig = serverTime;
         if (row.moon) {
           ptrePosition[row.coords].moon = {};
@@ -173,7 +173,7 @@ class DataHelper {
         this.scannedPlanets[row.id][row.coords] = row.moon;
         if (ptreKey && row.id) {
           let currentPlayer =
-            player ?? '{id:' + row.id + ', name:' + row.name + '}';
+            player ?? "{id:" + row.id + ", name:" + row.name + "}";
           ptrePosition[row.coords].player_id = row.id;
           ptrePosition[row.coords].name = row.name || false;
           ptrePosition[row.coords].rank = currentPlayer?.points?.position || -1;
@@ -227,16 +227,16 @@ class DataHelper {
 
   updatePtreGalaxy(ptrePosition) {
     fetch(
-      'https://ptre.chez.gg/scripts/api_galaxy_import_infos.php?tool=infinity',
+      "https://ptre.chez.gg/scripts/api_galaxy_import_infos.php?tool=infinity",
       {
-        priority: 'low',
-        method: 'POST',
+        priority: "low",
+        method: "POST",
         body: JSON.stringify(ptrePosition),
       }
     )
       .then((response) => response.json())
       .then((data) => {
-        if (data.code != 1) console.log('Can\'t send data to PTRE');
+        if (data.code != 1) console.log("Can't send data to PTRE");
       });
   }
 
@@ -270,45 +270,45 @@ class DataHelper {
           console.error(err);
         });
     } else {
-      console.log('Last ogame\'s data update was: ' + this.lastUpdate);
+      console.log("Last ogame's data update was: " + this.lastUpdate);
     }
   }
 
   _fetchXML(url) {
     return fetch(url)
       .then((rep) => rep.text())
-      .then((str) => new window.DOMParser().parseFromString(str, 'text/xml'))
+      .then((str) => new window.DOMParser().parseFromString(str, "text/xml"))
       .then((xml) => xml);
   }
 
   _updateHighscore(players) {
-    let types = ['points', 'economy', 'research', 'military'];
+    let types = ["points", "economy", "research", "military"];
     let promises = [];
     types.forEach((type, index) => {
       let p = this._fetchXML(
         `https://${this.universe}.ogame.gameforge.com/api/highscore.xml?category=1&type=` +
           index
       ).then((xml) => {
-        Array.from(xml.querySelectorAll('player')).forEach((player) => {
-          let playerid = player.getAttribute('id');
+        Array.from(xml.querySelectorAll("player")).forEach((player) => {
+          let playerid = player.getAttribute("id");
           if (!players[playerid]) {
-            players[player.getAttribute('id')] = {
-              id: player.getAttribute('id'),
+            players[player.getAttribute("id")] = {
+              id: player.getAttribute("id"),
               planets: [],
             };
           }
-          let position = player.getAttribute('position');
-          let score = player.getAttribute('score');
+          let position = player.getAttribute("position");
+          let score = player.getAttribute("score");
           if (index == 0 && Number(position) == 1) {
             this.topScore = score;
           }
-          players[player.getAttribute('id')][types[index]] = {
+          players[player.getAttribute("id")][types[index]] = {
             position: position,
             score: score,
           };
           if (index == 3) {
-            players[player.getAttribute('id')][types[index]].ships =
-              player.getAttribute('ships');
+            players[player.getAttribute("id")][types[index]].ships =
+              player.getAttribute("ships");
           }
         });
       });
@@ -320,32 +320,32 @@ class DataHelper {
   _updatePlayers(players) {
     return fetch(`https://${this.universe}.ogame.gameforge.com/api/players.xml`)
       .then((rep) => rep.text())
-      .then((str) => new window.DOMParser().parseFromString(str, 'text/xml'))
+      .then((str) => new window.DOMParser().parseFromString(str, "text/xml"))
       .then((xml) => {
         let update = new Date(
-          Number(xml.children[0].getAttribute('timestamp')) * 1e3
+          Number(xml.children[0].getAttribute("timestamp")) * 1e3
         );
         if (update > this.lastPlayersUpdate) {
           this.lastPlayersUpdate = update;
           this.scannedPlayers = {};
         }
-        Array.from(xml.querySelectorAll('player')).forEach((player, index) => {
-          let id = player.getAttribute('id');
+        Array.from(xml.querySelectorAll("player")).forEach((player, index) => {
+          let id = player.getAttribute("id");
           if (players[id]) {
-            players[id].name = player.getAttribute('name');
-            players[id].alliance = player.getAttribute('alliance');
-            players[id].status = player.getAttribute('status')
-              ? player.getAttribute('status')
-              : '';
-            this.names[player.getAttribute('name')] = id;
+            players[id].name = player.getAttribute("name");
+            players[id].alliance = player.getAttribute("alliance");
+            players[id].status = player.getAttribute("status")
+              ? player.getAttribute("status")
+              : "";
+            this.names[player.getAttribute("name")] = id;
           } else {
             let playerjson = {
               id: id,
-              name: player.getAttribute('name'),
-              alliance: player.getAttribute('alliance'),
-              status: player.getAttribute('status')
-                ? player.getAttribute('status')
-                : '',
+              name: player.getAttribute("name"),
+              alliance: player.getAttribute("alliance"),
+              status: player.getAttribute("status")
+                ? player.getAttribute("status")
+                : "",
               planets: [],
             };
             players[id] = playerjson;
@@ -360,24 +360,24 @@ class DataHelper {
       `https://${this.universe}.ogame.gameforge.com/api/universe.xml`
     )
       .then((rep) => rep.text())
-      .then((str) => new window.DOMParser().parseFromString(str, 'text/xml'))
+      .then((str) => new window.DOMParser().parseFromString(str, "text/xml"))
       .then((xml) => {
         let update = new Date(
-          Number(xml.children[0].getAttribute('timestamp')) * 1e3
+          Number(xml.children[0].getAttribute("timestamp")) * 1e3
         );
         if (update > this.lastPlanetsUpdate) {
           this.lastPlanetsUpdate = update;
           this.scannedPlanets = {};
         }
-        Array.from(xml.querySelectorAll('planet')).forEach((planet, index) => {
+        Array.from(xml.querySelectorAll("planet")).forEach((planet, index) => {
           let moon = planet.firstChild;
           let planetjson = {
-            id: planet.getAttribute('id'),
-            name: planet.getAttribute('name'),
-            coords: planet.getAttribute('coords'),
+            id: planet.getAttribute("id"),
+            name: planet.getAttribute("name"),
+            coords: planet.getAttribute("coords"),
             moon: moon ? true : false,
           };
-          let player = players[planet.getAttribute('player')];
+          let player = players[planet.getAttribute("player")];
           if (player) {
             player.planets.push(planetjson);
           }
@@ -394,13 +394,13 @@ class DataHelper {
           }
           player.planets.sort((a, b) => {
             let coordsA = a.coords
-              .split(':')
-              .map((x) => x.padStart(3, '0'))
-              .join('');
+              .split(":")
+              .map((x) => x.padStart(3, "0"))
+              .join("");
             let coordsB = b.coords
-              .split(':')
-              .map((x) => x.padStart(3, '0'))
-              .join('');
+              .split(":")
+              .map((x) => x.padStart(3, "0"))
+              .join("");
             return coordsA - coordsB;
           });
         }
@@ -413,16 +413,16 @@ class DataHelper {
       `https://${this.universe}.ogame.gameforge.com/api/alliances.xml`
     )
       .then((rep) => rep.text())
-      .then((str) => new window.DOMParser().parseFromString(str, 'text/xml'))
+      .then((str) => new window.DOMParser().parseFromString(str, "text/xml"))
       .then((xml) => {
-        Array.from(xml.querySelectorAll('alliance')).forEach(
+        Array.from(xml.querySelectorAll("alliance")).forEach(
           (alliance, index) => {
             Array.from(alliance.children).forEach((alliPlayer) => {
-              let player = players[alliPlayer.getAttribute('id')];
+              let player = players[alliPlayer.getAttribute("id")];
               if (player) {
                 player.alliance = `[${alliance.getAttribute(
-                  'tag'
-                )}] ${alliance.getAttribute('name')}`;
+                  "tag"
+                )}] ${alliance.getAttribute("name")}`;
               }
             });
           }
@@ -432,7 +432,7 @@ class DataHelper {
   }
 }
 
-const UNIVERSE = window.location.host.split('.')[0];
+const UNIVERSE = window.location.host.split(".")[0];
 let universes = {};
 let currentUniverse = null;
 let dataHelper = null;
@@ -491,10 +491,11 @@ function processData() {
 }
 
 function injectScript(path, cb, module = false) {
-  var s = document.createElement('script');
+  var s = document.createElement("script");
+  s.type = "text/javascript";
   s.src = chrome.runtime.getURL(path);
   if (module) {
-    s.type = 'module';
+    s.type = "module";
   }
   (document.head || document.documentElement).appendChild(s);
   s.onload = () => {
@@ -503,28 +504,29 @@ function injectScript(path, cb, module = false) {
   };
 }
 
-window.addEventListener('DOMContentLoaded', (event) => {
-  injectScript('ogkush.js', null, true);
+window.addEventListener("DOMContentLoaded", (event) => {
+  injectScript("ogkush.js", null, true);
+  injectScript("libs/moment.js", null, false);
 });
-document.addEventListener('ogi-chart', function (e) {
-  injectScript('libs/chart.min.js', () => {
-    injectScript('libs/chartjs-plugin-labels.js');
+document.addEventListener("ogi-chart", function (e) {
+  injectScript("libs/chart.min.js", () => {
+    injectScript("libs/chartjs-plugin-labels.js");
   });
 });
 
 window.addEventListener(
-  'ogi-expedition',
+  "ogi-expedition",
   function (evt) {
     setTimeout(() => {
       let request = evt.detail;
       let response = getExpeditionType(request.message);
       var clone = response;
-      if (navigator.userAgent.indexOf('Firefox') > 0) {
+      if (navigator.userAgent.indexOf("Firefox") > 0) {
         clone = cloneInto(response, document.defaultView);
       }
       clone.requestId = request.requestId;
       window.dispatchEvent(
-        new CustomEvent('ogi-expedition-rep', { detail: clone })
+        new CustomEvent("ogi-expedition-rep", { detail: clone })
       );
     });
   },
@@ -532,22 +534,22 @@ window.addEventListener(
 );
 
 window.addEventListener(
-  'ogi-players',
+  "ogi-players",
   function (evt) {
     setTimeout(() => {
       if (!dataHelper) {
-        console.warn('No data helper in ogi-players, returning...');
+        console.warn("No data helper in ogi-players, returning...");
         return;
       }
       let request = evt.detail;
       let response = { player: dataHelper.getPlayer(evt.detail.id) };
       var clone = response;
-      if (navigator.userAgent.indexOf('Firefox') > 0) {
+      if (navigator.userAgent.indexOf("Firefox") > 0) {
         clone = cloneInto(response, document.defaultView);
       }
       clone.requestId = request.requestId;
       window.dispatchEvent(
-        new CustomEvent('ogi-players-rep', { detail: clone })
+        new CustomEvent("ogi-players-rep", { detail: clone })
       );
     });
   },
@@ -555,31 +557,31 @@ window.addEventListener(
 );
 
 window.addEventListener(
-  'ogi-filter',
+  "ogi-filter",
   function (evt) {
     let request = evt.detail;
     let response = {
       players: dataHelper.filter(evt.detail.name, evt.detail.alliance),
     };
     var clone = response;
-    if (navigator.userAgent.indexOf('Firefox') > 0) {
+    if (navigator.userAgent.indexOf("Firefox") > 0) {
       clone = cloneInto(response, document.defaultView);
     }
     clone.requestId = request.requestId;
-    window.dispatchEvent(new CustomEvent('ogi-filter-rep', { detail: clone }));
+    window.dispatchEvent(new CustomEvent("ogi-filter-rep", { detail: clone }));
   },
   false
 );
-document.addEventListener('ogi-galaxy', function (e) {
+document.addEventListener("ogi-galaxy", function (e) {
   dataHelper.scan(e.detail.changes, e.detail.ptreKey, e.detail.serverTime);
 });
-document.addEventListener('ogi-clear', function (e) {
+document.addEventListener("ogi-clear", function (e) {
   dataHelper.clearData();
 });
-document.addEventListener('ogi-notification', function (e) {
-  const msg = Object.assign({ iconUrl: 'res/logo128.png' }, e.detail);
+document.addEventListener("ogi-notification", function (e) {
+  const msg = Object.assign({ iconUrl: "res/logo128.png" }, e.detail);
   chrome.runtime.sendMessage(
-    { type: 'notification', universe: UNIVERSE, message: msg },
+    { type: "notification", universe: UNIVERSE, message: msg },
     function (response) {}
   );
 });
@@ -623,20 +625,20 @@ function similarity(s1, s2) {
   );
 }
 
-const url = chrome.runtime.getURL('res/expeditions.tsv');
+const url = chrome.runtime.getURL("res/expeditions.tsv");
 let expeditionsMap = {};
 let logbooks = {};
 fetch(url)
   .then((response) => response.text())
   .then((text) => {
-    let lines = text.split('\n');
+    let lines = text.split("\n");
     let first = lines.shift();
     for (let line of lines) {
-      line.split(',');
-      let splits = line.split('\t');
+      line.split(",");
+      let splits = line.split("\t");
       for (let split of splits) {
         if (split == splits[0]) continue;
-        if (splits[0] == 'Logbook') {
+        if (splits[0] == "Logbook") {
           logbooks[split] = true;
         } else {
           expeditionsMap[split] = splits[0];
@@ -646,16 +648,16 @@ fetch(url)
   });
 
 function getExpeditionType(message) {
-  let splits = message.split('\n\n');
+  let splits = message.split("\n\n");
   logbook = splits[splits.length - 1];
-  if (logbook.includes(':')) {
+  if (logbook.includes(":")) {
     splits.pop();
   }
-  message = splits.join('\n\n');
+  message = splits.join("\n\n");
   let busy = false;
   let max = 0;
-  let similar = '';
-  let type = '';
+  let similar = "";
+  let type = "";
   for (let i in expeditionsMap) {
     let sim = similarity(message, i);
     if (sim > max) {
@@ -668,6 +670,6 @@ function getExpeditionType(message) {
   if (max > 0.35) {
     return { type: type, busy: busy };
   } else {
-    return { type: 'Unknown', busy: busy };
+    return { type: "Unknown", busy: busy };
   }
 }

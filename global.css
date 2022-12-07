@@ -4406,14 +4406,24 @@ span.espionageDefText {
 .ogl-moon-div.ogl-active:hover > .ogl-moon-hover,
 .ogl-planet-div:hover > .ogl-planet-hover {
   display: flex;
-  width: 69px;
+  /* width: 69px; */
   transition: width 2s;
   animation: fadeIn ease 0.4s;
 }
 
 .ogl-moon-div.ogl-active:hover .ogl-moon-hover{
-  width: 110px !important;
+  width: 25px !important;
+  margin-left: 80px;
 }
+
+.ogl-tooltip.ogl-active .ogl-stalkPlanets .ogl-moon-div.ogl-active:hover .ogl-moon-hover {
+  width: 25px !important;
+  margin-left: 46px;      
+}
+
+/* .mCSB_container .ogl-stalkPlanets .ogl-moon-div.ogl-active:hover .ogl-moon-hover {
+  width: 100px !important;
+} */
 
 .fade-in {
   animation: fadeIn ease 1s;
@@ -4498,13 +4508,13 @@ span.espionageDefText {
   left: 8px;
   top: 4px;
   z-index: 2;
-  width: 70px;
+  width: 25px;
 }
 
 .ogl-moon-hover {
   left: 32px;
   justify-content: flex-end;
-  width: 100%
+  /* width: 100% */
 }
 
 .ogl-sideStalk .ogl-stalkPlanets .close-tooltip {
@@ -6447,7 +6457,7 @@ table.fleetinfo tr:nth-last-child(1) {
 }
 
 .ogl-sideStalk .ogl-stalkPlanets .ogl-moon-hover .icon_eye {
-  margin-right: -31px;
+  margin-right: 3px;
 }
 
 .ogl-stalkPlanets .icon_eye:hover {
