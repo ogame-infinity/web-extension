@@ -285,7 +285,12 @@ class OGInfinity {
     this.json.options.autofetchempire =
       this.json.options.disableautofetchempire === true ? false : true;
     this.json.options.spyFilter = this.json.options.spyFilter || "DATE";
-    this.json.options.ptreTK = this.json.options.ptreTK || "";
+    if (this.json.options.ptreTK && (this.json.options.ptreTK.replace(/-/g, "").length == 18 && this.json.options.ptreTK.indexOf("TM") == 0)) {
+      this.json.options.ptreTK = this.json.options.ptreTK || "";
+    } else {
+      this.json.options.ptreTK = "";
+      // TODO: Remove ptreTK from LocalStorage (it has wrong format)
+    }
     this.json.options.pantryKey = this.json.options.pantryKey || "";
     this.json.options.rvalLimit =
       this.json.options.rvalLimit || 4e5 * this.json.speed;
@@ -13771,7 +13776,12 @@ class OGInfinity {
       this.json.options.rvalLimit = parseInt(
         this.removeNumSeparator(rvalInput.value)
       );
-      this.json.options.ptreTK = ptreInput.value;
+      if (ptreInput.value && (ptreInput.value.replace(/-/g, "").length == 18 && ptreInput.value.indexOf("TM") == 0)) {
+        this.json.options.ptreTK = ptreInput.value;
+      } else {
+        this.json.options.ptreTK = "";
+        // TODO: Display an error message "Invalid PTRE Team Key Format. TK should look like: TM-XXXX-XXXX-XXXX-XXXX"
+      }
       this.json.options.pantryKey = pantryInput.value;
       this.json.options.expeditionDefaultTime = Math.max(
         1,
