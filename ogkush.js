@@ -1867,6 +1867,13 @@ class OGInfinity {
         `<a href="https://www.mmorpg-stat.eu/base.php?se=1&univers=_${this.universe}" target="_blank">Mmorpg</a>`
       )
     );
+    bar.appendChild(
+      this.createDOM(
+        "li",
+        {},
+        `<a href="https://ptre.chez.gg/" target="_blank">PTRE</a>`
+      )
+    );
     let ping =
       window.performance.timing.domLoading -
       window.performance.timing.fetchStart;
