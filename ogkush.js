@@ -10470,15 +10470,16 @@ class OGInfinity {
         if (debris && !debris.classList.contains("ogl-debrisReady")) {
           debris.classList.add("ogl-debrisReady");
           let total = 0;
-          let htmlContent = element.querySelector(".microdebris").innerHTML;
+          const frag = document.createDocumentFragment();
           debris.querySelectorAll(".debris-content").forEach((resources) => {
             let value = this.removeNumSeparator(
               resources.innerText.replace(/(\D*)/, "")
             );
             total += parseInt(value);
-            htmlContent += this.formatToUnits(value) + "<br>";
+            frag.appendChild(document.createTextNode(this.formatToUnits(value)));
+            frag.appendChild(document.createElement("br"));
           });
-          element.querySelector(".microdebris").html(htmlContent);
+          element.querySelector(".microdebris").appendChild(frag);
           if (total > this.json.options.rvalLimit) {
             element.classList.add("ogl-active");
           }
