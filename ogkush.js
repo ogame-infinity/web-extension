@@ -10470,15 +10470,16 @@ class OGInfinity {
         if (debris && !debris.classList.contains("ogl-debrisReady")) {
           debris.classList.add("ogl-debrisReady");
           let total = 0;
-          let htmlContent = element.querySelector(".microdebris").innerHTML;
+          const frag = document.createDocumentFragment();
           debris.querySelectorAll(".debris-content").forEach((resources) => {
             let value = this.removeNumSeparator(
               resources.innerText.replace(/(\D*)/, "")
             );
             total += parseInt(value);
-            htmlContent += this.formatToUnits(value) + "<br>";
+            frag.appendChild(document.createTextNode(this.formatToUnits(value)));
+            frag.appendChild(document.createElement("br"));
           });
-          element.querySelector(".microdebris").html(htmlContent);
+          element.querySelector(".microdebris").appendChild(frag);
           if (total > this.json.options.rvalLimit) {
             element.classList.add("ogl-active");
           }
@@ -10497,6 +10498,8 @@ class OGInfinity {
         expeBox.html(
           `\n<img src="https://gf1.geo.gfsrv.net/cdnc5/fa3e396b8af2ae31e28ef3b44eca91.gif">\n<div>\n<div class="ogl-metal">${res[0]}</div>\n<div class="ogl-crystal">${res[1]}</div>\n</div>\n<div>\n<div>${scouts.textContent}</div>\n<div>${action.outerHTML}</div>\n</div>\n`
         );
+        expeBox.querySelector("a").setAttribute(
+        "onclick", action.outerHTML.match(/(?<=k=")(.*?)(?=">)/)[0]);
       }
     }
   }
