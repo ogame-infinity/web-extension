@@ -13357,28 +13357,28 @@ class OGInfinity {
     //   planetIconsCheck.checked = true;
     // }
     // dataDiv.appendChild(this.createDOM("hr"));
-    // optiondiv = dataDiv.appendChild(
-    //   this.createDOM(
-    //     'span',
-    //     {
-    //       style:
-    //         'display: flex;justify-content: space-between; align-items: center;',
-    //     },
-    //     'Disable auto fetch Empire (Commander only)'
-    //   )
-    // );
-    // let disableautofetchempirebox = optiondiv.appendChild(
-    //   this.createDOM('input', { type: 'checkbox' })
-    // );
-    // disableautofetchempirebox.addEventListener('change', () => {
-    //   this.json.options.disableautofetchempire =
-    //     disableautofetchempirebox.checked;
-    //   this.saveData();
-    // });
-    // if (this.json.options.disableautofetchempire) {
-    //   disableautofetchempirebox.checked = true;
-    // }
-    // dataDiv.appendChild(this.createDOM('hr'));
+    optiondiv = dataDiv.appendChild(
+      this.createDOM(
+        'span',
+        {
+          style:
+            'display: flex;justify-content: space-between; align-items: center;',
+        },
+        'Disable auto fetch Empire'
+      )
+    );
+    let disableautofetchempirebox = optiondiv.appendChild(
+      this.createDOM('input', { type: 'checkbox' })
+    );
+    disableautofetchempirebox.addEventListener('change', () => {
+      this.json.options.disableautofetchempire =
+        disableautofetchempirebox.checked;
+      this.saveData();
+    });
+    if (this.json.options.disableautofetchempire) {
+      disableautofetchempirebox.checked = true;
+    }
+    dataDiv.appendChild(this.createDOM('hr'));
 
     optiondiv = dataDiv.appendChild(
       this.createDOM(
