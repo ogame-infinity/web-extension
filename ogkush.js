@@ -777,6 +777,8 @@ class OGInfinity {
         document.querySelector("#resources_deuterium").getAttribute("data-raw"),
       ];
       let technocrat = document.querySelector(".technocrat.on") ? true : false;
+      let bonus = document.querySelector(".acceleration");
+      bonus = bonus ? (Number(bonus.getAttribute("data-value")) / 100) : 0;
       let labs = 0;
       let that = this;
       let updateResearchDetails = (technoId, baselvl, tolvl) => {
@@ -795,7 +797,8 @@ class OGInfinity {
               i,
               labs,
               technocrat,
-              that.playerClass == 3
+              that.playerClass == 3,
+              bonus
             );
           } else if (
             that.page == "supplies" ||
@@ -819,7 +822,8 @@ class OGInfinity {
             tolvl,
             labs,
             technocrat,
-            that.playerClass == 3
+            that.playerClass == 3,
+            bonus
           );
         } else if (
           that.page == "supplies" ||
@@ -1341,7 +1345,8 @@ class OGInfinity {
                 baseLvl,
                 initTime,
                 technocrat,
-                that.playerClass == 3
+                that.playerClass == 3,
+                bonus
               );
             } else if (
               that.page == "supplies" ||
@@ -11935,7 +11940,7 @@ class OGInfinity {
     return Math.round(prod);
   }
 
-  research(id, lvl, labs, technocrat, explorer) {
+  research(id, lvl, labs, technocrat, explorer, bonus) {
     if (labs == 0) {
       labs = 1;
     }
@@ -11980,6 +11985,7 @@ class OGInfinity {
       this.json.researchDivisor;
     if (technocrat) time -= time * 0.25;
     if (explorer) time -= time * 0.25;
+    if (bonus) time -= time * bonus;
     return { time: time, cost: cost };
   }
 
@@ -12001,9 +12007,9 @@ class OGInfinity {
     }
   }
 
-  getLabs(id, lvl, time, technocrat, explorer) {
+  getLabs(id, lvl, time, technocrat, explorer, bonus) {
     for (let i = 0; i < 300; i++) {
-      let newTime = this.research(id, lvl, i, technocrat, explorer).time;
+      let newTime = this.research(id, lvl, i, technocrat, explorer, bonus).time;
       if (
         time == formatTimeWrapper(newTime * 60 * 60, 2, true, " ", false, "") ||
         time ==
