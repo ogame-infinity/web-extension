@@ -754,23 +754,6 @@ class OGInfinity {
       let currentEnergy = this.removeNumSeparator(
         document.querySelector("#resources_energy").innerText
       );
-
-      function getTimeFromString(str) {
-        var regexStr = str.match(/[a-z]+|[^a-z]+/gi);
-        let time = 0;
-        for (let i = 0; i < regexStr.length; i++) {
-          let num = Number(regexStr[i]);
-          if (!isNaN(num)) {
-            if (regexStr[i + 1] == "M") num *= 60;
-            if (regexStr[i + 1] == "H") num *= 60 * 60;
-            if (regexStr[i + 1] == "DT") num *= 60 * 60 * 24;
-            time += num;
-            i++;
-          }
-        }
-        return time;
-      }
-
       let currentRes = [
         document.querySelector("#resources_metal").getAttribute("data-raw"),
         document.querySelector("#resources_crystal").getAttribute("data-raw"),
@@ -1147,7 +1130,8 @@ class OGInfinity {
           clone.innerText = "";
           document.querySelector(".description").appendChild(clone);
           let timeDiv = document.querySelector(".build_duration time");
-          let baseTime = getTimeFromString(timeDiv.getAttribute("datetime"));
+          let baseTime = that.getTimeFromString(timeDiv
+            .getAttribute("datetime"));
           if (
             [
               202, 203, 208, 209, 210, 204, 205, 206, 219, 207, 215, 211, 212,
@@ -1329,7 +1313,7 @@ class OGInfinity {
             lock.addEventListener("click", () => {
               lockListener();
             });
-            let initTime = getTimeFromString(
+            let initTime = that.getTimeFromString(
               document
                 .querySelector(".build_duration time")
                 .getAttribute("datetime")
@@ -12016,6 +12000,22 @@ class OGInfinity {
     }
   }
 
+  getTimeFromString(str) {
+    var regexStr = str.match(/[a-z]+|[^a-z]+/gi);
+    let time = 0;
+    for (let i = 0; i < regexStr.length; i++) {
+      let num = Number(regexStr[i]);
+      if (!isNaN(num)) {
+        if (regexStr[i + 1] == "M") num *= 60;
+        if (regexStr[i + 1] == "H") num *= 60 * 60;
+        if (regexStr[i + 1] == "DT") num *= 60 * 60 * 24;
+        time += num;
+        i++;
+      }
+    }
+    return time;
+  }
+
   convertDuration(t) {
     //dividing period from time
     var x = t.split("T"),
@@ -12415,7 +12415,7 @@ class OGInfinity {
       let dur = document
         .querySelector(".build_duration")
         .childNodes[3].getAttribute("datetime");
-      time = moment.duration(dur).asSeconds() / 60 / 60;
+      time = this.getTimeFromString(dur) / 60 / 60;
       return { time: time, cost: cost };
     } else {
       cost = baseCost[id];
