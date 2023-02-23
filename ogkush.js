@@ -9103,7 +9103,7 @@ class OGInfinity {
         );
         div.querySelectorAll('td[colspan="2"]').forEach((tooltip) => {
           let count = Number(
-            tooltip.nextElementSibling.innerHTML.trim().split(".").join("")
+            this.removeNumSeparator(tooltip.nextElementSibling.innerHTML.trim())
           );
           let name = tooltip.innerText.trim().slice(0, -1);
           let id = this.json.shipNames[name];
