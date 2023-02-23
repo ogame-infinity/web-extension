@@ -1857,7 +1857,7 @@ class OGInfinity {
       this.createDOM(
         "li",
         {},
-        `<a href="https://trashsim.universeview.be/${this.univerviewLang}" target="_blank">Trash</a>`
+        `<a href="https://trashsim.oplanet.eu/${this.univerviewLang}" target="_blank">Trash</a>`
       )
     );
     bar.appendChild(
