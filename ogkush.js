@@ -4232,8 +4232,12 @@ class OGInfinity {
             let content = msg.querySelector(".msg_content").innerText;
             coords = coords.innerText.slice(1, -1);
             let matches = content.match(/[0-9.,]*[0-9]/gm);
-            let met = Number(removeNumSeparator(matches[matches.length - 2]));
-            let cri = Number(removeNumSeparator(matches[matches.length - 1]));
+            let met = Number(
+              this.removeNumSeparator(matches[matches.length - 2])
+            );
+            let cri = Number(
+              this.removeNumSeparator(matches[matches.length - 1])
+            );
             let combat = false;
             if (coords.split(":")[2] == 16) {
               msg.classList.add("ogk-expedition");
