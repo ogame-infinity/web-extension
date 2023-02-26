@@ -13870,12 +13870,26 @@ class OGInfinity {
   updateFlyings() {
     const FLYING_PER_PLANETS = {};
     const eventTable = document.getElementById("eventContent");
-    const rows = eventTable.querySelectorAll("tr");
+    const ACSrows = eventTable.querySelectorAll("tr.allianceAttack");
+    const unionTable = [];
+    ACSrows.forEach(acsRow => {
+      const union = Array.from(acsRow.classList)
+        .find(cl => cl.includes("union")).split("unionunion")[1];
+        unionTable.push([union, acsRow.querySelectorAll("td")[1].innerText]);
+    });
+    const unionArrivalTime = Object.fromEntries(unionTable);
+    const rows = eventTable.querySelectorAll("tr.eventFleet");
     rows.forEach((row) => {
       const cols = row.querySelectorAll("td");
 
       const flying = {};
-      flying.arrivalTime = cols[1].innerText;
+      if (!row.classList.contains("partnerInfo")) {
+        flying.arrivalTime = cols[1].innerText;
+      } else {
+        const union = Array.from(row.classList)
+          .find(cl => cl.includes("union")).split("union")[1];
+        flying.arrivalTime = unionArrivalTime[union];
+      }
       flying.missionFleetIcon = cols[2].querySelector("img").src;
 
       // Get the mission title by removing the suffix "own fleet" and the "return" suffix (eg: "(R)")
