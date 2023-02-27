@@ -13875,7 +13875,7 @@ class OGInfinity {
     ACSrows.forEach(acsRow => {
       const union = Array.from(acsRow.classList)
         .find(cl => cl.includes("union")).split("unionunion")[1];
-        unionTable.push([union, acsRow.querySelectorAll("td")[1].innerText]);
+      unionTable.push([union, acsRow.querySelectorAll("td")[1].innerText]);
     });
     const unionArrivalTime = Object.fromEntries(unionTable);
     const rows = eventTable.querySelectorAll("tr.eventFleet");
