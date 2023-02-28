@@ -9078,7 +9078,7 @@ class OGInfinity {
     let ids = [];
     let planets = {};
     document.querySelectorAll(".eventFleet").forEach((line) => {
-      let tooltip = line.querySelector(".tooltip");
+      let tooltip = line.querySelector(".tooltip.tooltipClose");
       let id = Number(line.getAttribute("id").split("-")[1]);
       let back =
         line.getAttribute("data-return-flight") == "false" ? false : true;
