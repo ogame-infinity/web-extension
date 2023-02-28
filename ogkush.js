@@ -4085,131 +4085,133 @@ class OGInfinity {
         let id = document
           .querySelector("li[id=subtabs-nfFleet21].ui-state-active")
           .getAttribute("aria-controls");
-        document.querySelectorAll(`div[id=${id}] li.msg`).forEach((msg) => {
-          let id = msg.getAttribute("data-msg-id");
-          let isCR = msg.querySelector(".msg_actions .icon_nf_link");
-          if (!isCR) {
-            msg.classList.add("ogk-combat-contact");
-          }
-          if (id in this.json.combats) {
-            if (msg.querySelector(".icon_favorited")) {
-              this.json.combats[id].favorited = true;
-              this.json.combats[id].date = new Date();
-            } else {
-              this.json.combats[id].favorited = false;
+        document.querySelectorAll(`div[id=${id}] li.msg`).forEach((msg, ix) => {
+          setTimeout(() => {
+            let id = msg.getAttribute("data-msg-id");
+            let isCR = msg.querySelector(".msg_actions .icon_nf_link");
+            if (!isCR) {
+              msg.classList.add("ogk-combat-contact");
             }
-            if (this.json.combats[id].coordinates.position == 16) {
-              msg.classList.add("ogk-expedition");
-            } else if (this.json.combats[id].isProbes) {
-              msg.classList.add("ogk-combat-probes");
-            } else if (this.json.combats[id].draw) {
-              msg.classList.add("ogk-combat-draw");
-            } else if (this.json.combats[id].win) {
-              msg.classList.add("ogk-combat-win");
-            } else {
-              msg.classList.add("ogk-combat");
-            }
-          } else if (id in this.combats) {
-            return;
-          } else {
-            this.combats[id] = true;
-            this.fetchAndConvertRC(id).then((cr) => {
-              if (cr === null) return;
-              let date = getFormatedDate(cr.timestamp, "[d].[m].[y]");
-              if (cr.coordinates.position == 16) {
-                if (!this.json.expeditionSums[date]) {
-                  this.json.expeditionSums[date] = {
-                    found: [0, 0, 0, 0],
-                    harvest: [0, 0],
-                    fleet: {},
-                    losses: {},
-                    type: {},
-                    fuel: 0,
-                    adjust: [0, 0, 0],
-                  };
-                }
-                for (let [key, value] of Object.entries(cr.losses)) {
-                  if (this.json.expeditionSums[date].losses[key]) {
-                    this.json.expeditionSums[date].losses[key] += value;
-                  } else {
-                    this.json.expeditionSums[date].losses[key] = value;
-                  }
-                }
+            if (id in this.json.combats) {
+              if (msg.querySelector(".icon_favorited")) {
+                this.json.combats[id].favorited = true;
+                this.json.combats[id].date = new Date();
               } else {
-                if (!this.json.combatsSums[date]) {
-                  this.json.combatsSums[date] = {
-                    loot: [0, 0, 0],
-                    harvest: [0, 0],
-                    losses: {},
-                    fuel: 0,
-                    adjust: [0, 0, 0],
-                    topCombats: [],
-                    count: 0,
-                    wins: 0,
-                    draws: 0,
-                  };
-                }
-                if (!cr.isProbes) {
-                  if (cr.win) this.json.combatsSums[date].wins += 1;
-                  if (cr.draw) this.json.combatsSums[date].draws += 1;
-                  this.json.combatsSums[date].count += 1;
-                  this.json.combatsSums[date].topCombats.push({
-                    debris: cr.debris.metalTotal + cr.debris.crystalTotal,
-                    loot:
-                      (cr.loot.metal + cr.loot.crystal + cr.loot.deuterium) *
-                      (cr.win ? 1 : -1),
-                    ennemi: cr.ennemi.name,
-                    losses: cr.ennemi.losses,
-                  });
-                  this.json.combatsSums[date].topCombats.sort(
-                    (a, b) =>
-                      b.debris +
-                      Math.abs(b.loot) -
-                      (a.debris + Math.abs(a.loot))
-                  );
-                  if (this.json.combatsSums[date].topCombats.length > 3) {
-                    this.json.combatsSums[date].topCombats.pop();
-                  }
-                }
-                if (cr.win) {
-                  this.json.combatsSums[date].loot[0] += cr.loot.metal;
-                  this.json.combatsSums[date].loot[1] += cr.loot.crystal;
-                  this.json.combatsSums[date].loot[2] += cr.loot.deuterium;
-                } else {
-                  this.json.combatsSums[date].loot[0] -= cr.loot.metal;
-                  this.json.combatsSums[date].loot[1] -= cr.loot.crystal;
-                  this.json.combatsSums[date].loot[2] -= cr.loot.deuterium;
-                }
-                for (let [key, value] of Object.entries(cr.losses)) {
-                  if (this.json.combatsSums[date].losses[key]) {
-                    this.json.combatsSums[date].losses[key] += value;
-                  } else {
-                    this.json.combatsSums[date].losses[key] = value;
-                  }
-                }
+                this.json.combats[id].favorited = false;
               }
-              if (cr.coordinates.position == 16) {
+              if (this.json.combats[id].coordinates.position == 16) {
                 msg.classList.add("ogk-expedition");
-              } else if (cr.isProbes) {
+              } else if (this.json.combats[id].isProbes) {
                 msg.classList.add("ogk-combat-probes");
-              } else if (cr.draw) {
+              } else if (this.json.combats[id].draw) {
                 msg.classList.add("ogk-combat-draw");
-              } else if (cr.win) {
+              } else if (this.json.combats[id].win) {
                 msg.classList.add("ogk-combat-win");
               } else {
                 msg.classList.add("ogk-combat");
               }
-              this.json.combats[id] = {
-                timestamp: cr.timestamp,
-                favorited: msg.querySelector(".icon_favorited") ? true : false,
-                coordinates: cr.coordinates,
-                win: cr.win,
-                draw: cr.draw,
-                isProbes: cr.isProbes,
-              };
-              this.saveData();
-            });
-          }
+            } else if (id in this.combats) {
+              return;
+            } else {
+              this.combats[id] = true;
+              this.fetchAndConvertRC(id).then((cr) => {
+                if (cr === null) return;
+                let date = getFormatedDate(cr.timestamp, "[d].[m].[y]");
+                if (cr.coordinates.position == 16) {
+                  if (!this.json.expeditionSums[date]) {
+                    this.json.expeditionSums[date] = {
+                      found: [0, 0, 0, 0],
+                      harvest: [0, 0],
+                      fleet: {},
+                      losses: {},
+                      type: {},
+                      fuel: 0,
+                      adjust: [0, 0, 0],
+                    };
+                  }
+                  for (let [key, value] of Object.entries(cr.losses)) {
+                    if (this.json.expeditionSums[date].losses[key]) {
+                      this.json.expeditionSums[date].losses[key] += value;
+                    } else {
+                      this.json.expeditionSums[date].losses[key] = value;
+                    }
+                  }
+                } else {
+                  if (!this.json.combatsSums[date]) {
+                    this.json.combatsSums[date] = {
+                      loot: [0, 0, 0],
+                      harvest: [0, 0],
+                      losses: {},
+                      fuel: 0,
+                      adjust: [0, 0, 0],
+                      topCombats: [],
+                      count: 0,
+                      wins: 0,
+                      draws: 0,
+                    };
+                  }
+                  if (!cr.isProbes) {
+                    if (cr.win) this.json.combatsSums[date].wins += 1;
+                    if (cr.draw) this.json.combatsSums[date].draws += 1;
+                    this.json.combatsSums[date].count += 1;
+                    this.json.combatsSums[date].topCombats.push({
+                      debris: cr.debris.metalTotal + cr.debris.crystalTotal,
+                      loot:
+                        (cr.loot.metal + cr.loot.crystal + cr.loot.deuterium) *
+                        (cr.win ? 1 : -1),
+                      ennemi: cr.ennemi.name,
+                      losses: cr.ennemi.losses,
+                    });
+                    this.json.combatsSums[date].topCombats.sort(
+                      (a, b) =>
+                        b.debris +
+                        Math.abs(b.loot) -
+                        (a.debris + Math.abs(a.loot))
+                    );
+                    if (this.json.combatsSums[date].topCombats.length > 3) {
+                      this.json.combatsSums[date].topCombats.pop();
+                    }
+                  }
+                  if (cr.win) {
+                    this.json.combatsSums[date].loot[0] += cr.loot.metal;
+                    this.json.combatsSums[date].loot[1] += cr.loot.crystal;
+                    this.json.combatsSums[date].loot[2] += cr.loot.deuterium;
+                  } else {
+                    this.json.combatsSums[date].loot[0] -= cr.loot.metal;
+                    this.json.combatsSums[date].loot[1] -= cr.loot.crystal;
+                    this.json.combatsSums[date].loot[2] -= cr.loot.deuterium;
+                  }
+                  for (let [key, value] of Object.entries(cr.losses)) {
+                    if (this.json.combatsSums[date].losses[key]) {
+                      this.json.combatsSums[date].losses[key] += value;
+                    } else {
+                      this.json.combatsSums[date].losses[key] = value;
+                    }
+                  }
+                }
+                if (cr.coordinates.position == 16) {
+                  msg.classList.add("ogk-expedition");
+                } else if (cr.isProbes) {
+                  msg.classList.add("ogk-combat-probes");
+                } else if (cr.draw) {
+                  msg.classList.add("ogk-combat-draw");
+                } else if (cr.win) {
+                  msg.classList.add("ogk-combat-win");
+                } else {
+                  msg.classList.add("ogk-combat");
+                }
+                this.json.combats[id] = {
+                  timestamp: cr.timestamp,
+                  favorited: msg.querySelector(".icon_favorited") ? true : false,
+                  coordinates: cr.coordinates,
+                  win: cr.win,
+                  draw: cr.draw,
+                  isProbes: cr.isProbes,
+                };
+                this.saveData();
+              });
+            }
+          }, ix * 50);
         });
       }
       if (document.querySelector("li[id=subtabs-nfFleet24].ui-state-active")) {
