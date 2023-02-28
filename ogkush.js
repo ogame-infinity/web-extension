@@ -754,29 +754,14 @@ class OGInfinity {
       let currentEnergy = this.removeNumSeparator(
         document.querySelector("#resources_energy").innerText
       );
-
-      function getTimeFromString(str) {
-        var regexStr = str.match(/[a-z]+|[^a-z]+/gi);
-        let time = 0;
-        for (let i = 0; i < regexStr.length; i++) {
-          let num = Number(regexStr[i]);
-          if (!isNaN(num)) {
-            if (regexStr[i + 1] == "M") num *= 60;
-            if (regexStr[i + 1] == "H") num *= 60 * 60;
-            if (regexStr[i + 1] == "DT") num *= 60 * 60 * 24;
-            time += num;
-            i++;
-          }
-        }
-        return time;
-      }
-
       let currentRes = [
         document.querySelector("#resources_metal").getAttribute("data-raw"),
         document.querySelector("#resources_crystal").getAttribute("data-raw"),
         document.querySelector("#resources_deuterium").getAttribute("data-raw"),
       ];
       let technocrat = document.querySelector(".technocrat.on") ? true : false;
+      let bonus = document.querySelector(".acceleration");
+      bonus = bonus ? (Number(bonus.getAttribute("data-value")) / 100) : 0;
       let labs = 0;
       let that = this;
       let updateResearchDetails = (technoId, baselvl, tolvl) => {
@@ -795,7 +780,8 @@ class OGInfinity {
               i,
               labs,
               technocrat,
-              that.playerClass == 3
+              that.playerClass == 3,
+              bonus
             );
           } else if (
             that.page == "supplies" ||
@@ -819,7 +805,8 @@ class OGInfinity {
             tolvl,
             labs,
             technocrat,
-            that.playerClass == 3
+            that.playerClass == 3,
+            bonus
           );
         } else if (
           that.page == "supplies" ||
@@ -1147,7 +1134,8 @@ class OGInfinity {
           clone.innerText = "";
           document.querySelector(".description").appendChild(clone);
           let timeDiv = document.querySelector(".build_duration time");
-          let baseTime = getTimeFromString(timeDiv.getAttribute("datetime"));
+          let baseTime = that.getTimeFromString(timeDiv
+            .getAttribute("datetime"));
           if (
             [
               202, 203, 208, 209, 210, 204, 205, 206, 219, 207, 215, 211, 212,
@@ -1329,7 +1317,7 @@ class OGInfinity {
             lock.addEventListener("click", () => {
               lockListener();
             });
-            let initTime = getTimeFromString(
+            let initTime = that.getTimeFromString(
               document
                 .querySelector(".build_duration time")
                 .getAttribute("datetime")
@@ -1341,7 +1329,8 @@ class OGInfinity {
                 baseLvl,
                 initTime,
                 technocrat,
-                that.playerClass == 3
+                that.playerClass == 3,
+                bonus
               );
             } else if (
               that.page == "supplies" ||
@@ -1857,7 +1846,7 @@ class OGInfinity {
       this.createDOM(
         "li",
         {},
-        `<a href="https://trashsim.universeview.be/${this.univerviewLang}" target="_blank">Trash</a>`
+        `<a href="https://trashsim.oplanet.eu/${this.univerviewLang}" target="_blank">Trash</a>`
       )
     );
     bar.appendChild(
@@ -4080,131 +4069,133 @@ class OGInfinity {
         let id = document
           .querySelector("li[id=subtabs-nfFleet21].ui-state-active")
           .getAttribute("aria-controls");
-        document.querySelectorAll(`div[id=${id}] li.msg`).forEach((msg) => {
-          let id = msg.getAttribute("data-msg-id");
-          let isCR = msg.querySelector(".msg_actions .icon_nf_link");
-          if (!isCR) {
-            msg.classList.add("ogk-combat-contact");
-          }
-          if (id in this.json.combats) {
-            if (msg.querySelector(".icon_favorited")) {
-              this.json.combats[id].favorited = true;
-              this.json.combats[id].date = new Date();
-            } else {
-              this.json.combats[id].favorited = false;
+        document.querySelectorAll(`div[id=${id}] li.msg`).forEach((msg, ix) => {
+          setTimeout(() => {
+            let id = msg.getAttribute("data-msg-id");
+            let isCR = msg.querySelector(".msg_actions .icon_nf_link");
+            if (!isCR) {
+              msg.classList.add("ogk-combat-contact");
             }
-            if (this.json.combats[id].coordinates.position == 16) {
-              msg.classList.add("ogk-expedition");
-            } else if (this.json.combats[id].isProbes) {
-              msg.classList.add("ogk-combat-probes");
-            } else if (this.json.combats[id].draw) {
-              msg.classList.add("ogk-combat-draw");
-            } else if (this.json.combats[id].win) {
-              msg.classList.add("ogk-combat-win");
-            } else {
-              msg.classList.add("ogk-combat");
-            }
-          } else if (id in this.combats) {
-            return;
-          } else {
-            this.combats[id] = true;
-            this.fetchAndConvertRC(id).then((cr) => {
-              if (cr === null) return;
-              let date = getFormatedDate(cr.timestamp, "[d].[m].[y]");
-              if (cr.coordinates.position == 16) {
-                if (!this.json.expeditionSums[date]) {
-                  this.json.expeditionSums[date] = {
-                    found: [0, 0, 0, 0],
-                    harvest: [0, 0],
-                    fleet: {},
-                    losses: {},
-                    type: {},
-                    fuel: 0,
-                    adjust: [0, 0, 0],
-                  };
-                }
-                for (let [key, value] of Object.entries(cr.losses)) {
-                  if (this.json.expeditionSums[date].losses[key]) {
-                    this.json.expeditionSums[date].losses[key] += value;
-                  } else {
-                    this.json.expeditionSums[date].losses[key] = value;
-                  }
-                }
+            if (id in this.json.combats) {
+              if (msg.querySelector(".icon_favorited")) {
+                this.json.combats[id].favorited = true;
+                this.json.combats[id].date = new Date();
               } else {
-                if (!this.json.combatsSums[date]) {
-                  this.json.combatsSums[date] = {
-                    loot: [0, 0, 0],
-                    harvest: [0, 0],
-                    losses: {},
-                    fuel: 0,
-                    adjust: [0, 0, 0],
-                    topCombats: [],
-                    count: 0,
-                    wins: 0,
-                    draws: 0,
-                  };
-                }
-                if (!cr.isProbes) {
-                  if (cr.win) this.json.combatsSums[date].wins += 1;
-                  if (cr.draw) this.json.combatsSums[date].draws += 1;
-                  this.json.combatsSums[date].count += 1;
-                  this.json.combatsSums[date].topCombats.push({
-                    debris: cr.debris.metalTotal + cr.debris.crystalTotal,
-                    loot:
-                      (cr.loot.metal + cr.loot.crystal + cr.loot.deuterium) *
-                      (cr.win ? 1 : -1),
-                    ennemi: cr.ennemi.name,
-                    losses: cr.ennemi.losses,
-                  });
-                  this.json.combatsSums[date].topCombats.sort(
-                    (a, b) =>
-                      b.debris +
-                      Math.abs(b.loot) -
-                      (a.debris + Math.abs(a.loot))
-                  );
-                  if (this.json.combatsSums[date].topCombats.length > 3) {
-                    this.json.combatsSums[date].topCombats.pop();
-                  }
-                }
-                if (cr.win) {
-                  this.json.combatsSums[date].loot[0] += cr.loot.metal;
-                  this.json.combatsSums[date].loot[1] += cr.loot.crystal;
-                  this.json.combatsSums[date].loot[2] += cr.loot.deuterium;
-                } else {
-                  this.json.combatsSums[date].loot[0] -= cr.loot.metal;
-                  this.json.combatsSums[date].loot[1] -= cr.loot.crystal;
-                  this.json.combatsSums[date].loot[2] -= cr.loot.deuterium;
-                }
-                for (let [key, value] of Object.entries(cr.losses)) {
-                  if (this.json.combatsSums[date].losses[key]) {
-                    this.json.combatsSums[date].losses[key] += value;
-                  } else {
-                    this.json.combatsSums[date].losses[key] = value;
-                  }
-                }
+                this.json.combats[id].favorited = false;
               }
-              if (cr.coordinates.position == 16) {
+              if (this.json.combats[id].coordinates.position == 16) {
                 msg.classList.add("ogk-expedition");
-              } else if (cr.isProbes) {
+              } else if (this.json.combats[id].isProbes) {
                 msg.classList.add("ogk-combat-probes");
-              } else if (cr.draw) {
+              } else if (this.json.combats[id].draw) {
                 msg.classList.add("ogk-combat-draw");
-              } else if (cr.win) {
+              } else if (this.json.combats[id].win) {
                 msg.classList.add("ogk-combat-win");
               } else {
                 msg.classList.add("ogk-combat");
               }
-              this.json.combats[id] = {
-                timestamp: cr.timestamp,
-                favorited: msg.querySelector(".icon_favorited") ? true : false,
-                coordinates: cr.coordinates,
-                win: cr.win,
-                draw: cr.draw,
-                isProbes: cr.isProbes,
-              };
-              this.saveData();
-            });
-          }
+            } else if (id in this.combats) {
+              return;
+            } else {
+              this.combats[id] = true;
+              this.fetchAndConvertRC(id).then((cr) => {
+                if (cr === null) return;
+                let date = getFormatedDate(cr.timestamp, "[d].[m].[y]");
+                if (cr.coordinates.position == 16) {
+                  if (!this.json.expeditionSums[date]) {
+                    this.json.expeditionSums[date] = {
+                      found: [0, 0, 0, 0],
+                      harvest: [0, 0],
+                      fleet: {},
+                      losses: {},
+                      type: {},
+                      fuel: 0,
+                      adjust: [0, 0, 0],
+                    };
+                  }
+                  for (let [key, value] of Object.entries(cr.losses)) {
+                    if (this.json.expeditionSums[date].losses[key]) {
+                      this.json.expeditionSums[date].losses[key] += value;
+                    } else {
+                      this.json.expeditionSums[date].losses[key] = value;
+                    }
+                  }
+                } else {
+                  if (!this.json.combatsSums[date]) {
+                    this.json.combatsSums[date] = {
+                      loot: [0, 0, 0],
+                      harvest: [0, 0],
+                      losses: {},
+                      fuel: 0,
+                      adjust: [0, 0, 0],
+                      topCombats: [],
+                      count: 0,
+                      wins: 0,
+                      draws: 0,
+                    };
+                  }
+                  if (!cr.isProbes) {
+                    if (cr.win) this.json.combatsSums[date].wins += 1;
+                    if (cr.draw) this.json.combatsSums[date].draws += 1;
+                    this.json.combatsSums[date].count += 1;
+                    this.json.combatsSums[date].topCombats.push({
+                      debris: cr.debris.metalTotal + cr.debris.crystalTotal,
+                      loot:
+                        (cr.loot.metal + cr.loot.crystal + cr.loot.deuterium) *
+                        (cr.win ? 1 : -1),
+                      ennemi: cr.ennemi.name,
+                      losses: cr.ennemi.losses,
+                    });
+                    this.json.combatsSums[date].topCombats.sort(
+                      (a, b) =>
+                        b.debris +
+                        Math.abs(b.loot) -
+                        (a.debris + Math.abs(a.loot))
+                    );
+                    if (this.json.combatsSums[date].topCombats.length > 3) {
+                      this.json.combatsSums[date].topCombats.pop();
+                    }
+                  }
+                  if (cr.win) {
+                    this.json.combatsSums[date].loot[0] += cr.loot.metal;
+                    this.json.combatsSums[date].loot[1] += cr.loot.crystal;
+                    this.json.combatsSums[date].loot[2] += cr.loot.deuterium;
+                  } else {
+                    this.json.combatsSums[date].loot[0] -= cr.loot.metal;
+                    this.json.combatsSums[date].loot[1] -= cr.loot.crystal;
+                    this.json.combatsSums[date].loot[2] -= cr.loot.deuterium;
+                  }
+                  for (let [key, value] of Object.entries(cr.losses)) {
+                    if (this.json.combatsSums[date].losses[key]) {
+                      this.json.combatsSums[date].losses[key] += value;
+                    } else {
+                      this.json.combatsSums[date].losses[key] = value;
+                    }
+                  }
+                }
+                if (cr.coordinates.position == 16) {
+                  msg.classList.add("ogk-expedition");
+                } else if (cr.isProbes) {
+                  msg.classList.add("ogk-combat-probes");
+                } else if (cr.draw) {
+                  msg.classList.add("ogk-combat-draw");
+                } else if (cr.win) {
+                  msg.classList.add("ogk-combat-win");
+                } else {
+                  msg.classList.add("ogk-combat");
+                }
+                this.json.combats[id] = {
+                  timestamp: cr.timestamp,
+                  favorited: msg.querySelector(".icon_favorited") ? true : false,
+                  coordinates: cr.coordinates,
+                  win: cr.win,
+                  draw: cr.draw,
+                  isProbes: cr.isProbes,
+                };
+                this.saveData();
+              });
+            }
+          }, ix * 50);
         });
       }
       if (document.querySelector("li[id=subtabs-nfFleet24].ui-state-active")) {
@@ -4232,8 +4223,12 @@ class OGInfinity {
             let content = msg.querySelector(".msg_content").innerText;
             coords = coords.innerText.slice(1, -1);
             let matches = content.match(/[0-9.,]*[0-9]/gm);
-            let met = Number(removeNumSeparator(matches[matches.length - 2]));
-            let cri = Number(removeNumSeparator(matches[matches.length - 1]));
+            let met = Number(
+              this.removeNumSeparator(matches[matches.length - 2])
+            );
+            let cri = Number(
+              this.removeNumSeparator(matches[matches.length - 1])
+            );
             let combat = false;
             if (coords.split(":")[2] == 16) {
               msg.classList.add("ogk-expedition");
@@ -9069,7 +9064,7 @@ class OGInfinity {
     let ids = [];
     let planets = {};
     document.querySelectorAll(".eventFleet").forEach((line) => {
-      let tooltip = line.querySelector(".tooltip");
+      let tooltip = line.querySelector(".tooltip.tooltipClose");
       let id = Number(line.getAttribute("id").split("-")[1]);
       let back =
         line.getAttribute("data-return-flight") == "false" ? false : true;
@@ -9103,7 +9098,7 @@ class OGInfinity {
         );
         div.querySelectorAll('td[colspan="2"]').forEach((tooltip) => {
           let count = Number(
-            tooltip.nextElementSibling.innerHTML.trim().split(".").join("")
+            this.removeNumSeparator(tooltip.nextElementSibling.innerHTML.trim())
           );
           let name = tooltip.innerText.trim().slice(0, -1);
           let id = this.json.shipNames[name];
@@ -11935,7 +11930,7 @@ class OGInfinity {
     return Math.round(prod);
   }
 
-  research(id, lvl, labs, technocrat, explorer) {
+  research(id, lvl, labs, technocrat, explorer, bonus) {
     if (labs == 0) {
       labs = 1;
     }
@@ -11978,6 +11973,7 @@ class OGInfinity {
       this.json.researchDivisor;
     if (technocrat) time -= time * 0.25;
     if (explorer) time -= time * 0.25;
+    if (bonus) time -= time * bonus;
     return { time: time ? time : 1 / 3600, cost: cost };
   }
 
@@ -11999,9 +11995,9 @@ class OGInfinity {
     }
   }
 
-  getLabs(id, lvl, time, technocrat, explorer) {
+  getLabs(id, lvl, time, technocrat, explorer, bonus) {
     for (let i = 0; i < 300; i++) {
-      let newTime = this.research(id, lvl, i, technocrat, explorer).time;
+      let newTime = this.research(id, lvl, i, technocrat, explorer, bonus).time;
       if (
         time == formatTimeWrapper(newTime * 60 * 60, 2, true, " ", false, "") ||
         time ==
@@ -12012,6 +12008,22 @@ class OGInfinity {
         return i;
       }
     }
+  }
+
+  getTimeFromString(str) {
+    var regexStr = str.match(/[a-z]+|[^a-z]+/gi);
+    let time = 0;
+    for (let i = 0; i < regexStr.length; i++) {
+      let num = Number(regexStr[i]);
+      if (!isNaN(num)) {
+        if (regexStr[i + 1] == "M") num *= 60;
+        if (regexStr[i + 1] == "H") num *= 60 * 60;
+        if (regexStr[i + 1] == "DT") num *= 60 * 60 * 24;
+        time += num;
+        i++;
+      }
+    }
+    return time;
   }
 
   convertDuration(t) {
@@ -12413,7 +12425,7 @@ class OGInfinity {
       let dur = document
         .querySelector(".build_duration")
         .childNodes[3].getAttribute("datetime");
-      time = moment.duration(dur).asSeconds() / 60 / 60;
+      time = this.getTimeFromString(dur) / 60 / 60;
       return { time: time, cost: cost };
     } else {
       cost = baseCost[id];
@@ -13355,28 +13367,28 @@ class OGInfinity {
     //   planetIconsCheck.checked = true;
     // }
     // dataDiv.appendChild(this.createDOM("hr"));
-    // optiondiv = dataDiv.appendChild(
-    //   this.createDOM(
-    //     'span',
-    //     {
-    //       style:
-    //         'display: flex;justify-content: space-between; align-items: center;',
-    //     },
-    //     'Disable auto fetch Empire (Commander only)'
-    //   )
-    // );
-    // let disableautofetchempirebox = optiondiv.appendChild(
-    //   this.createDOM('input', { type: 'checkbox' })
-    // );
-    // disableautofetchempirebox.addEventListener('change', () => {
-    //   this.json.options.disableautofetchempire =
-    //     disableautofetchempirebox.checked;
-    //   this.saveData();
-    // });
-    // if (this.json.options.disableautofetchempire) {
-    //   disableautofetchempirebox.checked = true;
-    // }
-    // dataDiv.appendChild(this.createDOM('hr'));
+    optiondiv = dataDiv.appendChild(
+      this.createDOM(
+        'span',
+        {
+          style:
+            'display: flex;justify-content: space-between; align-items: center;',
+        },
+        'Disable auto fetch Empire'
+      )
+    );
+    let disableautofetchempirebox = optiondiv.appendChild(
+      this.createDOM('input', { type: 'checkbox' })
+    );
+    disableautofetchempirebox.addEventListener('change', () => {
+      this.json.options.disableautofetchempire =
+        disableautofetchempirebox.checked;
+      this.saveData();
+    });
+    if (this.json.options.disableautofetchempire) {
+      disableautofetchempirebox.checked = true;
+    }
+    dataDiv.appendChild(this.createDOM('hr'));
 
     optiondiv = dataDiv.appendChild(
       this.createDOM(
@@ -13864,12 +13876,26 @@ class OGInfinity {
   updateFlyings() {
     const FLYING_PER_PLANETS = {};
     const eventTable = document.getElementById("eventContent");
-    const rows = eventTable.querySelectorAll("tr");
+    const ACSrows = eventTable.querySelectorAll("tr.allianceAttack");
+    const unionTable = [];
+    ACSrows.forEach(acsRow => {
+      const union = Array.from(acsRow.classList)
+        .find(cl => cl.includes("union")).split("unionunion")[1];
+      unionTable.push([union, acsRow.querySelectorAll("td")[1].innerText]);
+    });
+    const unionArrivalTime = Object.fromEntries(unionTable);
+    const rows = eventTable.querySelectorAll("tr.eventFleet");
     rows.forEach((row) => {
       const cols = row.querySelectorAll("td");
 
       const flying = {};
-      flying.arrivalTime = cols[1].innerText;
+      if (!row.classList.contains("partnerInfo")) {
+        flying.arrivalTime = cols[1].innerText;
+      } else {
+        const union = Array.from(row.classList)
+          .find(cl => cl.includes("union")).split("union")[1];
+        flying.arrivalTime = unionArrivalTime[union];
+      }
       flying.missionFleetIcon = cols[2].querySelector("img").src;
 
       // Get the mission title by removing the suffix "own fleet" and the "return" suffix (eg: "(R)")
