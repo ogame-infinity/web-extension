@@ -11950,16 +11950,14 @@ class OGInfinity {
       122: [2e3, 4e3, 1e3],
       123: [24e4, 4e5, 16e4],
       124: [4e3, 8e3, 4e3],
-      199: [3e5, 3e5, 3e5],
+      199: [0, 0, 0, 3e5],
     };
     let cost = baseCost[id];
     cost[0] *= Math.pow(2, lvl - 1);
     cost[1] *= Math.pow(2, lvl - 1);
     cost[2] *= Math.pow(2, lvl - 1);
     if (id == 199) {
-      cost[0] *= 3;
-      cost[1] *= 3;
-      cost[2] *= 3;
+      cost[3] *= Math.pow(3, lvl - 1);
     } else if (id == 124) {
       cost[0] = Math.ceil((4e3 * Math.pow(1.75, lvl - 1)) / 100) * 100;
       cost[1] = Math.ceil((8e3 * Math.pow(1.75, lvl - 1)) / 100) * 100;
@@ -11976,7 +11974,7 @@ class OGInfinity {
     if (technocrat) time -= time * 0.25;
     if (explorer) time -= time * 0.25;
     if (bonus) time -= time * bonus;
-    return { time: time, cost: cost };
+    return { time: time ? time : 1 / 3600, cost: cost };
   }
 
   getRobotsNanites(id, lvl, time) {
