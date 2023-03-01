@@ -2042,7 +2042,7 @@ button.build-it_premium {
 
 #technologydetails .resource.icon {
   height: 75px !important;
-  width: 60px !important;
+  width: 60px;
   margin: 0 2px;
 }
 
@@ -7585,6 +7585,11 @@ select#crawlerPercent>option {
 
 li.resource.energy.icon.insufficient {
   width: fit-content !important;
+}
+
+li.resource {
+    width: fit-content !important;
+    min-width: 65px;
 }
 
 #planetdata {
