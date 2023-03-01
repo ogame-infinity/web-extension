@@ -18492,7 +18492,7 @@ class OGInfinity {
       this.createDOM(
         "div",
         { class: "ogi-checkbox" },
-        `<label for="fleet-activity">{this.getTranslatedText(134)}</label>\n        <input type="checkbox" id="fleet-activity" name="fleet-activity" ${
+        `<label for="fleet-activity">${this.getTranslatedText(134)}</label>\n        <input type="checkbox" id="fleet-activity" name="fleet-activity" ${
           this.json.options.fleetActivity ? "checked" : ""
         }>`
       )
