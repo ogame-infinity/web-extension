@@ -6137,7 +6137,7 @@ div[data-marker]:hover {
   padding: 10px;
   position: absolute;
   transform: translateX(-50%) translateY(-100%);
-  max-width: 400px;
+  max-width: 600px;
   width: max-content;
   z-index: 99999999 !important;
 }
