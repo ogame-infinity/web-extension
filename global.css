@@ -172,6 +172,16 @@ div#banner_skyscraper.fix-banner {
   background: linear-gradient(#1d2732, #131c24) !important;
 }
 
+input[type="text"],
+input[type="password"] {
+  background: -webkit-linear-gradient(top, #0d151b 0, #1f2a35 100%) !important;
+  color: #bbb !important;
+  border: solid 1px rgb(58 72 86) !important;
+  box-shadow: none !important;
+  line-height: 23px !important;
+  background: -webkit-linear-gradient(top, rgb(14 17 23) 0, rgb(35 43 51) 100%) !important;
+}
+
 .metal + input[type="text"],
 input[id="metal"],
 input[type="text"].metal {
@@ -203,16 +213,6 @@ input[disabled] {
 input[type="text"]::selection,
 input[type="password"]::selection {
   background-color: #a2a2a2;
-}
-
-input[type="text"],
-input[type="password"] {
-  background: -webkit-linear-gradient(top, #0d151b 0, #1f2a35 100%) !important;
-  color: #bbb;
-  border: solid 1px rgb(58 72 86) !important;
-  box-shadow: none !important;
-  line-height: 23px !important;
-  background: -webkit-linear-gradient(top, rgb(14 17 23) 0, rgb(35 43 51) 100%) !important;
 }
 
 .ogl-res-filler .ogk-real-cargo {
