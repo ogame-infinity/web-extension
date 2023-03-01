@@ -17969,6 +17969,11 @@ class OGInfinity {
           en: "Contribute or bug report",
           fr: "Contribuer ou signaler un bogue"
         },
+        /*134*/ {
+          de: "Flottenaktivität der Planeten anzeigen",
+          en: "Display planets fleet activity",
+          fr: "Afficher l'activité de la flotte des planètes"
+        }
       ],
     };
     return translation[type][id][language];
@@ -18487,7 +18492,7 @@ class OGInfinity {
       this.createDOM(
         "div",
         { class: "ogi-checkbox" },
-        `<label for="fleet-activity">Display planets fleet activity</label>\n        <input type="checkbox" id="fleet-activity" name="fleet-activity" ${
+        `<label for="fleet-activity">{this.getTranslatedText(134)}</label>\n        <input type="checkbox" id="fleet-activity" name="fleet-activity" ${
           this.json.options.fleetActivity ? "checked" : ""
         }>`
       )
