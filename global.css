@@ -390,7 +390,9 @@ input[type="password"]::selection {
 
 .ogl-settings {
   display: flex;
-  width: 650px;
+  width: fit-content;
+  min-width: 650px;
+  max-width: 900px;
   justify-content: space-around;
   overflow: auto;
 }
@@ -6298,7 +6300,7 @@ hr {
 }
 
 .ogl-dialogOverlay.ogl-active {
-  align-items: flex-start;
+  align-items: center;
   background: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
@@ -6308,6 +6310,12 @@ hr {
   height: 100%;
   width: 100%;
   z-index: 10000;
+}
+
+@supports selector(:has(*)) {
+  .ogl-dialogOverlay.ogl-active:has(div.ogl-tabs) {
+    align-items: flex-start;
+  }
 }
 
 .ogl-dialog {
