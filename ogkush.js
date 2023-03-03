@@ -5658,18 +5658,18 @@ class OGInfinity {
     fleetInfo.appendChild(
       this.createDOM(
         "span",
-        {},
+        { class: "tooltip", "data-title": toFormatedNumber(totalSum) },
         `${this.getTranslatedText(63)}: <strong>${toFormatedNumber(
-          totalSum
+          totalSum, null, totalSum >= 1e6
         )}</strong><small> ${this.getTranslatedText(64)}</small>`
       )
     );
     fleetInfo.appendChild(
       this.createDOM(
         "span",
-        {},
+        { class: "tooltip", "data-title": toFormatedNumber(transport) },
         `${this.getTranslatedText(47)}: <strong>${toFormatedNumber(
-          transport
+          transport, null, transport >= 1e6
         )}</strong>`
       )
     );
@@ -5678,9 +5678,9 @@ class OGInfinity {
     fleetInfo.appendChild(
       this.createDOM(
         "span",
-        {},
+        { class: "tooltip", "data-title": toFormatedNumber(rcpower) },
         `${this.getTranslatedText(65)}: <strong>${toFormatedNumber(
-          rcpower
+          rcpower, null, rcpower >= 1e6
         )}</strong>`
       )
     );
