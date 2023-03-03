@@ -1890,6 +1890,10 @@ strong {
   font-weight: 800;
 }
 
+#technologydetails button.details {
+  color: #fff !important;
+}
+
 #technologydetails .ogk-lvl {
   font-size: 14px;
   font-weight: 800;
