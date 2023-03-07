@@ -683,23 +683,26 @@ input[type="password"]::selection {
 
 #selectMinCrystal,
 #selectMinDeuterium,
+#selectMinFood,
 #selectMinMetal {
   position: relative;
-  left: -65px;
+  left: -74px;
 }
 
 #selectMaxCrystal,
 #selectMaxDeuterium,
+#selectMaxFood,
 #selectMaxMetal {
   position: relative;
-  left: -67px;
+  left: -76px;
 }
 
 #selectMostCrystal,
 #selectMostDeuterium,
+#selectMostFood,
 #selectMostMetal {
   position: relative;
-  left: -66px;
+  left: -75px;
 }
 
 .ogl-dest .ogl-planet-icon {
@@ -1239,6 +1242,7 @@ input[type="password"]::selection {
   display: block;
   margin-top: 1px;
   color: #ccc;
+  text-align: right;
 }
 
 #fleet3 #sendfleet #resources .res_wrap {

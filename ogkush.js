@@ -8856,7 +8856,21 @@ class OGInfinity {
         player[i] += planet.production.production[1004][i];
         alliance[i] += planet.production.production[1005][i];
         energy[i] -= planet.production.production[12][i];
-        if (lifeform) lifeform[i] += planet.production.production[1006][i];
+        if (lifeform) lifeform[i] += (
+          planet.production.hourly[i] -
+          planet.production.production[1][i] -
+          planet.production.production[2][i] -
+          planet.production.production[3][i] -
+          planet.production.generalIncoming[i] -
+          planet.production.production[122][i] -
+          planet.production.production[217][i] -
+          planet.production.production[1000][i] -
+          planet.production.production[1001][i] -
+          planet.production.production[1003][i] -
+          planet.production.production[1004][i] -
+          planet.production.production[1005][i] -
+          planet.production.production[12][i]
+        );
       }
     });
     header.appendChild(this.createDOM("th", { class: "ogl-sum-symbol" }, "Σ"));
@@ -10572,18 +10586,6 @@ class OGInfinity {
         src: "https://gf3.geo.gfsrv.net/cdnea/fa0c8ee62604e3af52e6ef297faf3c.gif",
       })
     );
-    $("#selectMinMetal").after(
-      this.createDOM("a", { id: "selectMostMetal", class: "select-most-min" })
-    );
-    $("#selectMinCrystal").after(
-      this.createDOM("a", { id: "selectMostCrystal", class: "select-most-min" })
-    );
-    $("#selectMinDeuterium").after(
-      this.createDOM("a", {
-        id: "selectMostDeuterium",
-        class: "select-most-min",
-      })
-    );
     $("#selectMaxMetal").after(
       this.createDOM("span", { class: "ogi-metalLeft" }, "-")
     );
@@ -11770,7 +11772,8 @@ class OGInfinity {
           crystalFiller,
           document.querySelector("input#crystal"),
           deutFiller,
-          document.querySelector("input#deuterium")
+          document.querySelector("input#deuterium"),
+          document.querySelector("input#food")
         ].forEach(elem => {
           elem.addEventListener("keyup", (event) => {
             const CODE = event.code;
@@ -11801,7 +11804,8 @@ class OGInfinity {
           crystalFiller,
           document.querySelector("input#crystal"),
           deutFiller,
-          document.querySelector("input#deuterium")
+          document.querySelector("input#deuterium"),
+          document.querySelector("input#food")
         ].forEach(elem => {
           elem.addEventListener("input", (event) => {
             if (event.data == "K" || event.data == "k" || event.data == "0k") {
@@ -11829,10 +11833,17 @@ class OGInfinity {
           class: "select-most-min",
         })
       );
-      if (lifeforms)
+      if (lifeforms) {
+        $("#selectMinFood").after(
+          this.createDOM("a", {
+            id: "selectMostFood",
+            class: "select-most-min",
+          })
+        );
         $("#selectMaxFood").after(
           this.createDOM("span", { class: "ogi-foodLeft" }, "-")
         );
+      }
       $("#selectMaxMetal").after(
         this.createDOM("span", { class: "ogi-metalLeft" }, "-")
       );
@@ -12058,6 +12069,20 @@ class OGInfinity {
         fleetDispatcher.refresh();
         refreshRes();
       });
+      if (lifeforms) {
+        $("#selectMostFood").on("click", () => {
+          let capacity = fleetDispatcher.getFreeCargoSpace();
+          fleetDispatcher.cargoFood = Math.min(
+            fleetDispatcher.cargoFood + capacity,
+            Math.max(
+              0,
+              foodAvailable - (kept[3] || 0)
+            )
+          );
+          fleetDispatcher.refresh();
+          refreshRes();
+        });
+      }
       $("#backToFleet2").on("click", () => {
         firstResRefresh = true;
       });
