@@ -206,6 +206,14 @@ input[type="text"].deuterium {
   box-shadow: none !important;
 }
 
+.ogl-fleet-coords + input[type="text"],
+input[id="food"],
+input[type="text"].food {
+  color: #f5b739 !important;
+  border: solid 1px rgb(58 72 86) !important;
+  box-shadow: none !important;
+}
+
 input[disabled] {
   filter: grayscale(1);
 }

@@ -3142,6 +3142,7 @@ class OGInfinity {
 
   keepOnPlanetDialog(coords, btn) {
     let kept;
+    let lifeforms = document.querySelector(".lifeform") != null;
     if (coords) {
       kept = this.json.options.kept[coords];
     }
@@ -3204,6 +3205,23 @@ class OGInfinity {
         value: toFormatedNumber(kept[2]) || toFormatedNumber(0),
       })
     );
+    let foodInput;
+    if (lifeforms){
+      prod.appendChild(
+        this.createDOM(
+          "span",
+          {},
+          '<a class="resourceIcon food"></a>'
+        )
+      );
+      foodInput = prod.appendChild(
+        this.createDOM("input", {
+          class: "ogl-formatInput food",
+          type: "text",
+          value: toFormatedNumber(kept[3]) || toFormatedNumber(0),
+        })
+      );
+    }
     box.appendChild(this.createDOM("hr"));
     box.appendChild(this.createDOM("h1", {}, this.getTranslatedText(29)));
     let fleet = box.appendChild(
@@ -3245,6 +3263,7 @@ class OGInfinity {
       kept[0] = fromFormatedNumber(metInput.value, true);
       kept[1] = fromFormatedNumber(criInput.value, true);
       kept[2] = fromFormatedNumber(deutInput.value, true);
+      if (lifeforms) kept[3] = fromFormatedNumber(foodInput.value, true);
       if (coords) {
         this.json.options.kept[coords] = kept;
       } else {
@@ -7342,6 +7361,15 @@ class OGInfinity {
         value: toFormatedNumber(adjustments[2]),
       })
     );
+    if (lifeforms) {
+      let foodInput = prod.appendChild(
+        this.createDOM("input", {
+          class: "ogl-formatInput food",
+          type: "text",
+          value: toFormatedNumber(adjustments[3]),
+        })
+    );
+    }
     if (onValidate) {
       let btn = box.appendChild(
         this.createDOM("button", { class: "btn_blue" }, "OK")
@@ -7351,6 +7379,7 @@ class OGInfinity {
           fromFormatedNumber(metInput.value, true),
           fromFormatedNumber(criInput.value, true),
           fromFormatedNumber(deutInput.value, true),
+          fromFormatedNumber(foodInput.value || 0, true),
         ]);
       });
     }
@@ -10825,7 +10854,7 @@ class OGInfinity {
       ) {
         if (fleetDispatcher.mission) selectedMission = fleetDispatcher.mission;
       }
-      let lifeforms = document.querySelector(".lifeforms-enabled") != null;
+      let lifeforms = document.querySelector(".lifeform") != null;
       let foodAvailable = Math.max(0, fleetDispatcher.foodOnPlanet);
 
       let needCargo = (fret) => {
@@ -11766,6 +11795,7 @@ class OGInfinity {
         })
       );
       if (!this.isMobile) {
+        (lifeforms ?
         [
           metalFiller,
           document.querySelector("input#metal"),
@@ -11774,7 +11804,16 @@ class OGInfinity {
           deutFiller,
           document.querySelector("input#deuterium"),
           document.querySelector("input#food")
-        ].forEach(elem => {
+        ] :
+                [
+          metalFiller,
+          document.querySelector("input#metal"),
+          crystalFiller,
+          document.querySelector("input#crystal"),
+          deutFiller,
+          document.querySelector("input#deuterium"),
+        ]
+        ).forEach(elem => {
           elem.addEventListener("keyup", (event) => {
             const CODE = event.code;
             let value =
@@ -11798,15 +11837,25 @@ class OGInfinity {
           });
         });
       } else {
-        [
-          metalFiller,
-          document.querySelector("input#metal"),
-          crystalFiller,
-          document.querySelector("input#crystal"),
-          deutFiller,
-          document.querySelector("input#deuterium"),
-          document.querySelector("input#food")
-        ].forEach(elem => {
+        (lifeforms ?
+          [
+            metalFiller,
+            document.querySelector("input#metal"),
+            crystalFiller,
+            document.querySelector("input#crystal"),
+            deutFiller,
+            document.querySelector("input#deuterium"),
+            document.querySelector("input#food")
+          ] :
+                  [
+            metalFiller,
+            document.querySelector("input#metal"),
+            crystalFiller,
+            document.querySelector("input#crystal"),
+            deutFiller,
+            document.querySelector("input#deuterium"),
+          ]
+          ).forEach(elem => {
           elem.addEventListener("input", (event) => {
             if (event.data == "K" || event.data == "k" || event.data == "0k") {
               event.target.value = toFormatedNumber(1000);
