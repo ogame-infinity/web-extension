@@ -145,18 +145,17 @@
   position: unset !important;
 }
 
-div#banner_skyscraper {
+#bannerSkyscrapercomponent {
   position: absolute;
-  top: 7.5em !important;
-  right: -120px !important;
-  }
-
-  div#banner_skyscraper a.close_details {
-    right: 0 !important
+  left: 1150px;
 }
 
-div#banner_skyscraper.fix-banner {
-  top: -4.5em !important;
+div#bannerSkyscrapercomponent {
+  margin: 0 !important;
+}
+
+div#banner_skyscraper a.close_details {
+  right: auto !important;
 }
 
 #galaxyContent td {
@@ -4491,7 +4490,7 @@ small {
 
 #pageContent > #right {
   float: left !important;
-  width: max-content !important;
+  width: 300px !important;
 }
 
 #top {
@@ -6540,18 +6539,26 @@ table.fleetinfo tr:nth-child(odd) {
 }
 
 .ogl-metal,
-table.fleetinfo tr:nth-last-child(3) {
+table.fleetinfo tr:nth-last-child(3),
+.hasLifeforms table.fleetinfo tr:nth-last-child(4) {
   color: #ffaacca1 !important;
 }
 
 .ogl-crystal,
-table.fleetinfo tr:nth-last-child(2) {
+table.fleetinfo tr:nth-last-child(2),
+.hasLifeforms table.fleetinfo tr:nth-last-child(3) {
   color: #73e5ffc7 !important;
 }
 
 .ogl-deut,
-table.fleetinfo tr:nth-last-child(1) {
+table.fleetinfo tr:nth-last-child(1),
+.hasLifeforms table.fleetinfo tr:nth-last-child(2) {
   color: #a6e0b0 !important;
+}
+
+.ogl-food,
+.hasLifeforms table.fleetinfo tr:nth-last-child(1) {
+  color: #f5b739 !important;
 }
 
 .btn_blue {
@@ -7253,39 +7260,8 @@ span.resbuttons {
   margin: 9px 0 !important;
 }
 
-/* SPytable MOD*/
-
-#messages .subtabs {
-  width: 665px !important;
-}
-
-#contentWrapper,
-#contentWrapper #buttonz {
-  width: 715px !important;
-}
-
-#contentWrapper #buttonz .content {
-  background-size: 715px !important;
-}
-
-#eventHeader {
-  background-size: 715px !important;
-}
-
-#eventFooter {
-  background-size: 707px !important;
-}
-
-#eventContent {
-  background-size: 700px !important;
-}
-
-#buttonz .header {
-  background-size: 715px !important;
-}
-
 .trash_box {
-  left: -654px !important;
+  left: -620px !important;
 }
 .ogi-loader-container {
   position: relative;
@@ -8011,4 +7987,5 @@ table.flyingFleet td.friendly {
   position: relative;
   left: 67px !important;
   top: 1px !important;
+  z-index: auto;
 }
