@@ -13163,15 +13163,15 @@ class OGInfinity {
 
   getFlyingRes() {
     let met = 0,
-      cri = 0,
-      deut = 0;
+        cri = 0,
+        deut = 0;
     let fleetCount = {};
     let uniques = {};
     let transports = {};
     let ids = [];
     let planets = {};
     document.querySelectorAll(".eventFleet").forEach((line) => {
-      let tooltip = line.querySelector(".tooltip");
+      let tooltip = line.querySelector(".icon_movement .tooltip");
       let id = Number(line.getAttribute("id").split("-")[1]);
       let back =
         line.getAttribute("data-return-flight") == "false" ? false : true;
