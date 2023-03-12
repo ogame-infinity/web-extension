@@ -3284,7 +3284,7 @@ class OGInfinity {
       kept[0] = fromFormatedNumber(metInput.value, true);
       kept[1] = fromFormatedNumber(criInput.value, true);
       kept[2] = fromFormatedNumber(deutInput.value, true);
-      if (lifeforms) kept[3] = fromFormatedNumber(foodInput.value, true);
+      if (this.hasLifeforms) kept[3] = fromFormatedNumber(foodInput.value, true);
       if (coords) {
         this.json.options.kept[coords] = kept;
       } else {
@@ -13225,7 +13225,7 @@ class OGInfinity {
       if (type == 16 || type == 18) return;
       let expe = {};
       let div = document.createElement("div");
-      div.html(
+      tooltip && div.html(
         tooltip.getAttribute("title") || tooltip.getAttribute("data-title")
       );
       let addToTotal = false;
@@ -15519,13 +15519,13 @@ class OGInfinity {
     });
 
     arr.forEach(async (report, index) => {
-      let line = this.createDOM("tr");
+      let line = this.createDOM("tr", { data: "closed"});
       table.appendChild(line);
       let indexDiv = line.appendChild(this.createDOM("td", {}, index + 1));
       if (report.new) {
         indexDiv.classList.add("ogi-new");
       }
-      let dateDetail = `\n${report.cleanDate.toLocaleDateString()}<br>\n${report.cleanDate.toLocaleTimeString()}<br>\n${this.getTranslatedText(107)} : ${report.activity
+      let dateDetail = `\n${report.cleanDate.toLocaleDateString()}<br>\n${report.cleanDate.toLocaleTimeString()}<br>\n${this.getTranslatedText(137)} : ${report.activity
       }\n`;
       let dateText = `${this.timeSince(report.cleanDate)}<br>`;
       let date = line.appendChild(
@@ -15748,6 +15748,85 @@ class OGInfinity {
       ) {
         deleteBtn.click();
       }
+      let renta = [];
+      let ships = [];
+      for (let round = 0; round < 6; round++) {
+        renta[round] = Math.round(report.total * Math.pow(1 - report.loot / 100, round) * report.loot / 100);
+        ships[round] = this.calcNeededShips({
+          moreFret: true,
+          fret: this.json.options.spyFret,
+          resources: Math.ceil(report.total * Math.pow(1 - report.loot / 100, round) * report.loot / 100),
+        });
+        // if (renta[round] <= this.json.options.rvalLimit) break;
+      }
+      if (renta.length > 1) total.addEventListener("click", (e) => {
+        let line = e.target.parentElement
+        if (line.getAttribute("data") == "expanded") {
+          line.setAttribute("data", "closed");
+          document.querySelectorAll("tr.spyTable-extended").forEach(e => e.remove());
+          return;
+        }
+        let expanded = document.querySelector("tr[data = 'expanded']");
+        if (expanded) {
+          expanded.setAttribute("data", "closed");
+          document.querySelectorAll("tr.spyTable-extended").forEach(e => e.remove());
+        }
+        line.setAttribute("data", "expanded");
+        let nextReport = line.nextElementSibling;
+        for (let round = 1; round < renta.length; round++){
+          let extraLine = line.parentNode.insertBefore(
+            this.createDOM("tr", { class: "spyTable-extended" }), nextReport
+          );
+          extraLine.appendChild(this.createDOM("td"));
+          extraLine.appendChild(this.createDOM("td", { class: "ogl-date" }));
+          extraLine.appendChild(this.createDOM("td"));
+          extraLine.appendChild(this.createDOM("td", { class: "ogl-name" }));
+          let extraDetail = `\n<div class="ogl-metal">${this.getTranslatedText(0, "res")}: ${toFormatedNumber(
+            renta[round]*report.resRatio[0] , null, true
+          )}</div>\n<div class="ogl-crystal">${this.getTranslatedText(1, "res")}: ${toFormatedNumber(
+            renta[round]*report.resRatio[1] , null, true
+          )}</div>\n<div class="ogl-deut">${this.getTranslatedText(2, "res")}: ${toFormatedNumber(
+            renta[round]*report.resRatio[2] , null,  true
+          )}</div>\n<div class="splitLine"></div>\n${this.getTranslatedText(40)}: ${toFormatedNumber(
+            renta[round], null, true
+          )}\n`;
+          let extraTotal = extraLine.appendChild(
+            this.createDOM(
+              "td",
+              { class: "tooltipLeft ogl-lootable", title: extraDetail },
+                toFormatedNumber(renta[round], null, true)
+            )
+          );
+          extraTotal.style.background = `linear-gradient(to right, rgba(255, 170, 204, 0.63) ${
+              report.resRatio[0]
+            }%, rgba(115, 229, 255, 0.78) ${
+              report.resRatio[0]
+            }%\n, rgba(115, 229, 255, 0.78) ${
+              report.resRatio[0] + report.resRatio[1]
+            }%, rgb(166, 224, 176) ${report.resRatio[2]}%)`;
+          if (renta[round] >= this.json.options.rvalLimit) extraTotal.classList.add("ogl-good");
+
+          extraLine.appendChild(this.createDOM("td"));
+          extraLine.appendChild(this.createDOM("td"));
+          let extraFleetLink = `?page=ingame&component=fleetdispatch&galaxy=${splittedCoords[0]}&system=${splittedCoords[1]}&position=${splittedCoords[2]}&type=${report.type}&mission=1&am${shipId}=${ships[round]}&oglMode=4`;
+          let extraShip = extraLine.appendChild(this.createDOM("td"));
+          extraShip.appendChild(
+            this.createDOM(
+              "a",
+              {
+                href:
+                  "https://" +
+                  window.location.host +
+                  window.location.pathname +
+                  extraFleetLink,
+              },
+              toFormatedNumber(ships[round])
+            )
+          );
+          extraLine.appendChild(this.createDOM("td"));
+          extraLine.appendChild(this.createDOM("td"));
+        }
+      });
     });
   }
 
@@ -18080,6 +18159,11 @@ class OGInfinity {
           de: "Forschungsgeschwindigkeit",
           en: "Research speed",
           fr: "Vitesse de recherche"
+        },
+        /*137*/ {
+          de: "Aktivität",
+          en: "Activity",
+          fr: "Activité"
         }
       ],
     };
