@@ -20028,7 +20028,7 @@ class OGInfinity {
 
   markLifeforms() {
     if (!this.hasLifeforms) return
-    document.querySelectorAll(".smallplanet a").forEach((elem) => {
+    document.querySelectorAll(".smallplanet a.planetlink").forEach((elem) => {
       let lf = String(elem.getAttribute("title").split("<br/>")[1].split(":")[1].trim());
       switch (lf){
         case "Rock’tal":
