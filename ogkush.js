@@ -3827,8 +3827,6 @@ class OGInfinity {
             ) {
               let arrival = movement.back ? movement.origin : movement.dest;
               let coords = "[" + arrival.slice(0, -1) + "]";
-              let current =
-                this.current.coords + (this.current.isMoon ? "M" : "P");
               this.json.empire.forEach((planet) => {
                 if (
                   (arrival.slice(-1) == "M" && planet.moon) ||
@@ -3836,16 +3834,14 @@ class OGInfinity {
                 ) {
                   let object = arrival.slice(-1) == "M" ? planet.moon : planet;
                   if (object.coordinates == coords) {
-                    object.metal += movement.metal;
-                    object.crystal += movement.crystal;
-                    object.deuterium += movement.deuterium;
-                    if (current != arrival) {
-                      if (this.json.options.autofetchempire) {
-                        update = true;
-                      } else {
-                        object.invalidate = true;
-                        this.updateresourceDetail();
-                      }
+                    if (movement.metal) object.metal += movement.metal;
+                    if (movement.crystal) object.crystal += movement.crystal;
+                    if (movement.deuterium) object.deuterium += movement.deuterium;
+                    if (this.json.options.autofetchempire) {
+                      update = true;
+                    } else {
+                      object.invalidate = true;
+                      this.updateresourceDetail();
                     }
                   }
                   this.saveData();
