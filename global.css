@@ -419,9 +419,10 @@ input[type="password"]::selection {
   margin-left: 30px;
 }
 
-.ogl-settings h1 {
+.ogl-settings h1,
+.ogl-settings h1.tooltip {
   font-weight: 800;
-  color: #5d7fa4;
+  color: #5d7fa4 !important;
   font-size: 12px;
 }
 
