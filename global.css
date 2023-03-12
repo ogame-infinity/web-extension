@@ -3984,16 +3984,6 @@ button.build-it_premium:hover {
   font-style: italic !important;
 }
 
-.ogl-afull {
-  color: #d29d00 !important;
-  font-style: oblique;
-}
-
-.ogl-full {
-  color: #d43635 !important;
-  font-style: oblique;
-}
-
 .ogl-search-result {
   min-height: 100px;
   max-height: 200px;
@@ -6560,6 +6550,16 @@ table.fleetinfo tr:nth-last-child(1),
 .ogl-food,
 .hasLifeforms table.fleetinfo tr:nth-last-child(1) {
   color: #f5b739 !important;
+}
+
+.ogl-afull {
+  color: #d29d00 !important;
+  font-style: oblique;
+}
+
+.ogl-full {
+  color: #d43635 !important;
+  font-style: oblique;
 }
 
 .btn_blue {
