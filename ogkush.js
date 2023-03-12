@@ -169,8 +169,10 @@ function fromFormatedNumber(value, int = false) {
   let locale = document
     .querySelector("#cookiebanner")
     .getAttribute("data-locale");
-  let decimalSeparator = getSeparator(locale, "decimal");
-  let groupSeparator = getSeparator(locale, "group");
+  // let decimalSeparator = getSeparator(locale, "decimal");
+  // let groupSeparator = getSeparator(locale, "group");
+  let decimalSeparator = LocalizationStrings["decimalPoint"];
+  let groupSeparator = LocalizationStrings["thousandSeperator"];
   let order = 1;
   if (value.includes("T")) {
     order = 1e12;
