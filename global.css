@@ -147,7 +147,11 @@
 
 #bannerSkyscrapercomponent {
   position: absolute;
-  left: 1150px;
+  left: 1160px;
+}
+
+#planetbarcomponent #bannerSkyscrapercomponent {
+  left: 318px;
 }
 
 div#bannerSkyscrapercomponent {
