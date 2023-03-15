@@ -93,15 +93,6 @@ Element.prototype.html = function (html) {
   this.innerHTML = DOMPurify.sanitize(html);
 };
 
-function getSeparator(locale, separatorType) {
-  const numberWithGroupAndDecimalSeparator = 1000.1;
-  let group = Intl.NumberFormat(locale)
-    .formatToParts(numberWithGroupAndDecimalSeparator)
-    .find((part) => part.type === separatorType);
-  if (group) return group.value
-  return ""
-}
-
 function toFormatedNumber(value, precision = null, units = false) {
   const commaSeparator = ["en-US", "en-GB", "ro-RO"];
   let locale = document
@@ -16491,13 +16482,6 @@ class OGInfinity {
     }
     value = value.split(sep).join("");
     return parseInt(value.replace("|", ".") * factor);
-  }
-
-  removeNumSeparator(str) {
-    return str.replace(
-      new RegExp(`\\${LocalizationStrings["thousandSeperator"]}`, "g"),
-      ""
-    );
   }
 
   consumption(id, lvl) {
