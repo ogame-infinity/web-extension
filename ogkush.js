@@ -1560,6 +1560,8 @@ class OGInfinity {
     this.json.options.spyFret = this.json.options.spyFret || 202;
     this.json.options.harvestMission = this.json.options.harvestMission || 4;
     this.json.options.foreignMission = this.json.options.foreignMission || 3;
+    this.json.options.expeditionSendCombat = this.json.options.expeditionSendCombat || true;
+    this.json.options.expeditionSendProbe = this.json.options.expeditionSendProbe || true;
     this.json.options.expeditionMission =
       this.json.options.expeditionMission || 15;
     this.json.options.expeditionDefaultTime =
@@ -12902,6 +12904,8 @@ class OGInfinity {
       });
       let expType = this.json.options.expFret || 203;
       let expCount = expType == 202 ? maxPT : maxGT;
+      let expProbe = this.json.options.expeditionSendProbe;
+      let expCombat = this.json.options.expeditionSendCombat;
       let btnExpe = document
         .querySelector("#allornone .secondcol")
         .appendChild(
@@ -12921,10 +12925,32 @@ class OGInfinity {
           class: "ogl-option ogl-fleet-ship choice ogl-fleet-203",
         })
       );
+      let probe = expCargoChoice.appendChild(
+        this.createDOM("div", {
+          class: `ogl-option ogl-fleet-ship choice ogl-fleet-210 ${expProbe?"":"grey"}`,
+        })
+      );
+      probe.addEventListener("click", () => {
+        this.json.options.expeditionSendProbe = !this.json.options.expeditionSendProbe;
+        this.saveData();
+        document.querySelector(".ogl-option.ogl-fleet-ship.choice.ogl-fleet-210").classList =
+          `ogl-option ogl-fleet-ship choice ogl-fleet-210 ${this.json.options.expeditionSendProbe?"":"grey"}`;
+      });
+      let combat = expCargoChoice.appendChild(
+        this.createDOM("div", {
+          class: `ogl-option ogl-fleet-ship choice ogl-fleet-218 ${expCombat?"":"grey"}`,
+        })
+      );
+      combat.addEventListener("click", () => {
+        this.json.options.expeditionSendCombat = !this.json.options.expeditionSendCombat;
+        this.saveData();
+        document.querySelector(".ogl-option.ogl-fleet-ship.choice.ogl-fleet-218").classList =
+          `ogl-option ogl-fleet-ship choice ogl-fleet-218 ${this.json.options.expeditionSendCombat?"":"grey"}`;
+      });
       let updateDefaultExpoShip = (id) => {
         this.json.options.expFret = id;
         this.saveData();
-        location.reload();
+        document.querySelector(".ogl-expedition").classList = `ogl-expedition ${this.json.options.expFret == 203 ? "largeCargo" : "smallCargo"} `;
       };
       sc.addEventListener("click", () => updateDefaultExpoShip(202));
       lc.addEventListener("click", () => updateDefaultExpoShip(203));
@@ -12938,6 +12964,8 @@ class OGInfinity {
         this.collect = false;
         this.json.href = undefined;
         this.saveData();
+        let expType = this.json.options.expFret || 203;
+        let expCount = expType == 202 ? maxPT : maxGT;
         let prio = [218, 213, 211, 215, 207];
         let bigship = 0;
         prio.forEach((shipID) => {
@@ -12960,9 +12988,9 @@ class OGInfinity {
         shipsOnPlanet.forEach((ship) => {
           if (ship.id == expType)
             expShips[0] = this.selectShips(ship.id, expCount);
-          else if (ship.id == bigship)
+          else if (this.json.options.expeditionSendCombat && ship.id == bigship)
             expShips[1] = this.selectShips(ship.id, 1);
-          else if (ship.id == 210) expShips[2] = this.selectShips(ship.id, 1);
+          else if (this.json.options.expeditionSendProbe && ship.id == 210) expShips[2] = this.selectShips(ship.id, 1);
           else if (ship.id == 219) expShips[3] = this.selectShips(ship.id, 1);
         });
         let fadeText = "";
@@ -12971,11 +12999,11 @@ class OGInfinity {
           fadeText += this.getTranslatedText(107) + "<br>";
           noFade = false;
         }
-        if (expShips[1] != 1) {
+        if (this.json.options.expeditionSendCombat && expShips[1] != 1) {
           fadeText += this.getTranslatedText(108) + "<br>";
           noFade = false;
         }
-        if (expShips[2] != 1) {
+        if (this.json.options.expeditionSendProbe && expShips[2] != 1) {
           fadeText += this.getTranslatedText(109) + "<br>";
           noFade = false;
         }
@@ -19886,12 +19914,12 @@ class OGInfinity {
       let updateDefaultCollectShip = (id) => {
         this.json.options.collect.ship = id;
         this.saveData();
-        location.reload();
+        document.querySelector(".ogl-collect").classList = `ogl-collect ${this.json.options.collect.mission == 4 ? "statio" : ""} ${this.json.options.collect.ship == 202 ? "smallCargo" : this.json.options.collect.ship == 219 ? "pathFinder" : "largeCargo"}`
       };
       let updateDefaultCollectMission = (mission) => {
         this.json.options.collect.mission = mission;
         this.saveData();
-        location.reload();
+        document.querySelector(".ogl-collect").classList = `ogl-collect ${this.json.options.collect.mission == 4 ? "statio" : ""} ${this.json.options.collect.ship == 202 ? "smallCargo" : this.json.options.collect.ship == 219 ? "pathFinder" : "largeCargo"}`
       };
       sc.addEventListener("click", () => updateDefaultCollectShip(202));
       lc.addEventListener("click", () => updateDefaultCollectShip(203));

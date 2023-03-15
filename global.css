@@ -7671,7 +7671,17 @@ li.resource {
 .ogl-tooltip .ogk-expedition-cargo {
   width: auto;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.ogl-fleet-210.grey {
+  -webkit-filter: grayscale(100%);
+  filter: grey;
+}
+
+.ogl-fleet-218.grey {
+  -webkit-filter: grayscale(100%);
+  filter: grey;
 }
 
 .ogl-fleet-ship.choice {
