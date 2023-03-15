@@ -11083,7 +11083,6 @@ class OGInfinity {
           auxAjaxFailed = true;
         }
       );
-
       this.overwriteFleetDispatcher("stopLoading", false, () => {
         let that = this;
         let missions = fleetDispatcher.getAvailableMissions();
@@ -11142,17 +11141,26 @@ class OGInfinity {
             fleetDispatcher.currentPage == "fleet1" ||
             (fleetDispatcher.currentPage == "fleet2" && missions.length > 0)
           ) {
+            let expedition = document.querySelector(".ogl-expedition").getAttribute("data") == "active";
+            let collect = document.querySelector(".ogl-collect").getAttribute("data") == "active";
             if (missions.length == 1) {
               defaultMission = missions[0];
             } else {
-              if (fleetDispatcher.mission == 0 || !missions.includes(fleetDispatcher.mission)) {
-                if (fleetDispatcher.targetPlanet.position === 16) {
-                  defaultMission = that.json.options.expeditionMission == 15 ? 15 : 6;
+              if (
+                (fleetDispatcher.mission == 0 || !missions.includes(fleetDispatcher.mission)) &&
+                (that.rawURL.searchParams.get("mission") == null && expedition == false && collect == false)
+              ) {
+                if (fleetDispatcher.targetPlanet.position == 16) {
+                  defaultMission = (that.json.options.expeditionMission == 15) ? 15 : 6;
                 } else if (fleetDispatcher.targetIsBuddyOrAllyMember) {
                   defaultMission = that.json.options.harvestMission;
                 } else {
                   defaultMission = that.json.options.foreignMission;
                 }
+              } else if (expedition) {
+                  defaultMission = 15;
+              } else if (collect) {
+                defaultMission = that.json.options.collect.mission;
               } else {
                 defaultMission = fleetDispatcher.mission;
               }
@@ -11171,6 +11179,8 @@ class OGInfinity {
               Number(e.target.getAttribute("mission"))
             );
             e.target.classList.add("ogl-active");
+            document.querySelector(".ogl-expedition").setAttribute("data", "");
+            document.querySelector(".ogl-collect").setAttribute("data", "");
             update(false);
           });
           update(false);
@@ -11320,6 +11330,10 @@ class OGInfinity {
         }
         update(false);
       });
+      $("a[id^='missionButton']").on("click", () => {
+        document.querySelector(".ogl-expedition").setAttribute("data", "");
+        document.querySelector(".ogl-collect").setAttribute("data", "");
+      })
       let missionsDiv = destination.appendChild(
         this.createDOM("div", { class: "ogl-missions", id: "missionsDiv" })
       );
@@ -11557,7 +11571,6 @@ class OGInfinity {
             fleetDispatcher.shipsToSend.map((elem) => elem.id)
           );
           let newTargetPlanet = JSON.stringify(fleetDispatcher.targetPlanet);
-          highlightFleetTarget();
           if (
             newFleet != fleet ||
             targetPlanet != newTargetPlanet ||
@@ -11698,6 +11711,7 @@ class OGInfinity {
             )
           );
         }, 100);
+        highlightFleetTarget();
         onResChange(2);
         onResChange(1);
         onResChange(0);
@@ -12589,6 +12603,7 @@ class OGInfinity {
       update(false);
     }
   }
+
   neededCargo() {
     let kept =
       this.json.options.kept[
@@ -12953,7 +12968,9 @@ class OGInfinity {
       btnExpe.addEventListener("click", () => {
         document.querySelector("#resetall").click();
         this.expedition = true;
+        btnExpe.setAttribute("data", "active");
         this.collect = false;
+        document.querySelector(".ogl-collect").setAttribute("data", "");
         this.json.href = undefined;
         this.saveData();
         let expType = this.json.options.expFret || 203;
@@ -13020,6 +13037,7 @@ class OGInfinity {
           .querySelector(".ogl-planet-icon")
           .classList.add("ogl-active");
         this.expedition = false;
+        this.saveData();
       });
     }
   }
@@ -18173,6 +18191,11 @@ class OGInfinity {
           de: "Aktivität",
           en: "Activity",
           fr: "Activité"
+        },
+        /*138*/ {
+          de: "Navigationspfeile in mobiler Version",
+          en: "Navigation arrows in mobile version",
+          fr: "Flèches de navigation en version mobile"
         }
       ],
     };
@@ -18703,11 +18726,29 @@ class OGInfinity {
         }>`
       )
     );
-    settingDiv
+    fleetActivity
       .querySelector("#fleet-activity")
       .addEventListener("click", (e) => {
         const isChecked = e.currentTarget.checked;
         this.json.options.fleetActivity = isChecked;
+      });
+
+    settingDiv.appendChild(this.createDOM("hr"));
+
+    let navigationArrows = settingDiv.appendChild(
+      this.createDOM(
+        "div",
+        { class: "ogi-checkbox" },
+        `<label for="fleet-activity">${this.getTranslatedText(138)}</label>\n        <input type="checkbox" id="nav-arrows" name="fleet-activity" ${
+          this.json.options.navigationArrows ? "checked" : ""
+        }>`
+      )
+    );
+    navigationArrows
+      .querySelector("#nav-arrows")
+      .addEventListener("click", (e) => {
+        const isChecked = e.currentTarget.checked;
+        this.json.options.navigationArrows = isChecked;
       });
 
     settingDiv.appendChild(this.createDOM("hr"));
@@ -19933,7 +19974,9 @@ class OGInfinity {
       btnCollect.addEventListener("click", () => {
         document.querySelector("#resetall").click();
         this.collect = true;
+        btnCollect.setAttribute("data", "active");
         this.expedition = false;
+        document.querySelector(".ogl-expedition").setAttribute("data", "");
         this.json.href = undefined;
         this.saveData();
         document.querySelector(".ogl-cargo a.send_none").click();
@@ -20097,7 +20140,7 @@ class OGInfinity {
   }
 
   navigationArrows() {
-    if (this.isMobile) {
+    if (this.isMobile && this.json.options.navigationArrows) {
       let navPanel = document
         .querySelector("#links")
         .appendChild(this.createDOM("div", { class: "ogk-navPanel" }));
