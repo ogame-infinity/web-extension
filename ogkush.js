@@ -103,9 +103,15 @@ function getSeparator(locale, separatorType) {
 }
 
 function toFormatedNumber(value, precision = null, units = false) {
+  const commaSeparator = ["en-US", "en-GB", "ro-RO"];
   let locale = document
     .querySelector("#cookiebanner")
     .getAttribute("data-locale");
+  if (commaSeparator.includes(locale)) {
+    locale = "en-US";
+  } else {
+    locale = "de-DE";
+  }
   if (isNaN(value) || value == undefined || value == null) return undefined;
 
   if (units) {
@@ -166,13 +172,8 @@ function toFormatedNumber(value, precision = null, units = false) {
 }
 
 function fromFormatedNumber(value, int = false) {
-  let locale = document
-    .querySelector("#cookiebanner")
-    .getAttribute("data-locale");
-  // let decimalSeparator = getSeparator(locale, "decimal");
-  // let groupSeparator = getSeparator(locale, "group");
-  let decimalSeparator = LocalizationStrings["decimalPoint"];
-  let groupSeparator = LocalizationStrings["thousandSeperator"];
+  const decimalSeparator = LocalizationStrings["decimalPoint"];
+  const groupSeparator = LocalizationStrings["thousandSeperator"];
   let order = 1;
   if (value.includes("T")) {
     order = 1e12;
@@ -13275,7 +13276,7 @@ class OGInfinity {
       }
       div.querySelectorAll('td[colspan="2"]').forEach((tooltip) => {
         let count = Number(
-          tooltip.nextElementSibling.innerHTML.trim().split(".").join("")
+          fromFormatedNumber(tooltip.nextElementSibling.innerHTML.trim())
         );
         let name = tooltip.innerText.trim().slice(0, -1);
         let id = this.json.shipNames[name];
