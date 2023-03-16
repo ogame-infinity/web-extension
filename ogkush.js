@@ -11141,26 +11141,23 @@ class OGInfinity {
             fleetDispatcher.currentPage == "fleet1" ||
             (fleetDispatcher.currentPage == "fleet2" && missions.length > 0)
           ) {
-            let expedition = document.querySelector(".ogl-expedition").getAttribute("data") == "active";
-            let collect = document.querySelector(".ogl-collect").getAttribute("data") == "active";
+            let missionURL = Number(that.rawURL.searchParams.get("mission"));
+            let autoSelectMission = document.querySelector("#missionsDiv").getAttribute("data") != "false";
             if (missions.length == 1) {
               defaultMission = missions[0];
             } else {
               if (
-                (fleetDispatcher.mission == 0 || !missions.includes(fleetDispatcher.mission)) &&
-                (that.rawURL.searchParams.get("mission") == null && expedition == false && collect == false)
+                (autoSelectMission || !missions.includes(fleetDispatcher.mission))
               ) {
-                if (fleetDispatcher.targetPlanet.position == 16) {
+                if (missionURL != 0 && missions.includes(missionURL)) {
+                  defaultMission = missionURL;
+                } else if (fleetDispatcher.targetPlanet.position == 16) {
                   defaultMission = (that.json.options.expeditionMission == 15) ? 15 : 6;
                 } else if (fleetDispatcher.targetIsBuddyOrAllyMember) {
                   defaultMission = that.json.options.harvestMission;
                 } else {
                   defaultMission = that.json.options.foreignMission;
                 }
-              } else if (expedition) {
-                  defaultMission = 15;
-              } else if (collect) {
-                defaultMission = that.json.options.collect.mission;
               } else {
                 defaultMission = fleetDispatcher.mission;
               }
@@ -11179,8 +11176,7 @@ class OGInfinity {
               Number(e.target.getAttribute("mission"))
             );
             e.target.classList.add("ogl-active");
-            document.querySelector(".ogl-expedition").setAttribute("data", "");
-            document.querySelector(".ogl-collect").setAttribute("data", "");
+            document.querySelector("#missionsDiv").setAttribute("data", "false");
             update(false);
           });
           update(false);
@@ -11331,8 +11327,11 @@ class OGInfinity {
         update(false);
       });
       $("a[id^='missionButton']").on("click", () => {
-        document.querySelector(".ogl-expedition").setAttribute("data", "");
-        document.querySelector(".ogl-collect").setAttribute("data", "");
+        document.querySelector("#missionsDiv").setAttribute("data", "false");
+        highlightFleetTarget();
+      })
+      $("#resetall").on("click", () => {
+        document.querySelector("#missionsDiv").setAttribute("data", "true");
       })
       let missionsDiv = destination.appendChild(
         this.createDOM("div", { class: "ogl-missions", id: "missionsDiv" })
@@ -11667,8 +11666,7 @@ class OGInfinity {
         durationDiv.html(
           "<strong>" +
             formatTime(
-              fleetDispatcher.getDuration() +
-                (fleetDispatcher.mission == 15 ? 3600 : 0)
+              fleetDispatcher.getDuration()
             ) +
             "</strong>"
         );
@@ -11706,7 +11704,7 @@ class OGInfinity {
             getFormatedDate(
               new Date(serverTime).getTime() +
                 2 * fleetDispatcher.getDuration() * 1e3 +
-                (fleetDispatcher.mission == 15 ? 3600 : 0) * 1e3,
+                (fleetDispatcher.expeditionTime + fleetDispatcher.holdingTime) * 3600 * 1e3,
               "[d].[m].[y] <strong> [G]:[i]:[s] </strong>"
             )
           );
@@ -11720,12 +11718,15 @@ class OGInfinity {
 
       galaxyInput.addEventListener("click", () => {
         galaxyInput.value = "";
+        document.querySelector("#missionsDiv").setAttribute("data", "true");
       });
       systemInput.addEventListener("click", () => {
         systemInput.value = "";
+        document.querySelector("#missionsDiv").setAttribute("data", "true");
       });
       positionInput.addEventListener("click", () => {
         positionInput.value = "";
+        document.querySelector("#missionsDiv").setAttribute("data", "true");
       });
 
       var myEfficientFn = debounce(function () {
@@ -12968,9 +12969,9 @@ class OGInfinity {
       btnExpe.addEventListener("click", () => {
         document.querySelector("#resetall").click();
         this.expedition = true;
-        btnExpe.setAttribute("data", "active");
         this.collect = false;
-        document.querySelector(".ogl-collect").setAttribute("data", "");
+        document.querySelector("#missionsDiv").setAttribute("data", "false");
+        fleetDispatcher.mission = 15;
         this.json.href = undefined;
         this.saveData();
         let expType = this.json.options.expFret || 203;
@@ -13024,12 +13025,12 @@ class OGInfinity {
         document.querySelector(".send_none").click();
         fleetDispatcher.targetPlanet.type = 1;
         fleetDispatcher.targetPlanet.position = 16;
+        document.querySelector("#expeditiontime").value =
+          this.json.options.expeditionDefaultTime || 1;
         fleetDispatcher.refreshTarget();
         fleetDispatcher.updateTarget();
         fleetDispatcher.fetchTargetPlayerData();
         fleetDispatcher.refresh();
-        document.querySelector("#expeditiontime").value =
-          this.json.options.expeditionDefaultTime || 1;
         document
           .querySelector(".ogl-moon-icon")
           .classList.remove("ogl-active");
@@ -18125,7 +18126,7 @@ class OGInfinity {
         /*5*/ {
           de: "Planeten Übersicht",
           en: "Planets overview",
-          es: "Visión general de planetas"
+          es: "Visión general de planetas",
           fr: "Aperçu des planètes",
         },
         /*6*/ {
@@ -20320,9 +20321,9 @@ class OGInfinity {
       btnCollect.addEventListener("click", () => {
         document.querySelector("#resetall").click();
         this.collect = true;
-        btnCollect.setAttribute("data", "active");
         this.expedition = false;
-        document.querySelector(".ogl-expedition").setAttribute("data", "");
+        document.querySelector("#missionsDiv").setAttribute("data", "false");
+        fleetDispatcher.mission = this.json.options.collect.mission;
         this.json.href = undefined;
         this.saveData();
         document.querySelector(".ogl-cargo a.send_none").click();
