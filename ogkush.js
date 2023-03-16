@@ -94,7 +94,7 @@ Element.prototype.html = function (html) {
 };
 
 function toFormatedNumber(value, precision = null, units = false) {
-  const commaSeparator = ["en-US", "en-GB", "ro-RO"];
+  const commaSeparator = ["en-US", "en-GB", "ro-RO", "zh-TW"];
   let locale = document
     .querySelector("#cookiebanner")
     .getAttribute("data-locale");
