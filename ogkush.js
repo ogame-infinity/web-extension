@@ -17744,321 +17744,382 @@ class OGInfinity {
   }
 
   getTranslatedText(id, type = "text", html = true) {
-    let language = ["de", "en"].includes(this.gameLang) ? this.gameLang : "en";
-    // language = "en"
+    let language = ["de", "en", "es"].includes(this.gameLang) ? this.gameLang : "en";
     let translation = {
       tech: {
         1: {
           de: "Metallmine",
           en: "Metal Mine",
           es: "Mina de metal",
+          fr: "",
         },
         2: {
           de: "Kristallmine",
           en: "Crystal Mine",
           es: "Mina de cristal",
+          fr: "",
         },
         3: {
           de: "Deuterium-Synthetisierer",
           en: "Deuterium Synthesizer",
           es: "Sintetizador de deuterio",
+          fr: "",
         },
         4: {
           de: "Solarkraftwerk",
           en: "Solar Plant",
           es: "Planta de energía solar",
+          fr: "",
         },
         12: {
           de: "Fusionskraftwerk",
           en: "Fusion Reactor",
           es: "Planta de fusión",
+          fr: "",
         },
         14: {
           de: "Roboterfabrik",
           en: "Robotics Factory",
           es: "Fábrica de robots",
+          fr: "",
         },
         15: {
           de: "Nanitenfabrik",
           en: "Nanite Factory",
           es: "Fábrica de nanobots",
+          fr: "",
         },
         21: {
           de: "Raumschiffswerft",
           en: "Shipyard",
           es: "Hangar",
+          fr: "",
         },
         22: {
           de: "Metallspeicher",
           en: "Metal Storage",
           es: "Almacén de metal",
+          fr: "",
         },
         23: {
           de: "Kristallspeicher",
           en: "Crystal Storage",
           es: "Almacén de cristal",
+          fr: "",
         },
         24: {
           de: "Deuteriumtank",
           en: "Deuterium Tank",
           es: "Contenedor de deuterio",
+          fr: "",
         },
         31: {
           de: "Forschungslabor",
           en: "Research Lab",
           es: "Laboratorio de investigación",
+          fr: "",
         },
         33: {
           de: "Terraformer",
           en: "Terraformer",
           es: "Terraformer",
+          fr: "",
         },
         34: {
           de: "Allianzdepot",
           en: "Alliance Depot",
           es: "Depósito de la alianza",
+          fr: "",
         },
         36: {
           de: "Raumdock",
           en: "Space Dock",
           es: "Astillero orbital",
+          fr: "",
         },
         41: {
           de: "Mondbasis",
           en: "Lunar Base",
           es: "Base lunar",
+          fr: "",
         },
         42: {
           de: "Sensorphalanx",
           en: "Sensor Phalanx",
           es: "Sensor Phalanx",
+          fr: "",
         },
         43: {
           de: "Sprungtor",
           en: "Jump Gate",
           es: "Salto cuántico",
+          fr: "",
         },
         44: {
           de: "Raketensilo",
           en: "Missile Silo",
           es: "Silo",
+          fr: "",
         },
         106: {
           de: "Spionagetechnik",
           en: "Espionage Technology",
           es: "Tecnología de espionaje",
+          fr: "",
         },
         108: {
           de: "Computertechnik",
           en: "Computer Technology",
           es: "Tecnología de computación",
+          fr: "",
         },
         109: {
           de: "Waffentechnik",
           en: "Weapon Technology",
           es: "Tecnología militar",
+          fr: "",
         },
         110: {
           de: "Schildtechnik",
           en: "Shielding Technology",
           es: "Tecnología de defensa",
+          fr: "",
         },
         111: {
           de: "Raumschiffpanzerung",
           en: "Armour Technology",
           es: "Tecnología de blindaje",
+          fr: "",
         },
         113: {
           de: "Energietechnik",
           en: "Energy Technology",
           es: "Tecnología de energía",
+          fr: "",
         },
         114: {
           de: "Hyperraumtechnik",
           en: "Hyperspace Technology",
           es: "Tecnología de hiperespacio",
+          fr: "",
         },
         115: {
           de: "Verbrennungstriebwerk",
           en: "Combustion Drive",
           es: "Motor de combustión",
+          fr: "",
         },
         117: {
           de: "Impulstriebwerk",
           en: "Impulse Drive",
           es: "Motor de impulso",
+          fr: "",
         },
         118: {
           de: "Hyperraumantrieb",
           en: "Hyperspace Drive",
           es: "Propulsor hiperespacial",
+          fr: "",
         },
         120: {
           de: "Lasertechnik",
           en: "Laser Technology",
           es: "Tecnología láser",
+          fr: "",
         },
         121: {
           de: "Ionentechnik",
           en: "Ion Technology",
           es: "Tecnología iónica",
+          fr: "",
         },
         122: {
           de: "Plasmatechnik",
           en: "Plasma Technology",
           es: "Tecnología de plasma",
+          fr: "",
         },
         123: {
           de: "Intergalaktisches Forschungsnetzwerk",
           en: "Intergalactic Research Network",
           es: "Red de investigación intergaláctica",
+          fr: "",
         },
         124: {
           de: "Astrophysik",
           en: "Astrophysics",
           es: "Astrofísica",
+          fr: "",
         },
         199: {
           de: "Gravitonforschung",
           en: "Graviton Technology",
           es: "Tecnología de gravitón",
+          fr: "",
         },
         202: {
           de: "Kleiner Transporter",
           en: "Small Cargo Ship",
           es: "Nave pequeña de carga",
+          fr: "",
         },
         203: {
           de: "Großer Transporter",
           en: "Large Cargo Ship",
           es: "Nave grande de carga",
+          fr: "",
         },
         204: {
           de: "Leichter Jäger",
           en: "Light Fighter",
           es: "Cazador ligero",
+          fr: "",
         },
         205: {
           de: "Schwerer Jäger",
           en: "Heavy Fighter",
           es: "Cazador pesado",
+          fr: "",
         },
         206: {
           de: "Kreuzer",
           en: "Cruiser",
           es: "Crucero",
+          fr: "",
         },
         207: {
           de: "Schlachtschiff",
           en: "Battleship",
           es: "Nave de batalla",
+          fr: "",
         },
         208: {
           de: "Kolonieschiff",
           en: "Colony Ship",
           es: "Colonizador",
+          fr: "",
         },
         209: {
           de: "Recycler",
           en: "Recycler",
           es: "Reciclador",
+          fr: "",
         },
         210: {
           de: "Spionagesonde",
           en: "Espionage Probe",
           es: "Sonda de espionaje",
+          fr: "",
         },
         211: {
           de: "Bomber",
           en: "Bomber",
           es: "Bombardero",
+          fr: "",
         },
         212: {
           de: "Solarsatellit",
           en: "Solar Satellite",
           es: "Satélite solar",
+          fr: "",
         },
         213: {
           de: "Zerstörer",
           en: "Destroyer",
           es: "Destructor",
+          fr: "",
         },
         214: {
           de: "Todesstern",
           en: "Death Star",
           es: "Estrella de la muerte",
+          fr: "",
         },
         215: {
           de: "Schlachtkreuzer",
           en: "Battlecruiser",
           es: "Acorazado",
+          fr: "",
         },
         217: {
           de: "Crawler",
           en: "Crawler",
           es: "Taladrador",
+          fr: "",
         },
         218: {
           de: "Reaper",
           en: "Reaper",
           es: "Segador",
+          fr: "",
         },
         219: {
           de: "Pathfinder",
           en: "Pathfinder",
           es: "Explorador",
+          fr: "",
         },
         401: {
           de: "Raketenwerfer",
           en: "Rocket Launcher",
           es: "Lazamisiles",
+          fr: "",
         },
         402: {
           de: "Leichtes Lasergeschütz",
           en: "Light Laser",
           es: "Láser pequeño",
+          fr: "",
         },
         403: {
           de: "Schweres Lasergeschütz",
           en: "Heavy Laser",
           es: "Láser grande",
+          fr: "",
         },
         404: {
           de: "Gaußkanone",
           en: "Gauss Cannon",
           es: "Cañón gauss",
+          fr: "",
         },
         405: {
           de: "Ionengeschütz",
           en: "Ion Cannon",
           es: "Cañón iónico",
+          fr: "",
         },
         406: {
           de: "Plasmawerfer",
           en: "Plasma Turret",
           es: "Cañón de plasma",
+          fr: "",
         },
         407: {
           de: "Kleine Schildkuppel",
           en: "Small Shield Dome",
           es: "Cúpula pequeña de protección",
+          fr: "",
         },
         408: {
           de: "Große Schildkuppel",
           en: "Large Shield Dome",
           es: "Cúpula grande de protección",
+          fr: "",
         },
         502: {
           de: "Abfangrakete",
           en: "Anti-ballistic Missile",
           es: "Misiles antibalísticos",
+          fr: "",
         },
         503: {
           de: "Interplanetarrakete",
           en: "Interplanetary Missile",
           es: "Misil interplanetario",
+          fr: "",
         },
-        label: { de: "", en: "", es: "" },
+        label: { de: "", en: "", es: "", fr: "" },
       },
       res: [
         {
@@ -18867,43 +18928,65 @@ class OGInfinity {
           es: "Transporte de recursos",
           fr: "Transport des ressources",
         },
-        /*129*/ { de: "Abriss", en: "Demolition", fr: "Démolition" },
-        /*130*/ { de: "Filter", en: "Filter", fr: "Filtre" },
-        /*131*/ { de: "Kapazität", en: "Capacity", fr: "Capacité" },
+        /*129*/ {
+          de: "Abriss",
+          en: "Demolition",
+          es: "Demolición",
+          fr: "Démolition",
+        },
+        /*130*/ {
+          de: "Filter",
+          en: "Filter",
+          es: "Filtro",
+          fr: "Filtre",
+        },
+        /*131*/ {
+          de: "Kapazität",
+          en: "Capacity",
+          es: "Capacidad",
+          fr: "Capacité",
+        },
         /*132*/ {
           de: "Füllzeit",
           en: "Filling time",
+          es: "Tiempo de llenado",
           fr: "Temps de remplissage",
         },
         /*133*/ {
           de: "Beitragen oder Bugs melden",
           en: "Contribute or bug report",
-          fr: "Contribuer ou signaler un bogue"
+          es: "Contribuir o reportar errores",
+          fr: "Contribuer ou signaler un bogue",
         },
         /*134*/ {
           de: "Flottenaktivität der Planeten anzeigen",
           en: "Display planets fleet activity",
-          fr: "Afficher l'activité de la flotte des planètes"
+          es: "Mostrar actividad de flota de los planetas",
+          fr: "Afficher l'activité de la flotte des planètes",
         },
         /*135*/ {
           de: "Filter invertieren",
           en: "Invert filter",
-          fr: "Inverser le filtre"
+          es: "Invertir filtro",
+          fr: "Inverser le filtre",
         },
         /*136*/ {
           de: "Forschungsgeschwindigkeit",
           en: "Research speed",
-          fr: "Vitesse de recherche"
+          es: "Velocidad de investigación",
+          fr: "Vitesse de recherche",
         },
         /*137*/ {
           de: "Aktivität",
           en: "Activity",
-          fr: "Activité"
+          es: "Actividad",
+          fr: "Activité",
         },
         /*138*/ {
           de: "Navigationspfeile in mobiler Version",
           en: "Navigation arrows in mobile version",
-          fr: "Flèches de navigation en version mobile"
+          es: "Flechas de navegación en versión móvil",
+          fr: "Flèches de navigation en version mobile",
         }
       ],
     };
