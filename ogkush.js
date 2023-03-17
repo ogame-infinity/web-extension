@@ -20505,7 +20505,7 @@ class OGInfinity {
         this.createDOM(
           "td",
           { class: "desc" },
-          `${this.getTranslatedText(22, "tech")}`
+          `${this.getTranslatedText(22, "tech")}:`
         )
       );
       metal_1.appendChild(
@@ -20547,7 +20547,7 @@ class OGInfinity {
         this.createDOM(
           "td",
           { class: "desc" },
-          `${this.getTranslatedText(23, "tech")} `
+          `${this.getTranslatedText(23, "tech")}:`
         )
       );
       crystal_1.appendChild(
@@ -20592,7 +20592,7 @@ class OGInfinity {
         this.createDOM(
           "td",
           { class: "desc" },
-          `${this.getTranslatedText(24, "tech")} `
+          `${this.getTranslatedText(24, "tech")}:`
         )
       );
       deuterium_1.appendChild(
