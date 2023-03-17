@@ -1589,6 +1589,7 @@ class OGInfinity {
     this.json.options.hiddenTargets = this.json.options.hiddenTargets || {};
     this.json.options.timeZone =
       this.json.options.timeZone === false ? false : true;
+    this.json.lifeformProduction = this.json.lifeformProduction || {};
     this.gameLang = document
       .querySelector('meta[name="ogame-language"]')
       .getAttribute("content");
@@ -1704,6 +1705,7 @@ class OGInfinity {
     this.showStorageTimers();
     this.showTabTimer();
     this.markLifeforms();
+    this.getLifeformProduction();
     this.navigationArrows();
     this.expedition = false;
     this.collect = false;
@@ -8902,21 +8904,7 @@ class OGInfinity {
         player[i] += planet.production.production[1004][i];
         alliance[i] += planet.production.production[1005][i];
         energy[i] -= planet.production.production[12][i];
-        if (lifeform) lifeform[i] += (
-          planet.production.hourly[i] -
-          planet.production.production[1][i] -
-          planet.production.production[2][i] -
-          planet.production.production[3][i] -
-          planet.production.generalIncoming[i] -
-          planet.production.production[122][i] -
-          planet.production.production[217][i] -
-          planet.production.production[1000][i] -
-          planet.production.production[1001][i] -
-          planet.production.production[1003][i] -
-          planet.production.production[1004][i] -
-          planet.production.production[1005][i] -
-          planet.production.production[12][i]
-        );
+        if (lifeform) lifeform[i] += planet.production.production[1006][i];
       }
     });
     header.appendChild(this.createDOM("th", { class: "ogl-sum-symbol" }, "Σ"));
@@ -13171,6 +13159,15 @@ class OGInfinity {
             hasMoon = true;
           }
           planet.invalidate = false;
+          // lifeform production is not included in ogames empire data, might change in future
+          if (this.hasLifeforms && planet.production.production["1006"] == undefined) {
+            planet.production.production["1006"] = this.json.lifeformProduction[planet.id] || { 0: 0, 1: 0, 2: 0, 3: 0, 5: 0, 6: 0 };
+            [0, 1, 2, 3, 5, 6].forEach((idx) => {
+              planet.production.hourly[idx] += Math.round(planet.production.production["1006"][idx]);
+              planet.production.daily[idx] += Math.round(planet.production.production["1006"][idx] * 24);
+              planet.production.weekly[idx] += Math.round(planet.production.production["1006"][idx] * 24 * 7);
+            });
+          }
         });
         if (hasMoon) {
           return fetch(
@@ -13215,7 +13212,8 @@ class OGInfinity {
     let ids = [];
     let planets = {};
     document.querySelectorAll(".eventFleet").forEach((line) => {
-      let tooltip = line.querySelector(".icon_movement .tooltip");
+      let tooltip = line.querySelector(".icon_movement .tooltip") ||
+        line.querySelector(".icon_movement_reserve .tooltip");
       let id = Number(line.getAttribute("id").split("-")[1]);
       let back =
         line.getAttribute("data-return-flight") == "false" ? false : true;
@@ -14677,7 +14675,6 @@ class OGInfinity {
   }
 
   renderPlanet(coords, main, scanned, moon, deleted) {
-    //debugger;
     coords = coords.split(":");
     let a = this.createDOM("a");
     let planetDiv = a.appendChild(
@@ -16095,6 +16092,7 @@ class OGInfinity {
     }
     return currentObj;
   }
+
   async checkPantrySync(pantryKey) {
     let lastPantrySync = null;
     let lastLocalSync = this.json.pantrySync;
@@ -16149,6 +16147,7 @@ class OGInfinity {
       this.pantrySync(pantryKey, pantrySyncObj, 1);
     }
   }
+
   async pantrySync(pantryKey, mainSyncObj, action = 1) {
     if (!pantryKey) return;
     //const delay = (ms) => new Promise((res) => setTimeout(res, ms));
@@ -17127,6 +17126,7 @@ class OGInfinity {
       requestAnimationFrame(() => this[callbackAsString](params));
     }, 1e3 / 20);
   }
+
   tooltip(sender, content, autoHide, side, timer) {
     side = side || {};
     timer = timer || 500;
@@ -21008,6 +21008,21 @@ class OGInfinity {
           );
       }
     });
+  }
+
+  getLifeformProduction() {
+    if (!this.hasLifeforms || (this.page != "resourceSettings" && this.page != "resourcesettings")) return;
+    let productions = document.querySelectorAll("tr[class*='1006'] .tooltipCustom");
+    console.log(this.current.id)
+    this.json.lifeformProduction[this.current.id] = {
+      0: fromFormatedNumber(productions[0].getAttribute("title")),
+      1: fromFormatedNumber(productions[1].getAttribute("title")),
+      2: fromFormatedNumber(productions[2].getAttribute("title")),
+      3: fromFormatedNumber(productions[3].getAttribute("title")),
+      5: fromFormatedNumber(productions[4].getAttribute("title")),
+      6: fromFormatedNumber(productions[5].getAttribute("title")),
+    };
+    this.saveData();
   }
 
   listenKeyboard() {
