@@ -4881,7 +4881,7 @@ class OGInfinity {
               };
               let base64 = btoa(JSON.stringify(json));
               window.open(
-                `https://trashsim.universeview.be/${this.univerviewLang}?SR_KEY=${key}#prefill=${base64}`,
+                `https://trashsim.oplanet.eu/${this.univerviewLang}?SR_KEY=${key}#prefill=${base64}`,
                 "_blank"
               );
             });
@@ -4894,7 +4894,7 @@ class OGInfinity {
             );
             link.addEventListener("click", () =>
               window.open(
-                `https://ogotcha.universeview.be/${this.univerviewLang}?CR_KEY=${key}`,
+                `https://ogotcha.oplanet.eu/${this.univerviewLang}?CR_KEY=${key}`,
                 "_blank",
                 `location=yes,scrollbars=yes,status=yes,width=${screen.availWidth},height=${screen.availHeight}`
               )
@@ -15745,7 +15745,7 @@ class OGInfinity {
         };
         let base64 = btoa(JSON.stringify(json));
         window.open(
-          `https://trashsim.universeview.be/${this.univerviewLang}?SR_KEY=${report.apiKey}#prefill=${base64}`,
+          `https://trashsim.oplanet.eu/${this.univerviewLang}?SR_KEY=${report.apiKey}#prefill=${base64}`,
           "_blank"
         );
       });
@@ -17311,7 +17311,7 @@ class OGInfinity {
       };
       let base64 = btoa(JSON.stringify(json));
       window.open(
-        `https://trashsim.universeview.be/${this.univerviewLang}?#prefill=${base64}`,
+        `https://trashsim.oplanet.eu/${this.univerviewLang}?#prefill=${base64}`,
         "_blank"
       );
     });
