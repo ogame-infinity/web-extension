@@ -15100,12 +15100,11 @@ class OGInfinity {
         expeBox.html(
           `\n<img src="https://gf1.geo.gfsrv.net/cdnc5/fa3e396b8af2ae31e28ef3b44eca91.gif">\n<div>\n<div class="ogl-metal">${res[0]}</div>\n<div class="ogl-crystal">${res[1]}</div>\n</div>\n<div>\n<div>${scouts.textContent}</div>\n<div>${action.outerHTML}</div>\n</div>\n`
         );
-        expeBox
-          .querySelector("a")
-          .setAttribute(
-            "onclick",
-            action.outerHTML.match(/(?<=k=")(.*?)(?=">)/)[0]
-          );
+        const anchor = expeBox.querySelector("a");
+        if (anchor) {
+          anchor.setAttribute("onclick",
+            action.outerHTML.match(/(?<=k=")(.*?)(?=">)/)[0]);
+        }
       }
     }
   }
