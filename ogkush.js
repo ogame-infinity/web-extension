@@ -18435,7 +18435,7 @@ class OGInfinity {
         /*46*/ {
           de: "Keine Missionen...",
           en: "No missions...",
-          es: "Sin misiones...",
+          es: "Ninguna misión...",
           fr: "Aucune mission...",
         },
         /*47*/ {
@@ -18687,7 +18687,7 @@ class OGInfinity {
         /*88*/ {
           de: "Empfohlene Weiterentwicklung",
           en: "Recommended further development",
-          es: "Desarrollo recomendado",
+          es: "Desarrollo posterior recomendado",
           fr: "Développement ultérieur recommandé",
         },
         /*89*/ {
@@ -18843,8 +18843,8 @@ class OGInfinity {
         /*114*/ {
           de: "Warnung: Expeditionsposition wird schwach...",
           en: "Warning: expedition position is getting weak...",
-          es: "Atención: la posición de expediciones está saturándose",
-          fr: "Attention: la position d'expédition devient saturée",
+          es: "Atención: la posición de expediciones está saturándose...",
+          fr: "Attention: la position d'expédition devient saturée...",
         },
         /*115*/ {
           de: "Fehler: Keine Schiffe ausgewählt",
