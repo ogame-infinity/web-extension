@@ -357,44 +357,6 @@ input[type="password"]::selection {
   width: 187px;
 }
 
-@font-face {
-  font-family: Sterilict;
-  src: url("chrome-extension://__MSG_@@extension_id__/res/Sterilict.ttf");
-}
-
-.bmc-button {
-  line-height: 30px !important;
-  height: 39px !important;
-  text-decoration: none !important;
-  display: inline-flex !important;
-  color: #fff !important;
-  border-radius: 10px !important;
-  border: 2px solid #4a6786 !important;
-  padding: 3px 10px 0 3px !important;
-  font-size: 11px !important;
-  letter-spacing: 0.6px !important;
-  margin: 0 auto !important;
-  font-family: Sterilict, cursive !important;
-  box-sizing: border-box !important;
-}
-
-.bmc-button span {
-  margin-left: 2px;
-  font-family: Sterilict, cursive !important;
-}
-
-.bmc-button:hover {
-  background-color: #4a6786 !important;
-}
-
-.bmc-button img {
-  height: 22px !important;
-  width: 31px !important;
-  margin-top: 3px !important;
-  box-shadow: none !important;
-  border: none !important;
-}
-
 .ogl-settings hr {
   margin: 4px 0;
 }
