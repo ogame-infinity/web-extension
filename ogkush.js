@@ -3954,7 +3954,7 @@ class OGInfinity {
         });
     };
     let addHover = () => {
-      document.querySelectorAll(".eventFleet").forEach((line) => {
+      document.querySelectorAll("#eventContent .eventFleet").forEach((line) => {
         let previous =
           Number(line.getAttribute("id").replace("eventRow-", "")) - 1;
         let next = Number(line.getAttribute("id").replace("eventRow-", "")) + 1;
@@ -3994,7 +3994,7 @@ class OGInfinity {
       });
     };
     let changeTimeZone = () => {
-      document.querySelectorAll(".eventFleet").forEach((line) => {
+      document.querySelectorAll("#eventContent .eventFleet").forEach((line) => {
         let arrival = new Date(line.getAttribute("data-arrival-time") * 1e3);
         arrival = arrival.getTime();
         if (line.querySelector(".arrivalTime")) {
@@ -4632,7 +4632,7 @@ class OGInfinity {
     let fleetCount = 0;
     let total = 0;
     let uniques = {};
-    document.querySelectorAll(".eventFleet").forEach((line) => {
+    document.querySelectorAll("#eventContent .eventFleet").forEach((line) => {
       let id = Number(line.getAttribute("id").split("-")[1]);
       let back = line.getAttribute("data-return-flight");
       let type = line.getAttribute("data-mission-type");
@@ -13211,7 +13211,7 @@ class OGInfinity {
     let transports = {};
     let ids = [];
     let planets = {};
-    document.querySelectorAll(".eventFleet").forEach((line) => {
+    document.querySelectorAll("#eventContent .eventFleet").forEach((line) => {
       let tooltip = line.querySelector(".icon_movement .tooltip") ||
         line.querySelector(".icon_movement_reserve .tooltip");
       let id = Number(line.getAttribute("id").split("-")[1]);
@@ -19642,7 +19642,7 @@ class OGInfinity {
       unionTable.push([union, acsRow.querySelectorAll("td")[1].innerText]);
     });
     const unionArrivalTime = Object.fromEntries(unionTable);
-    const rows = eventTable.querySelectorAll("tr.eventFleet");
+    const rows = eventTable.querySelectorAll("#eventContent tr.eventFleet");
     rows.forEach((row) => {
       const cols = row.querySelectorAll("td");
 
