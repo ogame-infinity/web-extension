@@ -37,10 +37,7 @@ class DataHelper {
     let possible = [];
     if (alliance) {
       for (let id in this.players) {
-        if (
-          this.players[id].alliance &&
-          this.players[id].alliance.toLowerCase().includes(name.toLowerCase())
-        ) {
+        if (this.players[id].alliance && this.players[id].alliance.toLowerCase().includes(name.toLowerCase())) {
           possible.push(this.getPlayer(id));
         }
       }
@@ -51,10 +48,7 @@ class DataHelper {
         }
       }
       for (let id in this.players) {
-        if (
-          this.players[id].name &&
-          this.players[id].name.toLowerCase().includes(name.toLowerCase())
-        ) {
+        if (this.players[id].name && this.players[id].name.toLowerCase().includes(name.toLowerCase())) {
           possible.push(this.getPlayer(id));
         }
       }
@@ -172,31 +166,19 @@ class DataHelper {
       if (!known) {
         this.scannedPlanets[row.id][row.coords] = row.moon;
         if (ptreKey && row.id) {
-          let currentPlayer =
-            player ?? "{id:" + row.id + ", name:" + row.name + "}";
+          let currentPlayer = player ?? "{id:" + row.id + ", name:" + row.name + "}";
           ptrePosition[row.coords].player_id = row.id;
           ptrePosition[row.coords].name = row.name || false;
           ptrePosition[row.coords].rank = currentPlayer?.points?.position || -1;
           ptrePosition[row.coords].score = currentPlayer?.points?.score || -1;
           ptrePosition[row.coords].fleet = currentPlayer?.military?.ships || -1;
           ptrePosition[row.coords].status = currentPlayer?.status;
-          ptrePosition[row.coords].old_player_id = sameOld
-            ? ptrePosition[row.coords].player_id
-            : -1;
-          ptrePosition[row.coords].timestamp_api =
-            sameOld && this.lastUpdate ? this.lastUpdate : -1;
-          ptrePosition[row.coords].old_name = sameOld
-            ? ptrePosition[row.coords].name
-            : false;
-          ptrePosition[row.coords].old_rank = sameOld
-            ? ptrePosition[row.coords].score
-            : -1;
-          ptrePosition[row.coords].old_score = sameOld
-            ? ptrePosition[row.coords].score
-            : -1;
-          ptrePosition[row.coords].old_fleet = sameOld
-            ? ptrePosition[row.coords].fleet
-            : -1;
+          ptrePosition[row.coords].old_player_id = sameOld ? ptrePosition[row.coords].player_id : -1;
+          ptrePosition[row.coords].timestamp_api = sameOld && this.lastUpdate ? this.lastUpdate : -1;
+          ptrePosition[row.coords].old_name = sameOld ? ptrePosition[row.coords].name : false;
+          ptrePosition[row.coords].old_rank = sameOld ? ptrePosition[row.coords].score : -1;
+          ptrePosition[row.coords].old_score = sameOld ? ptrePosition[row.coords].score : -1;
+          ptrePosition[row.coords].old_fleet = sameOld ? ptrePosition[row.coords].fleet : -1;
         }
       }
       if (row.deleted) {
@@ -226,14 +208,11 @@ class DataHelper {
   }
 
   updatePtreGalaxy(ptrePosition) {
-    fetch(
-      "https://ptre.chez.gg/scripts/api_galaxy_import_infos.php?tool=infinity",
-      {
-        priority: "low",
-        method: "POST",
-        body: JSON.stringify(ptrePosition),
-      }
-    )
+    fetch("https://ptre.chez.gg/scripts/api_galaxy_import_infos.php?tool=infinity", {
+      priority: "low",
+      method: "POST",
+      body: JSON.stringify(ptrePosition),
+    })
       .then((response) => response.json())
       .then((data) => {
         if (data.code != 1) console.log("Can't send data to PTRE");
@@ -286,8 +265,7 @@ class DataHelper {
     let promises = [];
     types.forEach((type, index) => {
       let p = this._fetchXML(
-        `https://${this.universe}.ogame.gameforge.com/api/highscore.xml?category=1&type=` +
-          index
+        `https://${this.universe}.ogame.gameforge.com/api/highscore.xml?category=1&type=` + index
       ).then((xml) => {
         Array.from(xml.querySelectorAll("player")).forEach((player) => {
           let playerid = player.getAttribute("id");
@@ -307,8 +285,7 @@ class DataHelper {
             score: score,
           };
           if (index == 3) {
-            players[player.getAttribute("id")][types[index]].ships =
-              player.getAttribute("ships");
+            players[player.getAttribute("id")][types[index]].ships = player.getAttribute("ships");
           }
         });
       });
@@ -322,9 +299,7 @@ class DataHelper {
       .then((rep) => rep.text())
       .then((str) => new window.DOMParser().parseFromString(str, "text/xml"))
       .then((xml) => {
-        let update = new Date(
-          Number(xml.children[0].getAttribute("timestamp")) * 1e3
-        );
+        let update = new Date(Number(xml.children[0].getAttribute("timestamp")) * 1e3);
         if (update > this.lastPlayersUpdate) {
           this.lastPlayersUpdate = update;
           this.scannedPlayers = {};
@@ -334,18 +309,14 @@ class DataHelper {
           if (players[id]) {
             players[id].name = player.getAttribute("name");
             players[id].alliance = player.getAttribute("alliance");
-            players[id].status = player.getAttribute("status")
-              ? player.getAttribute("status")
-              : "";
+            players[id].status = player.getAttribute("status") ? player.getAttribute("status") : "";
             this.names[player.getAttribute("name")] = id;
           } else {
             let playerjson = {
               id: id,
               name: player.getAttribute("name"),
               alliance: player.getAttribute("alliance"),
-              status: player.getAttribute("status")
-                ? player.getAttribute("status")
-                : "",
+              status: player.getAttribute("status") ? player.getAttribute("status") : "",
               planets: [],
             };
             players[id] = playerjson;
@@ -356,15 +327,11 @@ class DataHelper {
   }
 
   _updatePlanets(players) {
-    return fetch(
-      `https://${this.universe}.ogame.gameforge.com/api/universe.xml`
-    )
+    return fetch(`https://${this.universe}.ogame.gameforge.com/api/universe.xml`)
       .then((rep) => rep.text())
       .then((str) => new window.DOMParser().parseFromString(str, "text/xml"))
       .then((xml) => {
-        let update = new Date(
-          Number(xml.children[0].getAttribute("timestamp")) * 1e3
-        );
+        let update = new Date(Number(xml.children[0].getAttribute("timestamp")) * 1e3);
         if (update > this.lastPlanetsUpdate) {
           this.lastPlanetsUpdate = update;
           this.scannedPlanets = {};
@@ -409,24 +376,18 @@ class DataHelper {
   }
 
   _updateAlliances(players) {
-    return fetch(
-      `https://${this.universe}.ogame.gameforge.com/api/alliances.xml`
-    )
+    return fetch(`https://${this.universe}.ogame.gameforge.com/api/alliances.xml`)
       .then((rep) => rep.text())
       .then((str) => new window.DOMParser().parseFromString(str, "text/xml"))
       .then((xml) => {
-        Array.from(xml.querySelectorAll("alliance")).forEach(
-          (alliance, index) => {
-            Array.from(alliance.children).forEach((alliPlayer) => {
-              let player = players[alliPlayer.getAttribute("id")];
-              if (player) {
-                player.alliance = `[${alliance.getAttribute(
-                  "tag"
-                )}] ${alliance.getAttribute("name")}`;
-              }
-            });
-          }
-        );
+        Array.from(xml.querySelectorAll("alliance")).forEach((alliance, index) => {
+          Array.from(alliance.children).forEach((alliPlayer) => {
+            let player = players[alliPlayer.getAttribute("id")];
+            if (player) {
+              player.alliance = `[${alliance.getAttribute("tag")}] ${alliance.getAttribute("name")}`;
+            }
+          });
+        });
         return players;
       });
   }
@@ -444,12 +405,8 @@ if (!universes[UNIVERSE] || Object.keys(universes[UNIVERSE]) === 0) {
       try {
         let tempSaveData = data[UNIVERSE];
         tempSaveData.lastUpdate = new Date(tempSaveData.lastUpdate);
-        tempSaveData.lastPlanetsUpdate = new Date(
-          tempSaveData.lastPlanetsUpdate
-        );
-        tempSaveData.lastPlayersUpdate = new Date(
-          tempSaveData.lastPlayersUpdate
-        );
+        tempSaveData.lastPlanetsUpdate = new Date(tempSaveData.lastPlanetsUpdate);
+        tempSaveData.lastPlayersUpdate = new Date(tempSaveData.lastPlayersUpdate);
         universes[UNIVERSE] = new DataHelper(UNIVERSE);
         dataHelper = Object.assign(universes[UNIVERSE], tempSaveData);
       } catch (e) {
@@ -472,15 +429,10 @@ function processData() {
       universes[UNIVERSE].update().then(() => {
         let tempSaveData = { ...universes[UNIVERSE] };
         tempSaveData.lastUpdate = universes[UNIVERSE].lastUpdate.toJSON();
-        tempSaveData.lastPlanetsUpdate =
-          universes[UNIVERSE].lastPlanetsUpdate.toJSON();
-        tempSaveData.lastPlayersUpdate =
-          universes[UNIVERSE].lastPlayersUpdate.toJSON();
+        tempSaveData.lastPlanetsUpdate = universes[UNIVERSE].lastPlanetsUpdate.toJSON();
+        tempSaveData.lastPlayersUpdate = universes[UNIVERSE].lastPlayersUpdate.toJSON();
 
-        chrome.storage.local.set(
-          { [UNIVERSE]: tempSaveData },
-          function (at) {}
-        );
+        chrome.storage.local.set({ [UNIVERSE]: tempSaveData }, function (at) {});
       });
       dataHelper = universes[UNIVERSE];
     } catch (e) {
@@ -525,9 +477,7 @@ window.addEventListener(
         clone = cloneInto(response, document.defaultView);
       }
       clone.requestId = request.requestId;
-      window.dispatchEvent(
-        new CustomEvent("ogi-expedition-rep", { detail: clone })
-      );
+      window.dispatchEvent(new CustomEvent("ogi-expedition-rep", { detail: clone }));
     });
   },
   true
@@ -548,9 +498,7 @@ window.addEventListener(
         clone = cloneInto(response, document.defaultView);
       }
       clone.requestId = request.requestId;
-      window.dispatchEvent(
-        new CustomEvent("ogi-players-rep", { detail: clone })
-      );
+      window.dispatchEvent(new CustomEvent("ogi-players-rep", { detail: clone }));
     });
   },
   10
@@ -580,10 +528,7 @@ document.addEventListener("ogi-clear", function (e) {
 });
 document.addEventListener("ogi-notification", function (e) {
   const msg = Object.assign({ iconUrl: "res/logo128.png" }, e.detail);
-  chrome.runtime.sendMessage(
-    { type: "notification", universe: UNIVERSE, message: msg },
-    function (response) {}
-  );
+  chrome.runtime.sendMessage({ type: "notification", universe: UNIVERSE, message: msg }, function (response) {});
 });
 
 function editDistance(s1, s2) {
@@ -597,8 +542,7 @@ function editDistance(s1, s2) {
       else {
         if (j > 0) {
           var newValue = costs[j - 1];
-          if (s1.charAt(i - 1) != s2.charAt(j - 1))
-            newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+          if (s1.charAt(i - 1) != s2.charAt(j - 1)) newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
           costs[j - 1] = lastValue;
           lastValue = newValue;
         }
@@ -620,9 +564,7 @@ function similarity(s1, s2) {
   if (longerLength == 0) {
     return 1;
   }
-  return (
-    (longerLength - editDistance(longer, shorter)) / parseFloat(longerLength)
-  );
+  return (longerLength - editDistance(longer, shorter)) / parseFloat(longerLength);
 }
 
 const url = chrome.runtime.getURL("res/expeditions.tsv");
