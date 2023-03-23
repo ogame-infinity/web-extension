@@ -1027,6 +1027,7 @@ input[type="password"]::selection {
 
 .allornonewrap #sendall,
 .allornonewrap .select-most {
+  cursor: pointer;
   filter: grayscale(1) !important;
 }
 

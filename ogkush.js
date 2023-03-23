@@ -3927,7 +3927,6 @@ class OGInfinity {
   async flyingFleet() {
     let fleetCount = 0;
     let total = 0;
-    let uniques = {};
     document.querySelectorAll("#eventContent .eventFleet").forEach((line) => {
       let id = Number(line.getAttribute("id").split("-")[1]);
       let back = line.getAttribute("data-return-flight");
@@ -3937,8 +3936,7 @@ class OGInfinity {
         if (planet.coordinates == line.children[4].innerText.trim()) own = true;
       });
       if (type == 16 || !own) return;
-      if (type == 4 || (back && !(id - 1 in uniques) && !(id - 2 in uniques))) {
-        uniques[id] = true;
+      if (type == 4 || back) {
         fleetCount += Number(line.querySelector(".detailsFleet").innerText);
       }
     });
@@ -11204,7 +11202,6 @@ class OGInfinity {
       cri = 0,
       deut = 0;
     let fleetCount = {};
-    let uniques = {};
     let transports = {};
     let ids = [];
     let planets = {};
@@ -11248,22 +11245,27 @@ class OGInfinity {
       let div = document.createElement("div");
       tooltip && div.html(tooltip.getAttribute("title") || tooltip.getAttribute("data-title"));
       let addToTotal = false;
-      if (type == 4 || (type != 3 && back && !(id - 1 in uniques) && !(id - 2 in uniques))) {
-        uniques[id] = true;
-        addToTotal = true;
-        movement.resDest = true;
-      }
       let noRes = false;
-      if (type == 3 && !back) {
-        transports[id] = true;
+      if (type == 4) {
         addToTotal = true;
         movement.resDest = true;
-      }
-      if (type == 3 && back && id - 1 in transports) {
-        noRes = true;
+      } else if (type == 3) {
+        if (!back) {
+          transports[id] = true
+          addToTotal = true;
+          movement.resDest = true;
+        } else if (id - 1 in transports) {
+          noRes = true;
+        } else {
+          addToTotal = true;
+          movement.resDest = true;
+        }
+      } else if (back) {
+        addToTotal = true;
+        movement.resDest = true;
       } else {
-        addToTotal = true;
-        movement.resDest = true;
+        addToTotal = false;
+        movement.resDest = false;
       }
       div.querySelectorAll('td[colspan="2"]').forEach((tooltip) => {
         let count = Number(fromFormatedNumber(tooltip.nextElementSibling.innerHTML.trim()));
@@ -11486,7 +11488,7 @@ class OGInfinity {
     });
     let flyingDetails = {};
     this.json.flying.ids.forEach((mov) => {
-      if (mov.resDest && (mov.type == "4" || mov.type == "3" || mov.type == "15")) {
+      if (mov.resDest) {
         let coords = mov.back ? mov.origin : mov.dest;
         flyingDetails[coords] = flyingDetails[coords] || {
           metal: 0,
@@ -11522,7 +11524,7 @@ class OGInfinity {
           coords.split(":")[1]
         }&position=${coords.split(":")[2].slice(0, -1)}`;
         flyingRows += `<tr>
-      <td>${details.name}</td>
+      <td class=${details.own ? "own" : "friendly"}>${details.name}</td>
       <td class=${details.own ? "own" : "friendly"}><a href=${href}>[${coords.slice(0, -1)}]</a></td>
       <td><figure class="${coords.slice(-1) == "M" ? "planetIcon moon" : "planetIcon planet"}"></figure></td>
       <td class="value ogl-metal">${toFormatedNumber(details.metal)}</td>
