@@ -84,12 +84,23 @@ if (redirect && redirect.indexOf("https") > -1) {
     };
   } else requestAnimationFrame(() => goodbyeTipped());
 })();
+
 Element.prototype.empty = function (e) {
   while (this.firstChild) this.removeChild(this.firstChild);
 };
 Element.prototype.html = function (html) {
   this.innerHTML = DOMPurify.sanitize(html);
 };
+
+function createDOM(element, attributes, textContent, innerText) {
+  const e = document.createElement(element);
+  for (const key in attributes) {
+    e.setAttribute(key, attributes[key]);
+  }
+  if (textContent) e.textContent = textContent;
+  if (innerText) e.innerText = innerText;
+  return e;
+}
 
 function toFormatedNumber(value, precision = null, units = false) {
   const commaSeparator = ["en-US", "en-GB", "ro-RO", "zh-TW"];
@@ -12652,7 +12663,7 @@ class OGInfinity {
           let total = 0;
           const frag = document.createDocumentFragment();
           debris.querySelectorAll(".debris-content").forEach((resources) => {
-            let value = fromFormatedNumber(resources.innerText.replace(/(\D*)/, ""));
+            let value = fromFormatedNumber(resources.textContent.replace(/(\D*)/, ""));
             total += parseInt(value);
             frag.appendChild(document.createTextNode(toFormatedNumber(value, null, true)));
             frag.appendChild(document.createElement("br"));
@@ -12665,18 +12676,32 @@ class OGInfinity {
       });
       let expeBox = document.querySelector(".expeditionDebrisSlotBox");
       if (expeBox && !expeBox.classList.contains("ogl-done")) {
-        let content = expeBox.querySelectorAll(".ListLinks li");
         expeBox.classList.add("ogl-done");
-        let scouts = content[2];
-        let action = content[3];
-        let res = [content[0].textContent.replace(/(\D*)/, ""), content[1].textContent.replace(/(\D*)/, "")];
-        expeBox.html(
-          `\n<img src="https://gf1.geo.gfsrv.net/cdnc5/fa3e396b8af2ae31e28ef3b44eca91.gif">\n<div>\n<div class="ogl-metal">${res[0]}</div>\n<div class="ogl-crystal">${res[1]}</div>\n</div>\n<div>\n<div>${scouts.textContent}</div>\n<div>${action.outerHTML}</div>\n</div>\n`
+        const frag = document.createDocumentFragment();
+        frag.appendChild(
+          createDOM("img", { src: "https://gf1.geo.gfsrv.net/cdnc5/fa3e396b8af2ae31e28ef3b44eca91.gif" })
         );
-        const anchor = expeBox.querySelector("a");
-        if (anchor) {
-          anchor.setAttribute("onclick", action.outerHTML.match(/(?<=k=")(.*?)(?=">)/)[0]);
+        const res = [];
+        expeBox.querySelectorAll(".ListLinks li.debris-content").forEach((element) => {
+          res.push(element.textContent.replace(/(\D*)/, ""));
+        });
+        const debris = createDOM("div");
+        debris.appendChild(createDOM("div", { class: "ogl-metal" }, `${res[0]}`));
+        debris.appendChild(createDOM("div", { class: "ogl-crystal" }, `${res[1]}`));
+        if (res[2]) {
+          debris.appendChild(createDOM("div", { class: "ogl-deuterium" }, `${res[2]}`));
         }
+        frag.appendChild(debris);
+        const scouts = expeBox.querySelector(".ListLinks li.debris-recyclers");
+        const link = createDOM("div");
+        link.appendChild(createDOM("div", {}, scouts.textContent));
+        const action = expeBox.querySelector(".ListLinks li a");
+        if (action) {
+          link.appendChild(createDOM("a", { href: "#", onclick: action.getAttribute("onclick") }, action.textContent));
+        }
+        frag.appendChild(link);
+        expeBox.empty();
+        expeBox.appendChild(frag);
       }
     }
   }
