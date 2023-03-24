@@ -147,7 +147,7 @@
 
 #bannerSkyscrapercomponent {
   position: absolute;
-  left: 1160px;
+  left: 1153px;
 }
 
 #planetbarcomponent #bannerSkyscrapercomponent {
@@ -1963,6 +1963,10 @@ strong {
 #technologydetails a.upgrade:hover,
 #technologydetails button.upgrade:hover {
   background-position-y: -36px !important;
+}
+
+a.build-it.tooltip {
+  color: #fff !important;
 }
 
 a.build-it_premium,
