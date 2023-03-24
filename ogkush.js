@@ -5537,13 +5537,13 @@ class OGInfinity {
             deuterium: fleetRes[2],
           },
           {
-            title: this.getTranslatedText(68),
+            title: this.getTranslatedText(69),
             metal: sums.harvest[0],
             crystal: sums.harvest[1],
             deuterium: 0,
           },
           {
-            title: this.getTranslatedText(69),
+            title: this.getTranslatedText(68),
             metal: -losses[0],
             crystal: -losses[1],
             deuterium: -losses[2],
@@ -5890,13 +5890,13 @@ class OGInfinity {
             deuterium: sums.loot[2],
           },
           {
-            title: this.getTranslatedText(68),
+            title: this.getTranslatedText(69),
             metal: sums.harvest[0],
             crystal: sums.harvest[1],
             deuterium: 0,
           },
           {
-            title: this.getTranslatedText(69),
+            title: this.getTranslatedText(68),
             metal: -losses[0],
             crystal: -losses[1],
             deuterium: -losses[2],
