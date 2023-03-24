@@ -1463,6 +1463,8 @@ class OGInfinity {
     this.json.currentExpes = this.json.currentExpes || [];
     this.json.combatsSums = this.json.combatsSums || {};
     this.json.expeditionSums = this.json.expeditionSums || {};
+    this.json.discoveriesSums = this.json.discoveriesSums || {};
+    this.json.discoveries = this.json.discoveries || {};
     this.json.flying = this.json.flying || {
       metal: 0,
       crystal: 0,
@@ -4871,6 +4873,9 @@ class OGInfinity {
       tabNames[this.getTranslatedText(41, "text", false)] = this.expeditionStats.bind(this);
       tabNames[this.getTranslatedText(92, "text", false)] = this.combatStats.bind(this);
       tabNames[this.getTranslatedText(120, "text", false)] = this.roiStats.bind(this);
+      if (this.hasLifeforms) {
+        tabNames[this.getTranslatedText(139, "text", false)] = this.discoveryStats.bind(this);
+      }
       let body = this.tabs(tabNames);
       this.popup(null, body);
     };
@@ -5050,115 +5055,192 @@ class OGInfinity {
         let id = document.querySelector("li[id=subtabs-nfFleet22].ui-state-active").getAttribute("aria-controls");
         document.querySelectorAll(`div[id=${id}] li.msg`).forEach((msg) => {
           let id = msg.getAttribute("data-msg-id");
-          if (id in this.json.expeditions && this.json.expeditions[id].result) {
-            if (msg.querySelector(".icon_favorited")) {
-              this.json.expeditions[id].favorited = true;
-              this.json.expeditions[id].date = new Date();
-            } else {
-              this.json.expeditions[id].favorited = false;
-            }
-            if (this.json.expeditions[id].result == "Unknown") {
-              msg.querySelector(".ogl-unknown-warning") ||
-                msg
-                  .querySelector(".msg_actions")
-                  .appendChild(
-                    this.createDOM(
-                      "div",
-                      { class: "ogl-unknown-warning" },
-                      `${this.getTranslatedText(112)} <a href='https://discord.gg/8Y4SWup'> ${this.getTranslatedText(
-                        113
-                      )}</a>`
-                    )
-                  );
-            } else if (this.json.expeditions[id].busy) {
-              msg.querySelector(".ogl-warning") ||
-                msg.querySelector(".msg_actions").appendChild(
-                  this.createDOM("a", {
-                    class: "ogl-warning tooltip",
-                    "data-title": this.getTranslatedText(114),
-                  })
-                );
-            }
-            msg.classList.add("ogk-" + this.json.expeditions[id].result.toLowerCase());
-            return;
-          } else if (id in this.expeditionsIds) {
-            return;
-          }
-          this.expeditionsIds[id] = true;
           let content = msg.querySelector("span.msg_content");
           let date = msg.querySelector(".msg_date").innerText;
           let textContent = content.innerText;
-          dataHelper.getExpeditionType(textContent).then((type) => {
-            date = date.split(" ")[0].slice(0, -4) + date.split(" ")[0].slice(-2);
-            let sums = this.json.expeditionSums[date];
-            if (!sums) {
-              sums = {
-                found: [0, 0, 0, 0],
-                harvest: [0, 0],
-                losses: {},
-                fleet: {},
-                type: {},
-                adjust: [0, 0, 0],
-                fuel: 0,
-              };
-            }
-            let objectNode = content.querySelector("a");
-            if (objectNode) {
-              this.json.result = "Object";
-              this.json["object"] = objectNode.innerText;
-              type = "Object";
-            }
-            ressources.forEach((res, i) => {
-              if (textContent.includes(res)) {
-                let regex = new RegExp("[0-9]{1,3}(.[0-9]{1,3})*", "gm");
-                let found = textContent.match(regex);
-                if (found) {
-                  type = normalized[i];
-                  sums.found[i] += fromFormatedNumber(found[0], true);
+          let coords = msg.querySelector(".msg_title a");
+          if (coords) {
+            coords = coords.innerText.slice(1, -1);
+            if (coords.split(":")[2] == 16) {
+              if (id in this.json.expeditions && this.json.expeditions[id].result) {
+                if (msg.querySelector(".icon_favorited")) {
+                  this.json.expeditions[id].favorited = true;
+                  this.json.expeditions[id].date = new Date();
+                } else {
+                  this.json.expeditions[id].favorited = false;
                 }
+                if (this.json.expeditions[id].result == "Unknown") {
+                  msg.querySelector(".ogl-unknown-warning") ||
+                    msg
+                      .querySelector(".msg_actions")
+                      .appendChild(
+                        this.createDOM(
+                          "div",
+                          { class: "ogl-unknown-warning" },
+                          `${this.getTranslatedText(112)} <a href='https://discord.gg/8Y4SWup'> ${this.getTranslatedText(
+                            113
+                          )}</a>`
+                        )
+                      );
+                } else if (this.json.expeditions[id].busy) {
+                  msg.querySelector(".ogl-warning") ||
+                    msg.querySelector(".msg_actions").appendChild(
+                      this.createDOM("a", {
+                        class: "ogl-warning tooltip",
+                        "data-title": this.getTranslatedText(114),
+                      })
+                    );
+                }
+                msg.classList.add("ogk-" + this.json.expeditions[id].result.toLowerCase());
+                return;
+              } else if (id in this.expeditionsIds) {
+                return;
               }
-            });
-            let fleetMatches = textContent.match(/.*: [1-9].*/gm);
-            fleetMatches &&
-              fleetMatches.forEach((result) => {
-                let split = result.split(": ");
-                type = "Fleet";
-                let id = this.json.shipNames[split[0]];
-                let count = Number(split[1]);
-                sums.fleet[id] ? (sums.fleet[id] += count) : (sums.fleet[id] = count);
+              this.expeditionsIds[id] = true;
+              let content = msg.querySelector("span.msg_content");
+              let date = msg.querySelector(".msg_date").innerText;
+              let textContent = content.innerText;
+              dataHelper.getExpeditionType(textContent).then((type) => {
+                date = date.split(" ")[0].slice(0, -4) + date.split(" ")[0].slice(-2);
+                let sums = this.json.expeditionSums[date];
+                if (!sums) {
+                  sums = {
+                    found: [0, 0, 0, 0],
+                    harvest: [0, 0],
+                    losses: {},
+                    fleet: {},
+                    type: {},
+                    adjust: [0, 0, 0],
+                    fuel: 0,
+                  };
+                }
+                let objectNode = content.querySelector("a");
+                if (objectNode) {
+                  this.json.result = "Object";
+                  this.json["object"] = objectNode.innerText;
+                  type = "Object";
+                }
+                ressources.forEach((res, i) => {
+                  if (textContent.includes(res)) {
+                    let regex = new RegExp("[0-9]{1,3}(.[0-9]{1,3})*", "gm");
+                    let found = textContent.match(regex);
+                    if (found) {
+                      type = normalized[i];
+                      sums.found[i] += fromFormatedNumber(found[0], true);
+                    }
+                  }
+                });
+                let fleetMatches = textContent.match(/.*: [1-9].*/gm);
+                fleetMatches &&
+                  fleetMatches.forEach((result) => {
+                    let split = result.split(": ");
+                    type = "Fleet";
+                    let id = this.json.shipNames[split[0]];
+                    let count = Number(split[1]);
+                    sums.fleet[id] ? (sums.fleet[id] += count) : (sums.fleet[id] = count);
+                  });
+                if (type != "Unknown") {
+                  sums.type[type] ? (sums.type[type] += 1) : (sums.type[type] = 1);
+                }
+                this.json.expeditionSums[date] = sums;
+                this.json.expeditions[id] = {
+                  result: type,
+                  date: new Date(this.dateStrToDate(date)),
+                  favorited: msg.querySelector(".icon_favorited") ? true : false,
+                };
+                if (this.json.expeditions[id].result == "Unknown") {
+                  msg
+                    .querySelector(".msg_actions")
+                    .appendChild(
+                      this.createDOM(
+                        "div",
+                        { class: "ogl-unknown-warning" },
+                        `${this.getTranslatedText(112)} <a href='https://discord.gg/8Y4SWup'> ${this.getTranslatedText(
+                          113
+                        )}</a>`
+                      )
+                    );
+                } else if (this.json.expeditions[id].busy) {
+                  msg.querySelector(".msg_actions").appendChild(
+                    this.createDOM("a", {
+                      class: "ogl-warning tooltipRight ogl-tooltipReady ogl-tooltipInit",
+                      "data-title": this.getTranslatedText(114),
+                    })
+                  );
+                }
+                msg.classList.add("ogk-" + this.json.expeditions[id].result.toLowerCase());
+                this.saveData();
               });
-            if (type != "Unknown") {
-              sums.type[type] ? (sums.type[type] += 1) : (sums.type[type] = 1);
-            }
-            this.json.expeditionSums[date] = sums;
-            this.json.expeditions[id] = {
-              result: type,
-              date: new Date(this.dateStrToDate(date)),
-              favorited: msg.querySelector(".icon_favorited") ? true : false,
-            };
-            if (this.json.expeditions[id].result == "Unknown") {
-              msg
-                .querySelector(".msg_actions")
-                .appendChild(
-                  this.createDOM(
-                    "div",
-                    { class: "ogl-unknown-warning" },
-                    `${this.getTranslatedText(112)} <a href='https://discord.gg/8Y4SWup'> ${this.getTranslatedText(
-                      113
-                    )}</a>`
-                  )
+            } else {
+              if (!this.json.discoveries[id]) {
+                date =
+                  date.split(" ")[0].slice(0, -4) +
+                  date.split(" ")[0].slice(-2);
+                let lfFound = [
+                  "lifeform1",
+                  "lifeform2",
+                  "lifeform3",
+                  "lifeform4",
+                ];
+                let sums = this.json.discoveriesSums[date];
+                if (!sums) {
+                  sums = {
+                    found: [0, 0, 0, 0],
+                    artefacts: 0,
+                    type: {},
+                  };
+                }
+                let type = "void";
+
+                lfFound.forEach((raceType, i) => {
+                  let str = "." + raceType;
+                  let objectNode = content.querySelector(str);
+                  if (objectNode) {
+                    type = raceType;
+                    let found = content.innerHTML.match(/[0-9]{4}&nbsp/m);
+                    if (found) {
+                      let count = Number(found[0].replace("&nbsp", ""));
+                      sums.found[i]
+                        ? (sums.found[i] += count)
+                        : (sums.found[i] = count);
+                    }
+                  }
+                });
+
+                let artefactMatches = textContent.match(/.*: [1-9].*/gm);
+                artefactMatches &&
+                  artefactMatches.forEach((result) => {
+                    let split = result.split(": ");
+                    type = "artefacts";
+                    let count = Number(split[1]);
+                    sums.artefacts
+                      ? (sums.artefacts += count)
+                      : (sums.artefacts = count);
+                  });
+                if (type != "Unknown") {
+                  sums.type[type]
+                    ? (sums.type[type] += 1)
+                    : (sums.type[type] = 1);
+                }
+                this.json.discoveriesSums[date] = sums;
+                this.json.discoveries[id] = {
+                  result: type,
+                  date: new Date(this.dateStrToDate(date)),
+                  favorited: msg.querySelector(".icon_favorited")
+                    ? true
+                    : false,
+                };
+                msg.classList.add(
+                  "ogk-" + this.json.discoveries[id].result.toLowerCase()
                 );
-            } else if (this.json.expeditions[id].busy) {
-              msg.querySelector(".msg_actions").appendChild(
-                this.createDOM("a", {
-                  class: "ogl-warning tooltipRight ogl-tooltipReady ogl-tooltipInit",
-                  "data-title": this.getTranslatedText(114),
-                })
-              );
-            }
-            msg.classList.add("ogk-" + this.json.expeditions[id].result.toLowerCase());
-            this.saveData();
-          });
+                this.saveData();
+              } else {
+                msg.classList.add(
+                  "ogk-" + this.json.discoveries[id].result.toLowerCase()
+                );
+              };
+            };
+          };
         });
       }
       if (document.querySelector("li[id=subtabs-nfFleet21].ui-state-active")) {
@@ -8914,6 +8996,500 @@ class OGInfinity {
     });
     content.appendChild(table);
     return content;
+  }
+
+    discoveryStats() {
+    let content = this.createDOM("div", { class: "ogk-stats-content" });
+    let renderDetails = (sums, onchange) => {
+      let content = this.createDOM("div", { class: "ogk-stats" });
+      let globalDiv = content.appendChild(
+        this.createDOM("div", { class: "ogk-global" })
+      );
+      let numDiscovery = 0;
+      Object.values(sums.type).forEach((value) => (numDiscovery += value));
+      globalDiv.appendChild(
+        this.createDOM("span", { class: "ogk-center" }, numDiscovery)
+      );
+      globalDiv.appendChild(this.discoveryGraph(sums.type));
+      let details = content.appendChild(
+        this.createDOM("div", { class: "ogk-details" })
+      );
+
+      let box = this.discoveryBox(
+        [
+          {
+            title: this.getTranslatedText(144),
+            human: sums.found[0],
+            rocktal: sums.found[1],
+            mecha: sums.found[2],
+            kaelesh: sums.found[3],
+            artefacts: 0,
+          },
+          {
+            title: this.getTranslatedText(145),
+            human: 0,
+            rocktal: 0,
+            mecha: 0,
+            kaelesh: 0,
+            artefacts: sums.artefacts,
+          },
+        ],
+        true
+      );
+      details.appendChild(box);
+      return content;
+    };
+    let computeRangeSums = (sums, start, stop) => {
+      let weekSums = {
+        found: [0, 0, 0, 0],
+        type: {},
+        artefacts: 0,
+        adjust: [0, 0, 0, 0],
+      };
+      for (
+        var d = new Date(start);
+        d >= new Date(stop);
+        d.setDate(d.getDate() - 1)
+      ) {
+        let dateStr = getFormatedDate(new Date(d).getTime(), "[d].[m].[y]");
+        if (sums[dateStr]) {
+          weekSums.artefacts += sums[dateStr].artefacts;
+          sums[dateStr].found.forEach((value, index) => {
+            weekSums.found[index] += sums[dateStr].found[index];
+          });
+          for (let [type, num] of Object.entries(sums[dateStr].type)) {
+            weekSums.type[type]
+              ? (weekSums.type[type] += num)
+              : (weekSums.type[type] = num);
+          }
+        }
+      }
+      return weekSums;
+    };
+    let getTotal = (sums) => {
+      let total = 0;
+      total +=
+        sums.found[0] +
+        sums.found[1] +
+        sums.found[2] +
+        sums.found[3] +
+        sums.artefacts;
+      return total;
+    };
+    let refresh = (index) => {
+      if (index) {
+        this.initialRange = index;
+      }
+      document.querySelector(".ogk-stats-content .ogl-tab.ogl-active").click();
+    };
+    let tabNames = {};
+    tabNames[LocalizationStrings.timeunits.short.day] = () => {
+      let date = new Date();
+      let sum = {
+        found: [0, 0, 0, 0],
+        artefacts: 0,
+        type: {},
+        adjust: [0, 0, 0],
+      };
+      let profits = [];
+      let max = 0;
+      for (let i = 0; i < 12; i++) {
+        let dateStr = getFormatedDate(date.getTime(), "[d].[m].[y]");
+        let sums = this.json.discoveriesSums[dateStr] || sum;
+        let profit = sums ? getTotal(sums) : 0;
+        if (Math.abs(profit) > max) max = profit;
+        profits.push({
+          date: new Date(date.getTime()),
+          range: sums,
+          profit: profit,
+        });
+        date.setDate(date.getDate() - 1);
+      }
+      let div = this.createDOM("div");
+      let details = renderDetails(
+        computeRangeSums(this.json.discoveriesSums, new Date(), new Date()),
+        () => refresh()
+      );
+      div.appendChild(
+        this.profitGraph(profits, max, (range, index) => {
+          details.remove();
+          details = renderDetails(range, () => {
+            refresh(index);
+          });
+          div.appendChild(details);
+        })
+      );
+      div.appendChild(details);
+      return div;
+    };
+    tabNames[LocalizationStrings.timeunits.short.week] = () => {
+      let renderHeader = () => {};
+      let weeks = [];
+      let totals = [];
+      let start = new Date();
+      var prevMonday = new Date();
+      let max = -Infinity;
+      prevMonday.setDate(
+        prevMonday.getDate() - ((prevMonday.getDay() + 6) % 7)
+      );
+      for (let i = 0; i < 12; i++) {
+        let range = computeRangeSums(
+          this.json.discoveriesSums,
+          start,
+          prevMonday
+        );
+        weeks.push(range);
+        let total = getTotal(range);
+        totals.push({
+          profit: total,
+          range: range,
+          date: prevMonday,
+          start: start,
+        });
+        if (total > max) max = total;
+        start = new Date(prevMonday);
+        start.setDate(start.getDate() - 1);
+        prevMonday = new Date(start);
+        prevMonday.setDate(
+          prevMonday.getDate() - ((prevMonday.getDay() + 6) % 7)
+        );
+      }
+      let div = this.createDOM("div");
+      let details = renderDetails(weeks[0]);
+      div.appendChild(
+        this.profitGraph(totals, max, (range, index) => {
+          details.remove();
+          details = renderDetails(range);
+          div.appendChild(details);
+        })
+      );
+      div.appendChild(details);
+      return div;
+    };
+    tabNames[LocalizationStrings.timeunits.short.month] = () => {
+      var lastDay = new Date();
+      var firstDay = new Date(lastDay.getFullYear(), lastDay.getMonth(), 1);
+      let max = -Infinity;
+      let months = [];
+      let totals = [];
+      for (let i = 0; i < 12; i++) {
+        let range = computeRangeSums(
+          this.json.discoveriesSums,
+          lastDay,
+          firstDay
+        );
+        months.push(range);
+        let total = getTotal(range);
+        totals.push({
+          profit: total,
+          range: range,
+          date: firstDay,
+          start: lastDay,
+        });
+        if (total > max) max = total;
+        lastDay = new Date(lastDay.getFullYear(), lastDay.getMonth(), 0);
+        firstDay = new Date(lastDay.getFullYear(), lastDay.getMonth(), 1);
+      }
+      let div = this.createDOM("div");
+      let details = renderDetails(months[0]);
+      div.appendChild(
+        this.profitGraph(totals, max, (range, index) => {
+          details.remove();
+          details = renderDetails(range);
+          div.appendChild(details);
+        })
+      );
+      div.appendChild(details);
+      return div;
+    };
+    tabNames["∞"] = () => {
+      let keys = Object.keys(this.json.expeditionSums).sort(
+        (a, b) => this.dateStrToDate(a) - this.dateStrToDate(b)
+      );
+      let minDate = keys[0];
+      let maxDate = keys[keys.length - 1];
+      let range = computeRangeSums(
+        this.json.discoveriesSums,
+        this.dateStrToDate(maxDate),
+        this.dateStrToDate(minDate)
+      );
+      let total = getTotal(range);
+      let content = this.createDOM("div", { class: "ogk-profit" });
+      let title = content.appendChild(
+        this.createDOM("div", { class: "ogk-date" })
+      );
+      content.appendChild(
+        this.createDOM("div", { class: "ogk-scroll-wrapper" })
+      );
+      let contentHtml = `<strong>${getFormatedDate(
+        this.dateStrToDate(minDate).getTime(),
+        "[d].[m].[y]"
+      )}</strong> <span class="tooltip ${
+        total > 0 ? "undermark" : "overmark"
+      }" data-title=${toFormatedNumber(Math.abs(total), 0)}>${
+        total > 0 ? " + " : " - "
+      }${toFormatedNumber(Math.abs(total), 2, true)}</strong></span>`;
+      contentHtml += `<strong>${getFormatedDate(
+        this.dateStrToDate(maxDate).getTime(),
+        "[d].[m].[y]"
+      )}</strong>`;
+      title.html(contentHtml);
+      let div = this.createDOM("div");
+      div.appendChild(content);
+      div.appendChild(renderDetails(range));
+      return div;
+    };
+    content.appendChild(this.tabs(tabNames));
+    return content;
+  }
+
+  discoveryBox(rows, am, callback) {
+    let box = this.createDOM("div", { class: "ogk-box" });
+    let dicovery = box.appendChild(
+      this.createDOM("div", { class: "ogk-grid-discovery" })
+    );
+    dicovery.appendChild(this.createDOM("span"));
+    dicovery.appendChild(
+      this.createDOM(
+        "span",
+        {},
+        "<a class=\"ogl-option lifeform-item-icon small lifeform1\"></a>"
+      )
+    );
+    dicovery.appendChild(
+      this.createDOM(
+        "span",
+        {},
+        "<a class=\"ogl-option lifeform-item-icon small lifeform2\"></a>"
+      )
+    );
+    dicovery.appendChild(
+      this.createDOM(
+        "span",
+        {},
+        "<a class=\"ogl-option lifeform-item-icon small lifeform3\"></a>"
+      )
+    );
+    dicovery.appendChild(
+      this.createDOM(
+        "span",
+        {},
+        "<a class=\"ogl-option lifeform-item-icon small lifeform4\"></a>"
+      )
+    );
+    dicovery.appendChild(
+      this.createDOM("span", {}, "<a class=\"artefacts\"> - </a>")
+    );
+    let sums = [0, 0, 0, 0, 0];
+    rows.forEach((row) => {
+      let p = dicovery.appendChild(this.createDOM("p", {}, row.title));
+      if (row.edit) {
+        p.appendChild(
+          this.createDOM(
+            "strong",
+            {},
+            "<span style=\"    display: inline-block;\n          vertical-align: middle;\n          float: none;\n          margin-left: 5px;\n          border-radius: 4px;\n          margin-bottom: 1px;\n          width: 17px;\" class=\"planetMoveIcons settings planetMoveGiveUp icon\"></span>"
+          )
+        );
+        p.classList.add("ogk-edit");
+        p.addEventListener("click", () => {
+          callback();
+        });
+      }
+      dicovery.appendChild(
+        this.createDOM(
+          "span",
+          {
+            class: "tooltip" + (row.human < 0 ? " overmark" : ""),
+            "data-title": toFormatedNumber(row.human, 0),
+          },
+          `${row.human == 0 ? "-" : toFormatedNumber(row.human, null, true)}`
+        )
+      );
+      dicovery.appendChild(
+        this.createDOM(
+          "span",
+          {
+            class: "tooltip" + (row.rocktal < 0 ? " overmark" : ""),
+            "data-title": toFormatedNumber(row.rocktal, 0),
+          },
+          `${
+            row.rocktal == 0 ? "-" : toFormatedNumber(row.rocktal, null, true)
+          }`
+        )
+      );
+      dicovery.appendChild(
+        this.createDOM(
+          "span",
+          {
+            class: "tooltip" + (row.mecha < 0 ? " overmark" : ""),
+            "data-title": toFormatedNumber(row.mecha, 0),
+          },
+          `${row.mecha == 0 ? "-" : toFormatedNumber(row.mecha, null, true)}`
+        )
+      );
+
+      dicovery.appendChild(
+        this.createDOM(
+          "span",
+          {
+            class: "tooltip" + (row.kaelesh < 0 ? " overmark" : ""),
+            "data-title": toFormatedNumber(row.kaelesh, 0),
+          },
+          `${
+            row.kaelesh == 0 ? "-" : toFormatedNumber(row.kaelesh, null, true)
+          }`
+        )
+      );
+
+      dicovery.appendChild(
+        this.createDOM(
+          "span",
+          {
+            class: "tooltip" + (row.artefacts < 0 ? " overmark" : ""),
+            "data-title": toFormatedNumber(row.artefacts, 0),
+          },
+          `${
+            row.artefacts == 0
+              ? "-"
+              : toFormatedNumber(row.artefacts, null, true)
+          }`
+        )
+      );
+
+      sums[0] += row.human;
+      sums[1] += row.rocktal;
+      sums[2] += row.mecha;
+      sums[3] += row.kaelesh;
+      sums[4] += row.artefacts;
+    });
+    dicovery.appendChild(
+      this.createDOM("p", { class: "ogk-total" }, this.getTranslatedText(40))
+    );
+    dicovery.appendChild(
+      this.createDOM(
+        "span",
+        {
+          class: "ogk-total tooltip" + (sums[0] < 0 ? " overmark" : ""),
+          "data-title": toFormatedNumber(sums[0], 0),
+        },
+        `${toFormatedNumber(sums[0], null, true)}`
+      )
+    );
+    dicovery.appendChild(
+      this.createDOM(
+        "span",
+        {
+          class: "ogk-total tooltip" + (sums[1] < 0 ? " overmark" : ""),
+          "data-title": toFormatedNumber(sums[1], 0),
+        },
+        `${toFormatedNumber(sums[1], null, true)}`
+      )
+    );
+    dicovery.appendChild(
+      this.createDOM(
+        "span",
+        {
+          class: "ogk-total tooltip" + (sums[2] < 0 ? " overmark" : ""),
+          "data-title": toFormatedNumber(sums[2], 0),
+        },
+        `${toFormatedNumber(sums[2], null, true)}`
+      )
+    );
+    dicovery.appendChild(
+      this.createDOM(
+        "span",
+        {
+          class: "ogk-total tooltip" + (sums[3] < 0 ? " overmark" : ""),
+          "data-title": toFormatedNumber(sums[2], 0),
+        },
+        `${toFormatedNumber(sums[3], null, true)}`
+      )
+    );
+    dicovery.appendChild(
+      this.createDOM(
+        "span",
+        {
+          class: "ogk-total tooltip" + (sums[4] < 0 ? " overmark" : ""),
+          "data-title": toFormatedNumber(sums[2], 0),
+        },
+        `${toFormatedNumber(sums[4], null, true)}`
+      )
+    );
+
+    return box;
+  }
+
+  discoveryGraph(sums) {
+    let div = this.createDOM("div");
+    let chartNode = div.appendChild(
+      this.createDOM("canvas", {
+        id: "piechart",
+        width: "400px",
+        height: "300px",
+      })
+    );
+    let config = {
+      type: "doughnut",
+      data: {
+        datasets: [
+          {
+            data: [
+              sums["lifeform1"] || 0,
+              sums["lifeform2"] || 0,
+              sums["lifeform3"] || 0,
+              sums["lifeform4"] || 0,
+              sums["artefacts"] || 0,
+              sums["void"] || 0,
+            ],
+            label: "Discovery",
+            backgroundColor: [
+              "#7fc200",
+              "#ec752f",
+              "#3c93f0",
+              "#9c64ed",
+              "#fdeca6",
+              "#344051",
+            ],
+            borderColor: "#1b232c",
+          },
+        ],
+        labels: [
+          this.getTranslatedText(140, "text", false),
+          this.getTranslatedText(141, "text", false),
+          this.getTranslatedText(142, "text", false),
+          this.getTranslatedText(143, "text", false),
+          this.getTranslatedText(145, "text", false),
+          this.getTranslatedText(83, "text", false),
+        ],
+      },
+      options: {
+        legend: { display: false },
+        title: { display: false },
+        animation: { animateScale: true, animateRotate: true },
+        plugins: {
+          labels: [
+            {
+              fontSize: 12,
+              fontStyle: "bold",
+              textMargin: 10,
+              render: "label",
+              fontColor: "#ccc",
+              position: "outside",
+            },
+            {
+              fontSize: 12,
+              fontStyle: "bold",
+              fontColor: "#0d1117",
+              render: "percentage",
+            },
+          ],
+        },
+      },
+    };
+    var ctx = chartNode.getContext("2d");
+    let chart = new Chart(ctx, config);
+    return div;
   }
 
   buildDispatcherUI() {
@@ -16170,6 +16746,47 @@ class OGInfinity {
           en: "Navigation arrows in mobile version",
           es: "Flechas de navegación en versión móvil",
           fr: "Flèches de navigation en version mobile",
+        },/*139*/ {
+          de: "Entdeckung",
+          en: "Discoveries",
+          es: "Exploración",
+          fr: "Exploration",
+        },
+        /*140*/ {
+          de: "Menschen",
+          en: "Human",
+          es: "Humanos",
+          fr: "Les humains",
+        },
+        /*141*/ {
+          de: "Rock’tal",
+          en: "Rock’tal",
+          es: "Rock`tal",
+          fr: "Roctas",
+        },
+        /*142*/ {
+          de: "Mechas",
+          en: "Mechas",
+          es: "Mecas",
+          fr: "Mécas",
+        },
+        /*143*/ {
+          de: "Kaelesh",
+          en: "Kaelesh",
+          es: "Kaelesh",
+          fr: "Kaeleshs",
+        },
+        /*144*/ {
+          de: "Erfahrung",
+          en: "Experience",
+          es: "Experiencia ",
+          fr: "Expérience",
+        },
+        /*145*/ {
+          de: "Artefakte",
+          en: "Artefacts",
+          es: "Artefactos",
+          fr: "Artéfacts",
         },
       ],
     };
