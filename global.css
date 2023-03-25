@@ -2175,10 +2175,10 @@ button.build-it_premium:hover {
 
 .ogk-grid-discovery {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   align-items: center;
   grid-row-gap: 10px;
-  width: inherit;
+  width: 100%;
   justify-items: end;
 }
 

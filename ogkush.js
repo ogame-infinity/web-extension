@@ -4871,11 +4871,12 @@ class OGInfinity {
       tabNames[this.getTranslatedText(91, "text", false)] = this.generalStats.bind(this, player);
       tabNames[this.getTranslatedText(85, "text", false)] = this.minesStats.bind(this);
       tabNames[this.getTranslatedText(41, "text", false)] = this.expeditionStats.bind(this);
-      tabNames[this.getTranslatedText(92, "text", false)] = this.combatStats.bind(this);
-      tabNames[this.getTranslatedText(120, "text", false)] = this.roiStats.bind(this);
       if (this.hasLifeforms) {
         tabNames[this.getTranslatedText(139, "text", false)] = this.discoveryStats.bind(this);
       }
+      tabNames[this.getTranslatedText(92, "text", false)] = this.combatStats.bind(this);
+      tabNames[this.getTranslatedText(120, "text", false)] = this.roiStats.bind(this);
+      
       let body = this.tabs(tabNames);
       this.popup(null, body);
     };
@@ -8999,6 +9000,7 @@ class OGInfinity {
   }
 
     discoveryStats() {
+    let discoveryCosts = [-5000,-1000,-500];
     let content = this.createDOM("div", { class: "ogk-stats-content" });
     let renderDetails = (sums, onchange) => {
       let content = this.createDOM("div", { class: "ogk-stats" });
@@ -9023,20 +9025,24 @@ class OGInfinity {
             rocktal: sums.found[1],
             mecha: sums.found[2],
             kaelesh: sums.found[3],
-            artefacts: 0,
           },
+        ],
+        true
+      );
+      let costsBox = this.discoveryCostsBox(
+        [
           {
-            title: this.getTranslatedText(145),
-            human: 0,
-            rocktal: 0,
-            mecha: 0,
-            kaelesh: 0,
-            artefacts: sums.artefacts,
+            title: this.getTranslatedText(40),
+            metal: sums.costs[0],
+            crystal: sums.costs[1],
+            deut: sums.costs[2],
+            artefacts: sums.costs[3],
           },
         ],
         true
       );
       details.appendChild(box);
+      details.appendChild(costsBox);
       return content;
     };
     let computeRangeSums = (sums, start, stop) => {
@@ -9044,7 +9050,7 @@ class OGInfinity {
         found: [0, 0, 0, 0],
         type: {},
         artefacts: 0,
-        adjust: [0, 0, 0, 0],
+        costs: [0, 0, 0, 0],
       };
       for (
         var d = new Date(start);
@@ -9053,7 +9059,9 @@ class OGInfinity {
       ) {
         let dateStr = getFormatedDate(new Date(d).getTime(), "[d].[m].[y]");
         if (sums[dateStr]) {
-          weekSums.artefacts += sums[dateStr].artefacts;
+          
+          weekSums.costs[3] ? (weekSums.costs[3] += sums[dateStr].artefacts)
+              : (weekSums.costs[3] = sums[dateStr].artefacts);
           sums[dateStr].found.forEach((value, index) => {
             weekSums.found[index] += sums[dateStr].found[index];
           });
@@ -9061,6 +9069,10 @@ class OGInfinity {
             weekSums.type[type]
               ? (weekSums.type[type] += num)
               : (weekSums.type[type] = num);
+              discoveryCosts.forEach((costs,i) => {
+            weekSums.costs[i] ? (weekSums.costs[i] += num*costs)
+              : (weekSums.costs[i] = num*costs);
+          })
           }
         }
       }
@@ -9089,13 +9101,13 @@ class OGInfinity {
         found: [0, 0, 0, 0],
         artefacts: 0,
         type: {},
-        adjust: [0, 0, 0],
+        costs: [0, 0, 0],
       };
       let profits = [];
       let max = 0;
       for (let i = 0; i < 12; i++) {
         let dateStr = getFormatedDate(date.getTime(), "[d].[m].[y]");
-        let sums = this.json.discoveriesSums[dateStr] || sum;
+        let sums =  computeRangeSums(this.json.discoveriesSums,date,date) || sum;
         let profit = sums ? getTotal(sums) : 0;
         if (Math.abs(profit) > max) max = profit;
         profits.push({
@@ -9245,44 +9257,41 @@ class OGInfinity {
 
   discoveryBox(rows, am, callback) {
     let box = this.createDOM("div", { class: "ogk-box" });
-    let dicovery = box.appendChild(
+    let discovery = box.appendChild(
       this.createDOM("div", { class: "ogk-grid-discovery" })
     );
-    dicovery.appendChild(this.createDOM("span"));
-    dicovery.appendChild(
+    discovery.appendChild(this.createDOM("span"));
+    discovery.appendChild(
       this.createDOM(
         "span",
         {},
         "<a class=\"ogl-option lifeform-item-icon small lifeform1\"></a>"
       )
     );
-    dicovery.appendChild(
+    discovery.appendChild(
       this.createDOM(
         "span",
         {},
         "<a class=\"ogl-option lifeform-item-icon small lifeform2\"></a>"
       )
     );
-    dicovery.appendChild(
+    discovery.appendChild(
       this.createDOM(
         "span",
         {},
         "<a class=\"ogl-option lifeform-item-icon small lifeform3\"></a>"
       )
     );
-    dicovery.appendChild(
+    discovery.appendChild(
       this.createDOM(
         "span",
         {},
         "<a class=\"ogl-option lifeform-item-icon small lifeform4\"></a>"
       )
     );
-    dicovery.appendChild(
-      this.createDOM("span", {}, "<a class=\"artefacts\"> - </a>")
-    );
-    let sums = [0, 0, 0, 0, 0];
+
     rows.forEach((row) => {
-      let p = dicovery.appendChild(this.createDOM("p", {}, row.title));
+      let p = discovery.appendChild(this.createDOM("p", {}, row.title));
       if (row.edit) {
         p.appendChild(
           this.createDOM(
@@ -9296,7 +9305,7 @@ class OGInfinity {
           callback();
         });
       }
-      dicovery.appendChild(
+      discovery.appendChild(
         this.createDOM(
           "span",
           {
@@ -9306,7 +9315,7 @@ class OGInfinity {
           `${row.human == 0 ? "-" : toFormatedNumber(row.human, null, true)}`
         )
       );
-      dicovery.appendChild(
+      discovery.appendChild(
         this.createDOM(
           "span",
           {
@@ -9318,7 +9327,7 @@ class OGInfinity {
           }`
         )
       );
-      dicovery.appendChild(
+      discovery.appendChild(
         this.createDOM(
           "span",
           {
@@ -9329,7 +9338,7 @@ class OGInfinity {
         )
       );
 
-      dicovery.appendChild(
+      discovery.appendChild(
         this.createDOM(
           "span",
           {
@@ -9341,8 +9350,94 @@ class OGInfinity {
           }`
         )
       );
+    });
 
-      dicovery.appendChild(
+    return box;
+  }
+  discoveryCostsBox(rows, am, callback){
+    let box = this.createDOM("div", { class: "ogk-box" });
+    let discovery = box.appendChild(
+      this.createDOM("div", { class: "ogk-grid-discovery" })
+    );
+    discovery.appendChild(this.createDOM("span"));
+    discovery.appendChild(
+      this.createDOM(
+        "span",
+        {},
+        "<a class=\"ogl-option resourceIcon metal\"></a>"
+      )
+    );
+    discovery.appendChild(
+      this.createDOM(
+        "span",
+        {},
+        "<a class=\"ogl-option resourceIcon crystal\"></a>"
+      )
+    );
+    discovery.appendChild(
+      this.createDOM(
+        "span",
+        {},
+        "<a class=\"ogl-option resourceIcon deuterium\"></a>"
+      )
+    );
+    discovery.appendChild(
+      this.createDOM(
+        "span",
+        {},
+        "<a>"+ this.getTranslatedText(145,"text",false)+"</a>"
+      )
+    );
+
+    rows.forEach((row) => {
+      let p = discovery.appendChild(this.createDOM("p", {}, row.title));
+      if (row.edit) {
+        p.appendChild(
+          this.createDOM(
+            "strong",
+            {},
+            "<span style=\"    display: inline-block;\n          vertical-align: middle;\n          float: none;\n          margin-left: 5px;\n          border-radius: 4px;\n          margin-bottom: 1px;\n          width: 17px;\" class=\"planetMoveIcons settings planetMoveGiveUp icon\"></span>"
+          )
+        );
+        p.classList.add("ogk-edit");
+        p.addEventListener("click", () => {
+          callback();
+        });
+      }
+      discovery.appendChild(
+        this.createDOM(
+          "span",
+          {
+            class: "tooltip" + (row.metal < 0 ? " overmark" : ""),
+            "data-title": toFormatedNumber(row.metal, 0),
+          },
+          `${row.metal == 0 ? "-" : toFormatedNumber(row.metal, null, true)}`
+        )
+      );
+      discovery.appendChild(
+        this.createDOM(
+          "span",
+          {
+            class: "tooltip" + (row.crystal < 0 ? " overmark" : ""),
+            "data-title": toFormatedNumber(row.crystal, 0),
+          },
+          `${
+            row.crystal == 0 ? "-" : toFormatedNumber(row.crystal, null, true)
+          }`
+        )
+      );
+      discovery.appendChild(
+        this.createDOM(
+          "span",
+          {
+            class: "tooltip" + (row.deut < 0 ? " overmark" : ""),
+            "data-title": toFormatedNumber(row.deut, 0),
+          },
+          `${row.deut == 0 ? "-" : toFormatedNumber(row.deut, null, true)}`
+        )
+      );
+
+      discovery.appendChild(
         this.createDOM(
           "span",
           {
@@ -9350,72 +9445,11 @@ class OGInfinity {
             "data-title": toFormatedNumber(row.artefacts, 0),
           },
           `${
-            row.artefacts == 0
-              ? "-"
-              : toFormatedNumber(row.artefacts, null, true)
+            row.artefacts == 0 ? "-" : toFormatedNumber(row.artefacts, null, true)
           }`
         )
       );
-
-      sums[0] += row.human;
-      sums[1] += row.rocktal;
-      sums[2] += row.mecha;
-      sums[3] += row.kaelesh;
-      sums[4] += row.artefacts;
     });
-    dicovery.appendChild(
-      this.createDOM("p", { class: "ogk-total" }, this.getTranslatedText(40))
-    );
-    dicovery.appendChild(
-      this.createDOM(
-        "span",
-        {
-          class: "ogk-total tooltip" + (sums[0] < 0 ? " overmark" : ""),
-          "data-title": toFormatedNumber(sums[0], 0),
-        },
-        `${toFormatedNumber(sums[0], null, true)}`
-      )
-    );
-    dicovery.appendChild(
-      this.createDOM(
-        "span",
-        {
-          class: "ogk-total tooltip" + (sums[1] < 0 ? " overmark" : ""),
-          "data-title": toFormatedNumber(sums[1], 0),
-        },
-        `${toFormatedNumber(sums[1], null, true)}`
-      )
-    );
-    dicovery.appendChild(
-      this.createDOM(
-        "span",
-        {
-          class: "ogk-total tooltip" + (sums[2] < 0 ? " overmark" : ""),
-          "data-title": toFormatedNumber(sums[2], 0),
-        },
-        `${toFormatedNumber(sums[2], null, true)}`
-      )
-    );
-    dicovery.appendChild(
-      this.createDOM(
-        "span",
-        {
-          class: "ogk-total tooltip" + (sums[3] < 0 ? " overmark" : ""),
-          "data-title": toFormatedNumber(sums[2], 0),
-        },
-        `${toFormatedNumber(sums[3], null, true)}`
-      )
-    );
-    dicovery.appendChild(
-      this.createDOM(
-        "span",
-        {
-          class: "ogk-total tooltip" + (sums[4] < 0 ? " overmark" : ""),
-          "data-title": toFormatedNumber(sums[2], 0),
-        },
-        `${toFormatedNumber(sums[4], null, true)}`
-      )
-    );
 
     return box;
   }
@@ -16779,7 +16813,7 @@ class OGInfinity {
         /*144*/ {
           de: "Erfahrung",
           en: "Experience",
-          es: "Experiencia ",
+          es: "Experiencia",
           fr: "Expérience",
         },
         /*145*/ {
