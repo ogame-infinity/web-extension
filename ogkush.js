@@ -4876,7 +4876,7 @@ class OGInfinity {
       }
       tabNames[this.getTranslatedText(92, "text", false)] = this.combatStats.bind(this);
       tabNames[this.getTranslatedText(120, "text", false)] = this.roiStats.bind(this);
-      
+
       let body = this.tabs(tabNames);
       this.popup(null, body);
     };
@@ -5078,9 +5078,9 @@ class OGInfinity {
                         this.createDOM(
                           "div",
                           { class: "ogl-unknown-warning" },
-                          `${this.getTranslatedText(112)} <a href='https://discord.gg/8Y4SWup'> ${this.getTranslatedText(
-                            113
-                          )}</a>`
+                          `${this.getTranslatedText(
+                            112
+                          )} <a href='https://discord.gg/8Y4SWup'> ${this.getTranslatedText(113)}</a>`
                         )
                       );
                 } else if (this.json.expeditions[id].busy) {
@@ -5174,15 +5174,8 @@ class OGInfinity {
               });
             } else {
               if (!this.json.discoveries[id]) {
-                date =
-                  date.split(" ")[0].slice(0, -4) +
-                  date.split(" ")[0].slice(-2);
-                let lfFound = [
-                  "lifeform1",
-                  "lifeform2",
-                  "lifeform3",
-                  "lifeform4",
-                ];
+                date = date.split(" ")[0].slice(0, -4) + date.split(" ")[0].slice(-2);
+                let lfFound = ["lifeform1", "lifeform2", "lifeform3", "lifeform4"];
                 let sums = this.json.discoveriesSums[date];
                 if (!sums) {
                   sums = {
@@ -5201,9 +5194,7 @@ class OGInfinity {
                     let found = content.innerHTML.match(/[0-9]{4}&nbsp/m);
                     if (found) {
                       let count = Number(found[0].replace("&nbsp", ""));
-                      sums.found[i]
-                        ? (sums.found[i] += count)
-                        : (sums.found[i] = count);
+                      sums.found[i] ? (sums.found[i] += count) : (sums.found[i] = count);
                     }
                   }
                 });
@@ -5214,34 +5205,24 @@ class OGInfinity {
                     let split = result.split(": ");
                     type = "artefacts";
                     let count = Number(split[1]);
-                    sums.artefacts
-                      ? (sums.artefacts += count)
-                      : (sums.artefacts = count);
+                    sums.artefacts ? (sums.artefacts += count) : (sums.artefacts = count);
                   });
                 if (type != "Unknown") {
-                  sums.type[type]
-                    ? (sums.type[type] += 1)
-                    : (sums.type[type] = 1);
+                  sums.type[type] ? (sums.type[type] += 1) : (sums.type[type] = 1);
                 }
                 this.json.discoveriesSums[date] = sums;
                 this.json.discoveries[id] = {
                   result: type,
                   date: new Date(this.dateStrToDate(date)),
-                  favorited: msg.querySelector(".icon_favorited")
-                    ? true
-                    : false,
+                  favorited: msg.querySelector(".icon_favorited") ? true : false,
                 };
-                msg.classList.add(
-                  "ogk-" + this.json.discoveries[id].result.toLowerCase()
-                );
+                msg.classList.add("ogk-" + this.json.discoveries[id].result.toLowerCase());
                 this.saveData();
               } else {
-                msg.classList.add(
-                  "ogk-" + this.json.discoveries[id].result.toLowerCase()
-                );
-              };
-            };
-          };
+                msg.classList.add("ogk-" + this.json.discoveries[id].result.toLowerCase());
+              }
+            }
+          }
         });
       }
       if (document.querySelector("li[id=subtabs-nfFleet21].ui-state-active")) {
@@ -8999,23 +8980,17 @@ class OGInfinity {
     return content;
   }
 
-    discoveryStats() {
-    let discoveryCosts = [-5000,-1000,-500];
+  discoveryStats() {
+    let discoveryCosts = [-5000, -1000, -500];
     let content = this.createDOM("div", { class: "ogk-stats-content" });
     let renderDetails = (sums, onchange) => {
       let content = this.createDOM("div", { class: "ogk-stats" });
-      let globalDiv = content.appendChild(
-        this.createDOM("div", { class: "ogk-global" })
-      );
+      let globalDiv = content.appendChild(this.createDOM("div", { class: "ogk-global" }));
       let numDiscovery = 0;
       Object.values(sums.type).forEach((value) => (numDiscovery += value));
-      globalDiv.appendChild(
-        this.createDOM("span", { class: "ogk-center" }, numDiscovery)
-      );
+      globalDiv.appendChild(this.createDOM("span", { class: "ogk-center" }, numDiscovery));
       globalDiv.appendChild(this.discoveryGraph(sums.type));
-      let details = content.appendChild(
-        this.createDOM("div", { class: "ogk-details" })
-      );
+      let details = content.appendChild(this.createDOM("div", { class: "ogk-details" }));
 
       let box = this.discoveryBox(
         [
@@ -9052,27 +9027,20 @@ class OGInfinity {
         artefacts: 0,
         costs: [0, 0, 0, 0],
       };
-      for (
-        var d = new Date(start);
-        d >= new Date(stop);
-        d.setDate(d.getDate() - 1)
-      ) {
+      for (var d = new Date(start); d >= new Date(stop); d.setDate(d.getDate() - 1)) {
         let dateStr = getFormatedDate(new Date(d).getTime(), "[d].[m].[y]");
         if (sums[dateStr]) {
-          
-          weekSums.costs[3] ? (weekSums.costs[3] += sums[dateStr].artefacts)
-              : (weekSums.costs[3] = sums[dateStr].artefacts);
+          weekSums.costs[3]
+            ? (weekSums.costs[3] += sums[dateStr].artefacts)
+            : (weekSums.costs[3] = sums[dateStr].artefacts);
           sums[dateStr].found.forEach((value, index) => {
             weekSums.found[index] += sums[dateStr].found[index];
           });
           for (let [type, num] of Object.entries(sums[dateStr].type)) {
-            weekSums.type[type]
-              ? (weekSums.type[type] += num)
-              : (weekSums.type[type] = num);
-              discoveryCosts.forEach((costs,i) => {
-            weekSums.costs[i] ? (weekSums.costs[i] += num*costs)
-              : (weekSums.costs[i] = num*costs);
-          })
+            weekSums.type[type] ? (weekSums.type[type] += num) : (weekSums.type[type] = num);
+            discoveryCosts.forEach((costs, i) => {
+              weekSums.costs[i] ? (weekSums.costs[i] += num * costs) : (weekSums.costs[i] = num * costs);
+            });
           }
         }
       }
@@ -9080,12 +9048,7 @@ class OGInfinity {
     };
     let getTotal = (sums) => {
       let total = 0;
-      total +=
-        sums.found[0] +
-        sums.found[1] +
-        sums.found[2] +
-        sums.found[3] +
-        sums.artefacts;
+      total += sums.found[0] + sums.found[1] + sums.found[2] + sums.found[3] + sums.artefacts;
       return total;
     };
     let refresh = (index) => {
@@ -9107,7 +9070,7 @@ class OGInfinity {
       let max = 0;
       for (let i = 0; i < 12; i++) {
         let dateStr = getFormatedDate(date.getTime(), "[d].[m].[y]");
-        let sums =  computeRangeSums(this.json.discoveriesSums,date,date) || sum;
+        let sums = computeRangeSums(this.json.discoveriesSums, date, date) || sum;
         let profit = sums ? getTotal(sums) : 0;
         if (Math.abs(profit) > max) max = profit;
         profits.push({
@@ -9118,10 +9081,7 @@ class OGInfinity {
         date.setDate(date.getDate() - 1);
       }
       let div = this.createDOM("div");
-      let details = renderDetails(
-        computeRangeSums(this.json.discoveriesSums, new Date(), new Date()),
-        () => refresh()
-      );
+      let details = renderDetails(computeRangeSums(this.json.discoveriesSums, new Date(), new Date()), () => refresh());
       div.appendChild(
         this.profitGraph(profits, max, (range, index) => {
           details.remove();
@@ -9141,15 +9101,9 @@ class OGInfinity {
       let start = new Date();
       var prevMonday = new Date();
       let max = -Infinity;
-      prevMonday.setDate(
-        prevMonday.getDate() - ((prevMonday.getDay() + 6) % 7)
-      );
+      prevMonday.setDate(prevMonday.getDate() - ((prevMonday.getDay() + 6) % 7));
       for (let i = 0; i < 12; i++) {
-        let range = computeRangeSums(
-          this.json.discoveriesSums,
-          start,
-          prevMonday
-        );
+        let range = computeRangeSums(this.json.discoveriesSums, start, prevMonday);
         weeks.push(range);
         let total = getTotal(range);
         totals.push({
@@ -9162,9 +9116,7 @@ class OGInfinity {
         start = new Date(prevMonday);
         start.setDate(start.getDate() - 1);
         prevMonday = new Date(start);
-        prevMonday.setDate(
-          prevMonday.getDate() - ((prevMonday.getDay() + 6) % 7)
-        );
+        prevMonday.setDate(prevMonday.getDate() - ((prevMonday.getDay() + 6) % 7));
       }
       let div = this.createDOM("div");
       let details = renderDetails(weeks[0]);
@@ -9185,11 +9137,7 @@ class OGInfinity {
       let months = [];
       let totals = [];
       for (let i = 0; i < 12; i++) {
-        let range = computeRangeSums(
-          this.json.discoveriesSums,
-          lastDay,
-          firstDay
-        );
+        let range = computeRangeSums(this.json.discoveriesSums, lastDay, firstDay);
         months.push(range);
         let total = getTotal(range);
         totals.push({
@@ -9215,36 +9163,22 @@ class OGInfinity {
       return div;
     };
     tabNames["∞"] = () => {
-      let keys = Object.keys(this.json.expeditionSums).sort(
-        (a, b) => this.dateStrToDate(a) - this.dateStrToDate(b)
-      );
+      let keys = Object.keys(this.json.expeditionSums).sort((a, b) => this.dateStrToDate(a) - this.dateStrToDate(b));
       let minDate = keys[0];
       let maxDate = keys[keys.length - 1];
-      let range = computeRangeSums(
-        this.json.discoveriesSums,
-        this.dateStrToDate(maxDate),
-        this.dateStrToDate(minDate)
-      );
+      let range = computeRangeSums(this.json.discoveriesSums, this.dateStrToDate(maxDate), this.dateStrToDate(minDate));
       let total = getTotal(range);
       let content = this.createDOM("div", { class: "ogk-profit" });
-      let title = content.appendChild(
-        this.createDOM("div", { class: "ogk-date" })
-      );
-      content.appendChild(
-        this.createDOM("div", { class: "ogk-scroll-wrapper" })
-      );
+      let title = content.appendChild(this.createDOM("div", { class: "ogk-date" }));
+      content.appendChild(this.createDOM("div", { class: "ogk-scroll-wrapper" }));
       let contentHtml = `<strong>${getFormatedDate(
         this.dateStrToDate(minDate).getTime(),
         "[d].[m].[y]"
-      )}</strong> <span class="tooltip ${
-        total > 0 ? "undermark" : "overmark"
-      }" data-title=${toFormatedNumber(Math.abs(total), 0)}>${
-        total > 0 ? " + " : " - "
-      }${toFormatedNumber(Math.abs(total), 2, true)}</strong></span>`;
-      contentHtml += `<strong>${getFormatedDate(
-        this.dateStrToDate(maxDate).getTime(),
-        "[d].[m].[y]"
-      )}</strong>`;
+      )}</strong> <span class="tooltip ${total > 0 ? "undermark" : "overmark"}" data-title=${toFormatedNumber(
+        Math.abs(total),
+        0
+      )}>${total > 0 ? " + " : " - "}${toFormatedNumber(Math.abs(total), 2, true)}</strong></span>`;
+      contentHtml += `<strong>${getFormatedDate(this.dateStrToDate(maxDate).getTime(), "[d].[m].[y]")}</strong>`;
       title.html(contentHtml);
       let div = this.createDOM("div");
       div.appendChild(content);
@@ -9257,38 +9191,12 @@ class OGInfinity {
 
   discoveryBox(rows, am, callback) {
     let box = this.createDOM("div", { class: "ogk-box" });
-    let discovery = box.appendChild(
-      this.createDOM("div", { class: "ogk-grid-discovery" })
-    );
+    let discovery = box.appendChild(this.createDOM("div", { class: "ogk-grid-discovery" }));
     discovery.appendChild(this.createDOM("span"));
-    discovery.appendChild(
-      this.createDOM(
-        "span",
-        {},
-        "<a class=\"ogl-option lifeform-item-icon small lifeform1\"></a>"
-      )
-    );
-    discovery.appendChild(
-      this.createDOM(
-        "span",
-        {},
-        "<a class=\"ogl-option lifeform-item-icon small lifeform2\"></a>"
-      )
-    );
-    discovery.appendChild(
-      this.createDOM(
-        "span",
-        {},
-        "<a class=\"ogl-option lifeform-item-icon small lifeform3\"></a>"
-      )
-    );
-    discovery.appendChild(
-      this.createDOM(
-        "span",
-        {},
-        "<a class=\"ogl-option lifeform-item-icon small lifeform4\"></a>"
-      )
-    );
+    discovery.appendChild(this.createDOM("span", {}, '<a class="ogl-option lifeform-item-icon small lifeform1"></a>'));
+    discovery.appendChild(this.createDOM("span", {}, '<a class="ogl-option lifeform-item-icon small lifeform2"></a>'));
+    discovery.appendChild(this.createDOM("span", {}, '<a class="ogl-option lifeform-item-icon small lifeform3"></a>'));
+    discovery.appendChild(this.createDOM("span", {}, '<a class="ogl-option lifeform-item-icon small lifeform4"></a>'));
 
     rows.forEach((row) => {
       let p = discovery.appendChild(this.createDOM("p", {}, row.title));
@@ -9297,7 +9205,7 @@ class OGInfinity {
           this.createDOM(
             "strong",
             {},
-            "<span style=\"    display: inline-block;\n          vertical-align: middle;\n          float: none;\n          margin-left: 5px;\n          border-radius: 4px;\n          margin-bottom: 1px;\n          width: 17px;\" class=\"planetMoveIcons settings planetMoveGiveUp icon\"></span>"
+            '<span style="    display: inline-block;\n          vertical-align: middle;\n          float: none;\n          margin-left: 5px;\n          border-radius: 4px;\n          margin-bottom: 1px;\n          width: 17px;" class="planetMoveIcons settings planetMoveGiveUp icon"></span>'
           )
         );
         p.classList.add("ogk-edit");
@@ -9322,9 +9230,7 @@ class OGInfinity {
             class: "tooltip" + (row.rocktal < 0 ? " overmark" : ""),
             "data-title": toFormatedNumber(row.rocktal, 0),
           },
-          `${
-            row.rocktal == 0 ? "-" : toFormatedNumber(row.rocktal, null, true)
-          }`
+          `${row.rocktal == 0 ? "-" : toFormatedNumber(row.rocktal, null, true)}`
         )
       );
       discovery.appendChild(
@@ -9345,49 +9251,21 @@ class OGInfinity {
             class: "tooltip" + (row.kaelesh < 0 ? " overmark" : ""),
             "data-title": toFormatedNumber(row.kaelesh, 0),
           },
-          `${
-            row.kaelesh == 0 ? "-" : toFormatedNumber(row.kaelesh, null, true)
-          }`
+          `${row.kaelesh == 0 ? "-" : toFormatedNumber(row.kaelesh, null, true)}`
         )
       );
     });
 
     return box;
   }
-  discoveryCostsBox(rows, am, callback){
+  discoveryCostsBox(rows, am, callback) {
     let box = this.createDOM("div", { class: "ogk-box" });
-    let discovery = box.appendChild(
-      this.createDOM("div", { class: "ogk-grid-discovery" })
-    );
+    let discovery = box.appendChild(this.createDOM("div", { class: "ogk-grid-discovery" }));
     discovery.appendChild(this.createDOM("span"));
-    discovery.appendChild(
-      this.createDOM(
-        "span",
-        {},
-        "<a class=\"ogl-option resourceIcon metal\"></a>"
-      )
-    );
-    discovery.appendChild(
-      this.createDOM(
-        "span",
-        {},
-        "<a class=\"ogl-option resourceIcon crystal\"></a>"
-      )
-    );
-    discovery.appendChild(
-      this.createDOM(
-        "span",
-        {},
-        "<a class=\"ogl-option resourceIcon deuterium\"></a>"
-      )
-    );
-    discovery.appendChild(
-      this.createDOM(
-        "span",
-        {},
-        "<a>"+ this.getTranslatedText(145,"text",false)+"</a>"
-      )
-    );
+    discovery.appendChild(this.createDOM("span", {}, '<a class="ogl-option resourceIcon metal"></a>'));
+    discovery.appendChild(this.createDOM("span", {}, '<a class="ogl-option resourceIcon crystal"></a>'));
+    discovery.appendChild(this.createDOM("span", {}, '<a class="ogl-option resourceIcon deuterium"></a>'));
+    discovery.appendChild(this.createDOM("span", {}, "<a>" + this.getTranslatedText(145, "text", false) + "</a>"));
 
     rows.forEach((row) => {
       let p = discovery.appendChild(this.createDOM("p", {}, row.title));
@@ -9396,7 +9274,7 @@ class OGInfinity {
           this.createDOM(
             "strong",
             {},
-            "<span style=\"    display: inline-block;\n          vertical-align: middle;\n          float: none;\n          margin-left: 5px;\n          border-radius: 4px;\n          margin-bottom: 1px;\n          width: 17px;\" class=\"planetMoveIcons settings planetMoveGiveUp icon\"></span>"
+            '<span style="    display: inline-block;\n          vertical-align: middle;\n          float: none;\n          margin-left: 5px;\n          border-radius: 4px;\n          margin-bottom: 1px;\n          width: 17px;" class="planetMoveIcons settings planetMoveGiveUp icon"></span>'
           )
         );
         p.classList.add("ogk-edit");
@@ -9421,9 +9299,7 @@ class OGInfinity {
             class: "tooltip" + (row.crystal < 0 ? " overmark" : ""),
             "data-title": toFormatedNumber(row.crystal, 0),
           },
-          `${
-            row.crystal == 0 ? "-" : toFormatedNumber(row.crystal, null, true)
-          }`
+          `${row.crystal == 0 ? "-" : toFormatedNumber(row.crystal, null, true)}`
         )
       );
       discovery.appendChild(
@@ -9444,9 +9320,7 @@ class OGInfinity {
             class: "tooltip" + (row.artefacts < 0 ? " overmark" : ""),
             "data-title": toFormatedNumber(row.artefacts, 0),
           },
-          `${
-            row.artefacts == 0 ? "-" : toFormatedNumber(row.artefacts, null, true)
-          }`
+          `${row.artefacts == 0 ? "-" : toFormatedNumber(row.artefacts, null, true)}`
         )
       );
     });
@@ -9477,14 +9351,7 @@ class OGInfinity {
               sums["void"] || 0,
             ],
             label: "Discovery",
-            backgroundColor: [
-              "#7fc200",
-              "#ec752f",
-              "#3c93f0",
-              "#9c64ed",
-              "#fdeca6",
-              "#344051",
-            ],
+            backgroundColor: ["#7fc200", "#ec752f", "#3c93f0", "#9c64ed", "#fdeca6", "#344051"],
             borderColor: "#1b232c",
           },
         ],
@@ -16780,7 +16647,8 @@ class OGInfinity {
           en: "Navigation arrows in mobile version",
           es: "Flechas de navegación en versión móvil",
           fr: "Flèches de navigation en version mobile",
-        },/*139*/ {
+        },
+        /*139*/ {
           de: "Entdeckung",
           en: "Discoveries",
           es: "Exploración",
