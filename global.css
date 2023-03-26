@@ -3508,6 +3508,10 @@ button.build-it_premium:hover {
   align-self: center;
 }
 
+.ogl-dialog .ogl-sum-symbol {
+  font-size: xx-large;
+}
+
 .ogl-planet-act {
   position: absolute;
   width: 16px;
@@ -4481,16 +4485,16 @@ span.espionageDefText {
 }
 
 .ogl-mines-content td {
-  padding: 15px;
+  padding: 5px;
 }
 
 .ogl-mines-content td > div:first-child {
   padding: 5px;
-  font-size: 20px;
+  font-size: 16px;
 }
 
 .ogl-mines-content .ogl-planet-fields {
-  font-size: 11px;
+  font-size: 10px;
   font-style: italic;
 }
 
@@ -4942,12 +4946,12 @@ body.ogame select {
   width: 90vw;
   overflow: auto !important;
   display: block !important;
-  max-height: 80vh;
+  max-height: 90vh;
 }
 
 .ogl-fleet-content .ogl-option {
-  height: 20px;
-  width: 20px;
+  height: 25px;
+  width: 25px;
   margin: 3px 15px 3px 15px;
   border: 1px solid #3b4a5c;
 }
@@ -6327,7 +6331,7 @@ hr {
   padding: 20px;
   position: fixed;
   animation: fadeIn ease 0.4s;
-  max-height: 80vh;
+  max-height: 90vh;
   position: relative;
 }
 
@@ -7805,10 +7809,10 @@ li.resource {
 }
 
 .ogl-prodOverview-icon {
-  background-size: calc(30px * 20) !important;
+  background-size: calc(50px * 20) !important;
   background: url("https://gf3.geo.gfsrv.net/cdn53/7a9861be0c38bf7de05a57c56d73cf.jpg");
-  height: 30px;
-  width: 30px;
+  height: 50px;
+  width: 50px;
   border: solid 1px #5f5d6b;
   margin: auto;
   padding: 0 !important;
@@ -7828,30 +7832,30 @@ li.resource {
 
 .ogl-prodOverview-icon.items {
   background: url("https://gf2.geo.gfsrv.net/cdnab/0c604ee3171ccb9a2c6398fb543bda.png");
-  background-size: calc(30px * 14) !important;
+  background-size: calc(50px * 14) !important;
   background-position: 23% 50% !important;
 }
 
 .ogl-prodOverview-icon.lifeform {
   background: url("https://gf3.geo.gfsrv.net/cdn81/ce44d444b7d14a3ea6fa51fa6c1148.png");
-  background-size: calc(30px * 16) !important;
+  background-size: calc(50px * 16) !important;
   background-position: 100% 50% !important;
 }
 
 .allOfficers.prodOverview {
-  transform: scale(0.3);
+  transform: scale(0.5);
   border: solid 1px #5f5d6b;
   margin: auto;
 }
 
 .characterclass.medium.prodOverview {
-  transform: scale(0.5);
+  transform: scale(0.8333);
   border: solid 1px #5f5d6b;
   margin: auto;
 }
 
 .allianceclass.prodOverview {
-  transform: scale(0.5);
+  transform: scale(0.8333);
   border: solid 1px #5f5d6b;
   margin: auto;
 }

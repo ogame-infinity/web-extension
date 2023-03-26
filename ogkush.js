@@ -1696,12 +1696,14 @@ class OGInfinity {
   }
 
   updateEmpireData(force = false) {
+    let timeSinceLastUpdate = new Date() - new Date(this.json.lastEmpireUpdate);
     if (
+      force ||
       isNaN(new Date(this.json.lastEmpireUpdate)) ||
-      new Date() - new Date(this.json.lastEmpireUpdate) > 5 * 60 * 1e3 ||
-      this.json.needsUpdate
+      (timeSinceLastUpdate > 5 * 60 * 1e3 && this.json.needsUpdate) ||
+      (timeSinceLastUpdate > 1 * 60 * 1e3 && this.json.options.autofetchempire)
     ) {
-      this.updateInfo(force);
+      this.updateInfo();
     }
     let stageForUpdate = () => {
       this.json.needsUpdate = true;
@@ -1934,7 +1936,7 @@ class OGInfinity {
                 "https://" +
                 window.location.host +
                 window.location.pathname +
-                `?page=ingame&component=supplies&cp=${that.current.id}&sats=${satsNeeded}`;
+                `?page=ingame&component=supplies&cp=${that.current.id}&techId212=${satsNeeded}`;
               let satsSpan = that.createDOM(
                 "span",
                 {},
@@ -2261,7 +2263,7 @@ class OGInfinity {
                 "https://" +
                 window.location.host +
                 window.location.pathname +
-                `?page=ingame&component=supplies&cp=${that.current.id}&sats=${satsNeeded}`;
+                `?page=ingame&component=supplies&cp=${that.current.id}&techId212=${satsNeeded}`;
               let satsSpan = that.createDOM(
                 "span",
                 {},
@@ -3267,7 +3269,7 @@ class OGInfinity {
           this.json.needsUpdate = update;
           this.saveData();
           if (update) {
-            this.updateInfo();
+            this.updateEmpireData();
           }
           this.json.needSync = true;
         }
@@ -4251,25 +4253,18 @@ class OGInfinity {
       this.playerSearch(!this.searchOpened);
       this.searchOpened = !this.searchOpened;
     });
-    empireBtn &&
-      empireBtn.addEventListener("click", () => {
-        if (this.json.options.disableautofetchempire) {
-          this.json.options.autofetchempire = true;
-          this.updateEmpireData();
+    empireBtn.addEventListener("click", () => {
+      this.updateEmpireData(true);
+      this.loading();
+      let inter = setInterval(() => {
+        if (!this.isLoading) {
+          clearInterval(inter);
+          this.overview();
         }
-        this.loading();
-        let inter = setInterval(() => {
-          if (!this.isLoading) {
-            clearInterval(inter);
-            this.overview();
-          }
-        }, 20);
-      });
+      }, 20);
+    });
     overViewBtn.addEventListener("click", () => {
-      if (this.json.options.disableautofetchempire) {
-        this.json.options.autofetchempire = true;
-        this.updateEmpireData();
-      }
+      this.updateEmpireData();
       let active = document.querySelector(".ogl-option.ogl-active:not(.ogl-overview-icon)");
       if (active) {
         active.click();
@@ -4287,10 +4282,7 @@ class OGInfinity {
       this.saveData();
     });
     statsBtn.addEventListener("click", () => {
-      if (this.json.options.disableautofetchempire) {
-        this.json.options.autofetchempire = true;
-        this.updateEmpireData();
-      }
+      this.updateEmpireData(true);
       this.loading();
       let inter = setInterval(() => {
         if (!this.isLoading) {
@@ -9262,23 +9254,24 @@ class OGInfinity {
       });
       let warning = document.querySelector("#warning");
       let neededShips = warning.appendChild(this.createDOM("div", { class: "noShips" }));
+      let planetId = this.current.isMoon ? this.json.empire[this.current.index].moonID : this.current.id;
       neededShips.appendChild(
         this.createDOM(
           "div",
           { class: "ogl-res-transport" },
-          `<a tech-id="202" class="ogl-option noShips ogl-fleet-ship ogl-fleet-202"></a><span>${toFormatedNumber(
+          `<a tech-id="202" class="ogl-option noShips ogl-fleet-ship ogl-fleet-202" href="https://${window.location.host}${window.location.pathname}?page=ingame&component=shipyard&cp=${planetId}&techId202=${sc}"></a><span>${toFormatedNumber(
             sc,
             0
           )}</span>
-          <a tech-id="203" class="ogl-option noShips ogl-fleet-ship ogl-fleet-203"></a><span>${toFormatedNumber(
+          <a tech-id="203" class="ogl-option noShips ogl-fleet-ship ogl-fleet-203" href="https://${window.location.host}${window.location.pathname}?page=ingame&component=shipyard&cp=${planetId}&techId203=${lc}"></a><span>${toFormatedNumber(
             lc,
             0
           )}</span>
-          <a tech-id="219" class="ogl-option noShips ogl-fleet-ship ogl-fleet-219"></a><span>${toFormatedNumber(
+          <a tech-id="219" class="ogl-option noShips ogl-fleet-ship ogl-fleet-219" href="https://${window.location.host}${window.location.pathname}?page=ingame&component=shipyard&cp=${planetId}&techId219=${pf}"></a><span>${toFormatedNumber(
             pf,
             0
           )}</span>
-          <a tech-id="209" class="ogl-option noShips ogl-fleet-ship ogl-fleet-209"></a><span>${toFormatedNumber(
+          <a tech-id="209" class="ogl-option noShips ogl-fleet-ship ogl-fleet-209" href="https://${window.location.host}${window.location.pathname}?page=ingame&component=shipyard&cp=${planetId}&techId209=${rec}"></a><span>${toFormatedNumber(
             rec,
             0
           )}</span>`
@@ -11888,8 +11881,7 @@ class OGInfinity {
     }
   }
 
-  updateInfo(force = false) {
-    if ((force = false && this.json.options.autofetchempire == false)) return;
+  updateInfo() {
     if (this.isLoading) return;
     this.isLoading = true;
     let svg =
@@ -17377,21 +17369,21 @@ class OGInfinity {
 
   checkRedirect() {
     let url = new URL(window.location.href);
-    let satsNeeded = url.searchParams.get("sats");
     let technoDetails = url.searchParams.get("technoDetails");
-
-    if (satsNeeded) {
-      waitForElementToDisplay(".solarSatellite.hasDetails span", () =>
-        document.querySelector(".solarSatellite.hasDetails span").click()
-      );
-      waitForElementToDisplay("#technologydetails[data-technology-id='212']", () => {
-        let satsInput = document.querySelector("#build_amount");
-        satsInput.focus();
-        satsInput.value = satsNeeded;
-        satsInput.dispatchEvent(new KeyboardEvent("keyup", { code: "ArrowDown" }));
-      });
-    }
-
+    [202, 203, 219, 209, 212].forEach(id => {
+      if (url.searchParams.has(`techId${id}`)) {
+        let needed = Number(url.searchParams.get(`techId${id}`));
+        waitForElementToDisplay(`.hasDetails[data-technology='${id}'] span`, () => {
+          document.querySelector(`.hasDetails[data-technology='${id}'] span`).click()
+        })
+        waitForElementToDisplay(`#technologydetails[data-technology-id='${id}']`, () => {
+          let input = document.querySelector("#build_amount");
+          input.focus();
+          input.value = needed;
+          input.dispatchEvent(new KeyboardEvent("keyup", { code: "ArrowDown" }));
+        });
+      }
+    });
     if (technoDetails) {
       let selector = `.technology[data-technology='${technoDetails}'] span`;
       waitForElementToDisplay(selector, () => document.querySelector(selector).click());
