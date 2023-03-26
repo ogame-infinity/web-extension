@@ -17824,25 +17824,25 @@ class OGInfinity {
 
   markLifeforms() {
     if (!this.hasLifeforms) return;
-    
-    if(!this.current.isMoon){
+
+    if (!this.current.isMoon) {
       let divLF = document.querySelector("div[id=lifeform]");
       let regex = new RegExp("lifeform+[0-9]", "gm");
       let found = divLF.innerHTML.match(regex);
-      if (found){
+      if (found) {
         this.json.empire[this.current.index].lfType = found;
       }
       this.saveData();
     }
     this.json.empire.forEach((planet) => {
       document.querySelectorAll(".smallplanet a.planetlink").forEach((elem) => {
-        let id = elem.parentNode.getAttribute('id').replace("planet-","");
-        if(planet.id == id){
+        let id = elem.parentNode.getAttribute("id").replace("planet-", "");
+        if (planet.id == id) {
           elem.appendChild(
-              this.createDOM("div", {
-                class: `lifeform-item-icon small ` + planet.lfType,
-              })
-            );
+            this.createDOM("div", {
+              class: `lifeform-item-icon small ` + planet.lfType,
+            })
+          );
           return;
         }
       });
