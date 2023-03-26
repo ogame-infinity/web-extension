@@ -1904,7 +1904,7 @@ class OGInfinity {
             roiTimeDiv.html(formatTimeWrapper(roi, 2, true, " ", false, ""));
           } else {
             if (durationDiv.parentNode.querySelector(".roi_duration"))
-              durationDiv.parentNode.querySelector(".roi_duration").html("");
+              durationDiv.parentNode.querySelector(".roi_duration").empty();
           }
           techno = that.research(
             technoId,
@@ -2089,7 +2089,7 @@ class OGInfinity {
 
               roiTimeDiv.html(formatTimeWrapper(roi, 2, true, " ", false, ""));
             } else {
-              roiDiv.html("");
+              roiDiv.empty();
             }
           }
         }
@@ -2115,7 +2115,7 @@ class OGInfinity {
             )
           );
         } else {
-          timeSumDiv.html("");
+          timeSumDiv.empty();
         }
         let missing = [];
         let demolish = [];
@@ -2318,7 +2318,7 @@ class OGInfinity {
             );
         }
         if (baselvl - 1 == tolvl || (baselvl > tolvl && (that.page == "research" || that.page == "lfresearch"))) {
-          document.querySelector(".ogk-titles").children[2].html("");
+          document.querySelector(".ogk-titles").children[2].empty();
         } else {
           document.querySelector(".ogk-titles").children[2].html(that.getTranslatedText(39));
         }
@@ -2370,7 +2370,7 @@ class OGInfinity {
           let tree = document.querySelector(".technology_tree");
           let clone = tree.cloneNode(true);
           tree.style.display = "none";
-          clone.html("");
+          clone.empty();
           document.querySelector(".description").appendChild(clone);
           let timeDiv = document.querySelector(".build_duration time");
           let baseTime = getTimeFromString(timeDiv.getAttribute("datetime"));
@@ -2644,7 +2644,7 @@ class OGInfinity {
                 `<strong>${toFormatedNumber(baseLvl)}</strong>-<strong>${toFormatedNumber(tolvl)}</strong>`
               );
               if (tolvl <= baseLvl) {
-                lvlFromTo.html("");
+                lvlFromTo.empty();
               }
               if (tolvl < baseLvl - 1 && that.page != "research" && that.page != "lfresearch") {
                 lvlFromTo.html(`${that.getTranslatedText(129)}`);
@@ -2661,7 +2661,7 @@ class OGInfinity {
                 `<strong>${toFormatedNumber(baseLvl)}</strong>-<strong>${toFormatedNumber(tolvl)}</strong>`
               );
               if (tolvl <= baseLvl) {
-                lvlFromTo.html("");
+                lvlFromTo.empty();
               }
               if (tolvl < baseLvl - 1 && that.page != "research" && that.page != "lfresearch") {
                 lvlFromTo.html(`${that.getTranslatedText(129)}`);
@@ -3624,8 +3624,8 @@ class OGInfinity {
     moonAct.classList.remove("active");
     moonAct.classList.remove("showMinutes");
     moonAct.classList.remove("activity");
-    planetAct.html("");
-    moonAct.html("");
+    planetAct.empty();
+    moonAct.empty();
     if (act.planet == 0) {
       planetAct.classList.add("active");
     } else if (act.planet > 0 && act.planet < 60) {
@@ -14520,8 +14520,8 @@ class OGInfinity {
     let body =
       dialog.querySelector(".ogl-dialogContent") ||
       dialog.appendChild(this.createDOM("div", { class: "ogl-dialogContent" }));
-    top.html("");
-    body.html("");
+    top.empty();
+    body.empty();
     if (header) {
       top.appendChild(header);
     }
