@@ -1463,7 +1463,7 @@ class OGInfinity {
     this.json.currentExpes = this.json.currentExpes || [];
     this.json.combatsSums = this.json.combatsSums || {};
     this.json.expeditionSums = this.json.expeditionSums || {};
-    this.json.lfType = this.json.lfType || {};
+    this.json.lfTypeNames = this.json.lfTypeNames || {};
     this.json.flying = this.json.flying || {
       metal: 0,
       crystal: 0,
@@ -17823,32 +17823,66 @@ class OGInfinity {
     }
   }
 
-  markLifeforms() {
+  async initializeLFTypeName(){
+   fetch("/game/index.php?page=ingame&component=lfoverview")
+       .then((rep) => rep.text())
+       .then((str) => {
+          let htmlDocument = new window.DOMParser().parseFromString(str,"text/html");
+          let lfdiv = htmlDocument.querySelector("div[id='lfoverviewcomponent']"); 
+          let listName = lfdiv.querySelectorAll("h3");
+          listName.forEach((lfName,index) => {
+            if (index != 0) {
+              this.json.lfTypeNames['lifeform'+index] = lfName.innerText;
+            }
+          });
+          this.saveData();
+       });
+  }
+
+  async markLifeforms() {
     if (!this.hasLifeforms) return;
     
-    this.json.empire.forEach((planet) => {
-      if(!this.current.isMoon && this.current.id == planet.id){
-        let divLF = document.querySelector("div[id=lifeform]");
-        let regex = new RegExp("lifeform+[0-9]", "gm");
-        let found = divLF.innerHTML.match(regex);
-        if (found && found != this.json.lfType[planet.id]){
-          this.json.lfType[planet.id] = found;
-        }
-      }
-      document.querySelectorAll(".smallplanet a.planetlink").forEach((elem) => {
-        let id = elem.parentNode.getAttribute('id').replace("planet-","");
-        if(planet.id == id && this.json.lfType[planet.id]){
+    if(!this.json.lfTypeNames['lifeform1']){
+      await this.initializeLFTypeName();
+    }
+
+    document.querySelectorAll(".smallplanet a.planetlink").forEach((elem) => {
+      let lf = String(elem.getAttribute("title").split("<br/>")[1].split(":")[1].trim());
+      switch (lf) {
+      case this.json.lfTypeNames['lifeform1']:
           elem.appendChild(
-              this.createDOM("div", {
-                class: `lifeform-item-icon small ` + this.json.lfType[planet.id],
-              })
-            );
-          return;
-        }
-      });
+            this.createDOM("div", {
+              class: `lifeform-item-icon small lifeform1`,
+            })
+          );
+          break;
+        case this.json.lfTypeNames['lifeform2']:
+          elem.appendChild(
+            this.createDOM("div", {
+              class: `lifeform-item-icon small lifeform2`,
+            })
+          );
+          break;
+        case this.json.lfTypeNames['lifeform3']:
+          elem.appendChild(
+            this.createDOM("div", {
+              class: `lifeform-item-icon small lifeform3`,
+            })
+          );
+          break;
+        case this.json.lfTypeNames['lifeform4']:
+          elem.appendChild(
+            this.createDOM("div", {
+              class: `lifeform-item-icon small lifeform4`,
+            })
+          );
+          break;
+        default:
+          break;
+      }
     });
-    this.saveData();
   }
+  
 
   getLifeformProduction() {
     if (!this.hasLifeforms || (this.page != "resourceSettings" && this.page != "resourcesettings")) return;
