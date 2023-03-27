@@ -17826,13 +17826,12 @@ class OGInfinity {
   markLifeforms() {
     if (!this.hasLifeforms) return;
     
-    
     this.json.empire.forEach((planet) => {
       if(!this.current.isMoon && this.current.id == planet.id){
         let divLF = document.querySelector("div[id=lifeform]");
         let regex = new RegExp("lifeform+[0-9]", "gm");
         let found = divLF.innerHTML.match(regex);
-        if (found && found != planet.lfType){
+        if (found && found != this.json.lfType[planet.id]){
           this.json.lfType[planet.id] = found;
         }
       }
