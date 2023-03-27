@@ -1463,6 +1463,7 @@ class OGInfinity {
     this.json.currentExpes = this.json.currentExpes || [];
     this.json.combatsSums = this.json.combatsSums || {};
     this.json.expeditionSums = this.json.expeditionSums || {};
+    this.json.lfType = this.json.lfType || {};
     this.json.flying = this.json.flying || {
       metal: 0,
       crystal: 0,
@@ -17825,28 +17826,29 @@ class OGInfinity {
   markLifeforms() {
     if (!this.hasLifeforms) return;
     
-    if(!this.current.isMoon){
-      let divLF = document.querySelector("div[id=lifeform]");
-      let regex = new RegExp("lifeform+[0-9]", "gm");
-      let found = divLF.innerHTML.match(regex);
-      if (found){
-        this.json.empire[this.current.index].lfType = found;
-      }
-      this.saveData();
-    }
+    
     this.json.empire.forEach((planet) => {
+      if(!this.current.isMoon && this.current.id == planet.id){
+        let divLF = document.querySelector("div[id=lifeform]");
+        let regex = new RegExp("lifeform+[0-9]", "gm");
+        let found = divLF.innerHTML.match(regex);
+        if (found && found != planet.lfType){
+          this.json.lfType[planet.id] = found;
+        }
+      }
       document.querySelectorAll(".smallplanet a.planetlink").forEach((elem) => {
         let id = elem.parentNode.getAttribute('id').replace("planet-","");
-        if(planet.id == id){
+        if(planet.id == id && this.json.lfType[planet.id]){
           elem.appendChild(
               this.createDOM("div", {
-                class: `lifeform-item-icon small ` + planet.lfType,
+                class: `lifeform-item-icon small ` + this.json.lfType[planet.id],
               })
             );
           return;
         }
       });
     });
+    this.saveData();
   }
 
   getLifeformProduction() {
