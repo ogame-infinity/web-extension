@@ -1879,7 +1879,7 @@ class OGInfinity {
                         )}`,
                 })
               );
-            roiTimeDiv.html(roi === Infinity ? "∞" : formatTimeWrapper(roi, 2, true, " ", false, ""));
+            roiTimeDiv.textContent = roi === Infinity ? "∞" : formatTimeWrapper(roi, 2, true, " ", false, "");
           } else if (RESEARCH_INFO[technoId].bonus) {
             let roi = that.roiLfResearch(technoId, baselvl, tolvl, labs);
             let roiDiv =
@@ -1901,7 +1901,7 @@ class OGInfinity {
                   )}`,
                 })
               );
-            roiTimeDiv.html(formatTimeWrapper(roi, 2, true, " ", false, ""));
+            roiTimeDiv.textContent = formatTimeWrapper(roi, 2, true, " ", false, "");
           } else {
             if (durationDiv.parentNode.querySelector(".roi_duration"))
               durationDiv.parentNode.querySelector(".roi_duration").empty();
@@ -2087,13 +2087,13 @@ class OGInfinity {
                   })
                 );
 
-              roiTimeDiv.html(formatTimeWrapper(roi, 2, true, " ", false, ""));
+              roiTimeDiv.textContent = formatTimeWrapper(roi, 2, true, " ", false, "");
             } else {
               roiDiv.empty();
             }
           }
         }
-        timeDiv.html(formatTimeWrapper(techno.time, 2, true, " ", false, ""));
+        timeDiv.textContent = formatTimeWrapper(techno.time, 2, true, " ", false, "");
         let currentDate = new Date();
         let finishDate = new Date(currentDate.getTime() + techno.time * 1e3);
         if (baselvl <= tolvl)
@@ -2124,7 +2124,7 @@ class OGInfinity {
         }
         if (techno.cost[0] != 0) {
           let metal = document.querySelector(".costs .metal");
-          metal.html(tolvl != 0 ? toFormatedNumber(techno.cost[0], null, true) : "");
+          metal.textContent = tolvl != 0 ? toFormatedNumber(techno.cost[0], null, true) : "";
           if (tolvl != 0) metal.setAttribute("data-title", toFormatedNumber(parseInt(techno.cost[0])));
           if (
             baselvl != tolvl &&
@@ -2157,7 +2157,7 @@ class OGInfinity {
         }
         if (techno.cost[1] != 0) {
           let crystal = document.querySelector(".costs .crystal");
-          crystal.html(tolvl != 0 ? toFormatedNumber(techno.cost[1], null, true) : "");
+          crystal.textContent = tolvl != 0 ? toFormatedNumber(techno.cost[1], null, true) : "";
           if (tolvl != 0) crystal.setAttribute("data-title", toFormatedNumber(parseInt(techno.cost[1])));
           if (
             baselvl != tolvl &&
@@ -2190,7 +2190,7 @@ class OGInfinity {
         }
         if (techno.cost[2] != 0) {
           let deuterium = document.querySelector(".costs .deuterium");
-          deuterium.html(tolvl != 0 ? toFormatedNumber(techno.cost[2], null, true) : "");
+          deuterium.textContent = tolvl != 0 ? toFormatedNumber(techno.cost[2], null, true) : "";
           if (tolvl != 0) deuterium.setAttribute("data-title", toFormatedNumber(parseInt(techno.cost[2])));
           if (
             baselvl != tolvl &&
@@ -2224,7 +2224,7 @@ class OGInfinity {
         if (techno.cost[3] != 0) {
           let energy = document.querySelector(".costs .energy");
           if (energy) {
-            energy.html(tolvl != 0 ? toFormatedNumber(techno.cost[3], null, true) : "");
+            energy.textContent = tolvl != 0 ? toFormatedNumber(techno.cost[3], null, true) : "";
             if (tolvl != 0) energy.setAttribute("data-title", toFormatedNumber(parseInt(techno.cost[3])));
             if (
               baselvl != tolvl &&
@@ -2286,7 +2286,7 @@ class OGInfinity {
         }
         if (techno.pop && techno.pop != 0) {
           let population = document.querySelector(".costs .population");
-          population.html(tolvl != 0 ? toFormatedNumber(techno.pop, null, true) : "");
+          population.textContent = tolvl != 0 ? toFormatedNumber(techno.pop, null, true) : "";
           if (tolvl != 0) population.setAttribute("data-title", toFormatedNumber(parseInt(techno.pop)));
           let missingPop = Math.min(0, resourcesBar.resources.population.amount - techno.pop);
           if (
@@ -2420,7 +2420,7 @@ class OGInfinity {
                 resSum[index] = value * baseCost[index];
                 let min = Math.min(0, currentRes[index] - resSum[index]);
                 missing[index] = min;
-                div.html(toFormatedNumber(baseCost[index], null, true));
+                div.textContent = toFormatedNumber(baseCost[index], null, true);
                 div.appendChild(
                   that.createDOM(
                     "div",
@@ -2442,7 +2442,7 @@ class OGInfinity {
                   )
                 );
               });
-              timeDiv.html(formatTimeWrapper(baseTime * value, 2, true, " ", false, ""));
+              timeDiv.textContent = formatTimeWrapper(baseTime * value, 2, true, " ", false, "");
               let currentDate = new Date();
               let finishDate = new Date(currentDate.getTime() + baseTime * value * 1e3);
               timeDiv.appendChild(
@@ -2637,8 +2637,8 @@ class OGInfinity {
             next.addEventListener("click", () => {
               tolvl += 1;
               updateResearchDetails(technologyId, baseLvl, tolvl);
-              lvlSpan.html(toFormatedNumber(tolvl));
-              textLvl.html(textLvl.innerText.replace(tolvl - 1, tolvl));
+              lvlSpan.textContent = toFormatedNumber(tolvl);
+              textLvl.textContent = textLvl.textContent.replace(tolvl - 1, tolvl);
               lvl.html(`Lvl <strong>${toFormatedNumber(tolvl)}</strong>`);
               lvlFromTo.html(
                 `<strong>${toFormatedNumber(baseLvl)}</strong>-<strong>${toFormatedNumber(tolvl)}</strong>`
@@ -2655,7 +2655,7 @@ class OGInfinity {
               if (tolvl == 0) return;
               tolvl -= 1;
               updateResearchDetails(technologyId, baseLvl, tolvl);
-              lvlSpan.html(toFormatedNumber(tolvl));
+              lvlSpan.textContent = toFormatedNumber(tolvl);
               lvl.html(tolvl != 0 ? `Lvl <strong>${toFormatedNumber(tolvl)}</strong>` : "");
               lvlFromTo.html(
                 `<strong>${toFormatedNumber(baseLvl)}</strong>-<strong>${toFormatedNumber(tolvl)}</strong>`
