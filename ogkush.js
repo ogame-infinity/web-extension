@@ -1463,6 +1463,7 @@ class OGInfinity {
     this.json.currentExpes = this.json.currentExpes || [];
     this.json.combatsSums = this.json.combatsSums || {};
     this.json.expeditionSums = this.json.expeditionSums || {};
+    this.json.lfTypeNames = this.json.lfTypeNames || {};
     this.json.flying = this.json.flying || {
       metal: 0,
       crystal: 0,
@@ -17822,40 +17823,62 @@ class OGInfinity {
     }
   }
 
-  markLifeforms() {
+  async initializeLFTypeName() {
+    fetch("/game/index.php?page=ingame&component=lfoverview")
+      .then((rep) => rep.text())
+      .then((str) => {
+        let htmlDocument = new window.DOMParser().parseFromString(str, "text/html");
+        let lfdiv = htmlDocument.querySelector("div[id='lfoverviewcomponent']");
+        let listName = lfdiv.querySelectorAll("h3");
+        listName.forEach((lfName, index) => {
+          if (index != 0) {
+            this.json.lfTypeNames["lifeform" + index] = lfName.innerText;
+          }
+        });
+        this.saveData();
+      });
+  }
+
+  async markLifeforms() {
     if (!this.hasLifeforms) return;
+
+    if (!this.json.lfTypeNames["lifeform1"]) {
+      await this.initializeLFTypeName();
+    }
+
     document.querySelectorAll(".smallplanet a.planetlink").forEach((elem) => {
       let lf = String(elem.getAttribute("title").split("<br/>")[1].split(":")[1].trim());
       switch (lf) {
-        case "Rock’tal":
+        case this.json.lfTypeNames["lifeform1"]:
+          elem.appendChild(
+            this.createDOM("div", {
+              class: `lifeform-item-icon small lifeform1`,
+            })
+          );
+          break;
+        case this.json.lfTypeNames["lifeform2"]:
           elem.appendChild(
             this.createDOM("div", {
               class: `lifeform-item-icon small lifeform2`,
             })
           );
           break;
-        case "Mechas":
+        case this.json.lfTypeNames["lifeform3"]:
           elem.appendChild(
             this.createDOM("div", {
               class: `lifeform-item-icon small lifeform3`,
             })
           );
           break;
-        case "Kaelesh":
+        case this.json.lfTypeNames["lifeform4"]:
           elem.appendChild(
             this.createDOM("div", {
               class: `lifeform-item-icon small lifeform4`,
             })
           );
           break;
-        case "-":
-          break;
         default:
-          elem.appendChild(
-            this.createDOM("div", {
-              class: `lifeform-item-icon small lifeform1`,
-            })
-          );
+          break;
       }
     });
   }
