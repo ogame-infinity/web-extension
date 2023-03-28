@@ -2863,20 +2863,15 @@ class OGInfinity {
         })
       );
     }
-    let end = 0;
-    let update = () => {
-      let diff = union.time * 1e3 - serverTime.getTime();
-      let maxDelay = diff * 0.3;
-      let str = getFormatedTime(maxDelay / 1e3);
-      let flighDiff = fleetDispatcher.getDuration() - diff / 1e3;
-      end = maxDelay / 1e3 - flighDiff;
-      let abs = Math.abs(end);
-      this.delayDiv2.html(
-        end > 0 ? "Time to join " + getFormatedTime(abs) : "Too late to join !" + getFormatedTime(abs)
-      );
-      this.delayDiv3.html(
-        end > 0 ? "Time to join " + getFormatedTime(abs) : "Too late to join " + getFormatedTime(abs)
-      );
+    const update = () => {
+      const diff = union.time * 1e3 - serverTime.getTime();
+      const maxDelay = diff * 0.3;
+      const flighDiff = fleetDispatcher.getDuration() - diff / 1e3;
+      const end = maxDelay / 1e3 - flighDiff;
+      const abs = Math.abs(end);
+      const timeToJoin = end > 0 ? "Time to join " + getFormatedTime(abs) : "Too late to join! " + getFormatedTime(abs);
+      this.delayDiv2.textContent = timeToJoin;
+      this.delayDiv3.textContent = timeToJoin;
       if (end > 0) {
         this.delayDiv2.setAttribute("style", 'color:"green !important"');
         this.delayDiv2.setAttribute("style", 'color:"green !important"');
@@ -2884,10 +2879,10 @@ class OGInfinity {
         this.delayDiv2.classList.remove("ogk-delay-ontime");
         this.delayDiv2.classList.remove("ogk-delay-ontime");
       }
-      let format = getFormatedTime(flighDiff >= 0 ? flighDiff : 0);
-      this.delayTimeDiv.html("+" + format);
-      this.delayTimeDiv2.html("+" + format);
-      this.delayTimeDiv3.html("+" + format);
+      const format = "+" + getFormatedTime(flighDiff >= 0 ? flighDiff : 0);
+      this.delayTimeDiv.textContent = format;
+      this.delayTimeDiv2.textContent = format;
+      this.delayTimeDiv3.textContent = format;
     };
     fleetDispatcher.refreshFleet2();
     update();
@@ -3630,20 +3625,20 @@ class OGInfinity {
       planetAct.classList.add("active");
     } else if (act.planet > 0 && act.planet < 60) {
       planetAct.classList.add("activity", "showMinutes");
-      planetAct.html(act.planet);
+      planetAct.textContent = act.planet;
     } else {
       planetAct.classList.add("activity", "showMinutes");
-      planetAct.html("-");
+      planetAct.textContent = "-";
     }
     if (act.moon != -1) {
       if (act.moon == 0) {
         moonAct.classList.add("active");
       } else if (act.moon > 0 && act.moon < 60) {
         moonAct.classList.add("activity", "showMinutes");
-        moonAct.html(act.moon);
+        moonAct.textContent = act.moon;
       } else {
         moonAct.classList.add("activity", "showMinutes");
-        moonAct.html("-");
+        moonAct.textContent = "-";
       }
     }
   }
@@ -4893,7 +4888,7 @@ class OGInfinity {
     let container = this.createDOM("div", { class: "ptreContent" });
 
     if (!this.json.options.ptreTK) {
-      container.html("Error: no teamkey registered");
+      container.textContent = "Error: no teamkey registered";
       this.popup(null, container);
       return;
     }
@@ -6649,7 +6644,7 @@ class OGInfinity {
       this.updateStalk(player.planets).forEach((e) => stalkPlanets.appendChild(e));
       this.highlightTarget();
       let updateTime = planetsColumn.appendChild(this.createDOM("div", { class: "ogl-right ogl-date" }));
-      updateTime.html(this.timeSince(new Date(player.lastUpdate)));
+      updateTime.textContent = this.timeSince(new Date(player.lastUpdate));
       return planetsColumn;
     };
     let activeId, activeNode;
@@ -9886,10 +9881,10 @@ class OGInfinity {
         }
         if (interval) clearInterval(interval);
         let reset = (noShips) => {
-          durationDiv.html("-");
-          consDiv.innerText = "-";
-          arrivalDiv.innerText = "-";
-          returnDiv.innerText = "-";
+          durationDiv.textContent = "-";
+          consDiv.textContent = "-";
+          arrivalDiv.textContent = "-";
+          returnDiv.textContent = "-";
           document
             .querySelector(".ogl-dispatch .ogl-missions")
             .html(`<span style="color: #9099a3"> ${that.getTranslatedText(111)} </span>`);
@@ -10777,7 +10772,7 @@ class OGInfinity {
         coords[2],
         1
       );
-      btn.html(`[${coords.join(":")}] ${planet.querySelector(".planet-name").textContent}`);
+      btn.textContent = `[${coords.join(":")}] ${planet.querySelector(".planet-name").textContent}`;
       if (planet.querySelector(".moonlink")) {
         let btn = buildButton(
           planet,
@@ -12302,7 +12297,7 @@ class OGInfinity {
       let planets = this.updateStalk(player.planets, player.id);
       planets.forEach((e) => list.appendChild(e));
       this.highlightTarget();
-      date.html(this.timeSince(new Date(player.lastUpdate)));
+      date.textContent = this.timeSince(new Date(player.lastUpdate));
       count.html(player.planets.length + " " + this.getTranslatedText(42));
       detailRank.html(
         `\n      <div><div class="ogl-totalIcon"></div> ${toFormatedNumber(
