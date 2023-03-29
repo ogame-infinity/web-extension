@@ -1928,10 +1928,10 @@ class OGInfinity {
             let baseCons = that.consumption(technoId, baselvl - 1);
             let currentCons = that.consumption(technoId, tolvl);
             let diff = currentEnergy - (currentCons - baseCons);
-            consDiv.html(
-              `<span>${toFormatedNumber(currentCons - baseCons)}<span class="${
-                diff < 0 ? "overmark" : "undermark"
-              }"> (${toFormatedNumber(diff)})</span></span>`
+            consDiv.replaceChildren(
+              createDOM("span", {}, `${toFormatedNumber(currentCons - baseCons)}`).appendChild(
+                createDOM("span", { class: `${diff < 0 ? "overmark" : "undermark"}` }, ` (${toFormatedNumber(diff)})`)
+              ).parentElement
             );
             if (diff < 0) {
               let energyBonus =
@@ -1970,10 +1970,10 @@ class OGInfinity {
             let baseCons = that.consumption(technoId, baselvl - 1);
             let currentCons = that.consumption(technoId, tolvl);
             let diff = currentEnergy - (currentCons - baseCons);
-            consDiv.html(
-              `<span>${toFormatedNumber(currentCons - baseCons)}<span class="${
-                diff < 0 ? "overmark" : "undermark"
-              }"> (${toFormatedNumber(diff)})</span></span>`
+            consDiv.replaceChildren(
+              createDOM("span", {}, `${toFormatedNumber(currentCons - baseCons)}`).appendChild(
+                createDOM("span", { class: `${diff < 0 ? "overmark" : "undermark"}` }, ` (${toFormatedNumber(diff)})`)
+              ).parentElement
             );
 
             if (diff < 0) {
@@ -2016,12 +2016,16 @@ class OGInfinity {
             let pos = that.current.coords.split(":")[2];
             let currentProd = that.minesProduction(technoId, baselvl - 1, pos, temp);
             let baseProd = that.minesProduction(technoId, tolvl, pos, temp);
-            energyDiv.html(
-              `<span class="value">${toFormatedNumber(parseInt(baseProd))} <span class="bonus ${
-                parseInt(baseProd - currentProd) < 0 ? "overmark" : "undermark"
-              }"> (${parseInt(baseProd - currentProd) < 0 ? "" : "+"}${toFormatedNumber(
-                parseInt(baseProd - currentProd)
-              )})</span></span>`
+            energyDiv.replaceChildren(
+              createDOM("span", { class: "value" }, `${toFormatedNumber(parseInt(baseProd))} `).appendChild(
+                createDOM(
+                  "span",
+                  { class: `bonus ${parseInt(baseProd - currentProd) < 0 ? "overmark" : "undermark"}` },
+                  ` (${parseInt(baseProd - currentProd) < 0 ? "" : "+"}${toFormatedNumber(
+                    parseInt(baseProd - currentProd)
+                  )})`
+                )
+              ).parentElement
             );
           }
           if ([22, 23, 24].includes(technoId)) {
@@ -2055,11 +2059,15 @@ class OGInfinity {
                   )}`,
                 })
               );
-            storageSizeDiv.html(
-              `<span class="value">${toFormatedNumber(newStorage)} <span class="bonus ${
-                newStorage - oldStorage < 0 ? "overmark" : "undermark"
-              }"> (${newStorage - oldStorage < 0 ? "" : "+"}${toFormatedNumber(newStorage - oldStorage)})</span></span>`
-            );
+            storageSizeDiv.replaceChildren(
+              createDOM("span", { class: "value" }, `${toFormatedNumber(newStorage)} `).appendChild(
+                createDOM(
+                  "span",
+                  { class: `bonus ${newStorage - oldStorage < 0 ? "overmark" : "undermark"}` },
+                  ` (${newStorage - oldStorage < 0 ? "" : "+"}${toFormatedNumber(newStorage - oldStorage)})`
+                )
+              ).parentElement
+            ); 
           }
           if (technoId <= 3) {
             let roiDiv =
@@ -2458,9 +2466,9 @@ class OGInfinity {
                   (that.allOfficers ? 0.02 : 0) +
                   (that.json.allianceClass == ALLY_CLASS_MINER ? 0.05 : 0);
                 let diff = Number(currentEnergy) + Math.round(value * base * (1 + energyBonus));
-                energyDiv.html(
-                  toFormatedNumber(value * base) +
-                    `<span class="${diff < 0 ? "overmark" : "undermark"}"> (${toFormatedNumber(diff)})</span>`
+                energyDiv.replaceChildren(
+                  document.createTextNode(`${toFormatedNumber(value * base)}`),
+                  createDOM("span", { class: `${diff < 0 ? "overmark" : "undermark"}` }, ` (${toFormatedNumber(diff)})`)
                 );
                 if (Number(currentEnergy) < 0 && that.json.empire[that.current.index]) {
                   let temp = that.json.empire[that.current.index].db_par2 + 40;
@@ -2480,9 +2488,9 @@ class OGInfinity {
                 }
               } else if (technologyId == 217) {
                 let diff = Number(currentEnergy) - value * base;
-                energyDiv.html(
-                  toFormatedNumber(value * base) +
-                    `<span class="${diff < 0 ? "overmark" : "undermark"}"> (${toFormatedNumber(diff)})</span>`
+                energyDiv.replaceChildren(
+                  document.createTextNode(`${toFormatedNumber(value * base)}`),
+                  createDOM("span", { class: `${diff < 0 ? "overmark" : "undermark"}` }, ` (${toFormatedNumber(diff)})`)
                 );
                 if (diff < 0) {
                   let energyBonus =
@@ -2638,9 +2646,14 @@ class OGInfinity {
               updateResearchDetails(technologyId, baseLvl, tolvl);
               lvlSpan.textContent = toFormatedNumber(tolvl);
               textLvl.textContent = textLvl.textContent.replace(tolvl - 1, tolvl);
-              lvl.html(`Lvl <strong>${toFormatedNumber(tolvl)}</strong>`);
-              lvlFromTo.html(
-                `<strong>${toFormatedNumber(baseLvl)}</strong>-<strong>${toFormatedNumber(tolvl)}</strong>`
+              lvl.replaceChildren(
+                document.createTextNode("Lvl "),
+                createDOM("strong", {}, `${toFormatedNumber(tolvl)}`)
+              ); 
+              lvlFromTo.replaceChildren(
+                createDOM("strong", {}, `${toFormatedNumber(baseLvl)}`),
+                document.createTextNode("-"),
+                createDOM("strong", {}, `${toFormatedNumber(tolvl)}`)
               );
               if (tolvl <= baseLvl) {
                 lvlFromTo.empty();
