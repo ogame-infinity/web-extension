@@ -92,13 +92,12 @@ Element.prototype.html = function (html) {
   this.innerHTML = DOMPurify.sanitize(html);
 };
 
-function createDOM(element, attributes, textContent, innerText) {
+function createDOM(element, attributes, textContent) {
   const e = document.createElement(element);
   for (const key in attributes) {
     e.setAttribute(key, attributes[key]);
   }
   if (textContent) e.textContent = textContent;
-  if (innerText) e.innerText = innerText;
   return e;
 }
 
