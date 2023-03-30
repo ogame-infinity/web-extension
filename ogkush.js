@@ -1681,7 +1681,7 @@ class OGInfinity {
   }
 
   timeZone() {
-    if (!this.json.timezoneDiff && window.timeZoneDiffSeconds !== undefined) {
+    if (window.timeZoneDiffSeconds !== undefined) {
       this.json.timezoneDiff = timeZoneDiffSeconds;
       this.saveData();
     }
