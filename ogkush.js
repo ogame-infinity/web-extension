@@ -14316,16 +14316,20 @@ class OGInfinity {
             document.querySelector(".ogl-expedition").click();
             document.querySelector("#continueToFleet2").click();
           }
-          if (event.code == "KeyC" && document.activeElement.tagName != "INPUT") {
+          if (event.code == "KeyC") {
             document.querySelector(".ogl-collect").click();
             document.querySelector("#continueToFleet2").click();
           }
-          if (event.code == "KeyN" && document.activeElement.tagName != "INPUT")
+          if (event.code == "KeyN")
             document.querySelector("#resetall").click();
-          if (event.code == "KeyA" && document.activeElement.tagName != "INPUT")
+          if (event.code == "KeyA")
             document.querySelector("#sendall").click();
-          if (event.code == "KeyM" && document.activeElement.tagName != "INPUT")
+          if (event.code == "KeyM")
             document.querySelector("span.select-most").click();
+          if (event.code == "ArrowUp")
+            document.querySelector("#systemInput").value = Number(document.querySelector("#systemInput").value) + 1;
+            if (event.code == "ArrowDown")
+            document.querySelector("#systemInput").value = Number(document.querySelector("#systemInput").value) - 1;
         } else if (fleetDispatcher.currentPage == "fleet2") {
           if (event.code == "KeyA") document.querySelector("#loadAllResources img").click();
           if (event.code == "KeyM" && !event.shiftKey) document.querySelector("#loadAllResources .select-most").click();

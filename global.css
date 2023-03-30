@@ -4432,6 +4432,14 @@ a {
   color: inherit !important;
 }
 
+.ogl-energy.tooltip.overmark {
+  color: #bd3c43 !important;
+}
+
+.ogl-energy.tooltip.undermark {
+  color: #99CC00 !important;
+}
+
 .ogl-tooltip a[href] {
   color: #6f9fc8;
   text-decoration: none;
