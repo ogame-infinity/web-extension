@@ -85,9 +85,6 @@ if (redirect && redirect.indexOf("https") > -1) {
   } else requestAnimationFrame(() => goodbyeTipped());
 })();
 
-Element.prototype.empty = function (e) {
-  while (this.firstChild) this.removeChild(this.firstChild);
-};
 Element.prototype.html = function (html) {
   this.innerHTML = DOMPurify.sanitize(html);
 };
@@ -1903,7 +1900,7 @@ class OGInfinity {
             roiTimeDiv.textContent = formatTimeWrapper(roi, 2, true, " ", false, "");
           } else {
             if (durationDiv.parentNode.querySelector(".roi_duration"))
-              durationDiv.parentNode.querySelector(".roi_duration").empty();
+              durationDiv.parentNode.querySelector(".roi_duration").replaceChildren();
           }
           techno = that.research(
             technoId,
@@ -2096,7 +2093,7 @@ class OGInfinity {
 
               roiTimeDiv.textContent = formatTimeWrapper(roi, 2, true, " ", false, "");
             } else {
-              roiDiv.empty();
+              roiDiv.replaceChildren();
             }
           }
         }
@@ -2122,7 +2119,7 @@ class OGInfinity {
             )
           );
         } else {
-          timeSumDiv.empty();
+          timeSumDiv.replaceChildren();
         }
         let missing = [];
         let demolish = [];
@@ -2325,7 +2322,7 @@ class OGInfinity {
             );
         }
         if (baselvl - 1 == tolvl || (baselvl > tolvl && (that.page == "research" || that.page == "lfresearch"))) {
-          document.querySelector(".ogk-titles").children[2].empty();
+          document.querySelector(".ogk-titles").children[2].replaceChildren();
         } else {
           document.querySelector(".ogk-titles").children[2].html(that.getTranslatedText(39));
         }
@@ -2377,7 +2374,7 @@ class OGInfinity {
           let tree = document.querySelector(".technology_tree");
           let clone = tree.cloneNode(true);
           tree.style.display = "none";
-          clone.empty();
+          clone.replaceChildren();
           document.querySelector(".description").appendChild(clone);
           let timeDiv = document.querySelector(".build_duration time");
           let baseTime = getTimeFromString(timeDiv.getAttribute("datetime"));
@@ -2656,7 +2653,7 @@ class OGInfinity {
                 createDOM("strong", {}, `${toFormatedNumber(tolvl)}`)
               );
               if (tolvl <= baseLvl) {
-                lvlFromTo.empty();
+                lvlFromTo.replaceChildren();
               }
               if (tolvl < baseLvl - 1 && that.page != "research" && that.page != "lfresearch") {
                 lvlFromTo.html(`${that.getTranslatedText(129)}`);
@@ -2680,7 +2677,7 @@ class OGInfinity {
                 createDOM("strong", {}, `${toFormatedNumber(tolvl)}`)
               );                 
               if (tolvl <= baseLvl) {
-                lvlFromTo.empty();
+                lvlFromTo.replaceChildren();
               }
               if (tolvl < baseLvl - 1 && that.page != "research" && that.page != "lfresearch") {
                 lvlFromTo.html(`${that.getTranslatedText(129)}`);
@@ -3638,8 +3635,8 @@ class OGInfinity {
     moonAct.classList.remove("active");
     moonAct.classList.remove("showMinutes");
     moonAct.classList.remove("activity");
-    planetAct.empty();
-    moonAct.empty();
+    planetAct.replaceChildren();
+    moonAct.replaceChildren();
     if (act.planet == 0) {
       planetAct.classList.add("active");
     } else if (act.planet > 0 && act.planet < 60) {
@@ -5606,7 +5603,7 @@ class OGInfinity {
         ],
         true,
         () => {
-          globalDiv.empty();
+          globalDiv.replaceChildren();
           globalDiv.appendChild(
             this.blackHoleBox((costs) => {
               let date = document.querySelector(".ogk-date strong").innerText;
@@ -5959,7 +5956,7 @@ class OGInfinity {
         ],
         false,
         () => {
-          globalDiv.empty();
+          globalDiv.replaceChildren();
           globalDiv.appendChild(
             this.adjustBox(sums.adjust, (adjust) => {
               let date = document.querySelector(".ogk-date strong").innerText;
@@ -6752,7 +6749,7 @@ class OGInfinity {
       });
     };
     let updateSearch = async (value, alliance, forced) => {
-      searchResult.empty();
+      searchResult.replaceChildren();
       if (value.length > 2) {
         var possible = await dataHelper.filter(value, alliance);
         possible.sort((a, b) => {
@@ -12642,7 +12639,7 @@ class OGInfinity {
           });
         watchlistBtn &&
           watchlistBtn.addEventListener("click", () => {
-            sideStalk.empty();
+            sideStalk.replaceChildren();
             sideStalk.appendChild(
               this.createDOM("div", { class: "title" }, "Historic " + this.json.sideStalk.length + "/10")
             );
@@ -12729,7 +12726,7 @@ class OGInfinity {
           link.appendChild(createDOM("a", { href: "#", onclick: action.getAttribute("onclick") }, action.textContent));
         }
         frag.appendChild(link);
-        expeBox.empty();
+        expeBox.replaceChildren();
         expeBox.appendChild(frag);
       }
     }
@@ -14549,8 +14546,8 @@ class OGInfinity {
     let body =
       dialog.querySelector(".ogl-dialogContent") ||
       dialog.appendChild(this.createDOM("div", { class: "ogl-dialogContent" }));
-    top.empty();
-    body.empty();
+    top.replaceChildren();
+    body.replaceChildren();
     if (header) {
       top.appendChild(header);
     }
