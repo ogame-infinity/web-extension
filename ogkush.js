@@ -2668,10 +2668,17 @@ class OGInfinity {
               tolvl -= 1;
               updateResearchDetails(technologyId, baseLvl, tolvl);
               lvlSpan.textContent = toFormatedNumber(tolvl);
-              lvl.html(tolvl != 0 ? `Lvl <strong>${toFormatedNumber(tolvl)}</strong>` : "");
-              lvlFromTo.html(
-                `<strong>${toFormatedNumber(baseLvl)}</strong>-<strong>${toFormatedNumber(tolvl)}</strong>`
-              );
+              tolvl != 0
+                ? lvl.replaceChildren(
+                    document.createTextNode("Lvl "),
+                    createDOM("strong", {}, `${toFormatedNumber(tolvl)}`)
+                  )
+                : lvl.replaceChildren();
+              lvlFromTo.replaceChildren(
+                createDOM("strong", {}, `${toFormatedNumber(baseLvl)}`),
+                document.createTextNode("-"),
+                createDOM("strong", {}, `${toFormatedNumber(tolvl)}`)
+              );                 
               if (tolvl <= baseLvl) {
                 lvlFromTo.empty();
               }
@@ -4344,13 +4351,17 @@ class OGInfinity {
         span.addEventListener("click", () => {
           spans.forEach((elem) => elem.classList.remove("ogk-active"));
           span.classList.add("ogk-active");
-          let contentHtml = `<strong>${getFormatedDate(elem.date.getTime(), "[d].[m].[y]")}</strong> <span class="${
-            elem.profit >= 0 ? "undermark" : "overmark"
-          }">${elem.profit >= 0 ? " +" : " -"}${toFormatedNumber(Math.abs(elem.profit), 2, true)}</strong></span>`;
+          title.replaceChildren(
+            createDOM("strong", {}, `${getFormatedDate(elem.date.getTime(), "[d].[m].[y]")}`),
+            createDOM(
+              "span",
+              { class: `${elem.profit >= 0 ? "undermark" : "overmark"}` },
+              `${elem.profit >= 0 ? " +" : " -"}${toFormatedNumber(Math.abs(elem.profit), 2, true)}`
+            )
+          );
           if (elem.start) {
-            contentHtml += `<strong>${getFormatedDate(elem.start.getTime(), "[d].[m].[y]")}</strong>`;
+            title.appendChild(createDOM("strong", {}, `${getFormatedDate(elem.start.getTime(), "[d].[m].[y]")}`));
           }
-          title.html(contentHtml);
           callback(elem.range, index);
         });
       });
@@ -4575,23 +4586,34 @@ class OGInfinity {
       this.createDOM("h3", {}, toFormatedNumber(parseInt(player.points.score)) + "<small> pts</small>")
     );
     let detailRank = globalInfo.appendChild(this.createDOM("div", { class: "ogl-detailRank" }));
-    detailRank.html(
-      `\n          <div><div class="ogl-ecoIcon"></div>${toFormatedNumber(
-        parseInt(player.economy.score)
-      )} <small>pts</small><span class="ogl-ranking">#${parseInt(
-        player.economy.position
-      )} </span></div>\n          <div><div class="ogl-techIcon"></div>${toFormatedNumber(
-        parseInt(player.research.score)
-      )} <small>pts</small><span class="ogl-ranking">#${parseInt(
-        player.research.position
-      )} </span></div>\n          <div><div class="ogl-fleetIcon"></div>${toFormatedNumber(
-        parseInt(player.military.score)
-      )} <small>pts</small><span class="ogl-ranking">#${toFormatedNumber(
-        parseInt(player.military.position)
-      )} </span></div>\n          <div><div class="ogl-fleetIcon grey"></div>${toFormatedNumber(
-        parseInt(player.def)
-      )} <small>pts</small></div>\n          `
+    const detailRankDiv1 = createDOM("div");
+    detailRankDiv1.replaceChildren(
+      createDOM("div", { class: "ogl-ecoIcon" }),
+      document.createTextNode(`${toFormatedNumber(parseInt(player.economy.score))} `),
+      createDOM("small", {}, `pts`),
+      createDOM("span", { class: "ogl-ranking" }, `#${parseInt(player.economy.position)} `)
     );
+    const detailRankDiv2 = createDOM("div");
+    detailRankDiv2.replaceChildren(
+      createDOM("div", { class: "ogl-techIcon" }),
+      document.createTextNode(`${toFormatedNumber(parseInt(player.research.score))} `),
+      createDOM("small", {}, `pts`),
+      createDOM("span", { class: "ogl-ranking" }, `#${parseInt(player.research.position)} `)
+    );
+    const detailRankDiv3 = createDOM("div");
+    detailRankDiv3.replaceChildren(
+      createDOM("div", { class: "ogl-fleetIcon" }),
+      document.createTextNode(`${toFormatedNumber(parseInt(player.military.score))} `),
+      createDOM("small", {}, `pts`),
+      createDOM("span", { class: "ogl-ranking" }, `#${toFormatedNumber(parseInt(player.military.position))} `)
+    );
+    const detailRankDiv4 = createDOM("div");
+    detailRankDiv4.replaceChildren(
+      createDOM("div", { class: "ogl-fleetIcon grey" }),
+      document.createTextNode(`${toFormatedNumber(parseInt(player.def))} `),
+      createDOM("small", {}, `pts`)
+    );
+    detailRank.replaceChildren(detailRankDiv1, detailRankDiv2, detailRankDiv3, detailRankDiv4);
     let details = content.appendChild(this.createDOM("div", { class: "ogk-details" }));
     let ecoDetail = details.appendChild(this.createDOM("div", { class: "ogk-box" }));
     let techDetail = details.appendChild(this.createDOM("div", { class: "ogk-box ogk-technos" }));
