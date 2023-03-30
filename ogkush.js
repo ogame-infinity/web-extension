@@ -896,7 +896,6 @@ const RESEARCH_INFO = {
     factorCost: 1.5,
     baseTime: 2000,
     factorTime: 1.3,
-    bonus: [0.06, 0.06, 0.06], // in %
   },
   11203: {
     name: "Fusion Drives",
@@ -939,7 +938,6 @@ const RESEARCH_INFO = {
     factorCost: 1.5,
     baseTime: 6000,
     factorTime: 1.3,
-    bonus: [0.06, 0.06, 0.06], // in %
   },
   11209: {
     name: "Light Fighter Mk II",
@@ -1025,7 +1023,6 @@ const RESEARCH_INFO = {
     factorCost: 1.5,
     baseTime: 2000,
     factorTime: 1.3,
-    bonus: [0, 0.08, 0], // in %
   },
   12203: {
     name: "High Energy Pump Systems",
@@ -1033,7 +1030,6 @@ const RESEARCH_INFO = {
     factorCost: 1.5,
     baseTime: 2500,
     factorTime: 1.3,
-    bonus: [0, 0, 0.08], // in %
   },
   12204: {
     name: "Cargo Hold Expansion (Civilian Ships)",
@@ -1048,7 +1044,6 @@ const RESEARCH_INFO = {
     factorCost: 1.5,
     baseTime: 4500,
     factorTime: 1.3,
-    bonus: [0.06, 0.06, 0.06], // in %
   },
   12206: {
     name: "Geothermal Power Plants",
@@ -1063,7 +1058,6 @@ const RESEARCH_INFO = {
     factorCost: 1.5,
     baseTime: 5500,
     factorTime: 1.3,
-    bonus: [0.08, 0, 0], // in %
   },
   12208: {
     name: "Ion Crystal Enhancement (Heavy Fighter)",
@@ -1085,7 +1079,6 @@ const RESEARCH_INFO = {
     factorCost: 1.5,
     baseTime: 7000,
     factorTime: 1.3,
-    bonus: [0.08, 0, 0], // in %
   },
   12211: {
     name: "Seismic Mining Technology",
@@ -1093,7 +1086,6 @@ const RESEARCH_INFO = {
     factorCost: 1.5,
     baseTime: 7500,
     factorTime: 1.3,
-    bonus: [0, 0.08, 0], // in %
   },
   12212: {
     name: "Magma-Powered Pump Systems",
@@ -1101,7 +1093,6 @@ const RESEARCH_INFO = {
     factorCost: 1.5,
     baseTime: 8000,
     factorTime: 1.3,
-    bonus: [0, 0, 0.08], // in %
   },
   12213: {
     name: "Ion Crystal Modules",
@@ -1152,7 +1143,6 @@ const RESEARCH_INFO = {
     factorCost: 1.5,
     baseTime: 1000,
     factorTime: 1.3,
-    bonus: [0, 0, 0.08], // in %
   },
   13202: {
     name: "Plasma Drive",
@@ -1188,7 +1178,6 @@ const RESEARCH_INFO = {
     factorCost: 1.5,
     baseTime: 5000,
     factorTime: 1.3,
-    bonus: [0.06, 0.06, 0.06], // in %
   },
   13207: {
     name: "Improved Drone AI",
@@ -1238,7 +1227,6 @@ const RESEARCH_INFO = {
     factorCost: 1.5,
     baseTime: 8500,
     factorTime: 1.3,
-    bonus: [0.06, 0.06, 0, 0], // %
   },
   13214: {
     name: "General Overhaul (Battlecruiser)",
@@ -1289,7 +1277,6 @@ const RESEARCH_INFO = {
     factorCost: 1.5,
     baseTime: 2000,
     factorTime: 1.3,
-    bonus: [0, 0, 0.08], // in %
   },
   14203: {
     name: "Psionic Network",
@@ -1360,7 +1347,6 @@ const RESEARCH_INFO = {
     factorCost: 1.5,
     baseTime: 8000,
     factorTime: 1.3,
-    bonus: [0.06, 0.06, 0, 0], // %
   },
   14213: {
     name: "Efficient Swarm Intelligence",
