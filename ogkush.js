@@ -4350,12 +4350,13 @@ class OGInfinity {
           span.classList.add("ogk-active");
           title.replaceChildren(
             createDOM("strong", {}, `${getFormatedDate(elem.date.getTime(), "[d].[m].[y]")}`),
+            createDOM("strong").appendChild(
             createDOM(
               "span",
               { class: `${elem.profit >= 0 ? "undermark" : "overmark"}` },
               `${elem.profit >= 0 ? " +" : " -"}${toFormatedNumber(Math.abs(elem.profit), 2, true)}`
             )
-          );
+          ).parentElement);
           if (elem.start) {
             title.appendChild(createDOM("strong", {}, `${getFormatedDate(elem.start.getTime(), "[d].[m].[y]")}`));
           }
@@ -5851,15 +5852,20 @@ class OGInfinity {
       let content = this.createDOM("div", { class: "ogk-profit" });
       let title = content.appendChild(this.createDOM("div", { class: "ogk-date" }));
       content.appendChild(this.createDOM("div", { class: "ogk-scroll-wrapper" }));
-      let contentHtml = `<strong>${getFormatedDate(
-        this.dateStrToDate(minDate).getTime(),
-        "[d].[m].[y]"
-      )}</strong> <span class="tooltip ${total > 0 ? "undermark" : "overmark"}" data-title=${toFormatedNumber(
-        Math.abs(total),
-        0
-      )}>${total > 0 ? " + " : " - "}${toFormatedNumber(Math.abs(total), 2, true)}</strong></span>`;
-      contentHtml += `<strong>${getFormatedDate(this.dateStrToDate(maxDate).getTime(), "[d].[m].[y]")}</strong>`;
-      title.html(contentHtml);
+      title.replaceChildren(
+        createDOM("strong", {}, `${getFormatedDate(this.dateStrToDate(minDate).getTime(), "[d].[m].[y]")}`),
+        createDOM("strong").appendChild(
+          createDOM(
+            "span",
+            {
+              class: `${total > 0 ? "tooltip undermark" : "tooltip overmark"}`,
+              "data-title": `${toFormatedNumber(Math.abs(total), 0)}`,
+            },
+            `${total > 0 ? " + " : " - "}${toFormatedNumber(Math.abs(total), 2, true)}`
+          )
+        ).parentElement,
+        createDOM("strong", {}, `${getFormatedDate(this.dateStrToDate(maxDate).getTime(), "[d].[m].[y]")}`)
+      );
       let div = this.createDOM("div");
       div.appendChild(content);
       div.appendChild(renderDetails(range));
@@ -6200,15 +6206,20 @@ class OGInfinity {
       let content = this.createDOM("div", { class: "ogk-profit" });
       let title = content.appendChild(this.createDOM("div", { class: "ogk-date" }));
       content.appendChild(this.createDOM("div", { class: "ogk-scroll-wrapper" }));
-      let contentHtml = `<strong>${getFormatedDate(
-        this.dateStrToDate(minDate).getTime(),
-        "[d].[m].[y]"
-      )}</strong> <span class="${total > 0 ? "tooltip undermark" : "tooltip overmark"}" data-title=${toFormatedNumber(
-        Math.abs(total),
-        0
-      )}>${total > 0 ? " + " : " - "}${toFormatedNumber(Math.abs(total), 2, true)}</strong></span>`;
-      contentHtml += `<strong>${getFormatedDate(this.dateStrToDate(maxDate).getTime(), "[d].[m].[y]")}</strong>`;
-      title.html(contentHtml);
+      title.replaceChildren(
+        createDOM("strong", {}, `${getFormatedDate(this.dateStrToDate(minDate).getTime(), "[d].[m].[y]")}`),
+        createDOM("strong").appendChild(
+          createDOM(
+            "span",
+            {
+              class: `${total > 0 ? "tooltip undermark" : "tooltip overmark"}`,
+              "data-title": `${toFormatedNumber(Math.abs(total), 0)}`,
+            },
+            `${total > 0 ? " + " : " - "}${toFormatedNumber(Math.abs(total), 2, true)}`
+          )
+        ).parentElement,
+        createDOM("strong", {}, `${getFormatedDate(this.dateStrToDate(maxDate).getTime(), "[d].[m].[y]")}`)
+      );
       let div = this.createDOM("div");
       div.appendChild(content);
       div.appendChild(renderDetails(range));
@@ -6640,32 +6651,49 @@ class OGInfinity {
       });
 
       let detailRank = planetsColumn.appendChild(this.createDOM("div", { class: "ogl-detailRank" }));
-      detailRank.html(
-        `\n          <div><div class="ogl-totalIcon"></div> ${toFormatedNumber(
-          Number(player.points.score),
-          null,
-          true
-        )} <small>pts</small></div>\n          <div><div class="ogl-ecoIcon"></div> ${toFormatedNumber(
-          Number(player.economy.score),
-          null,
-          true
-        )} <small>pts</small></div>\n          <div><div class="ogl-techIcon"></div> ${toFormatedNumber(
-          Number(player.research.score),
-          null,
-          true
-        )} <small>pts</small></div>\n          <div><div class="ogl-fleetIcon"></div> ${toFormatedNumber(
-          Number(player.military.score),
-          null,
-          true
-        )} <small>pts</small></div>\n          <div><div class="ogl-fleetIcon grey"></div> ${toFormatedNumber(
-          Number(player.def),
-          null,
-          true
-        )} <small>pts</small></div>\n          <div><div class="ogl-fleetIcon orange"></div> ${toFormatedNumber(
-          Number(player.military.ships),
-          null,
-          true
-        )} <small>ships</small></div>\n          `
+      const detailRankDiv1 = createDOM("div");
+      detailRankDiv1.replaceChildren(
+        createDOM("div", { class: "ogl-totalIcon" }),
+        document.createTextNode(` ${toFormatedNumber(Number(player.points.score), null, true)} `),
+        createDOM("small", {}, `pts`)
+      );
+      const detailRankDiv2 = createDOM("div");
+      detailRankDiv2.replaceChildren(
+        createDOM("div", { class: "ogl-ecoIcon" }),
+        document.createTextNode(` ${toFormatedNumber(Number(player.economy.score), null, true)} `),
+        createDOM("small", {}, `pts`)
+      );
+      const detailRankDiv3 = createDOM("div");
+      detailRankDiv3.replaceChildren(
+        createDOM("div", { class: "ogl-techIcon" }),
+        document.createTextNode(` ${toFormatedNumber(Number(player.research.score), null, true)} `),
+        createDOM("small", {}, `pts`)
+      );
+      const detailRankDiv4 = createDOM("div");
+      detailRankDiv4.replaceChildren(
+        createDOM("div", { class: "ogl-fleetIcon" }),
+        document.createTextNode(` ${toFormatedNumber(Number(player.military.score), null, true)} `),
+        createDOM("small", {}, `pts`)
+      );
+      const detailRankDiv5 = createDOM("div");
+      detailRankDiv5.replaceChildren(
+        createDOM("div", { class: "ogl-fleetIcon grey" }),
+        document.createTextNode(` ${toFormatedNumber(Number(player.def), null, true)} `),
+        createDOM("small", {}, `pts`)
+      );
+      const detailRankDiv6 = createDOM("div");
+      detailRankDiv6.replaceChildren(
+        createDOM("div", { class: "ogl-fleetIcon orange" }),
+        document.createTextNode(` ${toFormatedNumber(Number(player.military.ships), null, true)} `),
+        createDOM("small", {}, `ships`)
+      );
+      detailRank.replaceChildren(
+        detailRankDiv1,
+        detailRankDiv2,
+        detailRankDiv3,
+        detailRankDiv4,
+        detailRankDiv5,
+        detailRankDiv6
       );
       let stalkPlanets = this.createDOM("div", {
         class: "ogl-stalkPlanets",
@@ -9180,8 +9208,14 @@ class OGInfinity {
       selectMostMetal.click();
     });
     let bar = load.appendChild(this.createDOM("div", {}));
-    bar.html(
-      '<div class="fleft bar_container" data-current-amount="0" data-capacity="0">\n        <div class="filllevel_bar"></div>\n        </div>\n        <div>\n        <span class="undermark">0</span>\n        / <span>0</span>\n        </div>'
+    bar.replaceChildren(
+      createDOM("div", { class: "fleft bar_container", "data-current-amount": "0", "data-capacity": "0" }).appendChild(
+        createDOM("div", { class: "filllevel_bar" })
+      ).parentElement,
+      createDOM("div")
+        .appendChild(createDOM("span", { class: "undermark" }, "0"))
+        .parentElement.appendChild(document.createTextNode(" / "))
+        .parentElement.appendChild(createDOM("span", {}, "0")).parentElement
     );
     let settings = load.appendChild(
       this.createDOM(
@@ -10398,8 +10432,16 @@ class OGInfinity {
         selectMostMetal.click();
       });
       let bar = load.appendChild(this.createDOM("div", {}));
-      bar.html(
-        '<div class="fleft bar_container" data-current-amount="0" data-capacity="0">\n        <div class="filllevel_bar"></div>\n        </div>\n        <div>\n        <span class="undermark">0</span>\n        / <span>0</span>\n        </div>'
+      bar.replaceChildren(
+        createDOM("div", {
+          class: "fleft bar_container",
+          "data-current-amount": "0",
+          "data-capacity": "0",
+        }).appendChild(createDOM("div", { class: "filllevel_bar" })).parentElement,
+        createDOM("div")
+          .appendChild(createDOM("span", { class: "undermark" }, "0"))
+          .parentElement.appendChild(document.createTextNode(" / "))
+          .parentElement.appendChild(createDOM("span", {}, "0")).parentElement
       );
       let settings = load.appendChild(
         this.createDOM(
@@ -10417,13 +10459,24 @@ class OGInfinity {
           fromFormatedNumber(crystalFiller.value) +
           fromFormatedNumber(deutFiller.value);
         let freeSpace = fleetDispatcher.getCargoCapacity() - total;
-        bar.html(
-          `<div class="fleft bar_container" data-current-amount="0" data-capacity="0">\n        <div class="filllevel_bar"></div>\n        </div>\n        <div>\n        <span class="${
-            freeSpace >= 0 ? "undermark" : "overmark"
-          }">${toFormatedNumber(freeSpace, 0)} </span>\n        / <span> ${toFormatedNumber(
-            fleetDispatcher.getCargoCapacity(),
-            0
-          )}</span>\n        </div>`
+        bar.replaceChildren(
+          createDOM("div", {
+            class: "fleft bar_container",
+            "data-current-amount": "0",
+            "data-capacity": "0",
+          }).appendChild(createDOM("div", { class: "filllevel_bar" })).parentElement,
+          createDOM("div")
+            .appendChild(
+              createDOM(
+                "span",
+                { class: `${freeSpace >= 0 ? "undermark" : "overmark"}` },
+                `${toFormatedNumber(freeSpace, 0)}`
+              )
+            )
+            .parentElement.appendChild(document.createTextNode(" / "))
+            .parentElement.appendChild(
+              createDOM("span", {}, `${toFormatedNumber(fleetDispatcher.getCargoCapacity(), 0)}`)
+            ).parentElement
         );
         let filler = document.querySelector(".ogl-cargo .filllevel_bar");
         let percent = 100 - (freeSpace / fleetDispatcher.getCargoCapacity()) * 100;
@@ -12330,32 +12383,49 @@ class OGInfinity {
       this.highlightTarget();
       date.textContent = this.timeSince(new Date(player.lastUpdate));
       count.html(player.planets.length + " " + this.getTranslatedText(42));
-      detailRank.html(
-        `\n      <div><div class="ogl-totalIcon"></div> ${toFormatedNumber(
-          player.points.score,
-          null,
-          true
-        )} <small>pts</small></div>\n      <div><div class="ogl-ecoIcon"></div> ${toFormatedNumber(
-          player.economy.score,
-          null,
-          true
-        )} <small>pts</small></div>\n      <div><div class="ogl-techIcon"></div> ${toFormatedNumber(
-          player.research.score,
-          null,
-          true
-        )} <small>pts</small></div>\n      <div><div class="ogl-fleetIcon"></div> ${toFormatedNumber(
-          player.military.score,
-          null,
-          true
-        )} <small>pts</small></div>\n      <div><div class="ogl-fleetIcon grey"></div> ${toFormatedNumber(
-          player.def,
-          null,
-          true
-        )} <small>pts</small></div>\n      <div><div class="ogl-fleetIcon orange"></div> ${toFormatedNumber(
-          player.military.ships,
-          null,
-          true
-        )} <small>ships</small></div>`
+      const detailRankDiv1 = createDOM("div");
+      detailRankDiv1.replaceChildren(
+        createDOM("div", { class: "ogl-totalIcon" }),
+        document.createTextNode(` ${toFormatedNumber(Number(player.points.score), null, true)} `),
+        createDOM("small", {}, `pts`)
+      );
+      const detailRankDiv2 = createDOM("div");
+      detailRankDiv2.replaceChildren(
+        createDOM("div", { class: "ogl-ecoIcon" }),
+        document.createTextNode(` ${toFormatedNumber(Number(player.economy.score), null, true)} `),
+        createDOM("small", {}, `pts`)
+      );
+      const detailRankDiv3 = createDOM("div");
+      detailRankDiv3.replaceChildren(
+        createDOM("div", { class: "ogl-techIcon" }),
+        document.createTextNode(` ${toFormatedNumber(Number(player.research.score), null, true)} `),
+        createDOM("small", {}, `pts`)
+      );
+      const detailRankDiv4 = createDOM("div");
+      detailRankDiv4.replaceChildren(
+        createDOM("div", { class: "ogl-fleetIcon" }),
+        document.createTextNode(` ${toFormatedNumber(Number(player.military.score), null, true)} `),
+        createDOM("small", {}, `pts`)
+      );
+      const detailRankDiv5 = createDOM("div");
+      detailRankDiv5.replaceChildren(
+        createDOM("div", { class: "ogl-fleetIcon grey" }),
+        document.createTextNode(` ${toFormatedNumber(Number(player.def), null, true)} `),
+        createDOM("small", {}, `pts`)
+      );
+      const detailRankDiv6 = createDOM("div");
+      detailRankDiv6.replaceChildren(
+        createDOM("div", { class: "ogl-fleetIcon orange" }),
+        document.createTextNode(` ${toFormatedNumber(Number(player.military.ships), null, true)} `),
+        createDOM("small", {}, `ships`)
+      );
+      detailRank.replaceChildren(
+        detailRankDiv1,
+        detailRankDiv2,
+        detailRankDiv3,
+        detailRankDiv4,
+        detailRankDiv5,
+        detailRankDiv6
       );
     };
     if (isNaN(Number(player))) {
