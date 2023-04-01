@@ -147,7 +147,11 @@
 
 #bannerSkyscrapercomponent {
   position: absolute;
-  left: 1160px;
+  left: 1150px;
+}
+
+#bannerSkyscrapercomponent img {
+  max-width: 150px;
 }
 
 #planetbarcomponent #bannerSkyscrapercomponent {
@@ -381,8 +385,7 @@ input[type="password"]::selection {
 }
 
 .ogl-settings .ogk-logo {
-  margin-bottom: 20px;
-  margin-left: 30px;
+  transform: scale(0.75);
 }
 
 .ogl-settings h1,
@@ -394,7 +397,7 @@ input[type="password"]::selection {
 
 .ogl-settings > div:first-child,
 .ogl-settings > div:last-child {
-  padding: 10px;
+  padding: 5px;
 }
 
 .ogl-settings > div:last-child {
@@ -405,8 +408,8 @@ input[type="password"]::selection {
 .ogl-settings .ogl-rvalInput {
   cursor: auto !important;
   float: right;
-  height: 14px;
-  line-height: 16px;
+  height: 12px;
+  line-height: 14px;
   padding: 0 4px;
   text-align: center;
   width: 100px !important;
@@ -416,8 +419,8 @@ input[type="password"]::selection {
 .ogl-settings .ogl-ptreTeamKey {
   cursor: auto !important;
   float: right;
-  height: 18px;
-  line-height: 16px !important;
+  height: 12px;
+  line-height: 14px !important;
   padding: 0 4px;
   text-align: center;
   vertical-align: middle;
@@ -434,7 +437,7 @@ input[type="password"]::selection {
 
 .ogl-settings .btn_blue.save {
   width: fit-content;
-    min-width: 30px;
+  min-width: 30px;
   align-self: flex-end;
   margin-top: 5px;
 }
@@ -2465,7 +2468,7 @@ button.build-it_premium:hover {
 .ogk-bhole-grid {
   display: grid;
   grid-template-columns: 0fr 1fr 0fr 1fr;
-  gap: 8px 10px;
+  gap: 5px 10px;
   align-items: center;
   margin-bottom: 20px;
 }
@@ -2486,7 +2489,7 @@ button.build-it_premium:hover {
   border-radius: 5px 5px 0 0;
   height: 20px;
   line-height: 20px;
-  top: 111px;
+  top: 105px;
   right: 50px;
 }
 
@@ -2613,6 +2616,7 @@ button.build-it_premium:hover {
   font-size: 13px;
 }
 
+.ogk-stats .ogl-lfIcon,
 .ogk-stats .ogl-ecoIcon,
 .ogk-stats .ogl-fleetIcon,
 .ogk-stats .ogl-fleetIcon.grey,
@@ -3374,10 +3378,11 @@ button.build-it_premium:hover {
 .ogl-ecoIcon,
 .ogl-fleetIcon,
 .ogl-techIcon,
+.ogl-lfIcon,
 .ogl-totalIcon {
-  background: url("https://gf3.geo.gfsrv.net/cdne9/1fd57fa51cdb81035382943e635348.gif") no-repeat;
+  background: url("https://gf1.geo.gfsrv.net/cdnfc/bf68bc13514fa2b43185fb0e6a25fe.png") no-repeat;
   background-position: 100% 0 !important;
-  background-size: calc(16px * 6) !important;
+  background-size: calc(16px * 7) !important;
   border-radius: 3px;
   box-shadow: 0 0 0 1px #000;
   display: inline-block;
@@ -3392,12 +3397,16 @@ button.build-it_premium:hover {
   width: 16px;
 }
 
+.ogl-ecoIcon {
+  background-position: -80px 0 !important;
+}
+
 .ogl-techIcon {
-  background-position: 80% 0 !important;
+  background-position: -64px 0 !important;
 }
 
 .ogl-fleetIcon {
-  background-position: 60% 0 !important;
+  background-position: -48px 0 !important;
 }
 
 .ogl-fleetIcon.grey {
@@ -6319,10 +6328,10 @@ hr {
   background: #262e39;
   display: flex;
   overflow: hidden;
-  padding: 20px;
+  padding: 15px;
   position: fixed;
   animation: fadeIn ease 0.4s;
-  max-height: 80vh;
+  max-height: 90vh;
   position: relative;
 }
 
@@ -6334,7 +6343,7 @@ hr {
 
 .ogl-dialogContent {
   overflow-y: auto;
-  padding: 10px;
+  padding: 5px;
 }
 
 @media only screen and (max-height: 800px) {

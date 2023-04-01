@@ -1677,7 +1677,7 @@ class OGInfinity {
   }
 
   timeZone() {
-    if (!this.json.timezoneDiff && window.timeZoneDiffSeconds !== undefined) {
+    if (window.timeZoneDiffSeconds !== undefined) {
       this.json.timezoneDiff = timeZoneDiffSeconds;
       this.saveData();
     }
@@ -4398,7 +4398,7 @@ class OGInfinity {
     return content;
   }
 
-  repartitionGraph(eco, tech, fleet, def) {
+  repartitionGraph(eco, tech, fleet, def, lf) {
     let div = this.createDOM("div", { class: "ogk-repartition" });
     let chartNode = div.appendChild(
       this.createDOM("canvas", {
@@ -4412,16 +4412,17 @@ class OGInfinity {
       data: {
         datasets: [
           {
-            data: [eco, tech, fleet, def],
-            backgroundColor: ["#656565", "#83ba33", "#b73536", "#3d4800"],
+            data: [eco, tech, fleet, def, lf],
+            backgroundColor: ["#656565", "#83ba33", "#b73536", "#3d4800", "#9556ce"],
             borderColor: "#1b232c",
           },
         ],
         labels: [
-          this.getTranslatedText(51, "text", false),
-          this.getTranslatedText(52, "text", false),
-          this.getTranslatedText(53, "text", false),
-          this.getTranslatedText(54, "text", false),
+          this.getTranslatedText(51, "text"),
+          this.getTranslatedText(52, "text"),
+          this.getTranslatedText(53, "text"),
+          this.getTranslatedText(54, "text"),
+          this.getTranslatedText(89, "text"),
         ],
       },
       options: {
@@ -4601,9 +4602,11 @@ class OGInfinity {
       player.economy = { score: 0 };
       player.research = { score: 0 };
       player.military = { score: 0 };
+      if (this.hasLifeforms) player.lifeform = { score: 0 };
     }
+    console.log(player.lifeform)
     globalInfo.appendChild(
-      this.repartitionGraph(player.economy.score, player.research.score, player.military.score, player.def)
+      this.repartitionGraph(player.economy.score, player.research.score, player.military.score, player.def, player.lifeform.score)
     );
     globalInfo.appendChild(this.createDOM("h2", {}, toFormatedNumber(parseInt(player.points.position))));
     globalInfo.appendChild(
@@ -4625,7 +4628,9 @@ class OGInfinity {
         parseInt(player.military.position)
       )} </span></div>\n          <div><div class="ogl-fleetIcon grey"></div>${toFormatedNumber(
         parseInt(player.def)
-      )} <small>pts</small></div>\n          `
+      )} <small>pts</small></div>\n${this.hasLifeforms?'<div><div class="ogl-lfIcon"></div>'+toFormatedNumber(
+        parseInt(player.lifeform.score))+'<small>pts</small><span class="ogl-ranking">#'+toFormatedNumber(
+          parseInt(player.military.score))+'</span></div>\n':""}`
     );
     let details = content.appendChild(this.createDOM("div", { class: "ogk-details" }));
     let ecoDetail = details.appendChild(this.createDOM("div", { class: "ogk-box" }));
@@ -5428,7 +5433,7 @@ class OGInfinity {
       this.createDOM("span", { class: "ogl-tab ogl-active" }, this.getTranslatedText(90))
     );
     let fleetBtn = header.appendChild(this.createDOM("span", { class: "ogl-tab" }, this.getTranslatedText(63)));
-    let defBtn = header.appendChild(this.createDOM("span", { class: "ogl-tab" }, this.getTranslatedText(89)));
+    let defBtn = header.appendChild(this.createDOM("span", { class: "ogl-tab" }, this.getTranslatedText(54)));
     let body = this.createDOM("div");
     body.appendChild(header);
     body.appendChild(this.minesOverview());
@@ -13015,7 +13020,7 @@ class OGInfinity {
     header.appendChild(this.createDOM("th", {}, `${this.getTranslatedText(73)} (+)`));
     header.appendChild(this.createDOM("th", { "data-filter": "$" }, this.getTranslatedText(99)));
     header.appendChild(this.createDOM("th", { "data-filter": "FLEET" }, this.getTranslatedText(100)));
-    header.appendChild(this.createDOM("th", { "data-filter": "DEF" }, this.getTranslatedText(101)));
+    header.appendChild(this.createDOM("th", { "data-filter": "DEF" }, this.getTranslatedText(54)));
 
     let cargoChoice = this.createDOM("div", {
       class: `ogk-cargo${this.json.ships[210].cargoCapacity ? " spio" : ""}`,
@@ -15026,7 +15031,7 @@ class OGInfinity {
     window.onbeforeunload = () => cancelController.abort();
   }
 
-  getTranslatedText(id, type = "text", html = true) {
+  getTranslatedText(id, type = "text") {
     let language = ["de", "en", "es", "fr"].includes(this.gameLang) ? this.gameLang : "en";
     let translation = {
       tech: {
@@ -15972,10 +15977,10 @@ class OGInfinity {
           fr: "Développement ultérieur recommandé",
         },
         /*89*/ {
-          de: "Verteidigung",
-          en: "Defence",
-          es: "Defensa",
-          fr: "Défense",
+          de: "Lebensformen",
+          en: "Lifeforms",
+          es: "Formas de vida",
+          fr: "Forme de vie",
         },
         /*90*/ {
           de: "Minen",
@@ -16043,11 +16048,11 @@ class OGInfinity {
           es: "Flota",
           fr: "Flotte",
         },
-        /*101*/ {
-          de: "Verteidigung",
-          en: "Defense",
-          es: "Defensa",
-          fr: "Défense",
+        /*101*/ { /*54 is Defence, can be used differntly*/
+          de: "",
+          en: "",
+          es: "",
+          fr: "",
         },
         /*102*/ {
           de: "Aktionen",
@@ -16271,9 +16276,32 @@ class OGInfinity {
           es: "Flechas de navegación en versión móvil",
           fr: "Flèches de navigation en version mobile",
         },
+        /*139*/ {
+          de: "Abgeschlossenen Vorgang anzeigen",
+          en: "Indicate finished process",
+          es: "Indicar proceso terminado",
+          fr: "Indiquer le processus terminé"
+        },
+        /*140*/ {
+          de: "Externe Tools",
+          en: "External Tools",
+          es: "Herramientas externas",
+          fr: "Outils externes"
+        },
+        /*141*/ {
+          de: "",
+          en: "",
+          es: "",
+          fr: "",
+        },
+        /*142*/ {
+          de: "Standardmissionen",
+          en: "Default missions",
+          es: "Misiónes por defecto",
+          fr: "Missions par défaut",
+        },
       ],
     };
-    if (html) return '<span class="ogl-translated">' + translation[type][id][language] + "</span>";
     return translation[type][id][language];
   }
 
@@ -16319,45 +16347,27 @@ class OGInfinity {
       class: "ogl-dialogContainer ogl-settings",
     });
     let dataDiv = container.appendChild(this.createDOM("div", {}));
-    dataDiv.appendChild(this.createDOM("div", { class: "ogk-logo" }));
-
-    dataDiv.appendChild(
+    let ogameInfinity = dataDiv.appendChild(this.createDOM("div"));
+    ogameInfinity.appendChild(this.createDOM("div", { class: "ogk-logo" }));
+    ogameInfinity.appendChild(
       this.createDOM(
         "div",
         { class: "ogi-checkbox" },
         `<strong class="undermark">${this.getTranslatedText(
           133
-        )}</strong>\n        <a target="_blank" href="https://discord.gg/9aMdQgk"> Discord </span>`
+        )}</strong><a target="_blank" href="https://discord.gg/9aMdQgk">Discord</span>`
       )
     );
-    // dataDiv.appendChild(
-    //   this.createDOM(
-    //     "div",
-    //     { style: "margin-bottom: 3px" },
-    //     `<a target="_blank" class="undermark" href="https://discord.gg/9aMdQgk"> Contributing/Bug reporting<br/></span>`
-    //   )
-    // );
-    let optiondiv = dataDiv.appendChild(this.createDOM("hr"));
-    optiondiv = dataDiv.appendChild(
-      this.createDOM("span", {}, '<a href="https://ptre.chez.gg/" target="_blank">PTRE</a> Teamkey')
-    );
-    let ptreInput = optiondiv.appendChild(
-      this.createDOM("input", {
-        type: "password",
-        class: "ogl-ptreTeamKey tooltip",
-        value: this.json.options.ptreTK ?? "",
-        placeholder: "TM-XXXX-XXXX-XXXX-XXXX",
-      })
-    );
+    dataDiv.appendChild(this.createDOM("hr"));
+    let universe = dataDiv.appendChild(this.createDOM("div"));
     let universeSettingsTooltip = "";
     for (let [key, value] of Object.entries(this.json.universeSettingsTooltip)) {
       universeSettingsTooltip += `<span>${key}: ${value}</span><br>`;
     }
-    dataDiv.appendChild(this.createDOM("hr"));
-    dataDiv.appendChild(
+    universe.appendChild(
       this.createDOM("h1", { class: "tooltip", title: universeSettingsTooltip }, this.getTranslatedText(9))
     );
-    let srvDatas = dataDiv.appendChild(
+    let srvDatas = universe.appendChild(
       this.createDOM(
         "span",
         {
@@ -16385,12 +16395,14 @@ class OGInfinity {
       document.querySelector(".ogl-dialog .close-tooltip").click();
     });
     dataDiv.appendChild(this.createDOM("hr"));
+    let featureSettings = dataDiv.appendChild(this.createDOM("div", { style: "display: grid;" }));
+    featureSettings.appendChild(this.createDOM("h1", {}, this.getTranslatedText(103)));
     if (this.json.timezoneDiff != 0) {
-      let spanZone = dataDiv.appendChild(
+      let spanZone = featureSettings.appendChild(
         this.createDOM(
           "span",
           {
-            style: "display: flex;justify-content: space-between; align-items: center;margin-bottom: 10px",
+            style: "display: flex;justify-content: space-between; align-items: center;",
           },
           this.getTranslatedText(36)
         )
@@ -16403,9 +16415,106 @@ class OGInfinity {
       if (this.json.options.timeZone) {
         timeZoneCheck.checked = true;
       }
-      dataDiv.appendChild(this.createDOM("hr"));
     }
-    dataDiv.appendChild(
+    let optiondiv = featureSettings.appendChild(
+      this.createDOM(
+        "span",
+        {
+          style: "display: flex;justify-content: space-between; align-items: center;",
+        },
+        this.getTranslatedText(33)
+      )
+    );
+    let timerCheck = optiondiv.appendChild(this.createDOM("input", { type: "checkbox" }));
+    timerCheck.addEventListener("change", () => {
+      this.json.options.activitytimers = timerCheck.checked;
+      this.saveData();
+    });
+    if (this.json.options.activitytimers) {
+      timerCheck.checked = true;
+    }
+    optiondiv = featureSettings.appendChild(
+      this.createDOM(
+        "span",
+        {
+          style: "display: flex;justify-content: space-between; align-items: center;",
+        },
+        this.getTranslatedText(34)
+      )
+    );
+    let disableautofetchempirebox = optiondiv.appendChild(this.createDOM("input", { type: "checkbox" }));
+    disableautofetchempirebox.addEventListener("change", () => {
+      this.json.options.disableautofetchempire = disableautofetchempirebox.checked;
+      this.saveData();
+    });
+    if (this.json.options.disableautofetchempire) {
+      disableautofetchempirebox.checked = true;
+    }
+    let fleetActivity = featureSettings.appendChild(
+      this.createDOM(
+        "div",
+        { class: "ogi-checkbox" },
+        `<label for="fleet-activity">${this.getTranslatedText(
+          134
+        )}</label>\n        <input type="checkbox" id="fleet-activity" name="fleet-activity" ${
+          this.json.options.fleetActivity ? "checked" : ""
+        }>`
+      )
+    );
+    fleetActivity.querySelector("#fleet-activity").addEventListener("click", (e) => {
+      const isChecked = e.currentTarget.checked;
+      this.json.options.fleetActivity = isChecked;
+    });
+    let showProgressIndicators = featureSettings.appendChild(
+      this.createDOM(
+        "div",
+        { class: "ogi-checkbox" },
+        `<label for="progress-indicator">${this.getTranslatedText(
+          139
+        )}</label>\n        <input type="checkbox" id="progress-indicator" name="progress-indicator" ${
+          this.json.options.showProgressIndicators ? "checked" : ""
+        }>`
+      )
+    );
+    showProgressIndicators.querySelector("#progress-indicator").addEventListener("click", (e) => {
+      const isChecked = e.currentTarget.checked;
+      this.json.options.showProgressIndicators = isChecked;
+    });
+    let navigationArrows = featureSettings.appendChild(
+      this.createDOM(
+        "div",
+        { class: "ogi-checkbox" },
+        `<label for="fleet-activity">${this.getTranslatedText(
+          138
+        )}</label>\n        <input type="checkbox" id="nav-arrows" name="fleet-activity" ${
+          this.json.options.navigationArrows ? "checked" : ""
+        }>`
+      )
+    );
+    navigationArrows.querySelector("#nav-arrows").addEventListener("click", (e) => {
+      const isChecked = e.currentTarget.checked;
+      this.json.options.navigationArrows = isChecked;
+    });
+      optiondiv = featureSettings.appendChild(this.createDOM("span", {}, this.getTranslatedText(35)));
+      let rvalInput = optiondiv.appendChild(
+        this.createDOM("input", {
+          type: "text",
+          class: "ogl-rvalInput ogl-formatInput tooltip",
+          value: toFormatedNumber(this.json.options.rvalLimit),
+          title: this.getTranslatedText(105),
+        })
+      );
+      optiondiv = featureSettings.appendChild(this.createDOM("span", {}, "Default expedition time"));
+      let expeditionDefaultTime = optiondiv.appendChild(
+        this.createDOM("input", {
+          type: "text",
+          class: "ogl-rvalInput ogl-formatInput",
+          value: this.json.options.expeditionDefaultTime,
+        })
+      );
+    dataDiv.appendChild(this.createDOM("hr"));
+    let dataManagement = dataDiv.appendChild(this.createDOM("div",{style:"display: grid;"}));
+    dataManagement.appendChild(
       this.createDOM(
         "h1",
         {},
@@ -16414,8 +16523,7 @@ class OGInfinity {
         }"> ${size.total}</strong>  / 5 Mb`
       )
     );
-    dataDiv.appendChild(this.createDOM("h1", {}, ""));
-    let expeditionsBox = dataDiv.appendChild(
+    let expeditionsBox = dataManagement.appendChild(
       this.createDOM(
         "div",
         { class: "ogi-checkbox" },
@@ -16423,7 +16531,7 @@ class OGInfinity {
         <input type="checkbox" id="expeditions" name="expeditions">`
       )
     );
-    let combatsBox = dataDiv.appendChild(
+    let combatsBox = dataManagement.appendChild(
       this.createDOM(
         "div",
         { class: "ogi-checkbox" },
@@ -16431,7 +16539,7 @@ class OGInfinity {
         <input type="checkbox" id="combats" name="combats">`
       )
     );
-    let targetsBox = dataDiv.appendChild(
+    let targetsBox = dataManagement.appendChild(
       this.createDOM(
         "div",
         { class: "ogi-checkbox" },
@@ -16439,7 +16547,7 @@ class OGInfinity {
         <input type="checkbox" id="targets" name="targets">`
       )
     );
-    let scanBox = dataDiv.appendChild(
+    let scanBox = dataManagement.appendChild(
       this.createDOM(
         "div",
         { class: "ogi-checkbox" },
@@ -16447,7 +16555,7 @@ class OGInfinity {
         <input type="checkbox" id="scan" name="scan">`
       )
     );
-    let OptionsBox = dataDiv.appendChild(
+    let OptionsBox = dataManagement.appendChild(
       this.createDOM(
         "div",
         { class: "ogi-checkbox" },
@@ -16455,7 +16563,7 @@ class OGInfinity {
         <input type="checkbox" id="combats" name="combats">`
       )
     );
-    let cacheBox = dataDiv.appendChild(
+    let cacheBox = dataManagement.appendChild(
       this.createDOM(
         "div",
         { class: "ogi-checkbox" },
@@ -16463,31 +16571,17 @@ class OGInfinity {
         <input type="checkbox" id="temp" name="temp" checked>`
       )
     );
-    let purgeBox = dataDiv.appendChild(
+    let purgeBox = dataManagement.appendChild(
       this.createDOM(
         "div",
-        { class: "ogi-checkbox", style: "margin-top: 10px" },
+        { class: "ogi-checkbox" },
         `<label for="purge">${this.getTranslatedText(22)}<span class="${size.other > 3 ? "undermark" : "overmark"}"> (${
           size.other
         }Mb)</span></label>
         <input type="checkbox" id="purge" name="purge">`
       )
     );
-    dataDiv.appendChild(this.createDOM("hr"));
-    dataDiv.appendChild(this.createDOM("h1", {}, "Cloud Sync (beta)"));
-    let dataSpan = dataDiv.appendChild(
-      this.createDOM("span", {}, '<a href="https://getpantry.cloud/" target="_blank">Pantry</a> Key ')
-    );
-    let pantryInput = dataSpan.appendChild(
-      this.createDOM("input", {
-        type: "password",
-        class: "ogl-pantryKey tooltip",
-        value: this.json.options.pantryKey ?? "",
-        placeholder: "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
-      })
-    );
-    dataDiv.appendChild(this.createDOM("hr"));
-    let dataBtns = dataDiv.appendChild(this.createDOM("div", { style: "display: flex;align-items: flex-end;" }));
+    let dataBtns = dataManagement.appendChild(this.createDOM("div", { style: "display: flex;align-items: flex-end;margin-top: 5px" }));
     let exportBtn = dataBtns.appendChild(this.createDOM("button", { class: "btn_blue" }, this.getTranslatedText(24)));
     let fileHandler = dataBtns.appendChild(
       this.createDOM("input", {
@@ -16520,11 +16614,16 @@ class OGInfinity {
       this.createDOM("button", { class: "btn_blue ogl-btn_red" }, this.getTranslatedText(26))
     );
     container.appendChild(this.createDOM("div", { style: "width: 1px; background: #10171d;" }));
-    let settingDiv = container.appendChild(this.createDOM("div", { style: "margin-top: 12px;" }));
+
+    let settingDiv = container.appendChild(this.createDOM("div"));
     let saveBtn = this.createDOM("button", { class: "btn_blue save" }, this.getTranslatedText(27));
-    settingDiv.appendChild(this.keepOnPlanetDialog(null, saveBtn));
+
+    let keepOnPlanet = settingDiv.appendChild(this.createDOM("div"));
+    keepOnPlanet.appendChild(this.keepOnPlanetDialog(null, saveBtn));
     settingDiv.appendChild(this.createDOM("hr"));
-    let span = settingDiv.appendChild(
+    let standardMissions = settingDiv.appendChild(this.createDOM("div"));
+    standardMissions.appendChild(this.createDOM("h1", {}, this.getTranslatedText(142)));
+    let span = standardMissions.appendChild(
       this.createDOM(
         "span",
         {
@@ -16568,8 +16667,8 @@ class OGInfinity {
       this.json.options.harvestMission = 0;
       this.saveData();
     });
-    settingDiv.appendChild(this.createDOM("hr"));
-    optiondiv = settingDiv.appendChild(
+
+    span = standardMissions.appendChild(
       this.createDOM(
         "span",
         {
@@ -16578,7 +16677,7 @@ class OGInfinity {
         this.getTranslatedText(31)
       )
     );
-    missionDiv = optiondiv.appendChild(this.createDOM("div", { style: "display:flex" }));
+    missionDiv = span.appendChild(this.createDOM("div", { style: "display:flex" }));
     none = missionDiv.appendChild(
       this.createDOM("a", {
         class: "icon icon_against",
@@ -16610,8 +16709,7 @@ class OGInfinity {
       other3.classList.remove("ogl-active");
       this.json.options.foreignMission = 0;
     });
-    settingDiv.appendChild(this.createDOM("hr"));
-    optiondiv = settingDiv.appendChild(
+    span = standardMissions.appendChild(
       this.createDOM(
         "span",
         {
@@ -16620,7 +16718,7 @@ class OGInfinity {
         this.getTranslatedText(32)
       )
     );
-    missionDiv = optiondiv.appendChild(this.createDOM("div", { style: "display:flex" }));
+    missionDiv = span.appendChild(this.createDOM("div", { style: "display:flex" }));
     none = missionDiv.appendChild(
       this.createDOM("a", {
         class: "icon icon_against",
@@ -16652,109 +16750,31 @@ class OGInfinity {
       expe6.classList.remove("ogl-active");
       this.json.options.expeditionMission = 0;
     });
-
     settingDiv.appendChild(this.createDOM("hr"));
-
-    optiondiv = settingDiv.appendChild(
-      this.createDOM(
-        "span",
-        {
-          style: "display: flex;justify-content: space-between; align-items: center;",
-        },
-        this.getTranslatedText(33)
-      )
+    let keys = settingDiv.appendChild(this.createDOM("div",{style:"display: grid;"}));
+    keys.appendChild(this.createDOM("h1", {}, this.getTranslatedText(140)));
+    let ptre = keys.appendChild(
+      this.createDOM("span", {}, '<a href="https://ptre.chez.gg/" target="_blank">PTRE</a> Teamkey')
     );
-    let timerCheck = optiondiv.appendChild(this.createDOM("input", { type: "checkbox" }));
-    timerCheck.addEventListener("change", () => {
-      this.json.options.activitytimers = timerCheck.checked;
-      this.saveData();
-    });
-    if (this.json.options.activitytimers) {
-      timerCheck.checked = true;
-    }
-
-    settingDiv.appendChild(this.createDOM("hr"));
-
-    optiondiv = settingDiv.appendChild(
-      this.createDOM(
-        "span",
-        {
-          style: "display: flex;justify-content: space-between; align-items: center;",
-        },
-        this.getTranslatedText(34)
-      )
-    );
-    let disableautofetchempirebox = optiondiv.appendChild(this.createDOM("input", { type: "checkbox" }));
-    disableautofetchempirebox.addEventListener("change", () => {
-      this.json.options.disableautofetchempire = disableautofetchempirebox.checked;
-      this.saveData();
-    });
-    if (this.json.options.disableautofetchempire) {
-      disableautofetchempirebox.checked = true;
-    }
-
-    settingDiv.appendChild(this.createDOM("hr"));
-
-    optiondiv = settingDiv.appendChild(this.createDOM("span", {}, this.getTranslatedText(35)));
-    let rvalInput = optiondiv.appendChild(
+    let ptreInput = ptre.appendChild(
       this.createDOM("input", {
-        type: "text",
-        class: "ogl-rvalInput ogl-formatInput tooltip",
-        value: toFormatedNumber(this.json.options.rvalLimit),
-        title: this.getTranslatedText(105),
+        type: "password",
+        class: "ogl-ptreTeamKey tooltip",
+        value: this.json.options.ptreTK ?? "",
+        placeholder: "TM-XXXX-XXXX-XXXX-XXXX",
       })
     );
-
-    settingDiv.appendChild(this.createDOM("hr"));
-
-    optiondiv = settingDiv.appendChild(this.createDOM("span", {}, "Default expedition time"));
-    let expeditionDefaultTime = optiondiv.appendChild(
+    let pantry = keys.appendChild(
+      this.createDOM("span", {}, '<a href="https://getpantry.cloud/" target="_blank">Pantry</a> Key<small> (Cloud Sync beta)</small>')
+    );
+    let pantryInput = pantry.appendChild(
       this.createDOM("input", {
-        type: "text",
-        class: "ogl-rvalInput ogl-formatInput tooltip",
-        value: this.json.options.expeditionDefaultTime,
-        title: this.getTranslatedText(26),
+        type: "password",
+        class: "ogl-pantryKey tooltip",
+        value: this.json.options.pantryKey ?? "",
+        placeholder: "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
       })
     );
-
-    settingDiv.appendChild(this.createDOM("hr"));
-
-    let fleetActivity = settingDiv.appendChild(
-      this.createDOM(
-        "div",
-        { class: "ogi-checkbox" },
-        `<label for="fleet-activity">${this.getTranslatedText(
-          134
-        )}</label>\n        <input type="checkbox" id="fleet-activity" name="fleet-activity" ${
-          this.json.options.fleetActivity ? "checked" : ""
-        }>`
-      )
-    );
-    fleetActivity.querySelector("#fleet-activity").addEventListener("click", (e) => {
-      const isChecked = e.currentTarget.checked;
-      this.json.options.fleetActivity = isChecked;
-    });
-
-    settingDiv.appendChild(this.createDOM("hr"));
-
-    let navigationArrows = settingDiv.appendChild(
-      this.createDOM(
-        "div",
-        { class: "ogi-checkbox" },
-        `<label for="fleet-activity">${this.getTranslatedText(
-          138
-        )}</label>\n        <input type="checkbox" id="nav-arrows" name="fleet-activity" ${
-          this.json.options.navigationArrows ? "checked" : ""
-        }>`
-      )
-    );
-    navigationArrows.querySelector("#nav-arrows").addEventListener("click", (e) => {
-      const isChecked = e.currentTarget.checked;
-      this.json.options.navigationArrows = isChecked;
-    });
-
-    settingDiv.appendChild(this.createDOM("hr"));
-
     settingDiv.appendChild(saveBtn);
     saveBtn.addEventListener("click", () => {
       this.json.options.rvalLimit = fromFormatedNumber(rvalInput.value, true);
@@ -17397,9 +17417,10 @@ class OGInfinity {
   }
 
   updateProductionProgress() {
+    if (!this.json.options.showProgressIndicators) return;
     let now = new Date();
     document.querySelectorAll(".planet-koords").forEach((planet) => {
-      let elem = this.json.productionProgress[planet.innerText];
+      let elem = this.json.productionProgress[planet.textContent.trim()];
       if (elem && new Date(elem.endDate) < now) {
         planet.parentElement.classList.add("finished");
       } else {
@@ -17414,10 +17435,10 @@ class OGInfinity {
         let technoId =
           building.getAttribute("alt").split("_")[1] ||
           building.parentElement.getAttribute("onclick").split("(")[1].split(", ")[0];
-        let tolvl = document.querySelector("#productionboxbuildingcomponent .level").innerText.replace(/[^0-9]/g, "");
-        let datestring = document.querySelector("#productionboxbuildingcomponent .ogl-date").innerText;
-        let date = datestring.split(" ")[0].split(".");
-        let time = datestring.split(" ")[1].split(":");
+        let tolvl = document.querySelector("#productionboxbuildingcomponent .level").textContent.trim().replace(/[^0-9]/g, "");
+        let datestring = document.querySelector("#productionboxbuildingcomponent .ogl-date").textContent.trim();
+        let date = datestring.split("  ")[0].split(".");
+        let time = datestring.split("  ")[1].split(":");
         let endDate = new Date(
           2000 + parseInt(date[2]),
           parseInt(date[1]) - 1,
@@ -17440,10 +17461,10 @@ class OGInfinity {
       let lfbuilding = document.querySelector("#productionboxlfbuildingcomponent .queuePic");
       if (lfbuilding) {
         let technoId = lfbuilding.classList[2].replace("lifeformTech", "");
-        let tolvl = document.querySelector("#productionboxlfbuildingcomponent .level").innerText.replace(/[^0-9]/g, "");
-        let datestring = document.querySelector("#productionboxlfbuildingcomponent .ogl-date").innerText;
-        let date = datestring.split(" ")[0].split(".");
-        let time = datestring.split(" ")[1].split(":");
+        let tolvl = document.querySelector("#productionboxlfbuildingcomponent .level").textContent.trim().replace(/[^0-9]/g, "");
+        let datestring = document.querySelector("#productionboxlfbuildingcomponent .ogl-date").textContent.trim();
+        let date = datestring.split("  ")[0].split(".");
+        let time = datestring.split("  ")[1].split(":");
         let endDate = new Date(
           2000 + parseInt(date[2]),
           parseInt(date[1]) - 1,
@@ -17467,15 +17488,15 @@ class OGInfinity {
         let technoId =
           research.getAttribute("alt").split("_")[1] ||
           research.parentElement.getAttribute("onclick").split("(")[1].split(", ")[0];
-        let tolvl = document.querySelector("#productionboxresearchcomponent .level").innerText.replace(/[^0-9]/g, "");
+        let tolvl = document.querySelector("#productionboxresearchcomponent .level").textContent.trim().replace(/[^0-9]/g, "");
         let coords = document
           .querySelector("#productionboxresearchcomponent .tooltip")
           .getAttribute("onclick")
           .split("[")[1]
           .split("]")[0];
-        let datestring = document.querySelector("#productionboxresearchcomponent .ogl-date").innerText;
-        let date = datestring.split(" ")[0].split(".");
-        let time = datestring.split(" ")[1].split(":");
+        let datestring = document.querySelector("#productionboxresearchcomponent .ogl-date").textContent.trim();
+        let date = datestring.split("  ")[0].split(".");
+        let time = datestring.split("  ")[1].split(":");
         let endDate = new Date(
           2000 + parseInt(date[2]),
           parseInt(date[1]) - 1,
@@ -17500,10 +17521,10 @@ class OGInfinity {
       let lfresearch = document.querySelector("#productionboxlfresearchcomponent .queuePic");
       if (lfresearch) {
         let technoId = lfresearch.classList[2].replace("lifeformTech", "");
-        let tolvl = document.querySelector("#productionboxlfresearchcomponent .level").innerText.replace(/[^0-9]/g, "");
-        let datestring = document.querySelector("#productionboxlfresearchcomponent .ogl-date").innerText;
-        let date = datestring.split(" ")[0].split(".");
-        let time = datestring.split(" ")[1].split(":");
+        let tolvl = document.querySelector("#productionboxlfresearchcomponent .level").textContent.trim().replace(/[^0-9]/g, "");
+        let datestring = document.querySelector("#productionboxlfresearchcomponent .ogl-date").textContent.trim();
+        let date = datestring.split("  ")[0].split(".");
+        let time = datestring.split("  ")[1].split(":");
         let endDate = new Date(
           2000 + parseInt(date[2]),
           parseInt(date[1]) - 1,
