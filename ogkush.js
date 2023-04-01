@@ -5400,10 +5400,42 @@ class OGInfinity {
   }
 
   loading() {
-    let svg =
-      '<svg width="200px" height="100px" viewBox="0 0 187.3 93.7" preserveAspectRatio="xMidYMid meet">\n                <path stroke="#3c536c" id="outline" fill="none" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"\n                  d="M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-13.3,7.2-22.1,17.1\n                    c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z" />\n                <path id="outline-bg" opacity="0.1" fill="none" stroke="#eee" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="\n                M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-13.3,7.2-22.1,17.1\n                c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z" />\n              </svg>';
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("width", "200px");
+    svg.setAttribute("height", "100px");
+    svg.setAttribute("viewBox", "0 0 187.3 93.7");
+    svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+    const path1 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path1.setAttribute("stroke", "#3c536c");
+    path1.setAttribute("id", "outline");
+    path1.setAttribute("fill", "none");
+    path1.setAttribute("stroke-width", "4");
+    path1.setAttribute("stroke-linecap", "round");
+    path1.setAttribute("stroke-linejoin", "round");
+    path1.setAttribute("stroke-miterlimit", "10");
+    path1.setAttribute(
+      "d",
+      "M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-1" +
+        "3.3,7.2-22.1,17.1c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z"
+    );
+    const path2 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path2.setAttribute("opacity", "0.1");
+    path2.setAttribute("stroke", "#eee");
+    path2.setAttribute("id", "outline-bg");
+    path2.setAttribute("fill", "none");
+    path2.setAttribute("stroke-width", "4");
+    path2.setAttribute("stroke-linecap", "round");
+    path2.setAttribute("stroke-linejoin", "round");
+    path2.setAttribute("stroke-miterlimit", "10");
+    path2.setAttribute(
+      "d",
+      "M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-1" +
+        "3.3,7.2-22.1,17.1c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z"
+    );
+    svg.appendChild(path1);
+    svg.appendChild(path2);
     let body = this.createDOM("div");
-    body.html(svg);
+    body.appendChild(svg);
     this.popup(null, body);
   }
 
@@ -9555,9 +9587,9 @@ class OGInfinity {
               `<span class="status_abbr_${fleetDispatcher.targetPlayerColorClass}">${fleetDispatcher.targetPlayerName}</span>` +
               "</span>"
           );
-          if (missionsDiv.innerText == "") {
+          if (missionsDiv.textContent == "") {
             if (fleetDispatcher.targetPlanet.name == "?") fleetDispatcher.targetPlanet.name = "Unknown";
-            missionsDiv.html("<span>" + fleetDispatcher.targetPlanet.name + "</span>");
+            missionsDiv.replaceChildren(createDOM("span", {}, fleetDispatcher.targetPlanet.name));
           }
           iconsDiv = missionsDiv.appendChild(this.createDOM("div"));
           let defaultMission;
@@ -9841,9 +9873,9 @@ class OGInfinity {
                 `<span class="status_abbr_${fleetDispatcher.targetPlayerColorClass}">${fleetDispatcher.targetPlayerName}</span>` +
                 "</span>"
             );
-            if (missionsDiv.innerText == "") {
+            if (missionsDiv.textContent == "") {
               if (fleetDispatcher.targetPlanet.name == "?") fleetDispatcher.targetPlanet.name = "Unknown";
-              missionsDiv.html("<span>" + fleetDispatcher.targetPlanet.name + "</span>");
+              missionsDiv.replaceChildren(createDOM("span", {}, fleetDispatcher.targetPlanet.name));
             }
             iconsDiv = missionsDiv.appendChild(this.createDOM("div"));
           }
@@ -9992,8 +10024,8 @@ class OGInfinity {
           $(".ogl-mission-icon").removeClass("ogl-active");
           icon.classList.add("ogl-active");
         }
-        durationDiv.html("<strong>" + formatTime(fleetDispatcher.getDuration()) + "</strong>");
-        consDiv.innerText = toFormatedNumber(fleetDispatcher.getConsumption(), 0);
+        durationDiv.replaceChildren(createDOM("strong", {}, formatTime(fleetDispatcher.getDuration())));
+        consDiv.textContent = toFormatedNumber(fleetDispatcher.getConsumption(), 0);
         if (fleetDispatcher.getConsumption() > deutAvailable) {
           consDiv.classList.add("overmark");
           if (!error) {
@@ -10009,19 +10041,23 @@ class OGInfinity {
           consDiv.classList.remove("overmark");
         }
         interval = setInterval(() => {
-          arrivalDiv.html(
-            getFormatedDate(
-              new Date(serverTime).getTime() + fleetDispatcher.getDuration() * 1e3,
-              "[d].[m].[y] <strong> [G]:[i]:[s] </strong>"
-            )
+          const arrivalDivTxt = getFormatedDate(
+            new Date(serverTime).getTime() + fleetDispatcher.getDuration() * 1e3,
+            "[d].[m].[y] [G]:[i]:[s] "
           );
-          returnDiv.html(
-            getFormatedDate(
-              new Date(serverTime).getTime() +
-                2 * fleetDispatcher.getDuration() * 1e3 +
-                (fleetDispatcher.expeditionTime + fleetDispatcher.holdingTime) * 3600 * 1e3,
-              "[d].[m].[y] <strong> [G]:[i]:[s] </strong>"
-            )
+          arrivalDiv.replaceChildren(
+            document.createTextNode(`${arrivalDivTxt.split(" ")[0]}  `),
+            createDOM("strong", {}, arrivalDivTxt.split(" ")[1])
+          );
+          const returnDivTxt = getFormatedDate(
+            new Date(serverTime).getTime() +
+              2 * fleetDispatcher.getDuration() * 1e3 +
+              (fleetDispatcher.expeditionTime + fleetDispatcher.holdingTime) * 3600 * 1e3,
+            "[d].[m].[y] [G]:[i]:[s] "
+          );
+          returnDiv.replaceChildren(
+            document.createTextNode(`${returnDivTxt.split(" ")[0]}  `),
+            createDOM("strong", {}, returnDivTxt.split(" ")[1])
           );
         }, 100);
         highlightFleetTarget();
@@ -10866,7 +10902,7 @@ class OGInfinity {
           coords[2],
           3
         );
-        btn.html('<figure class="planetIcon moon"></figure>');
+        btn.appendChild(createDOM("figure", {class: "planetIcon moon"}));
       } else container.appendChild(this.createDOM("div"));
     });
     return container;
@@ -12280,20 +12316,23 @@ class OGInfinity {
     let render = (player) => {
       finalPlayer = player;
       let content = this.createDOM("div");
-      content.html(
-        `\n      <h1 class="${this.getPlayerStatus(player.status)}">${player.name}\n        <a href="${
-          this.generateHiscoreLink(player.id) || ""
-        }" class="ogl-ranking">\n          #${
-          player.points.position || "b"
-        }\n        </a>\n      </h1>\n      <hr style="margin-bottom: 8px">`
+      content.replaceChildren(
+        createDOM("h1", { class: `${this.getPlayerStatus(player.status)}` }, `${player.name}`).appendChild(
+          createDOM(
+            "a",
+            {
+              href: `${this.generateHiscoreLink(player.id) || ""}`,
+              class: "ogl-ranking",
+            },
+            ` #${player.points.position || "b"}`
+          )
+        ).parentElement,
+        createDOM("hr", { style: "margin-bottom: 8px" })
       );
       let actions = content.appendChild(this.createDOM("div", { class: "ogi-actions" }));
-      actions.html(
-        `\n      <a href="${this.generateIgnoreLink(
-          player.id
-        )}" class="icon icon_against"></a>\n      <a href="${this.generateBuddyLink(
-          player.id
-        )}" class="icon icon_user overlay buddyrequest"></a>`
+      actions.replaceChildren(
+        createDOM("a", { href: `${this.generateIgnoreLink(player.id)}`, class: "icon icon_against" }),
+        createDOM("a", { href: `${this.generateBuddyLink(player.id)}`, class: "icon icon_user overlay buddyrequest" })
       );
       let msgBtn = actions.appendChild(this.createDOM("a", { class: "icon icon_chat" }));
       msgBtn.addEventListener("click", () => {
@@ -13443,20 +13482,13 @@ class OGInfinity {
           btn.classList.add("ogl-moonLock");
         }
         let div = this.createDOM("div");
-        div.html(
-          `\n          <div style="width: 75px">Missing </div>\n          <hr>\n          <div class="ogl-metal">M: ${toFormatedNumber(
-            Math.max(0, missing[0]),
-            null,
-            true
-          )}</div>\n          <div class="ogl-crystal">C: ${toFormatedNumber(
-            Math.max(0, missing[1]),
-            null,
-            true
-          )}</div>\n          <div class="ogl-deut">D: ${toFormatedNumber(
-            Math.max(0, missing[2]),
-            null,
-            true
-          )}</div>\n          <hr>\n          `
+        div.replaceChildren(
+          createDOM("div", { style: "width: 75px" }, "Missing "),
+          createDOM("hr"),
+          createDOM("div", { class: "ogl-metal" }, `M: ${toFormatedNumber(Math.max(0, missing[0]), null, true)}`),
+          createDOM("div", { class: "ogl-crystal" }, `C: ${toFormatedNumber(Math.max(0, missing[1]), null, true)}`),
+          createDOM("div", { class: "ogl-deut" }, `D: ${toFormatedNumber(Math.max(0, missing[2]), null, true)}`),
+          createDOM("hr")
         );
         let deleteBtn = div.appendChild(
           this.createDOM("div", {
@@ -14686,7 +14718,10 @@ class OGInfinity {
             if (countDiv) {
               let count = countDiv.getAttribute("title") || countDiv.getAttribute("data-title");
               count = count.split(":")[1].trim();
-              countDiv.html(`<span class="ogi-highscore-ships">(${count})</span> ${countDiv.innerText}`);
+              countDiv.replaceChildren(
+                createDOM("span", { class: "ogi-highscore-ships" }, `(${count})`),
+                document.createTextNode(` ${countDiv.textContent.trim()}`)
+              );
             }
             let mail = position.querySelector(".sendMail");
             if (mail) {
@@ -14696,7 +14731,7 @@ class OGInfinity {
                 if (playerDiv.getAttribute("class").includes("status_abbr_honorableTarget")) {
                   statusClass = "status_abbr_honorableTarget";
                 }
-                playerDiv.html(`<span class="${statusClass}">${p.name}</span>`);
+                playerDiv.replaceChildren(createDOM("span", {class: `${statusClass}`}, `${p.name}`));
                 this.stalk(playerDiv, p);
               });
             }
@@ -14721,7 +14756,9 @@ class OGInfinity {
         }
         $(".changeSite").change(function () {
           var value = $(this).val();
-          $("#stat_list_content").html('<div class="ajaxLoad">' + LocalizationStrings.loading + "</div>");
+          $("#stat_list_content").replaceChildren(
+            createDOM("div", { class: "ajaxLoad" }, ` ${LocalizationStrings.loading} `)
+          );
           ajaxCall(
             highscoreContentUrl + "&category=" + currentCategory + "&type=" + currentType + "&site=" + value,
             "#stat_list_content",
@@ -14864,12 +14901,40 @@ class OGInfinity {
       });
       document.querySelector('div[id="mission"]').appendChild(slider);
       if (this.playerClass == PLAYER_CLASS_WARRIOR) {
-        slider.html(
-          '\n        <div data-step="0.5" style="width: 31px;">05</div>\n        <div data-step="1" style="width: 31px;">10</div>\n        <div data-step="1.5" style="width: 31px;">15</div>\n        <div data-step="2" style="width: 31px;">20</div>\n        <div data-step="2.5" style="width: 31px;">25</div>\n        <div data-step="3" style="width: 31px;">30</div>\n        <div data-step="3.5" style="width: 31px;">35</div>\n        <div data-step="4" style="width: 31px;">40</div>\n        <div data-step="4.5" style="width: 31px;">45</div>\n        <div data-step="5" style="width: 31px;">50</div>\n        <div data-step="5.5" style="width: 31px;">55</div>\n        <div data-step="6" style="width: 31px;">60</div>\n        <div data-step="6.5" style="width: 31px;">65</div>\n        <div data-step="7" style="width: 31px;">70</div>\n        <div data-step="7.5" style="width: 31px;">75</div>\n        <div data-step="8" style="width: 31px;">80</div>\n        <div data-step="8.5" style="width: 31px;">85</div>\n        <div data-step="9" style="width: 31px;">90</div>\n        <div data-step="9.5" style="width: 31px;">95</div>\n        <div class="ogl-active" data-step="10" style="width: 31px;">100</div>\n        '
+        slider.replaceChildren(
+          createDOM("div", { "data-step": "0.5", style: "width: 31px;" }, "05"),
+          createDOM("div", { "data-step": "1", style: "width: 31px;" }, "10"),
+          createDOM("div", { "data-step": "1.5", style: "width: 31px;" }, "15"),
+          createDOM("div", { "data-step": "2", style: "width: 31px;" }, "20"),
+          createDOM("div", { "data-step": "2.5", style: "width: 31px;" }, "25"),
+          createDOM("div", { "data-step": "3", style: "width: 31px;" }, "30"),
+          createDOM("div", { "data-step": "3.5", style: "width: 31px;" }, "35"),
+          createDOM("div", { "data-step": "4", style: "width: 31px;" }, "40"),
+          createDOM("div", { "data-step": "4.5", style: "width: 31px;" }, "45"),
+          createDOM("div", { "data-step": "5", style: "width: 31px;" }, "50"),
+          createDOM("div", { "data-step": "5.5", style: "width: 31px;" }, "55"),
+          createDOM("div", { "data-step": "6", style: "width: 31px;" }, "60"),
+          createDOM("div", { "data-step": "6.5", style: "width: 31px;" }, "65"),
+          createDOM("div", { "data-step": "7", style: "width: 31px;" }, "70"),
+          createDOM("div", { "data-step": "7.5", style: "width: 31px;" }, "75"),
+          createDOM("div", { "data-step": "8", style: "width: 31px;" }, "80"),
+          createDOM("div", { "data-step": "8.5", style: "width: 31px;" }, "85"),
+          createDOM("div", { "data-step": "9", style: "width: 31px;" }, "90"),
+          createDOM("div", { "data-step": "9.5", style: "width: 31px;" }, "95"),
+          createDOM("div", { class: "ogl-active", "data-step": "10", style: "width: 31px;" }, "100")
         );
       } else {
-        slider.html(
-          '\n        <div data-step="1" style="width: 62px;">10</div>\n        <div data-step="2" style="width: 62px;">20</div>\n        <div data-step="3" style="width: 62px;">30</div>\n        <div data-step="4" style="width: 62px;">40</div>\n        <div data-step="5" style="width: 62px;">50</div>\n        <div data-step="6" style="width: 62px;">60</div>\n        <div data-step="7" style="width: 62px;">70</div>\n        <div data-step="8" style="width: 62px;">80</div>\n        <div data-step="9" style="width: 62px;">90</div>\n        <div class="ogl-active" data-step="10" style="width: 62px;">100</div>\n        '
+        slider.replaceChildren(
+          createDOM("div", { "data-step": "1", style: "width: 62px;" }, "10"),
+          createDOM("div", { "data-step": "2", style: "width: 62px;" }, "20"),
+          createDOM("div", { "data-step": "3", style: "width: 62px;" }, "30"),
+          createDOM("div", { "data-step": "4", style: "width: 62px;" }, "40"),
+          createDOM("div", { "data-step": "5", style: "width: 62px;" }, "50"),
+          createDOM("div", { "data-step": "6", style: "width: 62px;" }, "60"),
+          createDOM("div", { "data-step": "7", style: "width: 62px;" }, "70"),
+          createDOM("div", { "data-step": "8", style: "width: 62px;" }, "80"),
+          createDOM("div", { "data-step": "9", style: "width: 62px;" }, "90"),
+          createDOM("div", { class: "ogl-active", "data-step": "10", style: "width: 62px;" }, "100")
         );
       }
       $(".ogl-fleetSpeed div").on("click", (event) => {
@@ -14987,7 +15052,11 @@ class OGInfinity {
         let updateTimer = () => {
           lastTimer += 1e3;
           date = new Date(lastTimer);
-          content.html(getFormatedDate(date.getTime(), "[d].[m].[y] <strong> [G]:[i]:[s] </strong>"));
+          const dateTxt = getFormatedDate(date.getTime(), "[d].[m].[y] [G]:[i]:[s] ");
+          content.replaceChildren(
+            document.createTextNode(`${dateTxt.split(" ")[0]}  `),
+            createDOM("strong", {}, dateTxt.split(" ")[1])
+          );
         };
         updateTimer();
         setInterval(() => updateTimer(), 500);
