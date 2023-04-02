@@ -2064,7 +2064,7 @@ class OGInfinity {
                   ` (${newStorage - oldStorage < 0 ? "" : "+"}${toFormatedNumber(newStorage - oldStorage)})`
                 )
               ).parentElement
-            ); 
+            );
           }
           if (technoId <= 3) {
             let roiDiv =
@@ -2646,7 +2646,7 @@ class OGInfinity {
               lvl.replaceChildren(
                 document.createTextNode("Lvl "),
                 createDOM("strong", {}, `${toFormatedNumber(tolvl)}`)
-              ); 
+              );
               lvlFromTo.replaceChildren(
                 createDOM("strong", {}, `${toFormatedNumber(baseLvl)}`),
                 document.createTextNode("-"),
@@ -2675,7 +2675,7 @@ class OGInfinity {
                 createDOM("strong", {}, `${toFormatedNumber(baseLvl)}`),
                 document.createTextNode("-"),
                 createDOM("strong", {}, `${toFormatedNumber(tolvl)}`)
-              );                 
+              );
               if (tolvl <= baseLvl) {
                 lvlFromTo.replaceChildren();
               }
@@ -4350,13 +4350,15 @@ class OGInfinity {
           span.classList.add("ogk-active");
           title.replaceChildren(
             createDOM("strong", {}, `${getFormatedDate(elem.date.getTime(), "[d].[m].[y]")}`),
-            createDOM("strong").appendChild(
             createDOM(
               "span",
-              { class: `${elem.profit >= 0 ? "undermark" : "overmark"}` },
-              `${elem.profit >= 0 ? " +" : " -"}${toFormatedNumber(Math.abs(elem.profit), 2, true)}`
+              {
+                class: `tooltip ${elem.profit >= 0 ? "undermark" : "overmark"}`,
+                "data-title": `${toFormatedNumber(Math.abs(elem.profit), 0)}`,
+              },
+              `${elem.profit >= 0 ? " + " : " - "}${toFormatedNumber(Math.abs(elem.profit), 2, true)}`
             )
-          ).parentElement);
+          );
           if (elem.start) {
             title.appendChild(createDOM("strong", {}, `${getFormatedDate(elem.start.getTime(), "[d].[m].[y]")}`));
           }
@@ -5886,16 +5888,14 @@ class OGInfinity {
       content.appendChild(this.createDOM("div", { class: "ogk-scroll-wrapper" }));
       title.replaceChildren(
         createDOM("strong", {}, `${getFormatedDate(this.dateStrToDate(minDate).getTime(), "[d].[m].[y]")}`),
-        createDOM("strong").appendChild(
-          createDOM(
-            "span",
-            {
-              class: `${total > 0 ? "tooltip undermark" : "tooltip overmark"}`,
-              "data-title": `${toFormatedNumber(Math.abs(total), 0)}`,
-            },
-            `${total > 0 ? " + " : " - "}${toFormatedNumber(Math.abs(total), 2, true)}`
-          )
-        ).parentElement,
+        createDOM(
+          "span",
+          {
+            class: `tooltip ${total >= 0 ? "undermark" : "overmark"}`,
+            "data-title": `${toFormatedNumber(Math.abs(total), 0)}`,
+          },
+          `${total >= 0 ? " + " : " - "}${toFormatedNumber(Math.abs(total), 2, true)}`
+        ),
         createDOM("strong", {}, `${getFormatedDate(this.dateStrToDate(maxDate).getTime(), "[d].[m].[y]")}`)
       );
       let div = this.createDOM("div");
@@ -6240,16 +6240,14 @@ class OGInfinity {
       content.appendChild(this.createDOM("div", { class: "ogk-scroll-wrapper" }));
       title.replaceChildren(
         createDOM("strong", {}, `${getFormatedDate(this.dateStrToDate(minDate).getTime(), "[d].[m].[y]")}`),
-        createDOM("strong").appendChild(
-          createDOM(
-            "span",
-            {
-              class: `${total > 0 ? "tooltip undermark" : "tooltip overmark"}`,
-              "data-title": `${toFormatedNumber(Math.abs(total), 0)}`,
-            },
-            `${total > 0 ? " + " : " - "}${toFormatedNumber(Math.abs(total), 2, true)}`
-          )
-        ).parentElement,
+        createDOM(
+          "span",
+          {
+            class: `tooltip ${total >= 0 ? "undermark" : "overmark"}`,
+            "data-title": `${toFormatedNumber(Math.abs(total), 0)}`,
+          },
+          `${total >= 0 ? " + " : " - "}${toFormatedNumber(Math.abs(total), 2, true)}`
+        ),
         createDOM("strong", {}, `${getFormatedDate(this.dateStrToDate(maxDate).getTime(), "[d].[m].[y]")}`)
       );
       let div = this.createDOM("div");
@@ -10902,7 +10900,7 @@ class OGInfinity {
           coords[2],
           3
         );
-        btn.appendChild(createDOM("figure", {class: "planetIcon moon"}));
+        btn.appendChild(createDOM("figure", { class: "planetIcon moon" }));
       } else container.appendChild(this.createDOM("div"));
     });
     return container;
@@ -14731,7 +14729,7 @@ class OGInfinity {
                 if (playerDiv.getAttribute("class").includes("status_abbr_honorableTarget")) {
                   statusClass = "status_abbr_honorableTarget";
                 }
-                playerDiv.replaceChildren(createDOM("span", {class: `${statusClass}`}, `${p.name}`));
+                playerDiv.replaceChildren(createDOM("span", { class: `${statusClass}` }, `${p.name}`));
                 this.stalk(playerDiv, p);
               });
             }
