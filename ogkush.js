@@ -1692,12 +1692,14 @@ class OGInfinity {
   }
 
   updateEmpireData(force = false) {
+    let timeSinceLastUpdate = new Date() - new Date(this.json.lastEmpireUpdate);
     if (
+      force ||
       isNaN(new Date(this.json.lastEmpireUpdate)) ||
-      new Date() - new Date(this.json.lastEmpireUpdate) > 5 * 60 * 1e3 ||
-      this.json.needsUpdate
+      (timeSinceLastUpdate > 5 * 60 * 1e3 && this.json.needsUpdate) ||
+      (timeSinceLastUpdate > 1 * 60 * 1e3 && this.json.options.autofetchempire)
     ) {
-      this.updateInfo(force);
+      this.updateInfo();
     }
     let stageForUpdate = () => {
       this.json.needsUpdate = true;
@@ -1930,7 +1932,7 @@ class OGInfinity {
                 "https://" +
                 window.location.host +
                 window.location.pathname +
-                `?page=ingame&component=supplies&cp=${that.current.id}&sats=${satsNeeded}`;
+                `?page=ingame&component=supplies&cp=${that.current.id}&techId212=${satsNeeded}`;
               let satsSpan = that.createDOM(
                 "span",
                 {},
@@ -2257,7 +2259,7 @@ class OGInfinity {
                 "https://" +
                 window.location.host +
                 window.location.pathname +
-                `?page=ingame&component=supplies&cp=${that.current.id}&sats=${satsNeeded}`;
+                `?page=ingame&component=supplies&cp=${that.current.id}&techId212=${satsNeeded}`;
               let satsSpan = that.createDOM(
                 "span",
                 {},
@@ -3320,7 +3322,7 @@ class OGInfinity {
           this.json.needsUpdate = update;
           this.saveData();
           if (update) {
-            this.updateInfo();
+            this.updateEmpireData();
           }
           this.json.needSync = true;
         }
@@ -3980,7 +3982,6 @@ class OGInfinity {
   async flyingFleet() {
     let fleetCount = 0;
     let total = 0;
-    let uniques = {};
     document.querySelectorAll("#eventContent .eventFleet").forEach((line) => {
       let id = Number(line.getAttribute("id").split("-")[1]);
       let back = line.getAttribute("data-return-flight");
@@ -3990,8 +3991,7 @@ class OGInfinity {
         if (planet.coordinates == line.children[4].innerText.trim()) own = true;
       });
       if (type == 16 || !own) return;
-      if (type == 4 || (back && !(id - 1 in uniques) && !(id - 2 in uniques))) {
-        uniques[id] = true;
+      if (type == 4 || back) {
         fleetCount += Number(line.querySelector(".detailsFleet").innerText);
       }
     });
@@ -4306,25 +4306,18 @@ class OGInfinity {
       this.playerSearch(!this.searchOpened);
       this.searchOpened = !this.searchOpened;
     });
-    empireBtn &&
-      empireBtn.addEventListener("click", () => {
-        if (this.json.options.disableautofetchempire) {
-          this.json.options.autofetchempire = true;
-          this.updateEmpireData();
+    empireBtn.addEventListener("click", () => {
+      this.updateEmpireData(true);
+      this.loading();
+      let inter = setInterval(() => {
+        if (!this.isLoading) {
+          clearInterval(inter);
+          this.overview();
         }
-        this.loading();
-        let inter = setInterval(() => {
-          if (!this.isLoading) {
-            clearInterval(inter);
-            this.overview();
-          }
-        }, 20);
-      });
+      }, 20);
+    });
     overViewBtn.addEventListener("click", () => {
-      if (this.json.options.disableautofetchempire) {
-        this.json.options.autofetchempire = true;
-        this.updateEmpireData();
-      }
+      this.updateEmpireData();
       let active = document.querySelector(".ogl-option.ogl-active:not(.ogl-overview-icon)");
       if (active) {
         active.click();
@@ -4342,10 +4335,7 @@ class OGInfinity {
       this.saveData();
     });
     statsBtn.addEventListener("click", () => {
-      if (this.json.options.disableautofetchempire) {
-        this.json.options.autofetchempire = true;
-        this.updateEmpireData();
-      }
+      this.updateEmpireData(true);
       this.loading();
       let inter = setInterval(() => {
         if (!this.isLoading) {
@@ -5597,13 +5587,13 @@ class OGInfinity {
             deuterium: fleetRes[2],
           },
           {
-            title: this.getTranslatedText(68),
+            title: this.getTranslatedText(69),
             metal: sums.harvest[0],
             crystal: sums.harvest[1],
             deuterium: 0,
           },
           {
-            title: this.getTranslatedText(69),
+            title: this.getTranslatedText(68),
             metal: -losses[0],
             crystal: -losses[1],
             deuterium: -losses[2],
@@ -5950,13 +5940,13 @@ class OGInfinity {
             deuterium: sums.loot[2],
           },
           {
-            title: this.getTranslatedText(68),
+            title: this.getTranslatedText(69),
             metal: sums.harvest[0],
             crystal: sums.harvest[1],
             deuterium: 0,
           },
           {
-            title: this.getTranslatedText(69),
+            title: this.getTranslatedText(68),
             metal: -losses[0],
             crystal: -losses[1],
             deuterium: -losses[2],
@@ -9322,23 +9312,24 @@ class OGInfinity {
       });
       let warning = document.querySelector("#warning");
       let neededShips = warning.appendChild(this.createDOM("div", { class: "noShips" }));
+      let planetId = this.current.isMoon ? this.json.empire[this.current.index].moonID : this.current.id;
       neededShips.appendChild(
         this.createDOM(
           "div",
           { class: "ogl-res-transport" },
-          `<a tech-id="202" class="ogl-option noShips ogl-fleet-ship ogl-fleet-202"></a><span>${toFormatedNumber(
+          `<a tech-id="202" class="ogl-option noShips ogl-fleet-ship ogl-fleet-202" href="https://${window.location.host}${window.location.pathname}?page=ingame&component=shipyard&cp=${planetId}&techId202=${sc}"></a><span>${toFormatedNumber(
             sc,
             0
           )}</span>
-          <a tech-id="203" class="ogl-option noShips ogl-fleet-ship ogl-fleet-203"></a><span>${toFormatedNumber(
+          <a tech-id="203" class="ogl-option noShips ogl-fleet-ship ogl-fleet-203" href="https://${window.location.host}${window.location.pathname}?page=ingame&component=shipyard&cp=${planetId}&techId203=${lc}"></a><span>${toFormatedNumber(
             lc,
             0
           )}</span>
-          <a tech-id="219" class="ogl-option noShips ogl-fleet-ship ogl-fleet-219"></a><span>${toFormatedNumber(
+          <a tech-id="219" class="ogl-option noShips ogl-fleet-ship ogl-fleet-219" href="https://${window.location.host}${window.location.pathname}?page=ingame&component=shipyard&cp=${planetId}&techId219=${pf}"></a><span>${toFormatedNumber(
             pf,
             0
           )}</span>
-          <a tech-id="209" class="ogl-option noShips ogl-fleet-ship ogl-fleet-209"></a><span>${toFormatedNumber(
+          <a tech-id="209" class="ogl-option noShips ogl-fleet-ship ogl-fleet-209" href="https://${window.location.host}${window.location.pathname}?page=ingame&component=shipyard&cp=${planetId}&techId209=${rec}"></a><span>${toFormatedNumber(
             rec,
             0
           )}</span>`
@@ -11262,7 +11253,6 @@ class OGInfinity {
       cri = 0,
       deut = 0;
     let fleetCount = {};
-    let uniques = {};
     let transports = {};
     let ids = [];
     let planets = {};
@@ -11306,22 +11296,27 @@ class OGInfinity {
       let div = document.createElement("div");
       tooltip && div.html(tooltip.getAttribute("title") || tooltip.getAttribute("data-title"));
       let addToTotal = false;
-      if (type == 4 || (type != 3 && back && !(id - 1 in uniques) && !(id - 2 in uniques))) {
-        uniques[id] = true;
-        addToTotal = true;
-        movement.resDest = true;
-      }
       let noRes = false;
-      if (type == 3 && !back) {
-        transports[id] = true;
+      if (type == 4) {
         addToTotal = true;
         movement.resDest = true;
-      }
-      if (type == 3 && back && id - 1 in transports) {
-        noRes = true;
+      } else if (type == 3) {
+        if (!back) {
+          transports[id] = true
+          addToTotal = true;
+          movement.resDest = true;
+        } else if (id - 1 in transports) {
+          noRes = true;
+        } else {
+          addToTotal = true;
+          movement.resDest = true;
+        }
+      } else if (back) {
+        addToTotal = true;
+        movement.resDest = true;
       } else {
-        addToTotal = true;
-        movement.resDest = true;
+        addToTotal = false;
+        movement.resDest = false;
       }
       div.querySelectorAll('td[colspan="2"]').forEach((tooltip) => {
         let count = Number(fromFormatedNumber(tooltip.nextElementSibling.innerHTML.trim()));
@@ -11544,7 +11539,7 @@ class OGInfinity {
     });
     let flyingDetails = {};
     this.json.flying.ids.forEach((mov) => {
-      if (mov.resDest && (mov.type == "4" || mov.type == "3" || mov.type == "15")) {
+      if (mov.resDest) {
         let coords = mov.back ? mov.origin : mov.dest;
         flyingDetails[coords] = flyingDetails[coords] || {
           metal: 0,
@@ -11580,7 +11575,7 @@ class OGInfinity {
           coords.split(":")[1]
         }&position=${coords.split(":")[2].slice(0, -1)}`;
         flyingRows += `<tr>
-      <td>${details.name}</td>
+      <td class=${details.own ? "own" : "friendly"}>${details.name}</td>
       <td class=${details.own ? "own" : "friendly"}><a href=${href}>[${coords.slice(0, -1)}]</a></td>
       <td><figure class="${coords.slice(-1) == "M" ? "planetIcon moon" : "planetIcon planet"}"></figure></td>
       <td class="value ogl-metal">${toFormatedNumber(details.metal)}</td>
@@ -11944,8 +11939,7 @@ class OGInfinity {
     }
   }
 
-  updateInfo(force = false) {
-    if ((force = false && this.json.options.autofetchempire == false)) return;
+  updateInfo() {
     if (this.isLoading) return;
     this.isLoading = true;
     let svg =
@@ -14452,16 +14446,20 @@ class OGInfinity {
             document.querySelector(".ogl-expedition").click();
             document.querySelector("#continueToFleet2").click();
           }
-          if (event.code == "KeyC" && document.activeElement.tagName != "INPUT") {
+          if (event.code == "KeyC") {
             document.querySelector(".ogl-collect").click();
             document.querySelector("#continueToFleet2").click();
           }
-          if (event.code == "KeyN" && document.activeElement.tagName != "INPUT")
+          if (event.code == "KeyN")
             document.querySelector("#resetall").click();
-          if (event.code == "KeyA" && document.activeElement.tagName != "INPUT")
+          if (event.code == "KeyA")
             document.querySelector("#sendall").click();
-          if (event.code == "KeyM" && document.activeElement.tagName != "INPUT")
+          if (event.code == "KeyM")
             document.querySelector("span.select-most").click();
+          if (event.code == "ArrowUp")
+            document.querySelector("#systemInput").value = Number(document.querySelector("#systemInput").value) + 1;
+            if (event.code == "ArrowDown")
+            document.querySelector("#systemInput").value = Number(document.querySelector("#systemInput").value) - 1;
         } else if (fleetDispatcher.currentPage == "fleet2") {
           if (event.code == "KeyA") document.querySelector("#loadAllResources img").click();
           if (event.code == "KeyM" && !event.shiftKey) document.querySelector("#loadAllResources .select-most").click();
@@ -17547,21 +17545,21 @@ class OGInfinity {
 
   checkRedirect() {
     let url = new URL(window.location.href);
-    let satsNeeded = url.searchParams.get("sats");
     let technoDetails = url.searchParams.get("technoDetails");
-
-    if (satsNeeded) {
-      waitForElementToDisplay(".solarSatellite.hasDetails span", () =>
-        document.querySelector(".solarSatellite.hasDetails span").click()
-      );
-      waitForElementToDisplay("#technologydetails[data-technology-id='212']", () => {
-        let satsInput = document.querySelector("#build_amount");
-        satsInput.focus();
-        satsInput.value = satsNeeded;
-        satsInput.dispatchEvent(new KeyboardEvent("keyup", { code: "ArrowDown" }));
-      });
-    }
-
+    [202, 203, 219, 209, 212].forEach(id => {
+      if (url.searchParams.has(`techId${id}`)) {
+        let needed = Number(url.searchParams.get(`techId${id}`));
+        waitForElementToDisplay(`.hasDetails[data-technology='${id}'] span`, () => {
+          document.querySelector(`.hasDetails[data-technology='${id}'] span`).click()
+        })
+        waitForElementToDisplay(`#technologydetails[data-technology-id='${id}']`, () => {
+          let input = document.querySelector("#build_amount");
+          input.focus();
+          input.value = needed;
+          input.dispatchEvent(new KeyboardEvent("keyup", { code: "ArrowDown" }));
+        });
+      }
+    });
     if (technoDetails) {
       let selector = `.technology[data-technology='${technoDetails}'] span`;
       waitForElementToDisplay(selector, () => document.querySelector(selector).click());
