@@ -15733,8 +15733,8 @@ class OGInfinity {
         /*38*/ {
           de: "Fliegend",
           en: "Flying",
-          es: "Volando",
-          fr: "En volant",
+          es: "En vuelo",
+          fr: "En vol",
         },
         /*39*/ {
           de: "Fehlend",
