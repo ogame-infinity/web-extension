@@ -1533,8 +1533,8 @@ class OGInfinity {
     this.json.options.spyFret = this.json.options.spyFret || 202;
     this.json.options.harvestMission = this.json.options.harvestMission || 4;
     this.json.options.foreignMission = this.json.options.foreignMission || 3;
-    this.json.options.expeditionSendCombat = this.json.options.expeditionSendCombat || true;
-    this.json.options.expeditionSendProbe = this.json.options.expeditionSendProbe || true;
+    this.json.options.expeditionSendCombat = this.json.options.expeditionSendCombat === true ? true : false;
+    this.json.options.expeditionSendProbe = this.json.options.expeditionSendProbe === true ? true : false;
     this.json.options.expeditionMission = this.json.options.expeditionMission || 15;
     this.json.options.expeditionDefaultTime = this.json.options.expeditionDefaultTime || 1;
     this.json.options.activitytimers = this.json.options.activitytimers === true ? true : false;
