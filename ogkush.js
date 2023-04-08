@@ -98,6 +98,14 @@ function createDOM(element, attributes, textContent) {
   return e;
 }
 
+function createSVG(element, attributes) {
+  const e = document.createElementNS("http://www.w3.org/2000/svg", element);
+  for (const key in attributes) {
+    e.setAttributeNS(null, key, attributes[key]);
+  }
+  return e;
+}
+
 function toFormatedNumber(value, precision = null, units = false) {
   const commaSeparator = ["en-US", "en-GB", "ro-RO", "zh-TW"];
   let locale = document.querySelector("#cookiebanner").getAttribute("data-locale");
@@ -5402,40 +5410,39 @@ class OGInfinity {
   }
 
   loading() {
-    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute("width", "200px");
-    svg.setAttribute("height", "100px");
-    svg.setAttribute("viewBox", "0 0 187.3 93.7");
-    svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
-    const path1 = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    path1.setAttribute("stroke", "#3c536c");
-    path1.setAttribute("id", "outline");
-    path1.setAttribute("fill", "none");
-    path1.setAttribute("stroke-width", "4");
-    path1.setAttribute("stroke-linecap", "round");
-    path1.setAttribute("stroke-linejoin", "round");
-    path1.setAttribute("stroke-miterlimit", "10");
-    path1.setAttribute(
-      "d",
-      "M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-1" +
-        "3.3,7.2-22.1,17.1c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z"
+    const svg = createSVG("svg", {
+      width: "200px",
+      height: "100px",
+      viewBox: "0 0 187.3 93.7",
+      preserveAspectRatio: "xMidYMid meet",
+    });
+    svg.replaceChildren(
+      createSVG("path", {
+        stroke: "#3c536c",
+        id: "outline",
+        fill: "none",
+        "stroke-width": "4",
+        "stroke-linecap": "round",
+        "stroke-linejoin": "round",
+        "stroke-miterlimit": "10",
+        d:
+          "M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-1" +
+          "3.3,7.2-22.1,17.1c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z",
+      }),
+      createSVG("path", {
+        opacity: "0.1",
+        stroke: "#eee",
+        id: "outline-bg",
+        fill: "none",
+        "stroke-width": "4",
+        "stroke-linecap": "round",
+        "stroke-linejoin": "round",
+        "stroke-miterlimit": "10",
+        d:
+          "M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-1" +
+          "3.3,7.2-22.1,17.1c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z",
+      })
     );
-    const path2 = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    path2.setAttribute("opacity", "0.1");
-    path2.setAttribute("stroke", "#eee");
-    path2.setAttribute("id", "outline-bg");
-    path2.setAttribute("fill", "none");
-    path2.setAttribute("stroke-width", "4");
-    path2.setAttribute("stroke-linecap", "round");
-    path2.setAttribute("stroke-linejoin", "round");
-    path2.setAttribute("stroke-miterlimit", "10");
-    path2.setAttribute(
-      "d",
-      "M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-1" +
-        "3.3,7.2-22.1,17.1c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z"
-    );
-    svg.appendChild(path1);
-    svg.appendChild(path2);
     let body = this.createDOM("div");
     body.appendChild(svg);
     this.popup(null, body);
