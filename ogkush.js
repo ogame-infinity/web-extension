@@ -14441,25 +14441,34 @@ class OGInfinity {
     };
     if (this.page == "fleetdispatch") {
       document.addEventListener("keydown", (event) => {
-        if (fleetDispatcher.currentPage == "fleet1" && document.activeElement.tagName != "INPUT") {
-          if (event.code == "KeyE") {
-            document.querySelector(".ogl-expedition").click();
-            document.querySelector("#continueToFleet2").click();
+        if (fleetDispatcher.currentPage == "fleet1") {
+          if (document.activeElement.tagName != "INPUT") {
+            if (event.code == "KeyE") {
+              document.querySelector(".ogl-expedition").click();
+              document.querySelector("#continueToFleet2").click();
+            }
+            if (event.code == "KeyC") {
+              document.querySelector(".ogl-collect").click();
+              document.querySelector("#continueToFleet2").click();
+            }
+            if (event.code == "KeyN") document.querySelector("#resetall").click();
+            if (event.code == "KeyA") document.querySelector("#sendall").click();
+            if (event.code == "KeyM") document.querySelector("span.select-most").click();
+          } else {
+            const input = document.querySelector("#systemInput");
+            if (document.activeElement == input) {
+              if (event.code == "ArrowUp") {
+                input.value = Number(input.value) + 1;
+                fleetDispatcher.updateTarget();
+                fleetDispatcher.fetchTargetPlayerData();
+              }
+              if (event.code == "ArrowDown") {
+                input.value = Number(input.value) - 1;
+                fleetDispatcher.updateTarget();
+                fleetDispatcher.fetchTargetPlayerData();
+              }
+            }
           }
-          if (event.code == "KeyC") {
-            document.querySelector(".ogl-collect").click();
-            document.querySelector("#continueToFleet2").click();
-          }
-          if (event.code == "KeyN")
-            document.querySelector("#resetall").click();
-          if (event.code == "KeyA")
-            document.querySelector("#sendall").click();
-          if (event.code == "KeyM")
-            document.querySelector("span.select-most").click();
-          if (event.code == "ArrowUp")
-            document.querySelector("#systemInput").value = Number(document.querySelector("#systemInput").value) + 1;
-            if (event.code == "ArrowDown")
-            document.querySelector("#systemInput").value = Number(document.querySelector("#systemInput").value) - 1;
         } else if (fleetDispatcher.currentPage == "fleet2") {
           if (event.code == "KeyA") document.querySelector("#loadAllResources img").click();
           if (event.code == "KeyM" && !event.shiftKey) document.querySelector("#loadAllResources .select-most").click();
