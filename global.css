@@ -2148,6 +2148,40 @@ button.build-it_premium:hover {
   background-color: #a0c02b !important;
 }
 
+.msg.ogk-lifeform1 .msg_status,
+.msg_new.ogk-lifeform1 .msg_status {
+  background: linear-gradient(80deg, #ffffff 1%, #7fc200 60%) !important
+}
+
+.msg.ogk-lifeform2 .msg_status,
+.msg_new.ogk-lifeform2 .msg_status {
+  background: linear-gradient(80deg, #ffffff 1%, #ec752f 60%) !important;
+}
+
+.msg.ogk-lifeform3 .msg_status,
+.msg_new.ogk-lifeform3 .msg_status {
+  background: linear-gradient(80deg, #ffffff 1%, #3c93f0 60%) !important;
+}
+
+.msg.ogk-lifeform4 .msg_status,
+.msg_new.ogk-lifeform4 .msg_status {
+  background: linear-gradient(80deg, #ffffff 1%, #9c64ed 60%) !important;
+}
+
+.msg.ogk-artefacts .msg_status,
+.msg_new.ogk-artefacts .msg_status {
+  background: linear-gradient(80deg, #ffffff 1%, #fdeca6 60%) !important;
+}
+
+.ogk-grid-discovery {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  align-items: center;
+  grid-row-gap: 10px;
+  width: 100%;
+  justify-items: end;
+}
+
 .msg.ogk-void .msg_status,
 .msg_new.ogk-void .msg_status {
   background-color: #22303a !important;
