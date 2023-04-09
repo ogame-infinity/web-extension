@@ -693,7 +693,7 @@ const BUIDLING_INFO = {
     factorCons: 1.05,
   },
   // Kaelesh
-  01: {
+  14101: {
     name: "Sanctuary",
     baseCost: [4, 3, 0],
     factorCost: 1.21,
