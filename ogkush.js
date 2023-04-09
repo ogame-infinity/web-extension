@@ -693,9 +693,6 @@ const BUIDLING_INFO = {
     factorCons: 1.05,
   },
   // Kaelesh
-  
-  
-  
   01: {
     name: "Sanctuary",
     baseCost: [4, 3, 0],
@@ -16992,6 +16989,7 @@ class OGInfinity {
           en: "Default missions",
           es: "Misiónes por defecto",
           fr: "Missions par défaut",
+        },
         /*149*/ {
           de: "",
           en: "",
