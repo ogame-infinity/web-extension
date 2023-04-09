@@ -1547,7 +1547,7 @@ class OGInfinity {
     this.json.options.hiddenTargets = this.json.options.hiddenTargets || {};
     this.json.options.timeZone = this.json.options.timeZone === false ? false : true;
     this.json.lifeFormProduction = this.json.lifeFormProduction || {};
-    this.gameLang = document.querySelector('meta[name="ogame-language"]').getAttribute("content");
+    this.gameLang = document.querySelector("meta[name=\"ogame-language\"]").getAttribute("content");
     this.isLoading = false;
     this.autoQueue = new AutoQueue();
   }
@@ -1812,8 +1812,8 @@ class OGInfinity {
       let that = this;
       let updateResearchDetails = (technoId, baselvl, tolvl) => {
         let object = that.current.isMoon
-        ? that.json.empire[that.current.index].moon
-        : that.json.empire[that.current.index];
+          ? that.json.empire[that.current.index].moon
+          : that.json.empire[that.current.index];
         let durationDiv = document.querySelector(".build_duration");
         let timeDiv = document.querySelector(".build_duration time");
         let timeSumDiv =
@@ -1860,10 +1860,10 @@ class OGInfinity {
                     roi === Infinity
                       ? that.getTranslatedText(118)
                       : `${that.getTranslatedText(119)}: ${toFormatedNumber(
-                          that.json.options.tradeRate[0]
-                        )}:${toFormatedNumber(that.json.options.tradeRate[1])}:${toFormatedNumber(
-                          that.json.options.tradeRate[2]
-                        )}`,
+                        that.json.options.tradeRate[0]
+                      )}:${toFormatedNumber(that.json.options.tradeRate[1])}:${toFormatedNumber(
+                        that.json.options.tradeRate[2]
+                      )}`,
                 })
               );
             roiTimeDiv.html(roi === Infinity ? "∞" : formatTimeWrapper(roi, 2, true, " ", false, ""));
@@ -1910,6 +1910,31 @@ class OGInfinity {
         resSum[3] = techno.cost[3];
         timeSum += techno.time;
         if (that.page == "lfbuildings") {
+          if (that.json.lifeFormProductionBoostFromBuildings[technoId] && baselvl <= tolvl) {
+            let roi = that.roiLfBuilding(technoId, baselvl, tolvl, object);
+            let roiDiv =
+              durationDiv.parentNode.querySelector(".roi_duration") ||
+              durationDiv.parentNode.insertBefore(
+                that.createDOM("li", { class: "roi_duration" }),
+                durationDiv.parentNode.children[1]
+              );
+            roiDiv.html(`<strong>${that.getTranslatedText(50)}:</strong>`);
+            let roiTimeDiv =
+              roiDiv.querySelector(".roi_duration time") ||
+              roiDiv.appendChild(
+                that.createDOM("time", {
+                  class: "value tooltip",
+                  "data-title": `${that.getTranslatedText(119)}: ${toFormatedNumber(
+                    that.json.options.tradeRate[0]
+                  )}:${toFormatedNumber(that.json.options.tradeRate[1])}:${toFormatedNumber(
+                    that.json.options.tradeRate[2]
+                  )}`,
+                })
+              );
+            roiTimeDiv.html(formatTimeWrapper(roi, 2, true, " ", false, ""));
+          } else if (durationDiv.parentNode.querySelector(".roi_duration")) {
+            durationDiv.parentNode.querySelector(".roi_duration").html("");
+          }
           let consDiv = document.querySelector(".additional_energy_consumption span");
           if (consDiv && that.json.empire[that.current.index]) {
             let temp = that.json.empire[that.current.index].db_par2 + 40;
@@ -2017,8 +2042,8 @@ class OGInfinity {
               technoId == 22
                 ? resourcesBar.resources.metal.production
                 : technoId == 23
-                ? resourcesBar.resources.crystal.production
-                : resourcesBar.resources.deuterium.production;
+                  ? resourcesBar.resources.crystal.production
+                  : resourcesBar.resources.deuterium.production;
             let storageDiv =
               durationDiv.parentNode.querySelector(".narrow .storage_size") ||
               durationDiv.parentNode.insertBefore(
@@ -2595,9 +2620,12 @@ class OGInfinity {
               baseTechno.cost[0] != metalCost ||
               baseTechno.cost[1] != crystalCost ||
               baseTechno.cost[2] != deuteriumCost
-            ) document
+            )
+              document
                 .querySelector(".costs")
-                .appendChild(that.createDOM("div", { class: "overmark" }, "resources not correct, please report to developers!"));
+                .appendChild(
+                  that.createDOM("div", { class: "overmark" }, "resources not correct, please report to developers!")
+                );
 
             updateResearchDetails(technologyId, baseLvl, tolvl);
             let previous = infoDiv.appendChild(that.createDOM("a", { class: "icon icon_skip_back" }));
@@ -2713,7 +2741,7 @@ class OGInfinity {
     let box = this.createDOM("div", { class: "ogk-keep-dialog" });
     box.appendChild(this.createDOM("h1", {}, this.getTranslatedText(28)));
     let prod = box.appendChild(this.createDOM("div", { class: "ogk-adjust-grid" }));
-    prod.appendChild(this.createDOM("span", {}, '<a class="resourceIcon metal"></a>'));
+    prod.appendChild(this.createDOM("span", {}, "<a class=\"resourceIcon metal\"></a>"));
     let metInput = prod.appendChild(
       this.createDOM("input", {
         class: "ogl-formatInput metal",
@@ -2721,7 +2749,7 @@ class OGInfinity {
         value: toFormatedNumber(kept[0]) || toFormatedNumber(0),
       })
     );
-    prod.appendChild(this.createDOM("span", {}, '<a class="resourceIcon crystal"></a>'));
+    prod.appendChild(this.createDOM("span", {}, "<a class=\"resourceIcon crystal\"></a>"));
     let criInput = prod.appendChild(
       this.createDOM("input", {
         class: "ogl-formatInput crystal",
@@ -2729,7 +2757,7 @@ class OGInfinity {
         value: toFormatedNumber(kept[1]) || toFormatedNumber(0),
       })
     );
-    prod.appendChild(this.createDOM("span", {}, '<a class="resourceIcon deuterium"></a>'));
+    prod.appendChild(this.createDOM("span", {}, "<a class=\"resourceIcon deuterium\"></a>"));
     let deutInput = prod.appendChild(
       this.createDOM("input", {
         class: "ogl-formatInput deuterium",
@@ -2739,7 +2767,7 @@ class OGInfinity {
     );
     let foodInput;
     if (this.hasLifeforms) {
-      prod.appendChild(this.createDOM("span", {}, '<a class="resourceIcon food"></a>'));
+      prod.appendChild(this.createDOM("span", {}, "<a class=\"resourceIcon food\"></a>"));
       foodInput = prod.appendChild(
         this.createDOM("input", {
           class: "ogl-formatInput food",
@@ -2848,8 +2876,8 @@ class OGInfinity {
         end > 0 ? "Time to join " + getFormatedTime(abs) : "Too late to join " + getFormatedTime(abs)
       );
       if (end > 0) {
-        this.delayDiv2.setAttribute("style", 'color:"green !important"');
-        this.delayDiv2.setAttribute("style", 'color:"green !important"');
+        this.delayDiv2.setAttribute("style", "color:\"green !important\"");
+        this.delayDiv2.setAttribute("style", "color:\"green !important\"");
       } else {
         this.delayDiv2.classList.remove("ogk-delay-ontime");
         this.delayDiv2.classList.remove("ogk-delay-ontime");
@@ -3014,7 +3042,7 @@ class OGInfinity {
         this.createDOM(
           "div",
           { class: "ogi-speed-icon" },
-          '\n        <svg x="0px" y="0px"\n           viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;">\n              <path fill="white" d="M268.574,511.69c1.342-0.065,2.678-0.154,4.015-0.239c0.697-0.045,1.396-0.082,2.091-0.133\n                c1.627-0.117,3.247-0.259,4.865-0.406c0.37-0.034,0.741-0.063,1.111-0.099c1.895-0.181,3.783-0.387,5.665-0.609\n                c0.056-0.007,0.111-0.012,0.167-0.019C413.497,495.109,512,387.063,512,256C512,114.618,397.382,0,256,0S0,114.618,0,256\n                c0,131.063,98.503,239.109,225.511,254.185c0.056,0.007,0.111,0.013,0.167,0.019c1.883,0.222,3.77,0.428,5.665,0.609\n                c0.37,0.036,0.741,0.065,1.111,0.099c1.618,0.148,3.239,0.289,4.865,0.406c0.696,0.051,1.394,0.087,2.091,0.133\n                c1.337,0.086,2.673,0.174,4.015,0.239c1.098,0.054,2.201,0.086,3.301,0.125c0.976,0.035,1.95,0.081,2.929,0.105\n                c2.111,0.052,4.225,0.08,6.344,0.08s4.234-0.028,6.344-0.08c0.979-0.024,1.952-0.07,2.929-0.105\n                C266.374,511.776,267.476,511.743,268.574,511.69z M273.523,468.613c-0.921,0.076-1.844,0.14-2.767,0.204\n                c-0.814,0.056-1.629,0.109-2.446,0.155c-0.776,0.045-1.553,0.086-2.331,0.122c-1.037,0.048-2.077,0.086-3.118,0.118\n                c-0.608,0.019-1.215,0.043-1.823,0.057c-1.675,0.039-3.353,0.064-5.037,0.064s-3.362-0.025-5.037-0.064\n                c-0.609-0.014-1.216-0.038-1.823-0.057c-1.041-0.033-2.081-0.071-3.118-0.118c-0.778-0.036-1.555-0.078-2.331-0.122\n                c-0.817-0.046-1.632-0.099-2.446-0.155c-0.923-0.064-1.846-0.128-2.767-0.204c-0.52-0.042-1.037-0.092-1.555-0.138\n                c-41.142-3.68-79.759-19.195-111.96-44.412c32.024-38.424,79.557-61.396,131.038-61.396s99.015,22.972,131.038,61.396\n                c-32.201,25.218-70.819,40.732-111.96,44.412C274.56,468.521,274.042,468.571,273.523,468.613z M43.726,277.333h41.608\n                c11.782,0,21.333-9.551,21.333-21.333s-9.551-21.333-21.333-21.333H43.726c4.26-42.904,21.234-82.066,47.099-113.672l29.41,29.41\n                c8.331,8.331,21.839,8.331,30.17,0s8.331-21.839,0-30.17l-29.41-29.41c31.607-25.865,70.768-42.838,113.672-47.099v41.608\n                c0,11.782,9.551,21.333,21.333,21.333s21.333-9.551,21.333-21.333V43.726c42.904,4.26,82.066,21.234,113.672,47.099l-29.41,29.41\n                c-8.331,8.331-8.331,21.839,0,30.17s21.839,8.331,30.17,0l29.41-29.41c25.865,31.607,42.838,70.768,47.099,113.672h-41.608\n                c-11.782,0-21.333,9.551-21.333,21.333s9.551,21.333,21.333,21.333h41.608c-4.428,44.592-22.591,85.14-50.194,117.366\n                C378.101,347.932,319.426,320,256,320s-122.101,27.932-162.08,74.7C66.317,362.474,48.154,321.926,43.726,277.333z"/>\n              <path fill="white" d="M248.077,275.807c10.939,4.376,23.355-0.945,27.73-11.885l42.667-106.667c4.376-10.939-0.945-23.355-11.885-27.731\n                c-10.939-4.376-23.355,0.945-27.73,11.885l-42.667,106.667C231.817,259.016,237.138,271.432,248.077,275.807z"/>\n        </svg>\n        '
+          "\n        <svg x=\"0px\" y=\"0px\"\n           viewBox=\"0 0 512 512\" style=\"enable-background:new 0 0 512 512;\">\n              <path fill=\"white\" d=\"M268.574,511.69c1.342-0.065,2.678-0.154,4.015-0.239c0.697-0.045,1.396-0.082,2.091-0.133\n                c1.627-0.117,3.247-0.259,4.865-0.406c0.37-0.034,0.741-0.063,1.111-0.099c1.895-0.181,3.783-0.387,5.665-0.609\n                c0.056-0.007,0.111-0.012,0.167-0.019C413.497,495.109,512,387.063,512,256C512,114.618,397.382,0,256,0S0,114.618,0,256\n                c0,131.063,98.503,239.109,225.511,254.185c0.056,0.007,0.111,0.013,0.167,0.019c1.883,0.222,3.77,0.428,5.665,0.609\n                c0.37,0.036,0.741,0.065,1.111,0.099c1.618,0.148,3.239,0.289,4.865,0.406c0.696,0.051,1.394,0.087,2.091,0.133\n                c1.337,0.086,2.673,0.174,4.015,0.239c1.098,0.054,2.201,0.086,3.301,0.125c0.976,0.035,1.95,0.081,2.929,0.105\n                c2.111,0.052,4.225,0.08,6.344,0.08s4.234-0.028,6.344-0.08c0.979-0.024,1.952-0.07,2.929-0.105\n                C266.374,511.776,267.476,511.743,268.574,511.69z M273.523,468.613c-0.921,0.076-1.844,0.14-2.767,0.204\n                c-0.814,0.056-1.629,0.109-2.446,0.155c-0.776,0.045-1.553,0.086-2.331,0.122c-1.037,0.048-2.077,0.086-3.118,0.118\n                c-0.608,0.019-1.215,0.043-1.823,0.057c-1.675,0.039-3.353,0.064-5.037,0.064s-3.362-0.025-5.037-0.064\n                c-0.609-0.014-1.216-0.038-1.823-0.057c-1.041-0.033-2.081-0.071-3.118-0.118c-0.778-0.036-1.555-0.078-2.331-0.122\n                c-0.817-0.046-1.632-0.099-2.446-0.155c-0.923-0.064-1.846-0.128-2.767-0.204c-0.52-0.042-1.037-0.092-1.555-0.138\n                c-41.142-3.68-79.759-19.195-111.96-44.412c32.024-38.424,79.557-61.396,131.038-61.396s99.015,22.972,131.038,61.396\n                c-32.201,25.218-70.819,40.732-111.96,44.412C274.56,468.521,274.042,468.571,273.523,468.613z M43.726,277.333h41.608\n                c11.782,0,21.333-9.551,21.333-21.333s-9.551-21.333-21.333-21.333H43.726c4.26-42.904,21.234-82.066,47.099-113.672l29.41,29.41\n                c8.331,8.331,21.839,8.331,30.17,0s8.331-21.839,0-30.17l-29.41-29.41c31.607-25.865,70.768-42.838,113.672-47.099v41.608\n                c0,11.782,9.551,21.333,21.333,21.333s21.333-9.551,21.333-21.333V43.726c42.904,4.26,82.066,21.234,113.672,47.099l-29.41,29.41\n                c-8.331,8.331-8.331,21.839,0,30.17s21.839,8.331,30.17,0l29.41-29.41c25.865,31.607,42.838,70.768,47.099,113.672h-41.608\n                c-11.782,0-21.333,9.551-21.333,21.333s9.551,21.333,21.333,21.333h41.608c-4.428,44.592-22.591,85.14-50.194,117.366\n                C378.101,347.932,319.426,320,256,320s-122.101,27.932-162.08,74.7C66.317,362.474,48.154,321.926,43.726,277.333z\"/>\n              <path fill=\"white\" d=\"M248.077,275.807c10.939,4.376,23.355-0.945,27.73-11.885l42.667-106.667c4.376-10.939-0.945-23.355-11.885-27.731\n                c-10.939-4.376-23.355,0.945-27.73,11.885l-42.667,106.667C231.817,259.016,237.138,271.432,248.077,275.807z\"/>\n        </svg>\n        "
         )
       );
       svg.addEventListener("mouseover", () => {
@@ -3040,7 +3068,7 @@ class OGInfinity {
         this.createDOM(
           "div",
           { class: "ogi-plus-icon" },
-          '\n      <svg viewBox="0 0 300.003 300.003" style="enable-background:new 0 0 300.003 300.003;">\n        <g>\n\t\t  <path fill="white" d="M150,0C67.159,0,0.001,67.159,0.001,150c0,82.838,67.157,150.003,149.997,150.003S300.002,232.838,300.002,150\n\t\t\tC300.002,67.159,232.839,0,150,0z M213.281,166.501h-48.27v50.469c-0.003,8.463-6.863,15.323-15.328,15.323\n\t\t\tc-8.468,0-15.328-6.86-15.328-15.328v-50.464H87.37c-8.466-0.003-15.323-6.863-15.328-15.328c0-8.463,6.863-15.326,15.328-15.328\n\t\t\tl46.984,0.003V91.057c0-8.466,6.863-15.328,15.326-15.328c8.468,0,15.331,6.863,15.328,15.328l0.003,44.787l48.265,0.005\n\t\t\tc8.466-0.005,15.331,6.86,15.328,15.328C228.607,159.643,221.742,166.501,213.281,166.501z"/>\n\t      </g>\n        </svg>'
+          "\n      <svg viewBox=\"0 0 300.003 300.003\" style=\"enable-background:new 0 0 300.003 300.003;\">\n        <g>\n\t\t  <path fill=\"white\" d=\"M150,0C67.159,0,0.001,67.159,0.001,150c0,82.838,67.157,150.003,149.997,150.003S300.002,232.838,300.002,150\n\t\t\tC300.002,67.159,232.839,0,150,0z M213.281,166.501h-48.27v50.469c-0.003,8.463-6.863,15.323-15.328,15.323\n\t\t\tc-8.468,0-15.328-6.86-15.328-15.328v-50.464H87.37c-8.466-0.003-15.323-6.863-15.328-15.328c0-8.463,6.863-15.326,15.328-15.328\n\t\t\tl46.984,0.003V91.057c0-8.466,6.863-15.328,15.326-15.328c8.468,0,15.331,6.863,15.328,15.328l0.003,44.787l48.265,0.005\n\t\t\tc8.466-0.005,15.331,6.86,15.328,15.328C228.607,159.643,221.742,166.501,213.281,166.501z\"/>\n\t      </g>\n        </svg>"
         )
       );
       if (this.json.options.dispatcher) {
@@ -3124,21 +3152,22 @@ class OGInfinity {
           probeCargo: Number(xml.querySelector("probeCargo").innerHTML),
         };
         this.json.lifeFormResearchSpeed = {};
-        xml.querySelectorAll("generalBase").forEach(elem => {
+        xml.querySelectorAll("generalBase").forEach((elem) => {
           let research = elem.parentNode.parentNode;
           let id = research.getAttribute("technologyId");
           this.json.lifeFormResearchSpeed[id] = {};
-          research.querySelector("factors").childNodes.forEach(factor => {
+          research.querySelector("factors").childNodes.forEach((factor) => {
             this.json.lifeFormResearchSpeed[id][factor.nodeName] = factor.innerHTML;
           });
         });
         this.json.lifeFormCostReductionFromBuilding = {};
         this.json.lifeFormCostReductionFromResearch = {};
-        xml.querySelectorAll("technologyBase").forEach(elem => {
+        xml.querySelectorAll("technologyBase").forEach((elem) => {
           if (elem.parentNode.parentNode.parentNode.nodeName == "building") {
             let bonusTo = elem.parentNode.querySelector("techId").innerHTML;
             let bonusFrom = elem.parentNode.parentNode.parentNode.getAttribute("technologyId");
-            this.json.lifeFormCostReductionFromBuilding[bonusTo] = this.json.lifeFormCostReductionFromBuilding[bonusTo] || {};
+            this.json.lifeFormCostReductionFromBuilding[bonusTo] =
+              this.json.lifeFormCostReductionFromBuilding[bonusTo] || {};
             this.json.lifeFormCostReductionFromBuilding[bonusTo][bonusFrom] = {
               base: elem.parentNode.querySelector("technologyBase").innerHTML,
               factor: elem.parentNode.querySelector("technologyFactor").innerHTML,
@@ -3148,7 +3177,8 @@ class OGInfinity {
           if (elem.parentNode.parentNode.parentNode.nodeName == "research") {
             let bonusTo = elem.parentNode.querySelector("techId").innerHTML;
             let bonusFrom = elem.parentNode.parentNode.parentNode.getAttribute("technologyId");
-            this.json.lifeFormCostReductionFromResearch[bonusTo] = this.json.lifeFormCostReductionFromResearch[bonusTo] || {};
+            this.json.lifeFormCostReductionFromResearch[bonusTo] =
+              this.json.lifeFormCostReductionFromResearch[bonusTo] || {};
             this.json.lifeFormCostReductionFromResearch[bonusTo][bonusFrom] = {
               base: elem.parentNode.querySelector("technologyBase").innerHTML,
               factor: elem.parentNode.querySelector("technologyFactor").innerHTML,
@@ -3158,11 +3188,12 @@ class OGInfinity {
         });
         this.json.lifeFormTimeReductionFromBuilding = {};
         this.json.lifeFormTimeReductionFromResearch = {};
-        xml.querySelectorAll("timeTechnologyBase").forEach(elem => {
+        xml.querySelectorAll("timeTechnologyBase").forEach((elem) => {
           if (elem.parentNode.parentNode.parentNode.nodeName == "building") {
             let bonusTo = elem.parentNode.querySelector("techId").innerHTML;
             let bonusFrom = elem.parentNode.parentNode.parentNode.getAttribute("technologyId");
-            this.json.lifeFormTimeReductionFromBuilding[bonusTo] = this.json.lifeFormTimeReductionFromBuilding[bonusTo] || {};
+            this.json.lifeFormTimeReductionFromBuilding[bonusTo] =
+              this.json.lifeFormTimeReductionFromBuilding[bonusTo] || {};
             this.json.lifeFormTimeReductionFromBuilding[bonusTo][bonusFrom] = {
               base: elem.parentNode.querySelector("timeTechnologyBase").innerHTML,
               factor: elem.parentNode.querySelector("timeTechnologyFactor").innerHTML,
@@ -3172,7 +3203,8 @@ class OGInfinity {
           if (elem.parentNode.parentNode.parentNode.nodeName == "research") {
             let bonusTo = elem.parentNode.querySelector("techId").innerHTML;
             let bonusFrom = elem.parentNode.parentNode.parentNode.getAttribute("technologyId");
-            this.json.lifeFormTimeReductionFromResearch[bonusTo] = this.json.lifeFormTimeReductionFromResearch[bonusTo] || {};
+            this.json.lifeFormTimeReductionFromResearch[bonusTo] =
+              this.json.lifeFormTimeReductionFromResearch[bonusTo] || {};
             this.json.lifeFormTimeReductionFromResearch[bonusTo][bonusFrom] = {
               base: elem.parentNode.querySelector("timeTechnologyBase").innerHTML,
               factor: elem.parentNode.querySelector("timeTechnologyFactor").innerHTML,
@@ -3183,17 +3215,18 @@ class OGInfinity {
 
         this.json.lifeFormProductionBoostFromBuildings = {};
         this.json.lifeFormProductionBoostFromResearch = {};
-        xml.querySelectorAll("metalBase, crystalBase, deuteriumBase").forEach(elem => {
+        xml.querySelectorAll("metalBase, crystalBase, deuteriumBase").forEach((elem) => {
           let tech = elem.parentNode.parentNode;
           let id = tech.getAttribute("technologyId");
-          let boost = tech.nodeName == "building" ?
-            this.json.lifeFormProductionBoostFromBuildings :
-            this.json.lifeFormProductionBoostFromResearch;
+          let boost =
+            tech.nodeName == "building"
+              ? this.json.lifeFormProductionBoostFromBuildings
+              : this.json.lifeFormProductionBoostFromResearch;
           if (["ResourceBooster", "ProductionBooster"].includes(tech.querySelector("type").innerHTML)) {
             boost[id] = [
-              tech.querySelector("metalBase") ? Number(tech.querySelector("metalBase").innerHTML) : 0 ,
-              tech.querySelector("crystalBase") ? Number(tech.querySelector("crystalBase").innerHTML) : 0 ,
-              tech.querySelector("deuteriumBase") ? Number(tech.querySelector("deuteriumBase").innerHTML) : 0 ,
+              tech.querySelector("metalBase") ? Number(tech.querySelector("metalBase").innerHTML) : 0,
+              tech.querySelector("crystalBase") ? Number(tech.querySelector("crystalBase").innerHTML) : 0,
+              tech.querySelector("deuteriumBase") ? Number(tech.querySelector("deuteriumBase").innerHTML) : 0,
             ];
           }
         });
@@ -3223,7 +3256,7 @@ class OGInfinity {
         `<a href="https://www.mmorpg-stat.eu/base.php?se=1&univers=_${this.universe}" target="_blank">Mmorpg</a>`
       )
     );
-    bar.appendChild(this.createDOM("li", {}, `<a href="https://ptre.chez.gg/" target="_blank">PTRE</a>`));
+    bar.appendChild(this.createDOM("li", {}, "<a href=\"https://ptre.chez.gg/\" target=\"_blank\">PTRE</a>"));
     let ping = window.performance.timing.domLoading - window.performance.timing.fetchStart;
     let colorClass = "friendly";
     if (ping > 400 && ping < 800) colorClass = "neutral";
@@ -3800,7 +3833,7 @@ class OGInfinity {
           ptreJSON[coords].id = planetId;
           ptreJSON[coords].player_id = playerId;
           ptreJSON[coords].teamkey = this.json.options.ptreTK;
-          ptreJSON[coords].mv = row.querySelector('span[class*="vacation"]') ? true : false;
+          ptreJSON[coords].mv = row.querySelector("span[class*=\"vacation\"]") ? true : false;
           ptreJSON[coords].activity = planetActivity;
           ptreJSON[coords].galaxy = galaxy;
           ptreJSON[coords].system = system;
@@ -4019,9 +4052,9 @@ class OGInfinity {
               title: this.getTranslatedText(37),
             },
             `${this.getTranslatedText(38)}: ` +
-              '<span class="' +
+              "<span class=\"" +
               color +
-              '">' +
+              "\">" +
               toFormatedNumber((fleetCount / total) * 100, 0) +
               "%</span>"
           )
@@ -4091,7 +4124,7 @@ class OGInfinity {
       {
         style: "display: flex; width: 80px;margin-left: 10px;margin-top: -2px;",
       },
-      '\n      <div style="margin-right: 7px" class="ogl-keyboard">cmd/ctrl</div>\n      +\n      <div style="margin-left: 5px" class="ogl-keyboard">?</div>\n    '
+      "\n      <div style=\"margin-right: 7px\" class=\"ogl-keyboard\">cmd/ctrl</div>\n      +\n      <div style=\"margin-left: 5px\" class=\"ogl-keyboard\">?</div>\n    "
     );
     ctrl.appendChild(ctrlKey);
     keyHelp.appendChild(this.createDOM("div", { class: "ogl-option ogl-overview-icon" }));
@@ -4119,7 +4152,7 @@ class OGInfinity {
       )
     );
     let heart =
-      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path style="fill:#C80909" d="M12 4.435c-1.989-5.399-12-4.597-12 3.568 0 4.068 3.06 9.481 12 14.997 8.94-5.516 12-10.929 12-14.997 0-8.118-10-8.999-12-3.568z"/></svg>';
+      "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path style=\"fill:#C80909\" d=\"M12 4.435c-1.989-5.399-12-4.597-12 3.568 0 4.068 3.06 9.481 12 14.997 8.94-5.516 12-10.929 12-14.997 0-8.118-10-8.999-12-3.568z\"/></svg>";
     container.appendChild(this.createDOM("div", { class: "ogk-love" }, "Made isolated with " + heart + "in Paris"));
     this.popup(null, container);
   }
@@ -4306,8 +4339,8 @@ class OGInfinity {
       this.playerSearch(!this.searchOpened);
       this.searchOpened = !this.searchOpened;
     });
-    empireBtn.addEventListener("click", () => {
-      this.updateEmpireData(true);
+    empireBtn.addEventListener("click", (e) => {
+      this.updateEmpireData(e.ctrlKey);
       this.loading();
       let inter = setInterval(() => {
         if (!this.isLoading) {
@@ -4316,8 +4349,8 @@ class OGInfinity {
         }
       }, 20);
     });
-    overViewBtn.addEventListener("click", () => {
-      this.updateEmpireData();
+    overViewBtn.addEventListener("click", (e) => {
+      this.updateEmpireData(e.ctrlKey);
       let active = document.querySelector(".ogl-option.ogl-active:not(.ogl-overview-icon)");
       if (active) {
         active.click();
@@ -4334,8 +4367,8 @@ class OGInfinity {
       }
       this.saveData();
     });
-    statsBtn.addEventListener("click", () => {
-      this.updateEmpireData(true);
+    statsBtn.addEventListener("click", (e) => {
+      this.updateEmpireData(e.ctrlKey);
       this.loading();
       let inter = setInterval(() => {
         if (!this.isLoading) {
@@ -4397,23 +4430,35 @@ class OGInfinity {
         height: "150px",
       })
     );
+    let data = lf ? [eco, tech, fleet, def, lf] : [eco, tech, fleet, def];
+    let colors = lf
+      ? ["#656565", "#83ba33", "#b73536", "#3d4800", "#9556ce"]
+      : ["#656565", "#83ba33", "#b73536", "#3d4800"];
+    let labels = lf
+      ? [
+        this.getTranslatedText(51, "text"),
+        this.getTranslatedText(52, "text"),
+        this.getTranslatedText(53, "text"),
+        this.getTranslatedText(54, "text"),
+        this.getTranslatedText(89, "text"),
+      ]
+      : [
+        this.getTranslatedText(51, "text"),
+        this.getTranslatedText(52, "text"),
+        this.getTranslatedText(53, "text"),
+        this.getTranslatedText(54, "text"),
+      ];
     let config = {
       type: "doughnut",
       data: {
         datasets: [
           {
-            data: [eco, tech, fleet, def, lf],
-            backgroundColor: ["#656565", "#83ba33", "#b73536", "#3d4800", "#9556ce"],
+            data: data,
+            backgroundColor: colors,
             borderColor: "#1b232c",
           },
         ],
-        labels: [
-          this.getTranslatedText(51, "text"),
-          this.getTranslatedText(52, "text"),
-          this.getTranslatedText(53, "text"),
-          this.getTranslatedText(54, "text"),
-          this.getTranslatedText(89, "text"),
-        ],
+        labels: labels,
       },
       options: {
         circumference: Math.PI,
@@ -4541,31 +4586,31 @@ class OGInfinity {
     );
     let playerClassName;
     switch (this.playerClass) {
-      case PLAYER_CLASS_MINER:
-        playerClassName = "miner";
-        break;
-      case PLAYER_CLASS_WARRIOR:
-        playerClassName = "warrior";
-        break;
-      case PLAYER_CLASS_EXPLORER:
-        playerClassName = "explorer";
-        break;
-      default:
-        playerClassName = "";
+    case PLAYER_CLASS_MINER:
+      playerClassName = "miner";
+      break;
+    case PLAYER_CLASS_WARRIOR:
+      playerClassName = "warrior";
+      break;
+    case PLAYER_CLASS_EXPLORER:
+      playerClassName = "explorer";
+      break;
+    default:
+      playerClassName = "";
     }
     let allianceClassName;
     switch (this.json.allianceClass) {
-      case ALLY_CLASS_MINER:
-        allianceClassName = "trader";
-        break;
-      case ALLY_CLASS_WARRIOR:
-        allianceClassName = "warrior";
-        break;
-      case ALLY_CLASS_EXPLORER:
-        allianceClassName = "explorer";
-        break;
-      default:
-        allianceClassName = "";
+    case ALLY_CLASS_MINER:
+      allianceClassName = "trader";
+      break;
+    case ALLY_CLASS_WARRIOR:
+      allianceClassName = "warrior";
+      break;
+    case ALLY_CLASS_EXPLORER:
+      allianceClassName = "explorer";
+      break;
+    default:
+      allianceClassName = "";
     }
     playerDiv.appendChild(
       this.createDOM("div", {
@@ -4594,9 +4639,14 @@ class OGInfinity {
       player.military = { score: 0 };
       if (this.hasLifeforms) player.lifeform = { score: 0 };
     }
-    console.log(player.lifeform)
     globalInfo.appendChild(
-      this.repartitionGraph(player.economy.score, player.research.score, player.military.score, player.def, player.lifeform.score)
+      this.repartitionGraph(
+        player.economy.score,
+        player.research.score,
+        player.military.score,
+        player.def,
+        this.hasLifeforms ? player.lifeform.score : null
+      )
     );
     globalInfo.appendChild(this.createDOM("h2", {}, toFormatedNumber(parseInt(player.points.position))));
     globalInfo.appendChild(
@@ -4618,9 +4668,15 @@ class OGInfinity {
         parseInt(player.military.position)
       )} </span></div>\n          <div><div class="ogl-fleetIcon grey"></div>${toFormatedNumber(
         parseInt(player.def)
-      )} <small>pts</small></div>\n${this.hasLifeforms?'<div><div class="ogl-lfIcon"></div>'+toFormatedNumber(
-        parseInt(player.lifeform.score))+'<small>pts</small><span class="ogl-ranking">#'+toFormatedNumber(
-          parseInt(player.military.score))+'</span></div>\n':""}`
+      )} <small>pts</small></div>\n${
+        this.hasLifeforms
+          ? "<div><div class=\"ogl-lfIcon\"></div>" +
+            toFormatedNumber(parseInt(player.lifeform.score)) +
+            "<small>pts</small><span class=\"ogl-ranking\">#" +
+            toFormatedNumber(parseInt(player.military.score)) +
+            "</span></div>\n"
+          : ""
+      }`
     );
     let details = content.appendChild(this.createDOM("div", { class: "ogk-details" }));
     let ecoDetail = details.appendChild(this.createDOM("div", { class: "ogk-box" }));
@@ -4948,21 +5004,21 @@ class OGInfinity {
                             <div class="ptreBestReport">
                                 <div>
                                     <div><b class="ogl_fleet"><i class="material-icons">military_tech</i>${this.formatToUnits(
-                                      result.top_sr_fleet_points
-                                    )} pts</b></div>
+    result.top_sr_fleet_points
+  )} pts</b></div>
                                     <div><b>${new Date(result.top_sr_timestamp * 1000).toLocaleDateString(
-                                      "fr-FR"
-                                    )}</b></div>
+    "fr-FR"
+  )}</b></div>
                                 </div>
                                 <div>
                                     <a class="ogl_button" target="_blank" href="${result.top_sr_link}">${
-            this.gameLang == "fr" ? "Détails du rapport" : "Report Details"
-          }</a>
+  this.gameLang == "fr" ? "Détails du rapport" : "Report Details"
+}</a>
                                     <a class="ogl_button" target="_blank" href="https://ptre.chez.gg/?country=${
-                                      this.gameLang
-                                    }&univers=${this.universe}&player_id=${player.id}">${
-            this.gameLang == "fr" ? "Profil de la cible" : "Target Profile"
-          }</a>
+  this.gameLang
+}&univers=${this.universe}&player_id=${player.id}">${
+  this.gameLang == "fr" ? "Profil de la cible" : "Target Profile"
+}</a>
                                 </div>
                             </div>
                             <div class="splitLine"></div>
@@ -5411,7 +5467,7 @@ class OGInfinity {
 
   loading() {
     let svg =
-      '<svg width="200px" height="100px" viewBox="0 0 187.3 93.7" preserveAspectRatio="xMidYMid meet">\n                <path stroke="#3c536c" id="outline" fill="none" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"\n                  d="M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-13.3,7.2-22.1,17.1\n                    c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z" />\n                <path id="outline-bg" opacity="0.1" fill="none" stroke="#eee" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="\n                M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-13.3,7.2-22.1,17.1\n                c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z" />\n              </svg>';
+      "<svg width=\"200px\" height=\"100px\" viewBox=\"0 0 187.3 93.7\" preserveAspectRatio=\"xMidYMid meet\">\n                <path stroke=\"#3c536c\" id=\"outline\" fill=\"none\" stroke-width=\"4\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-miterlimit=\"10\"\n                  d=\"M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-13.3,7.2-22.1,17.1\n                    c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z\" />\n                <path id=\"outline-bg\" opacity=\"0.1\" fill=\"none\" stroke=\"#eee\" stroke-width=\"4\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-miterlimit=\"10\" d=\"\n                M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-13.3,7.2-22.1,17.1\n                c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z\" />\n              </svg>";
     let body = this.createDOM("div");
     body.html(svg);
     this.popup(null, body);
@@ -6288,7 +6344,7 @@ class OGInfinity {
   adjustBox(adjustments, onValidate) {
     let box = this.createDOM("div", { class: "ogk-box ogk-small" });
     let prod = box.appendChild(this.createDOM("div", { class: "ogk-adjust-grid" }));
-    prod.appendChild(this.createDOM("span", {}, '<a class="ogl-option resourceIcon metal"></a>'));
+    prod.appendChild(this.createDOM("span", {}, "<a class=\"ogl-option resourceIcon metal\"></a>"));
     let metInput = prod.appendChild(
       this.createDOM("input", {
         class: "ogl-formatInput metal",
@@ -6296,7 +6352,7 @@ class OGInfinity {
         value: toFormatedNumber(adjustments[0]),
       })
     );
-    prod.appendChild(this.createDOM("span", {}, '<a class="ogl-option resourceIcon crystal"></a>'));
+    prod.appendChild(this.createDOM("span", {}, "<a class=\"ogl-option resourceIcon crystal\"></a>"));
     let criInput = prod.appendChild(
       this.createDOM("input", {
         class: "ogl-formatInput crystal",
@@ -6304,7 +6360,7 @@ class OGInfinity {
         value: toFormatedNumber(adjustments[1]),
       })
     );
-    prod.appendChild(this.createDOM("span", {}, '<a class="ogl-option resourceIcon deuterium"></a>'));
+    prod.appendChild(this.createDOM("span", {}, "<a class=\"ogl-option resourceIcon deuterium\"></a>"));
     let deutInput = prod.appendChild(
       this.createDOM("input", {
         class: "ogl-formatInput deuterium",
@@ -6340,11 +6396,11 @@ class OGInfinity {
     let prod = box.appendChild(this.createDOM("div", { class: "ogk-grid" }));
     if (am) prod.classList.add("ogk-am");
     prod.appendChild(this.createDOM("span"));
-    prod.appendChild(this.createDOM("span", {}, '<a class="ogl-option resourceIcon metal"></a>'));
-    prod.appendChild(this.createDOM("span", {}, '<a class="ogl-option resourceIcon crystal"></a>'));
-    prod.appendChild(this.createDOM("span", {}, '<a class="ogl-option resourceIcon deuterium"></a>'));
+    prod.appendChild(this.createDOM("span", {}, "<a class=\"ogl-option resourceIcon metal\"></a>"));
+    prod.appendChild(this.createDOM("span", {}, "<a class=\"ogl-option resourceIcon crystal\"></a>"));
+    prod.appendChild(this.createDOM("span", {}, "<a class=\"ogl-option resourceIcon deuterium\"></a>"));
     if (am) {
-      prod.appendChild(this.createDOM("span", {}, '<a class="ogl-option resourceIcon darkmatter"></a>'));
+      prod.appendChild(this.createDOM("span", {}, "<a class=\"ogl-option resourceIcon darkmatter\"></a>"));
     }
     let totAm = 0;
     let sums = [0, 0, 0];
@@ -6355,7 +6411,7 @@ class OGInfinity {
           this.createDOM(
             "strong",
             {},
-            '<span style="    display: inline-block;\n          vertical-align: middle;\n          float: none;\n          margin-left: 5px;\n          border-radius: 4px;\n          margin-bottom: 1px;\n          width: 17px;" class="planetMoveIcons settings planetMoveGiveUp icon"></span>'
+            "<span style=\"    display: inline-block;\n          vertical-align: middle;\n          float: none;\n          margin-left: 5px;\n          border-radius: 4px;\n          margin-bottom: 1px;\n          width: 17px;\" class=\"planetMoveIcons settings planetMoveGiveUp icon\"></span>"
           )
         );
         p.classList.add("ogk-edit");
@@ -6821,10 +6877,10 @@ class OGInfinity {
     let crystalRow = table.appendChild(this.createDOM("tr"));
     let deutRow = table.appendChild(this.createDOM("tr"));
     let nrjRow = table.appendChild(this.createDOM("tr"));
-    metalRow.appendChild(this.createDOM("td", {}, '<div class="resourceIcon metal"></div>'));
-    crystalRow.appendChild(this.createDOM("td", {}, '<div class="resourceIcon crystal"></div>'));
-    deutRow.appendChild(this.createDOM("td", {}, '<div class="resourceIcon deuterium"></div>'));
-    nrjRow.appendChild(this.createDOM("td", {}, '<div class="resourceIcon energy"></div>'));
+    metalRow.appendChild(this.createDOM("td", {}, "<div class=\"resourceIcon metal\"></div>"));
+    crystalRow.appendChild(this.createDOM("td", {}, "<div class=\"resourceIcon crystal\"></div>"));
+    deutRow.appendChild(this.createDOM("td", {}, "<div class=\"resourceIcon deuterium\"></div>"));
+    nrjRow.appendChild(this.createDOM("td", {}, "<div class=\"resourceIcon energy\"></div>"));
     let minTimeMetal = 1e20;
     let minTimeCrystal = 1e20;
     let minTimeDeuterium = 1e20;
@@ -7443,7 +7499,7 @@ class OGInfinity {
       for (let n = 0; n < Math.min(20, Object.keys(bestRoi).length); n++) {
         let cons = bestRoi[n];
         let component = cons.technoId <= 3 ? "supplies" : "research";
-        let planetList = document.querySelectorAll('[id^="planet-"]');
+        let planetList = document.querySelectorAll("[id^=\"planet-\"]");
         let currentId =
           planetList.length == 1
             ? planetList[0]
@@ -7490,21 +7546,21 @@ class OGInfinity {
     let metalRow = table.appendChild(this.createDOM("tr"));
     let crystalRow = table.appendChild(this.createDOM("tr"));
     let deutRow = table.appendChild(this.createDOM("tr"));
-    metalRow.appendChild(this.createDOM("td", {}, '<div class="resourceIcon metal"></div>'));
-    crystalRow.appendChild(this.createDOM("td", {}, '<div class="resourceIcon crystal"></div>'));
-    deutRow.appendChild(this.createDOM("td", {}, '<div class="resourceIcon deuterium"></div>'));
-    header.appendChild(this.createDOM("th", {}, '<div class="ogl-prodOverview-icon mines"></div>'));
-    header.appendChild(this.createDOM("th", {}, '<div class="ogl-prodOverview-icon plasma"></div>'));
-    header.appendChild(this.createDOM("th", {}, '<div class="ogl-prodOverview-icon crawler"></div>'));
-    header.appendChild(this.createDOM("th", {}, '<div class="ogl-prodOverview-icon items"></div>'));
-    header.appendChild(this.createDOM("th", {}, '<div class="officers100 allOfficers prodOverview"></div>'));
-    header.appendChild(this.createDOM("th", {}, '<div class="sprite characterclass medium miner prodOverview"></div>'));
-    header.appendChild(this.createDOM("th", {}, '<div class="sprite allianceclass medium trader prodOverview"></div>'));
+    metalRow.appendChild(this.createDOM("td", {}, "<div class=\"resourceIcon metal\"></div>"));
+    crystalRow.appendChild(this.createDOM("td", {}, "<div class=\"resourceIcon crystal\"></div>"));
+    deutRow.appendChild(this.createDOM("td", {}, "<div class=\"resourceIcon deuterium\"></div>"));
+    header.appendChild(this.createDOM("th", {}, "<div class=\"ogl-prodOverview-icon mines\"></div>"));
+    header.appendChild(this.createDOM("th", {}, "<div class=\"ogl-prodOverview-icon plasma\"></div>"));
+    header.appendChild(this.createDOM("th", {}, "<div class=\"ogl-prodOverview-icon crawler\"></div>"));
+    header.appendChild(this.createDOM("th", {}, "<div class=\"ogl-prodOverview-icon items\"></div>"));
+    header.appendChild(this.createDOM("th", {}, "<div class=\"officers100 allOfficers prodOverview\"></div>"));
+    header.appendChild(this.createDOM("th", {}, "<div class=\"sprite characterclass medium miner prodOverview\"></div>"));
+    header.appendChild(this.createDOM("th", {}, "<div class=\"sprite allianceclass medium trader prodOverview\"></div>"));
     if (document.querySelector(".lifeform") != null)
       header.appendChild(
-        this.createDOM("th", { class: "menu_icon" }, '<div class="ogl-prodOverview-icon lifeform"></div>')
+        this.createDOM("th", { class: "menu_icon" }, "<div class=\"ogl-prodOverview-icon lifeform\"></div>")
       );
-    header.appendChild(this.createDOM("th", {}, '<div class="ogl-prodOverview-icon energy"></div>'));
+    header.appendChild(this.createDOM("th", {}, "<div class=\"ogl-prodOverview-icon energy\"></div>"));
     let mines = [0, 0, 0];
     let plasma = [0, 0, 0];
     let crawler = [0, 0, 0];
@@ -7529,7 +7585,7 @@ class OGInfinity {
         player[i] += planet.production.production[1004][i];
         alliance[i] += planet.production.production[1005][i];
         energy[i] -= planet.production.production[12][i];
-        if (lifeform) lifeform[i] += planet.production.production[1006][i];
+        if (lifeform) lifeform[i] += planet.production.lifeformProduction[i];
       }
     });
     header.appendChild(this.createDOM("th", { class: "ogl-sum-symbol" }, "Σ"));
@@ -8747,7 +8803,7 @@ class OGInfinity {
         content.replaceWith(this.fleetOverview(true));
       }
     });
-    row.appendChild(this.createDOM("th", {}, '<span class="icon_movement"></span>'));
+    row.appendChild(this.createDOM("th", {}, "<span class=\"icon_movement\"></span>"));
     td.appendChild(planetIcon);
     td.appendChild(moonIcon);
     row.appendChild(td);
@@ -8853,7 +8909,7 @@ class OGInfinity {
   defenseOverview(moon) {
     let content = this.createDOM("div", { class: "ogl-fleet-content" });
     let shipsInfo = JSON.parse(
-      '{ "212": { "name": "Satellite solaire" }, "401": { "name": "Lanceur de missiles" }, "402": { "name": "Artillerie laser légère" }, "403": { "name": "Artillerie laser lourde" }, "404": { "name": "Canon de Gauss" }, "405": { "name": "Artillerie à ions" }, "406": { "name": "Lanceur de plasma" }, "407": { "name": "Petit bouclier" }, "408": { "name": "Grand bouclier" }, "502": { "name": "Missile d`interception" }, "503": { "name": "Missile interplanétaire" }, "202": { "id": 202, "name": "Petit transporteur", "baseFuelConsumption": 20, "baseFuelCapacity": 5000, "baseCargoCapacity": 7250, "fuelConsumption": 10, "baseSpeed": 10000, "speed": 32000, "cargoCapacity": 7250, "fuelCapacity": 5000, "number": 1, "recycleMode": 0, "rapidfire": { "205": -3, "215": -3, "214": -250, "210": 5, "212": 5, "217": 5 } }, "203": { "id": 203, "name": "Grand transporteur", "baseFuelConsumption": 50, "baseFuelCapacity": 25000, "baseCargoCapacity": 36250, "fuelConsumption": 25, "baseSpeed": 7500, "speed": 18000, "cargoCapacity": 36250, "fuelCapacity": 25000, "number": 1, "recycleMode": 0, "rapidfire": { "215": -3, "214": -250, "210": 5, "212": 5, "217": 5 } }, "204": { "id": 204, "name": "Chasseur léger", "baseFuelConsumption": 20, "baseFuelCapacity": 50, "baseCargoCapacity": 72, "fuelConsumption": 10, "baseSpeed": 12500, "speed": 30000, "cargoCapacity": 72, "fuelCapacity": 50, "number": 1, "recycleMode": 0, "rapidfire": { "206": -6, "214": -200, "219": -3, "210": 5, "212": 5, "217": 5 } }, "205": { "id": 205, "name": "Chasseur lourd", "baseFuelConsumption": 75, "baseFuelCapacity": 100, "baseCargoCapacity": 145, "fuelConsumption": 37, "baseSpeed": 10000, "speed": 32000, "cargoCapacity": 145, "fuelCapacity": 100, "number": 1, "recycleMode": 0, "rapidfire": { "215": -4, "214": -100, "219": -2, "210": 5, "212": 5, "217": 5, "202": 3 } }, "206": { "id": 206, "name": "Croiseur", "baseFuelConsumption": 300, "baseFuelCapacity": 800, "baseCargoCapacity": 1160, "fuelConsumption": 150, "baseSpeed": 15000, "speed": 48000, "cargoCapacity": 1160, "fuelCapacity": 800, "number": 1, "recycleMode": 0, "rapidfire": { "215": -4, "214": -33, "219": 3, "210": 5, "212": 5, "217": 5, "204": 6, "401": 10 } }, "207": { "id": 207, "name": "Vaisseau de bataille", "baseFuelConsumption": 500, "baseFuelCapacity": 1500, "baseCargoCapacity": 2175, "fuelConsumption": 250, "baseSpeed": 10000, "speed": 49000, "cargoCapacity": 2175, "fuelCapacity": 1500, "number": 1, "recycleMode": 0, "rapidfire": { "215": -7, "214": -30, "218": -7, "210": 5, "212": 5, "217": 5, "219": 5 } }, "208": { "id": 208, "name": "Vaisseau de colonisation", "baseFuelConsumption": 1000, "baseFuelCapacity": 7500, "baseCargoCapacity": 10875, "fuelConsumption": 500, "baseSpeed": 2500, "speed": 8000, "cargoCapacity": 10875, "fuelCapacity": 7500, "number": 1, "recycleMode": 0, "rapidfire": { "214": -250, "210": 5, "212": 5, "217": 5 } }, "209": { "id": 209, "name": "Recycleur", "baseFuelConsumption": 300, "baseFuelCapacity": 20000, "baseCargoCapacity": 29000, "fuelConsumption": 150, "baseSpeed": 2000, "speed": 4800, "cargoCapacity": 29000, "fuelCapacity": 20000, "number": 1, "recycleMode": 0, "rapidfire": { "214": -250, "210": 5, "212": 5, "217": 5 } }, "210": { "id": 210, "name": "Sonde despionnage", "baseFuelConsumption": 1, "baseFuelCapacity": 5, "baseCargoCapacity": 7, "fuelConsumption": 0, "baseSpeed": 100000000, "speed": 240000000, "cargoCapacity": 7, "fuelCapacity": 5, "number": 1, "recycleMode": 0, "rapidfire": { "204": -5, "205": -5, "206": -5, "207": -5, "215": -5, "211": -5, "213": -5, "214": -1250, "218": -5, "219": -5, "202": -5, "203": -5, "208": -5, "209": -5 } }, "211": { "id": 211, "name": "Bombardier", "baseFuelConsumption": 700, "baseFuelCapacity": 500, "baseCargoCapacity": 725, "fuelConsumption": 350, "baseSpeed": 5000, "speed": 24500, "cargoCapacity": 725, "fuelCapacity": 500, "number": 1, "recycleMode": 0, "rapidfire": { "214": -25, "218": -4, "210": 5, "212": 5, "217": 5, "401": 20, "402": 20, "403": 10, "405": 10, "404": 5, "406": 5 } }, "213": { "id": 213, "name": "Destructeur", "baseFuelConsumption": 1000, "baseFuelCapacity": 2000, "baseCargoCapacity": 2900, "fuelConsumption": 500, "baseSpeed": 5000, "speed": 24500, "cargoCapacity": 2900, "fuelCapacity": 2000, "number": 1, "recycleMode": 0, "rapidfire": { "214": -5, "218": -3, "210": 5, "212": 5, "217": 5, "402": 10, "215": 2 } }, "214": { "id": 214, "name": "Étoile de la mort", "baseFuelConsumption": 1, "baseFuelCapacity": 1000000, "baseCargoCapacity": 1450000, "fuelConsumption": 0, "baseSpeed": 100, "speed": 490, "cargoCapacity": 1450000, "fuelCapacity": 1000000, "number": 1, "recycleMode": 0, "rapidfire": { "210": 1250, "212": 1250, "204": 200, "205": 100, "206": 33, "207": 30, "211": 25, "213": 5, "202": 250, "203": 250, "208": 250, "209": 250, "401": 200, "402": 200, "403": 100, "405": 100, "404": 50, "215": 15, "219": 30, "218": 10, "217": 1250 } }, "215": { "id": 215, "name": "Traqueur", "baseFuelConsumption": 250, "baseFuelCapacity": 750, "baseCargoCapacity": 1087, "fuelConsumption": 125, "baseSpeed": 10000, "speed": 49000, "cargoCapacity": 1087, "fuelCapacity": 750, "number": 1, "recycleMode": 0, "rapidfire": { "214": -10, "405": -2, "210": 5, "212": 5, "217": 5, "207": 7, "211": 4, "213": 3 } }, "217": { "id": 217, "name": "Foreuse", "baseFuelConsumption": 0, "baseFuelCapacity": 0, "baseCargoCapacity": 0, "fuelConsumption": 0, "baseSpeed": 0, "speed": 0, "cargoCapacity": 0, "fuelCapacity": 0, "number": 1, "recycleMode": 0, "rapidfire": { "204": -5, "205": -5, "206": -5, "207": -5, "215": -5, "211": -5, "213": -5, "214": -1250, "218": -5, "219": -5, "202": -5, "203": -5, "208": -5, "209": -5 } }, "218": { "id": 218, "name": "Faucheur", "baseFuelConsumption": 1100, "baseFuelCapacity": 10000, "baseCargoCapacity": 14500, "fuelConsumption": 550, "baseSpeed": 7000, "speed": 34300, "cargoCapacity": 14500, "fuelCapacity": 10000, "number": 1, "recycleMode": 2, "rapidfire": { "214": -10, "405": -2, "210": 5, "212": 5, "217": 5, "207": 7, "211": 4, "213": 3 } }, "219": { "id": 219, "name": "Éclaireur", "baseFuelConsumption": 300, "baseFuelCapacity": 10000, "baseCargoCapacity": 14500, "fuelConsumption": 150, "baseSpeed": 12000, "speed": 58800, "cargoCapacity": 14500, "fuelCapacity": 10000, "number": 1, "recycleMode": 3, "rapidfire": { "207": -5, "214": -30, "210": 5, "212": 5, "217": 5, "206": 3, "204": 3, "205": 2 } } }'
+      "{ \"212\": { \"name\": \"Satellite solaire\" }, \"401\": { \"name\": \"Lanceur de missiles\" }, \"402\": { \"name\": \"Artillerie laser légère\" }, \"403\": { \"name\": \"Artillerie laser lourde\" }, \"404\": { \"name\": \"Canon de Gauss\" }, \"405\": { \"name\": \"Artillerie à ions\" }, \"406\": { \"name\": \"Lanceur de plasma\" }, \"407\": { \"name\": \"Petit bouclier\" }, \"408\": { \"name\": \"Grand bouclier\" }, \"502\": { \"name\": \"Missile d`interception\" }, \"503\": { \"name\": \"Missile interplanétaire\" }, \"202\": { \"id\": 202, \"name\": \"Petit transporteur\", \"baseFuelConsumption\": 20, \"baseFuelCapacity\": 5000, \"baseCargoCapacity\": 7250, \"fuelConsumption\": 10, \"baseSpeed\": 10000, \"speed\": 32000, \"cargoCapacity\": 7250, \"fuelCapacity\": 5000, \"number\": 1, \"recycleMode\": 0, \"rapidfire\": { \"205\": -3, \"215\": -3, \"214\": -250, \"210\": 5, \"212\": 5, \"217\": 5 } }, \"203\": { \"id\": 203, \"name\": \"Grand transporteur\", \"baseFuelConsumption\": 50, \"baseFuelCapacity\": 25000, \"baseCargoCapacity\": 36250, \"fuelConsumption\": 25, \"baseSpeed\": 7500, \"speed\": 18000, \"cargoCapacity\": 36250, \"fuelCapacity\": 25000, \"number\": 1, \"recycleMode\": 0, \"rapidfire\": { \"215\": -3, \"214\": -250, \"210\": 5, \"212\": 5, \"217\": 5 } }, \"204\": { \"id\": 204, \"name\": \"Chasseur léger\", \"baseFuelConsumption\": 20, \"baseFuelCapacity\": 50, \"baseCargoCapacity\": 72, \"fuelConsumption\": 10, \"baseSpeed\": 12500, \"speed\": 30000, \"cargoCapacity\": 72, \"fuelCapacity\": 50, \"number\": 1, \"recycleMode\": 0, \"rapidfire\": { \"206\": -6, \"214\": -200, \"219\": -3, \"210\": 5, \"212\": 5, \"217\": 5 } }, \"205\": { \"id\": 205, \"name\": \"Chasseur lourd\", \"baseFuelConsumption\": 75, \"baseFuelCapacity\": 100, \"baseCargoCapacity\": 145, \"fuelConsumption\": 37, \"baseSpeed\": 10000, \"speed\": 32000, \"cargoCapacity\": 145, \"fuelCapacity\": 100, \"number\": 1, \"recycleMode\": 0, \"rapidfire\": { \"215\": -4, \"214\": -100, \"219\": -2, \"210\": 5, \"212\": 5, \"217\": 5, \"202\": 3 } }, \"206\": { \"id\": 206, \"name\": \"Croiseur\", \"baseFuelConsumption\": 300, \"baseFuelCapacity\": 800, \"baseCargoCapacity\": 1160, \"fuelConsumption\": 150, \"baseSpeed\": 15000, \"speed\": 48000, \"cargoCapacity\": 1160, \"fuelCapacity\": 800, \"number\": 1, \"recycleMode\": 0, \"rapidfire\": { \"215\": -4, \"214\": -33, \"219\": 3, \"210\": 5, \"212\": 5, \"217\": 5, \"204\": 6, \"401\": 10 } }, \"207\": { \"id\": 207, \"name\": \"Vaisseau de bataille\", \"baseFuelConsumption\": 500, \"baseFuelCapacity\": 1500, \"baseCargoCapacity\": 2175, \"fuelConsumption\": 250, \"baseSpeed\": 10000, \"speed\": 49000, \"cargoCapacity\": 2175, \"fuelCapacity\": 1500, \"number\": 1, \"recycleMode\": 0, \"rapidfire\": { \"215\": -7, \"214\": -30, \"218\": -7, \"210\": 5, \"212\": 5, \"217\": 5, \"219\": 5 } }, \"208\": { \"id\": 208, \"name\": \"Vaisseau de colonisation\", \"baseFuelConsumption\": 1000, \"baseFuelCapacity\": 7500, \"baseCargoCapacity\": 10875, \"fuelConsumption\": 500, \"baseSpeed\": 2500, \"speed\": 8000, \"cargoCapacity\": 10875, \"fuelCapacity\": 7500, \"number\": 1, \"recycleMode\": 0, \"rapidfire\": { \"214\": -250, \"210\": 5, \"212\": 5, \"217\": 5 } }, \"209\": { \"id\": 209, \"name\": \"Recycleur\", \"baseFuelConsumption\": 300, \"baseFuelCapacity\": 20000, \"baseCargoCapacity\": 29000, \"fuelConsumption\": 150, \"baseSpeed\": 2000, \"speed\": 4800, \"cargoCapacity\": 29000, \"fuelCapacity\": 20000, \"number\": 1, \"recycleMode\": 0, \"rapidfire\": { \"214\": -250, \"210\": 5, \"212\": 5, \"217\": 5 } }, \"210\": { \"id\": 210, \"name\": \"Sonde despionnage\", \"baseFuelConsumption\": 1, \"baseFuelCapacity\": 5, \"baseCargoCapacity\": 7, \"fuelConsumption\": 0, \"baseSpeed\": 100000000, \"speed\": 240000000, \"cargoCapacity\": 7, \"fuelCapacity\": 5, \"number\": 1, \"recycleMode\": 0, \"rapidfire\": { \"204\": -5, \"205\": -5, \"206\": -5, \"207\": -5, \"215\": -5, \"211\": -5, \"213\": -5, \"214\": -1250, \"218\": -5, \"219\": -5, \"202\": -5, \"203\": -5, \"208\": -5, \"209\": -5 } }, \"211\": { \"id\": 211, \"name\": \"Bombardier\", \"baseFuelConsumption\": 700, \"baseFuelCapacity\": 500, \"baseCargoCapacity\": 725, \"fuelConsumption\": 350, \"baseSpeed\": 5000, \"speed\": 24500, \"cargoCapacity\": 725, \"fuelCapacity\": 500, \"number\": 1, \"recycleMode\": 0, \"rapidfire\": { \"214\": -25, \"218\": -4, \"210\": 5, \"212\": 5, \"217\": 5, \"401\": 20, \"402\": 20, \"403\": 10, \"405\": 10, \"404\": 5, \"406\": 5 } }, \"213\": { \"id\": 213, \"name\": \"Destructeur\", \"baseFuelConsumption\": 1000, \"baseFuelCapacity\": 2000, \"baseCargoCapacity\": 2900, \"fuelConsumption\": 500, \"baseSpeed\": 5000, \"speed\": 24500, \"cargoCapacity\": 2900, \"fuelCapacity\": 2000, \"number\": 1, \"recycleMode\": 0, \"rapidfire\": { \"214\": -5, \"218\": -3, \"210\": 5, \"212\": 5, \"217\": 5, \"402\": 10, \"215\": 2 } }, \"214\": { \"id\": 214, \"name\": \"Étoile de la mort\", \"baseFuelConsumption\": 1, \"baseFuelCapacity\": 1000000, \"baseCargoCapacity\": 1450000, \"fuelConsumption\": 0, \"baseSpeed\": 100, \"speed\": 490, \"cargoCapacity\": 1450000, \"fuelCapacity\": 1000000, \"number\": 1, \"recycleMode\": 0, \"rapidfire\": { \"210\": 1250, \"212\": 1250, \"204\": 200, \"205\": 100, \"206\": 33, \"207\": 30, \"211\": 25, \"213\": 5, \"202\": 250, \"203\": 250, \"208\": 250, \"209\": 250, \"401\": 200, \"402\": 200, \"403\": 100, \"405\": 100, \"404\": 50, \"215\": 15, \"219\": 30, \"218\": 10, \"217\": 1250 } }, \"215\": { \"id\": 215, \"name\": \"Traqueur\", \"baseFuelConsumption\": 250, \"baseFuelCapacity\": 750, \"baseCargoCapacity\": 1087, \"fuelConsumption\": 125, \"baseSpeed\": 10000, \"speed\": 49000, \"cargoCapacity\": 1087, \"fuelCapacity\": 750, \"number\": 1, \"recycleMode\": 0, \"rapidfire\": { \"214\": -10, \"405\": -2, \"210\": 5, \"212\": 5, \"217\": 5, \"207\": 7, \"211\": 4, \"213\": 3 } }, \"217\": { \"id\": 217, \"name\": \"Foreuse\", \"baseFuelConsumption\": 0, \"baseFuelCapacity\": 0, \"baseCargoCapacity\": 0, \"fuelConsumption\": 0, \"baseSpeed\": 0, \"speed\": 0, \"cargoCapacity\": 0, \"fuelCapacity\": 0, \"number\": 1, \"recycleMode\": 0, \"rapidfire\": { \"204\": -5, \"205\": -5, \"206\": -5, \"207\": -5, \"215\": -5, \"211\": -5, \"213\": -5, \"214\": -1250, \"218\": -5, \"219\": -5, \"202\": -5, \"203\": -5, \"208\": -5, \"209\": -5 } }, \"218\": { \"id\": 218, \"name\": \"Faucheur\", \"baseFuelConsumption\": 1100, \"baseFuelCapacity\": 10000, \"baseCargoCapacity\": 14500, \"fuelConsumption\": 550, \"baseSpeed\": 7000, \"speed\": 34300, \"cargoCapacity\": 14500, \"fuelCapacity\": 10000, \"number\": 1, \"recycleMode\": 2, \"rapidfire\": { \"214\": -10, \"405\": -2, \"210\": 5, \"212\": 5, \"217\": 5, \"207\": 7, \"211\": 4, \"213\": 3 } }, \"219\": { \"id\": 219, \"name\": \"Éclaireur\", \"baseFuelConsumption\": 300, \"baseFuelCapacity\": 10000, \"baseCargoCapacity\": 14500, \"fuelConsumption\": 150, \"baseSpeed\": 12000, \"speed\": 58800, \"cargoCapacity\": 14500, \"fuelCapacity\": 10000, \"number\": 1, \"recycleMode\": 3, \"rapidfire\": { \"207\": -5, \"214\": -30, \"210\": 5, \"212\": 5, \"217\": 5, \"206\": 3, \"204\": 3, \"205\": 2 } } }"
     );
     let table = this.createDOM("table", { class: "ogl-fleet-table" });
     let row = this.createDOM("tr");
@@ -9003,7 +9059,7 @@ class OGInfinity {
       this.createDOM(
         "div",
         { class: "ogl-homes" },
-        '<svg height="12px" viewBox="0 0 512 512" width="12px"><path fill="white" d="m498.195312 222.695312c-.011718-.011718-.023437-.023437-.035156-.035156l-208.855468-208.847656c-8.902344-8.90625-20.738282-13.8125-33.328126-13.8125-12.589843 0-24.425781 4.902344-33.332031 13.808594l-208.746093 208.742187c-.070313.070313-.140626.144531-.210938.214844-18.28125 18.386719-18.25 48.21875.089844 66.558594 8.378906 8.382812 19.445312 13.238281 31.277344 13.746093.480468.046876.964843.070313 1.453124.070313h8.324219v153.699219c0 30.414062 24.746094 55.160156 55.167969 55.160156h81.710938c8.28125 0 15-6.714844 15-15v-120.5c0-13.878906 11.289062-25.167969 25.167968-25.167969h48.195313c13.878906 0 25.167969 11.289063 25.167969 25.167969v120.5c0 8.285156 6.714843 15 15 15h81.710937c30.421875 0 55.167969-24.746094 55.167969-55.160156v-153.699219h7.71875c12.585937 0 24.421875-4.902344 33.332031-13.808594 18.359375-18.371093 18.367187-48.253906.023437-66.636719zm0 0"/></svg>'
+        "<svg height=\"12px\" viewBox=\"0 0 512 512\" width=\"12px\"><path fill=\"white\" d=\"m498.195312 222.695312c-.011718-.011718-.023437-.023437-.035156-.035156l-208.855468-208.847656c-8.902344-8.90625-20.738282-13.8125-33.328126-13.8125-12.589843 0-24.425781 4.902344-33.332031 13.808594l-208.746093 208.742187c-.070313.070313-.140626.144531-.210938.214844-18.28125 18.386719-18.25 48.21875.089844 66.558594 8.378906 8.382812 19.445312 13.238281 31.277344 13.746093.480468.046876.964843.070313 1.453124.070313h8.324219v153.699219c0 30.414062 24.746094 55.160156 55.167969 55.160156h81.710938c8.28125 0 15-6.714844 15-15v-120.5c0-13.878906 11.289062-25.167969 25.167968-25.167969h48.195313c13.878906 0 25.167969 11.289063 25.167969 25.167969v120.5c0 8.285156 6.714843 15 15 15h81.710937c30.421875 0 55.167969-24.746094 55.167969-55.160156v-153.699219h7.71875c12.585937 0 24.421875-4.902344 33.332031-13.808594 18.359375-18.371093 18.367187-48.253906.023437-66.636719zm0 0\"/></svg>"
       )
     );
     if (unions.length != 0) {
@@ -9011,7 +9067,7 @@ class OGInfinity {
         this.createDOM(
           "div",
           { class: "ogl-union-btn" },
-          '<img src="https://gf3.geo.gfsrv.net/cdn56/2ff25995f98351834db4b5aa048c68.gif" height="16" width="16"></img>'
+          "<img src=\"https://gf3.geo.gfsrv.net/cdn56/2ff25995f98351834db4b5aa048c68.gif\" height=\"16\" width=\"16\"></img>"
         )
       );
       unionsBtn.addEventListener("click", () => {
@@ -9073,8 +9129,8 @@ class OGInfinity {
         "div",
         { style: "margin-top: 10px" },
         this.playerClass == PLAYER_CLASS_WARRIOR
-          ? '<div class="ogl-fleetSpeed first"><div data-step="0.5">05</div>\n          <div data-step="1">10</div>\n          <div data-step="1.5">15</div>\n          <div data-step="2">20</div>\n          <div data-step="2.5">25</div>\n          <div data-step="3">30</div>\n          <div data-step="3.5">35</div>\n          <div data-step="4">40</div>\n          <div data-step="4.5">45</div>\n          <div data-step="5">50</div>\n          </div>\n          <div class="ogl-fleetSpeed second">\n          <div data-step="5.5">55</div>\n          <div data-step="6">60</div>\n          <div data-step="6.5">65</div>\n          <div data-step="7">70</div>\n          <div data-step="7.5">75</div>\n          <div data-step="8">80</div>\n          <div data-step="8.5">85</div>\n          <div data-step="9">90</div>\n          <div data-step="9.5">95</div>\n          <div class="ogl-active" data-step="10">100</div>\n          </div>\n          '
-          : '<div class="ogl-fleetSpeed">\n        <div data-step="1">10</div>\n        <div data-step="2">20</div>\n        <div data-step="3">30</div>\n        <div data-step="4">40</div>\n        <div data-step="5">50</div>\n        <div data-step="6">60</div>\n        <div data-step="7">70</div>\n        <div data-step="8">80</div>\n        <div data-step="9">90</div>\n        <div class="ogl-active" data-step="10">100</div>\n        </div>'
+          ? "<div class=\"ogl-fleetSpeed first\"><div data-step=\"0.5\">05</div>\n          <div data-step=\"1\">10</div>\n          <div data-step=\"1.5\">15</div>\n          <div data-step=\"2\">20</div>\n          <div data-step=\"2.5\">25</div>\n          <div data-step=\"3\">30</div>\n          <div data-step=\"3.5\">35</div>\n          <div data-step=\"4\">40</div>\n          <div data-step=\"4.5\">45</div>\n          <div data-step=\"5\">50</div>\n          </div>\n          <div class=\"ogl-fleetSpeed second\">\n          <div data-step=\"5.5\">55</div>\n          <div data-step=\"6\">60</div>\n          <div data-step=\"6.5\">65</div>\n          <div data-step=\"7\">70</div>\n          <div data-step=\"7.5\">75</div>\n          <div data-step=\"8\">80</div>\n          <div data-step=\"8.5\">85</div>\n          <div data-step=\"9\">90</div>\n          <div data-step=\"9.5\">95</div>\n          <div class=\"ogl-active\" data-step=\"10\">100</div>\n          </div>\n          "
+          : "<div class=\"ogl-fleetSpeed\">\n        <div data-step=\"1\">10</div>\n        <div data-step=\"2\">20</div>\n        <div data-step=\"3\">30</div>\n        <div data-step=\"4\">40</div>\n        <div data-step=\"5\">50</div>\n        <div data-step=\"6\">60</div>\n        <div data-step=\"7\">70</div>\n        <div data-step=\"8\">80</div>\n        <div data-step=\"9\">90</div>\n        <div class=\"ogl-active\" data-step=\"10\">100</div>\n        </div>"
       )
     );
     $(".ogl-fleetSpeed div").on("click", (event) => {
@@ -9100,7 +9156,7 @@ class OGInfinity {
       }
     });
     let missionsDiv = destination.appendChild(this.createDOM("div", { class: "ogl-missions" }));
-    missionsDiv.html('<span style="color: #9099a3"> No missions... </span>');
+    missionsDiv.html("<span style=\"color: #9099a3\"> No missions... </span>");
     let resFiller = actions.appendChild(this.createDOM("div", { class: "ogl-res-filler" }));
     let metalBtn = resFiller.appendChild(this.createDOM("div"));
     metalBtn.appendChild(this.createDOM("div", { class: "resourceIcon metal" }));
@@ -9192,13 +9248,13 @@ class OGInfinity {
     });
     let bar = load.appendChild(this.createDOM("div", {}));
     bar.html(
-      '<div class="fleft bar_container" data-current-amount="0" data-capacity="0">\n        <div class="filllevel_bar"></div>\n        </div>\n        <div>\n        <span class="undermark">0</span>\n        / <span>0</span>\n        </div>'
+      "<div class=\"fleft bar_container\" data-current-amount=\"0\" data-capacity=\"0\">\n        <div class=\"filllevel_bar\"></div>\n        </div>\n        <div>\n        <span class=\"undermark\">0</span>\n        / <span>0</span>\n        </div>"
     );
     let settings = load.appendChild(
       this.createDOM(
         "div",
         { class: "ogl-setting-icon" },
-        '<img src="https://gf3.geo.gfsrv.net/cdne7/1f57d944fff38ee51d49c027f574ef.gif" width="16" height="16" >'
+        "<img src=\"https://gf3.geo.gfsrv.net/cdne7/1f57d944fff38ee51d49c027f574ef.gif\" width=\"16\" height=\"16\" >"
       )
     );
     settings.addEventListener("click", () => {
@@ -9317,22 +9373,29 @@ class OGInfinity {
         this.createDOM(
           "div",
           { class: "ogl-res-transport" },
-          `<a tech-id="202" class="ogl-option noShips ogl-fleet-ship ogl-fleet-202" href="https://${window.location.host}${window.location.pathname}?page=ingame&component=shipyard&cp=${planetId}&techId202=${sc}"></a><span>${toFormatedNumber(
-            sc,
-            0
-          )}</span>
-          <a tech-id="203" class="ogl-option noShips ogl-fleet-ship ogl-fleet-203" href="https://${window.location.host}${window.location.pathname}?page=ingame&component=shipyard&cp=${planetId}&techId203=${lc}"></a><span>${toFormatedNumber(
-            lc,
-            0
-          )}</span>
-          <a tech-id="219" class="ogl-option noShips ogl-fleet-ship ogl-fleet-219" href="https://${window.location.host}${window.location.pathname}?page=ingame&component=shipyard&cp=${planetId}&techId219=${pf}"></a><span>${toFormatedNumber(
-            pf,
-            0
-          )}</span>
-          <a tech-id="209" class="ogl-option noShips ogl-fleet-ship ogl-fleet-209" href="https://${window.location.host}${window.location.pathname}?page=ingame&component=shipyard&cp=${planetId}&techId209=${rec}"></a><span>${toFormatedNumber(
-            rec,
-            0
-          )}</span>`
+          `<a tech-id="202" class="ogl-option noShips ogl-fleet-ship ogl-fleet-202" href="https://${
+            window.location.host
+          }${
+            window.location.pathname
+          }?page=ingame&component=shipyard&cp=${planetId}&techId202=${sc}"></a><span>${toFormatedNumber(sc, 0)}</span>
+          <a tech-id="203" class="ogl-option noShips ogl-fleet-ship ogl-fleet-203" href="https://${
+  window.location.host
+}${
+  window.location.pathname
+}?page=ingame&component=shipyard&cp=${planetId}&techId203=${lc}"></a><span>${toFormatedNumber(lc, 0)}</span>
+          <a tech-id="219" class="ogl-option noShips ogl-fleet-ship ogl-fleet-219" href="https://${
+  window.location.host
+}${
+  window.location.pathname
+}?page=ingame&component=shipyard&cp=${planetId}&techId219=${pf}"></a><span>${toFormatedNumber(pf, 0)}</span>
+          <a tech-id="209" class="ogl-option noShips ogl-fleet-ship ogl-fleet-209" href="https://${
+  window.location.host
+}${
+  window.location.pathname
+}?page=ingame&component=shipyard&cp=${planetId}&techId209=${rec}"></a><span>${toFormatedNumber(
+  rec,
+  0
+)}</span>`
         )
       );
     }
@@ -9421,7 +9484,7 @@ class OGInfinity {
           this.createDOM(
             "div",
             { class: "ajax_loading", style: "display: none;" },
-            '<div class="ajax_loading_overlay"></div>'
+            "<div class=\"ajax_loading_overlay\"></div>"
           )
         );
       let warning = coords.appendChild(
@@ -9591,7 +9654,7 @@ class OGInfinity {
         this.createDOM(
           "div",
           { class: "ogl-homes" },
-          '<svg height="12px" viewBox="0 0 512 512" width="12px"><path fill="white" d="m498.195312 222.695312c-.011718-.011718-.023437-.023437-.035156-.035156l-208.855468-208.847656c-8.902344-8.90625-20.738282-13.8125-33.328126-13.8125-12.589843 0-24.425781 4.902344-33.332031 13.808594l-208.746093 208.742187c-.070313.070313-.140626.144531-.210938.214844-18.28125 18.386719-18.25 48.21875.089844 66.558594 8.378906 8.382812 19.445312 13.238281 31.277344 13.746093.480468.046876.964843.070313 1.453124.070313h8.324219v153.699219c0 30.414062 24.746094 55.160156 55.167969 55.160156h81.710938c8.28125 0 15-6.714844 15-15v-120.5c0-13.878906 11.289062-25.167969 25.167968-25.167969h48.195313c13.878906 0 25.167969 11.289063 25.167969 25.167969v120.5c0 8.285156 6.714843 15 15 15h81.710937c30.421875 0 55.167969-24.746094 55.167969-55.160156v-153.699219h7.71875c12.585937 0 24.421875-4.902344 33.332031-13.808594 18.359375-18.371093 18.367187-48.253906.023437-66.636719zm0 0"/></svg>'
+          "<svg height=\"12px\" viewBox=\"0 0 512 512\" width=\"12px\"><path fill=\"white\" d=\"m498.195312 222.695312c-.011718-.011718-.023437-.023437-.035156-.035156l-208.855468-208.847656c-8.902344-8.90625-20.738282-13.8125-33.328126-13.8125-12.589843 0-24.425781 4.902344-33.332031 13.808594l-208.746093 208.742187c-.070313.070313-.140626.144531-.210938.214844-18.28125 18.386719-18.25 48.21875.089844 66.558594 8.378906 8.382812 19.445312 13.238281 31.277344 13.746093.480468.046876.964843.070313 1.453124.070313h8.324219v153.699219c0 30.414062 24.746094 55.160156 55.167969 55.160156h81.710938c8.28125 0 15-6.714844 15-15v-120.5c0-13.878906 11.289062-25.167969 25.167968-25.167969h48.195313c13.878906 0 25.167969 11.289063 25.167969 25.167969v120.5c0 8.285156 6.714843 15 15 15h81.710937c30.421875 0 55.167969-24.746094 55.167969-55.160156v-153.699219h7.71875c12.585937 0 24.421875-4.902344 33.332031-13.808594 18.359375-18.371093 18.367187-48.253906.023437-66.636719zm0 0\"/></svg>"
         )
       );
       if (unions.length != 0) {
@@ -9599,7 +9662,7 @@ class OGInfinity {
           this.createDOM(
             "div",
             { class: "ogl-union-btn" },
-            '<img src="https://gf3.geo.gfsrv.net/cdn56/2ff25995f98351834db4b5aa048c68.gif" height="16" width="16"></img>'
+            "<img src=\"https://gf3.geo.gfsrv.net/cdn56/2ff25995f98351834db4b5aa048c68.gif\" height=\"16\" width=\"16\"></img>"
           )
         );
         unionsBtn.addEventListener("click", () => {
@@ -9674,8 +9737,8 @@ class OGInfinity {
           "div",
           { style: "margin-top: 10px" },
           this.playerClass == PLAYER_CLASS_WARRIOR
-            ? '<div class="ogl-fleetSpeed first"><div data-step="0.5">05</div>\n          <div data-step="1">10</div>\n          <div data-step="1.5">15</div>\n          <div data-step="2">20</div>\n          <div data-step="2.5">25</div>\n          <div data-step="3">30</div>\n          <div data-step="3.5">35</div>\n          <div data-step="4">40</div>\n          <div data-step="4.5">45</div>\n          <div data-step="5">50</div>\n          </div>\n          <div class="ogl-fleetSpeed second">\n          <div data-step="5.5">55</div>\n          <div data-step="6">60</div>\n          <div data-step="6.5">65</div>\n          <div data-step="7">70</div>\n          <div data-step="7.5">75</div>\n          <div data-step="8">80</div>\n          <div data-step="8.5">85</div>\n          <div data-step="9">90</div>\n          <div data-step="9.5">95</div>\n          <div class="ogl-active" data-step="10">100</div>\n          </div>\n          '
-            : '<div class="ogl-fleetSpeed">\n        <div data-step="1">10</div>\n        <div data-step="2">20</div>\n        <div data-step="3">30</div>\n        <div data-step="4">40</div>\n        <div data-step="5">50</div>\n        <div data-step="6">60</div>\n        <div data-step="7">70</div>\n        <div data-step="8">80</div>\n        <div data-step="9">90</div>\n        <div class="ogl-active" data-step="10">100</div>\n        </div>'
+            ? "<div class=\"ogl-fleetSpeed first\"><div data-step=\"0.5\">05</div>\n          <div data-step=\"1\">10</div>\n          <div data-step=\"1.5\">15</div>\n          <div data-step=\"2\">20</div>\n          <div data-step=\"2.5\">25</div>\n          <div data-step=\"3\">30</div>\n          <div data-step=\"3.5\">35</div>\n          <div data-step=\"4\">40</div>\n          <div data-step=\"4.5\">45</div>\n          <div data-step=\"5\">50</div>\n          </div>\n          <div class=\"ogl-fleetSpeed second\">\n          <div data-step=\"5.5\">55</div>\n          <div data-step=\"6\">60</div>\n          <div data-step=\"6.5\">65</div>\n          <div data-step=\"7\">70</div>\n          <div data-step=\"7.5\">75</div>\n          <div data-step=\"8\">80</div>\n          <div data-step=\"8.5\">85</div>\n          <div data-step=\"9\">90</div>\n          <div data-step=\"9.5\">95</div>\n          <div class=\"ogl-active\" data-step=\"10\">100</div>\n          </div>\n          "
+            : "<div class=\"ogl-fleetSpeed\">\n        <div data-step=\"1\">10</div>\n        <div data-step=\"2\">20</div>\n        <div data-step=\"3\">30</div>\n        <div data-step=\"4\">40</div>\n        <div data-step=\"5\">50</div>\n        <div data-step=\"6\">60</div>\n        <div data-step=\"7\">70</div>\n        <div data-step=\"8\">80</div>\n        <div data-step=\"9\">90</div>\n        <div class=\"ogl-active\" data-step=\"10\">100</div>\n        </div>"
         )
       );
       let oldDeut = null;
@@ -9801,7 +9864,7 @@ class OGInfinity {
           if (fleetDispatcher.shipsToSend.length == 0) {
             document
               .querySelector(".ogl-dispatch .ogl-missions")
-              .html('<span style="color: #9099a3"> No missions... </span>');
+              .html("<span style=\"color: #9099a3\"> No missions... </span>");
             warning.style.visibility = "visible";
             warning.setAttribute("data-title", "Error : No ships selected");
             return;
@@ -9810,7 +9873,7 @@ class OGInfinity {
           let missions = fleetDispatcher.getAvailableMissions();
           let iconsDiv;
           if (missions.length == 0) {
-            missionsDiv.html('<span style="color: #9099a3"> No missions... </span>');
+            missionsDiv.html("<span style=\"color: #9099a3\"> No missions... </span>");
           } else {
             warning.style.visibility = "hidden";
             missionsDiv.html(
@@ -10089,39 +10152,40 @@ class OGInfinity {
       if (!this.isMobile) {
         (this.hasLifeforms
           ? [
-              metalFiller,
-              document.querySelector("input#metal"),
-              crystalFiller,
-              document.querySelector("input#crystal"),
-              deutFiller,
-              document.querySelector("input#deuterium"),
-              document.querySelector("input#food"),
-            ]
+            metalFiller,
+            document.querySelector("input#metal"),
+            crystalFiller,
+            document.querySelector("input#crystal"),
+            deutFiller,
+            document.querySelector("input#deuterium"),
+            document.querySelector("input#food"),
+          ]
           : [
-              metalFiller,
-              document.querySelector("input#metal"),
-              crystalFiller,
-              document.querySelector("input#crystal"),
-              deutFiller,
-              document.querySelector("input#deuterium"),
-            ]
+            metalFiller,
+            document.querySelector("input#metal"),
+            crystalFiller,
+            document.querySelector("input#crystal"),
+            deutFiller,
+            document.querySelector("input#deuterium"),
+          ]
         ).forEach((elem) => {
           elem.addEventListener("keyup", (event) => {
             const CODE = event.code;
+            let factor;
             let value = fromFormatedNumber(event.target.value.replace("k", "")) || 0;
             if (CODE === "ArrowUp" || CODE === "ArrowDown" || CODE === "KeyK") {
               let add = event.ctrlKey ? 100 : event.shiftKey ? 10 : 1;
               switch (CODE) {
-                case "ArrowUp":
-                  value = value + add;
-                  break;
-                case "ArrowDown":
-                  value = Math.max(value - add, 0);
-                  break;
-                case "KeyK":
-                  let factor = value > 0 && elem.classList.contains("checkThousandSeparator") ? 1 : 1000;
-                  value = (value || 1) * factor;
-                  break;
+              case "ArrowUp":
+                value = value + add;
+                break;
+              case "ArrowDown":
+                value = Math.max(value - add, 0);
+                break;
+              case "KeyK":
+                factor = value > 0 && elem.classList.contains("checkThousandSeparator") ? 1 : 1000;
+                value = (value || 1) * factor;
+                break;
               }
             }
             event.target.value = toFormatedNumber(value);
@@ -10130,22 +10194,22 @@ class OGInfinity {
       } else {
         (this.hasLifeforms
           ? [
-              metalFiller,
-              document.querySelector("input#metal"),
-              crystalFiller,
-              document.querySelector("input#crystal"),
-              deutFiller,
-              document.querySelector("input#deuterium"),
-              document.querySelector("input#food"),
-            ]
+            metalFiller,
+            document.querySelector("input#metal"),
+            crystalFiller,
+            document.querySelector("input#crystal"),
+            deutFiller,
+            document.querySelector("input#deuterium"),
+            document.querySelector("input#food"),
+          ]
           : [
-              metalFiller,
-              document.querySelector("input#metal"),
-              crystalFiller,
-              document.querySelector("input#crystal"),
-              deutFiller,
-              document.querySelector("input#deuterium"),
-            ]
+            metalFiller,
+            document.querySelector("input#metal"),
+            crystalFiller,
+            document.querySelector("input#crystal"),
+            deutFiller,
+            document.querySelector("input#deuterium"),
+          ]
         ).forEach((elem) => {
           elem.addEventListener("input", (event) => {
             if (event.data == "K" || event.data == "k" || event.data == "0k") {
@@ -10411,13 +10475,13 @@ class OGInfinity {
       });
       let bar = load.appendChild(this.createDOM("div", {}));
       bar.html(
-        '<div class="fleft bar_container" data-current-amount="0" data-capacity="0">\n        <div class="filllevel_bar"></div>\n        </div>\n        <div>\n        <span class="undermark">0</span>\n        / <span>0</span>\n        </div>'
+        "<div class=\"fleft bar_container\" data-current-amount=\"0\" data-capacity=\"0\">\n        <div class=\"filllevel_bar\"></div>\n        </div>\n        <div>\n        <span class=\"undermark\">0</span>\n        / <span>0</span>\n        </div>"
       );
       let settings = load.appendChild(
         this.createDOM(
           "div",
           { class: "ogl-setting-icon" },
-          '<img src="https://gf3.geo.gfsrv.net/cdne7/1f57d944fff38ee51d49c027f574ef.gif" width="16" height="16" >'
+          "<img src=\"https://gf3.geo.gfsrv.net/cdne7/1f57d944fff38ee51d49c027f574ef.gif\" width=\"16\" height=\"16\" >"
         )
       );
       settings.addEventListener("click", () => {
@@ -10825,7 +10889,7 @@ class OGInfinity {
           coords[2],
           3
         );
-        btn.html('<figure class="planetIcon moon"></figure>');
+        btn.html("<figure class=\"planetIcon moon\"></figure>");
       } else container.appendChild(this.createDOM("div"));
     });
     return container;
@@ -11175,6 +11239,37 @@ class OGInfinity {
     }
   }
 
+  async getLifeformBonus(planetId) {
+    let abortController = new AbortController();
+    this.abordSignal = abortController.signal;
+    window.onbeforeunload = function (e) {
+      abortController.abort();
+    };
+    return fetch(
+      `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=ingame&component=bonussettings&cp=${planetId}`,
+      { signal: abortController.signal }
+    )
+      .then((rep) => rep.text())
+      .then((str) => {
+        let div = this.createDOM("div", {}, str);
+        let productionBonus = [
+          fromFormatedNumber(
+            div.querySelector("div[data-category='bonus-1'] .bonusValues").textContent.split("/")[0].trim()
+          ),
+          fromFormatedNumber(
+            div.querySelector("div[data-category='bonus-2'] .bonusValues").textContent.split("/")[0].trim()
+          ),
+          fromFormatedNumber(
+            div.querySelector("div[data-category='bonus-3'] .bonusValues").textContent.split("/")[0].trim()
+          ),
+          fromFormatedNumber(
+            div.querySelector("div[data-category='bonus-8'] .bonusValues").textContent.split("/")[0].trim()
+          ),
+        ];
+        return productionBonus.map((x) => Math.round(x * 100) / 100);
+      });
+  }
+
   async getEmpireInfo() {
     let abortController = new AbortController();
     this.abordSignal = abortController.signal;
@@ -11186,12 +11281,12 @@ class OGInfinity {
       { signal: abortController.signal }
     )
       .then((rep) => rep.text())
-      .then((str) => {
+      .then(async (str) => {
         let planets = JSON.parse(
           str.substring(str.indexOf("createImperiumHtml") + 47, str.indexOf("initEmpire") - 16)
         ).planets;
         let hasMoon = false;
-        planets.forEach((planet) => {
+        for await (let planet of planets) {
           for (const key in planet) {
             if (key.includes("html")) {
               delete planet[key];
@@ -11201,23 +11296,75 @@ class OGInfinity {
             hasMoon = true;
           }
           planet.invalidate = false;
-          // lifeform production is not included in ogames empire data, might change in future
-          if (this.hasLifeforms && planet.production.production["1006"] == undefined) {
-            planet.production.production["1006"] = this.json.lifeFormProduction[planet.id] || {
-              0: 0,
-              1: 0,
-              2: 0,
-              3: 0,
-              5: 0,
-              6: 0,
-            };
-            [0, 1, 2, 3, 5, 6].forEach((idx) => {
-              planet.production.hourly[idx] += Math.floor(planet.production.production["1006"][idx]);
-              planet.production.daily[idx] += Math.floor(planet.production.production["1006"][idx] * 24);
-              planet.production.weekly[idx] += Math.floor(planet.production.production["1006"][idx] * 24 * 7);
-            });
+          // Get exact production data (Ogame's empire data has rounding issues)
+          let plasmaBonus = [0.01, 0.0066, 0.0033];
+          for (let idx = 0; idx < 3; idx++) {
+            let totalProd = 0;
+            let baseProd = planet.production.generalIncoming[idx];
+            totalProd += baseProd;
+            let mineProd = this.minesProduction(idx + 1, planet[idx + 1], planet.position, planet.db_par2 + 40);
+            totalProd += mineProd;
+            planet.production.production[idx + 1][idx] = mineProd;
+            let plasmaProd = mineProd * planet[122] * plasmaBonus[idx];
+            totalProd += plasmaProd;
+            planet.production.production[122][idx] = plasmaProd;
+            let geoProd = mineProd * (this.geologist ? 0.1 : 0);
+            totalProd += geoProd;
+            planet.production.production[1001][idx] = geoProd;
+            let officerProd = mineProd * (this.allOfficers ? 0.02 : 0);
+            totalProd += officerProd;
+            planet.production.production[1003][idx] = officerProd;
+            let allyClassProd = mineProd * (this.json.allianceClass == ALLY_CLASS_MINER ? 0.05 : 0);
+            totalProd += allyClassProd;
+            planet.production.production[1005][idx] = allyClassProd;
+            let playerClassProd = mineProd * (this.playerClass == PLAYER_CLASS_MINER ? 0.25 : 0);
+            totalProd += playerClassProd;
+            planet.production.production[1004][idx] = playerClassProd;
+            if (planet.production.production[217][idx] != 0) {
+              let crawlerProd =
+                mineProd *
+                Math.min(planet.production.production[217].number, planet.production.production[217].numberMax) *
+                (this.playerClass == PLAYER_CLASS_MINER ? 0.0003 : 0.0002);
+              let crawlerPercent = Math.round((planet.production.production[217][idx] / crawlerProd) * 10) / 10;
+              crawlerProd *= crawlerPercent;
+              totalProd += crawlerProd;
+              planet.production.production[217][idx] = crawlerProd;
+            }
+            if (planet.production.production[1000][idx] != 0) {
+              let itemProd = (mineProd * Math.round((planet.production.production[1000][idx] / mineProd) * 10)) / 10;
+              totalProd += itemProd;
+              planet.production.production[1000][idx] = itemProd;
+            }
+            totalProd -= planet.production.production[12][idx];
+            planet.production.hourly[idx] = totalProd;
+            planet.production.daily[idx] = totalProd * 24;
+            planet.production.weekly[idx] = totalProd * 24 * 7;
           }
-        });
+          // lifeform production is not included in ogames empire data, might change in future
+          if (this.hasLifeforms && !planet.isMoon) {
+            await this.getLifeformBonus(planet.id).then((bonus) => {
+              let lifeformProduction = [0, 0, 0];
+              for (let idx = 0; idx < 3; idx++) {
+                let oldHourly = planet.production.hourly[idx];
+                let oldDaily = planet.production.daily[idx];
+                let oldWeekly = planet.production.weekly[idx];
+                let mineProd = this.minesProduction(idx + 1, planet[idx + 1], planet.position, planet.db_par2 + 40);
+                lifeformProduction[idx] = (mineProd * bonus[idx]) / 100;
+                planet.production.hourly[idx] = oldHourly + lifeformProduction[idx];
+                planet.production.daily[idx] = oldDaily + ((mineProd * bonus[idx]) / 100) * 24;
+                planet.production.weekly[idx] = oldWeekly + ((mineProd * bonus[idx]) / 100) * 24 * 7;
+              }
+              planet.production.lifeformProduction = lifeformProduction;
+              return planets;
+            });
+            fetch(
+              this.current.isMoon
+                ? this.current.planet.querySelector(".moonlink").href
+                : this.current.planet.querySelector(".planetlink").href,
+              { signal: abortController.signal }
+            ); // last called fetch has to be from current planet/moon else Ogame switches on next refresh
+          }
+        }
         if (hasMoon) {
           return fetch(
             `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=standalone&component=empire&planetType=1`,
@@ -11302,7 +11449,7 @@ class OGInfinity {
         movement.resDest = true;
       } else if (type == 3) {
         if (!back) {
-          transports[id] = true
+          transports[id] = true;
           addToTotal = true;
           movement.resDest = true;
         } else if (id - 1 in transports) {
@@ -11318,7 +11465,7 @@ class OGInfinity {
         addToTotal = false;
         movement.resDest = false;
       }
-      div.querySelectorAll('td[colspan="2"]').forEach((tooltip) => {
+      div.querySelectorAll("td[colspan=\"2\"]").forEach((tooltip) => {
         let count = Number(fromFormatedNumber(tooltip.nextElementSibling.innerHTML.trim()));
         let name = tooltip.innerText.trim().slice(0, -1);
         let id = this.json.shipNames[name];
@@ -11711,7 +11858,7 @@ class OGInfinity {
     let flyingSum = this.createDOM("div", {
       class: "smallplanet smaller ogl-summary",
     });
-    flyingSum.appendChild(this.createDOM("div", { class: "ogl-sum-symbol" }, '<span class="icon_movement"></span>'));
+    flyingSum.appendChild(this.createDOM("div", { class: "ogl-sum-symbol" }, "<span class=\"icon_movement\"></span>"));
     flyingSum.querySelector(".icon_movement").classList.add("tooltip", "tooltipTop", "tooltipClose");
     flyingSum.querySelector(".icon_movement").setAttribute(
       "data-title",
@@ -11943,7 +12090,7 @@ class OGInfinity {
     if (this.isLoading) return;
     this.isLoading = true;
     let svg =
-      '<svg width="80px" height="30px" viewBox="0 0 187.3 93.7" preserveAspectRatio="xMidYMid meet">\n                <path stroke="#3c536c" id="outline" fill="none" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"\n                  d="M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-13.3,7.2-22.1,17.1\n                    c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z" />\n                <path id="outline-bg" opacity="0.1" fill="none" stroke="#eee" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="\n                M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-13.3,7.2-22.1,17.1\n                c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z" />\n\t\t\t\t      </svg>';
+      "<svg width=\"80px\" height=\"30px\" viewBox=\"0 0 187.3 93.7\" preserveAspectRatio=\"xMidYMid meet\">\n                <path stroke=\"#3c536c\" id=\"outline\" fill=\"none\" stroke-width=\"4\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-miterlimit=\"10\"\n                  d=\"M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-13.3,7.2-22.1,17.1\n                    c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z\" />\n                <path id=\"outline-bg\" opacity=\"0.1\" fill=\"none\" stroke=\"#eee\" stroke-width=\"4\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-miterlimit=\"10\" d=\"\n                M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-13.3,7.2-22.1,17.1\n                c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z\" />\n\t\t\t\t      </svg>";
     document.querySelector("#countColonies").appendChild(this.createDOM("div", { class: "spinner" }, svg));
     return this.getEmpireInfo().then((json) => {
       this.json.empire = json;
@@ -12855,14 +13002,14 @@ class OGInfinity {
       report.attacked = msg.querySelector(".icon_attack img");
       report.type = msg.querySelector("figure.moon") ? 3 : 1;
       report.name = data[0]
-        .querySelectorAll('span[class^="status"]')[0]
+        .querySelectorAll("span[class^=\"status\"]")[0]
         .textContent.replace(/&nbsp;/g, "")
         .trim();
       report.status = data[0]
-        .querySelectorAll('span[class^="status"]')[1]
+        .querySelectorAll("span[class^=\"status\"]")[1]
         .textContent.replace(/&nbsp;/g, "")
         .trim();
-      report.spy = msg.querySelector('a[onclick*="sendShipsWithPopup"]').getAttribute("onclick");
+      report.spy = msg.querySelector("a[onclick*=\"sendShipsWithPopup\"]").getAttribute("onclick");
       report.activity = parseInt(data[0].querySelectorAll("span.fright")[0].textContent.match(/\d+/)[0]);
       report.coords = /\[.*\]/g.exec(msg.querySelector(".msg_title").innerHTML)[0].slice(1, -1);
       report.coordsLink = msg.querySelector(".msg_title a").href;
@@ -13087,7 +13234,7 @@ class OGInfinity {
       if (report.activity <= 15) date.classList.add("ogl-danger");
       else if (report.activity < 60) date.classList.add("ogl-care");
       else date.classList.add("ogl-good");
-      let moonContent = report.type == 3 ? '<figure class="planetIcon moon"></figure>' : "";
+      let moonContent = report.type == 3 ? "<figure class=\"planetIcon moon\"></figure>" : "";
       let coords = line.appendChild(this.createDOM("td"));
       coords.appendChild(this.createDOM("a", { href: report.coordsLink }, report.coords + moonContent));
       let name = line.appendChild(this.createDOM("td", { class: "ogl-name" }));
@@ -13971,10 +14118,10 @@ class OGInfinity {
     if (id == 1 || id == 2 || id == 3) {
       prod = prod * this.json.speed;
     }
-    return prod;
+    return Math.floor(prod);
   }
 
-  research(id, lvl, technocrat, explorer, acceleration, object=null) {
+  research(id, lvl, technocrat, explorer, acceleration, object = null) {
     // console.log(`research(id=${id}, lvl=${lvl}, technocrat=${technocrat}, explorer=${explorer}, acceleration=${acceleration}, object=${object})`);
 
     let labLvl = 1;
@@ -14004,48 +14151,58 @@ class OGInfinity {
       }
       if (this.json.lifeFormCostReductionFromBuilding[id]) {
         for (let techId in this.json.lifeFormCostReductionFromBuilding[id]) {
-          bonus = this.json.lifeFormCostReductionFromBuilding[id][techId]
-          costFactor -= Math.min((object[techId] || 0) * bonus.base / 100 * bonus.factor, bonus.max);
+          bonus = this.json.lifeFormCostReductionFromBuilding[id][techId];
+          costFactor -= Math.min((((object[techId] || 0) * bonus.base) / 100) * bonus.factor, bonus.max);
         }
       }
       if (this.json.lifeFormTimeReductionFromBuilding[id]) {
         for (let techId in this.json.lifeFormTimeReductionFromBuilding[id]) {
-          bonus = this.json.lifeFormTimeReductionFromBuilding[id][techId]
-          timeFactor -= Math.min((object[techId] || 0) * bonus.base / 100 * bonus.factor, bonus.max);
+          bonus = this.json.lifeFormTimeReductionFromBuilding[id][techId];
+          timeFactor -= Math.min((((object[techId] || 0) * bonus.base) / 100) * bonus.factor, bonus.max);
         }
       }
     }
     if (this.json.lifeFormCostReductionFromResearch[id]) {
       for (let techId in this.json.lifeFormCostReductionFromResearch[id]) {
         reduction = 0;
-        this.json.empire && this.json.empire.forEach((planet) => {
-          bonus = this.json.lifeFormCostReductionFromResearch[id][techId]
-          reduction += (planet[techId] || 0) * bonus.base / 100 * bonus.factor;
-        });
+        this.json.empire &&
+          this.json.empire.forEach((planet) => {
+            bonus = this.json.lifeFormCostReductionFromResearch[id][techId];
+            reduction += (((planet[techId] || 0) * bonus.base) / 100) * bonus.factor;
+          });
         costFactor -= Math.min(reduction, bonus.max);
       }
     }
     if (this.json.lifeFormTimeReductionFromResearch[id]) {
       for (let techId in this.json.lifeFormTimeReductionFromResearch[id]) {
         reduction = 0;
-        this.json.empire && this.json.empire.forEach((planet) => {
-          bonus = this.json.lifeFormTimeReductionFromResearch[id][techId]
-          reduction += (planet[techId] || 0) * bonus.base / 100 * bonus.factor;
-        });
+        this.json.empire &&
+          this.json.empire.forEach((planet) => {
+            bonus = this.json.lifeFormTimeReductionFromResearch[id][techId];
+            reduction += (((planet[techId] || 0) * bonus.base) / 100) * bonus.factor;
+          });
         timeFactor -= Math.min(reduction, bonus.max);
       }
     }
     if (this.json.lifeFormResearchSpeed[id]) {
       for (let techId in this.json.lifeFormResearchSpeed) {
         let reduction = 0;
-        this.json.empire && this.json.empire.forEach((planet) => {
-          if (id >= 11101) {
-            reduction += (planet[techId] || 0) * this.json.lifeFormResearchSpeed[id].lifeFormBase / 100 * this.json.lifeFormResearchSpeed[id].lifeFormFactor
-          } else {
-            reduction += (planet[techId] || 0) * this.json.lifeFormResearchSpeed[id].generalBase / 100 * this.json.lifeFormResearchSpeed[id].generalFactor
-          }
-        });
-        timeFactor -= Math.min(reduction, (id >= 11101) ? this.json.lifeFormResearchSpeed[id].lifeFormMax : this.json.lifeFormResearchSpeed[id].generalMax);
+        this.json.empire &&
+          this.json.empire.forEach((planet) => {
+            if (id >= 11101) {
+              reduction +=
+                (((planet[techId] || 0) * this.json.lifeFormResearchSpeed[id].lifeFormBase) / 100) *
+                this.json.lifeFormResearchSpeed[id].lifeFormFactor;
+            } else {
+              reduction +=
+                (((planet[techId] || 0) * this.json.lifeFormResearchSpeed[id].generalBase) / 100) *
+                this.json.lifeFormResearchSpeed[id].generalFactor;
+            }
+          });
+        timeFactor -= Math.min(
+          reduction,
+          id >= 11101 ? this.json.lifeFormResearchSpeed[id].lifeFormMax : this.json.lifeFormResearchSpeed[id].generalMax
+        );
       }
     }
     let cost = [
@@ -14152,7 +14309,7 @@ class OGInfinity {
     return duration;
   }
 
-  building(id, lvl, object=null) {
+  building(id, lvl, object = null) {
     let costFactor = 1;
     let timeFactor = 1;
     let bonus, costReduction;
@@ -14163,34 +14320,36 @@ class OGInfinity {
     if (this.json.lifeFormCostReductionFromResearch[id]) {
       for (let techId in this.json.lifeFormCostReductionFromResearch[id]) {
         costReduction = 0;
-        this.json.empire && this.json.empire.forEach((planet) => {
-          bonus = this.json.lifeFormCostReductionFromResearch[id][techId]
-          costReduction += (planet[techId] || 0) * bonus.base / 100 * bonus.factor;
-        });
+        this.json.empire &&
+          this.json.empire.forEach((planet) => {
+            bonus = this.json.lifeFormCostReductionFromResearch[id][techId];
+            costReduction += (((planet[techId] || 0) * bonus.base) / 100) * bonus.factor;
+          });
         costFactor -= Math.min(costReduction, bonus.max);
       }
     }
     if (this.json.lifeFormTimeReductionFromResearch[id]) {
       for (let techId in this.json.lifeFormTimeReductionFromResearch[id]) {
         timeReduction = 0;
-        this.json.empire && this.json.empire.forEach((planet) => {
-          bonus = this.json.lifeFormTimeReductionFromResearch[id][techId]
-          timeReduction += (planet[techId] || 0) * bonus.base / 100 * bonus.factor;
-        });
+        this.json.empire &&
+          this.json.empire.forEach((planet) => {
+            bonus = this.json.lifeFormTimeReductionFromResearch[id][techId];
+            timeReduction += (((planet[techId] || 0) * bonus.base) / 100) * bonus.factor;
+          });
         timeFactor -= Math.min(timeReduction, bonus.max);
       }
     }
     if (object) {
       if (this.json.lifeFormCostReductionFromBuilding[id]) {
         for (let techId in this.json.lifeFormCostReductionFromBuilding[id]) {
-          bonus = this.json.lifeFormCostReductionFromBuilding[id][techId]
-          costFactor -= Math.min((object[techId] || 0) * bonus.base / 100 * bonus.factor, bonus.max);
+          bonus = this.json.lifeFormCostReductionFromBuilding[id][techId];
+          costFactor -= Math.min((((object[techId] || 0) * bonus.base) / 100) * bonus.factor, bonus.max);
         }
       }
       if (this.json.lifeFormTimeReductionFromBuilding[id]) {
         for (let techId in this.json.lifeFormTimeReductionFromBuilding[id]) {
-          bonus = this.json.lifeFormTimeReductionFromBuilding[id][techId]
-          timeFactor -= Math.min((object[techId] || 0) * bonus.base / 100 * bonus.factor, bonus.max);
+          bonus = this.json.lifeFormTimeReductionFromBuilding[id][techId];
+          timeFactor -= Math.min((((object[techId] || 0) * bonus.base) / 100) * bonus.factor, bonus.max);
         }
       }
     }
@@ -14290,7 +14449,7 @@ class OGInfinity {
         }
       }
       if (!$(document.activeElement).is("input") && (event.ctrlKey || event.metaKey) && event.code == "ArrowDown") {
-        let planetList = document.querySelectorAll('[id^="planet-"]');
+        let planetList = document.querySelectorAll("[id^=\"planet-\"]");
         let active = 0;
         let isMoon = 0;
         let idList = [];
@@ -14325,7 +14484,7 @@ class OGInfinity {
         window.location.href = url;
       }
       if (!$(event.target).is("input") && (event.ctrlKey || event.metaKey) && event.code == "ArrowUp") {
-        let planetList = document.querySelectorAll('[id^="planet-"]');
+        let planetList = document.querySelectorAll("[id^=\"planet-\"]");
         let active = 0;
         let isMoon = 0;
         let idList = [];
@@ -14359,7 +14518,7 @@ class OGInfinity {
         window.location.href = url;
       }
       if ((event.ctrlKey || event.metaKey) && event.code == "ArrowRight") {
-        let planetList = document.querySelectorAll('[id^="planet-"]');
+        let planetList = document.querySelectorAll("[id^=\"planet-\"]");
         let active = 0;
         let isMoon = 0;
         let idList = [];
@@ -14388,7 +14547,7 @@ class OGInfinity {
         window.location.href = url;
       }
       if ((event.ctrlKey || event.metaKey) && event.code == "ArrowLeft") {
-        let planetList = document.querySelectorAll('[id^="planet-"]');
+        let planetList = document.querySelectorAll("[id^=\"planet-\"]");
         let active = 0;
         let isMoon = 0;
         let idList = [];
@@ -14469,6 +14628,17 @@ class OGInfinity {
               }
             }
           }
+          if (event.code == "KeyC") {
+            document.querySelector(".ogl-collect").click();
+            document.querySelector("#continueToFleet2").click();
+          }
+          if (event.code == "KeyN") document.querySelector("#resetall").click();
+          if (event.code == "KeyA") document.querySelector("#sendall").click();
+          if (event.code == "KeyM") document.querySelector("span.select-most").click();
+          if (event.code == "ArrowUp")
+            document.querySelector("#systemInput").value = Number(document.querySelector("#systemInput").value) + 1;
+          if (event.code == "ArrowDown")
+            document.querySelector("#systemInput").value = Number(document.querySelector("#systemInput").value) - 1;
         } else if (fleetDispatcher.currentPage == "fleet2") {
           if (event.code == "KeyA") document.querySelector("#loadAllResources img").click();
           if (event.code == "KeyM" && !event.shiftKey) document.querySelector("#loadAllResources .select-most").click();
@@ -14737,7 +14907,7 @@ class OGInfinity {
         }
         $(".changeSite").change(function () {
           var value = $(this).val();
-          $("#stat_list_content").html('<div class="ajaxLoad">' + LocalizationStrings.loading + "</div>");
+          $("#stat_list_content").html("<div class=\"ajaxLoad\">" + LocalizationStrings.loading + "</div>");
           ajaxCall(
             highscoreContentUrl + "&category=" + currentCategory + "&type=" + currentType + "&site=" + value,
             "#stat_list_content",
@@ -14787,8 +14957,8 @@ class OGInfinity {
     if (sender.classList.contains("show_fleet_apikey")) {
       let data = sender.getAttribute("title") || sender.getAttribute("data-title");
       if (data) {
-        let first = data.indexOf('value="');
-        let second = data.indexOf('"', first + 7);
+        let first = data.indexOf("value=\"");
+        let second = data.indexOf("\"", first + 7);
         sender.addEventListener("click", () => {
           fadeBox(`<br/>${this.getTranslatedText(58)}`);
           navigator.clipboard.writeText(data.substr(first + 7, second - first - 7));
@@ -14878,14 +15048,14 @@ class OGInfinity {
         class: "ogl-fleetSpeed",
         style: "margin-top: 10px; margin-left: 10px; margin-right: 10px; display: flex; grid-column: 1/3;",
       });
-      document.querySelector('div[id="mission"]').appendChild(slider);
+      document.querySelector("div[id=\"mission\"]").appendChild(slider);
       if (this.playerClass == PLAYER_CLASS_WARRIOR) {
         slider.html(
-          '\n        <div data-step="0.5" style="width: 31px;">05</div>\n        <div data-step="1" style="width: 31px;">10</div>\n        <div data-step="1.5" style="width: 31px;">15</div>\n        <div data-step="2" style="width: 31px;">20</div>\n        <div data-step="2.5" style="width: 31px;">25</div>\n        <div data-step="3" style="width: 31px;">30</div>\n        <div data-step="3.5" style="width: 31px;">35</div>\n        <div data-step="4" style="width: 31px;">40</div>\n        <div data-step="4.5" style="width: 31px;">45</div>\n        <div data-step="5" style="width: 31px;">50</div>\n        <div data-step="5.5" style="width: 31px;">55</div>\n        <div data-step="6" style="width: 31px;">60</div>\n        <div data-step="6.5" style="width: 31px;">65</div>\n        <div data-step="7" style="width: 31px;">70</div>\n        <div data-step="7.5" style="width: 31px;">75</div>\n        <div data-step="8" style="width: 31px;">80</div>\n        <div data-step="8.5" style="width: 31px;">85</div>\n        <div data-step="9" style="width: 31px;">90</div>\n        <div data-step="9.5" style="width: 31px;">95</div>\n        <div class="ogl-active" data-step="10" style="width: 31px;">100</div>\n        '
+          "\n        <div data-step=\"0.5\" style=\"width: 31px;\">05</div>\n        <div data-step=\"1\" style=\"width: 31px;\">10</div>\n        <div data-step=\"1.5\" style=\"width: 31px;\">15</div>\n        <div data-step=\"2\" style=\"width: 31px;\">20</div>\n        <div data-step=\"2.5\" style=\"width: 31px;\">25</div>\n        <div data-step=\"3\" style=\"width: 31px;\">30</div>\n        <div data-step=\"3.5\" style=\"width: 31px;\">35</div>\n        <div data-step=\"4\" style=\"width: 31px;\">40</div>\n        <div data-step=\"4.5\" style=\"width: 31px;\">45</div>\n        <div data-step=\"5\" style=\"width: 31px;\">50</div>\n        <div data-step=\"5.5\" style=\"width: 31px;\">55</div>\n        <div data-step=\"6\" style=\"width: 31px;\">60</div>\n        <div data-step=\"6.5\" style=\"width: 31px;\">65</div>\n        <div data-step=\"7\" style=\"width: 31px;\">70</div>\n        <div data-step=\"7.5\" style=\"width: 31px;\">75</div>\n        <div data-step=\"8\" style=\"width: 31px;\">80</div>\n        <div data-step=\"8.5\" style=\"width: 31px;\">85</div>\n        <div data-step=\"9\" style=\"width: 31px;\">90</div>\n        <div data-step=\"9.5\" style=\"width: 31px;\">95</div>\n        <div class=\"ogl-active\" data-step=\"10\" style=\"width: 31px;\">100</div>\n        "
         );
       } else {
         slider.html(
-          '\n        <div data-step="1" style="width: 62px;">10</div>\n        <div data-step="2" style="width: 62px;">20</div>\n        <div data-step="3" style="width: 62px;">30</div>\n        <div data-step="4" style="width: 62px;">40</div>\n        <div data-step="5" style="width: 62px;">50</div>\n        <div data-step="6" style="width: 62px;">60</div>\n        <div data-step="7" style="width: 62px;">70</div>\n        <div data-step="8" style="width: 62px;">80</div>\n        <div data-step="9" style="width: 62px;">90</div>\n        <div class="ogl-active" data-step="10" style="width: 62px;">100</div>\n        '
+          "\n        <div data-step=\"1\" style=\"width: 62px;\">10</div>\n        <div data-step=\"2\" style=\"width: 62px;\">20</div>\n        <div data-step=\"3\" style=\"width: 62px;\">30</div>\n        <div data-step=\"4\" style=\"width: 62px;\">40</div>\n        <div data-step=\"5\" style=\"width: 62px;\">50</div>\n        <div data-step=\"6\" style=\"width: 62px;\">60</div>\n        <div data-step=\"7\" style=\"width: 62px;\">70</div>\n        <div data-step=\"8\" style=\"width: 62px;\">80</div>\n        <div data-step=\"9\" style=\"width: 62px;\">90</div>\n        <div class=\"ogl-active\" data-step=\"10\" style=\"width: 62px;\">100</div>\n        "
         );
       }
       $(".ogl-fleetSpeed div").on("click", (event) => {
@@ -15016,7 +15186,7 @@ class OGInfinity {
             this.createDOM(
               "span",
               { class: "reload ogl-backLast" },
-              '\n          <a class="dark_highlight_tablet"">\n            <span class="icon icon_link"></span>\n            <span>Back latest</span>\n          </a>\n            '
+              "\n          <a class=\"dark_highlight_tablet\"\">\n            <span class=\"icon icon_link\"></span>\n            <span>Back latest</span>\n          </a>\n            "
             )
           );
         backlast.addEventListener("click", () => {
@@ -16055,11 +16225,11 @@ class OGInfinity {
           es: "Flota",
           fr: "Flotte",
         },
-        /*101*/ { /*54 is Defence, can be used differntly*/
-          de: "",
-          en: "",
-          es: "",
-          fr: "",
+        /*101*/ {
+          de: "Standard Expeditionsdauer",
+          en: "Default expedition time",
+          es: "Tiempo de expedición predeterminado",
+          fr: "Heure d'expédition par défaut",
         },
         /*102*/ {
           de: "Aktionen",
@@ -16287,13 +16457,13 @@ class OGInfinity {
           de: "Abgeschlossenen Vorgang anzeigen",
           en: "Indicate finished process",
           es: "Indicar proceso terminado",
-          fr: "Indiquer le processus terminé"
+          fr: "Indiquer le processus terminé",
         },
         /*140*/ {
           de: "Externe Tools",
           en: "External Tools",
           es: "Herramientas externas",
-          fr: "Outils externes"
+          fr: "Outils externes",
         },
         /*141*/ {
           de: "",
@@ -16502,25 +16672,26 @@ class OGInfinity {
       const isChecked = e.currentTarget.checked;
       this.json.options.navigationArrows = isChecked;
     });
-      optiondiv = featureSettings.appendChild(this.createDOM("span", {}, this.getTranslatedText(35)));
-      let rvalInput = optiondiv.appendChild(
-        this.createDOM("input", {
-          type: "text",
-          class: "ogl-rvalInput ogl-formatInput tooltip",
-          value: toFormatedNumber(this.json.options.rvalLimit),
-          title: this.getTranslatedText(105),
-        })
-      );
-      optiondiv = featureSettings.appendChild(this.createDOM("span", {}, "Default expedition time"));
-      let expeditionDefaultTime = optiondiv.appendChild(
-        this.createDOM("input", {
-          type: "text",
-          class: "ogl-rvalInput ogl-formatInput",
-          value: this.json.options.expeditionDefaultTime,
-        })
-      );
+    optiondiv = featureSettings.appendChild(
+      this.createDOM("span", { class: "tooltip", title: this.getTranslatedText(105) }, this.getTranslatedText(35))
+    );
+    let rvalInput = optiondiv.appendChild(
+      this.createDOM("input", {
+        type: "text",
+        class: "ogl-rvalInput ogl-formatInput tooltip",
+        value: toFormatedNumber(this.json.options.rvalLimit),
+      })
+    );
+    optiondiv = featureSettings.appendChild(this.createDOM("span", {}, this.getTranslatedText(101)));
+    let expeditionDefaultTime = optiondiv.appendChild(
+      this.createDOM("input", {
+        type: "text",
+        class: "ogl-rvalInput ogl-formatInput",
+        value: this.json.options.expeditionDefaultTime,
+      })
+    );
     dataDiv.appendChild(this.createDOM("hr"));
-    let dataManagement = dataDiv.appendChild(this.createDOM("div",{style:"display: grid;"}));
+    let dataManagement = dataDiv.appendChild(this.createDOM("div", { style: "display: grid;" }));
     dataManagement.appendChild(
       this.createDOM(
         "h1",
@@ -16588,7 +16759,9 @@ class OGInfinity {
         <input type="checkbox" id="purge" name="purge">`
       )
     );
-    let dataBtns = dataManagement.appendChild(this.createDOM("div", { style: "display: flex;align-items: flex-end;margin-top: 5px" }));
+    let dataBtns = dataManagement.appendChild(
+      this.createDOM("div", { style: "display: flex;align-items: flex-end;margin-top: 5px" })
+    );
     let exportBtn = dataBtns.appendChild(this.createDOM("button", { class: "btn_blue" }, this.getTranslatedText(24)));
     let fileHandler = dataBtns.appendChild(
       this.createDOM("input", {
@@ -16758,10 +16931,10 @@ class OGInfinity {
       this.json.options.expeditionMission = 0;
     });
     settingDiv.appendChild(this.createDOM("hr"));
-    let keys = settingDiv.appendChild(this.createDOM("div",{style:"display: grid;"}));
+    let keys = settingDiv.appendChild(this.createDOM("div", { style: "display: grid;" }));
     keys.appendChild(this.createDOM("h1", {}, this.getTranslatedText(140)));
     let ptre = keys.appendChild(
-      this.createDOM("span", {}, '<a href="https://ptre.chez.gg/" target="_blank">PTRE</a> Teamkey')
+      this.createDOM("span", {}, "<a href=\"https://ptre.chez.gg/\" target=\"_blank\">PTRE</a> Teamkey")
     );
     let ptreInput = ptre.appendChild(
       this.createDOM("input", {
@@ -16772,7 +16945,11 @@ class OGInfinity {
       })
     );
     let pantry = keys.appendChild(
-      this.createDOM("span", {}, '<a href="https://getpantry.cloud/" target="_blank">Pantry</a> Key<small> (Cloud Sync beta)</small>')
+      this.createDOM(
+        "span",
+        {},
+        "<a href=\"https://getpantry.cloud/\" target=\"_blank\">Pantry</a> Key<small> (Cloud Sync beta)</small>"
+      )
     );
     let pantryInput = pantry.appendChild(
       this.createDOM("input", {
@@ -16904,8 +17081,8 @@ class OGInfinity {
       // Get the direction image (no used as of today, but we never know)
       const styleDirection = window.getComputedStyle(cols[6]).getPropertyValue("background");
       flying.directionIcon = styleDirection.substring(
-        styleDirection.indexOf('url("') + 5,
-        styleDirection.indexOf('")')
+        styleDirection.indexOf("url(\"") + 5,
+        styleDirection.indexOf("\")")
       );
 
       flying.dest = cols[7].innerText.trim();
@@ -17011,7 +17188,7 @@ class OGInfinity {
     return (reasearchCostMSE * 3600) / prodDiffMSE;
   }
 
-  roiLfResearch(technoId, baselvl, tolvl, object=null) {
+  roiLfResearch(technoId, baselvl, tolvl, object = null) {
     // console.log(`roiLfResearch(${technoId}, ${baselvl}, ${tolvl}, ${object})`);
     if (!this.json.lifeFormProductionBoostFromResearch[technoId]) return;
     let bonus = this.json.lifeFormProductionBoostFromResearch[technoId].map((x) => (x / 100) * (tolvl - baselvl + 1));
@@ -17036,7 +17213,29 @@ class OGInfinity {
     return (reasearchCostMSE * 3600) / prodDiffMSE;
   }
 
-  roiAstrophysics(baselvl, tolvl, object=null) {
+  roiLfBuilding(technoId, baselvl, tolvl, object) {
+    // console.log(`roiLfBuilding(${technoId}, ${baselvl}, ${tolvl}, ${object})`);
+    if (!this.json.lifeFormProductionBoostFromBuildings[technoId]) return;
+    let bonus = this.json.lifeFormProductionBoostFromBuildings[technoId].map((x) => (x / 100) * (tolvl - baselvl + 1));
+    let tradeRate = this.json.options.tradeRate;
+    let pos = object.position;
+    let temp = object.db_par2 + 40;
+    let prodDiff = [
+      this.minesProduction(1, object[1], pos, temp) * bonus[0],
+      this.minesProduction(2, object[2], pos, temp) * bonus[1],
+      this.minesProduction(3, object[3], pos, temp) * bonus[2],
+    ];
+    let prodDiffMSE = prodDiff.map((x, n) => (x * tradeRate[0]) / tradeRate[n]).reduce((sum, cur) => sum + cur, 0);
+    let buildingCostMSE = 0;
+    for (let lvl = baselvl; lvl <= tolvl; lvl++) {
+      buildingCostMSE += this.building(technoId, lvl, false, false, false, object)
+        .cost.map((x, n) => (x * tradeRate[0]) / tradeRate[n])
+        .reduce((sum, cur) => sum + cur, 0);
+    }
+    return (buildingCostMSE * 3600) / prodDiffMSE;
+  }
+
+  roiAstrophysics(baselvl, tolvl, object = null) {
     let tradeRate = this.json.options.tradeRate;
     let numPlanets = Math.round((baselvl - 1) / 2) + 1;
     let newNumPlanets = Math.round(tolvl / 2) + 1;
@@ -17083,26 +17282,22 @@ class OGInfinity {
     let crawlerCount = this.json.options.limitCrawler ? object[217] : 1000000;
     let lifeFormBonus = [0, 0, 0];
     if (this.json.lifeFormProductionBoostFromResearch) {
-      this.json.empire.forEach(planet => {
+      this.json.empire.forEach((planet) => {
         for (let id in this.json.lifeFormProductionBoostFromResearch) {
-          this.json.lifeFormProductionBoostFromResearch[id].map((x,i) => lifeFormBonus[i] += (x / 100) * planet[id]);
+          this.json.lifeFormProductionBoostFromResearch[id].map((x, i) => (lifeFormBonus[i] += (x / 100) * planet[id]));
         }
       });
     }
     if (this.json.lifeFormProductionBoostFromBuildings) {
       for (let id in this.json.lifeFormProductionBoostFromBuildings) {
-        this.json.lifeFormProductionBoostFromBuildings[id].map((x,i) => lifeFormBonus[i] += (x / 100) * object[id]);
+        this.json.lifeFormProductionBoostFromBuildings[id].map((x, i) => (lifeFormBonus[i] += (x / 100) * object[id]));
       }
     }
     let crawlerPercent = Math.min(
       this.json.options.crawlerPercent || 1,
       this.playerClass == PLAYER_CLASS_MINER ? 1.5 : 1
     );
-    let currentMineLvls = [
-      Number(object[1]),
-      Number(object[2]),
-      Number(object[3]),
-    ];
+    let currentMineLvls = [Number(object[1]), Number(object[2]), Number(object[3])];
     let currentMineSum = currentMineLvls.reduce((sum, cur) => sum + cur, 0);
     let currentCrawlerCount = Math.min(Math.floor(currentMineSum * 8) * (this.geologist ? 1.1 : 1), crawlerCount);
     let currentCrawlerBonus =
@@ -17442,7 +17637,10 @@ class OGInfinity {
         let technoId =
           building.getAttribute("alt").split("_")[1] ||
           building.parentElement.getAttribute("onclick").split("(")[1].split(", ")[0];
-        let tolvl = document.querySelector("#productionboxbuildingcomponent .level").textContent.trim().replace(/[^0-9]/g, "");
+        let tolvl = document
+          .querySelector("#productionboxbuildingcomponent .level")
+          .textContent.trim()
+          .replace(/[^0-9]/g, "");
         let datestring = document.querySelector("#productionboxbuildingcomponent .ogl-date").textContent.trim();
         let date = datestring.split("  ")[0].split(".");
         let time = datestring.split("  ")[1].split(":");
@@ -17468,7 +17666,10 @@ class OGInfinity {
       let lfbuilding = document.querySelector("#productionboxlfbuildingcomponent .queuePic");
       if (lfbuilding) {
         let technoId = lfbuilding.classList[2].replace("lifeformTech", "");
-        let tolvl = document.querySelector("#productionboxlfbuildingcomponent .level").textContent.trim().replace(/[^0-9]/g, "");
+        let tolvl = document
+          .querySelector("#productionboxlfbuildingcomponent .level")
+          .textContent.trim()
+          .replace(/[^0-9]/g, "");
         let datestring = document.querySelector("#productionboxlfbuildingcomponent .ogl-date").textContent.trim();
         let date = datestring.split("  ")[0].split(".");
         let time = datestring.split("  ")[1].split(":");
@@ -17495,7 +17696,10 @@ class OGInfinity {
         let technoId =
           research.getAttribute("alt").split("_")[1] ||
           research.parentElement.getAttribute("onclick").split("(")[1].split(", ")[0];
-        let tolvl = document.querySelector("#productionboxresearchcomponent .level").textContent.trim().replace(/[^0-9]/g, "");
+        let tolvl = document
+          .querySelector("#productionboxresearchcomponent .level")
+          .textContent.trim()
+          .replace(/[^0-9]/g, "");
         let coords = document
           .querySelector("#productionboxresearchcomponent .tooltip")
           .getAttribute("onclick")
@@ -17528,7 +17732,10 @@ class OGInfinity {
       let lfresearch = document.querySelector("#productionboxlfresearchcomponent .queuePic");
       if (lfresearch) {
         let technoId = lfresearch.classList[2].replace("lifeformTech", "");
-        let tolvl = document.querySelector("#productionboxlfresearchcomponent .level").textContent.trim().replace(/[^0-9]/g, "");
+        let tolvl = document
+          .querySelector("#productionboxlfresearchcomponent .level")
+          .textContent.trim()
+          .replace(/[^0-9]/g, "");
         let datestring = document.querySelector("#productionboxlfresearchcomponent .ogl-date").textContent.trim();
         let date = datestring.split("  ")[0].split(".");
         let time = datestring.split("  ")[1].split(":");
@@ -17555,12 +17762,12 @@ class OGInfinity {
   checkRedirect() {
     let url = new URL(window.location.href);
     let technoDetails = url.searchParams.get("technoDetails");
-    [202, 203, 219, 209, 212].forEach(id => {
+    [202, 203, 219, 209, 212].forEach((id) => {
       if (url.searchParams.has(`techId${id}`)) {
         let needed = Number(url.searchParams.get(`techId${id}`));
         waitForElementToDisplay(`.hasDetails[data-technology='${id}'] span`, () => {
-          document.querySelector(`.hasDetails[data-technology='${id}'] span`).click()
-        })
+          document.querySelector(`.hasDetails[data-technology='${id}'] span`).click();
+        });
         waitForElementToDisplay(`#technologydetails[data-technology-id='${id}']`, () => {
           let input = document.querySelector("#build_amount");
           input.focus();
@@ -17728,8 +17935,8 @@ class OGInfinity {
             this.json.options.collect.ship == 202
               ? "smallCargo"
               : this.json.options.collect.ship == 219
-              ? "pathFinder"
-              : "largeCargo"
+                ? "pathFinder"
+                : "largeCargo"
           }`,
         })
       );
@@ -17780,8 +17987,8 @@ class OGInfinity {
           this.json.options.collect.ship == 202
             ? "smallCargo"
             : this.json.options.collect.ship == 219
-            ? "pathFinder"
-            : "largeCargo"
+              ? "pathFinder"
+              : "largeCargo"
         }`;
       };
       let updateDefaultCollectMission = (mission) => {
@@ -17793,8 +18000,8 @@ class OGInfinity {
           this.json.options.collect.ship == 202
             ? "smallCargo"
             : this.json.options.collect.ship == 219
-            ? "pathFinder"
-            : "largeCargo"
+              ? "pathFinder"
+              : "largeCargo"
         }`;
       };
       sc.addEventListener("click", () => updateDefaultCollectShip(202));
@@ -17981,35 +18188,35 @@ class OGInfinity {
     document.querySelectorAll(".smallplanet a.planetlink").forEach((elem) => {
       let lf = String(elem.getAttribute("title").split("<br/>")[1].split(":")[1].trim());
       switch (lf) {
-        case "Rock’tal":
-          elem.appendChild(
-            this.createDOM("div", {
-              class: `lifeform-item-icon small lifeform2`,
-            })
-          );
-          break;
-        case "Mechas":
-          elem.appendChild(
-            this.createDOM("div", {
-              class: `lifeform-item-icon small lifeform3`,
-            })
-          );
-          break;
-        case "Kaelesh":
-          elem.appendChild(
-            this.createDOM("div", {
-              class: `lifeform-item-icon small lifeform4`,
-            })
-          );
-          break;
-        case "-":
-          break;
-        default:
-          elem.appendChild(
-            this.createDOM("div", {
-              class: `lifeform-item-icon small lifeform1`,
-            })
-          );
+      case "Rock’tal":
+        elem.appendChild(
+          this.createDOM("div", {
+            class: "lifeform-item-icon small lifeform2",
+          })
+        );
+        break;
+      case "Mechas":
+        elem.appendChild(
+          this.createDOM("div", {
+            class: "lifeform-item-icon small lifeform3",
+          })
+        );
+        break;
+      case "Kaelesh":
+        elem.appendChild(
+          this.createDOM("div", {
+            class: "lifeform-item-icon small lifeform4",
+          })
+        );
+        break;
+      case "-":
+        break;
+      default:
+        elem.appendChild(
+          this.createDOM("div", {
+            class: "lifeform-item-icon small lifeform1",
+          })
+        );
       }
     });
   }
@@ -18018,17 +18225,21 @@ class OGInfinity {
     if (!this.hasLifeforms) return;
     let generalLifeFormBonus = [0, 0, 0];
     if (this.json.lifeFormProductionBoostFromResearch) {
-      this.json.empire.forEach(planet => {
+      this.json.empire.forEach((planet) => {
         for (let id in this.json.lifeFormProductionBoostFromResearch) {
-          this.json.lifeFormProductionBoostFromResearch[id].map((x,i) => generalLifeFormBonus[i] += (x / 100) * planet[id]);
+          this.json.lifeFormProductionBoostFromResearch[id].map(
+            (x, i) => (generalLifeFormBonus[i] += (x / 100) * planet[id])
+          );
         }
       });
     }
-    this.json.empire.forEach(planet => {
+    this.json.empire.forEach((planet) => {
       let lifeFormBonus = generalLifeFormBonus;
       if (this.json.lifeFormProductionBoostFromBuildings) {
         for (let id in this.json.lifeFormProductionBoostFromBuildings) {
-          this.json.lifeFormProductionBoostFromBuildings[id].map((x, i) => lifeFormBonus[i] += (x / 100) * planet[id]);
+          this.json.lifeFormProductionBoostFromBuildings[id].map(
+            (x, i) => (lifeFormBonus[i] += (x / 100) * planet[id])
+          );
         }
       }
       let mineProd = [
@@ -18037,12 +18248,12 @@ class OGInfinity {
         this.minesProduction(3, planet[3], planet.position, planet.db_par2 + 40),
       ];
       this.json.lifeFormProduction[planet.id] = {
-        0: lifeFormBonus[0]*mineProd[0],
-        1: lifeFormBonus[1]*mineProd[1],
-        2: lifeFormBonus[2]*mineProd[2],
-        3: lifeFormBonus[0]*mineProd[0],
-        5: lifeFormBonus[1]*mineProd[1],
-        6: lifeFormBonus[2]*mineProd[2],
+        0: lifeFormBonus[0] * mineProd[0],
+        1: lifeFormBonus[1] * mineProd[1],
+        2: lifeFormBonus[2] * mineProd[2],
+        3: lifeFormBonus[0] * mineProd[0],
+        5: lifeFormBonus[1] * mineProd[1],
+        6: lifeFormBonus[2] * mineProd[2],
       };
     });
     this.saveData();
@@ -18050,7 +18261,7 @@ class OGInfinity {
 
   listenKeyboard() {
     if (this.page == "fleetdispatch") {
-      document.querySelectorAll('form[name="shipsChosen"] input').forEach((i) => i.classList.add("ogl-formatInput"));
+      document.querySelectorAll("form[name=\"shipsChosen\"] input").forEach((i) => i.classList.add("ogl-formatInput"));
     }
     let listener = this.isMobile ? "input" : "keyup";
     window.addEventListener(listener, (e) => {
@@ -18083,17 +18294,18 @@ class OGInfinity {
           if (CODE === "ArrowUp" || CODE === "ArrowDown" || CODE === "KeyK") {
             const value = fromFormatedNumber(element.value.replace("k", "")) || 0;
             const add = e.ctrlKey ? 100 : e.shiftKey ? 10 : 1;
+            let factor;
             switch (CODE) {
-              case "ArrowUp":
-                element.value = toFormatedNumber(value + add);
-                break;
-              case "ArrowDown":
-                element.value = toFormatedNumber(Math.max(value - add, 0));
-                break;
-              case "KeyK":
-                let factor = value > 0 && element.classList.contains("checkThousandSeparator") ? 1 : 1000;
-                element.value = toFormatedNumber((value || 1) * factor);
-                break;
+            case "ArrowUp":
+              element.value = toFormatedNumber(value + add);
+              break;
+            case "ArrowDown":
+              element.value = toFormatedNumber(Math.max(value - add, 0));
+              break;
+            case "KeyK":
+              factor = value > 0 && element.classList.contains("checkThousandSeparator") ? 1 : 1000;
+              element.value = toFormatedNumber((value || 1) * factor);
+              break;
             }
           }
         }
