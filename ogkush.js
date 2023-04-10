@@ -5133,6 +5133,7 @@ class OGInfinity {
                 });
                 let fleetMatches = textContent.match(/.*: [1-9].*/gm);
                 fleetMatches &&
+                  !normalized.includes(type) &&
                   fleetMatches.forEach((result) => {
                     let split = result.split(": ");
                     type = "Fleet";
