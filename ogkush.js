@@ -1391,7 +1391,10 @@ const RESEARCH_INFO = {
     factorTime: 1.4,
   },
 };
-
+const IONTECHNOLOGY_BONUS = 0.04;
+const ENGINEER_ENERGY_BONUS = 0.1;
+const OFFICER_ENERGY_BONUS = 0.02;
+const TRADER_ENERGY_BONUS = 0.05;
 class OGInfinity {
   constructor() {
     this.commander = player.hasCommander;
@@ -1450,7 +1453,8 @@ class OGInfinity {
     this.json.expeditionSums = this.json.expeditionSums || {};
     this.json.discoveriesSums = this.json.discoveriesSums || {};
     this.json.discoveries = this.json.discoveries || {};
-    this.json.lfTypeNames = this.json.lfTypeNames || {};    this.json.flying = this.json.flying || {
+    this.json.lfTypeNames = this.json.lfTypeNames || {};
+    this.json.flying = this.json.flying || {
       metal: 0,
       crystal: 0,
       deuterium: 0,
@@ -1548,7 +1552,6 @@ class OGInfinity {
     this.json.options.defaultKept = this.json.options.defaultKept || {};
     this.json.options.hiddenTargets = this.json.options.hiddenTargets || {};
     this.json.options.timeZone = this.json.options.timeZone === false ? false : true;
-    this.json.lifeFormProduction = this.json.lifeFormProduction || {};
     this.json.selectedLifeForms = this.json.selectedLifeForms || {};
     this.gameLang = document.querySelector('meta[name="ogame-language"]').getAttribute("content");
     this.isLoading = false;
@@ -1648,7 +1651,6 @@ class OGInfinity {
     this.timeZone();
     this.updateFlyings();
     this.updatePlanets_FleetActivity();
-    this.getAllianceClass();
     this.checkRedirect();
     this.updateProductionProgress();
     this.showStorageTimers();
@@ -1950,10 +1952,10 @@ class OGInfinity {
             );
             if (diff < 0) {
               let energyBonus =
-                (that.engineer ? 0.1 : 0) +
-                (that.playerClass == 1 ? 0.1 : 0) +
-                (that.allOfficers ? 0.02 : 0) +
-                (that.json.allianceClass == 1 ? 0.05 : 0);
+                (that.engineer ? ENGINEER_ENERGY_BONUS : 0) +
+                (that.playerClass == PLAYER_CLASS_MINER ? that.json.minerBonusEnergy : 0) +
+                (that.allOfficers ? OFFICER_ENERGY_BONUS : 0) +
+                (that.json.allianceClass == ALLY_CLASS_MINER ? TRADER_ENERGY_BONUS : 0);
               let satsNeeded = Math.ceil(-diff / (1 + energyBonus) / Math.floor((temp + 140) / 6));
               let link =
                 "https://" +
@@ -1993,10 +1995,10 @@ class OGInfinity {
 
             if (diff < 0) {
               let energyBonus =
-                (that.engineer ? 0.1 : 0) +
-                (that.playerClass == 1 ? 0.1 : 0) +
-                (that.allOfficers ? 0.02 : 0) +
-                (that.json.allianceClass == 1 ? 0.05 : 0);
+                (that.engineer ? ENGINEER_ENERGY_BONUS : 0) +
+                (that.playerClass == PLAYER_CLASS_MINER ? that.json.minerBonusEnergy : 0) +
+                (that.allOfficers ? OFFICER_ENERGY_BONUS : 0) +
+                (that.json.allianceClass == ALLY_CLASS_MINER ? TRADER_ENERGY_BONUS : 0);
               let satsNeeded = Math.ceil(Math.floor(-diff / (1 + energyBonus)) / Math.floor((temp + 140) / 6));
               let satsSpan = that.createDOM(
                 "span",
@@ -2134,7 +2136,7 @@ class OGInfinity {
         let missing = [];
         let demolish = [];
         if (baselvl - 1 > tolvl) {
-          demolish = techno.cost.map((x) => Math.floor(x * (1 - 0.04 * that.json.technology[121])));
+          demolish = techno.cost.map((x) => Math.floor(x * (1 - IONTECHNOLOGY_BONUS * that.json.technology[121])));
         }
         if (techno.cost[0] != 0) {
           let metal = document.querySelector(".costs .metal");
@@ -2276,10 +2278,10 @@ class OGInfinity {
               );
             if (missing[3] < 0 && baselvl == tolvl && that.json.empire[that.current.index]) {
               let energyBonus =
-                (that.engineer ? 0.1 : 0) +
-                (that.playerClass == PLAYER_CLASS_MINER ? 0.1 : 0) +
-                (that.allOfficers ? 0.02 : 0) +
-                (that.json.allianceClass == ALLY_CLASS_MINER ? 0.05 : 0);
+                (that.engineer ? ENGINEER_ENERGY_BONUS : 0) +
+                (that.playerClass == PLAYER_CLASS_MINER ? that.json.minerBonusEnergy : 0) +
+                (that.allOfficers ? OFFICER_ENERGY_BONUS : 0) +
+                (that.json.allianceClass == ALLY_CLASS_MINER ? TRADER_ENERGY_BONUS : 0);
               let temp = that.json.empire[that.current.index].db_par2 + 40;
               let satsNeeded = Math.ceil(-missing[3] / (1 + energyBonus) / Math.floor((temp + 140) / 6));
               let link =
@@ -2468,10 +2470,10 @@ class OGInfinity {
               );
               if (technologyId == 212) {
                 let energyBonus =
-                  (that.engineer ? 0.1 : 0) +
-                  (that.playerClass == PLAYER_CLASS_MINER ? 0.1 : 0) +
-                  (that.allOfficers ? 0.02 : 0) +
-                  (that.json.allianceClass == ALLY_CLASS_MINER ? 0.05 : 0);
+                  (that.engineer ? ENGINEER_ENERGY_BONUS : 0) +
+                  (that.playerClass == PLAYER_CLASS_MINER ? that.json.minerBonusEnergy : 0) +
+                  (that.allOfficers ? OFFICER_ENERGY_BONUS : 0) +
+                  (that.json.allianceClass == ALLY_CLASS_MINER ? TRADER_ENERGY_BONUS : 0);
                 let diff = Number(currentEnergy) + Math.round(value * base * (1 + energyBonus));
                 energyDiv.html(
                   toFormatedNumber(value * base) +
@@ -2501,10 +2503,10 @@ class OGInfinity {
                 );
                 if (diff < 0) {
                   let energyBonus =
-                    (that.engineer ? 0.1 : 0) +
-                    (that.playerClass == PLAYER_CLASS_MINER ? 0.1 : 0) +
-                    (that.allOfficers ? 0.02 : 0) +
-                    (that.json.allianceClass == ALLY_CLASS_MINER ? 0.05 : 0);
+                    (that.engineer ? ENGINEER_ENERGY_BONUS : 0) +
+                    (that.playerClass == PLAYER_CLASS_MINER ? that.json.minerBonusEnergy : 0) +
+                    (that.allOfficers ? OFFICER_ENERGY_BONUS : 0) +
+                    (that.json.allianceClass == ALLY_CLASS_MINER ? TRADER_ENERGY_BONUS : 0);
                   let temp = that.json.empire[that.current.index].db_par2 + 40;
                   let satsNeeded = Math.ceil(-diff / (1 + energyBonus) / Math.floor((temp + 140) / 6));
                   let satsSpan = that.createDOM(
@@ -3107,6 +3109,7 @@ class OGInfinity {
   updateServerSettings() {
     if (this.json.trashsimSettings && !this.json.updateSettings) return;
     this.updateLifeformBonus();
+    this.getAllianceClass();
     let settingsUrl = `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/api/serverData.xml`;
     return fetch(settingsUrl)
       .then((rep) => rep.text())
@@ -7659,7 +7662,7 @@ class OGInfinity {
         player[i] += planet.production.production[1004][i];
         alliance[i] += planet.production.production[1005][i];
         energy[i] -= planet.production.production[12][i];
-        if (lifeform) lifeform[i] += planet.production.lifeformProduction[i];
+        if (planet.production.lifeformProduction) lifeform[i] += planet.production.lifeformProduction[i];
       }
     });
     header.appendChild(this.createDOM("th", { class: "ogl-sum-symbol" }, "Σ"));
@@ -11505,7 +11508,12 @@ class OGInfinity {
         minPT = 1223;
         minGT = 417;
       }
-      maxTotal = this.playerClass == PLAYER_CLASS_EXPLORER ? maxTotal * 3 * this.json.speed : maxTotal * 2;
+      maxTotal =
+        maxTotal * 2 *
+        (this.playerClass == PLAYER_CLASS_EXPLORER ?
+          (1 + this.json.explorerBonusIncreasedExpeditionOutcome) * this.json.speed :
+          1) *
+        (1+this.json.lifeFormExpeditionResourcesBonus);
       let maxPT = Math.max(minPT, this.calcNeededShips({ fret: 202, resources: maxTotal }));
       let maxGT = Math.max(minGT, this.calcNeededShips({ fret: 203, resources: maxTotal }));
       if (!document.querySelector("#allornone .allornonewrap")) return;
@@ -11760,21 +11768,45 @@ class OGInfinity {
       .then((rep) => rep.text())
       .then((str) => {
         let htmlDocument = new window.DOMParser().parseFromString(str, "text/html");
+        let expeditionBonus = htmlDocument.querySelector("div[data-category='bonus-xx'] .bonusValues") ? fromFormatedNumber(
+          htmlDocument.querySelector("div[data-category='bonus-16'] .bonusValues").textContent.split("/")[0].trim()
+        ) || 0 : 0;
+        let crawlerBonus = htmlDocument.querySelector("div[data-category='bonus-xx'] .bonusValues") ? fromFormatedNumber(
+          htmlDocument.querySelector("div[data-category='bonus-9'] .bonusValues").textContent.split("/")[0].trim()
+        ) || 0 : 0;
         let productionBonus = [
           fromFormatedNumber(
             htmlDocument.querySelector("div[data-category='bonus-1'] .bonusValues").textContent.split("/")[0].trim()
-          ),
+          ) || 0,
           fromFormatedNumber(
             htmlDocument.querySelector("div[data-category='bonus-2'] .bonusValues").textContent.split("/")[0].trim()
-          ),
+          ) || 0,
           fromFormatedNumber(
             htmlDocument.querySelector("div[data-category='bonus-3'] .bonusValues").textContent.split("/")[0].trim()
-          ),
+          ) || 0,
           fromFormatedNumber(
             htmlDocument.querySelector("div[data-category='bonus-8'] .bonusValues").textContent.split("/")[0].trim()
-          ),
+          ) || 0,
         ];
-        return productionBonus; //.map((x) => Math.round(x * 100) / 100);
+        let technologyCostReduction = {};
+        htmlDocument.querySelectorAll("div[data-category='bonus-28'] .subItemContent").forEach((tech) => {
+          let techId = new URL(tech.querySelector("button").getAttribute("data-target")).searchParams.get("technologyId");
+          let bonus = fromFormatedNumber(tech.querySelector(".innerBonus").nextElementSibling.textContent.split("/")[0].trim());
+          technologyCostReduction[techId] = bonus;
+        });
+        let technologyTimeReduction = {};
+        htmlDocument.querySelectorAll("div[data-category='bonus-11'] .subItemContent").forEach((tech) => {
+          let techId = new URL(tech.querySelector("button").getAttribute("data-target")).searchParams.get("technologyId");
+          let bonus = fromFormatedNumber(tech.querySelector(".innerBonus").nextElementSibling.textContent.split("/")[0].trim());
+          technologyTimeReduction[techId] = bonus;
+        });
+        return {
+          productionBonus: productionBonus,
+          technologyCostReduction: technologyCostReduction,
+          technologyTimeReduction: technologyTimeReduction,
+          expeditionBonus: expeditionBonus,
+          crawlerBonus: crawlerBonus
+        };
       });
   }
 
@@ -11834,9 +11866,10 @@ class OGInfinity {
                 Math.min(planet.production.production[217].number, planet.production.production[217].numberMax) *
                 Math.min(
                   this.json.resourceBuggyProductionBoost *
-                  (this.playerClass == PLAYER_CLASS_MINER ? 1+this.json.minerBonusAdditionalCrawler : 1),
+                  (this.playerClass == PLAYER_CLASS_MINER ? 1+this.json.minerBonusAdditionalCrawler : 1) *
+                  (1+(this.hasLifeforms?this.json.lifeFormBonus[planet.id].crawlerBonus:0)),
                   this.json.resourceBuggyMaxProductionBoost
-                ); // TODO: calc crawler bonus (lf research)
+                );
               let crawlerPercent = Math.round((planet.production.production[217][idx] / crawlerProd) * 10) / 10;
               crawlerProd *= Math.min(crawlerPercent, (this.playerClass == PLAYER_CLASS_MINER ? 1.5 : 1));
               totalProd += crawlerProd;
@@ -11853,8 +11886,8 @@ class OGInfinity {
             planet.production.weekly[idx] = totalProd * 24 * 7;
           }
           // lifeform production is not included in ogames empire data, might change in future
-          if (this.hasLifeforms && !planet.isMoon) {
-            let bonus = this.json.lifeFormBonus[planet.id];
+          if (this.hasLifeforms && !planet.isMoon  && this.json.lifeFormBonus[planet.id]) {
+            let bonus = this.json.lifeFormBonus[planet.id].productionBonus;
             let lifeformProduction = [0, 0, 0];
             for (let idx = 0; idx < 3; idx++) {
               let oldHourly = planet.production.hourly[idx];
@@ -14627,18 +14660,11 @@ class OGInfinity {
 
   research(id, lvl, technocrat, explorer, acceleration, object = null) {
     // console.log(`research(id=${id}, lvl=${lvl}, technocrat=${technocrat}, explorer=${explorer}, acceleration=${acceleration}, object=${object})`);
-
     let labLvl = 1;
     let timeFactor = 1;
     let costFactor = 1;
-    let bonus, reduction;
     if (object) {
-      if (id >= 11001) {
-        if (this.json.selectedLifeForms[object.id] == "lifeform1") labLvl = object[11103];
-        if (this.json.selectedLifeForms[object.id] == "lifeform2") labLvl = object[12103];
-        if (this.json.selectedLifeForms[object.id] == "lifeform3") labLvl = object[13103];
-        if (this.json.selectedLifeForms[object.id] == "lifeform4") labLvl = object[14103];
-      } else {
+      if (id < 11001) {
         let labs = [];
         let igfn = this.json.technology[123];
         this.json.empire.forEach((planet) => labs.push(planet[31]));
@@ -14653,61 +14679,10 @@ class OGInfinity {
           .slice(0, igfn)
           .map((x) => (labLvl += x));
       }
-      if (this.json.lifeFormCostReductionFromBuilding[id]) {
-        for (let techId in this.json.lifeFormCostReductionFromBuilding[id]) {
-          bonus = this.json.lifeFormCostReductionFromBuilding[id][techId];
-          costFactor -= Math.min((((object[techId] || 0) * bonus.base) / 100) * bonus.factor, bonus.max);
-        }
-      }
-      if (this.json.lifeFormTimeReductionFromBuilding[id]) {
-        for (let techId in this.json.lifeFormTimeReductionFromBuilding[id]) {
-          bonus = this.json.lifeFormTimeReductionFromBuilding[id][techId];
-          timeFactor -= Math.min((((object[techId] || 0) * bonus.base) / 100) * bonus.factor, bonus.max);
-        }
-      }
-    }
-    if (this.json.lifeFormCostReductionFromResearch[id]) {
-      for (let techId in this.json.lifeFormCostReductionFromResearch[id]) {
-        reduction = 0;
-        this.json.empire &&
-          this.json.empire.forEach((planet) => {
-            bonus = this.json.lifeFormCostReductionFromResearch[id][techId];
-            reduction += (((planet[techId] || 0) * bonus.base) / 100) * bonus.factor;
-          });
-        costFactor -= Math.min(reduction, bonus.max);
-      }
-    }
-    if (this.json.lifeFormTimeReductionFromResearch[id]) {
-      for (let techId in this.json.lifeFormTimeReductionFromResearch[id]) {
-        reduction = 0;
-        this.json.empire &&
-          this.json.empire.forEach((planet) => {
-            bonus = this.json.lifeFormTimeReductionFromResearch[id][techId];
-            reduction += (((planet[techId] || 0) * bonus.base) / 100) * bonus.factor;
-          });
-        timeFactor -= Math.min(reduction, bonus.max);
-      }
-    }
-    if (this.json.lifeFormResearchSpeed[id]) {
-      for (let techId in this.json.lifeFormResearchSpeed) {
-        let reduction = 0;
-        this.json.empire &&
-          this.json.empire.forEach((planet) => {
-            if (id >= 11101) {
-              reduction +=
-                (((planet[techId] || 0) * this.json.lifeFormResearchSpeed[id].lifeFormBase) / 100) *
-                this.json.lifeFormResearchSpeed[id].lifeFormFactor;
-            } else {
-              reduction +=
-                (((planet[techId] || 0) * this.json.lifeFormResearchSpeed[id].generalBase) / 100) *
-                this.json.lifeFormResearchSpeed[id].generalFactor;
-            }
-          });
-        timeFactor -= Math.min(
-          reduction,
-          id >= 11101 ? this.json.lifeFormResearchSpeed[id].lifeFormMax : this.json.lifeFormResearchSpeed[id].generalMax
-        );
-      }
+      if (this.json.lifeFormBonus && this.json.lifeFormBonus[object.id].technologyCostReduction[id])
+        costFactor -= this.json.lifeFormBonus[object.id].technologyCostReduction[id] / 100;
+      if (this.json.lifeFormBonus && this.json.lifeFormBonus[object.id].technologyTimeReduction[id])
+        timeFactor -= this.json.lifeFormBonus[object.id].technologyTimeReduction[id] / 100;
     }
     let cost = [
       Math.floor(
@@ -14727,25 +14702,19 @@ class OGInfinity {
       ),
     ];
     if (RESEARCH_INFO[id].baseCost[3])
-      cost.push(Math.floor(RESEARCH_INFO[id].baseCost[3] * Math.pow(RESEARCH_INFO[id].factorEnergy, lvl - 1)));
+      cost.push(RESEARCH_INFO[id].baseCost[3] * Math.pow(RESEARCH_INFO[id].factorEnergy, lvl - 1));
     let time = ((cost[0] + cost[1]) / (this.json.speed * 1000 * (1 + labLvl)) / this.json.researchDivisor) * 3600;
     if (technocrat) time -= time * 0.25;
     if (explorer) time -= time * 0.25;
     if (acceleration) time -= time * 0.25;
-    if (id == 124) {
-      time = Math.round(time / 100) * 100;
-    }
-    if (RESEARCH_INFO[id].factorTime) {
-      time = Math.floor(
-        Math.floor((RESEARCH_INFO[id].baseTime * Math.pow(RESEARCH_INFO[id].factorTime, lvl) * lvl) / this.json.speed) *
-          (labLvl > 1 ? 1.0 - 0.02 * labLvl : 1)
-      );
-    }
-
+    if (RESEARCH_INFO[id].factorTime)
+      time = (RESEARCH_INFO[id].baseTime * Math.pow(RESEARCH_INFO[id].factorTime, lvl) * lvl) / this.json.speed;
     time *= timeFactor;
+    if (id == 124)
+      time = Math.round(time / 100) * 100;
     return {
       time: Math.max(Math.floor(time), 1),
-      cost: cost,
+      cost: cost.map(x => Math.floor(x * costFactor)),
     };
   }
 
@@ -17700,14 +17669,19 @@ class OGInfinity {
   }
 
   getAllianceClass() {
-    let allyClassIcon = document.querySelector(".allianceclass");
-    if (allyClassIcon) {
-      if (allyClassIcon.classList.contains("trader")) this.json.allianceClass = ALLY_CLASS_MINER;
-      if (allyClassIcon.classList.contains("explorer")) this.json.allianceClass = ALLY_CLASS_EXPLORER;
-      if (allyClassIcon.classList.contains("warrior")) this.json.allianceClass = ALLY_CLASS_WARRIOR;
-      if (allyClassIcon.classList.contains("none")) this.json.allianceClass = ALLY_CLASS_NONE;
-      this.saveData();
-    }
+    fetch("/game/index.php?page=ingame&component=resourcesettings")
+      .then((rep) => rep.text())
+      .then((str) => {
+        let htmlDocument = new window.DOMParser().parseFromString(str, "text/html")
+        let allyClassIcon = htmlDocument.querySelector(".allianceclass");
+        if (allyClassIcon) {
+          if (allyClassIcon.classList.contains("trader")) this.json.allianceClass = ALLY_CLASS_MINER;
+          if (allyClassIcon.classList.contains("explorer")) this.json.allianceClass = ALLY_CLASS_EXPLORER;
+          if (allyClassIcon.classList.contains("warrior")) this.json.allianceClass = ALLY_CLASS_WARRIOR;
+          if (allyClassIcon.classList.contains("none")) this.json.allianceClass = ALLY_CLASS_NONE;
+          this.saveData();
+        }
+      });
   }
 
   roiPlasmatechnology(tolvl) {
