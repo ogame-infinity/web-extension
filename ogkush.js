@@ -3163,9 +3163,15 @@ class OGInfinity {
         this.json.minerBonusMaxCrawler = Number(xml.querySelector("minerBonusMaxCrawler").innerHTML);
         this.json.minerBonusEnergy = Number(xml.querySelector("minerBonusEnergy").innerHTML);
         this.json.resourceBuggyProductionBoost = Number(xml.querySelector("resourceBuggyProductionBoost").innerHTML);
-        this.json.resourceBuggyMaxProductionBoost = Number(xml.querySelector("resourceBuggyMaxProductionBoost").innerHTML);
-        this.json.explorerBonusIncreasedResearchSpeed = Number(xml.querySelector("explorerBonusIncreasedResearchSpeed").innerHTML);
-        this.json.explorerBonusIncreasedExpeditionOutcome = Number(xml.querySelector("explorerBonusIncreasedExpeditionOutcome").innerHTML);
+        this.json.resourceBuggyMaxProductionBoost = Number(
+          xml.querySelector("resourceBuggyMaxProductionBoost").innerHTML
+        );
+        this.json.explorerBonusIncreasedResearchSpeed = Number(
+          xml.querySelector("explorerBonusIncreasedResearchSpeed").innerHTML
+        );
+        this.json.explorerBonusIncreasedExpeditionOutcome = Number(
+          xml.querySelector("explorerBonusIncreasedExpeditionOutcome").innerHTML
+        );
         this.json.lifeFormResearchSpeed = {};
         xml.querySelectorAll("generalBase").forEach((elem) => {
           let research = elem.parentNode.parentNode;
@@ -11509,11 +11515,12 @@ class OGInfinity {
         minGT = 417;
       }
       maxTotal =
-        maxTotal * 2 *
-        (this.playerClass == PLAYER_CLASS_EXPLORER ?
-          (1 + this.json.explorerBonusIncreasedExpeditionOutcome) * this.json.speed :
-          1) *
-        (1+this.json.lifeFormExpeditionResourcesBonus);
+        maxTotal *
+        2 *
+        (this.playerClass == PLAYER_CLASS_EXPLORER
+          ? (1 + this.json.explorerBonusIncreasedExpeditionOutcome) * this.json.speed
+          : 1) *
+        (1 + this.json.lifeFormExpeditionResourcesBonus);
       let maxPT = Math.max(minPT, this.calcNeededShips({ fret: 202, resources: maxTotal }));
       let maxGT = Math.max(minGT, this.calcNeededShips({ fret: 203, resources: maxTotal }));
       if (!document.querySelector("#allornone .allornonewrap")) return;
@@ -11744,7 +11751,7 @@ class OGInfinity {
     this.abordSignal = abortController.signal;
     window.onbeforeunload = function (e) {
       abortController.abort();
-    }
+    };
     fetch(
       this.current.isMoon
         ? this.current.planet.querySelector(".moonlink").href
@@ -11768,12 +11775,16 @@ class OGInfinity {
       .then((rep) => rep.text())
       .then((str) => {
         let htmlDocument = new window.DOMParser().parseFromString(str, "text/html");
-        let expeditionBonus = htmlDocument.querySelector("div[data-category='bonus-xx'] .bonusValues") ? fromFormatedNumber(
-          htmlDocument.querySelector("div[data-category='bonus-16'] .bonusValues").textContent.split("/")[0].trim()
-        ) || 0 : 0;
-        let crawlerBonus = htmlDocument.querySelector("div[data-category='bonus-xx'] .bonusValues") ? fromFormatedNumber(
-          htmlDocument.querySelector("div[data-category='bonus-9'] .bonusValues").textContent.split("/")[0].trim()
-        ) || 0 : 0;
+        let expeditionBonus = htmlDocument.querySelector("div[data-category='bonus-16'] .bonusValues")
+          ? fromFormatedNumber(
+              htmlDocument.querySelector("div[data-category='bonus-16'] .bonusValues").textContent.split("/")[0].trim()
+            ) || 0
+          : 0;
+        let crawlerBonus = htmlDocument.querySelector("div[data-category='bonus-9'] .bonusValues")
+          ? fromFormatedNumber(
+              htmlDocument.querySelector("div[data-category='bonus-9'] .bonusValues").textContent.split("/")[0].trim()
+            ) || 0
+          : 0;
         let productionBonus = [
           fromFormatedNumber(
             htmlDocument.querySelector("div[data-category='bonus-1'] .bonusValues").textContent.split("/")[0].trim()
@@ -11790,14 +11801,22 @@ class OGInfinity {
         ];
         let technologyCostReduction = {};
         htmlDocument.querySelectorAll("div[data-category='bonus-28'] .subItemContent").forEach((tech) => {
-          let techId = new URL(tech.querySelector("button").getAttribute("data-target")).searchParams.get("technologyId");
-          let bonus = fromFormatedNumber(tech.querySelector(".innerBonus").nextElementSibling.textContent.split("/")[0].trim());
+          let techId = new URL(tech.querySelector("button").getAttribute("data-target")).searchParams.get(
+            "technologyId"
+          );
+          let bonus = fromFormatedNumber(
+            tech.querySelector(".innerBonus").nextElementSibling.textContent.split("/")[0].trim()
+          );
           technologyCostReduction[techId] = bonus;
         });
         let technologyTimeReduction = {};
         htmlDocument.querySelectorAll("div[data-category='bonus-11'] .subItemContent").forEach((tech) => {
-          let techId = new URL(tech.querySelector("button").getAttribute("data-target")).searchParams.get("technologyId");
-          let bonus = fromFormatedNumber(tech.querySelector(".innerBonus").nextElementSibling.textContent.split("/")[0].trim());
+          let techId = new URL(tech.querySelector("button").getAttribute("data-target")).searchParams.get(
+            "technologyId"
+          );
+          let bonus = fromFormatedNumber(
+            tech.querySelector(".innerBonus").nextElementSibling.textContent.split("/")[0].trim()
+          );
           technologyTimeReduction[techId] = bonus;
         });
         return {
@@ -11805,7 +11824,7 @@ class OGInfinity {
           technologyCostReduction: technologyCostReduction,
           technologyTimeReduction: technologyTimeReduction,
           expeditionBonus: expeditionBonus,
-          crawlerBonus: crawlerBonus
+          crawlerBonus: crawlerBonus,
         };
       });
   }
@@ -11857,21 +11876,20 @@ class OGInfinity {
             let allyClassProd = mineProd * (this.json.allianceClass == ALLY_CLASS_MINER ? 0.05 : 0);
             totalProd += allyClassProd;
             planet.production.production[1005][idx] = allyClassProd;
-            let playerClassProd = mineProd * (this.playerClass == PLAYER_CLASS_MINER ? this.json.minerBonusResourceProduction : 0);
+            let playerClassProd =
+              mineProd * (this.playerClass == PLAYER_CLASS_MINER ? this.json.minerBonusResourceProduction : 0);
             totalProd += playerClassProd;
             planet.production.production[1004][idx] = playerClassProd;
             if (planet.production.production[217][idx] != 0) {
               let crawlerProd =
                 mineProd *
                 Math.min(planet.production.production[217].number, planet.production.production[217].numberMax) *
-                Math.min(
-                  this.json.resourceBuggyProductionBoost *
-                  (this.playerClass == PLAYER_CLASS_MINER ? 1+this.json.minerBonusAdditionalCrawler : 1) *
-                  (1+(this.hasLifeforms?this.json.lifeFormBonus[planet.id].crawlerBonus:0)),
-                  this.json.resourceBuggyMaxProductionBoost
-                );
+                this.json.resourceBuggyProductionBoost *
+                (this.playerClass == PLAYER_CLASS_MINER ? 1 + this.json.minerBonusAdditionalCrawler : 1) *
+                (1 + (this.hasLifeforms ? this.json.lifeFormBonus[planet.id].crawlerBonus : 0));
               let crawlerPercent = Math.round((planet.production.production[217][idx] / crawlerProd) * 10) / 10;
-              crawlerProd *= Math.min(crawlerPercent, (this.playerClass == PLAYER_CLASS_MINER ? 1.5 : 1));
+              crawlerProd *= Math.min(crawlerPercent, this.playerClass == PLAYER_CLASS_MINER ? 1.5 : 1);
+              crawlerProd = Math.min(crawlerProd, mineProd * this.json.resourceBuggyMaxProductionBoost);
               totalProd += crawlerProd;
               planet.production.production[217][idx] = crawlerProd;
             }
@@ -11886,7 +11904,7 @@ class OGInfinity {
             planet.production.weekly[idx] = totalProd * 24 * 7;
           }
           // lifeform production is not included in ogames empire data, might change in future
-          if (this.hasLifeforms && !planet.isMoon  && this.json.lifeFormBonus[planet.id]) {
+          if (this.hasLifeforms && !planet.isMoon && this.json.lifeFormBonus[planet.id]) {
             let bonus = this.json.lifeFormBonus[planet.id].productionBonus;
             let lifeformProduction = [0, 0, 0];
             for (let idx = 0; idx < 3; idx++) {
@@ -14710,11 +14728,10 @@ class OGInfinity {
     if (RESEARCH_INFO[id].factorTime)
       time = (RESEARCH_INFO[id].baseTime * Math.pow(RESEARCH_INFO[id].factorTime, lvl) * lvl) / this.json.speed;
     time *= timeFactor;
-    if (id == 124)
-      time = Math.round(time / 100) * 100;
+    if (id == 124) time = Math.round(time / 100) * 100;
     return {
       time: Math.max(Math.floor(time), 1),
-      cost: cost.map(x => Math.floor(x * costFactor)),
+      cost: cost.map((x) => Math.floor(x * costFactor)),
     };
   }
 
@@ -16968,7 +16985,7 @@ class OGInfinity {
           es: "Artefactos",
           fr: "Artéfacts",
         },
-        /*146*/{
+        /*146*/ {
           de: "Abgeschlossenen Vorgang anzeigen",
           en: "Indicate finished process",
           es: "Indicar proceso terminado",
@@ -17672,7 +17689,7 @@ class OGInfinity {
     fetch("/game/index.php?page=ingame&component=resourcesettings")
       .then((rep) => rep.text())
       .then((str) => {
-        let htmlDocument = new window.DOMParser().parseFromString(str, "text/html")
+        let htmlDocument = new window.DOMParser().parseFromString(str, "text/html");
         let allyClassIcon = htmlDocument.querySelector(".allianceclass");
         if (allyClassIcon) {
           if (allyClassIcon.classList.contains("trader")) this.json.allianceClass = ALLY_CLASS_MINER;
