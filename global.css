@@ -1656,6 +1656,14 @@ input[type="file"] {
   align-items: center;
 }
 
+.ogk-profit .ogk-date .tooltip.overmark {
+  color: #bd3c43 !important;
+}
+
+.ogk-profit .ogk-date .tooltip.undermark {
+  color: #99CC00 !important;
+}
+
 .ogk-scroll-wrapper {
   width: 350px;
   height: 60px;
