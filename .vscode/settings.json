@@ -4,5 +4,11 @@
     "prettier.tabWidth": 2,
     "prettier.useTabs": false,
     "prettier.semi": true,
-    "prettier.singleQuote": false
+    "prettier.singleQuote": false,
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "githubPullRequests.ignoredPullRequestBranches": [
+        "master"
+    ]
 }
