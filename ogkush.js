@@ -1559,7 +1559,7 @@ class OGInfinity {
     this.json.options.defaultKept = this.json.options.defaultKept || {};
     this.json.options.hiddenTargets = this.json.options.hiddenTargets || {};
     this.json.options.timeZone = this.json.options.timeZone === false ? false : true;
-    this.json.selectedLifeForms = this.json.selectedLifeForms || {};
+    this.json.selectedLifeforms = this.json.selectedLifeforms || null;
     this.gameLang = document.querySelector('meta[name="ogame-language"]').getAttribute("content");
     this.isLoading = false;
     this.autoQueue = new AutoQueue();
@@ -1963,7 +1963,7 @@ class OGInfinity {
                 (that.playerClass == PLAYER_CLASS_MINER ? that.json.minerBonusEnergy : 0) +
                 (that.allOfficers ? OFFICER_ENERGY_BONUS : 0) +
                 (that.json.allianceClass == ALLY_CLASS_MINER ? TRADER_ENERGY_BONUS : 0) +
-                (that.hasLifeforms ? that.json.lifeformBonus[that.current.id].productionBonus[3] : 0);
+                (that.json.lifeformBonus ? that.json.lifeformBonus[that.current.id].productionBonus[3] : 0);
               let satsNeeded = Math.ceil(-diff / (1 + energyBonus) / Math.floor((temp + 140) / 6));
               let link =
                 "https://" +
@@ -2007,7 +2007,7 @@ class OGInfinity {
                 (that.playerClass == PLAYER_CLASS_MINER ? that.json.minerBonusEnergy : 0) +
                 (that.allOfficers ? OFFICER_ENERGY_BONUS : 0) +
                 (that.json.allianceClass == ALLY_CLASS_MINER ? TRADER_ENERGY_BONUS : 0) +
-                (that.hasLifeforms ? that.json.lifeformBonus[that.current.id].productionBonus[3] : 0);
+                (that.json.lifeformBonus ? that.json.lifeformBonus[that.current.id].productionBonus[3] : 0);
               let satsNeeded = Math.ceil(Math.floor(-diff / (1 + energyBonus)) / Math.floor((temp + 140) / 6));
               let satsSpan = that.createDOM(
                 "span",
@@ -2291,7 +2291,7 @@ class OGInfinity {
                 (that.playerClass == PLAYER_CLASS_MINER ? that.json.minerBonusEnergy : 0) +
                 (that.allOfficers ? OFFICER_ENERGY_BONUS : 0) +
                 (that.json.allianceClass == ALLY_CLASS_MINER ? TRADER_ENERGY_BONUS : 0) +
-                (that.hasLifeforms ? that.json.lifeformBonus[that.current.id].productionBonus[3] : 0);
+                (that.json.lifeformBonus ? that.json.lifeformBonus[that.current.id].productionBonus[3] : 0);
               let temp = that.json.empire[that.current.index].db_par2 + 40;
               let satsNeeded = Math.ceil(-missing[3] / (1 + energyBonus) / Math.floor((temp + 140) / 6));
               let link =
@@ -2412,7 +2412,7 @@ class OGInfinity {
               energyDiv = document.querySelector(".additional_energy_consumption span");
               base =
                 energyDiv.getAttribute("data-value") *
-                (that.hasLifeforms ? 1 - that.json.lifeformBonus[that.current.id].crawlerBonus.consumption : 1);
+                (that.json.lifeformBonus ? 1 - that.json.lifeformBonus[that.current.id].crawlerBonus.consumption : 1);
             } else if (technologyId == 212) {
               energyDiv = document.querySelector(".energy_production span");
               base = energyDiv.querySelector("span").getAttribute("data-value");
@@ -2486,7 +2486,7 @@ class OGInfinity {
                   (that.playerClass == PLAYER_CLASS_MINER ? that.json.minerBonusEnergy : 0) +
                   (that.allOfficers ? OFFICER_ENERGY_BONUS : 0) +
                   (that.json.allianceClass == ALLY_CLASS_MINER ? TRADER_ENERGY_BONUS : 0) +
-                  (that.hasLifeforms ? that.json.lifeformBonus[that.current.id].productionBonus[3] : 0);
+                  (that.json.lifeformBonus ? that.json.lifeformBonus[that.current.id].productionBonus[3] : 0);
                 let diff = Number(currentEnergy) + Math.round(value * base * (1 + energyBonus));
                 energyDiv.html(
                   toFormatedNumber(value * base) +
@@ -3119,9 +3119,14 @@ class OGInfinity {
     }
   }
 
-  updateServerSettings() {
+  async updateServerSettings() {
     if (this.json.trashsimSettings && !this.json.updateSettings) return;
-    this.updateLifeform();
+    let lf = await this.updateLifeform();
+    if (lf) {
+      this.json.lifeformBonus = lf.lifeformBonus;
+      this.json.selectedLifeforms = lf.selectedLifeforms;
+      this.saveData();
+    }
     let settingsUrl = `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/api/serverData.xml`;
     return fetch(settingsUrl)
       .then((rep) => rep.text())
@@ -3264,7 +3269,6 @@ class OGInfinity {
           }
         });
         this.saveData();
-        return true;
       });
   }
 
@@ -11529,7 +11533,7 @@ class OGInfinity {
           (this.playerClass == PLAYER_CLASS_EXPLORER
             ? this.json.explorerBonusIncreasedExpeditionOutcome * this.json.speed
             : 0)) *
-        (1 + (this.hasLifeforms ? this.json.lifeformBonus[this.current.id].expeditionBonus : 0));
+        (1 + (this.json.lifeformBonus ? this.json.lifeformBonus[this.current.id].expeditionBonus : 0));
       let maxPT = Math.max(minPT, this.calcNeededShips({ fret: 202, resources: maxTotal }));
       let maxGT = Math.max(minGT, this.calcNeededShips({ fret: 203, resources: maxTotal }));
       if (!document.querySelector("#allornone .allornonewrap")) return;
@@ -11751,25 +11755,25 @@ class OGInfinity {
   }
 
   async updateLifeform() {
-    if (!this.hasLifeforms) return;
+    if (!this.hasLifeforms) return null;
     let lifeformBonus = {};
+    let selectedLifeforms = {};
     for await (let planet of this.json.empire) {
       lifeformBonus[planet.id] = await this.getLifeformBonus(planet.id);
-      this.json.selectedLifeForms[planet.id] = await this.getSelectedLifeform(planet.id);
+      selectedLifeforms[planet.id] = await this.getSelectedLifeform(planet.id);
     }
     let abortController = new AbortController();
     this.abordSignal = abortController.signal;
     window.onbeforeunload = function (e) {
       abortController.abort();
     };
-    this.json.lifeformBonus = lifeformBonus;
-    this.saveData();
     fetch(
       this.current.isMoon
         ? this.current.planet.querySelector(".moonlink").href
         : this.current.planet.querySelector(".planetlink").href,
       { signal: abortController.signal }
     ); // last called fetch has to be from current planet/moon else Ogame switches on next refresh
+    return {lifeformBonus: lifeformBonus, selectedLifeforms: selectedLifeforms};
   }
 
   async getSelectedLifeform(planetId) {
@@ -11929,9 +11933,7 @@ class OGInfinity {
                 Math.min(planet.production.production[217].number, planet.production.production[217].numberMax) *
                 this.json.resourceBuggyProductionBoost *
                 (this.playerClass == PLAYER_CLASS_MINER ? 1 + this.json.minerBonusAdditionalCrawler : 1) *
-                this.hasLifeforms
-                  ? 1 + this.json.lifeformBonus[planet.id].crawlerBonus.production
-                  : 1;
+                (this.json.lifeformBonus ? 1 + this.json.lifeformBonus[planet.id].crawlerBonus.production : 1);
               let crawlerPercent = Math.round((planet.production.production[217][idx] / crawlerProd) * 10) / 10;
               crawlerProd *= Math.min(crawlerPercent, this.playerClass == PLAYER_CLASS_MINER ? CRAWLER_OVERLOAD_MAX : 1);
               crawlerProd = Math.min(crawlerProd, mineProd * this.json.resourceBuggyMaxProductionBoost);
@@ -11949,7 +11951,7 @@ class OGInfinity {
             planet.production.weekly[idx] = totalProd * 24 * 7;
           }
           // lifeform production is not included in ogames empire data, might change in future
-          if (this.hasLifeforms && !planet.isMoon && this.json.lifeformBonus[planet.id]) {
+          if (!planet.isMoon && this.json.lifeformBonus && this.json.lifeformBonus[planet.id]) {
             let bonus = this.json.lifeformBonus[planet.id].productionBonus;
             let lifeformProduction = [0, 0, 0];
             for (let idx = 0; idx < 3; idx++) {
@@ -14685,7 +14687,7 @@ class OGInfinity {
     if (!BUIDLING_INFO[id].baseCons || !BUIDLING_INFO[id].factorCons) return 0;
     return Math.floor(
       BUIDLING_INFO[id].baseCons * lvl * Math.pow(BUIDLING_INFO[id].factorCons, id >= 11101 && lvl == 1 ? 0 : lvl) /*
-      (this.hasLifeforms ? 1-this.json.lifeformBonus[this.current.id].consumptionReduction[id].energy : 1)*/
+      (tthis.json.lifeformBonus? 1-this.json.lifeformBonus[this.current.id].consumptionReduction[id].energy : 1)*/
       // TODO: add lf consumption reduction bonus
     );
   }
@@ -17762,7 +17764,7 @@ class OGInfinity {
   roiLfResearch(technoId, baselvl, tolvl, object) {
     // console.log(`roiLfResearch(${technoId}, ${baselvl}, ${tolvl}, ${object})`);
     if (!this.json.lifeFormProductionBoostFromResearch[technoId]) return;
-    let techBonusFromLifeformLevel = 0.001 * this.json.selectedLifeforms[object.id].level;
+    let techBonusFromLifeformLevel = this.json.selectedLifeforms ? 0.001 * this.json.selectedLifeforms[object.id].level : 0;
     let bonus = this.json.lifeFormProductionBoostFromResearch[technoId].map(
       (x) => (x / 100) * (1 + techBonusFromLifeformLevel) * (tolvl - baselvl + 1)
     );
@@ -17855,7 +17857,7 @@ class OGInfinity {
     let temp = object.db_par2 + 40;
     let plasmaBonus = PLASMATECH_BONUS.map((x) => x * this.json.technology[122]);
     let crawlerCount = this.json.options.limitCrawler ? object[217] : 1000000;
-    let lifeFormBonus = this.hasLifeforms ? this.json.lifeformBonus[object.id].productionBonus : [0, 0, 0];
+    let lifeFormBonus = this.json.lifeformBonus ? this.json.lifeformBonus[object.id].productionBonus : [0, 0, 0];
     let crawlerPercent = Math.min(
       this.json.options.crawlerPercent || 1,
       this.playerClass == PLAYER_CLASS_MINER ? CRAWLER_OVERLOAD_MAX : 1
@@ -17869,7 +17871,7 @@ class OGInfinity {
     let crawlerBonus =
       this.json.resourceBuggyProductionBoost *
       (this.playerClass == PLAYER_CLASS_MINER ? 1 + this.json.minerBonusAdditionalCrawler : 1) *
-      (this.hasLifeforms ? 1 + this.json.lifeformBonus[object.id].crawlerBonus.production : 1);
+      (this.json.lifeformBonus ? 1 + this.json.lifeformBonus[object.id].crawlerBonus.production : 1);
     let currentCrawlerBonus = Math.min(
       currentCrawlerCount * crawlerPercent * crawlerBonus,
       this.json.resourceBuggyMaxProductionBoost
@@ -18722,9 +18724,9 @@ class OGInfinity {
   }
 
   async markLifeforms() {
-    if (!this.hasLifeforms) return;
+    if (!this.hasLifeforms || this.json.selectedLifeforms == null) return;
     document.querySelectorAll(".smallplanet a.planetlink").forEach((elem) => {
-      let lf = this.json.selectedLifeForms[elem.href.split("cp=")[1]].lifeform;
+      let lf = this.json.selectedLifeforms[elem.href.split("cp=")[1]].lifeform;
       elem.appendChild(
         this.createDOM("div", {
           class: `lifeform-item-icon small ${lf}`,
