@@ -11820,11 +11820,11 @@ class OGInfinity {
         htmlDocument.querySelectorAll("div[data-category='bonus-9'] .subItem").forEach((planet) => {
           crawlerConsumptionBonus +=
             fromFormatedNumber(
-              planet.querySelectorAll[".innerBonus"][0].nextElementSibling.textContent.split("/")[0].trim()
+              planet.querySelectorAll(".innerBonus")[0].nextElementSibling.textContent.split("/")[0].trim()
             ) / 100;
           crawlerProductionBonus +=
             fromFormatedNumber(
-              planet.querySelectorAll[".innerBonus"][1].nextElementSibling.textContent.split("/")[0].trim()
+              planet.querySelectorAll(".innerBonus")[1].nextElementSibling.textContent.split("/")[0].trim()
             ) / 100;
         });
 
