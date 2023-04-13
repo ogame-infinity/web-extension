@@ -5091,7 +5091,7 @@ body.ogame select {
 div.activity.showMinutes {
   width: 15px;
   background-color: #000;
-  color: #ffa800;
+  color: #ffa800 !important;
   padding: 0 1px 1px 0;
   border: 1px solid #ffa800;
   -chrome-border-radius: 3px;
