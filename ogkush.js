@@ -1530,8 +1530,8 @@ class OGInfinity {
     this.json.options.spyFret = this.json.options.spyFret || 202;
     this.json.options.harvestMission = this.json.options.harvestMission || 4;
     this.json.options.foreignMission = this.json.options.foreignMission || 3;
-    this.json.options.expeditionSendCombat = this.json.options.expeditionSendCombat || true;
-    this.json.options.expeditionSendProbe = this.json.options.expeditionSendProbe || true;
+    this.json.options.expeditionSendCombat = this.json.options.expeditionSendCombat === true ? true : false;
+    this.json.options.expeditionSendProbe = this.json.options.expeditionSendProbe === true ? true : false;
     this.json.options.expeditionMission = this.json.options.expeditionMission || 15;
     this.json.options.expeditionDefaultTime = this.json.options.expeditionDefaultTime || 1;
     this.json.options.activitytimers = this.json.options.activitytimers === true ? true : false;
@@ -5257,6 +5257,7 @@ class OGInfinity {
                 });
                 let fleetMatches = textContent.match(/.*: [1-9].*/gm);
                 fleetMatches &&
+                  !normalized.includes(type) &&
                   fleetMatches.forEach((result) => {
                     let split = result.split(": ");
                     type = "Fleet";
@@ -14736,7 +14737,6 @@ class OGInfinity {
         let labs = [];
         let igfn = this.json.technology[123];
         this.json.empire.forEach((planet) => labs.push(planet[31]));
-
         if (object.type == 3) {
           labLvl = 0;
         } else {
@@ -17762,7 +17762,6 @@ class OGInfinity {
   roiLfResearch(technoId, baselvl, tolvl, object) {
     // console.log(`roiLfResearch(${technoId}, ${baselvl}, ${tolvl}, ${object})`);
     if (!this.json.lifeFormProductionBoostFromResearch[technoId]) return;
-    // TODO: add lifeform lvl bonus
     let techBonusFromLifeformLevel = 0.001 * this.json.selectedLifeforms[object.id].level;
     let bonus = this.json.lifeFormProductionBoostFromResearch[technoId].map(
       (x) => (x / 100) * (1 + techBonusFromLifeformLevel) * (tolvl - baselvl + 1)
