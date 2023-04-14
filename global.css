@@ -1660,6 +1660,14 @@ input[type="file"] {
   align-items: center;
 }
 
+.ogk-profit .ogk-date .tooltip.overmark {
+  color: #bd3c43 !important;
+}
+
+.ogk-profit .ogk-date .tooltip.undermark {
+  color: #99CC00 !important;
+}
+
 .ogk-scroll-wrapper {
   width: 350px;
   height: 60px;
@@ -1957,7 +1965,7 @@ strong {
 #technologydetails button.upgrade {
   width: 95px !important;
   height: 36px !important;
-  background: transparent url("https://https://gf3.geo.gfsrv.net/cdneb/f5f81e8302aaad56c958c033677fb8.png") 0 0 no-repeat;
+  background: transparent url("https://gf3.geo.gfsrv.net/cdneb/f5f81e8302aaad56c958c033677fb8.png") 0 0 no-repeat;
   background-size: 367px !important;
   border-radius: 5px;
   padding: 0 !important;
