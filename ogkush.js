@@ -1445,6 +1445,7 @@ class OGInfinity {
     let res = JSON.parse(localStorage.getItem("ogk-data"));
     this.json = res || {};
     this.json.welcome = this.json.welcome === false ? false : true;
+    this.json.needLifeformUpdate = this.json.needLifeformUpdate === false ? false : true;
     this.json.pantrySync = this.json.pantrySync || "";
     this.json.empire = this.json.empire || [];
     this.json.jumpGate = this.json.jumpGate || {};
@@ -1560,16 +1561,17 @@ class OGInfinity {
     this.json.options.hiddenTargets = this.json.options.hiddenTargets || {};
     this.json.options.timeZone = this.json.options.timeZone === false ? false : true;
     this.json.selectedLifeforms = this.json.selectedLifeforms || null;
+    this.json.lifeformBonus = this.json.lifeformBonus || null;
     this.gameLang = document.querySelector('meta[name="ogame-language"]').getAttribute("content");
     this.isLoading = false;
     this.autoQueue = new AutoQueue();
   }
 
   start() {
-    this.updateServerSettings();
-    let forceEmpire = document.querySelectorAll("div[id*=planet-").length != this.json.empire.length;
-    this.updateEmpireData(forceEmpire);
     this.hasLifeforms = document.querySelector(".lifeform") != null;
+    let forceEmpire = document.querySelectorAll("div[id*=planet-").length != this.json.empire.length;
+    this.updateServerSettings();
+    this.updateEmpireData(forceEmpire);
 
     if (UNIVERSVIEW_LANGS.includes(this.gameLang)) {
       this.univerviewLang = this.gameLang;
@@ -1672,7 +1674,7 @@ class OGInfinity {
     }
     if (this.json.welcome) {
       if (this.page == "fleetdispatch") {
-        this.welcome();
+        this.welcome()
       } else {
         window.location.href = `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=ingame&component=fleetdispatch`;
       }
@@ -1750,7 +1752,8 @@ class OGInfinity {
         } else if (timer.getAttribute("id") == "lfResearchCountdown") {
           timeLeft = restTimelfresearch * 1e3;
         }
-        let newDate = new Date(Date.now() + timeLeft);
+        let timeZoneChange = this.json.options.timeZone ? 0 : this.json.timezoneDiff;
+        let newDate = new Date(Date.now() + timeLeft - timeZoneChange * 1e3);
         timer.parentNode.appendChild(
           this.createDOM(
             "div",
@@ -2120,7 +2123,8 @@ class OGInfinity {
         }
         timeDiv.html(formatTimeWrapper(techno.time, 2, true, " ", false, ""));
         let currentDate = new Date();
-        let finishDate = new Date(currentDate.getTime() + techno.time * 1e3);
+        let timeZoneChange = that.json.options.timeZone ? 0 : that.json.timezoneDiff;
+        let finishDate = new Date(currentDate.getTime() + (techno.time - timeZoneChange) * 1e3);
         if (baselvl <= tolvl)
           timeDiv.appendChild(
             this.createDOM(
@@ -2131,7 +2135,7 @@ class OGInfinity {
           );
         if (baselvl < tolvl) {
           timeSumDiv.innerText = formatTimeWrapper(timeSum, 2, true, " ", false, "");
-          finishDate = new Date(currentDate.getTime() + timeSum * 1e3);
+          finishDate = new Date(currentDate.getTime() + (timeSum - timeZoneChange) * 1e3);
           timeSumDiv.appendChild(
             this.createDOM(
               "div",
@@ -2472,7 +2476,8 @@ class OGInfinity {
               });
               timeDiv.html(formatTimeWrapper(baseTime * value, 2, true, " ", false, ""));
               let currentDate = new Date();
-              let finishDate = new Date(currentDate.getTime() + baseTime * value * 1e3);
+              let timeZoneChange = that.json.options.timeZone ? 0 : that.json.timezoneDiff;
+              let finishDate = new Date(currentDate.getTime() + (baseTime * value  - timeZoneChange) * 1e3);
               timeDiv.appendChild(
                 that.createDOM(
                   "div",
@@ -3121,12 +3126,6 @@ class OGInfinity {
 
   async updateServerSettings() {
     if (this.json.trashsimSettings && !this.json.updateSettings) return;
-    let lf = await this.updateLifeform();
-    if (lf) {
-      this.json.lifeformBonus = lf.lifeformBonus;
-      this.json.selectedLifeforms = lf.selectedLifeforms;
-      this.saveData();
-    }
     let settingsUrl = `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/api/serverData.xml`;
     return fetch(settingsUrl)
       .then((rep) => rep.text())
@@ -3515,7 +3514,8 @@ class OGInfinity {
     };
     let changeTimeZone = () => {
       document.querySelectorAll("#eventContent .eventFleet").forEach((line) => {
-        let arrival = new Date(line.getAttribute("data-arrival-time") * 1e3);
+        let timeZoneChange = this.json.options.timeZone ? 0 : this.json.timezoneDiff;
+        let arrival = new Date((line.getAttribute("data-arrival-time") - timeZoneChange) * 1e3);
         arrival = arrival.getTime();
         if (line.querySelector(".arrivalTime")) {
           line.querySelector(".arrivalTime").innerText = getFormatedDate(arrival, "[H]:[i]:[s]");
@@ -4050,25 +4050,17 @@ class OGInfinity {
   }
 
   async flyingFleet() {
-    let fleetCount = 0;
     let total = 0;
-    document.querySelectorAll("#eventContent .eventFleet").forEach((line) => {
-      let id = Number(line.getAttribute("id").split("-")[1]);
-      let back = line.getAttribute("data-return-flight");
-      let type = line.getAttribute("data-mission-type");
-      let own = false;
+    let flyingCount = 0;
+    let flying = this.getFlyingRes().fleet;
+    for (let id in flying) flyingCount += flying[id];
+    let fleetCount = flyingCount;
+    [202, 203, 208, 209, 210, 204, 205, 206, 219, 207, 215, 211, 213, 218, 214].forEach((id) => {
       this.json.empire.forEach((planet) => {
-        if (planet.coordinates == line.children[4].innerText.trim()) own = true;
-      });
-      if (type == 16 || !own) return;
-      if (type == 4 || back) {
-        fleetCount += Number(line.querySelector(".detailsFleet").innerText);
-      }
+          fleetCount += parseInt(planet[id]);
+        });
     });
-    total = await dataHelper.getPlayer(playerId);
-    if (!total) return;
-    total = total.military.ships;
-    let per = (fleetCount / total) * 100;
+    let per = (flyingCount / fleetCount) * 100;
     let color = "friendly";
     if (per >= 70) color = "neutral";
     if (per >= 90) color = "hostile";
@@ -4078,8 +4070,8 @@ class OGInfinity {
       let eventList = document.querySelector(".event_list");
       if (eventList) {
         clearInterval(inter);
-        if (total == null || total == 0) {
-          total = 1;
+        if (fleetCount == null || fleetCount == 0) {
+          fleetCount = 1;
         }
         document.querySelector(".event_list").appendChild(
           this.createDOM(
@@ -4092,7 +4084,7 @@ class OGInfinity {
               '<span class="' +
               color +
               '">' +
-              toFormatedNumber((fleetCount / total) * 100, 0) +
+              toFormatedNumber((flyingCount / fleetCount) * 100, 0) +
               "%</span>"
           )
         );
@@ -11532,8 +11524,9 @@ class OGInfinity {
         (1 +
           (this.playerClass == PLAYER_CLASS_EXPLORER
             ? this.json.explorerBonusIncreasedExpeditionOutcome * this.json.speed
-            : 0)) *
-        (1 + (this.json.lifeformBonus ? this.json.lifeformBonus[this.current.id].expeditionBonus : 0));
+            : 0));
+      if ((this.json.lifeformBonus) && (this.json.lifeformBonus[this.current.id]))
+        maxTotal *= (1 + this.json.lifeformBonus[this.current.id].expeditionBonus || 0);
       let maxPT = Math.max(minPT, this.calcNeededShips({ fret: 202, resources: maxTotal }));
       let maxGT = Math.max(minGT, this.calcNeededShips({ fret: 203, resources: maxTotal }));
       if (!document.querySelector("#allornone .allornonewrap")) return;
@@ -11755,13 +11748,17 @@ class OGInfinity {
   }
 
   async updateLifeform() {
-    if (!this.hasLifeforms) return null;
+    if (!this.hasLifeforms) return;
     let lifeformBonus = {};
     let selectedLifeforms = {};
     for await (let planet of this.json.empire) {
       lifeformBonus[planet.id] = await this.getLifeformBonus(planet.id);
       selectedLifeforms[planet.id] = await this.getSelectedLifeform(planet.id);
     }
+    this.json.lifeformBonus = lifeformBonus;
+    this.json.selectedLifeforms = selectedLifeforms;
+    this.json.needLifeformUpdate = false;
+    this.saveData();
     let abortController = new AbortController();
     this.abordSignal = abortController.signal;
     window.onbeforeunload = function (e) {
@@ -11773,7 +11770,6 @@ class OGInfinity {
         : this.current.planet.querySelector(".planetlink").href,
       { signal: abortController.signal }
     ); // last called fetch has to be from current planet/moon else Ogame switches on next refresh
-    return {lifeformBonus: lifeformBonus, selectedLifeforms: selectedLifeforms};
   }
 
   async getSelectedLifeform(planetId) {
@@ -11994,7 +11990,7 @@ class OGInfinity {
             });
         }
         return planets;
-      });
+      })
   }
 
   getFlyingRes() {
@@ -12694,7 +12690,7 @@ class OGInfinity {
     let svg =
       '<svg width="80px" height="30px" viewBox="0 0 187.3 93.7" preserveAspectRatio="xMidYMid meet">\n                <path stroke="#3c536c" id="outline" fill="none" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"\n                  d="M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-13.3,7.2-22.1,17.1\n                    c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z" />\n                <path id="outline-bg" opacity="0.1" fill="none" stroke="#eee" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="\n                M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-13.3,7.2-22.1,17.1\n                c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z" />\n\t\t\t\t      </svg>';
     document.querySelector("#countColonies").appendChild(this.createDOM("div", { class: "spinner" }, svg));
-    return this.getEmpireInfo().then((json) => {
+    return this.getEmpireInfo().then(async (json) => {
       this.json.empire = json;
       this.json.lastEmpireUpdate = new Date();
       this.json.empire.forEach((planet) => {
@@ -12703,6 +12699,8 @@ class OGInfinity {
       });
       this.updateresourceDetail();
       this.flyingFleet();
+      if (this.json.needLifeformUpdate) await this.updateLifeform();
+      this.markLifeforms();
       this.isLoading = false;
       this.json.needsUpdate = false;
       for (let techId in this.json.technology) {
@@ -17133,9 +17131,10 @@ class OGInfinity {
     );
     let srvDatasBtn = this.createDOM("button", { class: "btn_blue update" }, this.getTranslatedText(23));
     srvDatas.appendChild(srvDatasBtn);
-    srvDatasBtn.addEventListener("click", () => {
+    srvDatasBtn.addEventListener("click", async () => {
       this.json.updateSettings = true;
       this.updateServerSettings();
+      await this.updateLifeform();
       document.querySelector(".ogl-dialog .close-tooltip").click();
     });
     dataDiv.appendChild(this.createDOM("hr"));
@@ -18037,7 +18036,7 @@ class OGInfinity {
       let planetProductionProgress = that.json.productionProgress[coords] || {
         technoId: 0,
         tolvl: 0,
-        endDate: new Date(),
+        endDate: new Date().toGMTString(),
       };
       let metalLvl = parseInt(planet[1]);
       let crystalLvl = parseInt(planet[2]);
@@ -18065,7 +18064,7 @@ class OGInfinity {
           construction: planetProductionProgress.technoId != 0 ? true : false,
           inConstruction:
             planetProductionProgress.technoId == 1 && planetProductionProgress.tolvl == lvl ? true : false,
-          endDate: planetProductionProgress.endDate || new Date(),
+          endDate: planetProductionProgress.endDate || new Date().toGMTString(),
         });
       }
       for (let lvl = crystalLvl + 1; lvl <= maxMineLvl.crystal + 5; lvl++) {
@@ -18078,7 +18077,7 @@ class OGInfinity {
           construction: planetProductionProgress.technoId != 0 ? true : false,
           inConstruction:
             planetProductionProgress.technoId == 2 && planetProductionProgress.tolvl == lvl ? true : false,
-          endDate: planetProductionProgress.endDate || new Date(),
+          endDate: planetProductionProgress.endDate || new Date().toGMTString(),
         });
       }
       for (let lvl = deuteriumLvl + 1; lvl <= maxMineLvl.deuterium + 5; lvl++) {
@@ -18091,7 +18090,7 @@ class OGInfinity {
           construction: planetProductionProgress.technoId != 0 ? true : false,
           inConstruction:
             planetProductionProgress.technoId == 3 && planetProductionProgress.tolvl == lvl ? true : false,
-          endDate: planetProductionProgress.endDate || new Date(),
+          endDate: planetProductionProgress.endDate || new Date().toGMTString(),
         });
       }
     });
@@ -18105,7 +18104,7 @@ class OGInfinity {
 
     let researchProgress = this.json.researchProgress.technoId
       ? this.json.researchProgress
-      : { technoId: 0, tolvl: 0, endDate: new Date() };
+      : { technoId: 0, tolvl: 0, endDate: new Date().toGMTString() };
     for (let l = (astro + 1) % 2 == 1 ? 1 : 2; l <= 10; l += 2) {
       let newAstro = astro + l;
       roi.push({
@@ -18143,14 +18142,24 @@ class OGInfinity {
   }
 
   updateProductionProgress() {
-    if (!this.json.options.showProgressIndicators) return;
     let now = new Date();
     document.querySelectorAll(".planet-koords").forEach((planet) => {
       let elem = this.json.productionProgress[planet.textContent.trim()];
       if (elem && new Date(elem.endDate) < now) {
-        planet.parentElement.classList.add("finished");
+        if (this.json.options.showProgressIndicators) planet.parentElement.classList.add("finished");
       } else {
-        planet.parentElement.classList.remove("finished");
+        if (this.json.options.showProgressIndicators) planet.parentElement.classList.remove("finished");
+      }
+      elem = this.json.lfProductionProgress[planet.textContent.trim()];
+      if (elem && new Date(elem.endDate) < now) {
+        this.json.needLifeformUpdate = true;
+        if (this.json.options.showProgressIndicators) planet.parentElement.classList.add("finishedLf");
+      } else {
+        if (this.json.options.showProgressIndicators) planet.parentElement.classList.remove("finishedLf");
+      }
+      elem = this.json.lfResearchProgress[planet.textContent.trim()];
+      if (elem && new Date(elem.endDate) < now) {
+        this.json.needLifeformUpdate = true;
       }
     });
 
@@ -18176,10 +18185,11 @@ class OGInfinity {
           time[1],
           time[2]
         );
+        if (this.json.options.timeZone)  endDate = new Date(endDate - this.json.timezoneDiff * 1e3);
         this.json.productionProgress[coords] = {
           technoId: technoId,
           tolvl: tolvl,
-          endDate: endDate,
+          endDate: endDate.toGMTString(),
         };
       } else {
         delete this.json.productionProgress[coords];
@@ -18205,10 +18215,11 @@ class OGInfinity {
           time[1],
           time[2]
         );
+        if (this.json.options.timeZone)  endDate = new Date(endDate - this.json.timezoneDiff * 1e3);
         this.json.lfProductionProgress[coords] = {
           technoId: technoId,
           tolvl: tolvl,
-          endDate: endDate,
+          endDate: endDate.toGMTString(),
         };
       } else {
         delete this.json.lfProductionProgress[coords];
@@ -18240,12 +18251,13 @@ class OGInfinity {
           time[1],
           time[2]
         );
+        if (this.json.options.timeZone)  endDate = new Date(endDate - this.json.timezoneDiff * 1e3);
         this.json.researchProgress = {
           technoId: technoId,
           coords: coords,
           tolvl: tolvl,
           planetId: this.current.id,
-          endDate: endDate,
+          endDate: endDate.toGMTString(),
         };
       } else {
         this.json.researchProgress = {};
@@ -18271,10 +18283,11 @@ class OGInfinity {
           time[1],
           time[2]
         );
+        if (this.json.options.timeZone)  endDate = new Date(endDate - this.json.timezoneDiff * 1e3);
         this.json.lfResearchProgress[coords] = {
           technoId: technoId,
           tolvl: tolvl,
-          endDate: endDate,
+          endDate: endDate.toGMTString(),
         };
       } else {
         delete this.json.lfResearchProgress[coords];
@@ -18309,13 +18322,14 @@ class OGInfinity {
   showStorageTimers() {
     if (this.page == "overview" && this.json.empire[this.current.index]) {
       let currentDate = new Date();
+      let timeZoneChange = this.json.options.timeZone ? 0 : this.json.timezoneDiff;
       let metalStorage = resourcesBar.resources.metal.storage;
       let metalResources = resourcesBar.resources.metal.amount;
       let metalProduction = this.current.isMoon
         ? 0
         : Math.floor(this.json.empire[this.current.index].production.hourly[0]);
       let metalTime = (metalStorage - metalResources) / metalProduction;
-      let metalDate = new Date(currentDate.getTime() + metalTime * 3600 * 1000);
+      let metalDate = new Date(currentDate.getTime() + (metalTime * 3600 - timeZoneChange) * 1e3);
       let metalFull = metalResources >= metalStorage;
       if (metalFull) metalProduction = 0;
       let crystalStorage = resourcesBar.resources.crystal.storage;
@@ -18324,7 +18338,7 @@ class OGInfinity {
         ? 0
         : Math.floor(this.json.empire[this.current.index].production.hourly[1]);
       let crystalTime = (crystalStorage - crystalResources) / crystalProduction;
-      let crystalDate = new Date(currentDate.getTime() + crystalTime * 3600 * 1000);
+      let crystalDate = new Date(currentDate.getTime() + (crystalTime * 3600 - timeZoneChange) * 1e3);
       let crystalFull = crystalResources >= crystalStorage;
       if (crystalFull) crystalProduction = 0;
       let deuteriumStorage = resourcesBar.resources.deuterium.storage;
@@ -18333,7 +18347,7 @@ class OGInfinity {
         ? 0
         : Math.floor(this.json.empire[this.current.index].production.hourly[2]);
       let deuteriumTime = (deuteriumStorage - deuteriumResources) / deuteriumProduction;
-      let deuteriumDate = new Date(currentDate.getTime() + deuteriumTime * 3600 * 1000);
+      let deuteriumDate = new Date(currentDate.getTime() + (deuteriumTime * 3600 - timeZoneChange) * 1e3);
       let deuteriumFull = deuteriumResources >= deuteriumStorage;
       if (deuteriumFull) deuteriumProduction = 0;
       let table = document.querySelector("#planetDetails tbody");
@@ -18726,7 +18740,7 @@ class OGInfinity {
   async markLifeforms() {
     if (!this.hasLifeforms || this.json.selectedLifeforms == null) return;
     document.querySelectorAll(".smallplanet a.planetlink").forEach((elem) => {
-      let lf = this.json.selectedLifeforms[elem.href.split("cp=")[1]].lifeform;
+      let lf = this.json.selectedLifeforms[elem.href.split("cp=")[1]] ? this.json.selectedLifeforms[elem.href.split("cp=")[1]].lifeform : "";
       elem.appendChild(
         this.createDOM("div", {
           class: `lifeform-item-icon small ${lf}`,

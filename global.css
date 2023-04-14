@@ -7916,7 +7916,11 @@ li.resource {
 }
 
 .planetlink.finished {
-  border: solid 1px orange;
+  border: solid 1px #ffa500;
+}
+
+.planetlink.finishedLf {
+  border: solid 1px #b646da;
 }
 
 .ogk-navPanel {
