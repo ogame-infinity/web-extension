@@ -5350,15 +5350,16 @@ class OGInfinity {
                   let objectNode = content.querySelector(str);
                   if (objectNode) {
                     type = raceType;
-                    let found = content.innerHTML.match(/[0-9]{4}&nbsp/m);
+                    let found = content.innerHTML.match(/[0-9]{4,}/gm);
+                    console.log(`type: ${raceType}: ${found}`)
                     if (found) {
-                      let count = Number(found[0].replace("&nbsp", ""));
+                      let count = Number(found[0]);
                       sums.found[i] ? (sums.found[i] += count) : (sums.found[i] = count);
                     }
                   }
                 });
 
-                let artefactMatches = textContent.match(/.*: [1-9].*/gm);
+                let artefactMatches = textContent.match(/.*: [0-9].*/gm);
                 artefactMatches &&
                   artefactMatches.forEach((result) => {
                     let split = result.split(": ");
