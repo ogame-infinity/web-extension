@@ -1885,8 +1885,8 @@ class OGInfinity {
                 })
               );
             roiTimeDiv.textContent = roi === Infinity ? "∞" : formatTimeWrapper(roi, 2, true, " ", false, "");
-          } else if (RESEARCH_INFO[technoId].bonus) {
-            let roi = that.roiLfResearch(technoId, baselvl, tolvl, labs);
+          } else if (that.json.lifeFormProductionBoostFromResearch[technoId]) {
+            let roi = that.roiLfResearch(technoId, baselvl, tolvl, object);
             let roiDiv =
               durationDiv.parentNode.querySelector(".roi_duration") ||
               durationDiv.parentNode.insertBefore(
