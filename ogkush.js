@@ -16234,7 +16234,6 @@ class OGInfinity {
           fr: "Importer",
           tr: "İçe Aktar",
         },
-        /*
          /*26*/ {
           de: "Zurücksetzen",
           en: "Reset",
