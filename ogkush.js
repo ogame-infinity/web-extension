@@ -16864,7 +16864,7 @@ class OGInfinity {
           en: "Lifeforms",
           es: "Formas de vida",
           fr: "Forme de vie",
-          tr: "Yaşam formları",
+          tr: "Canlı Türleri",
         },
         /*90*/ {
           de: "Minen",
@@ -16937,7 +16937,7 @@ class OGInfinity {
           en: "Default expedition time",
           es: "Tiempo de expedición predeterminado",
           fr: "Heure d'expédition par défaut",
-          tr: "Varsayılan sefer süresi",
+          tr: "Varsayılan keşif süresi",
         },
         /*102*/ {
           de: "Aktionen",
@@ -17208,7 +17208,7 @@ class OGInfinity {
           en: "Indicate finished process",
           es: "Indicar proceso terminado",
           fr: "Indiquer le processus terminé",
-          tr: "Tamamlanmış görevler",
+          tr: "Tamamlanmış işlemi belirt",
         },
         /*147*/ {
           de: "Externe Tools",
@@ -17222,7 +17222,7 @@ class OGInfinity {
           en: "Default missions",
           es: "Misiónes por defecto",
           fr: "Missions par défaut",
-          tr: "Varsayılan görevler",
+          tr: "Tamamlanmış görevler",
         },
         /*149*/ {
           de: "",
