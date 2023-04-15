@@ -1678,7 +1678,7 @@ class OGInfinity {
     }
     if (this.json.welcome) {
       if (this.page == "fleetdispatch") {
-        this.welcome()
+        this.welcome();
       } else {
         window.location.href = `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=ingame&component=fleetdispatch`;
       }
@@ -2489,7 +2489,7 @@ class OGInfinity {
               timeDiv.textContent = formatTimeWrapper(baseTime * value, 2, true, " ", false, "");
               let currentDate = new Date();
               let timeZoneChange = that.json.options.timeZone ? 0 : that.json.timezoneDiff;
-              let finishDate = new Date(currentDate.getTime() + (baseTime * value  - timeZoneChange) * 1e3);
+              let finishDate = new Date(currentDate.getTime() + (baseTime * value - timeZoneChange) * 1e3);
               timeDiv.appendChild(
                 that.createDOM(
                   "div",
@@ -4076,8 +4076,8 @@ class OGInfinity {
     let fleetCount = flyingCount;
     [202, 203, 208, 209, 210, 204, 205, 206, 219, 207, 215, 211, 213, 218, 214].forEach((id) => {
       this.json.empire.forEach((planet) => {
-          fleetCount += parseInt(planet[id]);
-        });
+        fleetCount += parseInt(planet[id]);
+      });
     });
     let per = (flyingCount / fleetCount) * 100;
     let color = "friendly";
@@ -5351,7 +5351,7 @@ class OGInfinity {
                   if (objectNode) {
                     type = raceType;
                     let found = content.innerHTML.match(/[0-9]{4,}/gm);
-                    console.log(`type: ${raceType}: ${found}`)
+                    console.log(`type: ${raceType}: ${found}`);
                     if (found) {
                       let count = Number(found[0]);
                       sums.found[i] ? (sums.found[i] += count) : (sums.found[i] = count);
@@ -7449,7 +7449,10 @@ class OGInfinity {
       updateRoi();
     });
 
-    let crawlerPercent = Math.min(that.json.options.crawlerPercent, this.playerClass == PLAYER_CLASS_MINER ? CRAWLER_OVERLOAD_MAX : 1);
+    let crawlerPercent = Math.min(
+      that.json.options.crawlerPercent,
+      this.playerClass == PLAYER_CLASS_MINER ? CRAWLER_OVERLOAD_MAX : 1
+    );
     function crawlerClass(crawlerPercent) {
       let selectClass = "undermark";
       if (crawlerPercent <= 0.3) {
@@ -7671,11 +7674,15 @@ class OGInfinity {
       let rev = document.querySelector("#reverseFilter") ? document.querySelector("#reverseFilter").checked : false;
 
       if (filter > 0 && filter <= 3)
-        bestRoi = rev ? bestRoi.filter((roi) => roi.technoId != filter) : bestRoi.filter((roi) => roi.technoId == filter);
+        bestRoi = rev
+          ? bestRoi.filter((roi) => roi.technoId != filter)
+          : bestRoi.filter((roi) => roi.technoId == filter);
       if (filter == 0)
         bestRoi = rev ? bestRoi.filter((roi) => roi.technoId <= 100) : bestRoi.filter((roi) => roi.technoId > 100);
       if (filter > 5000)
-        bestRoi = rev ? bestRoi.filter((roi) => roi.planetId != filter) : bestRoi.filter((roi) => roi.planetId == filter);
+        bestRoi = rev
+          ? bestRoi.filter((roi) => roi.planetId != filter)
+          : bestRoi.filter((roi) => roi.planetId == filter);
       for (let n = 0; n < Math.min(20, Object.keys(bestRoi).length); n++) {
         let cons = bestRoi[n];
         let component = cons.technoId <= 3 ? "supplies" : "research";
@@ -11647,8 +11654,8 @@ class OGInfinity {
           (this.playerClass == PLAYER_CLASS_EXPLORER
             ? this.json.explorerBonusIncreasedExpeditionOutcome * this.json.speed
             : 0));
-      if ((this.json.lifeformBonus) && (this.json.lifeformBonus[this.current.id]))
-        maxTotal *= (1 + this.json.lifeformBonus[this.current.id].expeditionBonus || 0);
+      if (this.json.lifeformBonus && this.json.lifeformBonus[this.current.id])
+        maxTotal *= 1 + this.json.lifeformBonus[this.current.id].expeditionBonus || 0;
       let maxPT = Math.max(minPT, this.calcNeededShips({ fret: 202, resources: maxTotal }));
       let maxGT = Math.max(minGT, this.calcNeededShips({ fret: 203, resources: maxTotal }));
       if (!document.querySelector("#allornone .allornonewrap")) return;
@@ -12053,7 +12060,10 @@ class OGInfinity {
                 (this.playerClass == PLAYER_CLASS_MINER ? 1 + this.json.minerBonusAdditionalCrawler : 1) *
                 (this.json.lifeformBonus ? 1 + this.json.lifeformBonus[planet.id].crawlerBonus.production : 1);
               let crawlerPercent = Math.round((planet.production.production[217][idx] / crawlerProd) * 10) / 10;
-              crawlerProd *= Math.min(crawlerPercent, this.playerClass == PLAYER_CLASS_MINER ? CRAWLER_OVERLOAD_MAX : 1);
+              crawlerProd *= Math.min(
+                crawlerPercent,
+                this.playerClass == PLAYER_CLASS_MINER ? CRAWLER_OVERLOAD_MAX : 1
+              );
               crawlerProd = Math.min(crawlerProd, mineProd * this.json.resourceBuggyMaxProductionBoost);
               totalProd += crawlerProd;
               planet.production.production[217][idx] = crawlerProd;
@@ -12112,7 +12122,7 @@ class OGInfinity {
             });
         }
         return planets;
-      })
+      });
   }
 
   getFlyingRes() {
@@ -13519,7 +13529,7 @@ class OGInfinity {
           })
         );
         let planets = this.updateStalk(player.planets);
-        planets.forEach(dom => container.appendChild(dom));
+        planets.forEach((dom) => container.appendChild(dom));
 
         this.highlightTarget();
         let index = 0;
@@ -16854,6 +16864,7 @@ class OGInfinity {
           en: "Lifeforms",
           es: "Formas de vida",
           fr: "Forme de vie",
+          tr: "Yaşam formları",
         },
         /*90*/ {
           de: "Minen",
@@ -16926,6 +16937,7 @@ class OGInfinity {
           en: "Default expedition time",
           es: "Tiempo de expedición predeterminado",
           fr: "Heure d'expédition par défaut",
+          tr: "Varsayılan sefer süresi",
         },
         /*102*/ {
           de: "Aktionen",
@@ -17196,24 +17208,28 @@ class OGInfinity {
           en: "Indicate finished process",
           es: "Indicar proceso terminado",
           fr: "Indiquer le processus terminé",
+          tr: "Bitmiş süreci belirtin",
         },
         /*147*/ {
           de: "Externe Tools",
           en: "External Tools",
           es: "Herramientas externas",
           fr: "Outils externes",
+          tr: "Harici Araçlar",
         },
         /*148*/ {
           de: "Standardmissionen",
           en: "Default missions",
           es: "Misiónes por defecto",
           fr: "Missions par défaut",
+          tr: "Varsayılan görevler",
         },
         /*149*/ {
           de: "",
           en: "",
           es: "",
           fr: "",
+          tr: "",
         },
       ],
     };
@@ -17936,7 +17952,9 @@ class OGInfinity {
   roiLfResearch(technoId, baselvl, tolvl, object) {
     // console.log(`roiLfResearch(${technoId}, ${baselvl}, ${tolvl}, ${object})`);
     if (!this.json.lifeFormProductionBoostFromResearch[technoId]) return;
-    let techBonusFromLifeformLevel = this.json.selectedLifeforms ? 0.001 * this.json.selectedLifeforms[object.id].level : 0;
+    let techBonusFromLifeformLevel = this.json.selectedLifeforms
+      ? 0.001 * this.json.selectedLifeforms[object.id].level
+      : 0;
     let bonus = this.json.lifeFormProductionBoostFromResearch[technoId].map(
       (x) => (x / 100) * (1 + techBonusFromLifeformLevel) * (tolvl - baselvl + 1)
     );
@@ -18059,14 +18077,12 @@ class OGInfinity {
       currentMineProd[2] * plasmaBonus[2],
     ];
     let currentCrawlerProd = currentMineProd.map((x) => x * currentCrawlerBonus);
-    let currentPlayerClassProd = currentMineProd.map((x) =>
-      x * (this.playerClass == PLAYER_CLASS_MINER ? this.json.minerBonusResourceProduction : 0)
+    let currentPlayerClassProd = currentMineProd.map(
+      (x) => x * (this.playerClass == PLAYER_CLASS_MINER ? this.json.minerBonusResourceProduction : 0)
     );
-    let currentGeologistProd = currentMineProd.map((x) =>
-      x * (this.geologist ? GEOLOGIST_RESOURCE_BONUS : 0)
-    );
-    let currentAllyClassProd = currentMineProd.map((x) =>
-      x * (this.json.allianceClass == ALLY_CLASS_MINER ? TRADER_RESOURCE_BONUS : 0)
+    let currentGeologistProd = currentMineProd.map((x) => x * (this.geologist ? GEOLOGIST_RESOURCE_BONUS : 0));
+    let currentAllyClassProd = currentMineProd.map(
+      (x) => x * (this.json.allianceClass == ALLY_CLASS_MINER ? TRADER_RESOURCE_BONUS : 0)
     );
     let currentOfficersProd = currentMineProd.map((x) => x * (this.allOfficers ? OFFICER_RESOURCE_BONUS : 0));
     let currentLifeFormProd = [
@@ -18131,12 +18147,12 @@ class OGInfinity {
       newMineProd[2] * plasmaBonus[2],
     ];
     let newCrawlerProd = newMineProd.map((x) => x * newCrawlerBonus);
-    let newPlayerClassProd = newMineProd.map((x) =>
-      x * (this.playerClass == PLAYER_CLASS_MINER ? this.json.minerBonusResourceProduction : 0)
+    let newPlayerClassProd = newMineProd.map(
+      (x) => x * (this.playerClass == PLAYER_CLASS_MINER ? this.json.minerBonusResourceProduction : 0)
     );
     let newGeologistProd = newMineProd.map((x) => x * (this.geologist ? GEOLOGIST_RESOURCE_BONUS : 0));
-    let newAllyClassProd = newMineProd.map((x) =>
-      x * (this.json.allianceClass == ALLY_CLASS_MINER ? TRADER_RESOURCE_BONUS : 0)
+    let newAllyClassProd = newMineProd.map(
+      (x) => x * (this.json.allianceClass == ALLY_CLASS_MINER ? TRADER_RESOURCE_BONUS : 0)
     );
     let newOfficersProd = newMineProd.map((x) => x * (this.allOfficers ? OFFICER_RESOURCE_BONUS : 0));
     let newLifeFormProd = [
@@ -18358,7 +18374,7 @@ class OGInfinity {
           time[1],
           time[2]
         );
-        if (this.json.options.timeZone)  endDate = new Date(endDate - this.json.timezoneDiff * 1e3);
+        if (this.json.options.timeZone) endDate = new Date(endDate - this.json.timezoneDiff * 1e3);
         this.json.productionProgress[coords] = {
           technoId: technoId,
           tolvl: tolvl,
@@ -18388,7 +18404,7 @@ class OGInfinity {
           time[1],
           time[2]
         );
-        if (this.json.options.timeZone)  endDate = new Date(endDate - this.json.timezoneDiff * 1e3);
+        if (this.json.options.timeZone) endDate = new Date(endDate - this.json.timezoneDiff * 1e3);
         this.json.lfProductionProgress[coords] = {
           technoId: technoId,
           tolvl: tolvl,
@@ -18424,7 +18440,7 @@ class OGInfinity {
           time[1],
           time[2]
         );
-        if (this.json.options.timeZone)  endDate = new Date(endDate - this.json.timezoneDiff * 1e3);
+        if (this.json.options.timeZone) endDate = new Date(endDate - this.json.timezoneDiff * 1e3);
         this.json.researchProgress = {
           technoId: technoId,
           coords: coords,
@@ -18456,7 +18472,7 @@ class OGInfinity {
           time[1],
           time[2]
         );
-        if (this.json.options.timeZone)  endDate = new Date(endDate - this.json.timezoneDiff * 1e3);
+        if (this.json.options.timeZone) endDate = new Date(endDate - this.json.timezoneDiff * 1e3);
         this.json.lfResearchProgress[coords] = {
           technoId: technoId,
           tolvl: tolvl,
@@ -18913,7 +18929,9 @@ class OGInfinity {
   async markLifeforms() {
     if (!this.hasLifeforms || this.json.selectedLifeforms == null) return;
     document.querySelectorAll(".smallplanet a.planetlink").forEach((elem) => {
-      let lf = this.json.selectedLifeforms[elem.href.split("cp=")[1]] ? this.json.selectedLifeforms[elem.href.split("cp=")[1]].lifeform : "";
+      let lf = this.json.selectedLifeforms[elem.href.split("cp=")[1]]
+        ? this.json.selectedLifeforms[elem.href.split("cp=")[1]].lifeform
+        : "";
       elem.appendChild(
         this.createDOM("div", {
           class: `lifeform-item-icon small ${lf}`,
