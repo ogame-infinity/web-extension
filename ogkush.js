@@ -17208,14 +17208,14 @@ class OGInfinity {
           en: "Indicate finished process",
           es: "Indicar proceso terminado",
           fr: "Indiquer le processus terminé",
-          tr: "Bitmiş süreci belirtin",
+          tr: "Tamamlanmış görevler",
         },
         /*147*/ {
           de: "Externe Tools",
           en: "External Tools",
           es: "Herramientas externas",
           fr: "Outils externes",
-          tr: "Harici Araçlar",
+          tr: "Diğer Araçlar",
         },
         /*148*/ {
           de: "Standardmissionen",
