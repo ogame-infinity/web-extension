@@ -11059,8 +11059,7 @@ class OGInfinity {
                 elem.nextElementSibling.value = " ";
               }
             });
-            fleetDispatcher.selectShip(Number(shipId), toSend);
-            updateMissions();
+            this.selectShips(Number(shipId), toSend);
             document.querySelector("#continueToFleet2").focus();
           }
         });
