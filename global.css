@@ -147,7 +147,11 @@
 
 #bannerSkyscrapercomponent {
   position: absolute;
-  left: 1160px;
+  left: 1150px;
+}
+
+#bannerSkyscrapercomponent img {
+  max-width: 150px;
 }
 
 #planetbarcomponent #bannerSkyscrapercomponent {
@@ -381,8 +385,7 @@ input[type="password"]::selection {
 }
 
 .ogl-settings .ogk-logo {
-  margin-bottom: 20px;
-  margin-left: 30px;
+  transform: scale(0.75);
 }
 
 .ogl-settings h1,
@@ -394,7 +397,7 @@ input[type="password"]::selection {
 
 .ogl-settings > div:first-child,
 .ogl-settings > div:last-child {
-  padding: 10px;
+  padding: 5px;
 }
 
 .ogl-settings > div:last-child {
@@ -405,8 +408,8 @@ input[type="password"]::selection {
 .ogl-settings .ogl-rvalInput {
   cursor: auto !important;
   float: right;
-  height: 14px;
-  line-height: 16px;
+  height: 12px;
+  line-height: 14px;
   padding: 0 4px;
   text-align: center;
   width: 100px !important;
@@ -416,8 +419,8 @@ input[type="password"]::selection {
 .ogl-settings .ogl-ptreTeamKey {
   cursor: auto !important;
   float: right;
-  height: 18px;
-  line-height: 16px !important;
+  height: 12px;
+  line-height: 14px !important;
   padding: 0 4px;
   text-align: center;
   vertical-align: middle;
@@ -434,7 +437,7 @@ input[type="password"]::selection {
 
 .ogl-settings .btn_blue.save {
   width: fit-content;
-    min-width: 30px;
+  min-width: 30px;
   align-self: flex-end;
   margin-top: 5px;
 }
@@ -1027,6 +1030,7 @@ input[type="password"]::selection {
 
 .allornonewrap #sendall,
 .allornonewrap .select-most {
+  cursor: pointer;
   filter: grayscale(1) !important;
 }
 
@@ -1972,6 +1976,10 @@ strong {
   background-position-y: -36px !important;
 }
 
+a.build-it.tooltip {
+  color: #fff !important;
+}
+
 a.build-it_premium,
 button.build-it_premium {
   width: 95px !important;
@@ -2507,7 +2515,7 @@ button.build-it_premium:hover {
 .ogk-bhole-grid {
   display: grid;
   grid-template-columns: 0fr 1fr 0fr 1fr;
-  gap: 8px 10px;
+  gap: 5px 10px;
   align-items: center;
   margin-bottom: 20px;
 }
@@ -2528,7 +2536,7 @@ button.build-it_premium:hover {
   border-radius: 5px 5px 0 0;
   height: 20px;
   line-height: 20px;
-  top: 111px;
+  top: 105px;
   right: 50px;
 }
 
@@ -2655,6 +2663,7 @@ button.build-it_premium:hover {
   font-size: 13px;
 }
 
+.ogk-stats .ogl-lfIcon,
 .ogk-stats .ogl-ecoIcon,
 .ogk-stats .ogl-fleetIcon,
 .ogk-stats .ogl-fleetIcon.grey,
@@ -3416,10 +3425,11 @@ button.build-it_premium:hover {
 .ogl-ecoIcon,
 .ogl-fleetIcon,
 .ogl-techIcon,
+.ogl-lfIcon,
 .ogl-totalIcon {
-  background: url("https://gf3.geo.gfsrv.net/cdne9/1fd57fa51cdb81035382943e635348.gif") no-repeat;
+  background: url("https://gf1.geo.gfsrv.net/cdnfc/bf68bc13514fa2b43185fb0e6a25fe.png") no-repeat;
   background-position: 100% 0 !important;
-  background-size: calc(16px * 6) !important;
+  background-size: calc(16px * 7) !important;
   border-radius: 3px;
   box-shadow: 0 0 0 1px #000;
   display: inline-block;
@@ -3434,12 +3444,16 @@ button.build-it_premium:hover {
   width: 16px;
 }
 
+.ogl-ecoIcon {
+  background-position: -80px 0 !important;
+}
+
 .ogl-techIcon {
-  background-position: 80% 0 !important;
+  background-position: -64px 0 !important;
 }
 
 .ogl-fleetIcon {
-  background-position: 60% 0 !important;
+  background-position: -48px 0 !important;
 }
 
 .ogl-fleetIcon.grey {
@@ -3543,6 +3557,10 @@ button.build-it_premium:hover {
 
 .ogl-sum-symbol {
   align-self: center;
+}
+
+.ogl-dialog .ogl-sum-symbol {
+  font-size: xx-large;
 }
 
 .ogl-planet-act {
@@ -4465,6 +4483,14 @@ a {
   color: inherit !important;
 }
 
+.ogl-energy.tooltip.overmark {
+  color: #bd3c43 !important;
+}
+
+.ogl-energy.tooltip.undermark {
+  color: #99CC00 !important;
+}
+
 .ogl-tooltip a[href] {
   color: #6f9fc8;
   text-decoration: none;
@@ -4518,16 +4544,16 @@ span.espionageDefText {
 }
 
 .ogl-mines-content td {
-  padding: 15px;
+  padding: 5px;
 }
 
 .ogl-mines-content td > div:first-child {
   padding: 5px;
-  font-size: 20px;
+  font-size: 16px;
 }
 
 .ogl-mines-content .ogl-planet-fields {
-  font-size: 11px;
+  font-size: 10px;
   font-style: italic;
 }
 
@@ -4979,12 +5005,12 @@ body.ogame select {
   width: 90vw;
   overflow: auto !important;
   display: block !important;
-  max-height: 80vh;
+  max-height: 90vh;
 }
 
 .ogl-fleet-content .ogl-option {
-  height: 20px;
-  width: 20px;
+  height: 25px;
+  width: 25px;
   margin: 3px 15px 3px 15px;
   border: 1px solid #3b4a5c;
 }
@@ -5073,7 +5099,7 @@ body.ogame select {
 div.activity.showMinutes {
   width: 15px;
   background-color: #000;
-  color: #ffa800;
+  color: #ffa800 !important;
   padding: 0 1px 1px 0;
   border: 1px solid #ffa800;
   -chrome-border-radius: 3px;
@@ -6361,10 +6387,10 @@ hr {
   background: #262e39;
   display: flex;
   overflow: hidden;
-  padding: 20px;
+  padding: 15px;
   position: fixed;
   animation: fadeIn ease 0.4s;
-  max-height: 80vh;
+  max-height: 90vh;
   position: relative;
 }
 
@@ -6376,7 +6402,7 @@ hr {
 
 .ogl-dialogContent {
   overflow-y: auto;
-  padding: 10px;
+  padding: 5px;
 }
 
 @media only screen and (max-height: 800px) {
@@ -7842,10 +7868,10 @@ li.resource {
 }
 
 .ogl-prodOverview-icon {
-  background-size: calc(30px * 20) !important;
+  background-size: calc(50px * 20) !important;
   background: url("https://gf3.geo.gfsrv.net/cdn53/7a9861be0c38bf7de05a57c56d73cf.jpg");
-  height: 30px;
-  width: 30px;
+  height: 50px;
+  width: 50px;
   border: solid 1px #5f5d6b;
   margin: auto;
   padding: 0 !important;
@@ -7865,30 +7891,30 @@ li.resource {
 
 .ogl-prodOverview-icon.items {
   background: url("https://gf2.geo.gfsrv.net/cdnab/0c604ee3171ccb9a2c6398fb543bda.png");
-  background-size: calc(30px * 14) !important;
+  background-size: calc(50px * 14) !important;
   background-position: 23% 50% !important;
 }
 
 .ogl-prodOverview-icon.lifeform {
   background: url("https://gf3.geo.gfsrv.net/cdn81/ce44d444b7d14a3ea6fa51fa6c1148.png");
-  background-size: calc(30px * 16) !important;
+  background-size: calc(50px * 16) !important;
   background-position: 100% 50% !important;
 }
 
 .allOfficers.prodOverview {
-  transform: scale(0.3);
+  transform: scale(0.5);
   border: solid 1px #5f5d6b;
   margin: auto;
 }
 
 .characterclass.medium.prodOverview {
-  transform: scale(0.5);
+  transform: scale(0.8333);
   border: solid 1px #5f5d6b;
   margin: auto;
 }
 
 .allianceclass.prodOverview {
-  transform: scale(0.5);
+  transform: scale(0.8333);
   border: solid 1px #5f5d6b;
   margin: auto;
 }
@@ -7898,7 +7924,11 @@ li.resource {
 }
 
 .planetlink.finished {
-  border: solid 1px orange;
+  border: solid 1px #ffa500;
+}
+
+.planetlink.finishedLf {
+  border: solid 1px #b646da;
 }
 
 .ogk-navPanel {

@@ -80,6 +80,7 @@ class DataHelper {
     response.economy = { score: 0, position: 0 };
     response.points = { score: 0, position: 0 };
     response.research = { score: 0, position: 0 };
+    response.lifeform = { score: 0, position: 0 };
     response.def = 0;
     if (player) {
       response.name = player.name || "";
@@ -89,10 +90,12 @@ class DataHelper {
       response.military = { ...player.military } || { score: 0, position: 0 };
       response.research = { ...player.research } || { score: 0, position: 0 };
       response.economy = { ...player.economy } || { score: 0, position: 0 };
+      response.lifeform = { ...player.lifeform } || { score: 0, position: 0 };
       response.def = -(
         response.points.score -
         response.economy.score -
         response.research.score -
+        response.lifeform.score -
         response.military.score
       );
       response.economy.score = response.economy.score - response.def;
@@ -261,7 +264,7 @@ class DataHelper {
   }
 
   _updateHighscore(players) {
-    let types = ["points", "economy", "research", "military"];
+    let types = ["points", "economy", "research", "military", "lost", "build", "destroyed", "honor", "lifeform"];
     let promises = [];
     types.forEach((type, index) => {
       let p = this._fetchXML(
