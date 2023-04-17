@@ -1782,7 +1782,7 @@ class OGInfinity {
           deut = planet[3];
         }
       });
-      let div = this.createDOM("div", { class: "ogl-mines" });
+      let div = createDOM("div", { class: "ogl-mines" });
       div.textContent = `${toFormatedNumber(metal)}-${toFormatedNumber(crystal)}-${toFormatedNumber(deut)}`;
       planet.querySelector(".planetlink").appendChild(div);
     });
@@ -2784,12 +2784,12 @@ class OGInfinity {
       );
       container.appendChild(createDOM("hr"));
     }
-    let box = this.createDOM("div", { class: "ogk-keep-dialog" });
+    let box = createDOM("div", { class: "ogk-keep-dialog" });
     box.appendChild(this.createDOM("h1", {}, this.getTranslatedText(28)));
-    let prod = box.appendChild(this.createDOM("div", { class: "ogk-adjust-grid" }));
+    let prod = box.appendChild(createDOM("div", { class: "ogk-adjust-grid" }));
     prod.appendChild(this.createDOM("span", {}, '<a class="resourceIcon metal"></a>'));
     let metInput = prod.appendChild(
-      this.createDOM("input", {
+      createDOM("input", {
         class: "ogl-formatInput metal",
         type: "text",
         value: toFormatedNumber(kept[0]) || toFormatedNumber(0),
@@ -2797,7 +2797,7 @@ class OGInfinity {
     );
     prod.appendChild(this.createDOM("span", {}, '<a class="resourceIcon crystal"></a>'));
     let criInput = prod.appendChild(
-      this.createDOM("input", {
+      createDOM("input", {
         class: "ogl-formatInput crystal",
         type: "text",
         value: toFormatedNumber(kept[1]) || toFormatedNumber(0),
@@ -2805,7 +2805,7 @@ class OGInfinity {
     );
     prod.appendChild(this.createDOM("span", {}, '<a class="resourceIcon deuterium"></a>'));
     let deutInput = prod.appendChild(
-      this.createDOM("input", {
+      createDOM("input", {
         class: "ogl-formatInput deuterium",
         type: "text",
         value: toFormatedNumber(kept[2]) || toFormatedNumber(0),
@@ -2815,7 +2815,7 @@ class OGInfinity {
     if (this.hasLifeforms) {
       prod.appendChild(this.createDOM("span", {}, '<a class="resourceIcon food"></a>'));
       foodInput = prod.appendChild(
-        this.createDOM("input", {
+        createDOM("input", {
           class: "ogl-formatInput food",
           type: "text",
           value: toFormatedNumber(kept[3]) || toFormatedNumber(0),
@@ -2824,16 +2824,12 @@ class OGInfinity {
     }
     box.appendChild(createDOM("hr"));
     box.appendChild(this.createDOM("h1", {}, this.getTranslatedText(29)));
-    let fleet = box.appendChild(this.createDOM("div", { class: "ogk-bhole-grid" }));
+    let fleet = box.appendChild(createDOM("div", { class: "ogk-bhole-grid" }));
     let inputs = [];
     [202, 203, 210, 208, 209, 204, 205, 206, 219, 207, 215, 211, 213, 218, 214].forEach((id) => {
-      fleet.appendChild(
-        this.createDOM("a", {
-          class: "ogl-option ogl-fleet-ship ogl-fleet-" + id,
-        })
-      );
+      fleet.appendChild(createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-fleet-" + id }));
       let input = fleet.appendChild(
-        this.createDOM("input", {
+        createDOM("input", {
           class: "ogl-formatInput",
           type: "text",
           data: id,
@@ -2890,22 +2886,17 @@ class OGInfinity {
     } else {
       this.delayDiv3 = document
         .querySelector("#continueToFleet2")
-        .appendChild(this.createDOM("div", { class: "ogk-delay" }));
+        .appendChild(createDOM("div", { class: "ogk-delay" }));
       this.delayTimeDiv = document
         .querySelector("#fleetBriefingPart1 li:first-of-type .value")
-        .appendChild(this.createDOM("div", { class: "undermark" }));
+        .appendChild(createDOM("div", { class: "undermark" }));
       this.delayTimeDiv2 = document
         .querySelector("#fleet2 #arrivalTime")
-        .parentElement.appendChild(this.createDOM("div", { class: "undermark" }));
-      this.delayDiv2 = document
-        .querySelector("#naviActions")
-        .appendChild(this.createDOM("div", { class: "ogk-delay" }));
-      this.delayTimeDiv3 = document.querySelector("#fleet1 .ogl-info").appendChild(
-        this.createDOM("div", {
-          class: "undermark",
-          style: "position: absolute;left: 65px;",
-        })
-      );
+        .parentElement.appendChild(createDOM("div", { class: "undermark" }));
+      this.delayDiv2 = document.querySelector("#naviActions").appendChild(createDOM("div", { class: "ogk-delay" }));
+      this.delayTimeDiv3 = document
+        .querySelector("#fleet1 .ogl-info")
+        .appendChild(createDOM("div", { class: "undermark", style: "position: absolute;left: 65px;" }));
     }
     const update = () => {
       const diff = union.time * 1e3 - serverTime.getTime();
@@ -3063,7 +3054,7 @@ class OGInfinity {
         this.saveData();
         return this.json.href;
       });
-      $(".send_all").before(this.createDOM("span", { class: "select-most" }));
+      $(".send_all").before(createDOM("span", { class: "select-most" }));
       $(".allornonewrap .select-most").on("click", () => {
         fleetDispatcher.shipsOnPlanet.forEach((ship) => {
           let kept =
@@ -3077,7 +3068,7 @@ class OGInfinity {
           document.querySelector(".ogl-debris-icon.ogl-active");
         if (elem) elem.click();
       });
-      let svgButtons = this.createDOM("div", { class: "ogl-dispatch-icons" });
+      let svgButtons = createDOM("div", { class: "ogl-dispatch-icons" });
       $("#civil").append(svgButtons);
       let svg = svgButtons.appendChild(
         this.createDOM(
@@ -3421,12 +3412,12 @@ class OGInfinity {
     }, 10);
     let addOptions = () => {
       let header = document.querySelector("#eventHeader");
-      let div = header.appendChild(this.createDOM("div", {}));
+      let div = header.appendChild(createDOM("div"));
       div.appendChild(this.createDOM("span", {}, "Keep"));
-      let keep = div.appendChild(this.createDOM("input", { type: "checkbox" }));
+      let keep = div.appendChild(createDOM("input", { type: "checkbox" }));
       if (this.json.options.eventBoxKeep) keep.checked = true;
       div.appendChild(this.createDOM("span", {}, this.getTranslatedText(41)));
-      let exps = div.appendChild(this.createDOM("input", { type: "checkbox" }));
+      let exps = div.appendChild(createDOM("input", { type: "checkbox" }));
       if (this.json.options.eventBoxExps) exps.checked = true;
       keep.addEventListener("change", () => {
         this.json.options.eventBoxKeep = keep.checked;
@@ -3551,7 +3542,7 @@ class OGInfinity {
       this.expeditionImpact(this.json.options.eventBoxExps);
     };
     let addRefreshButton = () => {
-      let refreshBtn = this.createDOM("a", { class: "icon icon_reload" });
+      let refreshBtn = createDOM("a", { class: "icon icon_reload" });
       $("#eventHeader").prepend(refreshBtn);
       refreshBtn.addEventListener("click", () => {
         $.get(
@@ -3681,12 +3672,7 @@ class OGInfinity {
         let id =
           (playerDiv && playerDiv.getAttribute("rel") && playerDiv.getAttribute("rel").replace("player", "")) || 99999;
         let coords = galaxy + ":" + system + ":" + Number(index + 1);
-        let colors = this.createDOM("div", {
-          class: "ogl-colors",
-          "data-coords": coords,
-          "data-context": "galaxy",
-        });
-
+        let colors = createDOM("div", { class: "ogl-colors", "data-coords": coords, "data-context": "galaxy" });
         //console.log('Coord: ' + coords + ' parent:' + colors + ' Id:' + id + ' Moon:' + moon);
         element.insertBefore(colors, element.firstChild);
         this.addMarkerUI(coords, colors, id, moon);
@@ -3992,7 +3978,7 @@ class OGInfinity {
               return false;
             }
           };
-          let counter = moonlink.appendChild(this.createDOM("div", { class: "ogk-gate-counter" }));
+          let counter = moonlink.appendChild(createDOM("div", { class: "ogk-gate-counter" }));
           updateCounter();
           let inter = setInterval(() => {
             if (!updateCounter()) clearInterval(inter);
@@ -4022,7 +4008,7 @@ class OGInfinity {
             this.saveData();
             jg();
           };
-          $("#jumpgate .send_all").after(this.createDOM("span", { class: "select-most" }));
+          $("#jumpgate .send_all").after(createDOM("span", { class: "select-most" }));
           $(".select-most").on("click", () => {
             let kept =
               this.json.options.kept[this.current.coords + (this.current.isMoon ? "M" : "P")] ||
@@ -4112,10 +4098,10 @@ class OGInfinity {
   }
 
   welcome() {
-    let container = this.createDOM("div", { class: "ogk-welcome" });
-    let head = container.appendChild(this.createDOM("div", { class: "ogk-header" }));
+    let container = createDOM("div", { class: "ogk-welcome" });
+    let head = container.appendChild(createDOM("div", { class: "ogk-header" }));
     head.appendChild(this.createDOM("h1", {}, "Welcome "));
-    head.appendChild(this.createDOM("div", { class: "ogk-logo" }));
+    head.appendChild(createDOM("div", { class: "ogk-logo" }));
     container.appendChild(this.createDOM("p", {}, "Ogame Infinity will hopefully bring some new joy playing OGame!"));
     container.appendChild(
       this.createDOM(
@@ -4166,7 +4152,7 @@ class OGInfinity {
     } else if ("fr".indexOf(this.gameLang) == -1) {
       ctrl.style.top = "244px";
     }
-    let keyHelp = container.appendChild(this.createDOM("div", { class: "ogk-keyhelp" }));
+    let keyHelp = container.appendChild(createDOM("div", { class: "ogk-keyhelp" }));
     let ctrlKey = this.createDOM(
       "div",
       {
@@ -4175,22 +4161,22 @@ class OGInfinity {
       '\n      <div style="margin-right: 7px" class="ogl-keyboard">cmd/ctrl</div>\n      +\n      <div style="margin-left: 5px" class="ogl-keyboard">?</div>\n    '
     );
     ctrl.appendChild(ctrlKey);
-    keyHelp.appendChild(this.createDOM("div", { class: "ogl-option ogl-overview-icon" }));
+    keyHelp.appendChild(createDOM("div", { class: "ogl-option ogl-overview-icon" }));
     keyHelp.appendChild(this.createDOM("div", {}, "Open the resources panel"));
     keyHelp.appendChild(createDOM("div"));
-    keyHelp.appendChild(this.createDOM("div", { class: "ogl-option ogl-search-icon" }));
+    keyHelp.appendChild(createDOM("div", { class: "ogl-option ogl-search-icon" }));
     keyHelp.appendChild(this.createDOM("div", {}, "Open the player search"));
     keyHelp.appendChild(this.createDOM("div", { class: "ogl-keyboard" }, "f"));
-    keyHelp.appendChild(this.createDOM("div", { class: "ogl-option ogl-statistics-icon" }));
+    keyHelp.appendChild(createDOM("div", { class: "ogl-option ogl-statistics-icon" }));
     keyHelp.appendChild(this.createDOM("div", {}, "Open the statistics panel"));
     keyHelp.appendChild(this.createDOM("div", { class: "ogl-keyboard" }, "s"));
-    keyHelp.appendChild(this.createDOM("div", { class: "ogl-option ogl-empire-icon" }));
+    keyHelp.appendChild(createDOM("div", { class: "ogl-option ogl-empire-icon" }));
     keyHelp.appendChild(this.createDOM("div", {}, "Open the empire view"));
     keyHelp.appendChild(this.createDOM("div", { class: "ogl-keyboard" }, "e"));
-    keyHelp.appendChild(this.createDOM("div", { class: "ogl-option ogl-targetIcon" }));
+    keyHelp.appendChild(createDOM("div", { class: "ogl-option ogl-targetIcon" }));
     keyHelp.appendChild(this.createDOM("div", {}, "Open the target list"));
     keyHelp.appendChild(this.createDOM("div", { class: "ogl-keyboard" }, "d"));
-    keyHelp.appendChild(this.createDOM("div", { class: "ogl-option ogl-syncOption" }));
+    keyHelp.appendChild(createDOM("div", { class: "ogl-option ogl-syncOption" }));
     keyHelp.appendChild(this.createDOM("div", {}, "Settings"));
     container.appendChild(
       this.createDOM(
@@ -4223,7 +4209,7 @@ class OGInfinity {
       }
       oldfunc(elem, m, cb, uu);
     };
-    let btn = document.querySelector("body").appendChild(this.createDOM("div", { class: "ogk-chat icon icon_chat" }));
+    let btn = document.querySelector("body").appendChild(createDOM("div", { class: "ogk-chat icon icon_chat" }));
     if (this.json.tchat) {
       document.querySelector("#chatBar").style.display = this.json.tchat ? "block" : "none";
     }
@@ -4242,11 +4228,7 @@ class OGInfinity {
           key = key.split("'")[1];
           if (key.startsWith("sr")) {
             let link = elem.appendChild(
-              this.createDOM("div", {
-                class: "ogk-trashsim tooltip",
-                target: "_blank",
-                title: "Trahsim",
-              })
+              createDOM("div", { class: "ogk-trashsim tooltip", target: "_blank", title: "Trahsim" })
             );
             let apiTechData = {
               109: { level: this.json.technology[109] },
@@ -4279,12 +4261,7 @@ class OGInfinity {
               );
             });
           } else if (key.startsWith("cr")) {
-            let link = elem.appendChild(
-              this.createDOM("a", {
-                class: "ogk-ogotcha tooltip",
-                title: "Ogotcha",
-              })
-            );
+            let link = elem.appendChild(createDOM("a", { class: "ogk-ogotcha tooltip", title: "Ogotcha" }));
             link.addEventListener("click", () =>
               window.open(
                 `https://ogotcha.oplanet.eu/${this.univerviewLang}?CR_KEY=${key}`,
@@ -4314,46 +4291,28 @@ class OGInfinity {
   }
 
   sideOptions() {
-    let harvestOptions = this.createDOM("div", { class: "ogl-harvestOptions" });
+    let harvestOptions = createDOM("div", { class: "ogl-harvestOptions" });
     let container = document.querySelector("#myPlanets") || document.querySelector("#myWorlds");
     container.prepend(harvestOptions);
     let syncOption = harvestOptions.appendChild(
-      this.createDOM("div", {
-        class: "ogl-option ogl-syncOption tooltip",
-        title: this.getTranslatedText(0),
-      })
+      createDOM("div", { class: "ogl-option ogl-syncOption tooltip", title: this.getTranslatedText(0) })
     );
     syncOption.addEventListener("click", () => this.settings());
     let targetList = harvestOptions.appendChild(
-      this.createDOM("a", {
-        class: "ogl-option ogl-targetIcon tooltip",
-        title: this.getTranslatedText(1),
-      })
+      createDOM("a", { class: "ogl-option ogl-targetIcon tooltip", title: this.getTranslatedText(1) })
     );
     let search = harvestOptions.appendChild(
-      this.createDOM("div", {
-        class: "ogl-option ogl-search-icon tooltip",
-        title: this.getTranslatedText(2),
-      })
+      createDOM("div", { class: "ogl-option ogl-search-icon tooltip", title: this.getTranslatedText(2) })
     );
     let statsBtn = harvestOptions.appendChild(
-      this.createDOM("div", {
-        class: "ogl-option ogl-statistics-icon tooltip",
-        title: this.getTranslatedText(3),
-      })
+      createDOM("div", { class: "ogl-option ogl-statistics-icon tooltip", title: this.getTranslatedText(3) })
     );
     let empireBtn;
     empireBtn = harvestOptions.appendChild(
-      this.createDOM("div", {
-        class: "ogl-option ogl-empire-icon tooltip",
-        title: this.getTranslatedText(4),
-      })
+      createDOM("div", { class: "ogl-option ogl-empire-icon tooltip", title: this.getTranslatedText(4) })
     );
     let overViewBtn = harvestOptions.appendChild(
-      this.createDOM("div", {
-        class: "ogl-option ogl-overview-icon tooltip",
-        title: this.getTranslatedText(5),
-      })
+      createDOM("div", { class: "ogl-option ogl-overview-icon tooltip", title: this.getTranslatedText(5) })
     );
     if (this.json.options.targetList) {
       targetList.classList.add("ogl-active");
@@ -4428,9 +4387,9 @@ class OGInfinity {
   }
 
   profitGraph(profits, max, callback) {
-    let content = this.createDOM("div", { class: "ogk-profit" });
-    let title = content.appendChild(this.createDOM("div", { class: "ogk-date" }));
-    let div = content.appendChild(this.createDOM("div", { class: "ogk-scroll-wrapper" }));
+    let content = createDOM("div", { class: "ogk-profit" });
+    let title = content.appendChild(createDOM("div", { class: "ogk-date" }));
+    let div = content.appendChild(createDOM("div", { class: "ogk-scroll-wrapper" }));
     max = -Infinity;
     profits.forEach((elem, index) => {
       if (Math.abs(elem.profit) > max) max = Math.abs(elem.profit);
@@ -4441,7 +4400,7 @@ class OGInfinity {
       .reverse()
       .forEach((elem, index) => {
         let span = div.appendChild(
-          this.createDOM("span", {
+          createDOM("span", {
             style: `height: ${elem.profit == 0 ? 5 : Math.max(10, (Math.abs(elem.profit) / max) * 60)}px`,
             class: elem.profit >= 0 ? "" : "ogk-minus",
           })
@@ -4477,9 +4436,9 @@ class OGInfinity {
   }
 
   repartitionGraph(eco, tech, fleet, def, lf) {
-    let div = this.createDOM("div", { class: "ogk-repartition" });
+    let div = createDOM("div", { class: "ogk-repartition" });
     let chartNode = div.appendChild(
-      this.createDOM("canvas", {
+      createDOM("canvas", {
         id: "piechart",
         width: "200px",
         height: "150px",
@@ -4549,9 +4508,9 @@ class OGInfinity {
   }
 
   winGraph(win, draw, count) {
-    let div = this.createDOM("div", { class: "ogk-win" });
+    let div = createDOM("div", { class: "ogk-win" });
     let chartNode = div.appendChild(
-      this.createDOM("canvas", {
+      createDOM("canvas", {
         id: "piechart",
         width: "200px",
         height: "150px",
@@ -4621,8 +4580,8 @@ class OGInfinity {
   }
 
   generalStats(player) {
-    let content = this.createDOM("div", { class: "ogk-stats" });
-    let globalInfo = content.appendChild(this.createDOM("div", { class: "ogk-global" }));
+    let content = createDOM("div", { class: "ogk-stats" });
+    let globalInfo = content.appendChild(createDOM("div", { class: "ogk-global" }));
     let honorRank = document.querySelector(".honorRank");
     if (honorRank) {
       honorRank = honorRank.cloneNode(true);
@@ -4668,18 +4627,18 @@ class OGInfinity {
         allianceClassName = "";
     }
     playerDiv.appendChild(
-      this.createDOM("div", {
+      createDOM("div", {
         class: "characterclass small sprite " + playerClassName,
         style: "margin-top: -2px;margin-left: 10px;",
       })
     );
     playerDiv.appendChild(
-      this.createDOM("div", {
+      createDOM("div", {
         class: "alliance_class small " + allianceClassName,
         style: "margin-top: 1px;margin-left: 30px;",
       })
     );
-    let stats = playerDiv.appendChild(this.createDOM("a", { class: "ogl-mmorpgstats" }));
+    let stats = playerDiv.appendChild(createDOM("a", { class: "ogl-mmorpgstats" }));
     stats.addEventListener("click", () => {
       window.open(
         this.generateMMORPGLink(player.id),
@@ -4707,7 +4666,7 @@ class OGInfinity {
     globalInfo.appendChild(
       this.createDOM("h3", {}, toFormatedNumber(parseInt(player.points.score)) + "<small> pts</small>")
     );
-    let detailRank = globalInfo.appendChild(this.createDOM("div", { class: "ogl-detailRank" }));
+    let detailRank = globalInfo.appendChild(createDOM("div", { class: "ogl-detailRank" }));
     const detailRankDiv1 = createDOM("div");
     detailRankDiv1.replaceChildren(
       createDOM("div", { class: "ogl-ecoIcon" }),
@@ -4745,33 +4704,21 @@ class OGInfinity {
       );
     }
     detailRank.replaceChildren(detailRankDiv1, detailRankDiv2, detailRankDiv3, detailRankDiv4, detailRankDiv5);
-    let details = content.appendChild(this.createDOM("div", { class: "ogk-details" }));
-    let ecoDetail = details.appendChild(this.createDOM("div", { class: "ogk-box" }));
-    let techDetail = details.appendChild(this.createDOM("div", { class: "ogk-box ogk-technos" }));
-    let div = techDetail.appendChild(this.createDOM("div", { class: "ogk-tech" }));
+    let details = content.appendChild(createDOM("div", { class: "ogk-details" }));
+    let ecoDetail = details.appendChild(createDOM("div", { class: "ogk-box" }));
+    let techDetail = details.appendChild(createDOM("div", { class: "ogk-box ogk-technos" }));
+    let div = techDetail.appendChild(createDOM("div", { class: "ogk-tech" }));
     div.appendChild(this.createDOM("span", {}, this.getTranslatedText(95)));
-    div.appendChild(
-      this.createDOM("a", {
-        class: "ogl-option ogl-fleet-ship ogl-tech-" + 114,
-      })
-    );
+    div.appendChild(createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-tech-" + 114 }));
     div.appendChild(this.createDOM("span", {}, `<strong>${toFormatedNumber(this.json.technology[114])}</strong>`));
     div.appendChild(this.createDOM("span", {}, this.getTranslatedText(94)));
-    div.appendChild(
-      this.createDOM("a", {
-        class: "ogl-option ogl-fleet-ship ogl-tech-" + 108,
-      })
-    );
+    div.appendChild(createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-tech-" + 108 }));
     div.appendChild(this.createDOM("span", {}, `<strong>${toFormatedNumber(this.json.technology[108] || 0)}</strong>`));
-    let fleetTech = techDetail.appendChild(this.createDOM("div", { class: "ogk-tech" }));
+    let fleetTech = techDetail.appendChild(createDOM("div", { class: "ogk-tech" }));
     [115, 117, 118, 109, 110, 111].forEach((id) => {
       if (id == 115) fleetTech.appendChild(this.createDOM("div", {}, this.getTranslatedText(87)));
       if (id == 109) fleetTech.appendChild(this.createDOM("div", {}, this.getTranslatedText(86)));
-      fleetTech.appendChild(
-        this.createDOM("a", {
-          class: "ogl-option ogl-fleet-ship ogl-tech-" + id,
-        })
-      );
+      fleetTech.appendChild(createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-tech-" + id }));
       fleetTech.appendChild(
         this.createDOM("span", {}, `<strong>${toFormatedNumber(this.json.technology[id])}</strong>`)
       );
@@ -4810,7 +4757,7 @@ class OGInfinity {
     mlvl = mlvl / sum;
     clvl = clvl / sum;
     dlvl = dlvl / sum;
-    let prod = ecoDetail.appendChild(this.createDOM("div", { class: "ogk-mines" }));
+    let prod = ecoDetail.appendChild(createDOM("div", { class: "ogk-mines" }));
     prod.appendChild(createDOM("span"));
     prod.appendChild(
       this.createDOM(
@@ -4882,16 +4829,11 @@ class OGInfinity {
     prod.appendChild(this.createDOM("span", { class: "ogl-deut" }, `${toFormatedNumber(Math.floor(dprodw))}`));
     prod.appendChild(createDOM("span"));
     let innerAstro = prod.appendChild(
-      this.createDOM("span", {
-        style: "display: flex; align-items: center; margin-left: auto; margin-top: 10px;",
-      })
+      createDOM("span", { style: "display: flex; align-items: center; margin-left: auto; margin-top: 10px;" })
     );
     innerAstro.appendChild(this.createDOM("span", {}, this.getTranslatedText(93)));
     innerAstro.appendChild(
-      this.createDOM("a", {
-        class: "ogl-option ogl-fleet-ship ogl-tech-124",
-        style: "margin-left: 5px; margin-right: 5px;",
-      })
+      createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-tech-124", style: "margin-left: 5px; margin-right: 5px;" })
     );
     innerAstro.appendChild(
       this.createDOM(
@@ -4901,16 +4843,11 @@ class OGInfinity {
       )
     );
     let innerEnergy = prod.appendChild(
-      this.createDOM("span", {
-        style: "display: flex; align-items: center; margin-left: auto; margin-top: 10px;",
-      })
+      createDOM("span", { style: "display: flex; align-items: center; margin-left: auto; margin-top: 10px;" })
     );
     innerEnergy.appendChild(this.createDOM("span", {}, this.getTranslatedText(4, "res")));
     innerEnergy.appendChild(
-      this.createDOM("a", {
-        class: "ogl-option ogl-fleet-ship ogl-tech-113",
-        style: "margin-left: 5px; margin-right: 5px;",
-      })
+      createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-tech-113", style: "margin-left: 5px; margin-right: 5px;" })
     );
     innerEnergy.appendChild(
       this.createDOM(
@@ -4920,16 +4857,11 @@ class OGInfinity {
       )
     );
     let innerPlasma = prod.appendChild(
-      this.createDOM("span", {
-        style: "display: flex; align-items: center; margin-left: auto; margin-top: 10px;",
-      })
+      createDOM("span", { style: "display: flex; align-items: center; margin-left: auto; margin-top: 10px;" })
     );
     innerPlasma.appendChild(this.createDOM("span", {}, this.getTranslatedText(96)));
     innerPlasma.appendChild(
-      this.createDOM("a", {
-        class: "ogl-option ogl-fleet-ship ogl-tech-122",
-        style: "margin-left: 5px; margin-right: 5px;",
-      })
+      createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-tech-122", style: "margin-left: 5px; margin-right: 5px;" })
     );
     innerPlasma.appendChild(
       this.createDOM(
@@ -4938,8 +4870,8 @@ class OGInfinity {
         `<strong>${toFormatedNumber(this.json.technology[122]) || toFormatedNumber(0)}</strong>`
       )
     );
-    let fleetDetail = details.appendChild(this.createDOM("div", { class: "ogk-box" }));
-    let fleet = fleetDetail.appendChild(this.createDOM("div", { class: "ogk-fleet" }));
+    let fleetDetail = details.appendChild(createDOM("div", { class: "ogk-box" }));
+    let fleet = fleetDetail.appendChild(createDOM("div", { class: "ogk-fleet" }));
     let flying = this.getFlyingRes();
     let totalFleet = {};
     let cyclos = 0;
@@ -4956,19 +4888,15 @@ class OGInfinity {
       transport += sum * this.json.ships[id].cargoCapacity;
       totalSum += sum;
       let shipDiv = fleet.appendChild(createDOM("div"));
-      shipDiv.appendChild(
-        this.createDOM("a", {
-          class: "ogl-option ogl-fleet-ship ogl-fleet-" + id,
-        })
-      );
+      shipDiv.appendChild(createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-fleet-" + id }));
       if (id == 209) {
         cyclos = sum;
       }
       shipDiv.appendChild(this.createDOM("span", {}, toFormatedNumber(sum)));
       totalFleet[id] = sum;
     });
-    let fleetInfo = fleetDetail.appendChild(this.createDOM("div", { class: "ogk-fleet-info" }));
-    let apiBtn = fleetInfo.appendChild(this.createDOM("span", { class: "show_fleet_apikey" }));
+    let fleetInfo = fleetDetail.appendChild(createDOM("div", { class: "ogk-fleet-info" }));
+    let apiBtn = fleetInfo.appendChild(createDOM("span", { class: "show_fleet_apikey" }));
     apiBtn.addEventListener("click", () => {
       this.APIStringToClipboard(totalFleet);
     });
@@ -5003,7 +4931,7 @@ class OGInfinity {
 
   tabs(titles, small) {
     let body = createDOM("div");
-    let header = body.appendChild(this.createDOM("div", { class: "ogl-tabs" }));
+    let header = body.appendChild(createDOM("div", { class: "ogl-tabs" }));
     let tabs = [];
     let first;
     for (let title in titles) {
@@ -5054,7 +4982,7 @@ class OGInfinity {
   async ptreAction(frame, player) {
     frame = frame || "week";
 
-    let container = this.createDOM("div", { class: "ptreContent" });
+    let container = createDOM("div", { class: "ptreContent" });
 
     if (!this.json.options.ptreTK) {
       container.textContent = "Error: no teamkey registered";
@@ -5116,12 +5044,9 @@ class OGInfinity {
             arrData.forEach((line, index) => {
               if (!isNaN(line[1])) {
                 let div = this.createDOM("div", { class: "tooltip" }, `<div>${line[0]}</div>`);
-                let span = div.appendChild(this.createDOM("span", { class: "ptreDotStats" }));
+                let span = div.appendChild(createDOM("span", { class: "ptreDotStats" }));
                 let dot = span.appendChild(
-                  this.createDOM("div", {
-                    "data-acti": line[1],
-                    "data-check": checkData[index][1],
-                  })
+                  createDOM("div", { "data-acti": line[1], "data-check": checkData[index][1] })
                 );
 
                 let dotValue = (line[1] / result.activity_array.max_acti_per_slot) * 100 * 7;
@@ -5243,12 +5168,11 @@ class OGInfinity {
                       );
                 } else if (this.json.expeditions[id].busy) {
                   msg.querySelector(".ogl-warning") ||
-                    msg.querySelector(".msg_actions").appendChild(
-                      this.createDOM("a", {
-                        class: "ogl-warning tooltip",
-                        "data-title": this.getTranslatedText(114),
-                      })
-                    );
+                    msg
+                      .querySelector(".msg_actions")
+                      .appendChild(
+                        createDOM("a", { class: "ogl-warning tooltip", "data-title": this.getTranslatedText(114) })
+                      );
                 }
                 msg.classList.add("ogk-" + this.json.expeditions[id].result.toLowerCase());
                 return;
@@ -5321,12 +5245,14 @@ class OGInfinity {
                       )
                     );
                 } else if (this.json.expeditions[id].busy) {
-                  msg.querySelector(".msg_actions").appendChild(
-                    this.createDOM("a", {
-                      class: "ogl-warning tooltipRight ogl-tooltipReady ogl-tooltipInit",
-                      "data-title": this.getTranslatedText(114),
-                    })
-                  );
+                  msg
+                    .querySelector(".msg_actions")
+                    .appendChild(
+                      createDOM("a", {
+                        class: "ogl-warning tooltipRight ogl-tooltipReady ogl-tooltipInit",
+                        "data-title": this.getTranslatedText(114),
+                      })
+                    );
                 }
                 msg.classList.add("ogk-" + this.json.expeditions[id].result.toLowerCase());
                 this.saveData();
@@ -5636,7 +5562,7 @@ class OGInfinity {
   }
 
   overview() {
-    let header = this.createDOM("div", { class: "ogl-tabs" });
+    let header = createDOM("div", { class: "ogl-tabs" });
     let minesBtn = header.appendChild(
       this.createDOM("span", { class: "ogl-tab ogl-active" }, this.getTranslatedText(90))
     );
@@ -5778,15 +5704,15 @@ class OGInfinity {
 
   expeditionStats() {
     let ressources = ["Metal", "Crystal", "Deuterium", "AM"];
-    let content = this.createDOM("div", { class: "ogk-stats-content" });
+    let content = createDOM("div", { class: "ogk-stats-content" });
     let renderDetails = (sums, onchange) => {
-      let content = this.createDOM("div", { class: "ogk-stats" });
-      let globalDiv = content.appendChild(this.createDOM("div", { class: "ogk-global" }));
+      let content = createDOM("div", { class: "ogk-stats" });
+      let globalDiv = content.appendChild(createDOM("div", { class: "ogk-global" }));
       let numExpe = 0;
       Object.values(sums.type).forEach((value) => (numExpe += value));
       globalDiv.appendChild(this.createDOM("span", { class: "ogk-center" }, numExpe));
       globalDiv.appendChild(this.expeditionGraph(sums.type));
-      let details = content.appendChild(this.createDOM("div", { class: "ogk-details" }));
+      let details = content.appendChild(createDOM("div", { class: "ogk-details" }));
       let losses = this.getFleetCost(sums.losses);
       let fleetRes = this.getFleetCost(sums.fleet);
       let box = this.resourceBox(
@@ -6077,9 +6003,9 @@ class OGInfinity {
       let maxDate = keys[keys.length - 1];
       let range = computeRangeSums(this.json.expeditionSums, this.dateStrToDate(maxDate), this.dateStrToDate(minDate));
       let total = getTotal(range);
-      let content = this.createDOM("div", { class: "ogk-profit" });
-      let title = content.appendChild(this.createDOM("div", { class: "ogk-date" }));
-      content.appendChild(this.createDOM("div", { class: "ogk-scroll-wrapper" }));
+      let content = createDOM("div", { class: "ogk-profit" });
+      let title = content.appendChild(createDOM("div", { class: "ogk-date" }));
+      content.appendChild(createDOM("div", { class: "ogk-scroll-wrapper" }));
       title.replaceChildren(
         createDOM("strong", {}, `${getFormatedDate(this.dateStrToDate(minDate).getTime(), "[d].[m].[y]")}`),
         createDOM(
@@ -6103,14 +6029,14 @@ class OGInfinity {
 
   combatStats() {
     let ressources = ["Metal", "Crystal", "Deuterium", "AM"];
-    let content = this.createDOM("div", { class: "ogk-stats-content" });
+    let content = createDOM("div", { class: "ogk-stats-content" });
     let renderDetails = (sums, onchange) => {
-      let content = this.createDOM("div", { class: "ogk-stats" });
-      let globalDiv = content.appendChild(this.createDOM("div", { class: "ogk-global" }));
+      let content = createDOM("div", { class: "ogk-stats" });
+      let globalDiv = content.appendChild(createDOM("div", { class: "ogk-global" }));
       globalDiv.appendChild(this.winGraph(sums.wins, sums.draws, sums.count));
       globalDiv.appendChild(this.createDOM("span", { class: "ogk-center" }, sums.count));
       globalDiv.appendChild(this.createDOM("h1", { class: "ogk-top-title" }, this.getTranslatedText(72)));
-      let topDiv = globalDiv.appendChild(this.createDOM("div", { class: "ogk-top" }));
+      let topDiv = globalDiv.appendChild(createDOM("div", { class: "ogk-top" }));
       topDiv.appendChild(this.createDOM("p", { style: "margin-bottom: 5px" }, this.getTranslatedText(73)));
       topDiv.appendChild(this.createDOM("div", { class: "ogk-head" }, this.getTranslatedText(74)));
       topDiv.appendChild(this.createDOM("div", { class: "ogk-head" }, this.getTranslatedText(75)));
@@ -6150,7 +6076,7 @@ class OGInfinity {
           )
         );
       });
-      let details = content.appendChild(this.createDOM("div", { class: "ogk-details" }));
+      let details = content.appendChild(createDOM("div", { class: "ogk-details" }));
       let losses = this.getFleetCost(sums.losses);
       let box = this.resourceBox(
         [
@@ -6429,9 +6355,9 @@ class OGInfinity {
       let maxDate = keys[keys.length - 1];
       let range = computeRangeSums(this.json.combatsSums, this.dateStrToDate(maxDate), this.dateStrToDate(minDate));
       let total = getTotal(range);
-      let content = this.createDOM("div", { class: "ogk-profit" });
-      let title = content.appendChild(this.createDOM("div", { class: "ogk-date" }));
-      content.appendChild(this.createDOM("div", { class: "ogk-scroll-wrapper" }));
+      let content = createDOM("div", { class: "ogk-profit" });
+      let title = content.appendChild(createDOM("div", { class: "ogk-date" }));
+      content.appendChild(createDOM("div", { class: "ogk-scroll-wrapper" }));
       title.replaceChildren(
         createDOM("strong", {}, `${getFormatedDate(this.dateStrToDate(minDate).getTime(), "[d].[m].[y]")}`),
         createDOM(
@@ -6454,23 +6380,12 @@ class OGInfinity {
   }
 
   blackHoleBox(onValidate) {
-    let box = this.createDOM("div", { class: "ogk-box ogk-small" });
-    let fleet = box.appendChild(this.createDOM("div", { class: "ogk-bhole-grid" }));
+    let box = createDOM("div", { class: "ogk-box ogk-small" });
+    let fleet = box.appendChild(createDOM("div", { class: "ogk-bhole-grid" }));
     let inputs = [];
     [202, 203, 210, 204, 205, 206, 219, 207, 215, 211, 213, 218, 214].forEach((id) => {
-      fleet.appendChild(
-        this.createDOM("a", {
-          class: "ogl-option ogl-fleet-ship ogl-fleet-" + id,
-        })
-      );
-      let input = fleet.appendChild(
-        this.createDOM("input", {
-          class: "ogl-formatInput",
-          type: "text",
-          data: id,
-          value: 0,
-        })
-      );
+      fleet.appendChild(createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-fleet-" + id }));
+      let input = fleet.appendChild(createDOM("input", { class: "ogl-formatInput", type: "text", data: id, value: 0 }));
       inputs.push(input);
     });
     if (onValidate) {
@@ -6489,15 +6404,11 @@ class OGInfinity {
   }
 
   shipsBox(ships, minus) {
-    let fleetDetail = this.createDOM("div", { class: "ogk-box" });
-    let fleet = fleetDetail.appendChild(this.createDOM("div", { class: "ogk-fleet" }));
+    let fleetDetail = createDOM("div", { class: "ogk-box" });
+    let fleet = fleetDetail.appendChild(createDOM("div", { class: "ogk-fleet" }));
     [202, 203, 210, 204, 205, 206, 219, 207, 215, 211, 213, 218].forEach((id) => {
       let shipDiv = fleet.appendChild(createDOM("div"));
-      shipDiv.appendChild(
-        this.createDOM("a", {
-          class: "ogl-option ogl-fleet-ship ogl-fleet-" + id,
-        })
-      );
+      shipDiv.appendChild(createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-fleet-" + id }));
       shipDiv.appendChild(
         this.createDOM(
           "span",
@@ -6510,39 +6421,23 @@ class OGInfinity {
   }
 
   adjustBox(adjustments, onValidate) {
-    let box = this.createDOM("div", { class: "ogk-box ogk-small" });
-    let prod = box.appendChild(this.createDOM("div", { class: "ogk-adjust-grid" }));
+    let box = createDOM("div", { class: "ogk-box ogk-small" });
+    let prod = box.appendChild(createDOM("div", { class: "ogk-adjust-grid" }));
     prod.appendChild(this.createDOM("span", {}, '<a class="ogl-option resourceIcon metal"></a>'));
     let metInput = prod.appendChild(
-      this.createDOM("input", {
-        class: "ogl-formatInput metal",
-        type: "text",
-        value: toFormatedNumber(adjustments[0]),
-      })
+      createDOM("input", { class: "ogl-formatInput metal", type: "text", value: toFormatedNumber(adjustments[0]) })
     );
     prod.appendChild(this.createDOM("span", {}, '<a class="ogl-option resourceIcon crystal"></a>'));
     let criInput = prod.appendChild(
-      this.createDOM("input", {
-        class: "ogl-formatInput crystal",
-        type: "text",
-        value: toFormatedNumber(adjustments[1]),
-      })
+      createDOM("input", { class: "ogl-formatInput crystal", type: "text", value: toFormatedNumber(adjustments[1]) })
     );
     prod.appendChild(this.createDOM("span", {}, '<a class="ogl-option resourceIcon deuterium"></a>'));
     let deutInput = prod.appendChild(
-      this.createDOM("input", {
-        class: "ogl-formatInput deuterium",
-        type: "text",
-        value: toFormatedNumber(adjustments[2]),
-      })
+      createDOM("input", { class: "ogl-formatInput deuterium", type: "text", value: toFormatedNumber(adjustments[2]) })
     );
     if (this.hasLifeforms) {
       let foodInput = prod.appendChild(
-        this.createDOM("input", {
-          class: "ogl-formatInput food",
-          type: "text",
-          value: toFormatedNumber(adjustments[3]),
-        })
+        createDOM("input", { class: "ogl-formatInput food", type: "text", value: toFormatedNumber(adjustments[3]) })
       );
     }
     if (onValidate) {
@@ -6560,8 +6455,8 @@ class OGInfinity {
   }
 
   resourceBox(rows, am, callback) {
-    let box = this.createDOM("div", { class: "ogk-box" });
-    let prod = box.appendChild(this.createDOM("div", { class: "ogk-grid" }));
+    let box = createDOM("div", { class: "ogk-box" });
+    let prod = box.appendChild(createDOM("div", { class: "ogk-grid" }));
     if (am) prod.classList.add("ogk-am");
     prod.appendChild(createDOM("span"));
     prod.appendChild(this.createDOM("span", {}, '<a class="ogl-option resourceIcon metal"></a>'));
@@ -6683,13 +6578,7 @@ class OGInfinity {
 
   expeditionGraph(sums) {
     let div = createDOM("div");
-    let chartNode = div.appendChild(
-      this.createDOM("canvas", {
-        id: "piechart",
-        width: "400px",
-        height: "300px",
-      })
-    );
+    let chartNode = div.appendChild(createDOM("canvas", { id: "piechart", width: "400px", height: "300px" }));
     let config = {
       type: "doughnut",
       data: {
@@ -6832,8 +6721,8 @@ class OGInfinity {
     let renderPlayerInfo = (player) => {
       this.json.playerSearch = player.name;
       this.saveData();
-      let planetsColumn = this.createDOM("div", { class: "ogl-planets-col" });
-      let controlRow = planetsColumn.appendChild(this.createDOM("div", { class: "ogl-search-controls" }));
+      let planetsColumn = createDOM("div", { class: "ogl-planets-col" });
+      let controlRow = planetsColumn.appendChild(createDOM("div", { class: "ogl-search-controls" }));
       let name = `<span>${player.name}</span> <span class="${this.getPlayerStatus(
         player.status
       )}"></span>\n                  <a target="_self"\n                    href="https://s${this.universe}-${
@@ -6845,7 +6734,7 @@ class OGInfinity {
       let btns = controlRow.appendChild(createDOM("div"));
 
       if (this.json.options.ptreTK) {
-        let ptreLink = btns.appendChild(this.createDOM("a", { class: "ogl-ptre" }));
+        let ptreLink = btns.appendChild(createDOM("a", { class: "ogl-ptre" }));
         ptreLink.textContent = "P";
         ptreLink.addEventListener("click", () => {
           window.open(
@@ -6856,10 +6745,10 @@ class OGInfinity {
         });
       }
 
-      let stats = btns.appendChild(this.createDOM("a", { class: "ogl-mmorpgstats" }));
-      let pinBtn = btns.appendChild(this.createDOM("a", { class: "ogl-pin" }));
+      let stats = btns.appendChild(createDOM("a", { class: "ogl-mmorpgstats" }));
+      let pinBtn = btns.appendChild(createDOM("a", { class: "ogl-pin" }));
 
-      let chat = btns.appendChild(this.createDOM("a", { class: "icon icon_chat" }));
+      let chat = btns.appendChild(createDOM("a", { class: "icon icon_chat" }));
       pinBtn.addEventListener("click", () => {
         this.sideStalk(player.id);
       });
@@ -6874,7 +6763,7 @@ class OGInfinity {
         );
       });
 
-      let detailRank = planetsColumn.appendChild(this.createDOM("div", { class: "ogl-detailRank" }));
+      let detailRank = planetsColumn.appendChild(createDOM("div", { class: "ogl-detailRank" }));
       const detailRankDiv1 = createDOM("div");
       detailRankDiv1.replaceChildren(
         createDOM("div", { class: "ogl-totalIcon" }),
@@ -6919,14 +6808,11 @@ class OGInfinity {
         detailRankDiv5,
         detailRankDiv6
       );
-      let stalkPlanets = this.createDOM("div", {
-        class: "ogl-stalkPlanets",
-        "player-id": player.id,
-      });
+      let stalkPlanets = createDOM("div", { class: "ogl-stalkPlanets", "player-id": player.id });
       planetsColumn.appendChild(stalkPlanets);
       this.updateStalk(player.planets).forEach((e) => stalkPlanets.appendChild(e));
       this.highlightTarget();
-      let updateTime = planetsColumn.appendChild(this.createDOM("div", { class: "ogl-right ogl-date" }));
+      let updateTime = planetsColumn.appendChild(createDOM("div", { class: "ogl-right ogl-date" }));
       updateTime.textContent = this.timeSince(new Date(player.lastUpdate));
       return planetsColumn;
     };
@@ -6949,7 +6835,7 @@ class OGInfinity {
             }
           }
         }
-        let playerNode = this.createDOM("div", { class: "ogl-player-div" });
+        let playerNode = createDOM("div", { class: "ogl-player-div" });
         let name = this.createDOM(
           "span",
           { class: this.getPlayerStatus(player.status, noob) },
@@ -7022,13 +6908,13 @@ class OGInfinity {
         updatePlayerList(this.json.searchHistory.slice().reverse());
       }
     };
-    let content = this.createDOM("div", { class: "ogl-search-content" });
-    let searchColumn = content.appendChild(this.createDOM("div", { class: "ogl-search-col" }));
-    let input = searchColumn.appendChild(this.createDOM("input", { type: "search", placeholder: "Player" }));
+    let content = createDOM("div", { class: "ogl-search-content" });
+    let searchColumn = content.appendChild(createDOM("div", { class: "ogl-search-col" }));
+    let input = searchColumn.appendChild(createDOM("input", { type: "search", placeholder: "Player" }));
     input.addEventListener("keyup", () => {
       updateSearch(input.value, false);
     });
-    let searchResult = content.appendChild(this.createDOM("div", { class: "ogl-search-result" }));
+    let searchResult = content.appendChild(createDOM("div", { class: "ogl-search-result" }));
     setTimeout(() => {
       $(".ogl-search-result").mCustomScrollbar({ theme: "ogame" });
       searchResult = document.querySelector(".ogl-search-content .mCSB_container");
@@ -7054,8 +6940,8 @@ class OGInfinity {
   }
 
   minesOverview() {
-    let content = this.createDOM("div", { class: "ogl-mines-content" });
-    let table = content.appendChild(this.createDOM("table", { class: "ogl-fleet-table" }));
+    let content = createDOM("div", { class: "ogl-mines-content" });
+    let table = content.appendChild(createDOM("table", { class: "ogl-fleet-table" }));
     let header = table.appendChild(createDOM("tr"));
     header.appendChild(createDOM("th"));
     let metalRow = table.appendChild(createDOM("tr"));
@@ -7402,17 +7288,17 @@ class OGInfinity {
 
   roiStats() {
     let that = this;
-    let content = this.createDOM("div", { class: "ogk-stats" });
-    let details = content.appendChild(this.createDOM("div", { class: "ogk-roi-details" }));
-    let settings = details.appendChild(this.createDOM("div", { class: "ogk-settings-box" }));
-    let tradeRateBox = settings.appendChild(this.createDOM("div", { class: "ogk-tradeRate-box" }));
-    let crawler = settings.appendChild(this.createDOM("div", { class: "ogk-crawler-box" }));
-    let filter = settings.appendChild(this.createDOM("div", { class: "ogk-filter-box" }));
-    let header = details.appendChild(this.createDOM("h1"));
+    let content = createDOM("div", { class: "ogk-stats" });
+    let details = content.appendChild(createDOM("div", { class: "ogk-roi-details" }));
+    let settings = details.appendChild(createDOM("div", { class: "ogk-settings-box" }));
+    let tradeRateBox = settings.appendChild(createDOM("div", { class: "ogk-tradeRate-box" }));
+    let crawler = settings.appendChild(createDOM("div", { class: "ogk-crawler-box" }));
+    let filter = settings.appendChild(createDOM("div", { class: "ogk-filter-box" }));
+    let header = details.appendChild(createDOM("h1"));
     header.appendChild(this.createDOM("p", {}, this.getTranslatedText(88)));
     let tradeRateText = this.createDOM("p", { class: "ogk-tradeRate-text" }, this.getTranslatedText(119));
-    let tradeRateGrid = this.createDOM("div", { class: "ogk-tradeRate-grid" });
-    let box = details.appendChild(this.createDOM("div", { class: "ogk-box" }));
+    let tradeRateGrid = createDOM("div", { class: "ogk-tradeRate-grid" });
+    let box = details.appendChild(createDOM("div", { class: "ogk-box" }));
     tradeRateBox.appendChild(tradeRateText);
     tradeRateBox.appendChild(tradeRateGrid);
 
@@ -7553,9 +7439,9 @@ class OGInfinity {
       updateRoi();
     });
 
-    tradeRateGrid.appendChild(this.createDOM("a", { class: "ogl-option resourceIcon metal" }));
+    tradeRateGrid.appendChild(createDOM("a", { class: "ogl-option resourceIcon metal" }));
     let metalTradeRate = tradeRateGrid.appendChild(
-      this.createDOM("input", {
+      createDOM("input", {
         class: "ogl-tradeRate-input metal",
         type: "text",
         value: toFormatedNumber(this.json.options.tradeRate[0]),
@@ -7590,9 +7476,9 @@ class OGInfinity {
       this.saveData();
       updateRoi();
     });
-    tradeRateGrid.appendChild(this.createDOM("a", { class: "ogl-option resourceIcon crystal" }));
+    tradeRateGrid.appendChild(createDOM("a", { class: "ogl-option resourceIcon crystal" }));
     let crystalTradeRate = tradeRateGrid.appendChild(
-      this.createDOM("input", {
+      createDOM("input", {
         class: "ogl-tradeRate-input crystal",
         type: "text",
         value: toFormatedNumber(this.json.options.tradeRate[1]),
@@ -7627,9 +7513,9 @@ class OGInfinity {
       this.saveData();
       updateRoi();
     });
-    tradeRateGrid.appendChild(this.createDOM("a", { class: "ogl-option resourceIcon deuterium" }));
+    tradeRateGrid.appendChild(createDOM("a", { class: "ogl-option resourceIcon deuterium" }));
     let deuteriumTradeRate = tradeRateGrid.appendChild(
-      this.createDOM("input", {
+      createDOM("input", {
         class: "ogl-tradeRate-input deuterium",
         type: "text",
         value: toFormatedNumber(this.json.options.tradeRate[2]),
@@ -7668,7 +7554,7 @@ class OGInfinity {
     let updateRoi = () => {
       let roi = document.querySelector(".ogk-roi");
       if (roi) roi.remove();
-      roi = box.appendChild(this.createDOM("div", { class: "ogk-roi" }));
+      roi = box.appendChild(createDOM("div", { class: "ogk-roi" }));
       let bestRoi = this.getBestRoi();
       let filter = document.querySelector("#filterRoi") ? document.querySelector("#filterRoi").value : -1;
       let rev = document.querySelector("#reverseFilter") ? document.querySelector("#reverseFilter").checked : false;
@@ -7726,8 +7612,8 @@ class OGInfinity {
   }
 
   minesStats() {
-    let content = this.createDOM("div", { class: "ogl-prodOverview-content" });
-    let table = content.appendChild(this.createDOM("table", { class: "ogl-fleet-table" }));
+    let content = createDOM("div", { class: "ogl-prodOverview-content" });
+    let table = content.appendChild(createDOM("table", { class: "ogl-fleet-table" }));
     let header = table.appendChild(createDOM("tr"));
     header.appendChild(createDOM("th"));
     let metalRow = table.appendChild(createDOM("tr"));
@@ -8970,16 +8856,12 @@ class OGInfinity {
   }
 
   fleetOverview(moon) {
-    let content = this.createDOM("div", { class: "ogl-fleet-content" });
-    let table = this.createDOM("table", { class: "ogl-fleet-table" });
+    let content = createDOM("div", { class: "ogl-fleet-content" });
+    let table = createDOM("table", { class: "ogl-fleet-table" });
     let row = createDOM("tr");
     let td = createDOM("th");
-    let planetIcon = this.createDOM("span", {
-      class: "ogl-planet " + (!moon ? "ogl-active" : ""),
-    });
-    let moonIcon = this.createDOM("span", {
-      class: "ogl-moon " + (moon ? "ogl-active" : ""),
-    });
+    let planetIcon = createDOM("span", { class: "ogl-planet " + (!moon ? "ogl-active" : "") });
+    let moonIcon = createDOM("span", { class: "ogl-moon " + (moon ? "ogl-active" : "") });
     planetIcon.addEventListener("click", () => {
       if (!planetIcon.classList.contains("ogl-active")) {
         content.replaceWith(this.fleetOverview(false));
@@ -9015,9 +8897,7 @@ class OGInfinity {
       }
       row = createDOM("tr");
       let shipCount = flying.fleet[id];
-      let td = this.createDOM("td", {
-        class: shipCount ? "" : "ogl-fleet-empty",
-      });
+      let td = createDOM("td", { class: shipCount ? "" : "ogl-fleet-empty" });
       td.appendChild(
         this.createDOM(
           "span",
@@ -9027,11 +8907,7 @@ class OGInfinity {
       );
       row.appendChild(td);
       let th = row.appendChild(createDOM("th"));
-      th.appendChild(
-        this.createDOM("th", {
-          class: "ogl-option ogl-fleet-ship ogl-fleet-" + id,
-        })
-      );
+      th.appendChild(createDOM("th", { class: "ogl-option ogl-fleet-ship ogl-fleet-" + id }));
       let sum = 0;
       this.json.empire.forEach((planet) => {
         let current = false;
@@ -9044,9 +8920,7 @@ class OGInfinity {
         if (planet.moon) {
           valueMooon = planet.moon[id] == 0 ? "-" : toFormatedNumber(planet.moon[id], null, true);
         }
-        let td = this.createDOM("td", {
-          class: valuePLa == "-" ? "ogl-fleet-empty" : "",
-        });
+        let td = createDOM("td", { class: valuePLa == "-" ? "ogl-fleet-empty" : "" });
         td.appendChild(
           this.createDOM(
             "span",
@@ -9058,9 +8932,7 @@ class OGInfinity {
           )
         );
         if (moon) {
-          td = this.createDOM("td", {
-            class: valueMooon == "-" ? "ogl-fleet-empty" : "",
-          });
+          td = createDOM("td", { class: valueMooon == "-" ? "ogl-fleet-empty" : "" });
           td.appendChild(
             this.createDOM(
               "span",
@@ -9077,7 +8949,7 @@ class OGInfinity {
         }
         row.appendChild(td);
       });
-      td = this.createDOM("td", { class: sum == "-" ? "ogl-fleet-empty" : "" });
+      td = createDOM("td", { class: sum == "-" ? "ogl-fleet-empty" : "" });
       td.appendChild(
         this.createDOM(
           "span",
@@ -9094,19 +8966,15 @@ class OGInfinity {
   }
 
   defenseOverview(moon) {
-    let content = this.createDOM("div", { class: "ogl-fleet-content" });
+    let content = createDOM("div", { class: "ogl-fleet-content" });
     let shipsInfo = JSON.parse(
       '{ "212": { "name": "Satellite solaire" }, "401": { "name": "Lanceur de missiles" }, "402": { "name": "Artillerie laser légère" }, "403": { "name": "Artillerie laser lourde" }, "404": { "name": "Canon de Gauss" }, "405": { "name": "Artillerie à ions" }, "406": { "name": "Lanceur de plasma" }, "407": { "name": "Petit bouclier" }, "408": { "name": "Grand bouclier" }, "502": { "name": "Missile d`interception" }, "503": { "name": "Missile interplanétaire" }, "202": { "id": 202, "name": "Petit transporteur", "baseFuelConsumption": 20, "baseFuelCapacity": 5000, "baseCargoCapacity": 7250, "fuelConsumption": 10, "baseSpeed": 10000, "speed": 32000, "cargoCapacity": 7250, "fuelCapacity": 5000, "number": 1, "recycleMode": 0, "rapidfire": { "205": -3, "215": -3, "214": -250, "210": 5, "212": 5, "217": 5 } }, "203": { "id": 203, "name": "Grand transporteur", "baseFuelConsumption": 50, "baseFuelCapacity": 25000, "baseCargoCapacity": 36250, "fuelConsumption": 25, "baseSpeed": 7500, "speed": 18000, "cargoCapacity": 36250, "fuelCapacity": 25000, "number": 1, "recycleMode": 0, "rapidfire": { "215": -3, "214": -250, "210": 5, "212": 5, "217": 5 } }, "204": { "id": 204, "name": "Chasseur léger", "baseFuelConsumption": 20, "baseFuelCapacity": 50, "baseCargoCapacity": 72, "fuelConsumption": 10, "baseSpeed": 12500, "speed": 30000, "cargoCapacity": 72, "fuelCapacity": 50, "number": 1, "recycleMode": 0, "rapidfire": { "206": -6, "214": -200, "219": -3, "210": 5, "212": 5, "217": 5 } }, "205": { "id": 205, "name": "Chasseur lourd", "baseFuelConsumption": 75, "baseFuelCapacity": 100, "baseCargoCapacity": 145, "fuelConsumption": 37, "baseSpeed": 10000, "speed": 32000, "cargoCapacity": 145, "fuelCapacity": 100, "number": 1, "recycleMode": 0, "rapidfire": { "215": -4, "214": -100, "219": -2, "210": 5, "212": 5, "217": 5, "202": 3 } }, "206": { "id": 206, "name": "Croiseur", "baseFuelConsumption": 300, "baseFuelCapacity": 800, "baseCargoCapacity": 1160, "fuelConsumption": 150, "baseSpeed": 15000, "speed": 48000, "cargoCapacity": 1160, "fuelCapacity": 800, "number": 1, "recycleMode": 0, "rapidfire": { "215": -4, "214": -33, "219": 3, "210": 5, "212": 5, "217": 5, "204": 6, "401": 10 } }, "207": { "id": 207, "name": "Vaisseau de bataille", "baseFuelConsumption": 500, "baseFuelCapacity": 1500, "baseCargoCapacity": 2175, "fuelConsumption": 250, "baseSpeed": 10000, "speed": 49000, "cargoCapacity": 2175, "fuelCapacity": 1500, "number": 1, "recycleMode": 0, "rapidfire": { "215": -7, "214": -30, "218": -7, "210": 5, "212": 5, "217": 5, "219": 5 } }, "208": { "id": 208, "name": "Vaisseau de colonisation", "baseFuelConsumption": 1000, "baseFuelCapacity": 7500, "baseCargoCapacity": 10875, "fuelConsumption": 500, "baseSpeed": 2500, "speed": 8000, "cargoCapacity": 10875, "fuelCapacity": 7500, "number": 1, "recycleMode": 0, "rapidfire": { "214": -250, "210": 5, "212": 5, "217": 5 } }, "209": { "id": 209, "name": "Recycleur", "baseFuelConsumption": 300, "baseFuelCapacity": 20000, "baseCargoCapacity": 29000, "fuelConsumption": 150, "baseSpeed": 2000, "speed": 4800, "cargoCapacity": 29000, "fuelCapacity": 20000, "number": 1, "recycleMode": 0, "rapidfire": { "214": -250, "210": 5, "212": 5, "217": 5 } }, "210": { "id": 210, "name": "Sonde despionnage", "baseFuelConsumption": 1, "baseFuelCapacity": 5, "baseCargoCapacity": 7, "fuelConsumption": 0, "baseSpeed": 100000000, "speed": 240000000, "cargoCapacity": 7, "fuelCapacity": 5, "number": 1, "recycleMode": 0, "rapidfire": { "204": -5, "205": -5, "206": -5, "207": -5, "215": -5, "211": -5, "213": -5, "214": -1250, "218": -5, "219": -5, "202": -5, "203": -5, "208": -5, "209": -5 } }, "211": { "id": 211, "name": "Bombardier", "baseFuelConsumption": 700, "baseFuelCapacity": 500, "baseCargoCapacity": 725, "fuelConsumption": 350, "baseSpeed": 5000, "speed": 24500, "cargoCapacity": 725, "fuelCapacity": 500, "number": 1, "recycleMode": 0, "rapidfire": { "214": -25, "218": -4, "210": 5, "212": 5, "217": 5, "401": 20, "402": 20, "403": 10, "405": 10, "404": 5, "406": 5 } }, "213": { "id": 213, "name": "Destructeur", "baseFuelConsumption": 1000, "baseFuelCapacity": 2000, "baseCargoCapacity": 2900, "fuelConsumption": 500, "baseSpeed": 5000, "speed": 24500, "cargoCapacity": 2900, "fuelCapacity": 2000, "number": 1, "recycleMode": 0, "rapidfire": { "214": -5, "218": -3, "210": 5, "212": 5, "217": 5, "402": 10, "215": 2 } }, "214": { "id": 214, "name": "Étoile de la mort", "baseFuelConsumption": 1, "baseFuelCapacity": 1000000, "baseCargoCapacity": 1450000, "fuelConsumption": 0, "baseSpeed": 100, "speed": 490, "cargoCapacity": 1450000, "fuelCapacity": 1000000, "number": 1, "recycleMode": 0, "rapidfire": { "210": 1250, "212": 1250, "204": 200, "205": 100, "206": 33, "207": 30, "211": 25, "213": 5, "202": 250, "203": 250, "208": 250, "209": 250, "401": 200, "402": 200, "403": 100, "405": 100, "404": 50, "215": 15, "219": 30, "218": 10, "217": 1250 } }, "215": { "id": 215, "name": "Traqueur", "baseFuelConsumption": 250, "baseFuelCapacity": 750, "baseCargoCapacity": 1087, "fuelConsumption": 125, "baseSpeed": 10000, "speed": 49000, "cargoCapacity": 1087, "fuelCapacity": 750, "number": 1, "recycleMode": 0, "rapidfire": { "214": -10, "405": -2, "210": 5, "212": 5, "217": 5, "207": 7, "211": 4, "213": 3 } }, "217": { "id": 217, "name": "Foreuse", "baseFuelConsumption": 0, "baseFuelCapacity": 0, "baseCargoCapacity": 0, "fuelConsumption": 0, "baseSpeed": 0, "speed": 0, "cargoCapacity": 0, "fuelCapacity": 0, "number": 1, "recycleMode": 0, "rapidfire": { "204": -5, "205": -5, "206": -5, "207": -5, "215": -5, "211": -5, "213": -5, "214": -1250, "218": -5, "219": -5, "202": -5, "203": -5, "208": -5, "209": -5 } }, "218": { "id": 218, "name": "Faucheur", "baseFuelConsumption": 1100, "baseFuelCapacity": 10000, "baseCargoCapacity": 14500, "fuelConsumption": 550, "baseSpeed": 7000, "speed": 34300, "cargoCapacity": 14500, "fuelCapacity": 10000, "number": 1, "recycleMode": 2, "rapidfire": { "214": -10, "405": -2, "210": 5, "212": 5, "217": 5, "207": 7, "211": 4, "213": 3 } }, "219": { "id": 219, "name": "Éclaireur", "baseFuelConsumption": 300, "baseFuelCapacity": 10000, "baseCargoCapacity": 14500, "fuelConsumption": 150, "baseSpeed": 12000, "speed": 58800, "cargoCapacity": 14500, "fuelCapacity": 10000, "number": 1, "recycleMode": 3, "rapidfire": { "207": -5, "214": -30, "210": 5, "212": 5, "217": 5, "206": 3, "204": 3, "205": 2 } } }'
     );
-    let table = this.createDOM("table", { class: "ogl-fleet-table" });
+    let table = createDOM("table", { class: "ogl-fleet-table" });
     let row = createDOM("tr");
     let td = createDOM("td");
-    let planetIcon = this.createDOM("span", {
-      class: "ogl-planet " + (!moon ? "ogl-active" : ""),
-    });
-    let moonIcon = this.createDOM("span", {
-      class: "ogl-moon " + (moon ? "ogl-active" : ""),
-    });
+    let planetIcon = createDOM("span", { class: "ogl-planet " + (!moon ? "ogl-active" : "") });
+    let moonIcon = createDOM("span", { class: "ogl-moon " + (moon ? "ogl-active" : "") });
     planetIcon.addEventListener("click", () => {
       if (!planetIcon.classList.contains("ogl-active")) {
         content.replaceWith(this.defenseOverview(false));
@@ -9140,11 +9008,7 @@ class OGInfinity {
       }
       row = createDOM("tr");
       let th = row.appendChild(createDOM("th"));
-      th.appendChild(
-        this.createDOM("th", {
-          class: "ogl-option ogl-fleet-ship tooltip ogl-fleet-" + id,
-        })
-      );
+      th.appendChild(createDOM("th", { class: "ogl-option ogl-fleet-ship tooltip ogl-fleet-" + id }));
       let sum = 0;
       this.json.empire.forEach((planet) => {
         let current = false;
@@ -9198,15 +9062,15 @@ class OGInfinity {
 
   discoveryStats() {
     let discoveryCosts = [-5000, -1000, -500];
-    let content = this.createDOM("div", { class: "ogk-stats-content" });
+    let content = createDOM("div", { class: "ogk-stats-content" });
     let renderDetails = (sums, onchange) => {
-      let content = this.createDOM("div", { class: "ogk-stats" });
-      let globalDiv = content.appendChild(this.createDOM("div", { class: "ogk-global" }));
+      let content = createDOM("div", { class: "ogk-stats" });
+      let globalDiv = content.appendChild(createDOM("div", { class: "ogk-global" }));
       let numDiscovery = 0;
       Object.values(sums.type).forEach((value) => (numDiscovery += value));
       globalDiv.appendChild(this.createDOM("span", { class: "ogk-center" }, numDiscovery));
       globalDiv.appendChild(this.discoveryGraph(sums.type));
-      let details = content.appendChild(this.createDOM("div", { class: "ogk-details" }));
+      let details = content.appendChild(createDOM("div", { class: "ogk-details" }));
 
       let box = this.discoveryBox(
         [
@@ -9384,9 +9248,9 @@ class OGInfinity {
       let maxDate = keys[keys.length - 1];
       let range = computeRangeSums(this.json.discoveriesSums, this.dateStrToDate(maxDate), this.dateStrToDate(minDate));
       let total = getTotal(range);
-      let content = this.createDOM("div", { class: "ogk-profit" });
-      let title = content.appendChild(this.createDOM("div", { class: "ogk-date" }));
-      content.appendChild(this.createDOM("div", { class: "ogk-scroll-wrapper" }));
+      let content = createDOM("div", { class: "ogk-profit" });
+      let title = content.appendChild(createDOM("div", { class: "ogk-date" }));
+      content.appendChild(createDOM("div", { class: "ogk-scroll-wrapper" }));
       let contentHtml = `<strong>${getFormatedDate(
         this.dateStrToDate(minDate).getTime(),
         "[d].[m].[y]"
@@ -9406,8 +9270,8 @@ class OGInfinity {
   }
 
   discoveryBox(rows, am, callback) {
-    let box = this.createDOM("div", { class: "ogk-box" });
-    let discovery = box.appendChild(this.createDOM("div", { class: "ogk-grid-discovery" }));
+    let box = createDOM("div", { class: "ogk-box" });
+    let discovery = box.appendChild(createDOM("div", { class: "ogk-grid-discovery" }));
     discovery.appendChild(createDOM("span"));
     discovery.appendChild(this.createDOM("span", {}, '<a class="ogl-option lifeform-item-icon small lifeform1"></a>'));
     discovery.appendChild(this.createDOM("span", {}, '<a class="ogl-option lifeform-item-icon small lifeform2"></a>'));
@@ -9476,8 +9340,8 @@ class OGInfinity {
   }
 
   discoveryCostsBox(rows, am, callback) {
-    let box = this.createDOM("div", { class: "ogk-box" });
-    let discovery = box.appendChild(this.createDOM("div", { class: "ogk-grid-discovery" }));
+    let box = createDOM("div", { class: "ogk-box" });
+    let discovery = box.appendChild(createDOM("div", { class: "ogk-grid-discovery" }));
     discovery.appendChild(createDOM("span"));
     discovery.appendChild(this.createDOM("span", {}, '<a class="ogl-option resourceIcon metal"></a>'));
     discovery.appendChild(this.createDOM("span", {}, '<a class="ogl-option resourceIcon crystal"></a>'));
@@ -9547,13 +9411,7 @@ class OGInfinity {
 
   discoveryGraph(sums) {
     let div = createDOM("div");
-    let chartNode = div.appendChild(
-      this.createDOM("canvas", {
-        id: "piechart",
-        width: "400px",
-        height: "300px",
-      })
-    );
+    let chartNode = div.appendChild(createDOM("canvas", { id: "piechart", width: "400px", height: "300px" }));
     let config = {
       type: "doughnut",
       data: {
@@ -9611,44 +9469,29 @@ class OGInfinity {
   }
 
   buildDispatcherUI() {
-    let dispatch = document.querySelector("#shipsChosen").appendChild(this.createDOM("div", { class: "ogl-dispatch" }));
+    let dispatch = document.querySelector("#shipsChosen").appendChild(createDOM("div", { class: "ogl-dispatch" }));
     if (!this.json.options.dispatcher) {
       dispatch.style.display = "none";
     }
-    let destination = dispatch.appendChild(this.createDOM("div", { class: "ogl-dest" }));
+    let destination = dispatch.appendChild(createDOM("div", { class: "ogl-dest" }));
     let resDiv = dispatch.appendChild(createDOM("div"));
-    let actions = resDiv.appendChild(this.createDOM("div", { class: "ogl-transport" }));
-    let coords = destination.appendChild(this.createDOM("div", { class: "ogl-coords" }));
+    let actions = resDiv.appendChild(createDOM("div", { class: "ogl-transport" }));
+    let coords = destination.appendChild(createDOM("div", { class: "ogl-coords" }));
     let warning = coords.appendChild(
-      this.createDOM("a", {
-        class: "ogl-warning tooltipRight",
-        "data-title": "Error : current planet/moon...",
-      })
+      createDOM("a", { class: "ogl-warning tooltipRight", "data-title": "Error : current planet/moon..." })
     );
     let galaxyInput = coords.appendChild(
-      this.createDOM("input", {
-        type: "text",
-        pattern: "[0-9]*",
-        value: fleetDispatcher.targetPlanet.galaxy,
-      })
+      createDOM("input", { type: "text", pattern: "[0-9]*", value: fleetDispatcher.targetPlanet.galaxy })
     );
     let systemInput = coords.appendChild(
-      this.createDOM("input", {
-        type: "text",
-        pattern: "[0-9]*",
-        value: fleetDispatcher.targetPlanet.system,
-      })
+      createDOM("input", { type: "text", pattern: "[0-9]*", value: fleetDispatcher.targetPlanet.system })
     );
     let positionInput = coords.appendChild(
-      this.createDOM("input", {
-        type: "text",
-        pattern: "[0-9]*",
-        value: fleetDispatcher.targetPlanet.position,
-      })
+      createDOM("input", { type: "text", pattern: "[0-9]*", value: fleetDispatcher.targetPlanet.position })
     );
-    let planet = coords.appendChild(this.createDOM("a", { class: "ogl-planet-icon" }));
-    let moon = coords.appendChild(this.createDOM("a", { class: "ogl-moon-icon" }));
-    let debris = coords.appendChild(this.createDOM("a", { class: "ogl-debris-icon" }));
+    let planet = coords.appendChild(createDOM("a", { class: "ogl-planet-icon" }));
+    let moon = coords.appendChild(createDOM("a", { class: "ogl-moon-icon" }));
+    let debris = coords.appendChild(createDOM("a", { class: "ogl-debris-icon" }));
     planet.addEventListener("click", () => {});
     moon.addEventListener("click", () => {
       fleetDispatcher.targetPlanet.type = fleetDispatcher.fleetHelper.PLANETTYPE_MOON;
@@ -9672,10 +9515,7 @@ class OGInfinity {
         )
       );
       unionsBtn.addEventListener("click", () => {
-        let container = this.createDOM("div", {
-          class: "ogl-quickLinks",
-          style: "display: flex;flex-direction:column",
-        });
+        let container = createDOM("div", { class: "ogl-quickLinks", style: "display: flex;flex-direction:column" });
         for (let i in unions) {
           let union = unions[i];
           let unionDiv = container.appendChild(
@@ -9714,17 +9554,17 @@ class OGInfinity {
       });
       this.popup(false, container);
     });
-    let briefing = destination.appendChild(this.createDOM("div", { style: "flex-direction: column" }));
-    let info = briefing.appendChild(this.createDOM("div", { class: "ogl-info" }));
+    let briefing = destination.appendChild(createDOM("div", { style: "flex-direction: column" }));
+    let info = briefing.appendChild(createDOM("div", { class: "ogl-info" }));
     info.appendChild(this.createDOM("div", {}, "Arrival"));
-    let arrivalDiv = info.appendChild(this.createDOM("div", { class: "ogl-arrival-time" }));
+    let arrivalDiv = info.appendChild(createDOM("div", { class: "ogl-arrival-time" }));
     info.appendChild(this.createDOM("div", {}, "Duration"));
-    let durationDiv = info.appendChild(this.createDOM("div", { class: "ogl-duration" }));
+    let durationDiv = info.appendChild(createDOM("div", { class: "ogl-duration" }));
     info.appendChild(this.createDOM("div", {}, "Return"));
-    let returnDiv = info.appendChild(this.createDOM("div", { class: "ogl-return-time" }));
+    let returnDiv = info.appendChild(createDOM("div", { class: "ogl-return-time" }));
     returnDiv.style.visibility = "hidden";
     info.appendChild(this.createDOM("div", {}, "Consumption"));
-    let consDiv = info.appendChild(this.createDOM("div", { class: "undermark" }));
+    let consDiv = info.appendChild(createDOM("div", { class: "undermark" }));
     let slider = briefing.appendChild(
       this.createDOM(
         "div",
@@ -9756,64 +9596,64 @@ class OGInfinity {
         deutLeft.classList.add("middlemark");
       }
     });
-    let missionsDiv = destination.appendChild(this.createDOM("div", { class: "ogl-missions" }));
+    let missionsDiv = destination.appendChild(createDOM("div", { class: "ogl-missions" }));
     missionsDiv.html('<span style="color: #9099a3"> No missions... </span>');
-    let resFiller = actions.appendChild(this.createDOM("div", { class: "ogl-res-filler" }));
+    let resFiller = actions.appendChild(createDOM("div", { class: "ogl-res-filler" }));
     let metalBtn = resFiller.appendChild(createDOM("div"));
-    metalBtn.appendChild(this.createDOM("div", { class: "resourceIcon metal" }));
-    let metalFiller = metalBtn.appendChild(this.createDOM("input", { type: "text" }));
+    metalBtn.appendChild(createDOM("div", { class: "resourceIcon metal" }));
+    let metalFiller = metalBtn.appendChild(createDOM("input", { type: "text" }));
     let metalLeft = metalBtn.appendChild(this.createDOM("span", {}, "-"));
     let metalReal = metalBtn.appendChild(this.createDOM("span", { class: "ogk-real-cargo ogk-metal" }, "-"));
-    let btns = metalBtn.appendChild(this.createDOM("div", { class: "ogl-actions" }));
+    let btns = metalBtn.appendChild(createDOM("div", { class: "ogl-actions" }));
     let selectMinMetal = btns.appendChild(
-      this.createDOM("img", {
+      createDOM("img", {
         src: "https://gf2.geo.gfsrv.net/cdn10/45494a6e18d52e5c60c8fb56dfbcc4.gif",
       })
     );
-    let selectMostMetal = btns.appendChild(this.createDOM("a", { class: "select-most-min" }));
+    let selectMostMetal = btns.appendChild(createDOM("a", { class: "select-most-min" }));
     let selectMaxMetal = btns.appendChild(
-      this.createDOM("img", {
+      createDOM("img", {
         src: "https://gf3.geo.gfsrv.net/cdnea/fa0c8ee62604e3af52e6ef297faf3c.gif",
       })
     );
     let crystalBtn = resFiller.appendChild(createDOM("div"));
-    crystalBtn.appendChild(this.createDOM("div", { class: "resourceIcon crystal" }));
-    let crystalFiller = crystalBtn.appendChild(this.createDOM("input", { type: "text" }));
+    crystalBtn.appendChild(createDOM("div", { class: "resourceIcon crystal" }));
+    let crystalFiller = crystalBtn.appendChild(createDOM("input", { type: "text" }));
     let crystalLeft = crystalBtn.appendChild(this.createDOM("span", {}, "-"));
     let crystalReal = crystalBtn.appendChild(this.createDOM("span", { class: "ogk-real-cargo ogk-crystal" }, "-"));
-    let crystalBtns = crystalBtn.appendChild(this.createDOM("div", { class: "ogl-actions" }));
+    let crystalBtns = crystalBtn.appendChild(createDOM("div", { class: "ogl-actions" }));
     let selectMinCrystal = crystalBtns.appendChild(
-      this.createDOM("img", {
+      createDOM("img", {
         src: "https://gf2.geo.gfsrv.net/cdn10/45494a6e18d52e5c60c8fb56dfbcc4.gif",
       })
     );
-    let selectMostCrystal = crystalBtns.appendChild(this.createDOM("a", { class: "select-most-min" }));
+    let selectMostCrystal = crystalBtns.appendChild(createDOM("a", { class: "select-most-min" }));
     let selectMaxCrystal = crystalBtns.appendChild(
-      this.createDOM("img", {
+      createDOM("img", {
         src: "https://gf3.geo.gfsrv.net/cdnea/fa0c8ee62604e3af52e6ef297faf3c.gif",
       })
     );
     let deutBtn = resFiller.appendChild(createDOM("div"));
-    deutBtn.appendChild(this.createDOM("div", { class: "resourceIcon deuterium" }));
-    let deutFiller = deutBtn.appendChild(this.createDOM("input", { type: "text" }));
+    deutBtn.appendChild(createDOM("div", { class: "resourceIcon deuterium" }));
+    let deutFiller = deutBtn.appendChild(createDOM("input", { type: "text" }));
     let deutLeft = deutBtn.appendChild(this.createDOM("span", {}, "-"));
     let deutReal = deutBtn.appendChild(this.createDOM("span", { class: "ogk-real-cargo ogk-deut" }, "-"));
-    let deutBtns = deutBtn.appendChild(this.createDOM("div", { class: "ogl-actions" }));
+    let deutBtns = deutBtn.appendChild(createDOM("div", { class: "ogl-actions" }));
     let selectMinDeut = deutBtns.appendChild(
-      this.createDOM("img", {
+      createDOM("img", {
         src: "https://gf2.geo.gfsrv.net/cdn10/45494a6e18d52e5c60c8fb56dfbcc4.gif",
       })
     );
-    let selectMostDeut = deutBtns.appendChild(this.createDOM("a", { class: "select-most-min" }));
+    let selectMostDeut = deutBtns.appendChild(createDOM("a", { class: "select-most-min" }));
     let selectMaxDeut = deutBtns.appendChild(
-      this.createDOM("img", {
+      createDOM("img", {
         src: "https://gf3.geo.gfsrv.net/cdnea/fa0c8ee62604e3af52e6ef297faf3c.gif",
       })
     );
     $("#selectMaxMetal").after(this.createDOM("span", { class: "ogi-metalLeft" }, "-"));
     $("#selectMaxCrystal").after(this.createDOM("span", { class: "ogi-crystalLeft" }, "-"));
     $("#selectMaxDeuterium").after(this.createDOM("span", { class: "ogi-deuteriumLeft" }, "-"));
-    $("#allresources").after(this.createDOM("a", { class: "select-most" }));
+    $("#allresources").after(createDOM("a", { class: "select-most" }));
     $("#allresources").after(this.createDOM("a", { class: "send_none" }, "<a></a>"));
     $("#loadAllResources .select-most").on("click", () => {
       $("#selectMinDeuterium").click();
@@ -9828,9 +9668,9 @@ class OGInfinity {
       $("#selectMinCrystal").click();
       $("#selectMinMetal").click();
     });
-    let load = this.createDOM("div", { class: "ogl-cargo" });
-    let selectMostRes = load.appendChild(this.createDOM("a", { class: "select-most" }));
-    let selectAllRes = load.appendChild(this.createDOM("a", { class: "sendall" }));
+    let load = createDOM("div", { class: "ogl-cargo" });
+    let selectMostRes = load.appendChild(createDOM("a", { class: "select-most" }));
+    let selectAllRes = load.appendChild(createDOM("a", { class: "sendall" }));
     let selectNoRes = load.appendChild(this.createDOM("a", { class: "send_none" }, "<a></a>"));
     selectNoRes.addEventListener("click", () => {
       selectMinDeut.click();
@@ -9847,7 +9687,7 @@ class OGInfinity {
       selectMostCrystal.click();
       selectMostMetal.click();
     });
-    let bar = load.appendChild(this.createDOM("div", {}));
+    let bar = load.appendChild(createDOM("div"));
     bar.replaceChildren(
       createDOM("div", { class: "fleft bar_container", "data-current-amount": "0", "data-capacity": "0" }).appendChild(
         createDOM("div", { class: "filllevel_bar" })
@@ -9868,43 +9708,28 @@ class OGInfinity {
       this.popup(null, this.keepOnPlanetDialog(this.current.coords + (this.current.isMoon ? "M" : "P")));
     });
     resDiv.appendChild(load);
-    let transport = actions.appendChild(this.createDOM("div", { class: "ogl-res-transport" }));
+    let transport = actions.appendChild(createDOM("div", { class: "ogl-res-transport" }));
     let ptBtn = transport.appendChild(
-      this.createDOM("a", {
-        "tech-id": 202,
-        class: "ogl-option ogl-fleet-ship ogl-fleet-202",
-      })
+      createDOM("a", { "tech-id": 202, class: "ogl-option ogl-fleet-ship ogl-fleet-202" })
     );
     let ptNum = transport.appendChild(this.createDOM("span", {}, "-"));
     let gtBtn = transport.appendChild(
-      this.createDOM("a", {
-        "tech-id": 203,
-        class: "ogl-option ogl-fleet-ship ogl-fleet-203",
-      })
+      createDOM("a", { "tech-id": 203, class: "ogl-option ogl-fleet-ship ogl-fleet-203" })
     );
     let gtNum = transport.appendChild(this.createDOM("span", {}, "-"));
     let pfBtn = transport.appendChild(
-      this.createDOM("a", {
-        "tech-id": 219,
-        class: "ogl-option ogl-fleet-ship ogl-fleet-219",
-      })
+      createDOM("a", { "tech-id": 219, class: "ogl-option ogl-fleet-ship ogl-fleet-219" })
     );
     let pfNum = transport.appendChild(this.createDOM("span", {}, "-"));
     let cyBtn = transport.appendChild(
-      this.createDOM("a", {
-        "tech-id": 209,
-        class: "ogl-option ogl-fleet-ship ogl-fleet-209",
-      })
+      createDOM("a", { "tech-id": 209, class: "ogl-option ogl-fleet-ship ogl-fleet-209" })
     );
     let cyNum = transport.appendChild(this.createDOM("span", {}, "-"));
     let pbBtn;
     let pbNum;
     if (this.json.pbFret != 0) {
       pbBtn = transport.appendChild(
-        this.createDOM("a", {
-          "tech-id": 210,
-          class: "ogl-option ogl-fleet-ship ogl-fleet-210",
-        })
+        createDOM("a", { "tech-id": 210, class: "ogl-option ogl-fleet-ship ogl-fleet-210" })
       );
       pbNum = transport.appendChild(this.createDOM("span", {}, "-"));
     }
@@ -9974,7 +9799,7 @@ class OGInfinity {
         resources: metal + crystal + deut,
       });
       let warning = document.querySelector("#warning");
-      let neededShips = warning.appendChild(this.createDOM("div", { class: "noShips" }));
+      let neededShips = warning.appendChild(createDOM("div", { class: "noShips" }));
       let planetId = this.current.isMoon ? this.json.empire[this.current.index].moonID : this.current.id;
       neededShips.appendChild(
         this.createDOM(
@@ -10058,16 +9883,14 @@ class OGInfinity {
           }
         });
       };
-      let dispatch = document
-        .querySelector("#shipsChosen")
-        .appendChild(this.createDOM("div", { class: "ogl-dispatch" }));
+      let dispatch = document.querySelector("#shipsChosen").appendChild(createDOM("div", { class: "ogl-dispatch" }));
       if (!this.json.options.dispatcher) {
         dispatch.style.display = "none";
       }
-      let destination = dispatch.appendChild(this.createDOM("div", { class: "ogl-dest" }));
+      let destination = dispatch.appendChild(createDOM("div", { class: "ogl-dest" }));
       let resDiv = dispatch.appendChild(createDOM("div"));
-      let actions = resDiv.appendChild(this.createDOM("div", { class: "ogl-transport" }));
-      let coords = destination.appendChild(this.createDOM("div", { class: "ogl-coords" }));
+      let actions = resDiv.appendChild(createDOM("div", { class: "ogl-transport" }));
+      let coords = destination.appendChild(createDOM("div", { class: "ogl-coords" }));
       document.querySelectorAll("#buttonz .header").forEach((elem) => (elem.style.display = "none"));
       document.querySelectorAll("#buttonz .missionHeader").forEach((elem) => (elem.style.display = "none"));
       document.querySelectorAll("#buttonz .move-box-wrapper").forEach((elem) => (elem.style.display = "none"));
@@ -10081,10 +9904,10 @@ class OGInfinity {
       document
         .querySelector("#fleetboxdestination")
         .parentNode.insertBefore(
-          this.createDOM("div", { id: "ogi-fleet2-ships" }),
+          createDOM("div", { id: "ogi-fleet2-ships" }),
           document.querySelector("#fleetboxdestination").nextSibling
         );
-      document.querySelector("#ogi-fleet2-ships").appendChild(this.createDOM("div", { class: "content" }));
+      document.querySelector("#ogi-fleet2-ships").appendChild(createDOM("div", { class: "content" }));
       document
         .querySelector("#ogi-fleet2-ships")
         .appendChild(
@@ -10095,13 +9918,10 @@ class OGInfinity {
           )
         );
       let warning = coords.appendChild(
-        this.createDOM("a", {
-          class: "ogl-warning tooltipRight",
-          "data-title": "Error : current planet/moon...",
-        })
+        createDOM("a", { class: "ogl-warning tooltipRight", "data-title": "Error : current planet/moon..." })
       );
       let galaxyInput = coords.appendChild(
-        this.createDOM("input", {
+        createDOM("input", {
           id: "galaxyInput",
           type: "text",
           pattern: "[0-9]*",
@@ -10109,7 +9929,7 @@ class OGInfinity {
         })
       );
       let systemInput = coords.appendChild(
-        this.createDOM("input", {
+        createDOM("input", {
           id: "systemInput",
           type: "text",
           pattern: "[0-9]*",
@@ -10117,16 +9937,16 @@ class OGInfinity {
         })
       );
       let positionInput = coords.appendChild(
-        this.createDOM("input", {
+        createDOM("input", {
           id: "positionInput",
           type: "text",
           pattern: "[0-9]*",
           value: fleetDispatcher.targetPlanet.position,
         })
       );
-      let planet = coords.appendChild(this.createDOM("a", { class: "ogl-planet-icon" }));
-      let moon = coords.appendChild(this.createDOM("a", { class: "ogl-moon-icon" }));
-      let debris = coords.appendChild(this.createDOM("a", { class: "ogl-debris-icon" }));
+      let planet = coords.appendChild(createDOM("a", { class: "ogl-planet-icon" }));
+      let moon = coords.appendChild(createDOM("a", { class: "ogl-moon-icon" }));
+      let debris = coords.appendChild(createDOM("a", { class: "ogl-debris-icon" }));
       planet.addEventListener("click", () => {
         fleetDispatcher.targetPlanet.type = fleetDispatcher.fleetHelper.PLANETTYPE_PLANET;
         fleetDispatcher.fetchTargetPlayerData();
@@ -10210,12 +10030,7 @@ class OGInfinity {
           iconsDiv = missionsDiv.appendChild(createDOM("div"));
           let defaultMission;
           missions.forEach((index) => {
-            iconsDiv.appendChild(
-              this.createDOM("div", {
-                class: `ogl-mission-${index} ogl-mission-icon`,
-                mission: index,
-              })
-            );
+            iconsDiv.appendChild(createDOM("div", { class: `ogl-mission-${index} ogl-mission-icon`, mission: index }));
           });
 
           if (
@@ -10273,10 +10088,7 @@ class OGInfinity {
           )
         );
         unionsBtn.addEventListener("click", () => {
-          let container = this.createDOM("div", {
-            class: "ogl-quickLinks",
-            style: "display: flex;flex-direction:column",
-          });
+          let container = createDOM("div", { class: "ogl-quickLinks", style: "display: flex;flex-direction:column" });
           for (let i in unions) {
             let union = unions[i];
             let unionDiv = container.appendChild(
@@ -10328,17 +10140,17 @@ class OGInfinity {
         );
         this.popup(false, container);
       });
-      let briefing = destination.appendChild(this.createDOM("div", { style: "flex-direction: column" }));
-      let info = briefing.appendChild(this.createDOM("div", { class: "ogl-info" }));
+      let briefing = destination.appendChild(createDOM("div", { style: "flex-direction: column" }));
+      let info = briefing.appendChild(createDOM("div", { class: "ogl-info" }));
       info.appendChild(this.createDOM("div", {}, "Arrival"));
-      let arrivalDiv = info.appendChild(this.createDOM("div", { class: "ogl-arrival-time" }));
+      let arrivalDiv = info.appendChild(createDOM("div", { class: "ogl-arrival-time" }));
       info.appendChild(this.createDOM("div", {}, "Duration"));
-      let durationDiv = info.appendChild(this.createDOM("div", { class: "ogl-duration" }));
+      let durationDiv = info.appendChild(createDOM("div", { class: "ogl-duration" }));
       info.appendChild(this.createDOM("div", {}, "Return"));
-      let returnDiv = info.appendChild(this.createDOM("div", { class: "ogl-return-time" }));
+      let returnDiv = info.appendChild(createDOM("div", { class: "ogl-return-time" }));
       returnDiv.style.visibility = "hidden";
       info.appendChild(this.createDOM("div", {}, "Consumption"));
-      let consDiv = info.appendChild(this.createDOM("div", { class: "undermark" }));
+      let consDiv = info.appendChild(createDOM("div", { class: "undermark" }));
       let slider = briefing.appendChild(
         this.createDOM(
           "div",
@@ -10385,7 +10197,7 @@ class OGInfinity {
       $("#resetall").on("click", () => {
         document.querySelector("#missionsDiv").setAttribute("data", "true");
       });
-      let missionsDiv = destination.appendChild(this.createDOM("div", { class: "ogl-missions", id: "missionsDiv" }));
+      let missionsDiv = destination.appendChild(createDOM("div", { class: "ogl-missions", id: "missionsDiv" }));
       missionsDiv.html(`<span style="color: #9099a3">${that.getTranslatedText(111)}</span>`);
       let switchToPage = fleetDispatcher.switchToPage.bind(fleetDispatcher);
       let refresh = fleetDispatcher.refresh.bind(fleetDispatcher);
@@ -10498,12 +10310,7 @@ class OGInfinity {
           let defaultMish = 0;
           let union = false;
           missions.forEach((index) => {
-            iconsDiv.appendChild(
-              this.createDOM("div", {
-                class: `ogl-mission-${index} ogl-mission-icon`,
-                mission: index,
-              })
-            );
+            iconsDiv.appendChild(createDOM("div", { class: `ogl-mission-${index} ogl-mission-icon`, mission: index }));
             if (missions.length == 1) {
               defaultMish = index;
             } else {
@@ -10708,55 +10515,55 @@ class OGInfinity {
       galaxyInput.addEventListener("keyup", myEfficientFn);
       systemInput.addEventListener("keyup", myEfficientFn);
       positionInput.addEventListener("keyup", myEfficientFn);
-      let resFiller = actions.appendChild(this.createDOM("div", { class: "ogl-res-filler" }));
+      let resFiller = actions.appendChild(createDOM("div", { class: "ogl-res-filler" }));
       let metalBtn = resFiller.appendChild(createDOM("div"));
-      metalBtn.appendChild(this.createDOM("div", { class: "resourceIcon metal" }));
-      let metalFiller = metalBtn.appendChild(this.createDOM("input", { type: "text" }));
+      metalBtn.appendChild(createDOM("div", { class: "resourceIcon metal" }));
+      let metalFiller = metalBtn.appendChild(createDOM("input", { type: "text" }));
       let metalLeft = metalBtn.appendChild(this.createDOM("span", {}, "-"));
       let metalReal = metalBtn.appendChild(this.createDOM("span", { class: "ogk-real-cargo ogk-metal" }, "-"));
-      let btns = metalBtn.appendChild(this.createDOM("div", { class: "ogl-actions" }));
+      let btns = metalBtn.appendChild(createDOM("div", { class: "ogl-actions" }));
       let selectMinMetal = btns.appendChild(
-        this.createDOM("img", {
+        createDOM("img", {
           src: "https://gf2.geo.gfsrv.net/cdn10/45494a6e18d52e5c60c8fb56dfbcc4.gif",
         })
       );
-      let selectMostMetal = btns.appendChild(this.createDOM("a", { class: "select-most-min" }));
+      let selectMostMetal = btns.appendChild(createDOM("a", { class: "select-most-min" }));
       let selectMaxMetal = btns.appendChild(
-        this.createDOM("img", {
+        createDOM("img", {
           src: "https://gf3.geo.gfsrv.net/cdnea/fa0c8ee62604e3af52e6ef297faf3c.gif",
         })
       );
       let crystalBtn = resFiller.appendChild(createDOM("div"));
-      crystalBtn.appendChild(this.createDOM("div", { class: "resourceIcon crystal" }));
-      let crystalFiller = crystalBtn.appendChild(this.createDOM("input", { type: "text" }));
+      crystalBtn.appendChild(createDOM("div", { class: "resourceIcon crystal" }));
+      let crystalFiller = crystalBtn.appendChild(createDOM("input", { type: "text" }));
       let crystalLeft = crystalBtn.appendChild(this.createDOM("span", {}, "-"));
       let crystalReal = crystalBtn.appendChild(this.createDOM("span", { class: "ogk-real-cargo ogk-crystal" }, "-"));
-      let crystalBtns = crystalBtn.appendChild(this.createDOM("div", { class: "ogl-actions" }));
+      let crystalBtns = crystalBtn.appendChild(createDOM("div", { class: "ogl-actions" }));
       let selectMinCrystal = crystalBtns.appendChild(
-        this.createDOM("img", {
+        createDOM("img", {
           src: "https://gf2.geo.gfsrv.net/cdn10/45494a6e18d52e5c60c8fb56dfbcc4.gif",
         })
       );
-      let selectMostCrystal = crystalBtns.appendChild(this.createDOM("a", { class: "select-most-min" }));
+      let selectMostCrystal = crystalBtns.appendChild(createDOM("a", { class: "select-most-min" }));
       let selectMaxCrystal = crystalBtns.appendChild(
-        this.createDOM("img", {
+        createDOM("img", {
           src: "https://gf3.geo.gfsrv.net/cdnea/fa0c8ee62604e3af52e6ef297faf3c.gif",
         })
       );
       let deutBtn = resFiller.appendChild(createDOM("div"));
-      deutBtn.appendChild(this.createDOM("div", { class: "resourceIcon deuterium" }));
-      let deutFiller = deutBtn.appendChild(this.createDOM("input", { type: "text" }));
+      deutBtn.appendChild(createDOM("div", { class: "resourceIcon deuterium" }));
+      let deutFiller = deutBtn.appendChild(createDOM("input", { type: "text" }));
       let deutLeft = deutBtn.appendChild(this.createDOM("span", {}, "-"));
       let deutReal = deutBtn.appendChild(this.createDOM("span", { class: "ogk-real-cargo ogk-deut" }, "-"));
-      let deutBtns = deutBtn.appendChild(this.createDOM("div", { class: "ogl-actions" }));
+      let deutBtns = deutBtn.appendChild(createDOM("div", { class: "ogl-actions" }));
       let selectMinDeut = deutBtns.appendChild(
-        this.createDOM("img", {
+        createDOM("img", {
           src: "https://gf2.geo.gfsrv.net/cdn10/45494a6e18d52e5c60c8fb56dfbcc4.gif",
         })
       );
-      let selectMostDeut = deutBtns.appendChild(this.createDOM("a", { class: "select-most-min" }));
+      let selectMostDeut = deutBtns.appendChild(createDOM("a", { class: "select-most-min" }));
       let selectMaxDeut = deutBtns.appendChild(
-        this.createDOM("img", {
+        createDOM("img", {
           src: "https://gf3.geo.gfsrv.net/cdnea/fa0c8ee62604e3af52e6ef297faf3c.gif",
         })
       );
@@ -10832,32 +10639,17 @@ class OGInfinity {
           });
         });
       }
-      $("#selectMinMetal").after(this.createDOM("a", { id: "selectMostMetal", class: "select-most-min" }));
-      $("#selectMinCrystal").after(
-        this.createDOM("a", {
-          id: "selectMostCrystal",
-          class: "select-most-min",
-        })
-      );
-      $("#selectMinDeuterium").after(
-        this.createDOM("a", {
-          id: "selectMostDeuterium",
-          class: "select-most-min",
-        })
-      );
+      $("#selectMinMetal").after(createDOM("a", { id: "selectMostMetal", class: "select-most-min" }));
+      $("#selectMinCrystal").after(createDOM("a", { id: "selectMostCrystal", class: "select-most-min" }));
+      $("#selectMinDeuterium").after(createDOM("a", { id: "selectMostDeuterium", class: "select-most-min" }));
       if (this.hasLifeforms) {
-        $("#selectMinFood").after(
-          this.createDOM("a", {
-            id: "selectMostFood",
-            class: "select-most-min",
-          })
-        );
+        $("#selectMinFood").after(createDOM("a", { id: "selectMostFood", class: "select-most-min" }));
         $("#selectMaxFood").after(this.createDOM("span", { class: "ogi-foodLeft" }, "-"));
       }
       $("#selectMaxMetal").after(this.createDOM("span", { class: "ogi-metalLeft" }, "-"));
       $("#selectMaxCrystal").after(this.createDOM("span", { class: "ogi-crystalLeft" }, "-"));
       $("#selectMaxDeuterium").after(this.createDOM("span", { class: "ogi-deuteriumLeft" }, "-"));
-      $("#allresources").after(this.createDOM("a", { class: "select-most" }));
+      $("#allresources").after(createDOM("a", { class: "select-most" }));
       $("#allresources").after(this.createDOM("a", { class: "send_none" }, "<a></a>"));
       $("#loadAllResources .select-most").on("click", () => {
         $("#selectMinDeuterium").click();
@@ -11064,9 +10856,9 @@ class OGInfinity {
           }
         });
       });
-      let load = this.createDOM("div", { class: "ogl-cargo" });
-      let selectMostRes = load.appendChild(this.createDOM("a", { class: "select-most" }));
-      let selectAllRes = load.appendChild(this.createDOM("a", { class: "sendall" }));
+      let load = createDOM("div", { class: "ogl-cargo" });
+      let selectMostRes = load.appendChild(createDOM("a", { class: "select-most" }));
+      let selectAllRes = load.appendChild(createDOM("a", { class: "sendall" }));
       let selectNoRes = load.appendChild(this.createDOM("a", { class: "send_none" }, "<a></a>"));
       selectNoRes.addEventListener("click", () => {
         selectMinDeut.click();
@@ -11083,7 +10875,7 @@ class OGInfinity {
         selectMostCrystal.click();
         selectMostMetal.click();
       });
-      let bar = load.appendChild(this.createDOM("div", {}));
+      let bar = load.appendChild(createDOM("div"));
       bar.replaceChildren(
         createDOM("div", {
           class: "fleft bar_container",
@@ -11184,30 +10976,30 @@ class OGInfinity {
         );
         onResChange(2);
       });
-      let transport = actions.appendChild(this.createDOM("div", { class: "ogl-res-transport" }));
+      let transport = actions.appendChild(createDOM("div", { class: "ogl-res-transport" }));
       let ptBtn = transport.appendChild(
-        this.createDOM("a", {
+        createDOM("a", {
           "tech-id": 202,
           class: "ogl-option ogl-fleet-ship ogl-fleet-202",
         })
       );
       let ptNum = transport.appendChild(this.createDOM("span", { class: "tooltip" }, "-"));
       let gtBtn = transport.appendChild(
-        this.createDOM("a", {
+        createDOM("a", {
           "tech-id": 203,
           class: "ogl-option ogl-fleet-ship ogl-fleet-203",
         })
       );
       let gtNum = transport.appendChild(this.createDOM("span", { class: "tooltip" }, "-"));
       let pfBtn = transport.appendChild(
-        this.createDOM("a", {
+        createDOM("a", {
           "tech-id": 219,
           class: "ogl-option ogl-fleet-ship ogl-fleet-219",
         })
       );
       let pfNum = transport.appendChild(this.createDOM("span", { class: "tooltip" }, "-"));
       let cyBtn = transport.appendChild(
-        this.createDOM("a", {
+        createDOM("a", {
           "tech-id": 209,
           class: "ogl-option ogl-fleet-ship ogl-fleet-209",
         })
@@ -11217,7 +11009,7 @@ class OGInfinity {
       let pbNum;
       if (this.json.ships[210].cargoCapacity != 0) {
         pbBtn = transport.appendChild(
-          this.createDOM("a", {
+          createDOM("a", {
             "tech-id": 210,
             class: "ogl-option ogl-fleet-ship ogl-fleet-210",
           })
@@ -11464,9 +11256,7 @@ class OGInfinity {
   }
 
   openPlanetList(callcback, target = fleetDispatcher.targetPlanet, mission = fleetDispatcher.mission) {
-    let container = this.createDOM("div", {
-      class: "ogl-dialogContainer ogl-quickLinks",
-    });
+    let container = createDOM("div", { class: "ogl-dialogContainer ogl-quickLinks" });
     let buildButton = (planet, id, galaxy, system, position, type) => {
       let data = {
         id: id,
@@ -11658,32 +11448,22 @@ class OGInfinity {
       let maxPT = Math.max(minPT, this.calcNeededShips({ fret: 202, resources: maxTotal }));
       let maxGT = Math.max(minGT, this.calcNeededShips({ fret: 203, resources: maxTotal }));
       if (!document.querySelector("#allornone .allornonewrap")) return;
-      let expCargoChoice = this.createDOM("div", {
-        class: "ogk-expedition-cargo",
-      });
+      let expCargoChoice = createDOM("div", { class: "ogk-expedition-cargo" });
       let expType = this.json.options.expFret || 203;
       let expCount = expType == 202 ? maxPT : maxGT;
       let expProbe = this.json.options.expeditionSendProbe;
       let expCombat = this.json.options.expeditionSendCombat;
-      let btnExpe = document.querySelector("#allornone .secondcol").appendChild(
-        this.createDOM("button", {
-          class: `ogl-expedition ${expType == 203 ? "largeCargo" : "smallCargo"} `,
-        })
-      );
+      let btnExpe = document
+        .querySelector("#allornone .secondcol")
+        .appendChild(createDOM("button", { class: `ogl-expedition ${expType == 203 ? "largeCargo" : "smallCargo"} ` }));
       let sc = expCargoChoice.appendChild(
-        this.createDOM("div", {
-          class: "ogl-option ogl-fleet-ship choice ogl-fleet-202",
-        })
+        createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-202" })
       );
       let lc = expCargoChoice.appendChild(
-        this.createDOM("div", {
-          class: "ogl-option ogl-fleet-ship choice ogl-fleet-203",
-        })
+        createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-203" })
       );
       let probe = expCargoChoice.appendChild(
-        this.createDOM("div", {
-          class: `ogl-option ogl-fleet-ship choice ogl-fleet-210 ${expProbe ? "" : "grey"}`,
-        })
+        createDOM("div", { class: `ogl-option ogl-fleet-ship choice ogl-fleet-210 ${expProbe ? "" : "grey"}` })
       );
       probe.addEventListener("click", () => {
         this.json.options.expeditionSendProbe = !this.json.options.expeditionSendProbe;
@@ -11695,9 +11475,7 @@ class OGInfinity {
         }`;
       });
       let combat = expCargoChoice.appendChild(
-        this.createDOM("div", {
-          class: `ogl-option ogl-fleet-ship choice ogl-fleet-218 ${expCombat ? "" : "grey"}`,
-        })
+        createDOM("div", { class: `ogl-option ogl-fleet-ship choice ogl-fleet-218 ${expCombat ? "" : "grey"}` })
       );
       combat.addEventListener("click", () => {
         this.json.options.expeditionSendCombat = !this.json.options.expeditionSendCombat;
@@ -11792,9 +11570,7 @@ class OGInfinity {
       let btn = document
         .querySelector("#shortcuts span")
         .appendChild(this.createDOM("btn", { class: "ogl-quickBtn" }, "-"));
-      let container = this.createDOM("div", {
-        class: "ogl-dialogContainer ogl-quickLinks",
-      });
+      let container = createDOM("div", { class: "ogl-dialogContainer ogl-quickLinks" });
       container.addEventListener("click", (event) => {
         if (!event.target.href) {
           event.stopPropagation();
@@ -11826,12 +11602,9 @@ class OGInfinity {
       let coords = planet.querySelector(".planet-koords").textContent;
       let timers = this.json.myActivities[coords] || [0, 0];
       let value = Math.min(Math.round((now - timers[0]) / 6e4), 60);
-      let pTimer = planet.querySelector(".planetlink").appendChild(
-        this.createDOM("div", {
-          class: "ogl-timer ogl-short ogl-medium",
-          "data-timer": value,
-        })
-      );
+      let pTimer = planet
+        .querySelector(".planetlink")
+        .appendChild(createDOM("div", { class: "ogl-timer ogl-short ogl-medium", "data-timer": value }));
       if (this.json.options.activitytimers && value != 60 && value >= 15) {
         planet
           .querySelector(".planetlink")
@@ -11842,7 +11615,7 @@ class OGInfinity {
       value = Math.min(Math.round((now - timers[1]) / 6e4), 60);
       if (planet.querySelector(".moonlink")) {
         let mTimer = planet.querySelector(".moonlink").appendChild(
-          this.createDOM("div", {
+          createDOM("div", {
             class: "ogl-timer ogl-short ogl-medium",
             "data-timer": Math.min(Math.round((now - timers[1]) / 6e4), 60),
           })
@@ -12506,7 +12279,7 @@ class OGInfinity {
     document.querySelector(".ogl-overview-icon").classList.add("ogl-active");
     let list = document.querySelector("#planetList");
     list.classList.add("moon-construction-sum");
-    let flying = this.createDOM("div", { class: "ogl-res" });
+    let flying = createDOM("div", { class: "ogl-res" });
     flying.appendChild(
       this.createDOM(
         "span",
@@ -12584,9 +12357,7 @@ class OGInfinity {
       </tr>`;
       }
     }
-    let flyingSum = this.createDOM("div", {
-      class: "smallplanet smaller ogl-summary",
-    });
+    let flyingSum = createDOM("div", { class: "smallplanet smaller ogl-summary" });
     flyingSum.appendChild(this.createDOM("div", { class: "ogl-sum-symbol" }, '<span class="icon_movement"></span>'));
     flyingSum.querySelector(".icon_movement").classList.add("tooltip", "tooltipTop", "tooltipClose");
     flyingSum.querySelector(".icon_movement").setAttribute(
@@ -12625,7 +12396,7 @@ class OGInfinity {
       let isaFullM = elem.metalStorage - elem.metal > elem.production.hourly[0] * 2 ? "" : " ogl-afull";
       let isaFullC = elem.crystalStorage - elem.crystal > elem.production.hourly[1] * 2 ? "" : " ogl-afull";
       let isaFullD = elem.deuteriumStorage - elem.deuterium > elem.production.hourly[2] * 2 ? "" : " ogl-afull";
-      let divPla = this.createDOM("div", { class: "ogl-res" });
+      let divPla = createDOM("div", { class: "ogl-res" });
       if (elem.invalidate) divPla.classList.add("ogi-invalidate");
       divPla.appendChild(
         this.createDOM(
@@ -12664,7 +12435,7 @@ class OGInfinity {
         .querySelector(".planetlink")
         .parentNode.insertBefore(divPla, planet.querySelector(".planetlink").nextSibling);
       if (elem.moon) {
-        let divMoon = this.createDOM("div", { class: "ogl-res" });
+        let divMoon = createDOM("div", { class: "ogl-res" });
         if (elem.moon.invalidate) {
           divMoon.classList.add("ogi-invalidate");
         }
@@ -12704,7 +12475,7 @@ class OGInfinity {
         planet.appendChild(divMoon);
       }
     });
-    let divPlaSum = this.createDOM("div", { class: "ogl-res" });
+    let divPlaSum = createDOM("div", { class: "ogl-res" });
     divPlaSum.appendChild(
       this.createDOM(
         "span",
@@ -12732,7 +12503,7 @@ class OGInfinity {
         toFormatedNumber(Math.floor(dSumP), null, true)
       )
     );
-    let divMoonSum = this.createDOM("div", { class: "ogl-res" });
+    let divMoonSum = createDOM("div", { class: "ogl-res" });
     divMoonSum.appendChild(
       this.createDOM(
         "span",
@@ -12763,19 +12534,15 @@ class OGInfinity {
         toFormatedNumber(Math.floor(dSumM), null, true)
       )
     );
-    let sumPlanet = this.createDOM("div", {
-      class: "smallplanet smaller ogl-summary",
-    });
+    let sumPlanet = createDOM("div", { class: "smallplanet smaller ogl-summary" });
     sumPlanet.appendChild(this.createDOM("div", { class: "ogl-sum-symbol" }, "Σ"));
     sumPlanet.appendChild(divPlaSum);
     let moonSumSymbol = sumPlanet.appendChild(this.createDOM("div", { class: "ogl-sum-symbol" }, "Σ"));
     sumPlanet.appendChild(divMoonSum);
     list.appendChild(sumPlanet);
     list.appendChild(flyingSum);
-    let sum = this.createDOM("div", {
-      class: "smallplanet smaller ogl-summary",
-    });
-    let sumres = this.createDOM("div", { class: "ogl-res" });
+    let sum = createDOM("div", { class: "smallplanet smaller ogl-summary" });
+    let sumres = createDOM("div", { class: "ogl-res" });
     sumres.appendChild(
       this.createDOM(
         "span",
@@ -12847,14 +12614,11 @@ class OGInfinity {
     let renderTagetList = () => {
       let galaxy = this.json.targetTabs.g == -1 ? false : true;
       let system = this.json.targetTabs.s == -1 ? false : true;
-      let div = this.createDOM("div", { class: "ogl-target-list" });
-      let header = div.appendChild(this.createDOM("div", { class: "ogk-controls" }));
+      let div = createDOM("div", { class: "ogl-target-list" });
+      let header = div.appendChild(createDOM("div", { class: "ogk-controls" }));
       let markers = header.appendChild(createDOM("div"));
       ["red", "orange", "yellow", "green", "blue", "violet", "gray", "brown"].forEach((color) => {
-        let toggle = this.createDOM("div", {
-          class: "tooltip ogl-toggle",
-          title: this.getTranslatedText(40),
-        });
+        let toggle = createDOM("div", { class: "tooltip ogl-toggle", title: this.getTranslatedText(40) });
         toggle.setAttribute("data-toggle", color);
         markers.appendChild(toggle);
         if (!this.json.options.hiddenTargets[color]) toggle.classList.add("ogl-active");
@@ -12870,12 +12634,7 @@ class OGInfinity {
           checkEmpty(galaxy, system);
         });
       });
-      let filterTabs = header.appendChild(
-        this.createDOM("div", {
-          class: "ogl-tabList",
-          style: "margin-bottom: 5px;",
-        })
-      );
+      let filterTabs = header.appendChild(createDOM("div", { class: "ogl-tabList", style: "margin-bottom: 5px;" }));
       let tabG = filterTabs.appendChild(
         this.createDOM("div", { class: "ogl-tab" + (!galaxy ? " ogl-active" : "") }, "Gs")
       );
@@ -12921,14 +12680,14 @@ class OGInfinity {
         checkEmpty(galaxy, system);
       });
       let content = div.appendChild(
-        this.createDOM("div", {
+        createDOM("div", {
           class: "ogl-dialogContainer ogl-stalkContainer",
           style: "max-height: 400px; overflow: hidden",
         })
       );
-      let galaxyTabList = header.appendChild(this.createDOM("div", { class: "ogl-tabList ogl-galaxyTabList" }));
-      let systemTabList = header.appendChild(this.createDOM("div", { class: "ogl-tabList ogl-systemTabList" }));
-      let planetList = content.appendChild(this.createDOM("div", { class: "ogl-stalkPlanets" }));
+      let galaxyTabList = header.appendChild(createDOM("div", { class: "ogl-tabList ogl-galaxyTabList" }));
+      let systemTabList = header.appendChild(createDOM("div", { class: "ogl-tabList ogl-systemTabList" }));
+      let planetList = content.appendChild(createDOM("div", { class: "ogl-stalkPlanets" }));
       header.appendChild(createDOM("hr"));
       let checkEmpty = (galaxy, system) => {
         for (let g = 1; g <= 10; g++) {
@@ -13051,9 +12810,9 @@ class OGInfinity {
   }
 
   addMarkerUI(coords, parent, id) {
-    let div = this.createDOM("div", { class: "ogl-colorChoice" });
+    let div = createDOM("div", { class: "ogl-colorChoice" });
     ["red", "orange", "yellow", "green", "blue", "violet", "gray", "brown"].forEach((color) => {
-      let circle = div.appendChild(this.createDOM("div", { "data-marker": color }));
+      let circle = div.appendChild(createDOM("div", { "data-marker": color }));
       div.appendChild(circle);
       if (this.json.markers[coords] && this.json.markers[coords].color == color) {
         circle.classList.add("ogl-active");
@@ -13135,12 +12894,12 @@ class OGInfinity {
         ).parentElement,
         createDOM("hr", { style: "margin-bottom: 8px" })
       );
-      let actions = content.appendChild(this.createDOM("div", { class: "ogi-actions" }));
+      let actions = content.appendChild(createDOM("div", { class: "ogi-actions" }));
       actions.replaceChildren(
         createDOM("a", { href: `${this.generateIgnoreLink(player.id)}`, class: "icon icon_against" }),
         createDOM("a", { href: `${this.generateBuddyLink(player.id)}`, class: "icon icon_user overlay buddyrequest" })
       );
-      let msgBtn = actions.appendChild(this.createDOM("a", { class: "icon icon_chat" }));
+      let msgBtn = actions.appendChild(createDOM("a", { class: "icon icon_chat" }));
       msgBtn.addEventListener("click", () => {
         this.sendMessage(player.id);
       });
@@ -13178,30 +12937,20 @@ class OGInfinity {
         e.preventDefault();
         e.stopPropagation();
       });
-      let date = content.appendChild(
-        this.createDOM("span", {
-          style: "margin-top: 2px;",
-          class: "ogl-right ogl-date",
-        })
-      );
+      let date = content.appendChild(createDOM("span", { style: "margin-top: 2px;", class: "ogl-right ogl-date" }));
       content.appendChild(createDOM("hr"));
-      let detailRank = content.appendChild(this.createDOM("div", { class: "ogl-detailRank" }));
+      let detailRank = content.appendChild(createDOM("div", { class: "ogl-detailRank" }));
       content.appendChild(createDOM("hr"));
-      let list = content.appendChild(
-        this.createDOM("div", {
-          class: "ogl-stalkPlanets",
-          "player-id": player.id,
-        })
-      );
-      let count = content.appendChild(this.createDOM("div", { class: "ogl-fullGrid ogl-right" }));
-      let sideStalk = content.appendChild(this.createDOM("a", { class: "ogl-pin" }));
+      let list = content.appendChild(createDOM("div", { class: "ogl-stalkPlanets", "player-id": player.id }));
+      let count = content.appendChild(createDOM("div", { class: "ogl-fullGrid ogl-right" }));
+      let sideStalk = content.appendChild(createDOM("a", { class: "ogl-pin" }));
       sideStalk.addEventListener("click", () => this.sideStalk(player.id));
-      let stats = content.appendChild(this.createDOM("a", { class: "ogl-mmorpgstats" }));
+      let stats = content.appendChild(createDOM("a", { class: "ogl-mmorpgstats" }));
       stats.addEventListener("click", () => {
         window.open(this.generateMMORPGLink(player.id), "_blank");
       });
       if (this.json.options.ptreTK) {
-        let ptreLink = content.appendChild(this.createDOM("a", { class: "ogl-ptre" }));
+        let ptreLink = content.appendChild(createDOM("a", { class: "ogl-ptre" }));
         ptreLink.textContent = "P";
         ptreLink.addEventListener("click", () => {
           window.open(
@@ -13300,11 +13049,11 @@ class OGInfinity {
   renderPlanet(coords, main, scanned, moon, deleted) {
     coords = coords.split(":");
     let a = createDOM("a");
-    let planetDiv = a.appendChild(this.createDOM("div", { class: "ogl-planet-div" }));
-    let planetIcon = planetDiv.appendChild(this.createDOM("div", { class: "ogl-planet" }));
-    let panel = planetDiv.appendChild(this.createDOM("div", { class: "ogl-planet-hover" }));
-    let plaspy = panel.appendChild(this.createDOM("button", { class: "icon_eye" }));
-    let plaFleet = panel.appendChild(this.createDOM("div", { class: "ogl-atk" }));
+    let planetDiv = a.appendChild(createDOM("div", { class: "ogl-planet-div" }));
+    let planetIcon = planetDiv.appendChild(createDOM("div", { class: "ogl-planet" }));
+    let panel = planetDiv.appendChild(createDOM("div", { class: "ogl-planet-hover" }));
+    let plaspy = panel.appendChild(createDOM("button", { class: "icon_eye" }));
+    let plaFleet = panel.appendChild(createDOM("div", { class: "ogl-atk" }));
     plaspy.addEventListener("click", (e) => {
       sendShipsWithPopup(6, coords[0], coords[1], coords[2], 0, this.json.spyProbes);
       e.stopPropagation();
@@ -13313,7 +13062,7 @@ class OGInfinity {
       window.location.href = `?page=ingame&component=fleetdispatch&galaxy=${coords[0]}&system=${coords[1]}&position=${coords[2]}&type=1`;
       e.stopPropagation();
     });
-    planetDiv.appendChild(this.createDOM("div", { class: "ogl-planet-act" }));
+    planetDiv.appendChild(createDOM("div", { class: "ogl-planet-act" }));
     a.appendChild(this.createDOM("span", {}, coords.join(":")));
     a.setAttribute("data-coords", coords.join(":"));
     if (main) {
@@ -13325,12 +13074,12 @@ class OGInfinity {
     } else if (scanned) {
       a.classList.add("ogl-scan");
     }
-    let moonDiv = a.appendChild(this.createDOM("div", { class: "ogl-moon-div" }));
-    moonDiv.appendChild(this.createDOM("div", { class: "ogl-moon-act" }));
-    let mIcon = moonDiv.appendChild(this.createDOM("div", { class: "ogl-moon" }));
-    panel = moonDiv.appendChild(this.createDOM("div", { class: "ogl-moon-hover" }));
-    plaFleet = panel.appendChild(this.createDOM("div", { class: "ogl-atk" }));
-    plaspy = panel.appendChild(this.createDOM("button", { class: "icon_eye" }));
+    let moonDiv = a.appendChild(createDOM("div", { class: "ogl-moon-div" }));
+    moonDiv.appendChild(createDOM("div", { class: "ogl-moon-act" }));
+    let mIcon = moonDiv.appendChild(createDOM("div", { class: "ogl-moon" }));
+    panel = moonDiv.appendChild(createDOM("div", { class: "ogl-moon-hover" }));
+    plaFleet = panel.appendChild(createDOM("div", { class: "ogl-atk" }));
+    plaspy = panel.appendChild(createDOM("button", { class: "icon_eye" }));
     plaspy.addEventListener("click", (e) => {
       sendShipsWithPopup(6, coords[0], coords[1], coords[2], 3, this.json.spyProbes);
       e.stopPropagation();
@@ -13385,15 +13134,15 @@ class OGInfinity {
     sorted.forEach((planet) => {
       let coords = planet.coords.split(":");
       let a = createDOM("a");
-      let planetDiv = a.appendChild(this.createDOM("div", { class: "ogl-planet-div" }));
-      let planetIcon = planetDiv.appendChild(this.createDOM("div", { class: "ogl-planet" }));
-      let panel = planetDiv.appendChild(this.createDOM("div", { class: "ogl-planet-hover" }));
-      let plaspy = panel.appendChild(this.createDOM("button", { class: "icon_eye" }));
+      let planetDiv = a.appendChild(createDOM("div", { class: "ogl-planet-div" }));
+      let planetIcon = planetDiv.appendChild(createDOM("div", { class: "ogl-planet" }));
+      let panel = planetDiv.appendChild(createDOM("div", { class: "ogl-planet-hover" }));
+      let plaspy = panel.appendChild(createDOM("button", { class: "icon_eye" }));
       plaspy.addEventListener("click", (e) => {
         sendShipsWithPopup(6, coords[0], coords[1], coords[2], 0, this.json.spyProbes);
         e.stopPropagation();
       });
-      planetDiv.appendChild(this.createDOM("div", { class: "ogl-planet-act" }));
+      planetDiv.appendChild(createDOM("div", { class: "ogl-planet-act" }));
       a.appendChild(this.createDOM("span", {}, planet.coords));
       a.setAttribute("data-coords", planet.coords);
       if (planet.isMain) {
@@ -13405,11 +13154,11 @@ class OGInfinity {
       } else if (planet.scanned) {
         a.classList.add("ogl-scan");
       }
-      let moonDiv = a.appendChild(this.createDOM("div", { class: "ogl-moon-div" }));
-      moonDiv.appendChild(this.createDOM("div", { class: "ogl-moon-act" }));
-      let mIcon = moonDiv.appendChild(this.createDOM("div", { class: "ogl-moon" }));
-      panel = moonDiv.appendChild(this.createDOM("div", { class: "ogl-moon-hover" }));
-      plaspy = panel.appendChild(this.createDOM("button", { class: "icon_eye" }));
+      let moonDiv = a.appendChild(createDOM("div", { class: "ogl-moon-div" }));
+      moonDiv.appendChild(createDOM("div", { class: "ogl-moon-act" }));
+      let mIcon = moonDiv.appendChild(createDOM("div", { class: "ogl-moon" }));
+      panel = moonDiv.appendChild(createDOM("div", { class: "ogl-moon-hover" }));
+      plaspy = panel.appendChild(createDOM("button", { class: "icon_eye" }));
       plaspy.addEventListener("click", (e) => {
         sendShipsWithPopup(6, coords[0], coords[1], coords[2], 3, this.json.spyProbes);
         e.stopPropagation();
@@ -13465,7 +13214,7 @@ class OGInfinity {
       if (sideStalk) {
         sideStalk.remove();
       }
-      sideStalk = document.querySelector("#links").appendChild(this.createDOM("div", { class: "ogl-sideStalk" }));
+      sideStalk = document.querySelector("#links").appendChild(createDOM("div", { class: "ogl-sideStalk" }));
       let actBtn, watchlistBtn, ptreBtn;
       if (!this.json.options.sideStalkVisible) {
         sideStalk.classList.add("ogi-hidden");
@@ -13521,12 +13270,7 @@ class OGInfinity {
           )
         );
         sideStalk.appendChild(createDOM("hr"));
-        let container = sideStalk.appendChild(
-          this.createDOM("div", {
-            class: "ogl-stalkPlanets",
-            "player-id": player.id,
-          })
-        );
+        let container = sideStalk.appendChild(createDOM("div", { class: "ogl-stalkPlanets", "player-id": player.id }));
         let planets = this.updateStalk(player.planets);
         planets.forEach((dom) => container.appendChild(dom));
 
@@ -13565,7 +13309,7 @@ class OGInfinity {
               .reverse()
               .forEach((id) => {
                 dataHelper.getPlayer(id).then((player) => {
-                  let playerDiv = sideStalk.appendChild(this.createDOM("div", { class: "ogl-player" }));
+                  let playerDiv = sideStalk.appendChild(createDOM("div", { class: "ogl-player" }));
                   playerDiv.appendChild(
                     this.createDOM("span", { class: this.getPlayerStatus(player.status) }, player.name)
                   );
@@ -13864,14 +13608,11 @@ class OGInfinity {
       tab = document.querySelector("#tabs-nfFavorites").getAttribute("aria-controls");
       pagination = document.querySelector("#" + tab + " .pagination");
     }
-    let tableOptions = this.createDOM("div", { class: "ogl-tableOptions" });
+    let tableOptions = createDOM("div", { class: "ogl-tableOptions" });
     if (!pagination) return; // Make sure pagination exists, else let's stop
     pagination.parentNode.insertBefore(tableOptions, pagination);
     let enableTable = tableOptions.appendChild(
-      this.createDOM("button", {
-        class: "icon icon_eye tooltip",
-        title: this.getTranslatedText(106),
-      })
+      createDOM("button", { class: "icon icon_eye tooltip", title: this.getTranslatedText(106) })
     );
     if (this.json.options.spyTableEnable) enableTable.classList.add("ogl-active");
     enableTable.addEventListener("click", () => {
@@ -13880,10 +13621,7 @@ class OGInfinity {
       document.location.reload();
     });
     let appendOption = tableOptions.appendChild(
-      this.createDOM("button", {
-        class: "icon icon_plus tooltip",
-        title: this.getTranslatedText(105),
-      })
+      createDOM("button", { class: "icon icon_plus tooltip", title: this.getTranslatedText(105) })
     );
     if (this.json.options.spyTableAppend) appendOption.classList.add("ogl-active");
     appendOption.addEventListener("click", () => {
@@ -13892,10 +13630,7 @@ class OGInfinity {
       document.location.reload();
     });
     let autoDelete = tableOptions.appendChild(
-      this.createDOM("button", {
-        class: "icon icon_trash tooltip",
-        title: this.getTranslatedText(104),
-      })
+      createDOM("button", { class: "icon icon_trash tooltip", title: this.getTranslatedText(104) })
     );
     if (this.json.options.autoDeleteEnable) autoDelete.classList.add("ogl-active");
     autoDelete.addEventListener("click", () => {
@@ -13903,8 +13638,8 @@ class OGInfinity {
       this.saveData();
       document.location.reload();
     });
-    tableOptions.appendChild(this.createDOM("div", { style: "height:1px;width:20px;" }));
-    let table = this.createDOM("table", { class: "ogl-spyTable" });
+    tableOptions.appendChild(createDOM("div", { style: "height:1px;width:20px;" }));
+    let table = createDOM("table", { class: "ogl-spyTable" });
     pagination.parentNode.insertBefore(table, pagination);
     if (!this.json.options.spyTableEnable) table.classList.add("ogl-hidden");
     let header = createDOM("tr");
@@ -13917,24 +13652,10 @@ class OGInfinity {
     header.appendChild(this.createDOM("th", { "data-filter": "FLEET" }, this.getTranslatedText(100)));
     header.appendChild(this.createDOM("th", { "data-filter": "DEF" }, this.getTranslatedText(54)));
 
-    let cargoChoice = this.createDOM("div", {
-      class: `ogk-cargo${this.json.ships[210].cargoCapacity ? " spio" : ""}`,
-    });
-    let sc = cargoChoice.appendChild(
-      this.createDOM("div", {
-        class: "ogl-option ogl-fleet-ship choice ogl-fleet-202",
-      })
-    );
-    let lc = cargoChoice.appendChild(
-      this.createDOM("div", {
-        class: "ogl-option ogl-fleet-ship choice ogl-fleet-203",
-      })
-    );
-    let pf = cargoChoice.appendChild(
-      this.createDOM("div", {
-        class: "ogl-option ogl-fleet-ship choice ogl-fleet-219",
-      })
-    );
+    let cargoChoice = createDOM("div", { class: `ogk-cargo${this.json.ships[210].cargoCapacity ? " spio" : ""}` });
+    let sc = cargoChoice.appendChild(createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-202" }));
+    let lc = cargoChoice.appendChild(createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-203" }));
+    let pf = cargoChoice.appendChild(createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-219" }));
     let updateDefaultShip = (id) => {
       this.json.options.spyFret = id;
       this.saveData();
@@ -13944,11 +13665,7 @@ class OGInfinity {
     lc.addEventListener("click", () => updateDefaultShip(203));
     pf.addEventListener("click", () => updateDefaultShip(219));
     if (this.json.ships[210].cargoCapacity != 0) {
-      let pb = cargoChoice.appendChild(
-        this.createDOM("div", {
-          class: "ogl-option ogl-fleet-ship choice ogl-fleet-210",
-        })
-      );
+      let pb = cargoChoice.appendChild(createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-210" }));
       pb.addEventListener("click", () => updateDefaultShip(210));
     }
     let cargo = header.appendChild(
@@ -13974,7 +13691,7 @@ class OGInfinity {
     });
 
     arr.forEach(async (report, index) => {
-      let line = this.createDOM("tr", { data: "closed" });
+      let line = createDOM("tr", { data: "closed" });
       table.appendChild(line);
       let indexDiv = line.appendChild(this.createDOM("td", {}, index + 1));
       if (report.new) {
@@ -13991,7 +13708,7 @@ class OGInfinity {
       let moonContent = report.type == 3 ? '<figure class="planetIcon moon"></figure>' : "";
       let coords = line.appendChild(createDOM("td"));
       coords.appendChild(this.createDOM("a", { href: report.coordsLink }, report.coords + moonContent));
-      let name = line.appendChild(this.createDOM("td", { class: "ogl-name" }));
+      let name = line.appendChild(createDOM("td", { class: "ogl-name" }));
       let status = {
         "": "status_abbr_active",
         "(i)": "status_abbr_inactive",
@@ -14063,11 +13780,7 @@ class OGInfinity {
       );
       let colorsContainer = line.appendChild(createDOM("td"));
       let colors = colorsContainer.appendChild(
-        this.createDOM("div", {
-          class: "ogl-colors",
-          "data-coords": report.coords,
-          "data-context": "spytable",
-        })
+        createDOM("div", { class: "ogl-colors", "data-coords": report.coords, "data-context": "spytable" })
       );
       let moon = false;
       dataHelper.getPlayer(report.name).then((player) => {
@@ -14081,13 +13794,8 @@ class OGInfinity {
           line.setAttribute("data-marked", this.json.markers[report.coords].color);
         }
       });
-      let opt = line.appendChild(this.createDOM("td", { class: "ogl-spyOptions" }));
-      opt.appendChild(
-        this.createDOM("button", {
-          class: "icon icon_maximize overlay",
-          href: report.detail,
-        })
-      );
+      let opt = line.appendChild(createDOM("td", { class: "ogl-spyOptions" }));
+      opt.appendChild(createDOM("button", { class: "icon icon_maximize overlay", href: report.detail }));
       let simulateBtn = opt.appendChild(this.createDOM("a", { class: "ogl-text-btn" }, "T"));
       if (this.json.options.ptreTK) {
         let ptreBtn = opt.appendChild(this.createDOM("a", { class: "ogl-text-btn" }, "P"));
@@ -14136,13 +13844,8 @@ class OGInfinity {
         );
       });
 
-      opt.appendChild(
-        this.createDOM("button", {
-          class: "icon icon_eye",
-          onclick: report.spy,
-        })
-      );
-      let deleteBtn = opt.appendChild(this.createDOM("button", { class: "icon icon_trash" }));
+      opt.appendChild(createDOM("button", { class: "icon icon_eye", onclick: report.spy }));
+      let deleteBtn = opt.appendChild(createDOM("button", { class: "icon icon_trash" }));
       deleteBtn.dataset.id = report.id;
       deleteBtn.addEventListener("click", (element) => {
         let msgId = element.target.dataset.id;
@@ -14190,14 +13893,11 @@ class OGInfinity {
           line.setAttribute("data", "expanded");
           let nextReport = line.nextElementSibling;
           for (let round = 1; round < renta.length; round++) {
-            let extraLine = line.parentNode.insertBefore(
-              this.createDOM("tr", { class: "spyTable-extended" }),
-              nextReport
-            );
+            let extraLine = line.parentNode.insertBefore(createDOM("tr", { class: "spyTable-extended" }), nextReport);
             extraLine.appendChild(createDOM("td"));
-            extraLine.appendChild(this.createDOM("td", { class: "ogl-date" }));
+            extraLine.appendChild(createDOM("td", { class: "ogl-date" }));
             extraLine.appendChild(createDOM("td"));
-            extraLine.appendChild(this.createDOM("td", { class: "ogl-name" }));
+            extraLine.appendChild(createDOM("td", { class: "ogl-name" }));
             let extraDetail = `\n<div class="ogl-metal">${this.getTranslatedText(0, "res")}: ${toFormatedNumber(
               renta[round] * report.resRatio[0],
               null,
@@ -14282,9 +13982,7 @@ class OGInfinity {
         moon = true;
       }
       if (missing) {
-        let btn = this.createDOM("button", {
-          class: "ogl-sideLock tooltip tooltipClose tooltipLeft",
-        });
+        let btn = createDOM("button", { class: "ogl-sideLock tooltip tooltipClose tooltipLeft" });
         planet.appendChild(btn);
         if (moon) {
           btn.classList.add("ogl-moonLock");
@@ -14298,12 +13996,7 @@ class OGInfinity {
           createDOM("div", { class: "ogl-deut" }, `D: ${toFormatedNumber(Math.max(0, missing[2]), null, true)}`),
           createDOM("hr")
         );
-        let deleteBtn = div.appendChild(
-          this.createDOM("div", {
-            style: "width: 75px;",
-            class: "icon icon_against",
-          })
-        );
+        let deleteBtn = div.appendChild(createDOM("div", { style: "width: 75px;", class: "icon icon_against" }));
         if (missing[0] + missing[1] + missing[2] == 0) {
           btn.classList.add("ogl-sideLockFilled");
         }
@@ -14504,12 +14197,9 @@ class OGInfinity {
     let errorCode = null;
     let errorMsg = null;
     let menuDiv = document.getElementById("links");
-    let loadIcon = this.createDOM("span", { class: "ogi-loader" });
-    let loadPantrySync = this.createDOM("div", {
-      id: "ogi-pantry-sync",
-      class: "ogi-loader-container",
-    });
-    let loaderText = this.createDOM("span", { class: "ogi-loader-text" });
+    let loadIcon = createDOM("span", { class: "ogi-loader" });
+    let loadPantrySync = createDOM("div", { id: "ogi-pantry-sync", class: "ogi-loader-container" });
+    let loaderText = createDOM("span", { class: "ogi-loader-text" });
     loaderText.textContent = "Syncing Pantry ...";
     loadPantrySync.append(loadIcon);
     loadPantrySync.append(loaderText);
@@ -14734,21 +14424,15 @@ class OGInfinity {
 
   showToast(text, type = "info", icon = "info", title = null, duration = 3500) {
     let totalduration = duration + 2000;
-    let toastHtml = this.createDOM("div", {
-      class: `ogi-toast ogi-toast-${type}`,
-    });
-    let toastContainer = this.createDOM("div", {
-      class: "ogi-toast-container",
-    });
-    let toastBody = this.createDOM("span", { class: "ogi-toast-body" });
-    let toastLogoContainer = this.createDOM("span", {
-      class: "ogi-toast-logo",
-    });
-    let toastLogo = this.createDOM("div", { class: "material-icons" });
+    let toastHtml = createDOM("div", { class: `ogi-toast ogi-toast-${type}` });
+    let toastContainer = createDOM("div", { class: "ogi-toast-container" });
+    let toastBody = createDOM("span", { class: "ogi-toast-body" });
+    let toastLogoContainer = createDOM("span", { class: "ogi-toast-logo" });
+    let toastLogo = createDOM("div", { class: "material-icons" });
     toastLogo.textContent = icon;
     toastBody.textContent = text;
     if (title) {
-      let toastTitle = this.createDOM("span", { class: "ogi-toast-title" });
+      let toastTitle = createDOM("span", { class: "ogi-toast-title" });
       let title = document.createElement("h1");
       title.textContent = title;
       toastTitle.append(title);
@@ -15367,8 +15051,8 @@ class OGInfinity {
     document.querySelector(".ogl-tooltip > div") && document.querySelector(".ogl-tooltip > div").remove();
     let close = document.querySelector(".close-tooltip");
     if (!tooltip) {
-      tooltip = document.body.appendChild(this.createDOM("div", { class: "ogl-tooltip" }));
-      close = tooltip.appendChild(this.createDOM("a", { class: "close-tooltip" }));
+      tooltip = document.body.appendChild(createDOM("div", { class: "ogl-tooltip" }));
+      close = tooltip.appendChild(createDOM("a", { class: "close-tooltip" }));
       close.addEventListener("click", (e) => {
         e.stopPropagation();
         tooltip.classList.remove("ogl-active");
@@ -15441,7 +15125,7 @@ class OGInfinity {
   popup(header, content) {
     let overlay = document.querySelector(".ogl-dialogOverlay");
     if (!overlay) {
-      overlay = document.body.appendChild(this.createDOM("div", { class: "ogl-dialogOverlay" }));
+      overlay = document.body.appendChild(createDOM("div", { class: "ogl-dialogOverlay" }));
       overlay.addEventListener("click", (event) => {
         if (event.target == overlay) {
           if (this.json.welcome) return;
@@ -15451,8 +15135,8 @@ class OGInfinity {
     }
     let dialog = overlay.querySelector(".ogl-dialog");
     if (!dialog) {
-      dialog = overlay.appendChild(this.createDOM("div", { class: "ogl-dialog" }));
-      let close = dialog.appendChild(this.createDOM("div", { class: "close-tooltip" }));
+      dialog = overlay.appendChild(createDOM("div", { class: "ogl-dialog" }));
+      let close = dialog.appendChild(createDOM("div", { class: "close-tooltip" }));
       close.addEventListener("click", () => {
         if (this.json.welcome) {
           this.json.welcome = false;
@@ -15469,7 +15153,7 @@ class OGInfinity {
     let top = dialog.querySelector("header") || dialog.appendChild(createDOM("header"));
     let body =
       dialog.querySelector(".ogl-dialogContent") ||
-      dialog.appendChild(this.createDOM("div", { class: "ogl-dialogContent" }));
+      dialog.appendChild(createDOM("div", { class: "ogl-dialogContent" }));
     top.replaceChildren();
     body.replaceChildren();
     if (header) {
@@ -15482,8 +15166,8 @@ class OGInfinity {
   }
 
   trashsimTooltip(container, fleetinfo) {
-    let ctn = container.appendChild(this.createDOM("div", { style: "display:flex;justify-content:center;" }));
-    let btn = ctn.appendChild(this.createDOM("div", { class: "ogk-trashsim tooltip" }));
+    let ctn = container.appendChild(createDOM("div", { style: "display:flex;justify-content:center;" }));
+    let btn = ctn.appendChild(createDOM("div", { class: "ogk-trashsim tooltip" }));
     let p = createDOM("div");
     p.html(fleetinfo);
     let ships = {};
@@ -15717,7 +15401,7 @@ class OGInfinity {
     });
     if (this.page == "fleetdispatch") {
       document.querySelector(".percentageBarWrapper").classList.add("ogl-hidden");
-      let slider = this.createDOM("div", {
+      let slider = createDOM("div", {
         class: "ogl-fleetSpeed",
         style: "margin-top: 10px; margin-left: 10px; margin-right: 10px; display: flex; grid-column: 1/3;",
       });
@@ -15807,7 +15491,7 @@ class OGInfinity {
             fleet.querySelector(".nextTimer") && fleet.querySelector(".nextTimer").classList.add("friendly");
           }
         });
-        fleet.appendChild(this.createDOM("a", { class: `ogl-mission-icon ogl-mission-${type}` }));
+        fleet.appendChild(createDOM("a", { class: `ogl-mission-icon ogl-mission-${type}` }));
         let fleetInfo = fleet.querySelector(".fleetinfo");
         let fleetCount = 0;
         let values = fleetInfo.querySelectorAll("td.value");
@@ -15841,7 +15525,7 @@ class OGInfinity {
             this.saveData();
           });
         }
-        let details = fleet.appendChild(this.createDOM("div", { class: "ogk-fleet-detail" }));
+        let details = fleet.appendChild(createDOM("div", { class: "ogk-fleet-detail" }));
         details.appendChild(
           this.createDOM(
             "div",
@@ -15869,7 +15553,7 @@ class OGInfinity {
           backDate.m,
           backDate.s
         ).getTime();
-        let content = details.appendChild(this.createDOM("div", { class: "ogl-date" }));
+        let content = details.appendChild(createDOM("div", { class: "ogl-date" }));
         let date;
         let updateTimer = () => {
           lastTimer += 1e3;
@@ -17484,12 +17168,10 @@ class OGInfinity {
     }
 
     let size = this.getLocalStorageSize();
-    let container = this.createDOM("div", {
-      class: "ogl-dialogContainer ogl-settings",
-    });
-    let dataDiv = container.appendChild(this.createDOM("div", {}));
+    let container = createDOM("div", { class: "ogl-dialogContainer ogl-settings" });
+    let dataDiv = container.appendChild(createDOM("div", {}));
     let ogameInfinity = dataDiv.appendChild(createDOM("div"));
-    ogameInfinity.appendChild(this.createDOM("div", { class: "ogk-logo" }));
+    ogameInfinity.appendChild(createDOM("div", { class: "ogk-logo" }));
     ogameInfinity.appendChild(
       this.createDOM(
         "div",
@@ -17537,7 +17219,7 @@ class OGInfinity {
       document.querySelector(".ogl-dialog .close-tooltip").click();
     });
     dataDiv.appendChild(createDOM("hr"));
-    let featureSettings = dataDiv.appendChild(this.createDOM("div", { style: "display: grid;" }));
+    let featureSettings = dataDiv.appendChild(createDOM("div", { style: "display: grid;" }));
     featureSettings.appendChild(this.createDOM("h1", {}, this.getTranslatedText(103)));
     if (this.json.timezoneDiff != 0) {
       let spanZone = featureSettings.appendChild(
@@ -17549,7 +17231,7 @@ class OGInfinity {
           this.getTranslatedText(36)
         )
       );
-      let timeZoneCheck = spanZone.appendChild(this.createDOM("input", { type: "checkbox" }));
+      let timeZoneCheck = spanZone.appendChild(createDOM("input", { type: "checkbox" }));
       timeZoneCheck.addEventListener("change", () => {
         this.json.options.timeZone = timeZoneCheck.checked;
         this.saveData();
@@ -17567,7 +17249,7 @@ class OGInfinity {
         this.getTranslatedText(33)
       )
     );
-    let timerCheck = optiondiv.appendChild(this.createDOM("input", { type: "checkbox" }));
+    let timerCheck = optiondiv.appendChild(createDOM("input", { type: "checkbox" }));
     timerCheck.addEventListener("change", () => {
       this.json.options.activitytimers = timerCheck.checked;
       this.saveData();
@@ -17584,7 +17266,7 @@ class OGInfinity {
         this.getTranslatedText(34)
       )
     );
-    let disableautofetchempirebox = optiondiv.appendChild(this.createDOM("input", { type: "checkbox" }));
+    let disableautofetchempirebox = optiondiv.appendChild(createDOM("input", { type: "checkbox" }));
     disableautofetchempirebox.addEventListener("change", () => {
       this.json.options.disableautofetchempire = disableautofetchempirebox.checked;
       this.saveData();
@@ -17641,7 +17323,7 @@ class OGInfinity {
       this.createDOM("span", { class: "tooltip", title: this.getTranslatedText(105) }, this.getTranslatedText(35))
     );
     let rvalInput = optiondiv.appendChild(
-      this.createDOM("input", {
+      createDOM("input", {
         type: "text",
         class: "ogl-rvalInput ogl-formatInput tooltip",
         value: toFormatedNumber(this.json.options.rvalLimit),
@@ -17649,14 +17331,14 @@ class OGInfinity {
     );
     optiondiv = featureSettings.appendChild(this.createDOM("span", {}, this.getTranslatedText(101)));
     let expeditionDefaultTime = optiondiv.appendChild(
-      this.createDOM("input", {
+      createDOM("input", {
         type: "text",
         class: "ogl-rvalInput ogl-formatInput",
         value: this.json.options.expeditionDefaultTime,
       })
     );
     dataDiv.appendChild(createDOM("hr"));
-    let dataManagement = dataDiv.appendChild(this.createDOM("div", { style: "display: grid;" }));
+    let dataManagement = dataDiv.appendChild(createDOM("div", { style: "display: grid;" }));
     dataManagement.appendChild(
       this.createDOM(
         "h1",
@@ -17725,17 +17407,11 @@ class OGInfinity {
       )
     );
     let dataBtns = dataManagement.appendChild(
-      this.createDOM("div", { style: "display: flex;align-items: flex-end;margin-top: 5px" })
+      createDOM("div", { style: "display: flex;align-items: flex-end;margin-top: 5px" })
     );
     let exportBtn = dataBtns.appendChild(this.createDOM("button", { class: "btn_blue" }, this.getTranslatedText(24)));
     let fileHandler = dataBtns.appendChild(
-      this.createDOM("input", {
-        id: "file",
-        name: "file",
-        class: "inputfile",
-        type: "file",
-        accept: ".data",
-      })
+      createDOM("input", { id: "file", name: "file", class: "inputfile", type: "file", accept: ".data" })
     );
     dataBtns.appendChild(
       this.createDOM("label", { for: "file", class: "btn_blue", style: "margin: 0px 10px" }, this.getTranslatedText(25))
@@ -17758,7 +17434,7 @@ class OGInfinity {
     let resetBtn = dataBtns.appendChild(
       this.createDOM("button", { class: "btn_blue ogl-btn_red" }, this.getTranslatedText(26))
     );
-    container.appendChild(this.createDOM("div", { style: "width: 1px; background: #10171d;" }));
+    container.appendChild(createDOM("div", { style: "width: 1px; background: #10171d;" }));
 
     let settingDiv = container.appendChild(createDOM("div"));
     let saveBtn = this.createDOM("button", { class: "btn_blue save" }, this.getTranslatedText(27));
@@ -17777,20 +17453,17 @@ class OGInfinity {
         this.getTranslatedText(30)
       )
     );
-    let missionDiv = span.appendChild(this.createDOM("div", { style: "display:flex" }));
+    let missionDiv = span.appendChild(createDOM("div", { style: "display:flex" }));
     let none = missionDiv.appendChild(
-      this.createDOM("a", {
-        class: "icon icon_against",
-        style: "margin-top: 2px;margin-right: 5px;",
-      })
+      createDOM("a", { class: "icon icon_against", style: "margin-top: 2px;margin-right: 5px;" })
     );
     let own3 = missionDiv.appendChild(
-      this.createDOM("div", {
+      createDOM("div", {
         class: `ogl-mission-icon ogl-mission-3 ${this.json.options.harvestMission == 3 ? "ogl-active" : ""}`,
       })
     );
     let own4 = missionDiv.appendChild(
-      this.createDOM("div", {
+      createDOM("div", {
         class: `ogl-mission-icon ogl-mission-4 ${this.json.options.harvestMission == 4 ? "ogl-active" : ""}`,
       })
     );
@@ -17822,20 +17495,17 @@ class OGInfinity {
         this.getTranslatedText(31)
       )
     );
-    missionDiv = span.appendChild(this.createDOM("div", { style: "display:flex" }));
+    missionDiv = span.appendChild(createDOM("div", { style: "display:flex" }));
     none = missionDiv.appendChild(
-      this.createDOM("a", {
-        class: "icon icon_against",
-        style: "margin-top: 2px;margin-right: 5px;",
-      })
+      createDOM("a", { class: "icon icon_against", style: "margin-top: 2px;margin-right: 5px;" })
     );
     let other3 = missionDiv.appendChild(
-      this.createDOM("div", {
+      createDOM("div", {
         class: `ogl-mission-icon ogl-mission-3 ${this.json.options.foreignMission == 3 ? "ogl-active" : ""}`,
       })
     );
     let other1 = missionDiv.appendChild(
-      this.createDOM("div", {
+      createDOM("div", {
         class: `ogl-mission-icon ogl-mission-1 ${this.json.options.foreignMission == 1 ? "ogl-active" : ""}`,
       })
     );
@@ -17863,20 +17533,17 @@ class OGInfinity {
         this.getTranslatedText(32)
       )
     );
-    missionDiv = span.appendChild(this.createDOM("div", { style: "display:flex" }));
+    missionDiv = span.appendChild(createDOM("div", { style: "display:flex" }));
     none = missionDiv.appendChild(
-      this.createDOM("a", {
-        class: "icon icon_against",
-        style: "margin-top: 2px;margin-right: 5px;",
-      })
+      createDOM("a", { class: "icon icon_against", style: "margin-top: 2px;margin-right: 5px;" })
     );
     let expe15 = missionDiv.appendChild(
-      this.createDOM("div", {
+      createDOM("div", {
         class: `ogl-mission-icon ogl-mission-15 ${this.json.options.expeditionMission == 15 ? "ogl-active" : ""}`,
       })
     );
     let expe6 = missionDiv.appendChild(
-      this.createDOM("div", {
+      createDOM("div", {
         class: `ogl-mission-icon ogl-mission-6 ${this.json.options.expeditionMission == 6 ? "ogl-active" : ""}`,
       })
     );
@@ -17896,13 +17563,13 @@ class OGInfinity {
       this.json.options.expeditionMission = 0;
     });
     settingDiv.appendChild(createDOM("hr"));
-    let keys = settingDiv.appendChild(this.createDOM("div", { style: "display: grid;" }));
+    let keys = settingDiv.appendChild(createDOM("div", { style: "display: grid;" }));
     keys.appendChild(this.createDOM("h1", {}, this.getTranslatedText(147)));
     let ptre = keys.appendChild(
       this.createDOM("span", {}, '<a href="https://ptre.chez.gg/" target="_blank">PTRE</a> Teamkey')
     );
     let ptreInput = ptre.appendChild(
-      this.createDOM("input", {
+      createDOM("input", {
         type: "password",
         class: "ogl-ptreTeamKey tooltip",
         value: this.json.options.ptreTK ?? "",
@@ -17917,7 +17584,7 @@ class OGInfinity {
       )
     );
     let pantryInput = pantry.appendChild(
-      this.createDOM("input", {
+      createDOM("input", {
         type: "password",
         class: "ogl-pantryKey tooltip",
         value: this.json.options.pantryKey ?? "",
@@ -18865,9 +18532,9 @@ class OGInfinity {
     if (this.page == "fleetdispatch" && fleetDispatcher.shipsOnPlanet.length !== 0 && !fleetDispatcher.isOnVacation) {
       this.json.href = undefined;
       this.saveData();
-      let cargoChoice = this.createDOM("div", { class: "ogk-collect-cargo" });
+      let cargoChoice = createDOM("div", { class: "ogk-collect-cargo" });
       let btnCollect = document.querySelector("#allornone .secondcol").appendChild(
-        this.createDOM("button", {
+        createDOM("button", {
           class: `ogl-collect ${this.json.options.collect.mission == 4 ? "statio" : ""} ${
             this.json.options.collect.ship == 202
               ? "smallCargo"
@@ -18877,33 +18544,13 @@ class OGInfinity {
           }`,
         })
       );
-      let sc = cargoChoice.appendChild(
-        this.createDOM("div", {
-          class: "ogl-option ogl-fleet-ship choice ogl-fleet-202",
-        })
-      );
-      let lc = cargoChoice.appendChild(
-        this.createDOM("div", {
-          class: "ogl-option ogl-fleet-ship choice ogl-fleet-203",
-        })
-      );
-      let pf = cargoChoice.appendChild(
-        this.createDOM("div", {
-          class: "ogl-option ogl-fleet-ship choice ogl-fleet-219",
-        })
-      );
-      let tr = cargoChoice.appendChild(
-        this.createDOM("div", {
-          class: "ogl-option choice-mission-icon ogl-mission-3",
-        })
-      );
-      let dp = cargoChoice.appendChild(
-        this.createDOM("div", {
-          class: "ogl-option choice-mission-icon ogl-mission-4",
-        })
-      );
+      let sc = cargoChoice.appendChild(createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-202" }));
+      let lc = cargoChoice.appendChild(createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-203" }));
+      let pf = cargoChoice.appendChild(createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-219" }));
+      let tr = cargoChoice.appendChild(createDOM("div", { class: "ogl-option choice-mission-icon ogl-mission-3" }));
+      let dp = cargoChoice.appendChild(createDOM("div", { class: "ogl-option choice-mission-icon ogl-mission-4" }));
       let tgt = cargoChoice.appendChild(
-        this.createDOM("div", {
+        createDOM("div", {
           class: `ogl-option choice-target ${this.json.options.collect.target.type == 3 ? "moon" : "planet"}`,
         })
       );
@@ -19100,20 +18747,20 @@ class OGInfinity {
 
   navigationArrows() {
     if (this.isMobile && this.json.options.navigationArrows) {
-      let navPanel = document.querySelector("#links").appendChild(this.createDOM("div", { class: "ogk-navPanel" }));
-      let left = navPanel.appendChild(this.createDOM("div", { class: "galaxy_icons ogk-nav left" }));
+      let navPanel = document.querySelector("#links").appendChild(createDOM("div", { class: "ogk-navPanel" }));
+      let left = navPanel.appendChild(createDOM("div", { class: "galaxy_icons ogk-nav left" }));
       left.addEventListener("click", () =>
         document.dispatchEvent(new KeyboardEvent("keydown", { code: "ArrowLeft", ctrlKey: "true" }))
       );
-      let right = navPanel.appendChild(this.createDOM("div", { class: "galaxy_icons ogk-nav right" }));
+      let right = navPanel.appendChild(createDOM("div", { class: "galaxy_icons ogk-nav right" }));
       right.addEventListener("click", () =>
         document.dispatchEvent(new KeyboardEvent("keydown", { code: "ArrowRight", ctrlKey: "true" }))
       );
-      let up = navPanel.appendChild(this.createDOM("div", { class: "galaxy_icons ogk-nav up" }));
+      let up = navPanel.appendChild(createDOM("div", { class: "galaxy_icons ogk-nav up" }));
       up.addEventListener("click", () =>
         document.dispatchEvent(new KeyboardEvent("keydown", { code: "ArrowUp", ctrlKey: "true" }))
       );
-      let down = navPanel.appendChild(this.createDOM("div", { class: "galaxy_icons ogk-nav down" }));
+      let down = navPanel.appendChild(createDOM("div", { class: "galaxy_icons ogk-nav down" }));
       down.addEventListener("click", () =>
         document.dispatchEvent(new KeyboardEvent("keydown", { code: "ArrowDown", ctrlKey: "true" }))
       );
@@ -19142,11 +18789,7 @@ class OGInfinity {
       let lf = this.json.selectedLifeforms[elem.href.split("cp=")[1]]
         ? this.json.selectedLifeforms[elem.href.split("cp=")[1]].lifeform
         : "";
-      elem.appendChild(
-        this.createDOM("div", {
-          class: `lifeform-item-icon small ${lf}`,
-        })
-      );
+      elem.appendChild(createDOM("div", { class: `lifeform-item-icon small ${lf}` }));
     });
   }
 
