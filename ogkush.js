@@ -5650,10 +5650,10 @@ class OGInfinity {
       fleetBtn.classList.remove("ogl-active");
       defBtn.classList.remove("ogl-active");
       body.children[1].remove();
-      if (e.target.innerText == this.getTranslatedText(63, "text", false)) {
+      if (e.target.textContent == this.getTranslatedText(63)) {
         fleetBtn.classList.add("ogl-active");
         body.appendChild(this.fleetOverview());
-      } else if (e.target.innerText == this.getTranslatedText(89, "text", false)) {
+      } else if (e.target.textContent == this.getTranslatedText(54)) {
         defBtn.classList.add("ogl-active");
         body.appendChild(this.defenseOverview());
       } else {
