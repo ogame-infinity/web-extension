@@ -1868,7 +1868,7 @@ class OGInfinity {
                 that.createDOM("li", { class: "roi_duration" }),
                 durationDiv.parentNode.children[1]
               );
-            roiDiv.html(`<strong>${that.getTranslatedText(50)}:</strong>`);
+            roiDiv.replaceChildren(createDOM("strong", {}, `${that.getTranslatedText(50)}:`));
             let roiTimeDiv =
               roiDiv.querySelector(".roi_duration time") ||
               roiDiv.appendChild(
@@ -1893,7 +1893,7 @@ class OGInfinity {
                 that.createDOM("li", { class: "roi_duration" }),
                 durationDiv.parentNode.children[1]
               );
-            roiDiv.html(`<strong>${that.getTranslatedText(50)}:</strong>`);
+            roiDiv.replaceChildren(createDOM("strong", {}, `${that.getTranslatedText(50)}:`));
             let roiTimeDiv =
               roiDiv.querySelector(".roi_duration time") ||
               roiDiv.appendChild(
@@ -1936,7 +1936,7 @@ class OGInfinity {
                 that.createDOM("li", { class: "roi_duration" }),
                 durationDiv.parentNode.children[1]
               );
-            roiDiv.html(`<strong>${that.getTranslatedText(50)}:</strong>`);
+            roiDiv.replaceChildren(createDOM("strong", {}, `${that.getTranslatedText(50)}:`));
             let roiTimeDiv =
               roiDiv.querySelector(".roi_duration time") ||
               roiDiv.appendChild(
@@ -1949,9 +1949,9 @@ class OGInfinity {
                   )}`,
                 })
               );
-            roiTimeDiv.html(formatTimeWrapper(roi, 2, true, " ", false, ""));
+            roiTimeDiv.textContent = formatTimeWrapper(roi, 2, true, " ", false, "");
           } else if (durationDiv.parentNode.querySelector(".roi_duration")) {
-            durationDiv.parentNode.querySelector(".roi_duration").html("");
+            durationDiv.parentNode.querySelector(".roi_duration").replaceChildren();
           }
           let consDiv = document.querySelector(".additional_energy_consumption span");
           if (consDiv && that.json.empire[that.current.index]) {
@@ -2076,7 +2076,7 @@ class OGInfinity {
               );
             let oldStorage = 5000 * Math.floor(2.5 * Math.exp((20 / 33) * (baselvl - 1)));
             let newStorage = 5000 * Math.floor(2.5 * Math.exp((20 / 33) * tolvl));
-            storageDiv.html(`<strong>${that.getTranslatedText(131)}:</strong>`);
+            storageDiv.replaceChildren(createDOM("strong", {}, `${that.getTranslatedText(131)}:`));
             let storageSizeDiv =
               storageDiv.querySelector(".storage_size size") ||
               storageDiv.appendChild(
@@ -2112,8 +2112,7 @@ class OGInfinity {
 
             if (baselvl <= tolvl) {
               let roi = that.roiMine(technoId, tolvl, that.json.empire[that.current.index]);
-              roiDiv.html(`<strong>${that.getTranslatedText(50)}:</strong>`);
-
+              roiDiv.replaceChildren(createDOM("strong", {}, `${that.getTranslatedText(50)}:`));
               let roiTimeDiv =
                 roiDiv.querySelector(".roi_duration time") ||
                 roiDiv.appendChild(
@@ -2362,7 +2361,7 @@ class OGInfinity {
         if (baselvl - 1 == tolvl || (baselvl > tolvl && (that.page == "research" || that.page == "lfresearch"))) {
           document.querySelector(".ogk-titles").children[2].replaceChildren();
         } else {
-          document.querySelector(".ogk-titles").children[2].html(that.getTranslatedText(39));
+          document.querySelector(".ogk-titles").children[2].textContent = that.getTranslatedText(39);
         }
         lockListener = () => {
           let coords = that.current.coords + (that.current.isMoon ? "M" : "P");
@@ -2684,7 +2683,7 @@ class OGInfinity {
                 lvlFromTo.replaceChildren();
               }
               if (tolvl < baseLvl - 1 && that.page != "research" && that.page != "lfresearch") {
-                lvlFromTo.html(`${that.getTranslatedText(129)}`);
+                lvlFromTo.textContent = that.getTranslatedText(129);
               }
             });
             previous.addEventListener("click", () => {
@@ -2708,7 +2707,7 @@ class OGInfinity {
                 lvlFromTo.replaceChildren();
               }
               if (tolvl < baseLvl - 1 && that.page != "research" && that.page != "lfresearch") {
-                lvlFromTo.html(`${that.getTranslatedText(129)}`);
+                lvlFromTo.textContent = that.getTranslatedText(129);
               }
             });
             infoDiv.appendChild(helpNode);
@@ -9560,7 +9559,7 @@ class OGInfinity {
       }
     });
     let missionsDiv = destination.appendChild(createDOM("div", { class: "ogl-missions" }));
-    missionsDiv.html('<span style="color: #9099a3"> No missions... </span>');
+    missionsDiv.replaceChildren(createDOM("span", { style: "color: #9099a3" }, `${that.getTranslatedText(111)}`));
     let resFiller = actions.appendChild(createDOM("div", { class: "ogl-res-filler" }));
     let metalBtn = resFiller.appendChild(createDOM("div"));
     metalBtn.appendChild(createDOM("div", { class: "resourceIcon metal" }));
@@ -9958,12 +9957,12 @@ class OGInfinity {
         let missionsDiv = document.getElementsByClassName("ogl-missions")[0];
         let iconsDiv;
         if (auxAjaxFailed) {
-          missionsDiv.html(`<span style="color: #9099a3"> ${that.getTranslatedText(111)} </span>`);
+          missionsDiv.replaceChildren(createDOM("span", { style: "color: #9099a3"}, `${that.getTranslatedText(111)}`));
           warning.style.visibility = "visible";
           warning.setAttribute("data-title", that.getTranslatedText(116));
           auxAjaxFailed = false;
         } else if (missions.length == 0 || !fleetDispatcher.hasShipsSelected()) {
-          missionsDiv.html(`<span style="color: #9099a3"> ${that.getTranslatedText(111)} </span>`);
+          missionsDiv.replaceChildren(createDOM("span", { style: "color: #9099a3"}, `${that.getTranslatedText(111)}`));
           warning.style.visibility = "visible";
           warning.setAttribute("data-title", that.getTranslatedText(115));
         } else {
@@ -10149,7 +10148,7 @@ class OGInfinity {
         document.querySelector("#missionsDiv").setAttribute("data", "true");
       });
       let missionsDiv = destination.appendChild(createDOM("div", { class: "ogl-missions", id: "missionsDiv" }));
-      missionsDiv.html(`<span style="color: #9099a3">${that.getTranslatedText(111)}</span>`);
+      missionsDiv.replaceChildren(createDOM("span", { style: "color: #9099a3"}, `${that.getTranslatedText(111)}`));
       let switchToPage = fleetDispatcher.switchToPage.bind(fleetDispatcher);
       let refresh = fleetDispatcher.refresh.bind(fleetDispatcher);
       let resetShips = fleetDispatcher.resetShips.bind(fleetDispatcher);
@@ -10234,7 +10233,7 @@ class OGInfinity {
           if (fleetDispatcher.shipsToSend.length == 0) {
             document
               .querySelector(".ogl-dispatch .ogl-missions")
-              .html('<span style="color: #9099a3"> No missions... </span>');
+              .replaceChildren(createDOM("span", { style: "color: #9099a3"}, `${that.getTranslatedText(111)}`));
             warning.style.visibility = "visible";
             warning.setAttribute("data-title", "Error : No ships selected");
             return;
@@ -10243,7 +10242,9 @@ class OGInfinity {
           let missions = fleetDispatcher.getAvailableMissions();
           let iconsDiv;
           if (missions.length == 0) {
-            missionsDiv.html('<span style="color: #9099a3"> No missions... </span>');
+            missionsDiv.replaceChildren(
+              createDOM("span", { style: "color: #9099a3" }, `${that.getTranslatedText(111)}`)
+            );
           } else {
             warning.style.visibility = "hidden";
             missionsDiv.html(
@@ -10293,7 +10294,7 @@ class OGInfinity {
       fleetDispatcher.displayErrors = function (errors) {
         document
           .querySelector(".ogl-dispatch .ogl-missions")
-          .html(`<span style="color: #9099a3"> ${that.getTranslatedText(111)} </span>`);
+          .replaceChildren(createDOM("span", { style: "color: #9099a3"}, `${that.getTranslatedText(111)}`));
         warning.style.visibility = "visible";
         document.querySelector("#continueToFleet2").style.filter = "hue-rotate(-50deg)";
         warning.setAttribute("data-title", errors[0].message);
@@ -10358,7 +10359,7 @@ class OGInfinity {
           returnDiv.textContent = "-";
           document
             .querySelector(".ogl-dispatch .ogl-missions")
-            .html(`<span style="color: #9099a3"> ${that.getTranslatedText(111)} </span>`);
+            .replaceChildren(createDOM("span", { style: "color: #9099a3"}, `${that.getTranslatedText(111)}`));
           warning.style.visibility = "visible";
           warning.setAttribute("data-title", that.getTranslatedText(117));
           if (noShips) {
@@ -12854,7 +12855,7 @@ class OGInfinity {
       planets.forEach((e) => list.appendChild(e));
       this.highlightTarget();
       date.textContent = this.timeSince(new Date(player.lastUpdate));
-      count.html(player.planets.length + " " + this.getTranslatedText(42));
+      count.textContent = player.planets.length + " " + this.getTranslatedText(42);
       const detailRankDiv1 = createDOM("div");
       detailRankDiv1.replaceChildren(
         createDOM("div", { class: "ogl-totalIcon" }),
