@@ -5029,9 +5029,7 @@ class OGInfinity {
                         `);
 
           ["last24h", "2days", "3days", "week", "2weeks", "month"].forEach((f) => {
-            let btn = container
-              .querySelector(".ptreFrames")
-              .appendChild(createDOM("div", { class: "ogl_button" }, f));
+            let btn = container.querySelector(".ptreFrames").appendChild(createDOM("div", { class: "ogl_button" }, f));
             btn.addEventListener("click", () => this.ptreAction(f, player));
           });
 
@@ -5240,14 +5238,12 @@ class OGInfinity {
                       )
                     );
                 } else if (this.json.expeditions[id].busy) {
-                  msg
-                    .querySelector(".msg_actions")
-                    .appendChild(
-                      createDOM("a", {
-                        class: "ogl-warning tooltipRight ogl-tooltipReady ogl-tooltipInit",
-                        "data-title": this.getTranslatedText(114),
-                      })
-                    );
+                  msg.querySelector(".msg_actions").appendChild(
+                    createDOM("a", {
+                      class: "ogl-warning tooltipRight ogl-tooltipReady ogl-tooltipInit",
+                      "data-title": this.getTranslatedText(114),
+                    })
+                  );
                 }
                 msg.classList.add("ogk-" + this.json.expeditions[id].result.toLowerCase());
                 this.saveData();
@@ -5558,9 +5554,7 @@ class OGInfinity {
 
   overview() {
     let header = createDOM("div", { class: "ogl-tabs" });
-    let minesBtn = header.appendChild(
-      createDOM("span", { class: "ogl-tab ogl-active" }, this.getTranslatedText(90))
-    );
+    let minesBtn = header.appendChild(createDOM("span", { class: "ogl-tab ogl-active" }, this.getTranslatedText(90)));
     let fleetBtn = header.appendChild(createDOM("span", { class: "ogl-tab" }, this.getTranslatedText(63)));
     let defBtn = header.appendChild(createDOM("span", { class: "ogl-tab" }, this.getTranslatedText(54)));
     let body = createDOM("div");
@@ -9957,12 +9951,12 @@ class OGInfinity {
         let missionsDiv = document.getElementsByClassName("ogl-missions")[0];
         let iconsDiv;
         if (auxAjaxFailed) {
-          missionsDiv.replaceChildren(createDOM("span", { style: "color: #9099a3"}, `${that.getTranslatedText(111)}`));
+          missionsDiv.replaceChildren(createDOM("span", { style: "color: #9099a3" }, `${that.getTranslatedText(111)}`));
           warning.style.visibility = "visible";
           warning.setAttribute("data-title", that.getTranslatedText(116));
           auxAjaxFailed = false;
         } else if (missions.length == 0 || !fleetDispatcher.hasShipsSelected()) {
-          missionsDiv.replaceChildren(createDOM("span", { style: "color: #9099a3"}, `${that.getTranslatedText(111)}`));
+          missionsDiv.replaceChildren(createDOM("span", { style: "color: #9099a3" }, `${that.getTranslatedText(111)}`));
           warning.style.visibility = "visible";
           warning.setAttribute("data-title", that.getTranslatedText(115));
         } else {
@@ -10148,7 +10142,7 @@ class OGInfinity {
         document.querySelector("#missionsDiv").setAttribute("data", "true");
       });
       let missionsDiv = destination.appendChild(createDOM("div", { class: "ogl-missions", id: "missionsDiv" }));
-      missionsDiv.replaceChildren(createDOM("span", { style: "color: #9099a3"}, `${that.getTranslatedText(111)}`));
+      missionsDiv.replaceChildren(createDOM("span", { style: "color: #9099a3" }, `${that.getTranslatedText(111)}`));
       let switchToPage = fleetDispatcher.switchToPage.bind(fleetDispatcher);
       let refresh = fleetDispatcher.refresh.bind(fleetDispatcher);
       let resetShips = fleetDispatcher.resetShips.bind(fleetDispatcher);
@@ -10233,7 +10227,7 @@ class OGInfinity {
           if (fleetDispatcher.shipsToSend.length == 0) {
             document
               .querySelector(".ogl-dispatch .ogl-missions")
-              .replaceChildren(createDOM("span", { style: "color: #9099a3"}, `${that.getTranslatedText(111)}`));
+              .replaceChildren(createDOM("span", { style: "color: #9099a3" }, `${that.getTranslatedText(111)}`));
             warning.style.visibility = "visible";
             warning.setAttribute("data-title", "Error : No ships selected");
             return;
@@ -10294,7 +10288,7 @@ class OGInfinity {
       fleetDispatcher.displayErrors = function (errors) {
         document
           .querySelector(".ogl-dispatch .ogl-missions")
-          .replaceChildren(createDOM("span", { style: "color: #9099a3"}, `${that.getTranslatedText(111)}`));
+          .replaceChildren(createDOM("span", { style: "color: #9099a3" }, `${that.getTranslatedText(111)}`));
         warning.style.visibility = "visible";
         document.querySelector("#continueToFleet2").style.filter = "hue-rotate(-50deg)";
         warning.setAttribute("data-title", errors[0].message);
@@ -10359,7 +10353,7 @@ class OGInfinity {
           returnDiv.textContent = "-";
           document
             .querySelector(".ogl-dispatch .ogl-missions")
-            .replaceChildren(createDOM("span", { style: "color: #9099a3"}, `${that.getTranslatedText(111)}`));
+            .replaceChildren(createDOM("span", { style: "color: #9099a3" }, `${that.getTranslatedText(111)}`));
           warning.style.visibility = "visible";
           warning.setAttribute("data-title", that.getTranslatedText(117));
           if (noShips) {
@@ -12782,9 +12776,7 @@ class OGInfinity {
       msgBtn.addEventListener("click", () => {
         this.sendMessage(player.id);
       });
-      let actBtn = actions.appendChild(
-        createDOM("a", { style: "margin-left: 10px", class: "ogl-text-btn" }, "⚠")
-      );
+      let actBtn = actions.appendChild(createDOM("a", { style: "margin-left: 10px", class: "ogl-text-btn" }, "⚠"));
       let first = false;
       actBtn.addEventListener("mouseout", () => {
         this.keepTooltip = false;
@@ -13106,9 +13098,7 @@ class OGInfinity {
         watchlistBtn = sideStalk.appendChild(
           createDOM("a", { class: "ogl-text-btn material-icons", title: "History" }, "history")
         );
-        actBtn = sideStalk.appendChild(
-          createDOM("a", { class: "ogl-text-btn material-icons", title: "" }, "warning")
-        );
+        actBtn = sideStalk.appendChild(createDOM("a", { class: "ogl-text-btn material-icons", title: "" }, "warning"));
         if (this.json.options.ptreTK) {
           ptreBtn = sideStalk.appendChild(
             createDOM("a", { class: "ogl-text-btn ogl-ptre-acti tooltip", title: "Display PTRE data" }, "PTRE")
@@ -13176,9 +13166,7 @@ class OGInfinity {
               .forEach((id) => {
                 dataHelper.getPlayer(id).then((player) => {
                   let playerDiv = sideStalk.appendChild(createDOM("div", { class: "ogl-player" }));
-                  playerDiv.appendChild(
-                    createDOM("span", { class: this.getPlayerStatus(player.status) }, player.name)
-                  );
+                  playerDiv.appendChild(createDOM("span", { class: this.getPlayerStatus(player.status) }, player.name));
                   playerDiv.appendChild(createDOM("span", {}, "#" + player.points.position));
                   playerDiv.addEventListener("click", () => {
                     this.sideStalk(player.id);
