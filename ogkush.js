@@ -11647,12 +11647,11 @@ class OGInfinity {
         minPT = 1223;
         minGT = 417;
       }
-      maxTotal *=
-        2 *
-        (1 +
-          (this.playerClass == PLAYER_CLASS_EXPLORER
-            ? this.json.explorerBonusIncreasedExpeditionOutcome * this.json.speed
-            : 0));
+      maxTotal *= 2; // Pathfinder bonus on expedition
+      if (this.playerClass == PLAYER_CLASS_EXPLORER) {
+        maxTotal *= (1 + this.json.explorerBonusIncreasedExpeditionOutcome) * this.json.speed;
+      }
+
       if (this.json.lifeformBonus && this.json.lifeformBonus[this.current.id])
         maxTotal *= 1 + this.json.lifeformBonus[this.current.id].expeditionBonus || 0;
       let maxPT = Math.max(minPT, this.calcNeededShips({ fret: 202, resources: maxTotal }));
