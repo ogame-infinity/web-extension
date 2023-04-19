@@ -1836,7 +1836,7 @@ class OGInfinity {
         let timeDiv = document.querySelector(".build_duration time");
         let timeSumDiv =
           durationDiv.querySelector(".build_duration .ogk-sum") ||
-          durationDiv.appendChild(that.createDOM("time", { class: "ogk-sum" }));
+          durationDiv.appendChild(createDOM("time", { class: "ogk-sum" }));
         let resSum = [0, 0, 0, 0];
         let timeSum = 0;
         let techno;
@@ -1865,14 +1865,14 @@ class OGInfinity {
             let roiDiv =
               durationDiv.parentNode.querySelector(".roi_duration") ||
               durationDiv.parentNode.insertBefore(
-                that.createDOM("li", { class: "roi_duration" }),
+                createDOM("li", { class: "roi_duration" }),
                 durationDiv.parentNode.children[1]
               );
             roiDiv.replaceChildren(createDOM("strong", {}, `${that.getTranslatedText(50)}:`));
             let roiTimeDiv =
               roiDiv.querySelector(".roi_duration time") ||
               roiDiv.appendChild(
-                that.createDOM("time", {
+                createDOM("time", {
                   class: "value tooltip",
                   "data-title":
                     roi === Infinity
@@ -1890,14 +1890,14 @@ class OGInfinity {
             let roiDiv =
               durationDiv.parentNode.querySelector(".roi_duration") ||
               durationDiv.parentNode.insertBefore(
-                that.createDOM("li", { class: "roi_duration" }),
+                createDOM("li", { class: "roi_duration" }),
                 durationDiv.parentNode.children[1]
               );
             roiDiv.replaceChildren(createDOM("strong", {}, `${that.getTranslatedText(50)}:`));
             let roiTimeDiv =
               roiDiv.querySelector(".roi_duration time") ||
               roiDiv.appendChild(
-                that.createDOM("time", {
+                createDOM("time", {
                   class: "value tooltip",
                   "data-title": `${that.getTranslatedText(119)}: ${toFormatedNumber(
                     that.json.options.tradeRate[0]
@@ -1933,14 +1933,14 @@ class OGInfinity {
             let roiDiv =
               durationDiv.parentNode.querySelector(".roi_duration") ||
               durationDiv.parentNode.insertBefore(
-                that.createDOM("li", { class: "roi_duration" }),
+                createDOM("li", { class: "roi_duration" }),
                 durationDiv.parentNode.children[1]
               );
             roiDiv.replaceChildren(createDOM("strong", {}, `${that.getTranslatedText(50)}:`));
             let roiTimeDiv =
               roiDiv.querySelector(".roi_duration time") ||
               roiDiv.appendChild(
-                that.createDOM("time", {
+                createDOM("time", {
                   class: "value tooltip",
                   "data-title": `${that.getTranslatedText(119)}: ${toFormatedNumber(
                     that.json.options.tradeRate[0]
@@ -1992,7 +1992,7 @@ class OGInfinity {
           let consDiv = document.querySelector(".additional_energy_consumption span");
           let prodDiv =
             (document.querySelector(".narrow") && document.querySelector(".ogk-production")) ||
-            document.querySelector(".narrow").appendChild(that.createDOM("li", { class: "ogk-production" }));
+            document.querySelector(".narrow").appendChild(createDOM("li", { class: "ogk-production" }));
           let energyDiv = document.querySelector(".energy_production span");
           if (consDiv && that.json.empire[that.current.index]) {
             let temp = that.json.empire[that.current.index].db_par2 + 40;
@@ -2071,7 +2071,7 @@ class OGInfinity {
             let storageDiv =
               durationDiv.parentNode.querySelector(".narrow .storage_size") ||
               durationDiv.parentNode.insertBefore(
-                that.createDOM("li", { class: "storage_size" }),
+                createDOM("li", { class: "storage_size" }),
                 durationDiv.parentNode.children[1]
               );
             let oldStorage = 5000 * Math.floor(2.5 * Math.exp((20 / 33) * (baselvl - 1)));
@@ -2080,7 +2080,7 @@ class OGInfinity {
             let storageSizeDiv =
               storageDiv.querySelector(".storage_size size") ||
               storageDiv.appendChild(
-                that.createDOM("size", {
+                createDOM("size", {
                   class: "value tooltip",
                   "data-title": `${that.getTranslatedText(132)}: ${formatTimeWrapper(
                     newStorage / production,
@@ -2106,7 +2106,7 @@ class OGInfinity {
             let roiDiv =
               durationDiv.parentNode.querySelector(".narrow .roi_duration") ||
               durationDiv.parentNode.insertBefore(
-                that.createDOM("li", { class: "roi_duration" }),
+                createDOM("li", { class: "roi_duration" }),
                 durationDiv.parentNode.children[1]
               );
 
@@ -2116,7 +2116,7 @@ class OGInfinity {
               let roiTimeDiv =
                 roiDiv.querySelector(".roi_duration time") ||
                 roiDiv.appendChild(
-                  that.createDOM("time", {
+                  createDOM("time", {
                     class: "value tooltip",
                     "data-title": `${that.getTranslatedText(119)}: ${toFormatedNumber(
                       that.json.options.tradeRate[0]
@@ -2172,7 +2172,7 @@ class OGInfinity {
             !(baselvl > tolvl && (that.page == "research" || that.page == "lfresearch"))
           ) {
             metal.appendChild(
-              that.createDOM(
+              createDOM(
                 "li",
                 {
                   class: "ogk-sum tooltip",
@@ -2185,7 +2185,7 @@ class OGInfinity {
           missing[0] = Math.min(0, currentRes[0] - (baselvl - 1 > tolvl ? demolish[0] : resSum[0]));
           if (baselvl - 1 != tolvl && !(baselvl > tolvl && (that.page == "research" || that.page == "lfresearch")))
             metal.appendChild(
-              that.createDOM(
+              createDOM(
                 "li",
                 {
                   class: missing[0] != 0 ? "overmark tooltip" : "tooltip",
@@ -2205,7 +2205,7 @@ class OGInfinity {
             !(baselvl > tolvl && (that.page == "research" || that.page == "lfresearch"))
           ) {
             crystal.appendChild(
-              that.createDOM(
+              createDOM(
                 "li",
                 {
                   class: "ogk-sum tooltip",
@@ -2218,7 +2218,7 @@ class OGInfinity {
           missing[1] = Math.min(0, currentRes[1] - (baselvl - 1 > tolvl ? demolish[1] : resSum[1]));
           if (baselvl - 1 != tolvl && !(baselvl > tolvl && (that.page == "research" || that.page == "lfresearch")))
             crystal.appendChild(
-              that.createDOM(
+              createDOM(
                 "li",
                 {
                   class: missing[1] != 0 ? "overmark tooltip" : "tooltip",
@@ -2238,7 +2238,7 @@ class OGInfinity {
             !(baselvl > tolvl && (that.page == "research" || that.page == "lfresearch"))
           ) {
             deuterium.appendChild(
-              that.createDOM(
+              createDOM(
                 "li",
                 {
                   class: "ogk-sum tooltip",
@@ -2251,7 +2251,7 @@ class OGInfinity {
           missing[2] = Math.min(0, currentRes[2] - (baselvl - 1 > tolvl ? demolish[2] : resSum[2]));
           if (baselvl - 1 != tolvl && !(baselvl > tolvl && (that.page == "research" || that.page == "lfresearch")))
             deuterium.appendChild(
-              that.createDOM(
+              createDOM(
                 "li",
                 {
                   class: missing[2] != 0 ? "overmark tooltip" : "tooltip",
@@ -2272,7 +2272,7 @@ class OGInfinity {
               !(baselvl > tolvl && (that.page == "research" || that.page == "lfresearch"))
             ) {
               energy.appendChild(
-                that.createDOM(
+                createDOM(
                   "li",
                   {
                     class: "ogk-sum tooltip",
@@ -2285,13 +2285,13 @@ class OGInfinity {
             let tooltip =
               document.querySelector("#energy_box").getAttribute("title") ||
               document.querySelector("#energy_box").getAttribute("data-title");
-            let div = that.createDOM("div");
+            let div = createDOM("div");
             div.html(tooltip);
             let prod = div.querySelectorAll("span")[1].innerText.substring(1);
             missing[3] = Math.min(0, fromFormatedNumber(prod, true) - (baselvl - 1 > tolvl ? demolish[3] : resSum[3]));
             if (baselvl - 1 != tolvl && !(baselvl > tolvl && (that.page == "research" || that.page == "lfresearch")))
               energy.appendChild(
-                that.createDOM(
+                createDOM(
                   "li",
                   {
                     class: missing[3] != 0 ? "overmark tooltip" : "tooltip",
@@ -2336,7 +2336,7 @@ class OGInfinity {
             !(baselvl > tolvl && (that.page == "research" || that.page == "lfresearch"))
           ) {
             population.appendChild(
-              that.createDOM(
+              createDOM(
                 "li",
                 {
                   class: "ogk-sum tooltip",
@@ -2348,7 +2348,7 @@ class OGInfinity {
           }
           if (baselvl - 1 != tolvl && !(baselvl > tolvl && (that.page == "research" || that.page == "lfresearch")))
             population.appendChild(
-              that.createDOM(
+              createDOM(
                 "li",
                 {
                   class: missingPop != 0 ? "overmark tooltip" : "tooltip",
@@ -2407,7 +2407,7 @@ class OGInfinity {
           localStorage.setItem("detailsOpen", true);
           $(document).trigger("ajaxShowElement", typeof technologyId === "undefined" ? 0 : technologyId);
           let costDiv = document.querySelector(".costs");
-          let titleDiv = costDiv.appendChild(that.createDOM("div", { class: "ogk-titles" }));
+          let titleDiv = costDiv.appendChild(createDOM("div", { class: "ogk-titles" }));
           let tree = document.querySelector(".technology_tree");
           let clone = tree.cloneNode(true);
           tree.style.display = "none";
@@ -2433,8 +2433,8 @@ class OGInfinity {
               base = energyDiv.querySelector("span").getAttribute("data-value");
             }
             titleDiv.appendChild(that.createDOM("div", {}, "&#8205;"));
-            titleDiv.appendChild(that.createDOM("div", {}, that.getTranslatedText(40)));
-            titleDiv.appendChild(that.createDOM("div", {}, that.getTranslatedText(39)));
+            titleDiv.appendChild(createDOM("div", {}, that.getTranslatedText(40)));
+            titleDiv.appendChild(createDOM("div", {}, that.getTranslatedText(39)));
             let resDivs = [
               costDiv.querySelector(".metal"),
               costDiv.querySelector(".crystal"),
@@ -2447,8 +2447,8 @@ class OGInfinity {
             ];
             let infoDiv = document
               .querySelector("#technologydetails .sprite_large")
-              .appendChild(that.createDOM("div", { class: "ogk-tech-controls" }));
-            lock = infoDiv.appendChild(that.createDOM("a", { class: "icon icon_lock" }));
+              .appendChild(createDOM("div", { class: "ogk-tech-controls" }));
+            lock = infoDiv.appendChild(createDOM("a", { class: "icon icon_lock" }));
             lock.addEventListener("click", () => {
               lockListener();
             });
@@ -2465,7 +2465,7 @@ class OGInfinity {
                 missing[index] = min;
                 div.textContent = toFormatedNumber(baseCost[index], null, true);
                 div.appendChild(
-                  that.createDOM(
+                  createDOM(
                     "div",
                     {
                       class: "ogk-sum tooltip",
@@ -2475,7 +2475,7 @@ class OGInfinity {
                   )
                 );
                 div.appendChild(
-                  that.createDOM(
+                  createDOM(
                     "div",
                     {
                       class: min != 0 ? "overmark tooltip" : "tooltip",
@@ -2606,16 +2606,16 @@ class OGInfinity {
             let infoDiv = (
               document.querySelector("#technologydetails .sprite") ||
               document.querySelector("#technologydetails .lifeformsprite")
-            ).appendChild(that.createDOM("div", { class: "ogk-tech-controls" }));
+            ).appendChild(createDOM("div", { class: "ogk-tech-controls" }));
             let baseLvl = Number(document.querySelector(".level").getAttribute("data-value"));
             let tolvl = baseLvl;
             let lvl = titleDiv.appendChild(
               that.createDOM("div", {}, `Lvl <strong>${toFormatedNumber(baseLvl)}</strong>`)
             );
-            let lvlFromTo = titleDiv.appendChild(that.createDOM("div", {}, ""));
-            titleDiv.appendChild(that.createDOM("div", {}, that.getTranslatedText(39)));
+            let lvlFromTo = titleDiv.appendChild(createDOM("div"));
+            titleDiv.appendChild(createDOM("div", {}, that.getTranslatedText(39)));
             let helpNode = document.querySelector(".txt_box .details").cloneNode(true);
-            lock = infoDiv.appendChild(that.createDOM("a", { class: "icon icon_lock" }));
+            lock = infoDiv.appendChild(createDOM("a", { class: "icon icon_lock" }));
             lock.addEventListener("click", () => {
               lockListener();
             });
@@ -2657,13 +2657,13 @@ class OGInfinity {
               document
                 .querySelector(".costs")
                 .appendChild(
-                  that.createDOM("div", { class: "overmark" }, "resources not correct, please report to developers!")
+                  createDOM("div", { class: "overmark" }, "resources not correct, please report to developers!")
                 );
 
             updateResearchDetails(technologyId, baseLvl, tolvl);
-            let previous = infoDiv.appendChild(that.createDOM("a", { class: "icon icon_skip_back" }));
-            let lvlSpan = infoDiv.appendChild(that.createDOM("span", { class: "ogk-lvl" }, toFormatedNumber(tolvl)));
-            let next = infoDiv.appendChild(that.createDOM("a", { class: "icon icon_skip" }));
+            let previous = infoDiv.appendChild(createDOM("a", { class: "icon icon_skip_back" }));
+            let lvlSpan = infoDiv.appendChild(createDOM("span", { class: "ogk-lvl" }, toFormatedNumber(tolvl)));
+            let next = infoDiv.appendChild(createDOM("a", { class: "icon icon_skip" }));
             let textLvl = document.querySelector(".costs p");
             next.addEventListener("click", () => {
               tolvl += 1;
