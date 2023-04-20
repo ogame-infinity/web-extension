@@ -1756,14 +1756,13 @@ class OGInfinity {
         } else if (timer.getAttribute("id") == "lfResearchCountdown") {
           timeLeft = restTimelfresearch * 1e3;
         }
-        let timeZoneChange = this.json.options.timeZone ? 0 : this.json.timezoneDiff;
-        let newDate = new Date(Date.now() + timeLeft - timeZoneChange * 1e3);
+        const timeZoneChange = this.json.options.timeZone ? 0 : this.json.timezoneDiff;
+        const newDate = new Date(Date.now() + timeLeft - timeZoneChange * 1e3);
+        const dateTxt = getFormatedDate(newDate.getTime(), "[d].[m].[y] [G]:[i]:[s] ");
         timer.parentNode.appendChild(
-          this.createDOM(
-            "div",
-            { class: "ogl-date" },
-            getFormatedDate(newDate.getTime(), "[d].[m].[y] <strong> [G]:[i]:[s] </strong>")
-          )
+          createDOM("div", { class: "ogl-date" }, `${dateTxt.split(" ")[0]}  `).appendChild(
+            createDOM("strong", {}, dateTxt.split(" ")[1])
+          ).parentElement
         );
       });
   }
@@ -1977,12 +1976,10 @@ class OGInfinity {
                 window.location.host +
                 window.location.pathname +
                 `?page=ingame&component=supplies&cp=${that.current.id}&techId212=${satsNeeded}`;
-              let satsSpan = that.createDOM(
-                "span",
-                {},
-                `<a href=${link} tech-id="212" class="ogl-option ogl-solar-satellite"></a><span>+${toFormatedNumber(
-                  satsNeeded
-                )}`
+              let satsSpan = createDOM("span");
+              satsSpan.replaceChildren(
+                createDOM("a", { href: `${link}`, "tech-id": "212", class: "ogl-option ogl-solar-satellite" }),
+                createDOM("span", {}, `+${toFormatedNumber(satsNeeded)}`)
               );
               consDiv.appendChild(satsSpan);
             }
@@ -2016,10 +2013,10 @@ class OGInfinity {
                 (that.json.allianceClass == ALLY_CLASS_MINER ? TRADER_ENERGY_BONUS : 0) +
                 (that.json.lifeformBonus ? that.json.lifeformBonus[that.current.id].productionBonus[3] : 0);
               let satsNeeded = Math.ceil(Math.floor(-diff / (1 + energyBonus)) / Math.floor((temp + 140) / 6));
-              let satsSpan = that.createDOM(
-                "span",
-                {},
-                `<a tech-id="212" class="ogl-option ogl-solar-satellite"></a><span>+${toFormatedNumber(satsNeeded)}`
+              let satsSpan = createDOM("span");
+              satsSpan.replaceChildren(
+                createDOM("a", { "tech-id": "212", class: "ogl-option ogl-solar-satellite" }),
+                createDOM("span", {}, `+${toFormatedNumber(satsNeeded)}`)
               );
               consDiv.appendChild(satsSpan);
               satsSpan.addEventListener("click", () => {
@@ -2136,23 +2133,22 @@ class OGInfinity {
         let currentDate = new Date();
         let timeZoneChange = that.json.options.timeZone ? 0 : that.json.timezoneDiff;
         let finishDate = new Date(currentDate.getTime() + (techno.time - timeZoneChange) * 1e3);
-        if (baselvl <= tolvl)
+        if (baselvl <= tolvl) {
+          const dateTxt = getFormatedDate(finishDate.getTime(), "[d].[m] - [G]:[i]:[s]");
           timeDiv.appendChild(
-            this.createDOM(
-              "div",
-              { class: "ogl-date" },
-              getFormatedDate(finishDate.getTime(), "<strong>[d].[m]</strong> - [G]:[i]:[s]")
-            )
+            createDOM("div", { class: "ogl-date" })
+              .appendChild(createDOM("strong", {}, `${dateTxt.split(" ")[0]}`))
+              .parentElement.appendChild(document.createTextNode(` -${dateTxt.split("-")[1]}`)).parentElement
           );
+        }
         if (baselvl < tolvl) {
           timeSumDiv.innerText = formatTimeWrapper(timeSum, 2, true, " ", false, "");
           finishDate = new Date(currentDate.getTime() + (timeSum - timeZoneChange) * 1e3);
-          timeSumDiv.appendChild(
-            this.createDOM(
-              "div",
-              { class: "ogl-date" },
-              getFormatedDate(finishDate.getTime(), "<strong>[d].[m]</strong> - [G]:[i]:[s]")
-            )
+          const dateTxt = getFormatedDate(finishDate.getTime(), "[d].[m] - [G]:[i]:[s]");
+          timeDiv.appendChild(
+            createDOM("div", { class: "ogl-date" })
+              .appendChild(createDOM("strong", {}, `${dateTxt.split(" ")[0]}`))
+              .parentElement.appendChild(document.createTextNode(` -${dateTxt.split("-")[1]}`)).parentElement
           );
         } else {
           timeSumDiv.replaceChildren();
@@ -2314,12 +2310,10 @@ class OGInfinity {
                 window.location.host +
                 window.location.pathname +
                 `?page=ingame&component=supplies&cp=${that.current.id}&techId212=${satsNeeded}`;
-              let satsSpan = that.createDOM(
-                "span",
-                {},
-                `<a href=${link} tech-id="212" class="ogl-option ogl-solar-satellite"></a><span>+${toFormatedNumber(
-                  satsNeeded
-                )}`
+              let satsSpan = createDOM("span");
+              satsSpan.replaceChildren(
+                createDOM("a", { href: `${link}`, "tech-id": "212", class: "ogl-option ogl-solar-satellite" }),
+                createDOM("span", {}, `+${toFormatedNumber(satsNeeded)}`)
               );
               energy.appendChild(satsSpan);
             }
@@ -2489,12 +2483,11 @@ class OGInfinity {
               let currentDate = new Date();
               let timeZoneChange = that.json.options.timeZone ? 0 : that.json.timezoneDiff;
               let finishDate = new Date(currentDate.getTime() + (baseTime * value - timeZoneChange) * 1e3);
+              const dateTxt = getFormatedDate(finishDate.getTime(), "[d].[m] - [G]:[i]:[s]");
               timeDiv.appendChild(
-                that.createDOM(
-                  "div",
-                  { class: "ogl-date" },
-                  getFormatedDate(finishDate.getTime(), "<strong>[d].[m]</strong> - [G]:[i]:[s]")
-                )
+                createDOM("div", { class: "ogl-date" })
+                  .appendChild(createDOM("strong", {}, `${dateTxt.split(" ")[0]}`))
+                  .parentElement.appendChild(document.createTextNode(` -${dateTxt.split("-")[1]}`)).parentElement
               );
               if (technologyId == 212) {
                 let energyBonus =
@@ -2511,10 +2504,10 @@ class OGInfinity {
                 if (Number(currentEnergy) < 0 && that.json.empire[that.current.index]) {
                   let temp = that.json.empire[that.current.index].db_par2 + 40;
                   let satsNeeded = Math.ceil(-Number(currentEnergy) / (1 + energyBonus) / Math.floor((temp + 140) / 6));
-                  let satsSpan = that.createDOM(
-                    "span",
-                    {},
-                    `<a tech-id="212" class="ogl-option ogl-solar-satellite"></a><span>+${toFormatedNumber(satsNeeded)}`
+                  let satsSpan = createDOM("span");
+                  satsSpan.replaceChildren(
+                    createDOM("a", { "tech-id": "212", class: "ogl-option ogl-solar-satellite" }),
+                    createDOM("span", {}, `+${toFormatedNumber(satsNeeded)}`)
                   );
                   energyDiv.appendChild(satsSpan);
                   satsSpan.addEventListener("click", () => {
@@ -2538,10 +2531,10 @@ class OGInfinity {
                     (that.json.allianceClass == ALLY_CLASS_MINER ? TRADER_ENERGY_BONUS : 0);
                   let temp = that.json.empire[that.current.index].db_par2 + 40;
                   let satsNeeded = Math.ceil(-diff / (1 + energyBonus) / Math.floor((temp + 140) / 6));
-                  let satsSpan = that.createDOM(
-                    "span",
-                    {},
-                    `<a tech-id="212" class="ogl-option ogl-solar-satellite"></a><span>+${toFormatedNumber(satsNeeded)}`
+                  let satsSpan = createDOM("span");
+                  satsSpan.replaceChildren(
+                    createDOM("a", { "tech-id": "212", class: "ogl-option ogl-solar-satellite" }),
+                    createDOM("span", {}, `+${toFormatedNumber(satsNeeded)}`)
                   );
                   energyDiv.appendChild(satsSpan);
                   satsSpan.addEventListener("click", () => {
@@ -4775,25 +4768,19 @@ class OGInfinity {
     let prod = ecoDetail.appendChild(createDOM("div", { class: "ogk-mines" }));
     prod.appendChild(createDOM("span"));
     prod.appendChild(
-      this.createDOM(
-        "span",
-        { class: "ogk-title ogl-metal" },
-        `<a class="resourceIcon metal ogl-option"></a>${toFormatedNumber(mlvl, 1)}`
-      )
+      createDOM("span", { class: "ogk-title ogl-metal" })
+        .appendChild(createDOM("a", { class: "resourceIcon metal ogl-option" }))
+        .parentElement.appendChild(document.createTextNode(`${toFormatedNumber(mlvl, 1)}`)).parentElement
     );
     prod.appendChild(
-      this.createDOM(
-        "span",
-        { class: "ogk-title ogl-crystal" },
-        `<a class="resourceIcon crystal ogl-option"></a>${toFormatedNumber(clvl, 1)}`
-      )
+      createDOM("span", { class: "ogk-title ogl-crystal" })
+        .appendChild(createDOM("a", { class: "resourceIcon crystal ogl-option" }))
+        .parentElement.appendChild(document.createTextNode(`${toFormatedNumber(clvl, 1)}`)).parentElement
     );
     prod.appendChild(
-      this.createDOM(
-        "span",
-        { class: "ogk-title ogl-deut" },
-        `<a class="resourceIcon deuterium ogl-option"></a>${toFormatedNumber(dlvl, 1)}`
-      )
+      createDOM("span", { class: "ogk-title ogl-deut" })
+        .appendChild(createDOM("a", { class: "resourceIcon deuterium ogl-option" }))
+        .parentElement.appendChild(document.createTextNode(`${toFormatedNumber(dlvl, 1)}`)).parentElement
     );
     prod.appendChild(
       createDOM("p").appendChild(createDOM("strong", {}, `${this.getTranslatedText(59)}`)).parentElement
@@ -9549,11 +9536,13 @@ class OGInfinity {
     );
     if (unions.length != 0) {
       let unionsBtn = coords.appendChild(
-        this.createDOM(
-          "div",
-          { class: "ogl-union-btn" },
-          '<img src="https://gf3.geo.gfsrv.net/cdn56/2ff25995f98351834db4b5aa048c68.gif" height="16" width="16"></img>'
-        )
+        createDOM("div", { class: "ogl-union-btn" }).appendChild(
+          createDOM("img", {
+            src: "https://gf3.geo.gfsrv.net/cdn56/2ff25995f98351834db4b5aa048c68.gif",
+            height: "16",
+            width: "16",
+          })
+        ).parentElement
       );
       unionsBtn.addEventListener("click", () => {
         let container = createDOM("div", { class: "ogl-quickLinks", style: "display: flex;flex-direction:column" });
@@ -9683,7 +9672,7 @@ class OGInfinity {
     $("#selectMaxCrystal").after(createDOM("span", { class: "ogi-crystalLeft" }, "-"));
     $("#selectMaxDeuterium").after(createDOM("span", { class: "ogi-deuteriumLeft" }, "-"));
     $("#allresources").after(createDOM("a", { class: "select-most" }));
-    $("#allresources").after(this.createDOM("a", { class: "send_none" }, "<a></a>"));
+    $("#allresources").after(createDOM("a", { class: "send_none" }).appendChild(createDOM("a")).parentElement);
     $("#loadAllResources .select-most").on("click", () => {
       $("#selectMinDeuterium").click();
       $("#selectMinCrystal").click();
@@ -9700,7 +9689,9 @@ class OGInfinity {
     let load = createDOM("div", { class: "ogl-cargo" });
     let selectMostRes = load.appendChild(createDOM("a", { class: "select-most" }));
     let selectAllRes = load.appendChild(createDOM("a", { class: "sendall" }));
-    let selectNoRes = load.appendChild(this.createDOM("a", { class: "send_none" }, "<a></a>"));
+    let selectNoRes = load.appendChild(
+      createDOM("a", { class: "send_none" }).appendChild(createDOM("a")).parentElement
+    );
     selectNoRes.addEventListener("click", () => {
       selectMinDeut.click();
       selectMinCrystal.click();
@@ -9727,11 +9718,13 @@ class OGInfinity {
         .parentElement.appendChild(createDOM("span", {}, "0")).parentElement
     );
     let settings = load.appendChild(
-      this.createDOM(
-        "div",
-        { class: "ogl-setting-icon" },
-        '<img src="https://gf3.geo.gfsrv.net/cdne7/1f57d944fff38ee51d49c027f574ef.gif" width="16" height="16" >'
-      )
+      createDOM("div", { class: "ogl-setting-icon" }).appendChild(
+        createDOM("img", {
+          src: "https://gf3.geo.gfsrv.net/cdne7/1f57d944fff38ee51d49c027f574ef.gif",
+          height: "16",
+          width: "16",
+        })
+      ).parentElement
     );
     settings.addEventListener("click", () => {
       this.popup(null, this.keepOnPlanetDialog(this.current.coords + (this.current.isMoon ? "M" : "P")));
@@ -10110,11 +10103,13 @@ class OGInfinity {
       );
       if (unions.length != 0) {
         let unionsBtn = coords.appendChild(
-          this.createDOM(
-            "div",
-            { class: "ogl-union-btn" },
-            '<img src="https://gf3.geo.gfsrv.net/cdn56/2ff25995f98351834db4b5aa048c68.gif" height="16" width="16"></img>'
-          )
+          createDOM("div", { class: "ogl-union-btn" }).appendChild(
+            createDOM("img", {
+              src: "https://gf3.geo.gfsrv.net/cdn56/2ff25995f98351834db4b5aa048c68.gif",
+              height: "16",
+              width: "16",
+            })
+          ).parentElement
         );
         unionsBtn.addEventListener("click", () => {
           let container = createDOM("div", { class: "ogl-quickLinks", style: "display: flex;flex-direction:column" });
@@ -10669,7 +10664,7 @@ class OGInfinity {
       $("#selectMaxCrystal").after(createDOM("span", { class: "ogi-crystalLeft" }, "-"));
       $("#selectMaxDeuterium").after(createDOM("span", { class: "ogi-deuteriumLeft" }, "-"));
       $("#allresources").after(createDOM("a", { class: "select-most" }));
-      $("#allresources").after(this.createDOM("a", { class: "send_none" }, "<a></a>"));
+      $("#allresources").after(createDOM("a", { class: "send_none" }).appendChild(createDOM("a")).parentElement);
       $("#loadAllResources .select-most").on("click", () => {
         $("#selectMinDeuterium").click();
         $("#selectMinCrystal").click();
@@ -10878,7 +10873,9 @@ class OGInfinity {
       let load = createDOM("div", { class: "ogl-cargo" });
       let selectMostRes = load.appendChild(createDOM("a", { class: "select-most" }));
       let selectAllRes = load.appendChild(createDOM("a", { class: "sendall" }));
-      let selectNoRes = load.appendChild(this.createDOM("a", { class: "send_none" }, "<a></a>"));
+      let selectNoRes = load.appendChild(
+        createDOM("a", { class: "send_none" }).appendChild(createDOM("a")).parentElement
+      );
       selectNoRes.addEventListener("click", () => {
         selectMinDeut.click();
         selectMinCrystal.click();
@@ -10907,11 +10904,13 @@ class OGInfinity {
           .parentElement.appendChild(createDOM("span", {}, "0")).parentElement
       );
       let settings = load.appendChild(
-        this.createDOM(
-          "div",
-          { class: "ogl-setting-icon" },
-          '<img src="https://gf3.geo.gfsrv.net/cdne7/1f57d944fff38ee51d49c027f574ef.gif" width="16" height="16" >'
-        )
+        createDOM("div", { class: "ogl-setting-icon" }).appendChild(
+          createDOM("img", {
+            src: "https://gf3.geo.gfsrv.net/cdne7/1f57d944fff38ee51d49c027f574ef.gif",
+            height: "16",
+            width: "16",
+          })
+        ).parentElement
       );
       settings.addEventListener("click", () => {
         this.popup(null, this.keepOnPlanetDialog(this.current.coords + (this.current.isMoon ? "M" : "P")));
@@ -16861,11 +16860,11 @@ class OGInfinity {
           tr: "Amortisman",
         },
         /*121*/ {
-          de: "Die Amortisationszeit errechnet sich aus der Differenz der Gesamtproduktion und den Kosten für die Zielstufe. Ausreichende Energieversorgung und unveränderte globale Produktionsbooster (Spieler- und Allianzklasse, Offiziere) werden vorausgesetzt. Zur Bewertung der Ressourcen wird der angegebene Handelskurs verwendet.<br>Bei Minen wird die Änderung der Gesamtproduktion durch erhöhtes Crawler-Limit berücksichtigt, dabei wird der Produktionsfaktor und eine eventuelle Begrenzung wie angegeben verwendet.<br>Für die Astrophysik werden die Forschungskosten und die Kosten für den Bau von Minen auf der neuen Kolonie bis zum Durchschnittslevel berücksichtigt. Die Produktionsänderung wird durch die durchschnittliche Planetenparameter angenähert, da die tatsächliche Produktion von der Temperatur und der Position der neuen Kolonie abhängt. Baukosten für die Energieversorgung oder andere Anlagen werden nicht berücksichtigt.",
-          en: "The payback period is calculated based on the difference in total production and the cost for the target level. Sufficient energy supply and unchanged global production boosters (player and alliance class, officers) are assumed. The configured trade rate is used to value the resources.<br>For mines the change of total production dueto increased crawler limit is taken into account, using the settings from above.<br>For Astrophysics the research cost and the cost of building mines to the average level on the new colony are taken into account. The change in production its approximated by the average planet parameters, because the actual production depends on the new colony's temperature and position. Building costs for energy supply or other facilities are not considered.",
-          es: "El período de amortización está calculado basándose en la diferencia en la producción total y el coste para el nivel objetivo. Se asume un suficiente aprovisionamiento energético y que los mejoradores de producción (clases de jugador y alianza, oficiales) permanecen inalterados. El ratio de cambio configurado se usa para valorar los recursos.<br>Para las minas, se tiene en cuenta el cambio de la producción total debido al incremento de taladradores, usando los ajustes superiores.<br>Para la astrofísica, se tiene en cuenta el coste de investigación y el coste de construcción de minas al nivel promedio en la nueva colonia. El cambio en la producción es aproximado usando parámetros promedio para el planeta, porque la producción real depende de la temperatura y posición de la nueva colonia. No se tienen en cuenta costes de construcción de aprovisionamiento de energía ni de otras instalaciones.",
-          fr: "La période de récupération est calculée en fonction de la différence entre la production totale et le coût pour le niveau cible. Un approvisionnement énergétique suffisant et des boosters de production mondiaux inchangés (classe de joueur et d'alliance, officiers) sont supposés. Le taux d'échange configuré est utilisé pour évaluer les ressources.<br>Pour les mines, le changement de production totale dû à l'augmentation de la limite de foreuses est pris en compte, en utilisant les paramètres ci-dessus.<br>Pour l'astrophysique, le coût de recherche et le coût de construction des mines au niveau moyen de la nouvelle colonie sont pris en compte. Le changement de production est approximé par les paramètres moyens de la planète, car la production réelle dépend de la température et de la position de la nouvelle colonie. Les coûts de construction pour l'approvisionnement en énergie ou d'autres installations ne sont pas pris en compte.",
-          tr: "Geri ödeme süresi, toplam üretimdeki farka ve hedef seviyenin maliyetine göre hesaplanır. Yeterli enerji arzı ve değişmeyen küresel üretim artırıcıları (oyuncu ve ittifak sınıfı, görevliler) varsayılır. Yapılandırılan ticaret oranı, değeri belirlemek için kullanılır. kaynaklar.<br>Madenler için, artan paletli sınırına bağlı olarak toplam üretimdeki değişiklik, yukarıdan yapılan ayarlar kullanılarak dikkate alınır.<br>Astrofizik için araştırma maliyeti ve yeni kolonide mayın inşa etme maliyeti ortalama seviyeye dikkate alınır. Üretimdeki değişiklik, ortalama gezegen parametrelerine yakındır, çünkü gerçek üretim yeni koloninin sıcaklığına ve konumuna bağlıdır. Enerji tedariki veya diğer tesisler için inşaat maliyetleri dikkate alınmaz.",
+          de: "Die Amortisationszeit errechnet sich aus der Differenz der Gesamtproduktion und den Kosten für die Zielstufe. Ausreichende Energieversorgung und unveränderte globale Produktionsbooster (Spieler- und Allianzklasse, Offiziere) werden vorausgesetzt. Zur Bewertung der Ressourcen wird der angegebene Handelskurs verwendet. Bei Minen wird die Änderung der Gesamtproduktion durch erhöhtes Crawler-Limit berücksichtigt, dabei wird der Produktionsfaktor und eine eventuelle Begrenzung wie angegeben verwendet. Für die Astrophysik werden die Forschungskosten und die Kosten für den Bau von Minen auf der neuen Kolonie bis zum Durchschnittslevel berücksichtigt. Die Produktionsänderung wird durch die durchschnittliche Planetenparameter angenähert, da die tatsächliche Produktion von der Temperatur und der Position der neuen Kolonie abhängt. Baukosten für die Energieversorgung oder andere Anlagen werden nicht berücksichtigt.",
+          en: "The payback period is calculated based on the difference in total production and the cost for the target level. Sufficient energy supply and unchanged global production boosters (player and alliance class, officers) are assumed. The configured trade rate is used to value the resources. For mines the change of total production dueto increased crawler limit is taken into account, using the settings from above. For Astrophysics the research cost and the cost of building mines to the average level on the new colony are taken into account. The change in production its approximated by the average planet parameters, because the actual production depends on the new colony's temperature and position. Building costs for energy supply or other facilities are not considered.",
+          es: "El período de amortización está calculado basándose en la diferencia en la producción total y el coste para el nivel objetivo. Se asume un suficiente aprovisionamiento energético y que los mejoradores de producción (clases de jugador y alianza, oficiales) permanecen inalterados. El ratio de cambio configurado se usa para valorar los recursos. Para las minas, se tiene en cuenta el cambio de la producción total debido al incremento de taladradores, usando los ajustes superiores. Para la astrofísica, se tiene en cuenta el coste de investigación y el coste de construcción de minas al nivel promedio en la nueva colonia. El cambio en la producción es aproximado usando parámetros promedio para el planeta, porque la producción real depende de la temperatura y posición de la nueva colonia. No se tienen en cuenta costes de construcción de aprovisionamiento de energía ni de otras instalaciones.",
+          fr: "La période de récupération est calculée en fonction de la différence entre la production totale et le coût pour le niveau cible. Un approvisionnement énergétique suffisant et des boosters de production mondiaux inchangés (classe de joueur et d'alliance, officiers) sont supposés. Le taux d'échange configuré est utilisé pour évaluer les ressources. Pour les mines, le changement de production totale dû à l'augmentation de la limite de foreuses est pris en compte, en utilisant les paramètres ci-dessus. Pour l'astrophysique, le coût de recherche et le coût de construction des mines au niveau moyen de la nouvelle colonie sont pris en compte. Le changement de production est approximé par les paramètres moyens de la planète, car la production réelle dépend de la température et de la position de la nouvelle colonie. Les coûts de construction pour l'approvisionnement en énergie ou d'autres installations ne sont pas pris en compte.",
+          tr: "Geri ödeme süresi, toplam üretimdeki farka ve hedef seviyenin maliyetine göre hesaplanır. Yeterli enerji arzı ve değişmeyen küresel üretim artırıcıları (oyuncu ve ittifak sınıfı, görevliler) varsayılır. Yapılandırılan ticaret oranı, değeri belirlemek için kullanılır. kaynaklar. Madenler için, artan paletli sınırına bağlı olarak toplam üretimdeki değişiklik, yukarıdan yapılan ayarlar kullanılarak dikkate alınır. Astrofizik için araştırma maliyeti ve yeni kolonide mayın inşa etme maliyeti ortalama seviyeye dikkate alınır. Üretimdeki değişiklik, ortalama gezegen parametrelerine yakındır, çünkü gerçek üretim yeni koloninin sıcaklığına ve konumuna bağlıdır. Enerji tedariki veya diğer tesisler için inşaat maliyetleri dikkate alınmaz.",
         },
         /*122*/ {
           de: "Nur Werte größer gleich 1 ...",
