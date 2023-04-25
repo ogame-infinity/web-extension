@@ -1474,6 +1474,7 @@ class OGInfinity {
       ids: [],
     };
     this.json.coordsHistory = this.json.coordsHistory || [];
+    this.json.serverSettingsTimeStamp = this.json.serverSettingsTimeStamp || 0;
     this.json.trashsimSettings = this.json.trashsimSettings || false;
     this.json.universeSettingsTooltip = this.json.universeSettingsTooltip || {};
     this.json.topScore = this.json.topScore || 0;
@@ -3143,13 +3144,16 @@ class OGInfinity {
     }
   }
 
-  async updateServerSettings() {
-    if (this.json.trashsimSettings && !this.json.updateSettings) return;
+  async updateServerSettings(force = false) {
+    const timeSinceServerTimeStamp =
+      document.querySelector("[name='ogame-timestamp']").content - this.json.serverSettingsTimeStamp;
+    if ((timeSinceServerTimeStamp <  24 * 3600) && !force) return;
     let settingsUrl = `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/api/serverData.xml`;
     return fetch(settingsUrl)
       .then((rep) => rep.text())
       .then((str) => new window.DOMParser().parseFromString(str, "text/xml"))
       .then((xml) => {
+        this.json.serverSettingsTimeStamp = xml.querySelector("serverData").getAttribute("timestamp");
         this.json.topScore = Number(xml.querySelector("topScore").innerHTML);
         this.json.speed = Number(xml.querySelector("speed").innerHTML);
         this.json.speedResearch =
@@ -17530,8 +17534,7 @@ class OGInfinity {
     let srvDatasBtn = this.createDOM("button", { class: "btn_blue update" }, this.getTranslatedText(23));
     srvDatas.appendChild(srvDatasBtn);
     srvDatasBtn.addEventListener("click", async () => {
-      this.json.updateSettings = true;
-      this.updateServerSettings();
+      this.updateServerSettings(true);
       await this.updateLifeform();
       document.querySelector(".ogl-dialog .close-tooltip").click();
     });
