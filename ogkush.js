@@ -1449,7 +1449,7 @@ class OGInfinity {
     let res = JSON.parse(localStorage.getItem("ogk-data"));
     this.json = res || {};
     this.json.welcome = this.json.welcome === false ? false : true;
-    this.json.needLifeformUpdate = this.json.needLifeformUpdate === false ? false : true;
+    this.json.needLifeformUpdate = this.json.needLifeformUpdate || {};
     this.json.pantrySync = this.json.pantrySync || "";
     this.json.empire = this.json.empire || [];
     this.json.jumpGate = this.json.jumpGate || {};
@@ -1717,7 +1717,7 @@ class OGInfinity {
       (timeSinceLastUpdate > 5 * 60 * 1e3 && this.json.needsUpdate) ||
       (timeSinceLastUpdate > 1 * 60 * 1e3 && this.json.options.autofetchempire)
     ) {
-      this.updateInfo();
+      this.updateInfo(force);
     }
     let stageForUpdate = () => {
       this.json.needsUpdate = true;
@@ -11878,29 +11878,34 @@ class OGInfinity {
     }
   }
 
-  async updateLifeform() {
+  async updateLifeform(full = false) {
     if (!this.hasLifeforms) return;
     let lifeformBonus = {};
     let selectedLifeforms = {};
-    for await (let planet of this.json.empire) {
-      lifeformBonus[planet.id] = await this.getLifeformBonus(planet.id);
-      selectedLifeforms[planet.id] = await this.getSelectedLifeform(planet.id);
+    if (full) {
+      for await (let planet of this.json.empire) {
+        if (planet.id !== this.current.id) {
+          lifeformBonus[planet.id] = await this.getLifeformBonus(planet.id);
+          selectedLifeforms[planet.id] = await this.getSelectedLifeform(planet.id);
+          this.json.needLifeformUpdate[planet.id] = false;
+        }
+      }
+      this.json.lifeformBonus = lifeformBonus;
+      this.json.selectedLifeforms = selectedLifeforms;
     }
-    this.json.lifeformBonus = lifeformBonus;
-    this.json.selectedLifeforms = selectedLifeforms;
-    this.json.needLifeformUpdate = false;
+    // last called fetch has to be from current planet/moon else Ogame switches on next refresh
+    this.json.lifeformBonus[this.current.id] = await this.getLifeformBonus(this.current.id);
+    this.json.selectedLifeforms[this.current.id] = await this.getSelectedLifeform(this.current.id);
+    this.json.needLifeformUpdate[this.current.id] = false;
     this.saveData();
-    let abortController = new AbortController();
-    this.abordSignal = abortController.signal;
-    window.onbeforeunload = function (e) {
-      abortController.abort();
-    };
-    fetch(
-      this.current.isMoon
-        ? this.current.planet.querySelector(".moonlink").href
-        : this.current.planet.querySelector(".planetlink").href,
-      { signal: abortController.signal }
-    ); // last called fetch has to be from current planet/moon else Ogame switches on next refresh
+    if (this.current.isMoon) {
+      let abortController = new AbortController();
+      this.abordSignal = abortController.signal;
+      window.onbeforeunload = function (e) {
+        abortController.abort();
+      };
+      fetch(this.current.planet.querySelector(".moonlink").href, { signal: abortController.signal } ); 
+    }
   }
 
   async getSelectedLifeform(planetId) {
@@ -12818,13 +12823,12 @@ class OGInfinity {
     }
   }
 
-  updateInfo() {
+  updateInfo(force = false) {
     if (this.isLoading) return;
     this.isLoading = true;
     let svg =
       '<svg width="80px" height="30px" viewBox="0 0 187.3 93.7" preserveAspectRatio="xMidYMid meet">\n                <path stroke="#3c536c" id="outline" fill="none" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"\n                  d="M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-13.3,7.2-22.1,17.1\n                    c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z" />\n                <path id="outline-bg" opacity="0.1" fill="none" stroke="#eee" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="\n                M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-13.3,7.2-22.1,17.1\n                c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z" />\n\t\t\t\t      </svg>';
     document.querySelector("#countColonies").appendChild(this.createDOM("div", { class: "spinner" }, svg));
-    this.getAllianceClass();
     return this.getEmpireInfo().then(async (json) => {
       this.json.empire = json;
       this.json.lastEmpireUpdate = new Date();
@@ -12834,7 +12838,8 @@ class OGInfinity {
       });
       this.updateresourceDetail();
       this.flyingFleet();
-      if (this.json.needLifeformUpdate) await this.updateLifeform();
+      if ((this.json.needLifeformUpdate[this.current.id] && !this.current.isMoon) || force)
+        await this.updateLifeform();
       this.markLifeforms();
       this.isLoading = false;
       this.json.needsUpdate = false;
@@ -17535,7 +17540,8 @@ class OGInfinity {
     srvDatas.appendChild(srvDatasBtn);
     srvDatasBtn.addEventListener("click", async () => {
       this.updateServerSettings(true);
-      await this.updateLifeform();
+      this.getAllianceClass();
+      await this.updateLifeform(true);
       document.querySelector(".ogl-dialog .close-tooltip").click();
     });
     dataDiv.appendChild(this.createDOM("hr"));
@@ -18544,6 +18550,7 @@ class OGInfinity {
 
   updateProductionProgress() {
     let now = new Date();
+    let needLifeformUpdateForResearch = false;
     document.querySelectorAll(".planet-koords").forEach((planet) => {
       let elem = this.json.productionProgress[planet.textContent.trim()];
       if (elem && new Date(elem.endDate) < now) {
@@ -18553,16 +18560,21 @@ class OGInfinity {
       }
       elem = this.json.lfProductionProgress[planet.textContent.trim()];
       if (elem && new Date(elem.endDate) < now) {
-        this.json.needLifeformUpdate = true;
+        this.json.needLifeformUpdate[planet.parentElement.href.match(/=(\d+)/)[1]] = true;
         if (this.json.options.showProgressIndicators) planet.parentElement.classList.add("finishedLf");
       } else {
         if (this.json.options.showProgressIndicators) planet.parentElement.classList.remove("finishedLf");
       }
       elem = this.json.lfResearchProgress[planet.textContent.trim()];
       if (elem && new Date(elem.endDate) < now) {
-        this.json.needLifeformUpdate = true;
+        needLifeformUpdateForResearch = true;
       }
     });
+    if (needLifeformUpdateForResearch) {
+      document.querySelectorAll(".planet-koords").forEach((planet) => {
+        this.json.needLifeformUpdate[planet.parentElement.href.match(/=(\d+)/)[1]] = true;
+      });
+    }
 
     if (document.querySelector("#productionboxbuildingcomponent") && !this.current.isMoon) {
       let coords = this.current.coords;
