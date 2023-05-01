@@ -18600,7 +18600,6 @@ class OGInfinity {
           time[1],
           time[2]
         );
-        if (this.json.options.timeZone) endDate = new Date(endDate - this.json.timezoneDiff * 1e3);
         this.json.productionProgress[coords] = {
           technoId: technoId,
           tolvl: tolvl,
@@ -18630,7 +18629,6 @@ class OGInfinity {
           time[1],
           time[2]
         );
-        if (this.json.options.timeZone) endDate = new Date(endDate - this.json.timezoneDiff * 1e3);
         this.json.lfProductionProgress[coords] = {
           technoId: technoId,
           tolvl: tolvl,
@@ -18666,7 +18664,6 @@ class OGInfinity {
           time[1],
           time[2]
         );
-        if (this.json.options.timeZone) endDate = new Date(endDate - this.json.timezoneDiff * 1e3);
         this.json.researchProgress = {
           technoId: technoId,
           coords: coords,
@@ -18698,7 +18695,6 @@ class OGInfinity {
           time[1],
           time[2]
         );
-        if (this.json.options.timeZone) endDate = new Date(endDate - this.json.timezoneDiff * 1e3);
         this.json.lfResearchProgress[coords] = {
           technoId: technoId,
           tolvl: tolvl,
