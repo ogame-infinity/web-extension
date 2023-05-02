@@ -15268,6 +15268,9 @@ class OGInfinity {
     if (this.page == "fleetdispatch") {
       document.addEventListener("keydown", (event) => {
         if (fleetDispatcher.currentPage == "fleet1") {
+          if (document.querySelector("#fleetTemplatesEdit")) {
+            if (document.querySelector("#fleetTemplatesEdit").classList.contains("overlayDiv")) return;
+          }
           if (document.activeElement.tagName != "INPUT") {
             if (event.code == "KeyE") {
               document.querySelector(".ogl-expedition").click();
