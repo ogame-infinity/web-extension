@@ -1577,6 +1577,7 @@ class OGInfinity {
     let forceEmpire = document.querySelectorAll("div[id*=planet-").length != this.json.empire.length;
     this.updateServerSettings();
     this.updateEmpireData(forceEmpire);
+    this.initializeLFTypeName();
     if (this.json.needLifeformUpdate[this.current.id]) this.updateLifeform();
 
     if (UNIVERSVIEW_LANGS.includes(this.gameLang)) {
@@ -3148,7 +3149,7 @@ class OGInfinity {
   async updateServerSettings(force = false) {
     const timeSinceServerTimeStamp =
       document.querySelector("[name='ogame-timestamp']").content - this.json.serverSettingsTimeStamp;
-    if ((timeSinceServerTimeStamp <  24 * 3600) && !force) return;
+    if (timeSinceServerTimeStamp < 24 * 3600 && !force) return;
     let settingsUrl = `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/api/serverData.xml`;
     return fetch(settingsUrl)
       .then((rep) => rep.text())
@@ -11906,7 +11907,7 @@ class OGInfinity {
       window.onbeforeunload = function (e) {
         abortController.abort();
       };
-      fetch(this.current.planet.querySelector(".moonlink").href, { signal: abortController.signal } ); 
+      fetch(this.current.planet.querySelector(".moonlink").href, { signal: abortController.signal });
     }
   }
 
@@ -17379,49 +17380,49 @@ class OGInfinity {
           en: "Discoveries",
           es: "Exploración",
           fr: "Exploration",
-          tr: "Keşifler"        
+          tr: "Keşifler",
         },
         /*140*/ {
           de: "Menschen",
           en: "Human",
           es: "Humanos",
           fr: "Les humains",
-          tr: "İnsanlar"
+          tr: "İnsanlar",
         },
         /*141*/ {
           de: "Rock’tal",
           en: "Rock’tal",
           es: "Rock`tal",
           fr: "Roctas",
-          tr: "Rock’tal"
+          tr: "Rock’tal",
         },
         /*142*/ {
           de: "Mechas",
           en: "Mechas",
           es: "Mecas",
           fr: "Mécas",
-          tr: "Mekalar"
+          tr: "Mekalar",
         },
         /*143*/ {
           de: "Kaelesh",
           en: "Kaelesh",
           es: "Kaelesh",
           fr: "Kaeleshs",
-          tr: "Kaelesh"
+          tr: "Kaelesh",
         },
         /*144*/ {
           de: "Erfahrung",
           en: "Experience",
           es: "Experiencia",
           fr: "Expérience",
-          tr: "Deneyim"
+          tr: "Deneyim",
         },
         /*145*/ {
           de: "Artefakte",
           en: "Artefacts",
           es: "Artefactos",
           fr: "Artéfacts",
-          tr: "Artefaktlar"    
+          tr: "Artefaktlar",
         },
         /*146*/ {
           de: "Abgeschlossenen Vorgang anzeigen",
@@ -19132,20 +19133,23 @@ class OGInfinity {
     }
   }
 
-  async initializeLFTypeName() {
-    fetch("/game/index.php?page=ingame&component=lfoverview")
-      .then((rep) => rep.text())
-      .then((str) => {
-        let htmlDocument = new window.DOMParser().parseFromString(str, "text/html");
-        let lfdiv = htmlDocument.querySelector("div[id='lfoverviewcomponent']");
-        let listName = lfdiv.querySelectorAll("h3");
-        listName.forEach((lfName, index) => {
-          if (index != 0) {
-            this.json.lfTypeNames["lifeform" + index] = lfName.innerText;
-          }
+  initializeLFTypeName() {
+    if (!this.hasLifeforms) return;
+    if (!this.json.lfTypeNames["lifeform1"]) {
+      fetch("/game/index.php?page=ingame&component=lfoverview")
+        .then((rep) => rep.text())
+        .then((str) => {
+          let htmlDocument = new window.DOMParser().parseFromString(str, "text/html");
+          let lfdiv = htmlDocument.querySelector("div[id='lfoverviewcomponent']");
+          let listName = lfdiv.querySelectorAll("h3");
+          listName.forEach((lfName, index) => {
+            if (index != 0) {
+              this.json.lfTypeNames["lifeform" + index] = lfName.textContent;
+            }
+          });
+          this.saveData();
         });
-        this.saveData();
-      });
+    }
   }
 
   async markLifeforms() {
