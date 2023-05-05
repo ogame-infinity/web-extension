@@ -15007,7 +15007,7 @@ class OGInfinity {
     let timeFactor = 1;
 
     let robotic = object ? object[14] : 0;
-    let nanite = object ? object[15] : 0;
+    let nanite = object ? (object[15] ? object[15] : 0) : 0;
     if (id >= 11101) lvl = Math.max(lvl, 1); // needed for demolish to lvl 0
 
     if (object && this.json.lifeformBonus && this.json.lifeformBonus[object.id]) {
