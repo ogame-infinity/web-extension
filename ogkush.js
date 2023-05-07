@@ -10078,8 +10078,8 @@ class OGInfinity {
       document.querySelector("#target .coords br").nextSibling.remove();
       document.querySelector("#target .coords br").remove();
       document.querySelector("#mission tr").style.display = "none";
-      document.querySelector("#start .coords").innerText =
-        "[" + document.querySelector("#start .coords span").innerText + "]";
+      document.querySelector("#start .coords").textContent =
+        "[" + document.querySelector("#start .coords span").textContent + "]";
       document
         .querySelector("#fleetboxdestination")
         .parentNode.insertBefore(
@@ -10361,10 +10361,10 @@ class OGInfinity {
       $(".ogl-fleetSpeed div").on("mouseover", (event) => {
         fleetDispatcher.speedPercent = event.target.getAttribute("data-step");
         if (!oldDeut) oldDeut = deutFiller.value;
-        let old = fromFormatedNumber(deutLeft.innerText, true);
+        let old = fromFormatedNumber(deutLeft.textContent, true);
         update(false);
         document.querySelector("input#deuterium").value = deutFiller.value;
-        if (fromFormatedNumber(deutLeft.innerText, true) != old) {
+        if (fromFormatedNumber(deutLeft.textContent, true) != old) {
           deutLeft.classList.add("middlemark");
           document.querySelector(".ogi-deuteriumLeft").classList.add("middlemark");
         }
@@ -10975,23 +10975,23 @@ class OGInfinity {
           if (crystalLeft.classList.contains("overmark")) {
             cLeft.classList.add("overmark");
           }
-          mLeft.innerText = metalLeft.innerText;
-          cLeft.innerText = crystalLeft.innerText;
-          dLeft.innerText = deutLeft.innerText;
+          mLeft.textContent = metalLeft.textContent;
+          cLeft.textContent = crystalLeft.textContent;
+          dLeft.textContent = deutLeft.textContent;
         } else {
           cLeft.classList.remove("overmark");
           mLeft.classList.remove("overmark");
           dLeft.classList.remove("overmark");
           dLeft.classList.remove("middlemark");
           let val = fromFormatedNumber(document.querySelector("input#metal").value, true);
-          mLeft.innerText = toFormatedNumber(Math.max(0, metalAvailable - val), 0);
+          mLeft.textContent = toFormatedNumber(Math.max(0, metalAvailable - val), 0);
           val = fromFormatedNumber(document.querySelector("input#crystal").value, true);
-          cLeft.innerText = toFormatedNumber(Math.max(0, crystalAvailable - val), 0);
+          cLeft.textContent = toFormatedNumber(Math.max(0, crystalAvailable - val), 0);
           val = fromFormatedNumber(document.querySelector("input#deuterium").value, true);
-          dLeft.innerText = toFormatedNumber(Math.max(0, deutAvailable - fleetDispatcher.getConsumption() - val), 0);
+          dLeft.textContent = toFormatedNumber(Math.max(0, deutAvailable - fleetDispatcher.getConsumption() - val), 0);
           if (this.hasLifeforms) {
             val = fromFormatedNumber(document.querySelector("input#food").value, true);
-            fLeft.innerText = toFormatedNumber(Math.max(0, foodAvailable - val), 0);
+            fLeft.textContent = toFormatedNumber(Math.max(0, foodAvailable - val), 0);
           }
         }
       };
@@ -11262,24 +11262,24 @@ class OGInfinity {
             deut,
             fleetDispatcher.cargoDeuterium + fleetDispatcher.getFreeCargoSpace()
           );
-          let old = deutLeft.innerText;
-          deutLeft.innerText = toFormatedNumber(
+          let old = deutLeft.textContent;
+          deutLeft.textContent = toFormatedNumber(
             deutAvailable - fleetDispatcher.getConsumption() - fleetDispatcher.cargoDeuterium,
             0
           );
-          if (old != deutLeft.innerText || deutLeft.innerText == "0") {
+          if (old != deutLeft.textContent || deutLeft.textContent == "0") {
             deutLeft.classList.remove("middlemark");
           }
           if (
             fleetDispatcher.getFreeCargoSpace() == 0 &&
-            deutLeft.innerText != "0" &&
-            deutLeft.innerText != toFormatedNumber(kept[2])
+            deutLeft.textContent != "0" &&
+            deutLeft.textContent != toFormatedNumber(kept[2])
           ) {
             deutLeft.classList.add("overmark");
-            deutReal.innerText = toFormatedNumber(Math.max(0, fleetDispatcher.cargoDeuterium), 0);
+            deutReal.textContent = toFormatedNumber(Math.max(0, fleetDispatcher.cargoDeuterium), 0);
           } else {
             deutLeft.classList.remove("overmark");
-            deutReal.innerText = "-";
+            deutReal.textContent = "-";
           }
           if (filled > Math.max(0, deutAvailable - fleetDispatcher.getConsumption())) {
             deutFiller.value = toFormatedNumber(deutAvailable - fleetDispatcher.getConsumption(), 0);
@@ -11291,17 +11291,17 @@ class OGInfinity {
             crystal,
             fleetDispatcher.cargoCrystal + fleetDispatcher.getFreeCargoSpace()
           );
-          crystalLeft.innerText = toFormatedNumber(crystalAvailable - fleetDispatcher.cargoCrystal, 0);
+          crystalLeft.textContent = toFormatedNumber(crystalAvailable - fleetDispatcher.cargoCrystal, 0);
           if (
             fleetDispatcher.getFreeCargoSpace() == 0 &&
-            crystalLeft.innerText != "0" &&
-            crystalLeft.innerText != toFormatedNumber(kept[1])
+            crystalLeft.textContent != "0" &&
+            crystalLeft.textContent != toFormatedNumber(kept[1])
           ) {
             crystalLeft.classList.add("overmark");
-            crystalReal.innerText = toFormatedNumber(Math.max(0, fleetDispatcher.cargoCrystal), 0);
+            crystalReal.textContent = toFormatedNumber(Math.max(0, fleetDispatcher.cargoCrystal), 0);
           } else {
             crystalLeft.classList.remove("overmark");
-            crystalReal.innerText = "-";
+            crystalReal.textContent = "-";
           }
         } else if (index == 0) {
           filled = fromFormatedNumber(metalFiller.value);
@@ -11310,17 +11310,17 @@ class OGInfinity {
             metal,
             fleetDispatcher.cargoMetal + fleetDispatcher.getFreeCargoSpace()
           );
-          metalLeft.innerText = toFormatedNumber(metalAvailable - fleetDispatcher.cargoMetal, 0);
+          metalLeft.textContent = toFormatedNumber(metalAvailable - fleetDispatcher.cargoMetal, 0);
           if (
             fleetDispatcher.getFreeCargoSpace() == 0 &&
-            metalLeft.innerText != "0" &&
-            metalLeft.innerText != toFormatedNumber(kept[0])
+            metalLeft.textContent != "0" &&
+            metalLeft.textContent != toFormatedNumber(kept[0])
           ) {
             metalLeft.classList.add("overmark");
-            metalReal.innerText = toFormatedNumber(Math.max(0, fleetDispatcher.cargoMetal), 0);
+            metalReal.textContent = toFormatedNumber(Math.max(0, fleetDispatcher.cargoMetal), 0);
           } else {
             metalLeft.classList.remove("overmark");
-            metalReal.innerText = "-";
+            metalReal.textContent = "-";
           }
         }
         let ships = {};
@@ -11333,28 +11333,28 @@ class OGInfinity {
         cyNum.classList.remove("overmark");
         if (pbNum) pbNum.classList.remove("overmark");
         let amount = needCargo(202);
-        ptNum.innerText = toFormatedNumber(amount, null, amount > 999999);
+        ptNum.textContent = toFormatedNumber(amount, null, amount > 999999);
         ptNum.setAttribute("data-title", toFormatedNumber(amount));
         ptNum.setAttribute("amount", amount);
         if (amount > (ships[202] || 0)) ptNum.classList.add("overmark");
         amount = needCargo(203);
-        gtNum.innerText = toFormatedNumber(amount, null, amount > 999999);
+        gtNum.textContent = toFormatedNumber(amount, null, amount > 999999);
         gtNum.setAttribute("data-title", toFormatedNumber(amount));
         gtNum.setAttribute("amount", amount);
         if (amount > (ships[203] || 0)) gtNum.classList.add("overmark");
         amount = needCargo(219);
-        pfNum.innerText = toFormatedNumber(amount, null, amount > 999999);
+        pfNum.textContent = toFormatedNumber(amount, null, amount > 999999);
         pfNum.setAttribute("data-title", toFormatedNumber(amount));
         pfNum.setAttribute("amount", amount);
         if (amount > (ships[219] || 0)) pfNum.classList.add("overmark");
         amount = needCargo(209);
-        cyNum.innerText = toFormatedNumber(amount, null, amount > 999999);
+        cyNum.textContent = toFormatedNumber(amount, null, amount > 999999);
         cyNum.setAttribute("data-title", toFormatedNumber(amount));
         cyNum.setAttribute("amount", amount);
         if (amount > (ships[209] || 0)) cyNum.classList.add("overmark");
         if (pbBtn) {
           amount = needCargo(210);
-          pbNum.innerText = toFormatedNumber(amount, null, amount > 999999);
+          pbNum.textContent = toFormatedNumber(amount, null, amount > 999999);
           pbNum.setAttribute("data-title", toFormatedNumber(amount));
           pbNum.setAttribute("amount", amount);
           if (amount > (ships[210] || 0)) pbNum.classList.add("overmark");
