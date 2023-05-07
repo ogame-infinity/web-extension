@@ -4077,6 +4077,7 @@ class OGInfinity {
     [202, 203, 208, 209, 210, 204, 205, 206, 219, 207, 215, 211, 213, 218, 214].forEach((id) => {
       this.json.empire.forEach((planet) => {
         fleetCount += parseInt(planet[id]);
+        if (planet.moon) fleetCount += parseInt(planet.moon[id]);
       });
     });
     let per = (flyingCount / fleetCount) * 100;
