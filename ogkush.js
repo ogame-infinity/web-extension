@@ -10074,9 +10074,9 @@ class OGInfinity {
       document.querySelectorAll("#buttonz .missionHeader").forEach((elem) => (elem.style.display = "none"));
       document.querySelectorAll("#buttonz .move-box-wrapper").forEach((elem) => (elem.style.display = "none"));
       document.querySelectorAll("#buttonz .footer").forEach((elem) => (elem.style.display = "none"));
-      document.querySelector("#target .coords").innerHTML = document
-        .querySelector("#target .coords")
-        .innerHTML.split("<br>\n")[1];
+      document.querySelector("#target .coords br").previousSibling.remove();
+      document.querySelector("#target .coords br").nextSibling.remove();
+      document.querySelector("#target .coords br").remove();
       document.querySelector("#mission tr").style.display = "none";
       document.querySelector("#start .coords").innerText =
         "[" + document.querySelector("#start .coords span").innerText + "]";
@@ -11362,16 +11362,23 @@ class OGInfinity {
         updateCargo();
       };
       let onShipsChange = () => {
-        let fleetSelected = "";
+        const fleetSelected = document.createDocumentFragment();
         fleetDispatcher.shipsToSend.forEach((ship) => {
-          fleetSelected += `<div tech-id="${ship.id}" class="ogl-option ogl-fleet-ship ogl-fleet-${
-            ship.id
-          }"></div><span class="tooltip" data-title='${this.getTranslatedText(ship.id, "tech")}: ${toFormatedNumber(
-            ship.number,
-            0
-          )}'>${toFormatedNumber(ship.number, null, ship.number > 999999)}</span>`;
+          fleetSelected.appendChild(
+            createDOM("div", { "tech-id": `${ship.id}`, class: `ogl-option ogl-fleet-ship ogl-fleet-${ship.id}` })
+          );
+          fleetSelected.appendChild(
+            createDOM(
+              "span",
+              {
+                class: "tooltip",
+                "data-title": `${this.getTranslatedText(ship.id, "tech")}: ${toFormatedNumber(ship.number, 0)}`,
+              },
+              `${toFormatedNumber(ship.number, null, ship.number > 999999)}`
+            )
+          ); 
         });
-        document.querySelector("#ogi-fleet2-ships .content").innerHTML = fleetSelected;
+        document.querySelector("#ogi-fleet2-ships .content").replaceChildren(fleetSelected);
       };
       metalFiller.addEventListener("keyup", (e) => {
         onResChange(0);
