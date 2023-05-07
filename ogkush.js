@@ -10068,7 +10068,9 @@ class OGInfinity {
       let resDiv = dispatch.appendChild(this.createDOM("div"));
       let actions = resDiv.appendChild(this.createDOM("div", { class: "ogl-transport" }));
       let coords = destination.appendChild(this.createDOM("div", { class: "ogl-coords" }));
-      document.querySelectorAll("#buttonz .header").forEach((elem) => (elem.style.display = "none"));
+      document
+        .querySelectorAll("#buttonz .move-box-wrapper + .header")
+        .forEach((elem) => (elem.style.display = "none"));
       document.querySelectorAll("#buttonz .missionHeader").forEach((elem) => (elem.style.display = "none"));
       document.querySelectorAll("#buttonz .move-box-wrapper").forEach((elem) => (elem.style.display = "none"));
       document.querySelectorAll("#buttonz .footer").forEach((elem) => (elem.style.display = "none"));
