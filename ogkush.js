@@ -3445,7 +3445,7 @@ class OGInfinity {
         let mission = line.getAttribute("data-mission-type");
         let debrisD = line.querySelector(".destFleet .tf");
         let moonD = line.querySelector(".destFleet .moon");
-        if (mission == 3 || mission == 16 || mission == 5 || mission == 7) {
+        if (mission == 3 || mission == 16 || mission == 18 || mission == 5 || mission == 7) {
           origin && origin.classList.add("ogk-coords-neutral");
           dest.classList.add("ogk-coords-neutral");
         } else {
@@ -3456,7 +3456,7 @@ class OGInfinity {
           dest.classList.add("ogk-coords-debris");
         } else if (moonD) {
           dest.classList.add("ogk-coords-moon");
-        } else if (dest.innerText.trim().split(":")[2] == "16]") {
+        } else if (dest.innerText.trim().split(":")[2] == "16]" || mission == 18) {
           dest.classList.add("ogk-coords-expedition");
         } else {
           dest.classList.add("ogk-coords-planet");
@@ -4081,8 +4081,7 @@ class OGInfinity {
     });
     let per = (flyingCount / fleetCount) * 100;
     let color = "friendly";
-    if (per >= 70) color = "neutral";
-    if (per >= 90) color = "hostile";
+    if (per >= 90) color = "neutral";
     let inter = setInterval(() => {
       let current = document.querySelector(".ogk-flying-per");
       if (current) current.remove();
