@@ -17210,7 +17210,7 @@ class OGInfinity {
           en: "Help me find them all",
           es: "Ayúdame a encontrarlos todos",
           fr: "Aidez-moi à les trouver tous",
-          tr: "Hepsini bulmama yardım et",
+          tr: "Onları bulmama yardım et !",
         },
         /*114*/ {
           de: "Warnung: Expeditionsposition wird schwach...",
