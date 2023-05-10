@@ -235,7 +235,7 @@ class DataHelper {
 
   async update() {
     if (this.loading) return;
-    if (isNaN(this.lastUpdate) || new Date() - this.lastUpdate > 5 * 60 * 1e3) {
+    if (isNaN(this.lastUpdate) || new Date() - this.lastUpdate > 30 * 60 * 1e3) {
       this.loading = true;
       let players = {};
       await this._updateHighscore(players)
