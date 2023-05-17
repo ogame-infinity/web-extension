@@ -11821,20 +11821,15 @@ class OGInfinity {
               planet.querySelectorAll(".innerBonus")[1].nextElementSibling.textContent.split("/")[0].trim()
             ) / 100;
         });
-
+        let metalBonus = htmlDocument.querySelector("div[data-category='bonus-1'] .bonusValues");
+        let crystalBonus = htmlDocument.querySelector("div[data-category='bonus-2'] .bonusValues");
+        let deuteriumBonus = htmlDocument.querySelector("div[data-category='bonus-3'] .bonusValues");
+        let energyBonus = htmlDocument.querySelector("div[data-category='bonus-8'] .bonusValues");
         let productionBonus = [
-          fromFormatedNumber(
-            htmlDocument.querySelector("div[data-category='bonus-1'] .bonusValues").textContent.split("/")[0].trim()
-          ) / 100 || 0,
-          fromFormatedNumber(
-            htmlDocument.querySelector("div[data-category='bonus-2'] .bonusValues").textContent.split("/")[0].trim()
-          ) / 100 || 0,
-          fromFormatedNumber(
-            htmlDocument.querySelector("div[data-category='bonus-3'] .bonusValues").textContent.split("/")[0].trim()
-          ) / 100 || 0,
-          fromFormatedNumber(
-            htmlDocument.querySelector("div[data-category='bonus-8'] .bonusValues").textContent.split("/")[0].trim()
-          ) / 100 || 0,
+          metalBonus ? fromFormatedNumber(metalBonus.textContent.split("/")[0].trim()) / 100 || 0 : 0,
+          crystalBonus ? fromFormatedNumber(crystalBonus.textContent.split("/")[0].trim()) / 100 || 0 : 0,
+          deuteriumBonus ? fromFormatedNumber(deuteriumBonus.textContent.split("/")[0].trim()) / 100 || 0 : 0,
+          energyBonus ? fromFormatedNumber(energyBonus.textContent.split("/")[0].trim()) / 100 || 0 : 0,
         ];
         let technologyCostReduction = {};
         htmlDocument.querySelectorAll("div[data-category='bonus-28'] .subItemContent").forEach((tech) => {
