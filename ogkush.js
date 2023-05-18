@@ -2286,7 +2286,7 @@ class OGInfinity {
               document.querySelector("#energy_box").getAttribute("data-title");
             let div = createDOM("div");
             div.html(tooltip);
-            let prod = div.querySelectorAll("span")[1].innerText.substring(1);
+            let prod = div.querySelectorAll("span")[1].textContent.substring(1);
             missing[3] = Math.min(0, fromFormatedNumber(prod, true) - (baselvl - 1 > tolvl ? demolish[3] : resSum[3]));
             if (baselvl - 1 != tolvl && !(baselvl > tolvl && (that.page == "research" || that.page == "lfresearch")))
               energy.appendChild(
@@ -5195,10 +5195,10 @@ class OGInfinity {
       this.json.options.timeZone &&
         document.querySelectorAll("div li.msg").forEach((msg) => {
           if (!msg.querySelector(".msg_date")) return;
-          let date = msg.querySelector(".msg_date").innerText;
+          let date = msg.querySelector(".msg_date").textContent;
           if (!msg.querySelector(".msg_date").classList.contains(".ogl-ready")) {
             msg.querySelector(".msg_date").classList.add(".ogl-ready");
-            msg.querySelector(".msg_date").innerText = getFormatedDate(
+            msg.querySelector(".msg_date").textContent = getFormatedDate(
               this.dateStrToDate(date).getTime() + this.json.timezoneDiff * 1e3,
               "[d].[m].[Y] [H]:[i]:[s]"
             );
@@ -5209,11 +5209,11 @@ class OGInfinity {
         document.querySelectorAll(`div[id=${id}] li.msg`).forEach((msg) => {
           let id = msg.getAttribute("data-msg-id");
           let content = msg.querySelector("span.msg_content");
-          let date = msg.querySelector(".msg_date").innerText;
+          let date = msg.querySelector(".msg_date").textContent;
           let textContent = content.innerText;
           let coords = msg.querySelector(".msg_title a");
           if (coords) {
-            coords = coords.innerText.slice(1, -1);
+            coords = coords.textContent.slice(1, -1);
             if (coords.split(":")[2] == 16) {
               if (id in this.json.expeditions && this.json.expeditions[id].result) {
                 if (msg.querySelector(".icon_favorited")) {
@@ -5250,7 +5250,7 @@ class OGInfinity {
               }
               this.expeditionsIds[id] = true;
               let content = msg.querySelector("span.msg_content");
-              let date = msg.querySelector(".msg_date").innerText;
+              let date = msg.querySelector(".msg_date").textContent;
               let textContent = content.innerText;
               dataHelper.getExpeditionType(textContent).then((type) => {
                 date = date.split(" ")[0].slice(0, -4) + date.split(" ")[0].slice(-2);
@@ -5520,12 +5520,12 @@ class OGInfinity {
             }
             return;
           }
-          let date = msg.querySelector(".msg_date").innerText;
+          let date = msg.querySelector(".msg_date").textContent;
           date = date.split(" ")[0].slice(0, -4) + date.split(" ")[0].slice(-2);
           let coords = msg.querySelector(".msg_title a");
           if (coords) {
             let content = msg.querySelector(".msg_content").innerText;
-            coords = coords.innerText.slice(1, -1);
+            coords = coords.textContent.slice(1, -1);
             let matches = content.match(/[0-9.,]*[0-9]/gm);
             let met = fromFormatedNumber(matches[matches.length - 2]);
             let cri = fromFormatedNumber(matches[matches.length - 1]);
@@ -13539,7 +13539,7 @@ class OGInfinity {
         let params = new URLSearchParams(a.getAttribute("href"));
         let coords = [params.get("galaxy") || "0", params.get("system") || "0", params.get("position") || "0"];
         let type = a.querySelector("figure.moon") ? 3 : 1;
-        let date = msg.querySelector(".msg_date").innerText;
+        let date = msg.querySelector(".msg_date").textContent;
         let timestamp = this.dateStrToDate(date).getTime();
         ptreJSON[id] = {};
         ptreJSON[id].player_id = playerID;
@@ -17739,7 +17739,7 @@ class OGInfinity {
       const union = Array.from(acsRow.classList)
         .find((cl) => cl.includes("union"))
         .split("unionunion")[1];
-      unionTable.push([union, acsRow.querySelectorAll("td")[1].innerText]);
+      unionTable.push([union, acsRow.querySelectorAll("td")[1].textContent]);
     });
     const unionArrivalTime = Object.fromEntries(unionTable);
     const rows = eventTable.querySelectorAll("#eventContent tr.eventFleet");
@@ -17748,7 +17748,7 @@ class OGInfinity {
 
       const flying = {};
       if (!row.classList.contains("partnerInfo")) {
-        flying.arrivalTime = cols[1].innerText;
+        flying.arrivalTime = cols[1].textContent;
       } else {
         const union = Array.from(row.classList)
           .find((cl) => cl.includes("union"))
@@ -17764,10 +17764,10 @@ class OGInfinity {
       if (flying.missionFleetTitle.includes("("))
         flying.missionFleetTitle = flying.missionFleetTitle.split("(")[0].trim();
 
-      flying.origin = cols[3].innerText.trim();
-      flying.originCoords = cols[4].innerText.replace("[", "").replace("]", "").trim();
+      flying.origin = cols[3].textContent.trim();
+      flying.originCoords = cols[4].textContent.replace("[", "").replace("]", "").trim();
       flying.originLink = cols[4].querySelector("a").href;
-      flying.fleetCount = cols[5].innerText;
+      flying.fleetCount = cols[5].textContent;
 
       // Get the direction
       flying.direction = Array.from(cols[6].classList).includes("icon_movement") ? "go" : "back";
@@ -17779,8 +17779,8 @@ class OGInfinity {
         styleDirection.indexOf('")')
       );
 
-      flying.dest = cols[7].innerText.trim();
-      flying.destCoords = cols[8].innerText.replace("[", "").replace("]", "").trim();
+      flying.dest = cols[7].textContent.trim();
+      flying.destCoords = cols[8].textContent.replace("[", "").replace("]", "").trim();
       flying.destLink = cols[8].querySelector("a").href;
       if (!FLYING_PER_PLANETS[flying.originCoords]) FLYING_PER_PLANETS[flying.originCoords] = {};
       if (!FLYING_PER_PLANETS[flying.originCoords][flying.missionFleetTitle]) {
