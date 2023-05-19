@@ -5014,7 +5014,7 @@ class OGInfinity {
       tabs.forEach((tab) => tab.classList.remove("ogl-active"));
       evt.target.classList.add("ogl-active");
       body.children[1].remove();
-      body.appendChild(titles[evt.target.innerText]());
+      body.appendChild(titles[evt.target.textContent]());
     };
     tabs.forEach((tab) => tab.addEventListener("click", tabListener));
     body.appendChild(first());
@@ -5269,7 +5269,7 @@ class OGInfinity {
                 let objectNode = content.querySelector("a");
                 if (objectNode) {
                   this.json.result = "Object";
-                  this.json["object"] = objectNode.innerText;
+                  this.json["object"] = objectNode.textContent;
                   type = "Object";
                 }
                 ressources.forEach((res, i) => {
@@ -13059,7 +13059,7 @@ class OGInfinity {
       first = false;
       let pos = 0;
       if (this.page == "galaxy") {
-        pos = sender.parentElement.parentElement.children[0].innerText;
+        pos = sender.parentElement.parentElement.children[0].textContent;
       }
       this.page == "galaxy" ? (pos = { bottom: pos < 4, top: pos > 4 }) : (pos = {});
       this.tooltip(sender, content, false, pos, delay);
@@ -15247,8 +15247,8 @@ class OGInfinity {
     let t = p.querySelectorAll(".fleetinfo tr");
     Array.from(p.querySelectorAll(".fleetinfo tr")).forEach((elem) => {
       if (elem.children[1]) {
-        let name = elem.children[0].innerText.slice(0, -1);
-        let count = elem.children[1].innerText.split(".").join("");
+        let name = elem.children[0].textContent.slice(0, -1);
+        let count = elem.children[1].textContent.split(".").join("");
         if (count > 0) {
           ships[this.json.shipNames[name]] = { count: count };
         }
