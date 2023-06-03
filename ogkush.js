@@ -945,14 +945,14 @@ const RESEARCH_INFO = {
   },
   11209: {
     name: "Light Fighter Mk II",
-    baseCost: [320000, 240000, 10000],
+    baseCost: [320000, 240000, 100000],
     factorCost: 1.5,
     baseTime: 6500,
     factorTime: 1.4,
   },
   11210: {
     name: "Cruiser Mk II",
-    baseCost: [320000, 240000, 10000],
+    baseCost: [320000, 240000, 100000],
     factorCost: 1,
     baseTime: 7000,
     factorTime: 1.4,
