@@ -953,7 +953,7 @@ const RESEARCH_INFO = {
   11210: {
     name: "Cruiser Mk II",
     baseCost: [320000, 240000, 100000],
-    factorCost: 1,
+    factorCost: 1.5,
     baseTime: 7000,
     factorTime: 1.4,
   },
