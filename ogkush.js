@@ -2648,14 +2648,17 @@ class OGInfinity {
               baseTechno = that.building(technologyId, baseLvl, object);
             }
             if (
-              baseTechno.cost[0] != metalCost ||
-              baseTechno.cost[1] != crystalCost ||
-              baseTechno.cost[2] != deuteriumCost
+              baseTechno.cost[0] > metalCost + 1 ||
+              baseTechno.cost[0] < metalCost - 1 ||
+              baseTechno.cost[1] > crystalCost + 1 ||
+              baseTechno.cost[1] < crystalCost - 1 ||
+              baseTechno.cost[2] > deuteriumCost + 1 ||
+              baseTechno.cost[2] < deuteriumCost - 1
             )
               document
                 .querySelector(".costs")
                 .appendChild(
-                  createDOM("div", { class: "overmark" }, "resources not correct, please report to developers!")
+                  createDOM("div", { class: "overmark" }, "resources not correct, try to update LF bonus")
                 );
 
             updateResearchDetails(technologyId, baseLvl, tolvl);
