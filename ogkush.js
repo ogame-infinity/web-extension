@@ -11855,7 +11855,7 @@ class OGInfinity {
             ? technologyTimeReduction[techId] + bonus
             : bonus;
         });
-        // TODO: add following buildingCostReduction, buildingTimeReduction, consumptionReduction[id] = {energy: 0, deuterium: 0}
+        // TODO: add following consumptionReduction[id] = {energy: 0, deuterium: 0}
         return {
           productionBonus: productionBonus,
           technologyCostReduction: technologyCostReduction,
@@ -14762,15 +14762,15 @@ class OGInfinity {
 
     if (object && this.json.lifeformBonus && this.json.lifeformBonus[object.id]) {
       if (
-        this.json.lifeformBonus[object.id].buildingCostReduction &&
-        this.json.lifeformBonus[object.id].buildingCostReduction[id]
+        this.json.lifeformBonus[object.id].technologyCostReduction &&
+        this.json.lifeformBonus[object.id].technologyCostReduction[id]
       )
-        costFactor -= this.json.lifeformBonus[object.id].buildingCostReduction[id];
+        costFactor -= this.json.lifeformBonus[object.id].technologyCostReduction[id];
       if (
-        this.json.lifeformBonus[object.id].buildingTimeReduction &&
-        this.json.lifeformBonus[object.id].buildingTimeReduction[id]
+        this.json.lifeformBonus[object.id].technologyTimeReduction &&
+        this.json.lifeformBonus[object.id].technologyTimeReduction[id]
       )
-        timeFactor -= this.json.lifeformBonus[object.id].buildingTimeReduction[id];
+        timeFactor -= this.json.lifeformBonus[object.id].technologyTimeReduction[id];
     }
 
     let cost = [
