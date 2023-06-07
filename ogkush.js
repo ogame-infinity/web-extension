@@ -15793,7 +15793,7 @@ class OGInfinity {
           en: "Jump Gate",
           es: "Salto cuántico",
           fr: "Porte de saut spatial",
-          tr: "Sıçrama",
+          tr: "Sıçrama Geçidi",
         },
         44: {
           de: "Raketensilo",
@@ -16059,7 +16059,7 @@ class OGInfinity {
           en: "Gauss Cannon",
           es: "Cañón gauss",
           fr: "Canon de Gauss",
-          tr: "Gauss Topu",
+          tr: "Gaus Topu",
         },
         405: {
           de: "Ionengeschütz",
@@ -16101,7 +16101,7 @@ class OGInfinity {
           en: "Interplanetary Missile",
           es: "Misil interplanetario",
           fr: "Missile interplanétaire",
-          tr: "Gezegenlerarasi Roketler",
+          tr: "Gezegenler Arası Roketler",
         },
         label: { de: "", en: "", es: "", fr: "", tr: "" },
       },
@@ -16330,7 +16330,7 @@ class OGInfinity {
           en: "Reset",
           es: "Resetear",
           fr: "Réinitialiser",
-          tr: "Reset",
+          tr: "Sıfırla",
         },
         /*27*/ {
           de: "Speichern",
@@ -16645,7 +16645,7 @@ class OGInfinity {
           en: "B. Hole",
           es: "Agujero negro",
           fr: "Trou noir",
-          tr: "Karanlık Madde",
+          tr: "Kara Delik",
         },
         /*72*/ {
           de: "Beste Kämpfe",
@@ -17023,14 +17023,14 @@ class OGInfinity {
           en: "If activated, the number of crawlers will be limited with the currently built crawlers.",
           es: "Si está activado, el número de taladradores se limitará al número actual de construidos.",
           fr: "S'il est activé, le nombre de foreuses sera limité aux foreuses actuellement construits.",
-          tr: "Etkinleştirildiğinde, crawler'ların sayısı şu anda yapılan crawler'larla sınırlanır.",
+          tr: "Etkinleştirildiğinde, paletlilerin sayısı şu anda üretilen paletlilerle sınırlanır.",
         },
         /*126*/ {
           de: "Crawler Produktionsfaktor",
           en: "Crawler production factor",
           es: "Factor de producción de los taladradores",
           fr: "Facteur de production des foreuses",
-          tr: "Crawler üretim faktörü",
+          tr: "Paletli üretim faktörü",
         },
         /*127*/ {
           de: "Ziel",
@@ -17079,7 +17079,7 @@ class OGInfinity {
           en: "Contribute or bug report",
           es: "Contribuir o reportar errores",
           fr: "Contribuer ou signaler un bogue",
-          tr: "Katkıda bulunun veya hata bildirin ",
+          tr: "Katkıda bulunun veya hata bildirin",
         },
         /*134*/ {
           de: "Flottenaktivität der Planeten anzeigen",
