@@ -170,7 +170,7 @@ function toFormatedNumber(value, precision = null, units = false) {
   }
 }
 
-function fromFormatedNumber(value, int = false) {
+function fromFormatedNumber(value, int = false, noGroup = false) {
   const decimalSeparator = LocalizationStrings["decimalPoint"];
   const groupSeparator = LocalizationStrings["thousandSeperator"];
   let order = 1;
@@ -190,7 +190,7 @@ function fromFormatedNumber(value, int = false) {
     order = 1e3;
     value = value.replace(LocalizationStrings["unitKilo"], "");
   }
-  value = value.replaceAll(groupSeparator, "");
+  if (!noGroup) value = value.replaceAll(groupSeparator, "");
   value = Number(value.replace(decimalSeparator, "."));
   value *= order;
   return int ? parseInt(value) : value;
@@ -11806,7 +11806,9 @@ class OGInfinity {
         let htmlDocument = new window.DOMParser().parseFromString(str, "text/html");
         let expeditionBonus = htmlDocument.querySelector("div[data-category='bonus-16'] .bonusValues")
           ? fromFormatedNumber(
-              htmlDocument.querySelector("div[data-category='bonus-16'] .bonusValues").textContent.split("/")[0].trim()
+              htmlDocument.querySelector("div[data-category='bonus-16'] .bonusValues").textContent.split("/")[0].trim(),
+              false,
+              true
             ) / 100 || 0
           : 0;
         let crawlerProductionBonus = 0;
@@ -11814,11 +11816,15 @@ class OGInfinity {
         htmlDocument.querySelectorAll("div[data-category='bonus-9'] .subItem").forEach((planet) => {
           crawlerConsumptionBonus +=
             fromFormatedNumber(
-              planet.querySelectorAll(".innerBonus")[0].nextElementSibling.textContent.split("/")[0].trim()
+              planet.querySelectorAll(".innerBonus")[0].nextElementSibling.textContent.split("/")[0].trim(),
+              false,
+              true
             ) / 100;
           crawlerProductionBonus +=
             fromFormatedNumber(
-              planet.querySelectorAll(".innerBonus")[1].nextElementSibling.textContent.split("/")[0].trim()
+              planet.querySelectorAll(".innerBonus")[1].nextElementSibling.textContent.split("/")[0].trim(),
+              false,
+              true
             ) / 100;
         });
         let metalBonus = htmlDocument.querySelector("div[data-category='bonus-1'] .bonusValues");
@@ -11826,10 +11832,12 @@ class OGInfinity {
         let deuteriumBonus = htmlDocument.querySelector("div[data-category='bonus-3'] .bonusValues");
         let energyBonus = htmlDocument.querySelector("div[data-category='bonus-8'] .bonusValues");
         let productionBonus = [
-          metalBonus ? fromFormatedNumber(metalBonus.textContent.split("/")[0].trim()) / 100 || 0 : 0,
-          crystalBonus ? fromFormatedNumber(crystalBonus.textContent.split("/")[0].trim()) / 100 || 0 : 0,
-          deuteriumBonus ? fromFormatedNumber(deuteriumBonus.textContent.split("/")[0].trim()) / 100 || 0 : 0,
-          energyBonus ? fromFormatedNumber(energyBonus.textContent.split("/")[0].trim()) / 100 || 0 : 0,
+          metalBonus ? fromFormatedNumber(metalBonus.textContent.split("/")[0].trim(), false, true) / 100 || 0 : 0,
+          crystalBonus ? fromFormatedNumber(crystalBonus.textContent.split("/")[0].trim(), false, true) / 100 || 0 : 0,
+          deuteriumBonus
+            ? fromFormatedNumber(deuteriumBonus.textContent.split("/")[0].trim(), false, true) / 100 || 0
+            : 0,
+          energyBonus ? fromFormatedNumber(energyBonus.textContent.split("/")[0].trim(), false, true) / 100 || 0 : 0,
         ];
         let technologyCostReduction = {};
         htmlDocument.querySelectorAll("div[data-category='bonus-28'] .subItemContent").forEach((tech) => {
@@ -11837,8 +11845,11 @@ class OGInfinity {
             "technologyId"
           );
           let bonus =
-            fromFormatedNumber(tech.querySelector(".innerBonus").nextElementSibling.textContent.split("/")[0].trim()) /
-            100;
+            fromFormatedNumber(
+              tech.querySelector(".innerBonus").nextElementSibling.textContent.split("/")[0].trim(),
+              false,
+              true
+            ) / 100;
           technologyCostReduction[techId] = technologyCostReduction[techId]
             ? technologyCostReduction[techId] + bonus
             : bonus;
@@ -11849,8 +11860,11 @@ class OGInfinity {
             "technologyId"
           );
           let bonus =
-            fromFormatedNumber(tech.querySelector(".innerBonus").nextElementSibling.textContent.split("/")[0].trim()) /
-            100;
+            fromFormatedNumber(
+              tech.querySelector(".innerBonus").nextElementSibling.textContent.split("/")[0].trim(),
+              false,
+              true
+            ) / 100;
           technologyTimeReduction[techId] = technologyTimeReduction[techId]
             ? technologyTimeReduction[techId] + bonus
             : bonus;
