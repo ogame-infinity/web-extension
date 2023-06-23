@@ -6392,6 +6392,9 @@ hr {
   animation: fadeIn ease 0.4s;
   max-height: 90vh;
   position: relative;
+
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
 .ogl-dialog .close-tooltip {
