@@ -1659,7 +1659,7 @@ class OGInfinity {
     this.overviewDates();
     this.sideLock();
     this.jumpGate();
-    //this.topBarUtilities();
+    this.topBarUtilities(); // only shows ping now
     this.fleetDispatcher();
     this.betterFleetDispatcher();
     this.technoDetail();
@@ -3328,6 +3328,19 @@ class OGInfinity {
         });
         this.saveData();
       });
+  }
+
+  topBarUtilities() {
+    const bar = document.querySelector("#bar ul");
+    const ping = window.performance.timing.domLoading - window.performance.timing.fetchStart;
+    let colorClass = "friendly";
+    if (ping > 400 && ping < 800) colorClass = "neutral";
+    if (ping > 800) colorClass = "hostile";
+    bar.prepend(
+      createDOM("span", { class: "ogk-ping" })
+        .appendChild(createDOM("span", { class: `${colorClass}` }, `${toFormatedNumber(ping / 1e3, 1)}s`))
+        .parentElement.appendChild(document.createTextNode(" ping")).parentElement
+    );
   }
 
   eventBox() {
