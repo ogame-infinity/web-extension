@@ -523,12 +523,15 @@ window.addEventListener(
   },
   false
 );
+
 document.addEventListener("ogi-galaxy", function (e) {
   dataHelper.scan(e.detail.changes, e.detail.ptreKey, e.detail.serverTime);
 });
+
 document.addEventListener("ogi-clear", function (e) {
   dataHelper.clearData();
 });
+
 document.addEventListener("ogi-notification", function (e) {
   const msg = Object.assign({ iconUrl: "res/logo128.png" }, e.detail);
   chrome.runtime.sendMessage({ type: "notification", universe: UNIVERSE, message: msg }, function (response) {});
