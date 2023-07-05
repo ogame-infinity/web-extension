@@ -15118,15 +15118,15 @@ class OGInfinity {
         let values = fleetInfo.querySelectorAll("td.value");
         let backed = [0, 0, 0];
         values.forEach((value, index) => {
-          if (index == values.length - 1) {
+          if (index == values.length - 2) {
             backed[2] = fromFormatedNumber(value.textContent);
             return;
           }
-          if (index == values.length - 2) {
+          if (index == values.length - 3) {
             backed[1] = fromFormatedNumber(value.textContent);
             return;
           }
-          if (index == values.length - 3) {
+          if (index == values.length - 4) {
             backed[0] = fromFormatedNumber(value.textContent);
             return;
           }
