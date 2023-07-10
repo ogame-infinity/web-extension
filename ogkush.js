@@ -213,9 +213,9 @@ function waitForElementToDisplay(selector, callback, checkFrequencyInMs = 10, ti
 }
 
 /**
-*  create basic information
-* 
-*/
+ *  create basic information
+ * 
+ */
 
 const SHIP_COSTS = {
 	202: [2, 2, 0],
@@ -1445,12 +1445,12 @@ const CRAWLER_OVERLOAD_MAX = 1.5;
 
 
 /**
-* todo: description
-* todo: split functionality more in modules - so redundant code can be removed
-* and some features are more focused in one place - like calculating production/consumption values - 
-* so this isnt done in like 20 different places... which grants the possibility to have 20 different ways/error of doing so
-* 
-*/
+ * todo: description
+ * todo: split functionality more in modules - so redundant code can be removed
+ * and some features are more focused in one place - like calculating production/consumption values - 
+ * so this isnt done in like 20 different places... which grants the possibility to have 20 different ways/error of doing so
+ * 
+ */
 class OGInfinity {
 	constructor() {
 		this.commander = player.hasCommander;
@@ -1618,6 +1618,11 @@ class OGInfinity {
 		this.gameLang = document.querySelector('meta[name="ogame-language"]').getAttribute("content");
 		this.isLoading = false;
 		this.autoQueue = new AutoQueue();
+
+		/**
+		 * Initiate Feature Components
+		 */
+		this.translation = new Translation(this.gameLang)
 	}
 
 	start() {
@@ -1940,7 +1945,7 @@ class OGInfinity {
 								createDOM("li", { class: "roi_duration" }),
 								durationDiv.parentNode.children[1]
 							);
-						roiDiv.replaceChildren(createDOM("strong", {}, `${that.getTranslatedText(50)}:`));
+						roiDiv.replaceChildren(createDOM("strong", {}, `${that.translation.text(50)}:`));
 						let roiTimeDiv =
 							roiDiv.querySelector(".roi_duration time") ||
 							roiDiv.appendChild(
@@ -1948,8 +1953,8 @@ class OGInfinity {
 									class: "value tooltip",
 									"data-title":
 										roi === Infinity
-											? that.getTranslatedText(118)
-											: `${that.getTranslatedText(119)}: ${toFormatedNumber(
+											? that.translation.text(118)
+											: `${that.translation.text(119)}: ${toFormatedNumber(
 												that.json.options.tradeRate[0]
 											)}:${toFormatedNumber(that.json.options.tradeRate[1])}:${toFormatedNumber(
 												that.json.options.tradeRate[2]
@@ -1965,13 +1970,13 @@ class OGInfinity {
 								createDOM("li", { class: "roi_duration" }),
 								durationDiv.parentNode.children[1]
 							);
-						roiDiv.replaceChildren(createDOM("strong", {}, `${that.getTranslatedText(50)}:`));
+						roiDiv.replaceChildren(createDOM("strong", {}, `${that.translation.text(50)}:`));
 						let roiTimeDiv =
 							roiDiv.querySelector(".roi_duration time") ||
 							roiDiv.appendChild(
 								createDOM("time", {
 									class: "value tooltip",
-									"data-title": `${that.getTranslatedText(119)}: ${toFormatedNumber(
+									"data-title": `${that.translation.text(119)}: ${toFormatedNumber(
 										that.json.options.tradeRate[0]
 									)}:${toFormatedNumber(that.json.options.tradeRate[1])}:${toFormatedNumber(
 										that.json.options.tradeRate[2]
@@ -2010,13 +2015,13 @@ class OGInfinity {
 								createDOM("li", { class: "roi_duration" }),
 								durationDiv.parentNode.children[1]
 							);
-						roiDiv.replaceChildren(createDOM("strong", {}, `${that.getTranslatedText(50)}:`));
+						roiDiv.replaceChildren(createDOM("strong", {}, `${that.translation.text(50)}:`));
 						let roiTimeDiv =
 							roiDiv.querySelector(".roi_duration time") ||
 							roiDiv.appendChild(
 								createDOM("time", {
 									class: "value tooltip",
-									"data-title": `${that.getTranslatedText(119)}: ${toFormatedNumber(
+									"data-title": `${that.translation.text(119)}: ${toFormatedNumber(
 										that.json.options.tradeRate[0]
 									)}:${toFormatedNumber(that.json.options.tradeRate[1])}:${toFormatedNumber(
 										that.json.options.tradeRate[2]
@@ -2113,7 +2118,7 @@ class OGInfinity {
 							});
 						}
 						prodDiv.html(
-							`<strong>${that.getTranslatedText(85)}:</strong><span class="value">${toFormatedNumber(
+							`<strong>${that.translation.text(85)}:</strong><span class="value">${toFormatedNumber(
 								parseInt(baseProd)
 							)} <span class="bonus ${parseInt(baseProd - currentProd) < 0 ? "overmark" : "undermark"}"> (${parseInt(baseProd - currentProd) < 0 ? "" : "+"
 							}${toFormatedNumber(parseInt(baseProd - currentProd))})</span></span>`
@@ -2151,13 +2156,13 @@ class OGInfinity {
 							);
 						let oldStorage = 5000 * Math.floor(2.5 * Math.exp((20 / 33) * (baselvl - 1)));
 						let newStorage = 5000 * Math.floor(2.5 * Math.exp((20 / 33) * tolvl));
-						storageDiv.replaceChildren(createDOM("strong", {}, `${that.getTranslatedText(131)}:`));
+						storageDiv.replaceChildren(createDOM("strong", {}, `${that.translation.text(131)}:`));
 						let storageSizeDiv =
 							storageDiv.querySelector(".storage_size size") ||
 							storageDiv.appendChild(
 								createDOM("size", {
 									class: "value tooltip",
-									"data-title": `${that.getTranslatedText(132)}: ${formatTimeWrapper(
+									"data-title": `${that.translation.text(132)}: ${formatTimeWrapper(
 										newStorage / production,
 										2,
 										true,
@@ -2187,13 +2192,13 @@ class OGInfinity {
 
 						if (baselvl <= tolvl) {
 							let roi = that.roiMine(technoId, tolvl, that.json.empire[that.current.index]);
-							roiDiv.replaceChildren(createDOM("strong", {}, `${that.getTranslatedText(50)}:`));
+							roiDiv.replaceChildren(createDOM("strong", {}, `${that.translation.text(50)}:`));
 							let roiTimeDiv =
 								roiDiv.querySelector(".roi_duration time") ||
 								roiDiv.appendChild(
 									createDOM("time", {
 										class: "value tooltip",
-										"data-title": `${that.getTranslatedText(119)}: ${toFormatedNumber(
+										"data-title": `${that.translation.text(119)}: ${toFormatedNumber(
 											that.json.options.tradeRate[0]
 										)}:${toFormatedNumber(that.json.options.tradeRate[1])}:${toFormatedNumber(
 											that.json.options.tradeRate[2]
@@ -2455,7 +2460,7 @@ class OGInfinity {
 				if (baselvl - 1 == tolvl || (baselvl > tolvl && (that.page == "research" || that.page == "lfresearch"))) {
 					document.querySelector(".ogk-titles").children[2].replaceChildren();
 				} else {
-					document.querySelector(".ogk-titles").children[2].textContent = that.getTranslatedText(39);
+					document.querySelector(".ogk-titles").children[2].textContent = that.translation.text(39);
 				}
 
 				lockListener = () => {
@@ -2543,8 +2548,8 @@ class OGInfinity {
 							base = energyDiv.querySelector("span").getAttribute("data-value");
 						}
 						titleDiv.appendChild(that.createDOM("div", {}, "&#8205;"));
-						titleDiv.appendChild(createDOM("div", {}, that.getTranslatedText(40)));
-						titleDiv.appendChild(createDOM("div", {}, that.getTranslatedText(39)));
+						titleDiv.appendChild(createDOM("div", {}, that.translation.text(40)));
+						titleDiv.appendChild(createDOM("div", {}, that.translation.text(39)));
 						let resDivs = [
 							costDiv.querySelector(".metal"),
 							costDiv.querySelector(".crystal"),
@@ -2747,7 +2752,7 @@ class OGInfinity {
 								.parentElement.appendChild(createDOM("strong", {}, `${toFormatedNumber(baseLvl)}`)).parentElement
 						);
 						let lvlFromTo = titleDiv.appendChild(createDOM("div"));
-						titleDiv.appendChild(createDOM("div", {}, that.getTranslatedText(39)));
+						titleDiv.appendChild(createDOM("div", {}, that.translation.text(39)));
 						let helpNode = document.querySelector(".txt_box .details").cloneNode(true);
 
 						// create res lock button for current element
@@ -2789,13 +2794,13 @@ class OGInfinity {
 						}
 
 						/* if (
-						baseTechno.cost[0] != metalCost ||
-						baseTechno.cost[1] != crystalCost ||
-						baseTechno.cost[2] != deuteriumCost
+						  baseTechno.cost[0] != metalCost ||
+						  baseTechno.cost[1] != crystalCost ||
+						  baseTechno.cost[2] != deuteriumCost
 						) {
-						document.querySelector(".costs").appendChild(
-							createDOM("div", { class: "overmark" }, "resources not correct, please report to developers!")
-						);
+						  document.querySelector(".costs").appendChild(
+							  createDOM("div", { class: "overmark" }, "resources not correct, please report to developers!")
+							);
 						} */
 
 						updateResearchDetails(technologyId, baseLvl, tolvl);
@@ -2825,7 +2830,7 @@ class OGInfinity {
 								lvlFromTo.replaceChildren();
 							}
 							if (tolvl < baseLvl - 1 && that.page != "research" && that.page != "lfresearch") {
-								lvlFromTo.textContent = that.getTranslatedText(129);
+								lvlFromTo.textContent = that.translation.text(129);
 							}
 						});
 
@@ -2855,7 +2860,7 @@ class OGInfinity {
 								lvlFromTo.replaceChildren();
 							}
 							if (tolvl < baseLvl - 1 && that.page != "research" && that.page != "lfresearch") {
-								lvlFromTo.textContent = that.getTranslatedText(129);
+								lvlFromTo.textContent = that.translation.text(129);
 							}
 						});
 
@@ -2933,7 +2938,7 @@ class OGInfinity {
 			container.appendChild(createDOM("hr"));
 		}
 		let box = createDOM("div", { class: "ogk-keep-dialog" });
-		box.appendChild(createDOM("h1", {}, this.getTranslatedText(28)));
+		box.appendChild(createDOM("h1", {}, this.translation.text(28)));
 		let prod = box.appendChild(createDOM("div", { class: "ogk-adjust-grid" }));
 		prod.appendChild(createDOM("span").appendChild(createDOM("a", { class: "resourceIcon metal" })).parentElement);
 		let metInput = prod.appendChild(
@@ -2971,7 +2976,7 @@ class OGInfinity {
 			);
 		}
 		box.appendChild(createDOM("hr"));
-		box.appendChild(createDOM("h1", {}, this.getTranslatedText(29)));
+		box.appendChild(createDOM("h1", {}, this.translation.text(29)));
 		let fleet = box.appendChild(createDOM("div", { class: "ogk-bhole-grid" }));
 		let inputs = [];
 		[202, 203, 210, 208, 209, 204, 205, 206, 219, 207, 215, 211, 213, 218, 214].forEach((id) => {
@@ -2987,7 +2992,7 @@ class OGInfinity {
 			inputs.push(input);
 		});
 		if (!btn) {
-			btn = box.appendChild(createDOM("button", { class: "btn_blue" }, this.getTranslatedText(27)));
+			btn = box.appendChild(createDOM("button", { class: "btn_blue" }, this.translation.text(27)));
 		}
 		btn.addEventListener("click", () => {
 			kept = {};
@@ -3014,7 +3019,7 @@ class OGInfinity {
 		});
 		if (coords) {
 			let resetBtn = box.appendChild(
-				createDOM("button", { class: "btn_blue ogl-btn_red" }, this.getTranslatedText(26))
+				createDOM("button", { class: "btn_blue ogl-btn_red" }, this.translation.text(26))
 			);
 			resetBtn.addEventListener("click", () => {
 				this.json.options.kept.delete(coords);
@@ -3594,7 +3599,7 @@ class OGInfinity {
 			div.appendChild(createDOM("span", {}, "Keep"));
 			let keep = div.appendChild(createDOM("input", { type: "checkbox" }));
 			if (this.json.options.eventBoxKeep) keep.checked = true;
-			div.appendChild(createDOM("span", {}, this.getTranslatedText(41)));
+			div.appendChild(createDOM("span", {}, this.translation.text(41)));
 			let exps = div.appendChild(createDOM("input", { type: "checkbox" }));
 			if (this.json.options.eventBoxExps) exps.checked = true;
 			keep.addEventListener("change", () => {
@@ -4263,9 +4268,9 @@ class OGInfinity {
 						"span",
 						{
 							class: "ogk-flying-per tooltip",
-							title: this.getTranslatedText(37),
+							title: this.translation.text(37),
 						},
-						`${this.getTranslatedText(38)}: ` +
+						`${this.translation.text(38)}: ` +
 						'<span class="' +
 						color +
 						'">' +
@@ -4486,24 +4491,24 @@ class OGInfinity {
 		let container = document.querySelector("#myPlanets") || document.querySelector("#myWorlds");
 		container.prepend(harvestOptions);
 		let syncOption = harvestOptions.appendChild(
-			createDOM("div", { class: "ogl-option ogl-syncOption tooltip", title: this.getTranslatedText(0) })
+			createDOM("div", { class: "ogl-option ogl-syncOption tooltip", title: this.translation.text(0) })
 		);
 		syncOption.addEventListener("click", () => this.settings());
 		let targetList = harvestOptions.appendChild(
-			createDOM("a", { class: "ogl-option ogl-targetIcon tooltip", title: this.getTranslatedText(1) })
+			createDOM("a", { class: "ogl-option ogl-targetIcon tooltip", title: this.translation.text(1) })
 		);
 		let search = harvestOptions.appendChild(
-			createDOM("div", { class: "ogl-option ogl-search-icon tooltip", title: this.getTranslatedText(2) })
+			createDOM("div", { class: "ogl-option ogl-search-icon tooltip", title: this.translation.text(2) })
 		);
 		let statsBtn = harvestOptions.appendChild(
-			createDOM("div", { class: "ogl-option ogl-statistics-icon tooltip", title: this.getTranslatedText(3) })
+			createDOM("div", { class: "ogl-option ogl-statistics-icon tooltip", title: this.translation.text(3) })
 		);
 		let empireBtn;
 		empireBtn = harvestOptions.appendChild(
-			createDOM("div", { class: "ogl-option ogl-empire-icon tooltip", title: this.getTranslatedText(4) })
+			createDOM("div", { class: "ogl-option ogl-empire-icon tooltip", title: this.translation.text(4) })
 		);
 		let overViewBtn = harvestOptions.appendChild(
-			createDOM("div", { class: "ogl-option ogl-overview-icon tooltip", title: this.getTranslatedText(5) })
+			createDOM("div", { class: "ogl-option ogl-overview-icon tooltip", title: this.translation.text(5) })
 		);
 		if (this.json.options.targetList) {
 			targetList.classList.add("ogl-active");
@@ -4641,17 +4646,17 @@ class OGInfinity {
 			: ["#656565", "#83ba33", "#b73536", "#3d4800"];
 		let labels = lf
 			? [
-				this.getTranslatedText(51, "text"),
-				this.getTranslatedText(52, "text"),
-				this.getTranslatedText(53, "text"),
-				this.getTranslatedText(54, "text"),
-				this.getTranslatedText(89, "text"),
+				this.translation.text(51, "text"),
+				this.translation.text(52, "text"),
+				this.translation.text(53, "text"),
+				this.translation.text(54, "text"),
+				this.translation.text(89, "text"),
 			]
 			: [
-				this.getTranslatedText(51, "text"),
-				this.getTranslatedText(52, "text"),
-				this.getTranslatedText(53, "text"),
-				this.getTranslatedText(54, "text"),
+				this.translation.text(51, "text"),
+				this.translation.text(52, "text"),
+				this.translation.text(53, "text"),
+				this.translation.text(54, "text"),
 			];
 		let config = {
 			type: "doughnut",
@@ -4718,9 +4723,9 @@ class OGInfinity {
 					},
 				],
 				labels: [
-					this.getTranslatedText(55, "text", false),
-					this.getTranslatedText(56, "text", false),
-					this.getTranslatedText(57, "text", false),
+					this.translation.text(55, "text", false),
+					this.translation.text(56, "text", false),
+					this.translation.text(57, "text", false),
 				],
 			},
 			options: {
@@ -4766,7 +4771,7 @@ class OGInfinity {
 			let count = fleet[id];
 			str += `${id};${count}|`;
 		}
-		fadeBox(`<br/>${this.getTranslatedText(58)}`);
+		fadeBox(`<br/>${this.translation.text(58)}`);
 		navigator.clipboard.writeText(str);
 	}
 
@@ -4896,13 +4901,13 @@ class OGInfinity {
 		let ecoDetail = details.appendChild(createDOM("div", { class: "ogk-box" }));
 		let techDetail = details.appendChild(createDOM("div", { class: "ogk-box ogk-technos" }));
 		let div = techDetail.appendChild(createDOM("div", { class: "ogk-tech" }));
-		div.appendChild(createDOM("span", {}, this.getTranslatedText(95)));
+		div.appendChild(createDOM("span", {}, this.translation.text(95)));
 		div.appendChild(createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-tech-" + 114 }));
 		div.appendChild(
 			createDOM("span").appendChild(createDOM("strong", {}, `${toFormatedNumber(this.json.technology[114])}`))
 				.parentElement
 		);
-		div.appendChild(createDOM("span", {}, this.getTranslatedText(94)));
+		div.appendChild(createDOM("span", {}, this.translation.text(94)));
 		div.appendChild(createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-tech-" + 108 }));
 		div.appendChild(
 			createDOM("span").appendChild(createDOM("strong", {}, `${toFormatedNumber(this.json.technology[108] || 0)}`))
@@ -4910,8 +4915,8 @@ class OGInfinity {
 		);
 		let fleetTech = techDetail.appendChild(createDOM("div", { class: "ogk-tech" }));
 		[115, 117, 118, 109, 110, 111].forEach((id) => {
-			if (id == 115) fleetTech.appendChild(createDOM("div", {}, this.getTranslatedText(87)));
-			if (id == 109) fleetTech.appendChild(createDOM("div", {}, this.getTranslatedText(86)));
+			if (id == 115) fleetTech.appendChild(createDOM("div", {}, this.translation.text(87)));
+			if (id == 109) fleetTech.appendChild(createDOM("div", {}, this.translation.text(86)));
 			fleetTech.appendChild(createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-tech-" + id }));
 			fleetTech.appendChild(
 				createDOM("span").appendChild(createDOM("strong", {}, `${toFormatedNumber(this.json.technology[id])}`))
@@ -4970,7 +4975,7 @@ class OGInfinity {
 				.parentElement.appendChild(document.createTextNode(`${toFormatedNumber(dlvl, 1)}`)).parentElement
 		);
 		prod.appendChild(
-			createDOM("p").appendChild(createDOM("strong", {}, `${this.getTranslatedText(59)}`)).parentElement
+			createDOM("p").appendChild(createDOM("strong", {}, `${this.translation.text(59)}`)).parentElement
 		);
 		prod.appendChild(
 			createDOM("span", { class: "ogl-metal" }).appendChild(
@@ -4986,17 +4991,17 @@ class OGInfinity {
 			createDOM("span", { class: "ogl-deut" }).appendChild(createDOM("strong", {}, `${toFormatedNumber(1)}`))
 				.parentElement
 		);
-		prod.appendChild(createDOM("p", {}, this.getTranslatedText(60)));
+		prod.appendChild(createDOM("p", {}, this.translation.text(60)));
 		prod.appendChild(createDOM("span", { class: "ogl-metal" }, `${toFormatedNumber(Math.floor(mprodh))}`));
 		prod.appendChild(createDOM("span", { class: "ogl-crystal" }, `${toFormatedNumber(Math.floor(cprodh))}`));
 		prod.appendChild(createDOM("span", { class: "ogl-deut" }, `${toFormatedNumber(Math.floor(dprodh))}`));
-		prod.appendChild(createDOM("p", {}, this.getTranslatedText(61)));
+		prod.appendChild(createDOM("p", {}, this.translation.text(61)));
 		prod.appendChild(
 			createDOM(
 				"span",
 				{
 					class: "ogl-metal tooltip",
-					"data-title": `${this.getTranslatedText(22, "tech")} ${mStorage}`,
+					"data-title": `${this.translation.text(22, "tech")} ${mStorage}`,
 				},
 				`${toFormatedNumber(Math.floor(mprodd))}`
 			)
@@ -5006,7 +5011,7 @@ class OGInfinity {
 				"span",
 				{
 					class: "ogl-crystal tooltip",
-					"data-title": `${this.getTranslatedText(23, "tech")} ${cStorage}`,
+					"data-title": `${this.translation.text(23, "tech")} ${cStorage}`,
 				},
 				`${toFormatedNumber(Math.floor(cprodd))}`
 			)
@@ -5016,12 +5021,12 @@ class OGInfinity {
 				"span",
 				{
 					class: "ogl-deut tooltip",
-					"data-title": `${this.getTranslatedText(24, "tech")} ${dStorage}`,
+					"data-title": `${this.translation.text(24, "tech")} ${dStorage}`,
 				},
 				`${toFormatedNumber(Math.floor(dprodd))}`
 			)
 		);
-		prod.appendChild(createDOM("p", {}, this.getTranslatedText(62)));
+		prod.appendChild(createDOM("p", {}, this.translation.text(62)));
 		prod.appendChild(createDOM("span", { class: "ogl-metal" }, `${toFormatedNumber(Math.floor(mprodw))}`));
 		prod.appendChild(createDOM("span", { class: "ogl-crystal" }, `${toFormatedNumber(Math.floor(cprodw))}`));
 		prod.appendChild(createDOM("span", { class: "ogl-deut" }, `${toFormatedNumber(Math.floor(dprodw))}`));
@@ -5029,7 +5034,7 @@ class OGInfinity {
 		let innerAstro = prod.appendChild(
 			createDOM("span", { style: "display: flex; align-items: center; margin-left: auto; margin-top: 10px;" })
 		);
-		innerAstro.appendChild(createDOM("span", {}, this.getTranslatedText(93)));
+		innerAstro.appendChild(createDOM("span", {}, this.translation.text(93)));
 		innerAstro.appendChild(
 			createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-tech-124", style: "margin-left: 5px; margin-right: 5px;" })
 		);
@@ -5041,7 +5046,7 @@ class OGInfinity {
 		let innerEnergy = prod.appendChild(
 			createDOM("span", { style: "display: flex; align-items: center; margin-left: auto; margin-top: 10px;" })
 		);
-		innerEnergy.appendChild(createDOM("span", {}, this.getTranslatedText(4, "res")));
+		innerEnergy.appendChild(createDOM("span", {}, this.translation.text(4, "res")));
 		innerEnergy.appendChild(
 			createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-tech-113", style: "margin-left: 5px; margin-right: 5px;" })
 		);
@@ -5053,7 +5058,7 @@ class OGInfinity {
 		let innerPlasma = prod.appendChild(
 			createDOM("span", { style: "display: flex; align-items: center; margin-left: auto; margin-top: 10px;" })
 		);
-		innerPlasma.appendChild(createDOM("span", {}, this.getTranslatedText(96)));
+		innerPlasma.appendChild(createDOM("span", {}, this.translation.text(96)));
 		innerPlasma.appendChild(
 			createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-tech-122", style: "margin-left: 5px; margin-right: 5px;" })
 		);
@@ -5096,18 +5101,18 @@ class OGInfinity {
 			this.createDOM(
 				"span",
 				{ class: "tooltip", "data-title": toFormatedNumber(totalSum) },
-				`${this.getTranslatedText(63)}: <strong>${toFormatedNumber(
+				`${this.translation.text(63)}: <strong>${toFormatedNumber(
 					totalSum,
 					null,
 					totalSum >= 1e6
-				)}</strong><small> ${this.getTranslatedText(64)}</small>`
+				)}</strong><small> ${this.translation.text(64)}</small>`
 			)
 		);
 		fleetInfo.appendChild(
 			this.createDOM(
 				"span",
 				{ class: "tooltip", "data-title": toFormatedNumber(transport) },
-				`${this.getTranslatedText(47)}: <strong>${toFormatedNumber(transport, null, transport >= 1e6)}</strong>`
+				`${this.translation.text(47)}: <strong>${toFormatedNumber(transport, null, transport >= 1e6)}</strong>`
 			)
 		);
 		let rcpower = (((this.json.technology[114] * 5) / 100) * 20000 + 20000) * cyclos;
@@ -5115,7 +5120,7 @@ class OGInfinity {
 			this.createDOM(
 				"span",
 				{ class: "tooltip", "data-title": toFormatedNumber(rcpower) },
-				`${this.getTranslatedText(65)}: <strong>${toFormatedNumber(rcpower, null, rcpower >= 1e6)}</strong>`
+				`${this.translation.text(65)}: <strong>${toFormatedNumber(rcpower, null, rcpower >= 1e6)}</strong>`
 			)
 		);
 		return content;
@@ -5146,13 +5151,13 @@ class OGInfinity {
 		let showStats = async () => {
 			let player = await dataHelper.getPlayer(playerId);
 			let tabNames = {};
-			tabNames[this.getTranslatedText(91, "text", false)] = this.generalStats.bind(this, player);
-			//tabNames[this.getTranslatedText(85, "text", false)] = this.minesStats.bind(this);
-			tabNames[this.getTranslatedText(41, "text", false)] = this.expeditionStats.bind(this);
+			tabNames[this.translation.text(91, "text", false)] = this.generalStats.bind(this, player);
+			//tabNames[this.translation.text(85, "text", false)] = this.minesStats.bind(this);
+			tabNames[this.translation.text(41, "text", false)] = this.expeditionStats.bind(this);
 			if (this.hasLifeforms) {
-				tabNames[this.getTranslatedText(139, "text", false)] = this.discoveryStats.bind(this);
+				tabNames[this.translation.text(139, "text", false)] = this.discoveryStats.bind(this);
 			}
-			tabNames[this.getTranslatedText(92, "text", false)] = this.combatStats.bind(this);
+			tabNames[this.translation.text(92, "text", false)] = this.combatStats.bind(this);
 
 			let body = this.tabs(tabNames);
 			this.popup(null, body);
@@ -5190,36 +5195,36 @@ class OGInfinity {
 					let checkData = result.activity_array.succes == 1 ? JSON.parse(result.activity_array.check_array) : null;
 
 					container.html(`
-				<h3>${this.gameLang == "fr" ? "Meilleur Rapport" : "Best Report"} :</h3>
-				<div class="ptreBestReport">
-					<div>
-						<div><b class="ogl_fleet"><i class="material-icons">military_tech</i>${this.formatToUnits(
+							  <h3>${this.gameLang == "fr" ? "Meilleur Rapport" : "Best Report"} :</h3>
+							  <div class="ptreBestReport">
+								  <div>
+									  <div><b class="ogl_fleet"><i class="material-icons">military_tech</i>${this.formatToUnits(
 						result.top_sr_fleet_points
 					)} pts</b></div>
-						<div><b>${new Date(result.top_sr_timestamp * 1000).toLocaleDateString(
+									  <div><b>${new Date(result.top_sr_timestamp * 1000).toLocaleDateString(
 						"fr-FR"
 					)}</b></div>
-					</div>
-					<div>
-						<a class="ogl_button" target="_blank" href="${result.top_sr_link}">${this.gameLang == "fr" ? "Détails du rapport" : "Report Details"
+								  </div>
+								  <div>
+									  <a class="ogl_button" target="_blank" href="${result.top_sr_link}">${this.gameLang == "fr" ? "Détails du rapport" : "Report Details"
 						}</a>
-						<a class="ogl_button" target="_blank" href="https://ptre.chez.gg/?country=${this.gameLang
+									  <a class="ogl_button" target="_blank" href="https://ptre.chez.gg/?country=${this.gameLang
 						}&univers=${this.universe}&player_id=${player.id}">${this.gameLang == "fr" ? "Profil de la cible" : "Target Profile"
 						}</a>
-					</div>
-				</div>
-				<div class="splitLine"></div>
-				<h3>${result.activity_array.title || ""}</h3>
-				<div class="ptreActivities"><span></span><div></div></div>
-				<div class="splitLine"></div>
-				<div class="ptreFrames"></div>
-				<!--<ul class="ptreLegend">
-					<li><u>Green circle</u>: no activity detected & fully checked</li>
-					<li><u>Green dot</u>: no activity detected</li>
-					<li><u>Red dot</u>: multiple activities detected</li>
-					<li><u>Transparent dot</u>: not enough planet checked</li>
-				</ul>-->
-			`);
+								  </div>
+							  </div>
+							  <div class="splitLine"></div>
+							  <h3>${result.activity_array.title || ""}</h3>
+							  <div class="ptreActivities"><span></span><div></div></div>
+							  <div class="splitLine"></div>
+							  <div class="ptreFrames"></div>
+							  <!--<ul class="ptreLegend">
+								  <li><u>Green circle</u>: no activity detected & fully checked</li>
+								  <li><u>Green dot</u>: no activity detected</li>
+								  <li><u>Red dot</u>: multiple activities detected</li>
+								  <li><u>Transparent dot</u>: not enough planet checked</li>
+							  </ul>-->
+						  `);
 
 					["last24h", "2days", "3days", "week", "2weeks", "month"].forEach((f) => {
 						let btn = container.querySelector(".ptreFrames").appendChild(createDOM("div", { class: "ogl_button" }, f));
@@ -5347,9 +5352,9 @@ class OGInfinity {
 												this.createDOM(
 													"div",
 													{ class: "ogl-unknown-warning" },
-													`${this.getTranslatedText(
+													`${this.translation.text(
 														112
-													)} <a href='https://discord.gg/8Y4SWup'> ${this.getTranslatedText(113)}</a>`
+													)} <a href='https://discord.gg/8Y4SWup'> ${this.translation.text(113)}</a>`
 												)
 											);
 								} else if (this.json.expeditions[id].busy) {
@@ -5357,7 +5362,7 @@ class OGInfinity {
 										msg
 											.querySelector(".msg_actions")
 											.appendChild(
-												createDOM("a", { class: "ogl-warning tooltip", "data-title": this.getTranslatedText(114) })
+												createDOM("a", { class: "ogl-warning tooltip", "data-title": this.translation.text(114) })
 											);
 								}
 								msg.classList.add("ogk-" + this.json.expeditions[id].result.toLowerCase());
@@ -5425,7 +5430,7 @@ class OGInfinity {
 											this.createDOM(
 												"div",
 												{ class: "ogl-unknown-warning" },
-												`${this.getTranslatedText(112)} <a href='https://discord.gg/8Y4SWup'> ${this.getTranslatedText(
+												`${this.translation.text(112)} <a href='https://discord.gg/8Y4SWup'> ${this.translation.text(
 													113
 												)}</a>`
 											)
@@ -5434,7 +5439,7 @@ class OGInfinity {
 									msg.querySelector(".msg_actions").appendChild(
 										createDOM("a", {
 											class: "ogl-warning tooltipRight ogl-tooltipReady ogl-tooltipInit",
-											"data-title": this.getTranslatedText(114),
+											"data-title": this.translation.text(114),
 										})
 									);
 								}
@@ -5747,9 +5752,9 @@ class OGInfinity {
 
 	overview() {
 		let header = createDOM("div", { class: "ogl-tabs" });
-		let minesBtn = header.appendChild(createDOM("span", { class: "ogl-tab ogl-active" }, this.getTranslatedText(90)));
-		let fleetBtn = header.appendChild(createDOM("span", { class: "ogl-tab" }, this.getTranslatedText(63)));
-		let defBtn = header.appendChild(createDOM("span", { class: "ogl-tab" }, this.getTranslatedText(54)));
+		let minesBtn = header.appendChild(createDOM("span", { class: "ogl-tab ogl-active" }, this.translation.text(90)));
+		let fleetBtn = header.appendChild(createDOM("span", { class: "ogl-tab" }, this.translation.text(63)));
+		let defBtn = header.appendChild(createDOM("span", { class: "ogl-tab" }, this.translation.text(54)));
 		let body = createDOM("div");
 		body.appendChild(header);
 		body.appendChild(this.minesOverview());
@@ -5758,10 +5763,10 @@ class OGInfinity {
 			fleetBtn.classList.remove("ogl-active");
 			defBtn.classList.remove("ogl-active");
 			body.children[1].remove();
-			if (e.target.textContent == this.getTranslatedText(63)) {
+			if (e.target.textContent == this.translation.text(63)) {
 				fleetBtn.classList.add("ogl-active");
 				body.appendChild(this.fleetOverview());
-			} else if (e.target.textContent == this.getTranslatedText(54)) {
+			} else if (e.target.textContent == this.translation.text(54)) {
 				defBtn.classList.add("ogl-active");
 				body.appendChild(this.defenseOverview());
 			} else {
@@ -5906,38 +5911,38 @@ class OGInfinity {
 			let box = this.resourceBox(
 				[
 					{
-						title: this.getTranslatedText(67),
+						title: this.translation.text(67),
 						metal: sums.found[0],
 						crystal: sums.found[1],
 						deuterium: sums.found[2],
 						am: sums.found[3],
 					},
 					{
-						title: this.getTranslatedText(63),
+						title: this.translation.text(63),
 						metal: fleetRes[0],
 						crystal: fleetRes[1],
 						deuterium: fleetRes[2],
 					},
 					{
-						title: this.getTranslatedText(69),
+						title: this.translation.text(69),
 						metal: sums.harvest[0],
 						crystal: sums.harvest[1],
 						deuterium: 0,
 					},
 					{
-						title: this.getTranslatedText(68),
+						title: this.translation.text(68),
 						metal: -losses[0],
 						crystal: -losses[1],
 						deuterium: -losses[2],
 					},
 					{
-						title: this.getTranslatedText(70),
+						title: this.translation.text(70),
 						metal: 0,
 						crystal: 0,
 						deuterium: sums.fuel,
 					},
 					{
-						title: this.getTranslatedText(71),
+						title: this.translation.text(71),
 						metal: sums.adjust[0],
 						crystal: sums.adjust[1],
 						deuterium: sums.adjust[2],
@@ -6243,12 +6248,12 @@ class OGInfinity {
 			let globalDiv = content.appendChild(createDOM("div", { class: "ogk-global" }));
 			globalDiv.appendChild(this.winGraph(sums.wins, sums.draws, sums.count));
 			globalDiv.appendChild(createDOM("span", { class: "ogk-center" }, sums.count));
-			globalDiv.appendChild(createDOM("h1", { class: "ogk-top-title" }, this.getTranslatedText(72)));
+			globalDiv.appendChild(createDOM("h1", { class: "ogk-top-title" }, this.translation.text(72)));
 			let topDiv = globalDiv.appendChild(createDOM("div", { class: "ogk-top" }));
-			topDiv.appendChild(createDOM("p", { style: "margin-bottom: 5px" }, this.getTranslatedText(73)));
-			topDiv.appendChild(createDOM("div", { class: "ogk-head" }, this.getTranslatedText(74)));
-			topDiv.appendChild(createDOM("div", { class: "ogk-head" }, this.getTranslatedText(75)));
-			topDiv.appendChild(createDOM("div", { class: "ogk-head" }, this.getTranslatedText(76)));
+			topDiv.appendChild(createDOM("p", { style: "margin-bottom: 5px" }, this.translation.text(73)));
+			topDiv.appendChild(createDOM("div", { class: "ogk-head" }, this.translation.text(74)));
+			topDiv.appendChild(createDOM("div", { class: "ogk-head" }, this.translation.text(75)));
+			topDiv.appendChild(createDOM("div", { class: "ogk-head" }, this.translation.text(76)));
 
 			sums.topCombats.forEach(async (top) => {
 				if (!top.loot) top.loot = 0;
@@ -6291,31 +6296,31 @@ class OGInfinity {
 			let box = this.resourceBox(
 				[
 					{
-						title: this.getTranslatedText(74),
+						title: this.translation.text(74),
 						metal: sums.loot[0],
 						crystal: sums.loot[1],
 						deuterium: sums.loot[2],
 					},
 					{
-						title: this.getTranslatedText(69),
+						title: this.translation.text(69),
 						metal: sums.harvest[0],
 						crystal: sums.harvest[1],
 						deuterium: 0,
 					},
 					{
-						title: this.getTranslatedText(68),
+						title: this.translation.text(68),
 						metal: -losses[0],
 						crystal: -losses[1],
 						deuterium: -losses[2],
 					},
 					{
-						title: this.getTranslatedText(70),
+						title: this.translation.text(70),
 						metal: 0,
 						crystal: 0,
 						deuterium: sums.fuel,
 					},
 					{
-						title: this.getTranslatedText(77),
+						title: this.translation.text(77),
 						metal: sums.adjust[0],
 						crystal: sums.adjust[1],
 						deuterium: sums.adjust[2],
@@ -6754,7 +6759,7 @@ class OGInfinity {
 			sums[1] += row.crystal;
 			sums[2] += row.deuterium;
 		});
-		prod.appendChild(createDOM("p", { class: "ogk-total" }, this.getTranslatedText(40)));
+		prod.appendChild(createDOM("p", { class: "ogk-total" }, this.translation.text(40)));
 		prod.appendChild(
 			createDOM(
 				"span",
@@ -6843,19 +6848,19 @@ class OGInfinity {
 					},
 				],
 				labels: [
-					this.getTranslatedText(0, "res", false),
-					this.getTranslatedText(1, "res", false),
-					this.getTranslatedText(2, "res", false),
-					this.getTranslatedText(3, "res", false),
-					this.getTranslatedText(78, "text", false),
-					this.getTranslatedText(63, "text", false),
-					this.getTranslatedText(79, "text", false),
-					this.getTranslatedText(80, "text", false),
-					this.getTranslatedText(81, "text", false),
-					this.getTranslatedText(82, "text", false),
-					this.getTranslatedText(71, "text", false),
-					this.getTranslatedText(83, "text", false),
-					this.getTranslatedText(84, "text", false),
+					this.translation.text(0, "res", false),
+					this.translation.text(1, "res", false),
+					this.translation.text(2, "res", false),
+					this.translation.text(3, "res", false),
+					this.translation.text(78, "text", false),
+					this.translation.text(63, "text", false),
+					this.translation.text(79, "text", false),
+					this.translation.text(80, "text", false),
+					this.translation.text(81, "text", false),
+					this.translation.text(82, "text", false),
+					this.translation.text(71, "text", false),
+					this.translation.text(83, "text", false),
+					this.translation.text(84, "text", false),
 				],
 			},
 			options: {
@@ -7192,7 +7197,7 @@ class OGInfinity {
 					"div",
 					{
 						class: "ogl-metal tooltip",
-						"data-title": `${this.getTranslatedText(132)}: ${formatTimeWrapper(mfilltime, 2, true, " ", false, "")}`,
+						"data-title": `${this.translation.text(132)}: ${formatTimeWrapper(mfilltime, 2, true, " ", false, "")}`,
 					},
 					toFormatedNumber(planet[1])
 				)
@@ -7234,7 +7239,7 @@ class OGInfinity {
 					"div",
 					{
 						class: "ogl-crystal tooltip",
-						"data-title": `${this.getTranslatedText(132)}: ${formatTimeWrapper(cfilltime, 2, true, " ", false, "")}`,
+						"data-title": `${this.translation.text(132)}: ${formatTimeWrapper(cfilltime, 2, true, " ", false, "")}`,
 					},
 					toFormatedNumber(planet[2])
 				)
@@ -7276,7 +7281,7 @@ class OGInfinity {
 					"div",
 					{
 						class: "ogl-deut tooltip",
-						"data-title": `${this.getTranslatedText(132)}: ${formatTimeWrapper(dfilltime, 2, true, " ", false, "")}`,
+						"data-title": `${this.translation.text(132)}: ${formatTimeWrapper(dfilltime, 2, true, " ", false, "")}`,
 					},
 					toFormatedNumber(planet[3])
 				)
@@ -7337,7 +7342,7 @@ class OGInfinity {
 				"div",
 				{
 					class: "ogl-metal tooltip",
-					"data-title": `${this.getTranslatedText(132)}: ${formatTimeWrapper(
+					"data-title": `${this.translation.text(132)}: ${formatTimeWrapper(
 						minTimeMetal,
 						2,
 						true,
@@ -7385,7 +7390,7 @@ class OGInfinity {
 				"div",
 				{
 					class: "ogl-crystal tooltip",
-					"data-title": `${this.getTranslatedText(132)}: ${formatTimeWrapper(
+					"data-title": `${this.translation.text(132)}: ${formatTimeWrapper(
 						minTimeCrystal,
 						2,
 						true,
@@ -7433,7 +7438,7 @@ class OGInfinity {
 				"div",
 				{
 					class: "ogl-deut tooltip",
-					"data-title": `${this.getTranslatedText(132)}: ${formatTimeWrapper(
+					"data-title": `${this.translation.text(132)}: ${formatTimeWrapper(
 						minTimeDeuterium,
 						2,
 						true,
@@ -8958,7 +8963,7 @@ class OGInfinity {
 			let box = this.discoveryBox(
 				[
 					{
-						title: this.getTranslatedText(144),
+						title: this.translation.text(144),
 						human: sums.found[0],
 						rocktal: sums.found[1],
 						mecha: sums.found[2],
@@ -8970,7 +8975,7 @@ class OGInfinity {
 			let costsBox = this.discoveryCostsBox(
 				[
 					{
-						title: this.getTranslatedText(40),
+						title: this.translation.text(40),
 						metal: sums.costs[0],
 						crystal: sums.costs[1],
 						deut: sums.costs[2],
@@ -9236,7 +9241,7 @@ class OGInfinity {
 			createDOM("span").appendChild(createDOM("a", { class: "ogl-option resourceIcon deuterium" })).parentElement
 		);
 		discovery.appendChild(
-			createDOM("span").appendChild(createDOM("a", {}, `${this.getTranslatedText(145)}`)).parentElement
+			createDOM("span").appendChild(createDOM("a", {}, `${this.translation.text(145)}`)).parentElement
 		);
 
 		rows.forEach((row) => {
@@ -9313,12 +9318,12 @@ class OGInfinity {
 					},
 				],
 				labels: [
-					this.getTranslatedText(140, "text", false),
-					this.getTranslatedText(141, "text", false),
-					this.getTranslatedText(142, "text", false),
-					this.getTranslatedText(143, "text", false),
-					this.getTranslatedText(145, "text", false),
-					this.getTranslatedText(83, "text", false),
+					this.translation.text(140, "text", false),
+					this.translation.text(141, "text", false),
+					this.translation.text(142, "text", false),
+					this.translation.text(143, "text", false),
+					this.translation.text(145, "text", false),
+					this.translation.text(83, "text", false),
 				],
 			},
 			options: {
@@ -9491,7 +9496,7 @@ class OGInfinity {
 			}
 		});
 		let missionsDiv = destination.appendChild(createDOM("div", { class: "ogl-missions" }));
-		missionsDiv.replaceChildren(createDOM("span", { style: "color: #9099a3" }, `${that.getTranslatedText(111)}`));
+		missionsDiv.replaceChildren(createDOM("span", { style: "color: #9099a3" }, `${that.translation.text(111)}`));
 		let resFiller = actions.appendChild(createDOM("div", { class: "ogl-res-filler" }));
 		let metalBtn = resFiller.appendChild(createDOM("div"));
 		metalBtn.appendChild(createDOM("div", { class: "resourceIcon metal" }));
@@ -9694,13 +9699,13 @@ class OGInfinity {
 					`<a tech-id="202" class="ogl-option noShips ogl-fleet-ship ogl-fleet-202" href="https://${window.location.host
 					}${window.location.pathname
 					}?page=ingame&component=shipyard&cp=${planetId}&techId202=${sc}"></a><span>${toFormatedNumber(sc, 0)}</span>
-<a tech-id="203" class="ogl-option noShips ogl-fleet-ship ogl-fleet-203" href="https://${window.location.host
+			<a tech-id="203" class="ogl-option noShips ogl-fleet-ship ogl-fleet-203" href="https://${window.location.host
 					}${window.location.pathname
 					}?page=ingame&component=shipyard&cp=${planetId}&techId203=${lc}"></a><span>${toFormatedNumber(lc, 0)}</span>
-<a tech-id="219" class="ogl-option noShips ogl-fleet-ship ogl-fleet-219" href="https://${window.location.host
+			<a tech-id="219" class="ogl-option noShips ogl-fleet-ship ogl-fleet-219" href="https://${window.location.host
 					}${window.location.pathname
 					}?page=ingame&component=shipyard&cp=${planetId}&techId219=${pf}"></a><span>${toFormatedNumber(pf, 0)}</span>
-<a tech-id="209" class="ogl-option noShips ogl-fleet-ship ogl-fleet-209" href="https://${window.location.host
+			<a tech-id="209" class="ogl-option noShips ogl-fleet-ship ogl-fleet-209" href="https://${window.location.host
 					}${window.location.pathname
 					}?page=ingame&component=shipyard&cp=${planetId}&techId209=${rec}"></a><span>${toFormatedNumber(
 						rec,
@@ -9887,14 +9892,14 @@ class OGInfinity {
 				let missionsDiv = document.getElementsByClassName("ogl-missions")[0];
 				let iconsDiv;
 				if (auxAjaxFailed) {
-					missionsDiv.replaceChildren(createDOM("span", { style: "color: #9099a3" }, `${that.getTranslatedText(111)}`));
+					missionsDiv.replaceChildren(createDOM("span", { style: "color: #9099a3" }, `${that.translation.text(111)}`));
 					warning.style.visibility = "visible";
-					warning.setAttribute("data-title", that.getTranslatedText(116));
+					warning.setAttribute("data-title", that.translation.text(116));
 					auxAjaxFailed = false;
 				} else if (missions.length == 0 || !fleetDispatcher.hasShipsSelected()) {
-					missionsDiv.replaceChildren(createDOM("span", { style: "color: #9099a3" }, `${that.getTranslatedText(111)}`));
+					missionsDiv.replaceChildren(createDOM("span", { style: "color: #9099a3" }, `${that.translation.text(111)}`));
 					warning.style.visibility = "visible";
-					warning.setAttribute("data-title", that.getTranslatedText(115));
+					warning.setAttribute("data-title", that.translation.text(115));
 				} else {
 					warning.style.visibility = "hidden";
 					missionsDiv.html(
@@ -10090,7 +10095,7 @@ class OGInfinity {
 				document.querySelector("#missionsDiv").setAttribute("data", "true");
 			});
 			let missionsDiv = destination.appendChild(createDOM("div", { class: "ogl-missions", id: "missionsDiv" }));
-			missionsDiv.replaceChildren(createDOM("span", { style: "color: #9099a3" }, `${that.getTranslatedText(111)}`));
+			missionsDiv.replaceChildren(createDOM("span", { style: "color: #9099a3" }, `${that.translation.text(111)}`));
 			let switchToPage = fleetDispatcher.switchToPage.bind(fleetDispatcher);
 			let refresh = fleetDispatcher.refresh.bind(fleetDispatcher);
 			let resetShips = fleetDispatcher.resetShips.bind(fleetDispatcher);
@@ -10175,7 +10180,7 @@ class OGInfinity {
 					if (fleetDispatcher.shipsToSend.length == 0) {
 						document
 							.querySelector(".ogl-dispatch .ogl-missions")
-							.replaceChildren(createDOM("span", { style: "color: #9099a3" }, `${that.getTranslatedText(111)}`));
+							.replaceChildren(createDOM("span", { style: "color: #9099a3" }, `${that.translation.text(111)}`));
 						warning.style.visibility = "visible";
 						warning.setAttribute("data-title", "Error : No ships selected");
 						return;
@@ -10185,7 +10190,7 @@ class OGInfinity {
 					let iconsDiv;
 					if (missions.length == 0) {
 						missionsDiv.replaceChildren(
-							createDOM("span", { style: "color: #9099a3" }, `${that.getTranslatedText(111)}`)
+							createDOM("span", { style: "color: #9099a3" }, `${that.translation.text(111)}`)
 						);
 					} else {
 						warning.style.visibility = "hidden";
@@ -10236,7 +10241,7 @@ class OGInfinity {
 			fleetDispatcher.displayErrors = function (errors) {
 				document
 					.querySelector(".ogl-dispatch .ogl-missions")
-					.replaceChildren(createDOM("span", { style: "color: #9099a3" }, `${that.getTranslatedText(111)}`));
+					.replaceChildren(createDOM("span", { style: "color: #9099a3" }, `${that.translation.text(111)}`));
 				warning.style.visibility = "visible";
 				document.querySelector("#continueToFleet2").style.filter = "hue-rotate(-50deg)";
 				warning.setAttribute("data-title", errors[0].message);
@@ -10301,11 +10306,11 @@ class OGInfinity {
 					returnDiv.textContent = "-";
 					document
 						.querySelector(".ogl-dispatch .ogl-missions")
-						.replaceChildren(createDOM("span", { style: "color: #9099a3" }, `${that.getTranslatedText(111)}`));
+						.replaceChildren(createDOM("span", { style: "color: #9099a3" }, `${that.translation.text(111)}`));
 					warning.style.visibility = "visible";
-					warning.setAttribute("data-title", that.getTranslatedText(117));
+					warning.setAttribute("data-title", that.translation.text(117));
 					if (noShips) {
-						warning.setAttribute("data-title", that.getTranslatedText(115));
+						warning.setAttribute("data-title", that.translation.text(115));
 					}
 					document.querySelector("#continueToFleet2").style.filter = "hue-rotate(-50deg)";
 				};
@@ -11033,7 +11038,7 @@ class OGInfinity {
 							"span",
 							{
 								class: "tooltip",
-								"data-title": `${this.getTranslatedText(ship.id, "tech")}: ${toFormatedNumber(ship.number, 0)}`,
+								"data-title": `${this.translation.text(ship.id, "tech")}: ${toFormatedNumber(ship.number, 0)}`,
 							},
 							`${toFormatedNumber(ship.number, null, ship.number > 999999)}`
 						)
@@ -11830,33 +11835,33 @@ class OGInfinity {
 					}.ogame.gameforge.com/game/index.php?page=ingame&amp;component=galaxy&galaxy=${coords.split(":")[0]}&system=${coords.split(":")[1]
 					}&position=${coords.split(":")[2].slice(0, -1)}`;
 				flyingRows += `<tr>
-<td class=${details.own ? "own" : "friendly"}>${details.name}</td>
-<td class=${details.own ? "own" : "friendly"}><a href=${href}>[${coords.slice(0, -1)}]</a></td>
-<td><figure class="${coords.slice(-1) == "M" ? "planetIcon moon" : "planetIcon planet"}"></figure></td>
-<td class="value ogl-metal">${toFormatedNumber(details.metal)}</td>
-<td class="value ogl-crystal">${toFormatedNumber(details.crystal)}</td>
-<td class="value ogl-deut">${toFormatedNumber(details.deuterium)}</td>
-</tr>`;
+		<td class=${details.own ? "own" : "friendly"}>${details.name}</td>
+		<td class=${details.own ? "own" : "friendly"}><a href=${href}>[${coords.slice(0, -1)}]</a></td>
+		<td><figure class="${coords.slice(-1) == "M" ? "planetIcon moon" : "planetIcon planet"}"></figure></td>
+		<td class="value ogl-metal">${toFormatedNumber(details.metal)}</td>
+		<td class="value ogl-crystal">${toFormatedNumber(details.crystal)}</td>
+		<td class="value ogl-deut">${toFormatedNumber(details.deuterium)}</td>
+		</tr>`;
 			}
 		}
 		document.querySelector(".ogl-sum-symbol .icon_movement").setAttribute(
 			"data-title",
 			`<div class="htmlTooltip">
-<h1>${this.getTranslatedText(128)}</h1>
-<div class="splitLine"></div>
-<tbody>
-<table class="flyingFleet">
-<tr>
-	<th colspan="3">${this.getTranslatedText(127)}</th>
-	<th class="ogl-metal">${this.getTranslatedText(0, "res")}</th>
-	<th class="ogl-crystal">${this.getTranslatedText(1, "res")}</th>
-	<th class="ogl-deut">${this.getTranslatedText(2, "res")}</th>
-</tr>
-${flyingRows}
-</table>
-</tbody>
-</div>
-`
+		  <h1>${this.translation.text(128)}</h1>
+		  <div class="splitLine"></div>
+		  <tbody>
+			<table class="flyingFleet">
+			  <tr>
+				  <th colspan="3">${this.translation.text(127)}</th>
+				  <th class="ogl-metal">${this.translation.text(0, "res")}</th>
+				  <th class="ogl-crystal">${this.translation.text(1, "res")}</th>
+				  <th class="ogl-deut">${this.translation.text(2, "res")}</th>
+			  </tr>
+			  ${flyingRows}
+			</table>
+		  </tbody>
+		</div>
+	`
 		);
 	}
 
@@ -11943,13 +11948,13 @@ ${flyingRows}
 					}.ogame.gameforge.com/game/index.php?page=ingame&amp;component=galaxy&galaxy=${coords.split(":")[0]}&system=${coords.split(":")[1]
 					}&position=${coords.split(":")[2].slice(0, -1)}`;
 				flyingRows += `<tr>
-<td>${details.name}</td>
-<td class=${details.own ? "own" : "friendly"}><a href=${href}>[${coords.slice(0, -1)}]</a></td>
-<td><figure class="${coords.slice(-1) == "M" ? "planetIcon moon" : "planetIcon planet"}"></figure></td>
-<td class="value ogl-metal">${toFormatedNumber(details.metal, 0)}</td>
-<td class="value ogl-crystal">${toFormatedNumber(details.crystal, 0)}</td>
-<td class="value ogl-deut">${toFormatedNumber(details.deuterium, 0)}</td>
-</tr>`;
+		<td>${details.name}</td>
+		<td class=${details.own ? "own" : "friendly"}><a href=${href}>[${coords.slice(0, -1)}]</a></td>
+		<td><figure class="${coords.slice(-1) == "M" ? "planetIcon moon" : "planetIcon planet"}"></figure></td>
+		<td class="value ogl-metal">${toFormatedNumber(details.metal, 0)}</td>
+		<td class="value ogl-crystal">${toFormatedNumber(details.crystal, 0)}</td>
+		<td class="value ogl-deut">${toFormatedNumber(details.deuterium, 0)}</td>
+		</tr>`;
 			}
 		}
 		let flyingSum = createDOM("div", { class: "smallplanet smaller ogl-summary" });
@@ -11961,21 +11966,21 @@ ${flyingRows}
 		flyingSum.querySelector(".icon_movement").setAttribute(
 			"data-title",
 			`<div class="htmlTooltip">
-<h1>${this.getTranslatedText(128)}</h1>
-<div class="splitLine"></div>
-<tbody>
-<table class="flyingFleet">
-<tr>
-	<th colspan="3">${this.getTranslatedText(127)}</th>
-	<th class="ogl-metal">${this.getTranslatedText(0, "res")}</th>
-	<th class="ogl-crystal">${this.getTranslatedText(1, "res")}</th>
-	<th class="ogl-deut">${this.getTranslatedText(2, "res")}</th>
-</tr>
-${flyingRows}
-</table>
-</tbody>
-</div>
-`
+		  <h1>${this.translation.text(128)}</h1>
+		  <div class="splitLine"></div>
+		  <tbody>
+			<table class="flyingFleet">
+			  <tr>
+				  <th colspan="3">${this.translation.text(127)}</th>
+				  <th class="ogl-metal">${this.translation.text(0, "res")}</th>
+				  <th class="ogl-crystal">${this.translation.text(1, "res")}</th>
+				  <th class="ogl-deut">${this.translation.text(2, "res")}</th>
+			  </tr>
+			  ${flyingRows}
+			</table>
+		  </tbody>
+		</div>
+	`
 		);
 		flyingSum.appendChild(flying);
 		let mSumP = 0,
@@ -12220,7 +12225,7 @@ ${flyingRows}
 			let header = div.appendChild(createDOM("div", { class: "ogk-controls" }));
 			let markers = header.appendChild(createDOM("div"));
 			["red", "orange", "yellow", "green", "blue", "violet", "gray", "brown"].forEach((color) => {
-				let toggle = createDOM("div", { class: "tooltip ogl-toggle", title: this.getTranslatedText(40) });
+				let toggle = createDOM("div", { class: "tooltip ogl-toggle", title: this.translation.text(40) });
 				toggle.setAttribute("data-toggle", color);
 				markers.appendChild(toggle);
 				if (!this.json.options.hiddenTargets[color]) toggle.classList.add("ogl-active");
@@ -12573,7 +12578,7 @@ ${flyingRows}
 			planets.forEach((e) => list.appendChild(e));
 			this.highlightTarget();
 			date.textContent = this.timeSince(new Date(player.lastUpdate));
-			count.textContent = player.planets.length + " " + this.getTranslatedText(42);
+			count.textContent = player.planets.length + " " + this.translation.text(42);
 			const detailRankDiv1 = createDOM("div");
 			detailRankDiv1.replaceChildren(
 				createDOM("div", { class: "ogl-totalIcon" }),
@@ -13192,7 +13197,7 @@ ${flyingRows}
 		if (!pagination) return; // Make sure pagination exists, else let's stop
 		pagination.parentNode.insertBefore(tableOptions, pagination);
 		let enableTable = tableOptions.appendChild(
-			createDOM("button", { class: "icon icon_eye tooltip", title: this.getTranslatedText(106) })
+			createDOM("button", { class: "icon icon_eye tooltip", title: this.translation.text(106) })
 		);
 		if (this.json.options.spyTableEnable) enableTable.classList.add("ogl-active");
 		enableTable.addEventListener("click", () => {
@@ -13201,7 +13206,7 @@ ${flyingRows}
 			document.location.reload();
 		});
 		let appendOption = tableOptions.appendChild(
-			createDOM("button", { class: "icon icon_plus tooltip", title: this.getTranslatedText(105) })
+			createDOM("button", { class: "icon icon_plus tooltip", title: this.translation.text(105) })
 		);
 		if (this.json.options.spyTableAppend) appendOption.classList.add("ogl-active");
 		appendOption.addEventListener("click", () => {
@@ -13210,7 +13215,7 @@ ${flyingRows}
 			document.location.reload();
 		});
 		let autoDelete = tableOptions.appendChild(
-			createDOM("button", { class: "icon icon_trash tooltip", title: this.getTranslatedText(104) })
+			createDOM("button", { class: "icon icon_trash tooltip", title: this.translation.text(104) })
 		);
 		if (this.json.options.autoDeleteEnable) autoDelete.classList.add("ogl-active");
 		autoDelete.addEventListener("click", () => {
@@ -13225,12 +13230,12 @@ ${flyingRows}
 		let header = createDOM("tr");
 		table.appendChild(header);
 		header.appendChild(createDOM("th", {}, "#"));
-		header.appendChild(createDOM("th", { "data-filter": "DATE" }, `${this.getTranslatedText(97)} (*)`));
-		header.appendChild(createDOM("th", { "data-filter": "COORDS" }, this.getTranslatedText(98)));
-		header.appendChild(createDOM("th", {}, `${this.getTranslatedText(73)} (+)`));
-		header.appendChild(createDOM("th", { "data-filter": "$" }, this.getTranslatedText(99)));
-		header.appendChild(createDOM("th", { "data-filter": "FLEET" }, this.getTranslatedText(100)));
-		header.appendChild(createDOM("th", { "data-filter": "DEF" }, this.getTranslatedText(54)));
+		header.appendChild(createDOM("th", { "data-filter": "DATE" }, `${this.translation.text(97)} (*)`));
+		header.appendChild(createDOM("th", { "data-filter": "COORDS" }, this.translation.text(98)));
+		header.appendChild(createDOM("th", {}, `${this.translation.text(73)} (+)`));
+		header.appendChild(createDOM("th", { "data-filter": "$" }, this.translation.text(99)));
+		header.appendChild(createDOM("th", { "data-filter": "FLEET" }, this.translation.text(100)));
+		header.appendChild(createDOM("th", { "data-filter": "DEF" }, this.translation.text(54)));
 
 		let cargoChoice = createDOM("div", { class: `ogk-cargo${this.json.ships[210].cargoCapacity ? " spio" : ""}` });
 		let sc = cargoChoice.appendChild(createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-202" }));
@@ -13257,7 +13262,7 @@ ${flyingRows}
 		);
 		cargo.addEventListener("mouseover", () => this.tooltip(cargo, cargoChoice, false, false, 50));
 		header.appendChild(createDOM("th", { class: "ogl-headerColors" }, "-"));
-		header.appendChild(createDOM("th", {}, this.getTranslatedText(102)));
+		header.appendChild(createDOM("th", {}, this.translation.text(102)));
 		document.querySelectorAll(".ogl-spyTable th").forEach((th) => {
 			let filter = th.getAttribute("data-filter");
 			if (this.json.options.spyFilter == filter) th.classList.add("ogl-active");
@@ -13277,7 +13282,7 @@ ${flyingRows}
 			if (report.new) {
 				indexDiv.classList.add("ogi-new");
 			}
-			let dateDetail = `\n${report.cleanDate.toLocaleDateString()}<br>\n${report.cleanDate.toLocaleTimeString()}<br>\n${this.getTranslatedText(
+			let dateDetail = `\n${report.cleanDate.toLocaleDateString()}<br>\n${report.cleanDate.toLocaleTimeString()}<br>\n${this.translation.text(
 				137
 			)} : ${report.activity}\n`;
 			let dateText = `${this.timeSince(report.cleanDate)}<br>`;
@@ -13300,19 +13305,19 @@ ${flyingRows}
 			let link = name.appendChild(
 				this.createDOM("a", { class: status[report.status] }, report.name + " " + report.status)
 			);
-			let totalDetail = `\n<div class="ogl-metal">${this.getTranslatedText(0, "res")}: ${toFormatedNumber(
+			let totalDetail = `\n<div class="ogl-metal">${this.translation.text(0, "res")}: ${toFormatedNumber(
 				report.metal,
 				null,
 				true
-			)}</div>\n<div class="ogl-crystal">${this.getTranslatedText(1, "res")}: ${toFormatedNumber(
+			)}</div>\n<div class="ogl-crystal">${this.translation.text(1, "res")}: ${toFormatedNumber(
 				report.crystal,
 				null,
 				true
-			)}</div>\n<div class="ogl-deut">${this.getTranslatedText(2, "res")}: ${toFormatedNumber(
+			)}</div>\n<div class="ogl-deut">${this.translation.text(2, "res")}: ${toFormatedNumber(
 				report.deut,
 				null,
 				true
-			)}</div>\n<div class="splitLine"></div>\n${this.getTranslatedText(40)}: ${toFormatedNumber(
+			)}</div>\n<div class="splitLine"></div>\n${this.translation.text(40)}: ${toFormatedNumber(
 				report.total,
 				null,
 				true
@@ -13474,19 +13479,19 @@ ${flyingRows}
 						extraLine.appendChild(createDOM("td", { class: "ogl-date" }));
 						extraLine.appendChild(createDOM("td"));
 						extraLine.appendChild(createDOM("td", { class: "ogl-name" }));
-						let extraDetail = `\n<div class="ogl-metal">${this.getTranslatedText(0, "res")}: ${toFormatedNumber(
+						let extraDetail = `\n<div class="ogl-metal">${this.translation.text(0, "res")}: ${toFormatedNumber(
 							renta[round] * report.resRatio[0],
 							null,
 							true
-						)}</div>\n<div class="ogl-crystal">${this.getTranslatedText(1, "res")}: ${toFormatedNumber(
+						)}</div>\n<div class="ogl-crystal">${this.translation.text(1, "res")}: ${toFormatedNumber(
 							renta[round] * report.resRatio[1],
 							null,
 							true
-						)}</div>\n<div class="ogl-deut">${this.getTranslatedText(2, "res")}: ${toFormatedNumber(
+						)}</div>\n<div class="ogl-deut">${this.translation.text(2, "res")}: ${toFormatedNumber(
 							renta[round] * report.resRatio[2],
 							null,
 							true
-						)}</div>\n<div class="splitLine"></div>\n${this.getTranslatedText(40)}: ${toFormatedNumber(
+						)}</div>\n<div class="splitLine"></div>\n${this.translation.text(40)}: ${toFormatedNumber(
 							renta[round],
 							null,
 							true
@@ -14099,7 +14104,7 @@ ${flyingRows}
 		if (!BUIDLING_INFO[id].baseCons || !BUIDLING_INFO[id].factorCons) return 0;
 		return Math.floor(
 			BUIDLING_INFO[id].baseCons * lvl * Math.pow(BUIDLING_INFO[id].factorCons, id >= 11101 && lvl == 1 ? 0 : lvl) /*
-(tthis.json.lifeformBonus? 1-this.json.lifeformBonus[this.current.id].consumptionReduction[id].energy : 1)*/
+		(tthis.json.lifeformBonus? 1-this.json.lifeformBonus[this.current.id].consumptionReduction[id].energy : 1)*/
 			// TODO: add lf consumption reduction bonus
 		);
 	}
@@ -14902,7 +14907,7 @@ ${flyingRows}
 			let first = data.indexOf("'");
 			let second = data.indexOf("'", first + 1);
 			sender.addEventListener("click", () => {
-				fadeBox(`<br/>${this.getTranslatedText(58)}`);
+				fadeBox(`<br/>${this.translation.text(58)}`);
 				navigator.clipboard.writeText(data.substr(first + 1, second - first - 1));
 			});
 			return true;
@@ -14913,7 +14918,7 @@ ${flyingRows}
 				let first = data.indexOf('value="');
 				let second = data.indexOf('"', first + 7);
 				sender.addEventListener("click", () => {
-					fadeBox(`<br/>${this.getTranslatedText(58)}`);
+					fadeBox(`<br/>${this.translation.text(58)}`);
 					navigator.clipboard.writeText(data.substr(first + 7, second - first - 7));
 				});
 			}
@@ -15055,13 +15060,13 @@ ${flyingRows}
 			let data = fleetDispatcher.fleetHelper.shipsData;
 			for (let id in data) {
 				let infos = `
-<div class="ogl-fleetInfo">
-${data[id].name}
-<hr>
-<div><span>${this.getTranslatedText(47)} </span>${toFormatedNumber(data[id].cargoCapacity, 0)}</div>
-<div><span>${this.getTranslatedText(48)} </span>${toFormatedNumber(data[id].speed, 0)}</div>
-<div><span>${this.getTranslatedText(49)} </span>${toFormatedNumber(data[id].fuelConsumption, 0)}</div>
-</div>`;
+		  <div class="ogl-fleetInfo">
+		  ${data[id].name}
+		  <hr>
+		  <div><span>${this.translation.text(47)} </span>${toFormatedNumber(data[id].cargoCapacity, 0)}</div>
+		  <div><span>${this.translation.text(48)} </span>${toFormatedNumber(data[id].speed, 0)}</div>
+		  <div><span>${this.translation.text(49)} </span>${toFormatedNumber(data[id].fuelConsumption, 0)}</div>
+		  </div>`;
 				let ship = document.querySelector(`.technology[data-technology="${id}"]`);
 				if (ship) {
 					ship.setAttribute("data-title", infos);
@@ -15126,7 +15131,7 @@ ${data[id].name}
 					createDOM(
 						"div",
 						{ class: "ogk-ships-count" },
-						toFormatedNumber(fleetCount, null, true) + " " + this.getTranslatedText(64)
+						toFormatedNumber(fleetCount, null, true) + " " + this.translation.text(64)
 					)
 				);
 				if (!fleet.querySelector(".reversal")) return;
@@ -15193,1539 +15198,6 @@ ${data[id].name}
 		window.onbeforeunload = () => cancelController.abort();
 	}
 
-	getTranslatedText(id, type = "text", html = true) {
-		let language = ["de", "en", "es", "fr", "tr"].includes(this.gameLang) ? this.gameLang : "en";
-		let translation = {
-			tech: {
-				1: {
-					de: "Metallmine",
-					en: "Metal Mine",
-					es: "Mina de metal",
-					fr: "Mine de métal",
-					tr: "Metal Madeni",
-				},
-				2: {
-					de: "Kristallmine",
-					en: "Crystal Mine",
-					es: "Mina de cristal",
-					fr: "Mine de cristal",
-					tr: "Kristal Madeni",
-				},
-				3: {
-					de: "Deuterium-Synthetisierer",
-					en: "Deuterium Synthesizer",
-					es: "Sintetizador de deuterio",
-					fr: "Synthétiseur de deutérium",
-					tr: "Deuterium Madeni",
-				},
-				4: {
-					de: "Solarkraftwerk",
-					en: "Solar Plant",
-					es: "Planta de energía solar",
-					fr: "Centrale électrique solaire",
-					tr: "Solar Enerji Santrali",
-				},
-				12: {
-					de: "Fusionskraftwerk",
-					en: "Fusion Reactor",
-					es: "Planta de fusión",
-					fr: "Centrale électrique de fusion",
-					tr: "Füzyoenerji Santrali",
-				},
-				14: {
-					de: "Roboterfabrik",
-					en: "Robotics Factory",
-					es: "Fábrica de robots",
-					fr: "Usine de robots",
-					tr: "Robot Fabrikası",
-				},
-				15: {
-					de: "Nanitenfabrik",
-					en: "Nanite Factory",
-					es: "Fábrica de nanobots",
-					fr: "Usine de nanites",
-					tr: "Nanit Fabrikasi",
-				},
-				21: {
-					de: "Raumschiffswerft",
-					en: "Shipyard",
-					es: "Hangar",
-					fr: "Chantier spatial",
-					tr: "Uzay Tersanesi",
-				},
-				22: {
-					de: "Metallspeicher",
-					en: "Metal Storage",
-					es: "Almacén de metal",
-					fr: "Hangar de métal",
-					tr: "Metal Deposu",
-				},
-				23: {
-					de: "Kristallspeicher",
-					en: "Crystal Storage",
-					es: "Almacén de cristal",
-					fr: "Hangar de cristal",
-					tr: "Kristal Deposu",
-				},
-				24: {
-					de: "Deuteriumtank",
-					en: "Deuterium Tank",
-					es: "Contenedor de deuterio",
-					fr: "Réservoir de deutérium",
-					tr: "Deuterium Tankeri",
-				},
-				31: {
-					de: "Forschungslabor",
-					en: "Research Lab",
-					es: "Laboratorio de investigación",
-					fr: "Laboratoire de recherche",
-					tr: "Araştırma Laboratuvarı",
-				},
-				33: {
-					de: "Terraformer",
-					en: "Terraformer",
-					es: "Terraformer",
-					fr: "Terraformeur",
-					tr: "Terraformer",
-				},
-				34: {
-					de: "Allianzdepot",
-					en: "Alliance Depot",
-					es: "Depósito de la alianza",
-					fr: "Dépôt de ravitaillement",
-					tr: "İttifak Deposu",
-				},
-				36: {
-					de: "Raumdock",
-					en: "Space Dock",
-					es: "Astillero orbital",
-					fr: "Dock spatial",
-					tr: "Uzay İskelesi",
-				},
-				41: {
-					de: "Mondbasis",
-					en: "Lunar Base",
-					es: "Base lunar",
-					fr: "Base lunaire",
-					tr: "Ay Üssü",
-				},
-				42: {
-					de: "Sensorphalanx",
-					en: "Sensor Phalanx",
-					es: "Sensor Phalanx",
-					fr: "Phalange de capteur",
-					tr: "Sensör Filanx",
-				},
-				43: {
-					de: "Sprungtor",
-					en: "Jump Gate",
-					es: "Salto cuántico",
-					fr: "Porte de saut spatial",
-					tr: "Sıçrama Geçidi",
-				},
-				44: {
-					de: "Raketensilo",
-					en: "Missile Silo",
-					es: "Silo",
-					fr: "Silo de missiles",
-					tr: "Füze Silosu",
-				},
-				106: {
-					de: "Spionagetechnik",
-					en: "Espionage Technology",
-					es: "Tecnología de espionaje",
-					fr: "Technologie Espionnage",
-					tr: "Casusluk Tekniği",
-				},
-				108: {
-					de: "Computertechnik",
-					en: "Computer Technology",
-					es: "Tecnología de computación",
-					fr: "Technologie Ordinateur",
-					tr: "Bilgisayar Tekniği",
-				},
-				109: {
-					de: "Waffentechnik",
-					en: "Weapon Technology",
-					es: "Tecnología militar",
-					fr: "Technologie Armes",
-					tr: "Silah Tekniği",
-				},
-				110: {
-					de: "Schildtechnik",
-					en: "Shielding Technology",
-					es: "Tecnología de defensa",
-					fr: "Technologie Bouclier",
-					tr: "Kalkan Tekniği",
-				},
-				111: {
-					de: "Raumschiffpanzerung",
-					en: "Armour Technology",
-					es: "Tecnología de blindaje",
-					fr: "Technologie Protection des vaisseaux spatiaux",
-					tr: "Uzay gemisi zırhı",
-				},
-				113: {
-					de: "Energietechnik",
-					en: "Energy Technology",
-					es: "Tecnología de energía",
-					fr: "Technologie énergétique",
-					tr: "Enerji Tekniği",
-				},
-				114: {
-					de: "Hyperraumtechnik",
-					en: "Hyperspace Technology",
-					es: "Tecnología de hiperespacio",
-					fr: "Technologie hyperespace",
-					tr: "Hiperuzay Tekniği",
-				},
-				115: {
-					de: "Verbrennungstriebwerk",
-					en: "Combustion Drive",
-					es: "Motor de combustión",
-					fr: "Réacteur à combustion",
-					tr: "Yanma motoru",
-				},
-				117: {
-					de: "Impulstriebwerk",
-					en: "Impulse Drive",
-					es: "Motor de impulso",
-					fr: "Réacteur à impulsion",
-					tr: "İtki motoru",
-				},
-				118: {
-					de: "Hyperraumantrieb",
-					en: "Hyperspace Drive",
-					es: "Propulsor hiperespacial",
-					fr: "Propulsion hyperespace",
-					tr: "Hiperuzay iticisi",
-				},
-				120: {
-					de: "Lasertechnik",
-					en: "Laser Technology",
-					es: "Tecnología láser",
-					fr: "Technologie Laser",
-					tr: "Lazer Teknolojisi",
-				},
-				121: {
-					de: "Ionentechnik",
-					en: "Ion Technology",
-					es: "Tecnología iónica",
-					fr: "Technologie à ions",
-					tr: "İyon Teknolojisi",
-				},
-				122: {
-					de: "Plasmatechnik",
-					en: "Plasma Technology",
-					es: "Tecnología de plasma",
-					fr: "Technologie Plasma",
-					tr: "Plazma Teknolojisi",
-				},
-				123: {
-					de: "Intergalaktisches Forschungsnetzwerk",
-					en: "Intergalactic Research Network",
-					es: "Red de investigación intergaláctica",
-					fr: "Réseau de recherche intergalactique",
-					tr: "Galaksiler arası araştırma ağı",
-				},
-				124: {
-					de: "Astrophysik",
-					en: "Astrophysics",
-					es: "Astrofísica",
-					fr: "Astrophysique",
-					tr: "Astrofizik",
-				},
-				199: {
-					de: "Gravitonforschung",
-					en: "Graviton Technology",
-					es: "Tecnología de gravitón",
-					fr: "Technologie Graviton",
-					tr: "Graviton Teknolojisi",
-				},
-				202: {
-					de: "Kleiner Transporter",
-					en: "Small Cargo Ship",
-					es: "Nave pequeña de carga",
-					fr: "Petit transporteur",
-					tr: "Küçük Nakliye Gemisi",
-				},
-				203: {
-					de: "Großer Transporter",
-					en: "Large Cargo Ship",
-					es: "Nave grande de carga",
-					fr: "Grand transporteur",
-					tr: "Büyük Nakliye Gemisi",
-				},
-				204: {
-					de: "Leichter Jäger",
-					en: "Light Fighter",
-					es: "Cazador ligero",
-					fr: "Chasseur léger",
-					tr: "Hafif Avcı",
-				},
-				205: {
-					de: "Schwerer Jäger",
-					en: "Heavy Fighter",
-					es: "Cazador pesado",
-					fr: "Chasseur lourd",
-					tr: "Ağır Avcı",
-				},
-				206: {
-					de: "Kreuzer",
-					en: "Cruiser",
-					es: "Crucero",
-					fr: "Croiseur",
-					tr: "Kruvazör",
-				},
-				207: {
-					de: "Schlachtschiff",
-					en: "Battleship",
-					es: "Nave de batalla",
-					fr: "Vaisseau de bataille",
-					tr: "Komuta Gemisi",
-				},
-				208: {
-					de: "Kolonieschiff",
-					en: "Colony Ship",
-					es: "Colonizador",
-					fr: "Vaisseau de colonisation",
-					tr: "Koloni Gemisi",
-				},
-				209: {
-					de: "Recycler",
-					en: "Recycler",
-					es: "Reciclador",
-					fr: "Recycleur",
-					tr: "Geri Dönüşümcü",
-				},
-				210: {
-					de: "Spionagesonde",
-					en: "Espionage Probe",
-					es: "Sonda de espionaje",
-					fr: "Sonde d`espionnage",
-					tr: "Casusluk Sondası",
-				},
-				211: {
-					de: "Bomber",
-					en: "Bomber",
-					es: "Bombardero",
-					fr: "Bombardier",
-					tr: "Bombardıman Gemisi",
-				},
-				212: {
-					de: "Solarsatellit",
-					en: "Solar Satellite",
-					es: "Satélite solar",
-					fr: "Satellite solaire",
-					tr: "Solar Uydu",
-				},
-				213: {
-					de: "Zerstörer",
-					en: "Destroyer",
-					es: "Destructor",
-					fr: "Destructeur",
-					tr: "Muhrip",
-				},
-				214: {
-					de: "Todesstern",
-					en: "Death Star",
-					es: "Estrella de la muerte",
-					fr: "Étoile de la mort",
-					tr: "Ölüm Yıldızı",
-				},
-				215: {
-					de: "Schlachtkreuzer",
-					en: "Battlecruiser",
-					es: "Acorazado",
-					fr: "Traqueur",
-					tr: "Fırkateyn",
-				},
-				217: {
-					de: "Crawler",
-					en: "Crawler",
-					es: "Taladrador",
-					fr: "Foreuse",
-					tr: "Paletli",
-				},
-				218: {
-					de: "Reaper",
-					en: "Reaper",
-					es: "Segador",
-					fr: "Faucheur",
-					tr: "Azrail",
-				},
-				219: {
-					de: "Pathfinder",
-					en: "Pathfinder",
-					es: "Explorador",
-					fr: "Éclaireur",
-					tr: "Rehber",
-				},
-				401: {
-					de: "Raketenwerfer",
-					en: "Rocket Launcher",
-					es: "Lazamisiles",
-					fr: "Lanceur de missiles",
-					tr: "Roketatar",
-				},
-				402: {
-					de: "Leichtes Lasergeschütz",
-					en: "Light Laser",
-					es: "Láser pequeño",
-					fr: "Artillerie laser légère",
-					tr: "Hafif Lazer Topu",
-				},
-				403: {
-					de: "Schweres Lasergeschütz",
-					en: "Heavy Laser",
-					es: "Láser grande",
-					fr: "Artillerie laser lourde",
-					tr: "Ağır Lazer Topu",
-				},
-				404: {
-					de: "Gaußkanone",
-					en: "Gauss Cannon",
-					es: "Cañón gauss",
-					fr: "Canon de Gauss",
-					tr: "Gaus Topu",
-				},
-				405: {
-					de: "Ionengeschütz",
-					en: "Ion Cannon",
-					es: "Cañón iónico",
-					fr: "Artillerie à ions",
-					tr: "İyon Topu",
-				},
-				406: {
-					de: "Plasmawerfer",
-					en: "Plasma Turret",
-					es: "Cañón de plasma",
-					fr: "Lanceur de plasma",
-					tr: "Plazma Atıcı",
-				},
-				407: {
-					de: "Kleine Schildkuppel",
-					en: "Small Shield Dome",
-					es: "Cúpula pequeña de protección",
-					fr: "Petit bouclier",
-					tr: "Küçük Kalkan Kubbesi",
-				},
-				408: {
-					de: "Große Schildkuppel",
-					en: "Large Shield Dome",
-					es: "Cúpula grande de protección",
-					fr: "Grand bouclier",
-					tr: "Büyük Kalkan Kubbesi",
-				},
-				502: {
-					de: "Abfangrakete",
-					en: "Anti-ballistic Missile",
-					es: "Misiles antibalísticos",
-					fr: "Missile d`interception",
-					tr: "Yakalıyıcı Roketler",
-				},
-				503: {
-					de: "Interplanetarrakete",
-					en: "Interplanetary Missile",
-					es: "Misil interplanetario",
-					fr: "Missile interplanétaire",
-					tr: "Gezegenler Arası Roketler",
-				},
-				label: { de: "", en: "", es: "", fr: "", tr: "" },
-			},
-			res: [
-				{
-					de: "Metall",
-					en: "Metal",
-					es: "Metal",
-					fr: "Métal",
-					tr: "Metal",
-				},
-				{
-					de: "Kristall",
-					en: "Crystal",
-					es: "Cristal",
-					fr: "Cristal",
-					tr: "Kristal",
-				},
-				{
-					de: "Deuterium",
-					en: "Deuterium",
-					es: "Deuterio",
-					fr: "Deutérium",
-					tr: "Deuterium",
-				},
-				{
-					de: "Dunkle Materie",
-					en: "Dark Matter",
-					es: "Materia oscura",
-					fr: "Antimatière",
-					tr: "Karanlık Madde",
-				},
-				{
-					de: "Energie",
-					en: "Energy",
-					es: "Energía",
-					fr: "Énergie",
-					tr: "Enerji",
-				},
-			],
-			text: [
-/*0*/ {
-					de: "Einstellungen",
-					en: "Setting",
-					es: "Ajustes",
-					fr: "Gestion des données",
-					tr: "Ayarlar",
-				},
-/*1*/ {
-					de: "Zielliste",
-					en: "Targets list",
-					es: "Lista de objetivos",
-					fr: "Liste des cibles",
-					tr: "Hedefler Listesi",
-				},
-/*2*/ {
-					de: "Spielersuche",
-					en: "Player search",
-					es: "Búsqueda de jugadores",
-					fr: "Recherche de joueur",
-					tr: "Oyuncu Arama",
-				},
-/*3*/ {
-					de: "Statistik",
-					en: "Statistics",
-					es: "Estadísticas",
-					fr: "Statistiques",
-					tr: "İstatistikler",
-				},
-/*4*/ {
-					de: "Übersicht",
-					en: "Overview",
-					es: "Visión general",
-					fr: "Aperçu",
-					tr: "Genel Bakış",
-				},
-/*5*/ {
-					de: "Planeten Übersicht",
-					en: "Planets overview",
-					es: "Visión general de planetas",
-					fr: "Aperçu des planètes",
-					tr: "Gezegenler Genel Bakışı",
-				},
-/*6*/ {
-					de: "Hier",
-					en: "Here",
-					es: "Aquí",
-					fr: "Ici",
-					tr: "Burada",
-				},
-/*7*/ {
-					de: "Fehlerberichte",
-					en: "Bug reporting",
-					es: "Reporte de errores",
-					fr: "Rapport de bogue",
-					tr: "Hata Bildirme",
-				},
-/*8*/ {
-					de: "Featureanfrage",
-					en: "Feature request",
-					es: "Petición de funciones",
-					fr: "Demande de fonctionnalité",
-					tr: "Özellik İsteği",
-				},
-/*9*/ {
-					de: "Universumseigenschaften",
-					en: "Universe characteristics",
-					es: "Características del universo",
-					fr: "Caractéristiques de l'univers",
-					tr: "Evren Özellikleri",
-				},
-/*10*/ {
-					de: "Punkte #1",
-					en: "Points #1",
-					es: "Puntos #1",
-					fr: "Point #1",
-					tr: "1.Oyuncunun Puanı",
-				},
-/*11*/ {
-					de: "Öko Geschwindigkeit",
-					en: "Eco Speed",
-					es: "Velocidad economía",
-					fr: "Vitesse éco",
-					tr: "Ekonomi Hızı",
-				},
-/*12*/ {
-					de: "Flottengeschwindigkeit (feindlich)",
-					en: "Fleet speed (war)",
-					es: "Velocidad de flota (guerra)",
-					fr: "Vitesse de flotte (guerre)",
-					tr: "Saldırı Filo Hızı",
-				},
-/*13*/ {
-					de: "Flottengeschwindigkeit (friedlich)",
-					en: "Fleet speed (peaceful)",
-					es: "Velocidad de flota (pacífica)",
-					fr: "Vitesse de flotte (paisible)",
-					tr: "Barışçıl Filo Hızı",
-				},
-/*14*/ {
-					de: "Flottengeschwindigkeit (halten)",
-					en: "Fleet speed (hoding)",
-					es: "Velocidad de flota (mantener)",
-					fr: "Vitesse de la flotte (en attente)",
-					tr: "Durma Filo Hızı",
-				},
-/*15*/ {
-					de: "Datenverwaltung",
-					en: "Data management",
-					es: "Gestión de datos",
-					fr: "Gestion de données",
-					tr: "Veri Yönetimi",
-				},
-/*16*/ {
-					de: "Expeditionsdaten",
-					en: "Expeditions data",
-					es: "Datos de expediciones",
-					fr: "Données d'expéditions",
-					tr: "Keşif Verileri",
-				},
-/*17*/ {
-					de: "Kampfdaten",
-					en: "Combats data",
-					es: "Datos de combates",
-					fr: "Combat les données",
-					tr: "Savaş Verileri",
-				},
-/*18*/ {
-					de: "Zieldaten",
-					en: "Targets data",
-					es: "Datos de objetivos",
-					fr: "Données cibles",
-					tr: "Hedef Verileri",
-				},
-/*19*/ {
-					de: "Gescannte Daten (Galaxie)",
-					en: "Scanned data (galaxy)",
-					es: "Datos escaneados (galaxia)",
-					fr: "Données numérisées (galaxie)",
-					tr: "Taranan Veriler (galaksi)",
-				},
-/*20*/ {
-					de: "Optionsdaten",
-					en: "Options data",
-					es: "Datos de opciones",
-					fr: "Données d'options",
-					tr: "Seçenekler Verisi",
-				},
-/*21*/ {
-					de: "Cache und Temporäre Daten",
-					en: "Cache and Temp data",
-					es: "Caché y datos temporales",
-					fr: "Données de cache et temporaires",
-					tr: "Önbellek ve Geçici Veriler",
-				},
-/*22*/ {
-					de: "Andere Add-On-Daten",
-					en: "Other add-on's data",
-					es: "Otros datos de la extensión",
-					fr: "Données d'autres add-ons",
-					tr: "Diğer Eklenti Verileri",
-				},
-/*23*/ {
-					de: "Aktualisieren",
-					en: "Update",
-					es: "Actualizar",
-					fr: "Mettre à jour",
-					tr: "Güncelle",
-				},
-/*24*/ {
-					de: "Exportieren",
-					en: "Export",
-					es: "Exportar",
-					fr: "Exportation",
-					tr: "Dışa Aktar",
-				},
-/*25*/ {
-					de: "Importieren",
-					en: "Import",
-					es: "Importar",
-					fr: "Importer",
-					tr: "İçe Aktar",
-				},
-/*26*/ {
-					de: "Zurücksetzen",
-					en: "Reset",
-					es: "Resetear",
-					fr: "Réinitialiser",
-					tr: "Sıfırla",
-				},
-/*27*/ {
-					de: "Speichern",
-					en: "Save",
-					es: "Guardar",
-					fr: "Sauvegarder",
-					tr: "Kaydet",
-				},
-/*28*/ {
-					de: "Am Planeten verbleibende Ressourcen",
-					en: "Resources to keep on planets",
-					es: "Recursos a permanecer en el planeta",
-					fr: "Ressources restantes sur la planète",
-					tr: "Gezegenlerde saklanacak kaynaklar",
-				},
-/*29*/ {
-					de: "Am Planeten verbleibende Schiffe",
-					en: "Ships to keep on planets",
-					es: "Naves a permanecer en el planeta",
-					fr: "Navires restant sur la planète",
-					tr: "Gezegenlerde saklanacak gemiler",
-				},
-/*30*/ {
-					de: "Standardmission (eigene)",
-					en: "Default mission (own)",
-					es: "Misión por defecto (propio)",
-					fr: "Mission par défaut (propre)",
-					tr: "Varsayılan görev (kendi)",
-				},
-/*31*/ {
-					de: "Standardmission (andere)",
-					en: "Default mission (others)",
-					es: "Misión por defecto (otros)",
-					fr: "Mission par défaut (autres)",
-					tr: "Varsayılan görev (başkaları)",
-				},
-/*32*/ {
-					de: "Standardmission (Expedition)",
-					en: "Default mission (expedition)",
-					es: "Misión por defecto (expedición)",
-					fr: "Mission par défaut (expédition)",
-					tr: "Varsayılan görev (keşif)",
-				},
-/*33*/ {
-					de: "Aktivitätstimer anzeigen",
-					en: "Show activity timers",
-					es: "Mostrar cronómetros de actividad",
-					fr: "Afficher les minuteurs d'activité",
-					tr: "Etkinlik zamanlayıcılarını göster",
-				},
-/*34*/ {
-					de: "Automatisches Abrufen von Imperium deaktivieren",
-					en: "Disable auto fetch Empire",
-					es: "Desactivar la actualización automática del Imperio",
-					fr: "Désactiver la récupération automatique de l'Empire",
-					tr: "İmparatorluğu otomatik getirmeyi devre dışı bırak",
-				},
-/*35*/ {
-					de: "Rentabilitätswert",
-					en: "Rentability value",
-					es: "Valor de rentabilidad",
-					fr: "Valeur de rentabilité",
-					tr: "Amortisman değeri",
-				},
-/*36*/ {
-					de: "Uhren auf die lokale Zeitzone umstellen",
-					en: "Change clocks to local time zone",
-					es: "Cambiar los relojes a la zona horaria local",
-					fr: "Changer les horloges au fuseau horaire local",
-					tr: "Saatleri yerel saat dilimine değiştir",
-				},
-/*37*/ {
-					de: "Prozentsatz der derzeit im Flug befindlichen Flotte",
-					en: "Percentage of fleet currently in flight",
-					es: "Porcentaje de flota actualmente en vuelo",
-					fr: "Pourcentage de la flotte actuellement en vol",
-					tr: "Şu anda uçuşta olan filonun yüzdesi",
-				},
-/*38*/ {
-					de: "Fliegend",
-					en: "Flying",
-					es: "En vuelo",
-					fr: "En vol",
-					tr: "Havada",
-				},
-/*39*/ {
-					de: "Fehlend",
-					en: "Missing",
-					es: "Restante",
-					fr: "Manquant",
-					tr: "Eksik",
-				},
-/*40*/ {
-					de: "Gesamt",
-					en: "Total",
-					es: "Total",
-					fr: "Total",
-					tr: "Toplam",
-				},
-/*41*/ {
-					de: "Expeditionen",
-					en: "Expeditions",
-					es: "Expediciones",
-					fr: "Expéditions",
-					tr: "Keşif",
-				},
-/*42*/ {
-					de: "Planet(en)",
-					en: "planet(s)",
-					es: "planeta(s)",
-					fr: "planète(s)",
-					tr: "Gezegen",
-				},
-/*43*/ {
-					de: "Ankunft",
-					en: "Arrival",
-					es: "Llegada",
-					fr: "Arrivées",
-					tr: "Varış",
-				},
-/*44*/ {
-					de: "Dauer",
-					en: "Duration",
-					es: "Duración",
-					fr: "Durée",
-					tr: "Süre",
-				},
-/*45*/ {
-					de: "Rückkehr",
-					en: "Return",
-					es: "Retorno",
-					fr: "Retourner",
-					tr: "Dönüş",
-				},
-/*46*/ {
-					de: "Keine Missionen...",
-					en: "No missions...",
-					es: "Ninguna misión...",
-					fr: "Aucune mission...",
-					tr: "Görev yok...",
-				},
-/*47*/ {
-					de: "Ladekapazität",
-					en: "Cargo Capacity",
-					es: "Capacidad de carga",
-					fr: "Fret",
-					tr: "Nakliye Kapasitesi",
-				},
-/*48*/ {
-					de: "Geschwindigkeit",
-					en: "Speed",
-					es: "Velocidad",
-					fr: "Vitesse",
-					tr: "Hız",
-				},
-/*49*/ {
-					de: "Treibstoffverbrauch",
-					en: "Fuel Consumption",
-					es: "Consumo de combustible",
-					fr: "Consommation",
-					tr: "Yakıt tüketimi",
-				},
-/*50*/ {
-					de: "Amortisationsdauer",
-					en: "Payback period",
-					es: "Período de amortización",
-					fr: "Période de remboursement",
-					tr: "Amortisman süresi",
-				},
-/*51*/ {
-					de: "Ökonomie",
-					en: "Economy",
-					es: "Economía",
-					fr: "Économie",
-					tr: "Ekonomi",
-				},
-/*52*/ {
-					de: "Forschung",
-					en: "Research",
-					es: "Investigación",
-					fr: "Recherche",
-					tr: "Araştırma",
-				},
-/*53*/ {
-					de: "Militär",
-					en: "Military",
-					es: "Militar",
-					fr: "Militaire",
-					tr: "Askeri",
-				},
-/*54*/ {
-					de: "Verteidigung",
-					en: "Defense",
-					es: "Defensa",
-					fr: "Défense",
-					tr: "Savunma",
-				},
-/*55*/ {
-					de: "Sieg",
-					en: "Win",
-					es: "Victoria",
-					fr: "Gagner",
-					tr: "Kazandın",
-				},
-/*56*/ {
-					de: "Niederlage",
-					en: "Lose",
-					es: "Derrota",
-					fr: "Perdre",
-					tr: "Kaybettin",
-				},
-/*57*/ {
-					de: "Unentschieden",
-					en: "Draw",
-					es: "Empate",
-					fr: "Dessiner",
-					tr: "Berabere",
-				},
-/*58*/ {
-					de: "API in die Zwischenablage kopiert",
-					en: "API Key copied in clipboard",
-					es: "Clave API copiada al portapapeles",
-					fr: "Clé API copiée dans le presse-papiers",
-					tr: "API Anahtarı panoya kopyalandı",
-				},
-/*59*/ {
-					de: "Verhältnis",
-					en: "Ratio",
-					es: "Ratio",
-					fr: "Rapport",
-					tr: "Oran",
-				},
-/*60*/ {
-					de: "Stunde",
-					en: "Hour",
-					es: "Hora",
-					fr: "Heure",
-					tr: "Saatlik Üretim",
-				},
-/*61*/ {
-					de: "Tag",
-					en: "Day",
-					es: "Día",
-					fr: "Jour",
-					tr: "Günlük Üretim",
-				},
-/*62*/ {
-					de: "Woche",
-					en: "Week",
-					es: "Semana",
-					fr: "Semaine",
-					tr: "Haftalık Üretim",
-				},
-/*63*/ {
-					de: "Flotte",
-					en: "Fleet",
-					es: "Flota",
-					fr: "Flotte",
-					tr: "Filo",
-				},
-/*64*/ {
-					de: "Schiffe",
-					en: "ships",
-					es: "naves",
-					fr: "navires",
-					tr: "Gemi",
-				},
-/*65*/ {
-					de: "Recycling",
-					en: "Recycling",
-					es: "Reciclaje",
-					fr: "Recyclage",
-					tr: "GD Kapasitesi",
-				},
-/*66*/ {
-					de: "Für diese Funktionen ist der Commander erforderlich ...",
-					en: "The commander officier is required for these features...",
-					es: "El oficial comandante es necesario para estas funciones...",
-					fr: "L'officier de commandement est requis pour ces fonctions...",
-					tr: "Bu özellikler için komutan subayı gereklidir...",
-				},
-/*67*/ {
-					de: "Ressourcen",
-					en: "Resources",
-					es: "Recursos",
-					fr: "Ressources",
-					tr: "Kaynaklar",
-				},
-/*68*/ {
-					de: "Verluste",
-					en: "Losses",
-					es: "Pérdidas",
-					fr: "Pertes",
-					tr: "Kayıplar",
-				},
-/*69*/ {
-					de: "Recycled",
-					en: "Recycled",
-					es: "Reciclado",
-					fr: "Recyclé",
-					tr: "Hurda",
-				},
-/*70*/ {
-					de: "Treibstoff",
-					en: "Fuel",
-					es: "Combustible",
-					fr: "Carburant",
-					tr: "Harcanan Deu",
-				},
-/*71*/ {
-					de: "S. Loch",
-					en: "B. Hole",
-					es: "Agujero negro",
-					fr: "Trou noir",
-					tr: "Kara Delik",
-				},
-/*72*/ {
-					de: "Beste Kämpfe",
-					en: "Best combats",
-					es: "Mejores combates",
-					fr: "Meilleurs combats",
-					tr: "En iyi Savaşlar",
-				},
-/*73*/ {
-					de: "Name",
-					en: "Name",
-					es: "Nombre",
-					fr: "Nom",
-					tr: "Adı",
-				},
-/*74*/ {
-					de: "Beute",
-					en: "Loot",
-					es: "Botín",
-					fr: "Proie",
-					tr: "Ganimet",
-				},
-/*75*/ {
-					de: "Schaden",
-					en: "Damage",
-					es: "Daños",
-					fr: "Dommage",
-					tr: "Hasar",
-				},
-/*76*/ {
-					de: "Trümmerfeld",
-					en: "Debris",
-					es: "Escombros",
-					fr: "Débris",
-					tr: "Enkaz alanı",
-				},
-/*77*/ {
-					de: "Anpassen",
-					en: "Adjust",
-					es: "Ajuste",
-					fr: "Régler",
-					tr: "Ayarla",
-				},
-/*78*/ {
-					de: "Items",
-					en: "Items",
-					es: "Ítems",
-					fr: "Items",
-					tr: "Öğeler",
-				},
-/*79*/ {
-					de: "Aliens",
-					en: "Aliens",
-					es: "Alienígenas",
-					fr: "Extraterrestres",
-					tr: "Yabancılar",
-				},
-/*80*/ {
-					de: "Piraten",
-					en: "Pirates",
-					es: "Piratas",
-					fr: "Pirates",
-					tr: "Korsanlar",
-				},
-/*81*/ {
-					de: "Spät",
-					en: "Late",
-					es: "Retraso",
-					fr: "En retard",
-					tr: "Geç",
-				},
-/*82*/ {
-					de: "Frühzeitig",
-					en: "Early",
-					es: "Adelanto",
-					fr: "De bonne heure",
-					tr: "Erken",
-				},
-/*83*/ {
-					de: "Leer",
-					en: "Empty",
-					es: "Vacío",
-					fr: "Vide",
-					tr: "Boş",
-				},
-/*84*/ {
-					de: "Händler",
-					en: "Merchant",
-					es: "Mercader",
-					fr: "Marchande",
-					tr: "Tüccar",
-				},
-/*85*/ {
-					de: "Produktion",
-					en: "Production",
-					es: "Producción",
-					fr: "Production",
-					tr: "Üretim",
-				},
-/*86*/ {
-					de: "Kampf",
-					en: "Combat",
-					es: "Combate",
-					fr: "Combat",
-					tr: "Savaş Araştırmaları",
-				},
-/*87*/ {
-					de: "Antrieb",
-					en: "Drive",
-					es: "Propulsión",
-					fr: "Propulsion",
-					tr: "Sürüş Araştırmaları",
-				},
-/*88*/ {
-					de: "Empfohlene Weiterentwicklung",
-					en: "Recommended further development",
-					es: "Desarrollo posterior recomendado",
-					fr: "Développement ultérieur recommandé",
-					tr: "Tavsiye edilen ileri geliştirme (Amortisman Hesabı)",
-				},
-/*89*/ {
-					de: "Lebensformen",
-					en: "Lifeforms",
-					es: "Formas de vida",
-					fr: "Forme de vie",
-					tr: "Canlı Türleri",
-				},
-/*90*/ {
-					de: "Minen",
-					en: "Mines",
-					es: "Minas",
-					fr: "Mines",
-					tr: "Madenler",
-				},
-/*91*/ {
-					de: "Allgemein",
-					en: "General",
-					es: "General",
-					fr: "Général",
-					tr: "Genel",
-				},
-/*92*/ {
-					de: "Kämpfe",
-					en: "Combats",
-					es: "Combates",
-					fr: "Combat",
-					tr: "Savaşlar",
-				},
-/*93*/ {
-					de: "Astro",
-					en: "Astro",
-					es: "Astro",
-					fr: "Astro",
-					tr: "Astro",
-				},
-/*94*/ {
-					de: "Computer",
-					en: "Computer",
-					es: "Computación",
-					fr: "Ordinateur",
-					tr: "Bilgisayar T.",
-				},
-/*95*/ {
-					de: "Hyperraum",
-					en: "Hyperspace",
-					es: "Hiperespacio",
-					fr: "Hyperespace",
-					tr: "Hiperuzay T.",
-				},
-/*96*/ {
-					de: "Plasma",
-					en: "Plasma",
-					es: "Plasma",
-					fr: "Plasma",
-					tr: "Plazma",
-				},
-/*97*/ {
-					de: "Datum",
-					en: "Date",
-					es: "Fecha",
-					fr: "Date",
-					tr: "Tarih",
-				},
-/*98*/ {
-					de: "Koordinaten",
-					en: "Coords",
-					es: "Coordenadas",
-					fr: "Coordonnées",
-					tr: "Koordinatlar",
-				},
-/*99*/ {
-					de: "Beute",
-					en: "Loot",
-					es: "Botín",
-					fr: "Butin",
-					tr: "Ganimet",
-				},
-/*100*/ {
-					de: "Flotte",
-					en: "Fleet",
-					es: "Flota",
-					fr: "Flotte",
-					tr: "Filo",
-				},
-/*101*/ {
-					de: "Standard Expeditionsdauer",
-					en: "Default expedition time",
-					es: "Tiempo de expedición predeterminado",
-					fr: "Heure d'expédition par défaut",
-					tr: "Varsayılan keşif süresi",
-				},
-/*102*/ {
-					de: "Aktionen",
-					en: "Actions",
-					es: "Acciones",
-					fr: "Actions",
-					tr: "Eylemler",
-				},
-/*103*/ {
-					de: "Optionen",
-					en: "Options",
-					es: "Opciones",
-					fr: "Options",
-					tr: "Seçenekler",
-				},
-/*104*/ {
-					de: "Automatisches Löschen von wenig rentablen Berichten aktivieren/deaktivieren",
-					en: "Toggle automatic removal of low rentability reports",
-					es: "Activar/desactivar el borrado automático de los informes con baja rentabilidad",
-					fr: "Active/désactive la suppression automatique des rapports inintéréssants",
-					tr: "Düşük karlılık raporlarının otomatik kaldırmasını etkinleştir/devre dışı bırak",
-				},
-/*105*/ {
-					de: "Minimale Rentabilität um als interessant angesehen zu werden",
-					en: "Minimal target rentability to be considered as interesting",
-					es: "Retabilidad mínima de un objetivo para ser considerado interesante",
-					fr: "Rentabilité minimale d'une cible pour être considéré comme intéressante",
-					tr: "İlginç kabul edilecek en düşük hedef karlılık",
-				},
-/*106*/ {
-					de: "Spionagetabelle aktivieren/deaktivieren",
-					en: "Toggle spy table",
-					es: "Activar/desactivar la tabla de espionajes",
-					fr: "Active/désactive le tableau d'espionnage",
-					tr: "Casusluk tablosunu etkinleştir/devre dışı bırak",
-				},
-/*107*/ {
-					de: "Nicht genügend Transportschiffe...",
-					en: "Not enough cargo ships...",
-					es: "No hay suficientes naves de transporte...",
-					fr: "Pas assez de navires de transport...",
-					tr: "Yeterli kargo gemisi yok...",
-				},
-/*108*/ {
-					de: "Kein Kampfschiff...",
-					en: "No combat ship...",
-					es: "Ninguna nave de combate...",
-					fr: "Pas de vaisseau de chasse...",
-					tr: "Savaş gemisi yok...",
-				},
-/*109*/ {
-					de: "Keine Spionagesonde...",
-					en: "No Espionage Probe...",
-					es: "Ninguna sonda de espionaje...",
-					fr: "Pas de sonde espion...",
-					tr: "Casusluk Sondası yok...",
-				},
-/*110*/ {
-					de: "Kein Pathfinder...",
-					en: "No Pathfinder...",
-					es: "Ningún explorador...",
-					fr: "Pas d'explorateur...",
-					tr: "Rehber yok...",
-				},
-/*111*/ {
-					de: "Keine Mission...",
-					en: "No mission...",
-					es: "Ninguna misión...",
-					fr: "Pas de mission...",
-					tr: "Görev yok...",
-				},
-/*112*/ {
-					de: "Unbekannte Expeditionsnachricht...",
-					en: "Unknown expedition message...",
-					es: "Mensaje de expedición desconocido...",
-					fr: "Message d'expédition inconnu...",
-					tr: "Bilinmeyen keşif mesajı...",
-				},
-/*113*/ {
-					de: "Hilf mir alle zu finden",
-					en: "Help me find them all",
-					es: "Ayúdame a encontrarlos todos",
-					fr: "Aidez-moi à les trouver tous",
-					tr: "Onları bulmama yardım et !",
-				},
-/*114*/ {
-					de: "Warnung: Expeditionsposition wird schwach...",
-					en: "Warning: expedition position is getting weak...",
-					es: "Atención: la posición de expediciones está saturándose...",
-					fr: "Attention: la position d'expédition devient saturée...",
-					tr: "Uyarı: Keşif konumu zayıflıyor...",
-				},
-/*115*/ {
-					de: "Fehler: Keine Schiffe ausgewählt",
-					en: "Error: No ships selected",
-					es: "Error: ninguna nave seleccionada",
-					fr: "Erreur: aucun navire sélectionné",
-					tr: "Hata: Hiç gemi seçilmedi",
-				},
-/*116*/ {
-					de: "Fehler: Keine Mission verfügbar",
-					en: "Error: No mission available",
-					es: "Error: ninguna misión disponible",
-					fr: "Erreur: aucune mission disponible",
-					tr: "Hata: Kullanılabilir görev yok",
-				},
-/*117*/ {
-					de: "Fehler: Aktueller Planet/Mond",
-					en: "Error: Current planet/moon",
-					es: "Error: planeta/luna actual",
-					fr: "Erreur: planète/lune actuelle",
-					tr: "Hata: Mevcut gezegen/ay",
-				},
-/*118*/ {
-					de: "Keine neue Kolonie",
-					en: "No new colony",
-					es: "Ninguna colonia nueva",
-					fr: "Pas de nouvelle colonie",
-					tr: "Yeni koloni yok",
-				},
-/*119*/ {
-					de: "Handelskurs",
-					en: "Trade rate",
-					es: "Ratio de cambio",
-					fr: "Taux d'échange",
-					tr: "Ticaret oranı",
-				},
-/*120*/ {
-					de: "Rentabilität",
-					en: "Profitability",
-					es: "Rentabilidad",
-					fr: "Rentabilité",
-					tr: "Amortisman",
-				},
-/*121*/ {
-					de: "Die Amortisationszeit errechnet sich aus der Differenz der Gesamtproduktion und den Kosten für die Zielstufe. Ausreichende Energieversorgung und unveränderte globale Produktionsbooster (Spieler- und Allianzklasse, Offiziere) werden vorausgesetzt. Zur Bewertung der Ressourcen wird der angegebene Handelskurs verwendet. Bei Minen wird die Änderung der Gesamtproduktion durch erhöhtes Crawler-Limit berücksichtigt, dabei wird der Produktionsfaktor und eine eventuelle Begrenzung wie angegeben verwendet. Für die Astrophysik werden die Forschungskosten und die Kosten für den Bau von Minen auf der neuen Kolonie bis zum Durchschnittslevel berücksichtigt. Die Produktionsänderung wird durch die durchschnittliche Planetenparameter angenähert, da die tatsächliche Produktion von der Temperatur und der Position der neuen Kolonie abhängt. Baukosten für die Energieversorgung oder andere Anlagen werden nicht berücksichtigt.",
-					en: "The payback period is calculated based on the difference in total production and the cost for the target level. Sufficient energy supply and unchanged global production boosters (player and alliance class, officers) are assumed. The configured trade rate is used to value the resources. For mines the change of total production dueto increased crawler limit is taken into account, using the settings from above. For Astrophysics the research cost and the cost of building mines to the average level on the new colony are taken into account. The change in production its approximated by the average planet parameters, because the actual production depends on the new colony's temperature and position. Building costs for energy supply or other facilities are not considered.",
-					es: "El período de amortización está calculado basándose en la diferencia en la producción total y el coste para el nivel objetivo. Se asume un suficiente aprovisionamiento energético y que los mejoradores de producción (clases de jugador y alianza, oficiales) permanecen inalterados. El ratio de cambio configurado se usa para valorar los recursos. Para las minas, se tiene en cuenta el cambio de la producción total debido al incremento de taladradores, usando los ajustes superiores. Para la astrofísica, se tiene en cuenta el coste de investigación y el coste de construcción de minas al nivel promedio en la nueva colonia. El cambio en la producción es aproximado usando parámetros promedio para el planeta, porque la producción real depende de la temperatura y posición de la nueva colonia. No se tienen en cuenta costes de construcción de aprovisionamiento de energía ni de otras instalaciones.",
-					fr: "La période de récupération est calculée en fonction de la différence entre la production totale et le coût pour le niveau cible. Un approvisionnement énergétique suffisant et des boosters de production mondiaux inchangés (classe de joueur et d'alliance, officiers) sont supposés. Le taux d'échange configuré est utilisé pour évaluer les ressources. Pour les mines, le changement de production totale dû à l'augmentation de la limite de foreuses est pris en compte, en utilisant les paramètres ci-dessus. Pour l'astrophysique, le coût de recherche et le coût de construction des mines au niveau moyen de la nouvelle colonie sont pris en compte. Le changement de production est approximé par les paramètres moyens de la planète, car la production réelle dépend de la température et de la position de la nouvelle colonie. Les coûts de construction pour l'approvisionnement en énergie ou d'autres installations ne sont pas pris en compte.",
-					tr: "Geri ödeme süresi, toplam üretimdeki farka ve hedef seviyenin maliyetine göre hesaplanır. Yeterli enerji arzı ve değişmeyen küresel üretim artırıcıları (oyuncu ve ittifak sınıfı, görevliler) varsayılır. Yapılandırılan ticaret oranı, değeri belirlemek için kullanılır. kaynaklar. Madenler için, artan paletli sınırına bağlı olarak toplam üretimdeki değişiklik, yukarıdan yapılan ayarlar kullanılarak dikkate alınır. Astrofizik için araştırma maliyeti ve yeni kolonide mayın inşa etme maliyeti ortalama seviyeye dikkate alınır. Üretimdeki değişiklik, ortalama gezegen parametrelerine yakındır, çünkü gerçek üretim yeni koloninin sıcaklığına ve konumuna bağlıdır. Enerji tedariki veya diğer tesisler için inşaat maliyetleri dikkate alınmaz.",
-				},
-/*122*/ {
-					de: "Nur Werte größer gleich 1 ...",
-					en: "Only values greater or equal to 1 allowed...",
-					es: "Sólo valores superiores o iguales a 1 están permitidos...",
-					fr: "Seules les valeurs supérieures ou égales à 1 sont autorisées...",
-					tr: "Sadece 1'e eşit veya daha büyük değerler izin verilir...",
-				},
-/*123*/ {
-					de: "Alle Nachrichten löschen",
-					en: "Delete all messages",
-					es: "Borrar todos los mensajes",
-					fr: "Supprimer tous les messages",
-					tr: "Tüm mesajları sil",
-				},
-/*124*/ {
-					de: "Feindliche Spionageberichte löschen",
-					en: "Delete enemy spy reports",
-					es: "Borrar los informes de espionaje enemigos",
-					fr: "Supprimer les rapports d'espionnage ennemis",
-					tr: "Düşman casus raporlarını sil",
-				},
-/*125*/ {
-					de: "Wenn aktiviert, wird die Anzahl der Crawler mit den derzeit gebauten Crawlern begrenzt.",
-					en: "If activated, the number of crawlers will be limited with the currently built crawlers.",
-					es: "Si está activado, el número de taladradores se limitará al número actual de construidos.",
-					fr: "S'il est activé, le nombre de foreuses sera limité aux foreuses actuellement construits.",
-					tr: "Etkinleştirildiğinde, paletlilerin sayısı şu anda üretilen paletlilerle sınırlanır.",
-				},
-/*126*/ {
-					de: "Crawler Produktionsfaktor",
-					en: "Crawler production factor",
-					es: "Factor de producción de los taladradores",
-					fr: "Facteur de production des foreuses",
-					tr: "Paletli üretim faktörü",
-				},
-/*127*/ {
-					de: "Ziel",
-					en: "Destination",
-					es: "Destino",
-					fr: "Destination",
-					tr: "Hedef",
-				},
-/*128*/ {
-					de: "Ressourcentransport",
-					en: "Resource transport",
-					es: "Transporte de recursos",
-					fr: "Transport des ressources",
-					tr: "Nakliye",
-				},
-/*129*/ {
-					de: "Abriss",
-					en: "Demolition",
-					es: "Demolición",
-					fr: "Démolition",
-					tr: "Yıkım",
-				},
-/*130*/ {
-					de: "Filter",
-					en: "Filter",
-					es: "Filtro",
-					fr: "Filtre",
-					tr: "Filtre",
-				},
-/*131*/ {
-					de: "Kapazität",
-					en: "Capacity",
-					es: "Capacidad",
-					fr: "Capacité",
-					tr: "Kapasite",
-				},
-/*132*/ {
-					de: "Füllzeit",
-					en: "Filling time",
-					es: "Tiempo de llenado",
-					fr: "Temps de remplissage",
-					tr: "Dolum süresi",
-				},
-/*133*/ {
-					de: "Beitragen oder Bugs melden",
-					en: "Contribute or bug report",
-					es: "Contribuir o reportar errores",
-					fr: "Contribuer ou signaler un bogue",
-					tr: "Katkıda bulunun veya hata bildirin",
-				},
-/*134*/ {
-					de: "Flottenaktivität der Planeten anzeigen",
-					en: "Display planets fleet activity",
-					es: "Mostrar actividad de flota de los planetas",
-					fr: "Afficher l'activité de la flotte des planètes",
-					tr: "Gezegenlerin filo etkinliğini görüntüle",
-				},
-/*135*/ {
-					de: "Filter invertieren",
-					en: "Invert filter",
-					es: "Invertir filtro",
-					fr: "Inverser le filtre",
-					tr: "Filtreyi ters çevir",
-				},
-/*136*/ {
-					de: "Forschungsgeschwindigkeit",
-					en: "Research speed",
-					es: "Velocidad de investigación",
-					fr: "Vitesse de recherche",
-					tr: "Araştırma hızı",
-				},
-/*137*/ {
-					de: "Aktivität",
-					en: "Activity",
-					es: "Actividad",
-					fr: "Activité",
-					tr: "Etkinlik",
-				},
-/*138*/ {
-					de: "Navigationspfeile in mobiler Version",
-					en: "Navigation arrows in mobile version",
-					es: "Flechas de navegación en versión móvil",
-					fr: "Flèches de navigation en version mobile",
-					tr: "Mobil sürümde gezinme okları",
-				},
-/*139*/ {
-					de: "Entdeckung",
-					en: "Discoveries",
-					es: "Exploración",
-					fr: "Exploration",
-					tr: "Keşifler",
-				},
-/*140*/ {
-					de: "Menschen",
-					en: "Human",
-					es: "Humanos",
-					fr: "Les humains",
-					tr: "İnsanlar",
-				},
-/*141*/ {
-					de: "Rock’tal",
-					en: "Rock’tal",
-					es: "Rock`tal",
-					fr: "Roctas",
-					tr: "Rock’tal",
-				},
-/*142*/ {
-					de: "Mechas",
-					en: "Mechas",
-					es: "Mecas",
-					fr: "Mécas",
-					tr: "Mekalar",
-				},
-/*143*/ {
-					de: "Kaelesh",
-					en: "Kaelesh",
-					es: "Kaelesh",
-					fr: "Kaeleshs",
-					tr: "Kaelesh",
-				},
-/*144*/ {
-					de: "Erfahrung",
-					en: "Experience",
-					es: "Experiencia",
-					fr: "Expérience",
-					tr: "Deneyim",
-				},
-/*145*/ {
-					de: "Artefakte",
-					en: "Artefacts",
-					es: "Artefactos",
-					fr: "Artéfacts",
-					tr: "Artefaktlar",
-				},
-/*146*/ {
-					de: "Abgeschlossenen Vorgang anzeigen",
-					en: "Indicate finished process",
-					es: "Indicar proceso terminado",
-					fr: "Indiquer le processus terminé",
-					tr: "Tamamlanmış işlemi belirt",
-				},
-/*147*/ {
-					de: "Externe Tools",
-					en: "External Tools",
-					es: "Herramientas externas",
-					fr: "Outils externes",
-					tr: "Diğer Araçlar",
-				},
-/*148*/ {
-					de: "Standardmissionen",
-					en: "Default missions",
-					es: "Misiónes por defecto",
-					fr: "Missions par défaut",
-					tr: "Tamamlanmış görevler",
-				},
-/*149*/ {
-					de: "",
-					en: "",
-					es: "",
-					fr: "",
-					tr: "",
-				},
-			],
-		};
-		return translation[type][id][language];
-	}
-
 	getLocalStorageSize() {
 		var other = 0;
 		var ogi = 0;
@@ -16772,7 +15244,7 @@ ${data[id].name}
 			this.createDOM(
 				"div",
 				{ class: "ogi-checkbox" },
-				`<strong class="undermark">${this.getTranslatedText(
+				`<strong class="undermark">${this.translation.text(
 					133
 				)}</strong><a target="_blank" href="https://discord.gg/9aMdQgk">Discord</span>`
 			)
@@ -16784,7 +15256,7 @@ ${data[id].name}
 			universeSettingsTooltip += `<span>${key}: ${value}</span><br>`;
 		}
 		universe.appendChild(
-			createDOM("h1", { class: "tooltip", title: universeSettingsTooltip }, this.getTranslatedText(9))
+			createDOM("h1", { class: "tooltip", title: universeSettingsTooltip }, this.translation.text(9))
 		);
 		let srvDatas = universe.appendChild(
 			this.createDOM(
@@ -16792,21 +15264,21 @@ ${data[id].name}
 				{
 					style: "display: flex;justify-content: space-between; align-items: center;",
 				},
-				`${this.getTranslatedText(10, "text", false)}: ` +
+				`${this.translation.text(10, "text", false)}: ` +
 				toFormatedNumber(this.json.topScore, null, true) +
-				`<br/>${this.getTranslatedText(11, "text", false)}: ` +
+				`<br/>${this.translation.text(11, "text", false)}: ` +
 				toFormatedNumber(this.json.speed) +
-				`<br/>${this.getTranslatedText(136, "text", false)}: ` +
+				`<br/>${this.translation.text(136, "text", false)}: ` +
 				toFormatedNumber(this.json.speedResearch) +
-				`<br/>${this.getTranslatedText(12, "text", false)}: ` +
+				`<br/>${this.translation.text(12, "text", false)}: ` +
 				toFormatedNumber(this.json.speedFleetWar) +
-				`<br/>${this.getTranslatedText(13, "text", false)}: ` +
+				`<br/>${this.translation.text(13, "text", false)}: ` +
 				toFormatedNumber(this.json.speedFleetPeaceful) +
-				`<br/>${this.getTranslatedText(14, "text", false)}: ` +
+				`<br/>${this.translation.text(14, "text", false)}: ` +
 				toFormatedNumber(this.json.speedFleetHolding)
 			)
 		);
-		let srvDatasBtn = createDOM("button", { class: "btn_blue update" }, this.getTranslatedText(23));
+		let srvDatasBtn = createDOM("button", { class: "btn_blue update" }, this.translation.text(23));
 		srvDatas.appendChild(srvDatasBtn);
 		srvDatasBtn.addEventListener("click", async () => {
 			this.updateServerSettings(true);
@@ -16816,13 +15288,13 @@ ${data[id].name}
 		});
 		dataDiv.appendChild(createDOM("hr"));
 		let featureSettings = dataDiv.appendChild(createDOM("div", { style: "display: grid;" }));
-		featureSettings.appendChild(createDOM("h1", {}, this.getTranslatedText(103)));
+		featureSettings.appendChild(createDOM("h1", {}, this.translation.text(103)));
 		if (this.json.timezoneDiff != 0) {
 			let spanZone = featureSettings.appendChild(
 				createDOM(
 					"span",
 					{ style: "display: flex;justify-content: space-between; align-items: center;" },
-					this.getTranslatedText(36)
+					this.translation.text(36)
 				)
 			);
 			let timeZoneCheck = spanZone.appendChild(createDOM("input", { type: "checkbox" }));
@@ -16838,7 +15310,7 @@ ${data[id].name}
 			createDOM(
 				"span",
 				{ style: "display: flex;justify-content: space-between; align-items: center;" },
-				this.getTranslatedText(33)
+				this.translation.text(33)
 			)
 		);
 		let timerCheck = optiondiv.appendChild(createDOM("input", { type: "checkbox" }));
@@ -16853,7 +15325,7 @@ ${data[id].name}
 			createDOM(
 				"span",
 				{ style: "display: flex;justify-content: space-between; align-items: center;" },
-				this.getTranslatedText(34)
+				this.translation.text(34)
 			)
 		);
 		let disableautofetchempirebox = optiondiv.appendChild(createDOM("input", { type: "checkbox" }));
@@ -16868,7 +15340,7 @@ ${data[id].name}
 			this.createDOM(
 				"div",
 				{ class: "ogi-checkbox" },
-				`<label for="fleet-activity">${this.getTranslatedText(
+				`<label for="fleet-activity">${this.translation.text(
 					134
 				)}</label>\n        <input type="checkbox" id="fleet-activity" name="fleet-activity" ${this.json.options.fleetActivity ? "checked" : ""
 				}>`
@@ -16882,7 +15354,7 @@ ${data[id].name}
 			this.createDOM(
 				"div",
 				{ class: "ogi-checkbox" },
-				`<label for="progress-indicator">${this.getTranslatedText(
+				`<label for="progress-indicator">${this.translation.text(
 					146
 				)}</label>\n        <input type="checkbox" id="progress-indicator" name="progress-indicator" ${this.json.options.showProgressIndicators ? "checked" : ""
 				}>`
@@ -16896,7 +15368,7 @@ ${data[id].name}
 			this.createDOM(
 				"div",
 				{ class: "ogi-checkbox" },
-				`<label for="fleet-activity">${this.getTranslatedText(
+				`<label for="fleet-activity">${this.translation.text(
 					138
 				)}</label>\n        <input type="checkbox" id="nav-arrows" name="fleet-activity" ${this.json.options.navigationArrows ? "checked" : ""
 				}>`
@@ -16907,7 +15379,7 @@ ${data[id].name}
 			this.json.options.navigationArrows = isChecked;
 		});
 		optiondiv = featureSettings.appendChild(
-			createDOM("span", { class: "tooltip", title: this.getTranslatedText(105) }, this.getTranslatedText(35))
+			createDOM("span", { class: "tooltip", title: this.translation.text(105) }, this.translation.text(35))
 		);
 		let rvalInput = optiondiv.appendChild(
 			createDOM("input", {
@@ -16916,7 +15388,7 @@ ${data[id].name}
 				value: toFormatedNumber(this.json.options.rvalLimit),
 			})
 		);
-		optiondiv = featureSettings.appendChild(createDOM("span", {}, this.getTranslatedText(101)));
+		optiondiv = featureSettings.appendChild(createDOM("span", {}, this.translation.text(101)));
 		let expeditionDefaultTime = optiondiv.appendChild(
 			createDOM("input", {
 				type: "text",
@@ -16930,7 +15402,7 @@ ${data[id].name}
 			this.createDOM(
 				"h1",
 				{},
-				`${this.getTranslatedText(15)}<span style="font-weight: 100;color: white; float:right"> <strong class="${size.total > 4 ? "overmark" : "undermark"
+				`${this.translation.text(15)}<span style="font-weight: 100;color: white; float:right"> <strong class="${size.total > 4 ? "overmark" : "undermark"
 				}"> ${size.total}</strong>  / 5 Mb`
 			)
 		);
@@ -16938,68 +15410,68 @@ ${data[id].name}
 			this.createDOM(
 				"div",
 				{ class: "ogi-checkbox" },
-				`<label for="expeditions">${this.getTranslatedText(16)}</label>
-<input type="checkbox" id="expeditions" name="expeditions">`
+				`<label for="expeditions">${this.translation.text(16)}</label>
+		  <input type="checkbox" id="expeditions" name="expeditions">`
 			)
 		);
 		let combatsBox = dataManagement.appendChild(
 			this.createDOM(
 				"div",
 				{ class: "ogi-checkbox" },
-				`<label for="combats">${this.getTranslatedText(17)}</label>
-<input type="checkbox" id="combats" name="combats">`
+				`<label for="combats">${this.translation.text(17)}</label>
+		  <input type="checkbox" id="combats" name="combats">`
 			)
 		);
 		let targetsBox = dataManagement.appendChild(
 			this.createDOM(
 				"div",
 				{ class: "ogi-checkbox" },
-				`<label for="targets">${this.getTranslatedText(18)}</label>
-<input type="checkbox" id="targets" name="targets">`
+				`<label for="targets">${this.translation.text(18)}</label>
+		  <input type="checkbox" id="targets" name="targets">`
 			)
 		);
 		let scanBox = dataManagement.appendChild(
 			this.createDOM(
 				"div",
 				{ class: "ogi-checkbox" },
-				`<label for="scan">${this.getTranslatedText(19)}</label>
-<input type="checkbox" id="scan" name="scan">`
+				`<label for="scan">${this.translation.text(19)}</label>
+		  <input type="checkbox" id="scan" name="scan">`
 			)
 		);
 		let OptionsBox = dataManagement.appendChild(
 			this.createDOM(
 				"div",
 				{ class: "ogi-checkbox" },
-				`<label for="combats">${this.getTranslatedText(20)}</label>
-<input type="checkbox" id="combats" name="combats">`
+				`<label for="combats">${this.translation.text(20)}</label>
+		  <input type="checkbox" id="combats" name="combats">`
 			)
 		);
 		let cacheBox = dataManagement.appendChild(
 			this.createDOM(
 				"div",
 				{ class: "ogi-checkbox" },
-				`<label for="temp">${this.getTranslatedText(21)}</label>
-<input type="checkbox" id="temp" name="temp" checked>`
+				`<label for="temp">${this.translation.text(21)}</label>
+		  <input type="checkbox" id="temp" name="temp" checked>`
 			)
 		);
 		let purgeBox = dataManagement.appendChild(
 			this.createDOM(
 				"div",
 				{ class: "ogi-checkbox" },
-				`<label for="purge">${this.getTranslatedText(22)}<span class="${size.other > 3 ? "undermark" : "overmark"}"> (${size.other
+				`<label for="purge">${this.translation.text(22)}<span class="${size.other > 3 ? "undermark" : "overmark"}"> (${size.other
 				}Mb)</span></label>
-<input type="checkbox" id="purge" name="purge">`
+		  <input type="checkbox" id="purge" name="purge">`
 			)
 		);
 		let dataBtns = dataManagement.appendChild(
 			createDOM("div", { style: "display: flex;align-items: flex-end;margin-top: 5px" })
 		);
-		let exportBtn = dataBtns.appendChild(createDOM("button", { class: "btn_blue" }, this.getTranslatedText(24)));
+		let exportBtn = dataBtns.appendChild(createDOM("button", { class: "btn_blue" }, this.translation.text(24)));
 		let fileHandler = dataBtns.appendChild(
 			createDOM("input", { id: "file", name: "file", class: "inputfile", type: "file", accept: ".data" })
 		);
 		dataBtns.appendChild(
-			createDOM("label", { for: "file", class: "btn_blue", style: "margin: 0px 10px" }, this.getTranslatedText(25))
+			createDOM("label", { for: "file", class: "btn_blue", style: "margin: 0px 10px" }, this.translation.text(25))
 		);
 		fileHandler.addEventListener("change", () => {
 			var reader = new FileReader();
@@ -17017,23 +15489,23 @@ ${data[id].name}
 			download(data, `oginfinity-${this.gameLang}-${this.universe}.data`);
 		});
 		let resetBtn = dataBtns.appendChild(
-			createDOM("button", { class: "btn_blue ogl-btn_red" }, this.getTranslatedText(26))
+			createDOM("button", { class: "btn_blue ogl-btn_red" }, this.translation.text(26))
 		);
 		container.appendChild(createDOM("div", { style: "width: 1px; background: #10171d;" }));
 
 		let settingDiv = container.appendChild(createDOM("div"));
-		let saveBtn = createDOM("button", { class: "btn_blue save" }, this.getTranslatedText(27));
+		let saveBtn = createDOM("button", { class: "btn_blue save" }, this.translation.text(27));
 
 		let keepOnPlanet = settingDiv.appendChild(createDOM("div"));
 		keepOnPlanet.appendChild(this.keepOnPlanetDialog(null, saveBtn));
 		settingDiv.appendChild(createDOM("hr"));
 		let standardMissions = settingDiv.appendChild(createDOM("div"));
-		standardMissions.appendChild(createDOM("h1", {}, this.getTranslatedText(148)));
+		standardMissions.appendChild(createDOM("h1", {}, this.translation.text(148)));
 		let span = standardMissions.appendChild(
 			createDOM(
 				"span",
 				{ style: "display: flex;justify-content: space-between; align-items: center;" },
-				this.getTranslatedText(30)
+				this.translation.text(30)
 			)
 		);
 		let missionDiv = span.appendChild(createDOM("div", { style: "display:flex" }));
@@ -17073,7 +15545,7 @@ ${data[id].name}
 			createDOM(
 				"span",
 				{ style: "display: flex;justify-content: space-between; align-items: center;" },
-				this.getTranslatedText(31)
+				this.translation.text(31)
 			)
 		);
 		missionDiv = span.appendChild(createDOM("div", { style: "display:flex" }));
@@ -17109,7 +15581,7 @@ ${data[id].name}
 			createDOM(
 				"span",
 				{ style: "display: flex;justify-content: space-between; align-items: center;" },
-				this.getTranslatedText(32)
+				this.translation.text(32)
 			)
 		);
 		missionDiv = span.appendChild(createDOM("div", { style: "display:flex" }));
@@ -17143,7 +15615,7 @@ ${data[id].name}
 		});
 		settingDiv.appendChild(createDOM("hr"));
 		let keys = settingDiv.appendChild(createDOM("div", { style: "display: grid;" }));
-		keys.appendChild(createDOM("h1", {}, this.getTranslatedText(147)));
+		keys.appendChild(createDOM("h1", {}, this.translation.text(147)));
 		let ptre = keys.appendChild(
 			createDOM("span")
 				.appendChild(createDOM("a", { href: "https://ptre.chez.gg/", target: "_blank" }, "PTRE"))
@@ -17325,16 +15797,16 @@ ${data[id].name}
 							const div = document.createElement("div");
 							const sizeDiv = 18;
 							div.style = `
-	position: absolute !important;
-	left: -${sizeDiv + 7}px !important;
-	top: 0px !important;
-	width: ${sizeDiv + 5}px;
-	height: ${sizeDiv + 5}px;
-	display: flex;
-	flex-direction: row;
-	flex-wrap: wrap;
-	direction: rtl;
-`;
+				  position: absolute !important;
+				  left: -${sizeDiv + 7}px !important;
+				  top: 0px !important;
+				  width: ${sizeDiv + 5}px;
+				  height: ${sizeDiv + 5}px;
+				  display: flex;
+				  flex-direction: row;
+				  flex-wrap: wrap;
+				  direction: rtl;
+				`;
 							planetKoordsEl.parentNode.parentNode.appendChild(div);
 							Object.keys(movements).forEach((movementKey, i) => {
 								if (i < 8) {
@@ -17999,7 +16471,7 @@ ${data[id].name}
 			if (deuteriumFull) deuteriumProduction = 0;
 			let table = document.querySelector("#planetDetails tbody");
 			let metal_1 = table.insertBefore(createDOM("tr"), table.children[0]);
-			metal_1.appendChild(createDOM("td", { class: "desc" }, `${this.getTranslatedText(22, "tech")}:`));
+			metal_1.appendChild(createDOM("td", { class: "desc" }, `${this.translation.text(22, "tech")}:`));
 			metal_1.appendChild(
 				this.createDOM(
 					"td",
@@ -18025,7 +16497,7 @@ ${data[id].name}
 				)
 			);
 			let crystal_1 = table.insertBefore(createDOM("tr"), table.children[2]);
-			crystal_1.appendChild(createDOM("td", { class: "desc" }, `${this.getTranslatedText(23, "tech")}:`));
+			crystal_1.appendChild(createDOM("td", { class: "desc" }, `${this.translation.text(23, "tech")}:`));
 			crystal_1.appendChild(
 				this.createDOM(
 					"td",
@@ -18051,7 +16523,7 @@ ${data[id].name}
 				)
 			);
 			let deuterium_1 = table.insertBefore(createDOM("tr"), table.children[4]);
-			deuterium_1.appendChild(createDOM("td", { class: "desc" }, `${this.getTranslatedText(24, "tech")}:`));
+			deuterium_1.appendChild(createDOM("td", { class: "desc" }, `${this.translation.text(24, "tech")}:`));
 			deuterium_1.appendChild(
 				this.createDOM(
 					"td",
@@ -18164,7 +16636,7 @@ ${data[id].name}
 					}
 				});
 			}
-			if (!enoughCargo) fadeBox(this.getTranslatedText(107), true);
+			if (!enoughCargo) fadeBox(this.translation.text(107), true);
 		}
 	}
 
@@ -18242,9 +16714,9 @@ ${data[id].name}
 			if (!element) return;
 
 			/**
-			* Make sure that the debounce from fleetDispatcher.updateMissions
-			* does not conflict with us.
-			*/
+			 * Make sure that the debounce from fleetDispatcher.updateMissions
+			 * does not conflict with us.
+			 */
 			if (window.fleetDispatcher) {
 				fleetDispatcher.NO_UPDATE_MISSIONS = true;
 			}
@@ -18354,6 +16826,1544 @@ class AutoQueue extends Queue {
 		}
 
 		return true;
+	}
+}
+
+class Translation {
+	constructor(gameLang) {
+		this.language = ["de", "en", "es", "fr", "tr"].includes(gameLang) ? gameLang : "en";
+		this.translation = {
+			tech: {
+				1: {
+					de: "Metallmine",
+					en: "Metal Mine",
+					es: "Mina de metal",
+					fr: "Mine de métal",
+					tr: "Metal Madeni",
+				},
+				2: {
+					de: "Kristallmine",
+					en: "Crystal Mine",
+					es: "Mina de cristal",
+					fr: "Mine de cristal",
+					tr: "Kristal Madeni",
+				},
+				3: {
+					de: "Deuterium-Synthetisierer",
+					en: "Deuterium Synthesizer",
+					es: "Sintetizador de deuterio",
+					fr: "Synthétiseur de deutérium",
+					tr: "Deuterium Madeni",
+				},
+				4: {
+					de: "Solarkraftwerk",
+					en: "Solar Plant",
+					es: "Planta de energía solar",
+					fr: "Centrale électrique solaire",
+					tr: "Solar Enerji Santrali",
+				},
+				12: {
+					de: "Fusionskraftwerk",
+					en: "Fusion Reactor",
+					es: "Planta de fusión",
+					fr: "Centrale électrique de fusion",
+					tr: "Füzyoenerji Santrali",
+				},
+				14: {
+					de: "Roboterfabrik",
+					en: "Robotics Factory",
+					es: "Fábrica de robots",
+					fr: "Usine de robots",
+					tr: "Robot Fabrikası",
+				},
+				15: {
+					de: "Nanitenfabrik",
+					en: "Nanite Factory",
+					es: "Fábrica de nanobots",
+					fr: "Usine de nanites",
+					tr: "Nanit Fabrikasi",
+				},
+				21: {
+					de: "Raumschiffswerft",
+					en: "Shipyard",
+					es: "Hangar",
+					fr: "Chantier spatial",
+					tr: "Uzay Tersanesi",
+				},
+				22: {
+					de: "Metallspeicher",
+					en: "Metal Storage",
+					es: "Almacén de metal",
+					fr: "Hangar de métal",
+					tr: "Metal Deposu",
+				},
+				23: {
+					de: "Kristallspeicher",
+					en: "Crystal Storage",
+					es: "Almacén de cristal",
+					fr: "Hangar de cristal",
+					tr: "Kristal Deposu",
+				},
+				24: {
+					de: "Deuteriumtank",
+					en: "Deuterium Tank",
+					es: "Contenedor de deuterio",
+					fr: "Réservoir de deutérium",
+					tr: "Deuterium Tankeri",
+				},
+				31: {
+					de: "Forschungslabor",
+					en: "Research Lab",
+					es: "Laboratorio de investigación",
+					fr: "Laboratoire de recherche",
+					tr: "Araştırma Laboratuvarı",
+				},
+				33: {
+					de: "Terraformer",
+					en: "Terraformer",
+					es: "Terraformer",
+					fr: "Terraformeur",
+					tr: "Terraformer",
+				},
+				34: {
+					de: "Allianzdepot",
+					en: "Alliance Depot",
+					es: "Depósito de la alianza",
+					fr: "Dépôt de ravitaillement",
+					tr: "İttifak Deposu",
+				},
+				36: {
+					de: "Raumdock",
+					en: "Space Dock",
+					es: "Astillero orbital",
+					fr: "Dock spatial",
+					tr: "Uzay İskelesi",
+				},
+				41: {
+					de: "Mondbasis",
+					en: "Lunar Base",
+					es: "Base lunar",
+					fr: "Base lunaire",
+					tr: "Ay Üssü",
+				},
+				42: {
+					de: "Sensorphalanx",
+					en: "Sensor Phalanx",
+					es: "Sensor Phalanx",
+					fr: "Phalange de capteur",
+					tr: "Sensör Filanx",
+				},
+				43: {
+					de: "Sprungtor",
+					en: "Jump Gate",
+					es: "Salto cuántico",
+					fr: "Porte de saut spatial",
+					tr: "Sıçrama Geçidi",
+				},
+				44: {
+					de: "Raketensilo",
+					en: "Missile Silo",
+					es: "Silo",
+					fr: "Silo de missiles",
+					tr: "Füze Silosu",
+				},
+				106: {
+					de: "Spionagetechnik",
+					en: "Espionage Technology",
+					es: "Tecnología de espionaje",
+					fr: "Technologie Espionnage",
+					tr: "Casusluk Tekniği",
+				},
+				108: {
+					de: "Computertechnik",
+					en: "Computer Technology",
+					es: "Tecnología de computación",
+					fr: "Technologie Ordinateur",
+					tr: "Bilgisayar Tekniği",
+				},
+				109: {
+					de: "Waffentechnik",
+					en: "Weapon Technology",
+					es: "Tecnología militar",
+					fr: "Technologie Armes",
+					tr: "Silah Tekniği",
+				},
+				110: {
+					de: "Schildtechnik",
+					en: "Shielding Technology",
+					es: "Tecnología de defensa",
+					fr: "Technologie Bouclier",
+					tr: "Kalkan Tekniği",
+				},
+				111: {
+					de: "Raumschiffpanzerung",
+					en: "Armour Technology",
+					es: "Tecnología de blindaje",
+					fr: "Technologie Protection des vaisseaux spatiaux",
+					tr: "Uzay gemisi zırhı",
+				},
+				113: {
+					de: "Energietechnik",
+					en: "Energy Technology",
+					es: "Tecnología de energía",
+					fr: "Technologie énergétique",
+					tr: "Enerji Tekniği",
+				},
+				114: {
+					de: "Hyperraumtechnik",
+					en: "Hyperspace Technology",
+					es: "Tecnología de hiperespacio",
+					fr: "Technologie hyperespace",
+					tr: "Hiperuzay Tekniği",
+				},
+				115: {
+					de: "Verbrennungstriebwerk",
+					en: "Combustion Drive",
+					es: "Motor de combustión",
+					fr: "Réacteur à combustion",
+					tr: "Yanma motoru",
+				},
+				117: {
+					de: "Impulstriebwerk",
+					en: "Impulse Drive",
+					es: "Motor de impulso",
+					fr: "Réacteur à impulsion",
+					tr: "İtki motoru",
+				},
+				118: {
+					de: "Hyperraumantrieb",
+					en: "Hyperspace Drive",
+					es: "Propulsor hiperespacial",
+					fr: "Propulsion hyperespace",
+					tr: "Hiperuzay iticisi",
+				},
+				120: {
+					de: "Lasertechnik",
+					en: "Laser Technology",
+					es: "Tecnología láser",
+					fr: "Technologie Laser",
+					tr: "Lazer Teknolojisi",
+				},
+				121: {
+					de: "Ionentechnik",
+					en: "Ion Technology",
+					es: "Tecnología iónica",
+					fr: "Technologie à ions",
+					tr: "İyon Teknolojisi",
+				},
+				122: {
+					de: "Plasmatechnik",
+					en: "Plasma Technology",
+					es: "Tecnología de plasma",
+					fr: "Technologie Plasma",
+					tr: "Plazma Teknolojisi",
+				},
+				123: {
+					de: "Intergalaktisches Forschungsnetzwerk",
+					en: "Intergalactic Research Network",
+					es: "Red de investigación intergaláctica",
+					fr: "Réseau de recherche intergalactique",
+					tr: "Galaksiler arası araştırma ağı",
+				},
+				124: {
+					de: "Astrophysik",
+					en: "Astrophysics",
+					es: "Astrofísica",
+					fr: "Astrophysique",
+					tr: "Astrofizik",
+				},
+				199: {
+					de: "Gravitonforschung",
+					en: "Graviton Technology",
+					es: "Tecnología de gravitón",
+					fr: "Technologie Graviton",
+					tr: "Graviton Teknolojisi",
+				},
+				202: {
+					de: "Kleiner Transporter",
+					en: "Small Cargo Ship",
+					es: "Nave pequeña de carga",
+					fr: "Petit transporteur",
+					tr: "Küçük Nakliye Gemisi",
+				},
+				203: {
+					de: "Großer Transporter",
+					en: "Large Cargo Ship",
+					es: "Nave grande de carga",
+					fr: "Grand transporteur",
+					tr: "Büyük Nakliye Gemisi",
+				},
+				204: {
+					de: "Leichter Jäger",
+					en: "Light Fighter",
+					es: "Cazador ligero",
+					fr: "Chasseur léger",
+					tr: "Hafif Avcı",
+				},
+				205: {
+					de: "Schwerer Jäger",
+					en: "Heavy Fighter",
+					es: "Cazador pesado",
+					fr: "Chasseur lourd",
+					tr: "Ağır Avcı",
+				},
+				206: {
+					de: "Kreuzer",
+					en: "Cruiser",
+					es: "Crucero",
+					fr: "Croiseur",
+					tr: "Kruvazör",
+				},
+				207: {
+					de: "Schlachtschiff",
+					en: "Battleship",
+					es: "Nave de batalla",
+					fr: "Vaisseau de bataille",
+					tr: "Komuta Gemisi",
+				},
+				208: {
+					de: "Kolonieschiff",
+					en: "Colony Ship",
+					es: "Colonizador",
+					fr: "Vaisseau de colonisation",
+					tr: "Koloni Gemisi",
+				},
+				209: {
+					de: "Recycler",
+					en: "Recycler",
+					es: "Reciclador",
+					fr: "Recycleur",
+					tr: "Geri Dönüşümcü",
+				},
+				210: {
+					de: "Spionagesonde",
+					en: "Espionage Probe",
+					es: "Sonda de espionaje",
+					fr: "Sonde d`espionnage",
+					tr: "Casusluk Sondası",
+				},
+				211: {
+					de: "Bomber",
+					en: "Bomber",
+					es: "Bombardero",
+					fr: "Bombardier",
+					tr: "Bombardıman Gemisi",
+				},
+				212: {
+					de: "Solarsatellit",
+					en: "Solar Satellite",
+					es: "Satélite solar",
+					fr: "Satellite solaire",
+					tr: "Solar Uydu",
+				},
+				213: {
+					de: "Zerstörer",
+					en: "Destroyer",
+					es: "Destructor",
+					fr: "Destructeur",
+					tr: "Muhrip",
+				},
+				214: {
+					de: "Todesstern",
+					en: "Death Star",
+					es: "Estrella de la muerte",
+					fr: "Étoile de la mort",
+					tr: "Ölüm Yıldızı",
+				},
+				215: {
+					de: "Schlachtkreuzer",
+					en: "Battlecruiser",
+					es: "Acorazado",
+					fr: "Traqueur",
+					tr: "Fırkateyn",
+				},
+				217: {
+					de: "Crawler",
+					en: "Crawler",
+					es: "Taladrador",
+					fr: "Foreuse",
+					tr: "Paletli",
+				},
+				218: {
+					de: "Reaper",
+					en: "Reaper",
+					es: "Segador",
+					fr: "Faucheur",
+					tr: "Azrail",
+				},
+				219: {
+					de: "Pathfinder",
+					en: "Pathfinder",
+					es: "Explorador",
+					fr: "Éclaireur",
+					tr: "Rehber",
+				},
+				401: {
+					de: "Raketenwerfer",
+					en: "Rocket Launcher",
+					es: "Lazamisiles",
+					fr: "Lanceur de missiles",
+					tr: "Roketatar",
+				},
+				402: {
+					de: "Leichtes Lasergeschütz",
+					en: "Light Laser",
+					es: "Láser pequeño",
+					fr: "Artillerie laser légère",
+					tr: "Hafif Lazer Topu",
+				},
+				403: {
+					de: "Schweres Lasergeschütz",
+					en: "Heavy Laser",
+					es: "Láser grande",
+					fr: "Artillerie laser lourde",
+					tr: "Ağır Lazer Topu",
+				},
+				404: {
+					de: "Gaußkanone",
+					en: "Gauss Cannon",
+					es: "Cañón gauss",
+					fr: "Canon de Gauss",
+					tr: "Gaus Topu",
+				},
+				405: {
+					de: "Ionengeschütz",
+					en: "Ion Cannon",
+					es: "Cañón iónico",
+					fr: "Artillerie à ions",
+					tr: "İyon Topu",
+				},
+				406: {
+					de: "Plasmawerfer",
+					en: "Plasma Turret",
+					es: "Cañón de plasma",
+					fr: "Lanceur de plasma",
+					tr: "Plazma Atıcı",
+				},
+				407: {
+					de: "Kleine Schildkuppel",
+					en: "Small Shield Dome",
+					es: "Cúpula pequeña de protección",
+					fr: "Petit bouclier",
+					tr: "Küçük Kalkan Kubbesi",
+				},
+				408: {
+					de: "Große Schildkuppel",
+					en: "Large Shield Dome",
+					es: "Cúpula grande de protección",
+					fr: "Grand bouclier",
+					tr: "Büyük Kalkan Kubbesi",
+				},
+				502: {
+					de: "Abfangrakete",
+					en: "Anti-ballistic Missile",
+					es: "Misiles antibalísticos",
+					fr: "Missile d`interception",
+					tr: "Yakalıyıcı Roketler",
+				},
+				503: {
+					de: "Interplanetarrakete",
+					en: "Interplanetary Missile",
+					es: "Misil interplanetario",
+					fr: "Missile interplanétaire",
+					tr: "Gezegenler Arası Roketler",
+				},
+				label: { de: "", en: "", es: "", fr: "", tr: "" },
+			},
+			res: [
+				{
+					de: "Metall",
+					en: "Metal",
+					es: "Metal",
+					fr: "Métal",
+					tr: "Metal",
+				},
+				{
+					de: "Kristall",
+					en: "Crystal",
+					es: "Cristal",
+					fr: "Cristal",
+					tr: "Kristal",
+				},
+				{
+					de: "Deuterium",
+					en: "Deuterium",
+					es: "Deuterio",
+					fr: "Deutérium",
+					tr: "Deuterium",
+				},
+				{
+					de: "Dunkle Materie",
+					en: "Dark Matter",
+					es: "Materia oscura",
+					fr: "Antimatière",
+					tr: "Karanlık Madde",
+				},
+				{
+					de: "Energie",
+					en: "Energy",
+					es: "Energía",
+					fr: "Énergie",
+					tr: "Enerji",
+				},
+			],
+			text: [
+			  /*0*/ {
+					de: "Einstellungen",
+					en: "Setting",
+					es: "Ajustes",
+					fr: "Gestion des données",
+					tr: "Ayarlar",
+				},
+			  /*1*/ {
+					de: "Zielliste",
+					en: "Targets list",
+					es: "Lista de objetivos",
+					fr: "Liste des cibles",
+					tr: "Hedefler Listesi",
+				},
+			  /*2*/ {
+					de: "Spielersuche",
+					en: "Player search",
+					es: "Búsqueda de jugadores",
+					fr: "Recherche de joueur",
+					tr: "Oyuncu Arama",
+				},
+			  /*3*/ {
+					de: "Statistik",
+					en: "Statistics",
+					es: "Estadísticas",
+					fr: "Statistiques",
+					tr: "İstatistikler",
+				},
+			  /*4*/ {
+					de: "Übersicht",
+					en: "Overview",
+					es: "Visión general",
+					fr: "Aperçu",
+					tr: "Genel Bakış",
+				},
+			  /*5*/ {
+					de: "Planeten Übersicht",
+					en: "Planets overview",
+					es: "Visión general de planetas",
+					fr: "Aperçu des planètes",
+					tr: "Gezegenler Genel Bakışı",
+				},
+			  /*6*/ {
+					de: "Hier",
+					en: "Here",
+					es: "Aquí",
+					fr: "Ici",
+					tr: "Burada",
+				},
+			  /*7*/ {
+					de: "Fehlerberichte",
+					en: "Bug reporting",
+					es: "Reporte de errores",
+					fr: "Rapport de bogue",
+					tr: "Hata Bildirme",
+				},
+			  /*8*/ {
+					de: "Featureanfrage",
+					en: "Feature request",
+					es: "Petición de funciones",
+					fr: "Demande de fonctionnalité",
+					tr: "Özellik İsteği",
+				},
+			  /*9*/ {
+					de: "Universumseigenschaften",
+					en: "Universe characteristics",
+					es: "Características del universo",
+					fr: "Caractéristiques de l'univers",
+					tr: "Evren Özellikleri",
+				},
+			  /*10*/ {
+					de: "Punkte #1",
+					en: "Points #1",
+					es: "Puntos #1",
+					fr: "Point #1",
+					tr: "1.Oyuncunun Puanı",
+				},
+			  /*11*/ {
+					de: "Öko Geschwindigkeit",
+					en: "Eco Speed",
+					es: "Velocidad economía",
+					fr: "Vitesse éco",
+					tr: "Ekonomi Hızı",
+				},
+			  /*12*/ {
+					de: "Flottengeschwindigkeit (feindlich)",
+					en: "Fleet speed (war)",
+					es: "Velocidad de flota (guerra)",
+					fr: "Vitesse de flotte (guerre)",
+					tr: "Saldırı Filo Hızı",
+				},
+			  /*13*/ {
+					de: "Flottengeschwindigkeit (friedlich)",
+					en: "Fleet speed (peaceful)",
+					es: "Velocidad de flota (pacífica)",
+					fr: "Vitesse de flotte (paisible)",
+					tr: "Barışçıl Filo Hızı",
+				},
+			  /*14*/ {
+					de: "Flottengeschwindigkeit (halten)",
+					en: "Fleet speed (hoding)",
+					es: "Velocidad de flota (mantener)",
+					fr: "Vitesse de la flotte (en attente)",
+					tr: "Durma Filo Hızı",
+				},
+			  /*15*/ {
+					de: "Datenverwaltung",
+					en: "Data management",
+					es: "Gestión de datos",
+					fr: "Gestion de données",
+					tr: "Veri Yönetimi",
+				},
+			  /*16*/ {
+					de: "Expeditionsdaten",
+					en: "Expeditions data",
+					es: "Datos de expediciones",
+					fr: "Données d'expéditions",
+					tr: "Keşif Verileri",
+				},
+			  /*17*/ {
+					de: "Kampfdaten",
+					en: "Combats data",
+					es: "Datos de combates",
+					fr: "Combat les données",
+					tr: "Savaş Verileri",
+				},
+			  /*18*/ {
+					de: "Zieldaten",
+					en: "Targets data",
+					es: "Datos de objetivos",
+					fr: "Données cibles",
+					tr: "Hedef Verileri",
+				},
+			  /*19*/ {
+					de: "Gescannte Daten (Galaxie)",
+					en: "Scanned data (galaxy)",
+					es: "Datos escaneados (galaxia)",
+					fr: "Données numérisées (galaxie)",
+					tr: "Taranan Veriler (galaksi)",
+				},
+			  /*20*/ {
+					de: "Optionsdaten",
+					en: "Options data",
+					es: "Datos de opciones",
+					fr: "Données d'options",
+					tr: "Seçenekler Verisi",
+				},
+			  /*21*/ {
+					de: "Cache und Temporäre Daten",
+					en: "Cache and Temp data",
+					es: "Caché y datos temporales",
+					fr: "Données de cache et temporaires",
+					tr: "Önbellek ve Geçici Veriler",
+				},
+			  /*22*/ {
+					de: "Andere Add-On-Daten",
+					en: "Other add-on's data",
+					es: "Otros datos de la extensión",
+					fr: "Données d'autres add-ons",
+					tr: "Diğer Eklenti Verileri",
+				},
+			  /*23*/ {
+					de: "Aktualisieren",
+					en: "Update",
+					es: "Actualizar",
+					fr: "Mettre à jour",
+					tr: "Güncelle",
+				},
+			  /*24*/ {
+					de: "Exportieren",
+					en: "Export",
+					es: "Exportar",
+					fr: "Exportation",
+					tr: "Dışa Aktar",
+				},
+			  /*25*/ {
+					de: "Importieren",
+					en: "Import",
+					es: "Importar",
+					fr: "Importer",
+					tr: "İçe Aktar",
+				},
+			  /*26*/ {
+					de: "Zurücksetzen",
+					en: "Reset",
+					es: "Resetear",
+					fr: "Réinitialiser",
+					tr: "Sıfırla",
+				},
+			  /*27*/ {
+					de: "Speichern",
+					en: "Save",
+					es: "Guardar",
+					fr: "Sauvegarder",
+					tr: "Kaydet",
+				},
+			  /*28*/ {
+					de: "Am Planeten verbleibende Ressourcen",
+					en: "Resources to keep on planets",
+					es: "Recursos a permanecer en el planeta",
+					fr: "Ressources restantes sur la planète",
+					tr: "Gezegenlerde saklanacak kaynaklar",
+				},
+			  /*29*/ {
+					de: "Am Planeten verbleibende Schiffe",
+					en: "Ships to keep on planets",
+					es: "Naves a permanecer en el planeta",
+					fr: "Navires restant sur la planète",
+					tr: "Gezegenlerde saklanacak gemiler",
+				},
+			  /*30*/ {
+					de: "Standardmission (eigene)",
+					en: "Default mission (own)",
+					es: "Misión por defecto (propio)",
+					fr: "Mission par défaut (propre)",
+					tr: "Varsayılan görev (kendi)",
+				},
+			  /*31*/ {
+					de: "Standardmission (andere)",
+					en: "Default mission (others)",
+					es: "Misión por defecto (otros)",
+					fr: "Mission par défaut (autres)",
+					tr: "Varsayılan görev (başkaları)",
+				},
+			  /*32*/ {
+					de: "Standardmission (Expedition)",
+					en: "Default mission (expedition)",
+					es: "Misión por defecto (expedición)",
+					fr: "Mission par défaut (expédition)",
+					tr: "Varsayılan görev (keşif)",
+				},
+			  /*33*/ {
+					de: "Aktivitätstimer anzeigen",
+					en: "Show activity timers",
+					es: "Mostrar cronómetros de actividad",
+					fr: "Afficher les minuteurs d'activité",
+					tr: "Etkinlik zamanlayıcılarını göster",
+				},
+			  /*34*/ {
+					de: "Automatisches Abrufen von Imperium deaktivieren",
+					en: "Disable auto fetch Empire",
+					es: "Desactivar la actualización automática del Imperio",
+					fr: "Désactiver la récupération automatique de l'Empire",
+					tr: "İmparatorluğu otomatik getirmeyi devre dışı bırak",
+				},
+			  /*35*/ {
+					de: "Rentabilitätswert",
+					en: "Rentability value",
+					es: "Valor de rentabilidad",
+					fr: "Valeur de rentabilité",
+					tr: "Amortisman değeri",
+				},
+			  /*36*/ {
+					de: "Uhren auf die lokale Zeitzone umstellen",
+					en: "Change clocks to local time zone",
+					es: "Cambiar los relojes a la zona horaria local",
+					fr: "Changer les horloges au fuseau horaire local",
+					tr: "Saatleri yerel saat dilimine değiştir",
+				},
+			  /*37*/ {
+					de: "Prozentsatz der derzeit im Flug befindlichen Flotte",
+					en: "Percentage of fleet currently in flight",
+					es: "Porcentaje de flota actualmente en vuelo",
+					fr: "Pourcentage de la flotte actuellement en vol",
+					tr: "Şu anda uçuşta olan filonun yüzdesi",
+				},
+			  /*38*/ {
+					de: "Fliegend",
+					en: "Flying",
+					es: "En vuelo",
+					fr: "En vol",
+					tr: "Havada",
+				},
+			  /*39*/ {
+					de: "Fehlend",
+					en: "Missing",
+					es: "Restante",
+					fr: "Manquant",
+					tr: "Eksik",
+				},
+			  /*40*/ {
+					de: "Gesamt",
+					en: "Total",
+					es: "Total",
+					fr: "Total",
+					tr: "Toplam",
+				},
+			  /*41*/ {
+					de: "Expeditionen",
+					en: "Expeditions",
+					es: "Expediciones",
+					fr: "Expéditions",
+					tr: "Keşif",
+				},
+			  /*42*/ {
+					de: "Planet(en)",
+					en: "planet(s)",
+					es: "planeta(s)",
+					fr: "planète(s)",
+					tr: "Gezegen",
+				},
+			  /*43*/ {
+					de: "Ankunft",
+					en: "Arrival",
+					es: "Llegada",
+					fr: "Arrivées",
+					tr: "Varış",
+				},
+			  /*44*/ {
+					de: "Dauer",
+					en: "Duration",
+					es: "Duración",
+					fr: "Durée",
+					tr: "Süre",
+				},
+			  /*45*/ {
+					de: "Rückkehr",
+					en: "Return",
+					es: "Retorno",
+					fr: "Retourner",
+					tr: "Dönüş",
+				},
+			  /*46*/ {
+					de: "Keine Missionen...",
+					en: "No missions...",
+					es: "Ninguna misión...",
+					fr: "Aucune mission...",
+					tr: "Görev yok...",
+				},
+			  /*47*/ {
+					de: "Ladekapazität",
+					en: "Cargo Capacity",
+					es: "Capacidad de carga",
+					fr: "Fret",
+					tr: "Nakliye Kapasitesi",
+				},
+			  /*48*/ {
+					de: "Geschwindigkeit",
+					en: "Speed",
+					es: "Velocidad",
+					fr: "Vitesse",
+					tr: "Hız",
+				},
+			  /*49*/ {
+					de: "Treibstoffverbrauch",
+					en: "Fuel Consumption",
+					es: "Consumo de combustible",
+					fr: "Consommation",
+					tr: "Yakıt tüketimi",
+				},
+			  /*50*/ {
+					de: "Amortisationsdauer",
+					en: "Payback period",
+					es: "Período de amortización",
+					fr: "Période de remboursement",
+					tr: "Amortisman süresi",
+				},
+			  /*51*/ {
+					de: "Ökonomie",
+					en: "Economy",
+					es: "Economía",
+					fr: "Économie",
+					tr: "Ekonomi",
+				},
+			  /*52*/ {
+					de: "Forschung",
+					en: "Research",
+					es: "Investigación",
+					fr: "Recherche",
+					tr: "Araştırma",
+				},
+			  /*53*/ {
+					de: "Militär",
+					en: "Military",
+					es: "Militar",
+					fr: "Militaire",
+					tr: "Askeri",
+				},
+			  /*54*/ {
+					de: "Verteidigung",
+					en: "Defense",
+					es: "Defensa",
+					fr: "Défense",
+					tr: "Savunma",
+				},
+			  /*55*/ {
+					de: "Sieg",
+					en: "Win",
+					es: "Victoria",
+					fr: "Gagner",
+					tr: "Kazandın",
+				},
+			  /*56*/ {
+					de: "Niederlage",
+					en: "Lose",
+					es: "Derrota",
+					fr: "Perdre",
+					tr: "Kaybettin",
+				},
+			  /*57*/ {
+					de: "Unentschieden",
+					en: "Draw",
+					es: "Empate",
+					fr: "Dessiner",
+					tr: "Berabere",
+				},
+			  /*58*/ {
+					de: "API in die Zwischenablage kopiert",
+					en: "API Key copied in clipboard",
+					es: "Clave API copiada al portapapeles",
+					fr: "Clé API copiée dans le presse-papiers",
+					tr: "API Anahtarı panoya kopyalandı",
+				},
+			  /*59*/ {
+					de: "Verhältnis",
+					en: "Ratio",
+					es: "Ratio",
+					fr: "Rapport",
+					tr: "Oran",
+				},
+			  /*60*/ {
+					de: "Stunde",
+					en: "Hour",
+					es: "Hora",
+					fr: "Heure",
+					tr: "Saatlik Üretim",
+				},
+			  /*61*/ {
+					de: "Tag",
+					en: "Day",
+					es: "Día",
+					fr: "Jour",
+					tr: "Günlük Üretim",
+				},
+			  /*62*/ {
+					de: "Woche",
+					en: "Week",
+					es: "Semana",
+					fr: "Semaine",
+					tr: "Haftalık Üretim",
+				},
+			  /*63*/ {
+					de: "Flotte",
+					en: "Fleet",
+					es: "Flota",
+					fr: "Flotte",
+					tr: "Filo",
+				},
+			  /*64*/ {
+					de: "Schiffe",
+					en: "ships",
+					es: "naves",
+					fr: "navires",
+					tr: "Gemi",
+				},
+			  /*65*/ {
+					de: "Recycling",
+					en: "Recycling",
+					es: "Reciclaje",
+					fr: "Recyclage",
+					tr: "GD Kapasitesi",
+				},
+			  /*66*/ {
+					de: "Für diese Funktionen ist der Commander erforderlich ...",
+					en: "The commander officier is required for these features...",
+					es: "El oficial comandante es necesario para estas funciones...",
+					fr: "L'officier de commandement est requis pour ces fonctions...",
+					tr: "Bu özellikler için komutan subayı gereklidir...",
+				},
+			  /*67*/ {
+					de: "Ressourcen",
+					en: "Resources",
+					es: "Recursos",
+					fr: "Ressources",
+					tr: "Kaynaklar",
+				},
+			  /*68*/ {
+					de: "Verluste",
+					en: "Losses",
+					es: "Pérdidas",
+					fr: "Pertes",
+					tr: "Kayıplar",
+				},
+			  /*69*/ {
+					de: "Recycled",
+					en: "Recycled",
+					es: "Reciclado",
+					fr: "Recyclé",
+					tr: "Hurda",
+				},
+			  /*70*/ {
+					de: "Treibstoff",
+					en: "Fuel",
+					es: "Combustible",
+					fr: "Carburant",
+					tr: "Harcanan Deu",
+				},
+			  /*71*/ {
+					de: "S. Loch",
+					en: "B. Hole",
+					es: "Agujero negro",
+					fr: "Trou noir",
+					tr: "Kara Delik",
+				},
+			  /*72*/ {
+					de: "Beste Kämpfe",
+					en: "Best combats",
+					es: "Mejores combates",
+					fr: "Meilleurs combats",
+					tr: "En iyi Savaşlar",
+				},
+			  /*73*/ {
+					de: "Name",
+					en: "Name",
+					es: "Nombre",
+					fr: "Nom",
+					tr: "Adı",
+				},
+			  /*74*/ {
+					de: "Beute",
+					en: "Loot",
+					es: "Botín",
+					fr: "Proie",
+					tr: "Ganimet",
+				},
+			  /*75*/ {
+					de: "Schaden",
+					en: "Damage",
+					es: "Daños",
+					fr: "Dommage",
+					tr: "Hasar",
+				},
+			  /*76*/ {
+					de: "Trümmerfeld",
+					en: "Debris",
+					es: "Escombros",
+					fr: "Débris",
+					tr: "Enkaz alanı",
+				},
+			  /*77*/ {
+					de: "Anpassen",
+					en: "Adjust",
+					es: "Ajuste",
+					fr: "Régler",
+					tr: "Ayarla",
+				},
+			  /*78*/ {
+					de: "Items",
+					en: "Items",
+					es: "Ítems",
+					fr: "Items",
+					tr: "Öğeler",
+				},
+			  /*79*/ {
+					de: "Aliens",
+					en: "Aliens",
+					es: "Alienígenas",
+					fr: "Extraterrestres",
+					tr: "Yabancılar",
+				},
+			  /*80*/ {
+					de: "Piraten",
+					en: "Pirates",
+					es: "Piratas",
+					fr: "Pirates",
+					tr: "Korsanlar",
+				},
+			  /*81*/ {
+					de: "Spät",
+					en: "Late",
+					es: "Retraso",
+					fr: "En retard",
+					tr: "Geç",
+				},
+			  /*82*/ {
+					de: "Frühzeitig",
+					en: "Early",
+					es: "Adelanto",
+					fr: "De bonne heure",
+					tr: "Erken",
+				},
+			  /*83*/ {
+					de: "Leer",
+					en: "Empty",
+					es: "Vacío",
+					fr: "Vide",
+					tr: "Boş",
+				},
+			  /*84*/ {
+					de: "Händler",
+					en: "Merchant",
+					es: "Mercader",
+					fr: "Marchande",
+					tr: "Tüccar",
+				},
+			  /*85*/ {
+					de: "Produktion",
+					en: "Production",
+					es: "Producción",
+					fr: "Production",
+					tr: "Üretim",
+				},
+			  /*86*/ {
+					de: "Kampf",
+					en: "Combat",
+					es: "Combate",
+					fr: "Combat",
+					tr: "Savaş Araştırmaları",
+				},
+			  /*87*/ {
+					de: "Antrieb",
+					en: "Drive",
+					es: "Propulsión",
+					fr: "Propulsion",
+					tr: "Sürüş Araştırmaları",
+				},
+			  /*88*/ {
+					de: "Empfohlene Weiterentwicklung",
+					en: "Recommended further development",
+					es: "Desarrollo posterior recomendado",
+					fr: "Développement ultérieur recommandé",
+					tr: "Tavsiye edilen ileri geliştirme (Amortisman Hesabı)",
+				},
+			  /*89*/ {
+					de: "Lebensformen",
+					en: "Lifeforms",
+					es: "Formas de vida",
+					fr: "Forme de vie",
+					tr: "Canlı Türleri",
+				},
+			  /*90*/ {
+					de: "Minen",
+					en: "Mines",
+					es: "Minas",
+					fr: "Mines",
+					tr: "Madenler",
+				},
+			  /*91*/ {
+					de: "Allgemein",
+					en: "General",
+					es: "General",
+					fr: "Général",
+					tr: "Genel",
+				},
+			  /*92*/ {
+					de: "Kämpfe",
+					en: "Combats",
+					es: "Combates",
+					fr: "Combat",
+					tr: "Savaşlar",
+				},
+			  /*93*/ {
+					de: "Astro",
+					en: "Astro",
+					es: "Astro",
+					fr: "Astro",
+					tr: "Astro",
+				},
+			  /*94*/ {
+					de: "Computer",
+					en: "Computer",
+					es: "Computación",
+					fr: "Ordinateur",
+					tr: "Bilgisayar T.",
+				},
+			  /*95*/ {
+					de: "Hyperraum",
+					en: "Hyperspace",
+					es: "Hiperespacio",
+					fr: "Hyperespace",
+					tr: "Hiperuzay T.",
+				},
+			  /*96*/ {
+					de: "Plasma",
+					en: "Plasma",
+					es: "Plasma",
+					fr: "Plasma",
+					tr: "Plazma",
+				},
+			  /*97*/ {
+					de: "Datum",
+					en: "Date",
+					es: "Fecha",
+					fr: "Date",
+					tr: "Tarih",
+				},
+			  /*98*/ {
+					de: "Koordinaten",
+					en: "Coords",
+					es: "Coordenadas",
+					fr: "Coordonnées",
+					tr: "Koordinatlar",
+				},
+			  /*99*/ {
+					de: "Beute",
+					en: "Loot",
+					es: "Botín",
+					fr: "Butin",
+					tr: "Ganimet",
+				},
+			  /*100*/ {
+					de: "Flotte",
+					en: "Fleet",
+					es: "Flota",
+					fr: "Flotte",
+					tr: "Filo",
+				},
+			  /*101*/ {
+					de: "Standard Expeditionsdauer",
+					en: "Default expedition time",
+					es: "Tiempo de expedición predeterminado",
+					fr: "Heure d'expédition par défaut",
+					tr: "Varsayılan keşif süresi",
+				},
+			  /*102*/ {
+					de: "Aktionen",
+					en: "Actions",
+					es: "Acciones",
+					fr: "Actions",
+					tr: "Eylemler",
+				},
+			  /*103*/ {
+					de: "Optionen",
+					en: "Options",
+					es: "Opciones",
+					fr: "Options",
+					tr: "Seçenekler",
+				},
+			  /*104*/ {
+					de: "Automatisches Löschen von wenig rentablen Berichten aktivieren/deaktivieren",
+					en: "Toggle automatic removal of low rentability reports",
+					es: "Activar/desactivar el borrado automático de los informes con baja rentabilidad",
+					fr: "Active/désactive la suppression automatique des rapports inintéréssants",
+					tr: "Düşük karlılık raporlarının otomatik kaldırmasını etkinleştir/devre dışı bırak",
+				},
+			  /*105*/ {
+					de: "Minimale Rentabilität um als interessant angesehen zu werden",
+					en: "Minimal target rentability to be considered as interesting",
+					es: "Retabilidad mínima de un objetivo para ser considerado interesante",
+					fr: "Rentabilité minimale d'une cible pour être considéré comme intéressante",
+					tr: "İlginç kabul edilecek en düşük hedef karlılık",
+				},
+			  /*106*/ {
+					de: "Spionagetabelle aktivieren/deaktivieren",
+					en: "Toggle spy table",
+					es: "Activar/desactivar la tabla de espionajes",
+					fr: "Active/désactive le tableau d'espionnage",
+					tr: "Casusluk tablosunu etkinleştir/devre dışı bırak",
+				},
+			  /*107*/ {
+					de: "Nicht genügend Transportschiffe...",
+					en: "Not enough cargo ships...",
+					es: "No hay suficientes naves de transporte...",
+					fr: "Pas assez de navires de transport...",
+					tr: "Yeterli kargo gemisi yok...",
+				},
+			  /*108*/ {
+					de: "Kein Kampfschiff...",
+					en: "No combat ship...",
+					es: "Ninguna nave de combate...",
+					fr: "Pas de vaisseau de chasse...",
+					tr: "Savaş gemisi yok...",
+				},
+			  /*109*/ {
+					de: "Keine Spionagesonde...",
+					en: "No Espionage Probe...",
+					es: "Ninguna sonda de espionaje...",
+					fr: "Pas de sonde espion...",
+					tr: "Casusluk Sondası yok...",
+				},
+			  /*110*/ {
+					de: "Kein Pathfinder...",
+					en: "No Pathfinder...",
+					es: "Ningún explorador...",
+					fr: "Pas d'explorateur...",
+					tr: "Rehber yok...",
+				},
+			  /*111*/ {
+					de: "Keine Mission...",
+					en: "No mission...",
+					es: "Ninguna misión...",
+					fr: "Pas de mission...",
+					tr: "Görev yok...",
+				},
+			  /*112*/ {
+					de: "Unbekannte Expeditionsnachricht...",
+					en: "Unknown expedition message...",
+					es: "Mensaje de expedición desconocido...",
+					fr: "Message d'expédition inconnu...",
+					tr: "Bilinmeyen keşif mesajı...",
+				},
+			  /*113*/ {
+					de: "Hilf mir alle zu finden",
+					en: "Help me find them all",
+					es: "Ayúdame a encontrarlos todos",
+					fr: "Aidez-moi à les trouver tous",
+					tr: "Onları bulmama yardım et !",
+				},
+			  /*114*/ {
+					de: "Warnung: Expeditionsposition wird schwach...",
+					en: "Warning: expedition position is getting weak...",
+					es: "Atención: la posición de expediciones está saturándose...",
+					fr: "Attention: la position d'expédition devient saturée...",
+					tr: "Uyarı: Keşif konumu zayıflıyor...",
+				},
+			  /*115*/ {
+					de: "Fehler: Keine Schiffe ausgewählt",
+					en: "Error: No ships selected",
+					es: "Error: ninguna nave seleccionada",
+					fr: "Erreur: aucun navire sélectionné",
+					tr: "Hata: Hiç gemi seçilmedi",
+				},
+			  /*116*/ {
+					de: "Fehler: Keine Mission verfügbar",
+					en: "Error: No mission available",
+					es: "Error: ninguna misión disponible",
+					fr: "Erreur: aucune mission disponible",
+					tr: "Hata: Kullanılabilir görev yok",
+				},
+			  /*117*/ {
+					de: "Fehler: Aktueller Planet/Mond",
+					en: "Error: Current planet/moon",
+					es: "Error: planeta/luna actual",
+					fr: "Erreur: planète/lune actuelle",
+					tr: "Hata: Mevcut gezegen/ay",
+				},
+			  /*118*/ {
+					de: "Keine neue Kolonie",
+					en: "No new colony",
+					es: "Ninguna colonia nueva",
+					fr: "Pas de nouvelle colonie",
+					tr: "Yeni koloni yok",
+				},
+			  /*119*/ {
+					de: "Handelskurs",
+					en: "Trade rate",
+					es: "Ratio de cambio",
+					fr: "Taux d'échange",
+					tr: "Ticaret oranı",
+				},
+			  /*120*/ {
+					de: "Rentabilität",
+					en: "Profitability",
+					es: "Rentabilidad",
+					fr: "Rentabilité",
+					tr: "Amortisman",
+				},
+			  /*121*/ {
+					de: "Die Amortisationszeit errechnet sich aus der Differenz der Gesamtproduktion und den Kosten für die Zielstufe. Ausreichende Energieversorgung und unveränderte globale Produktionsbooster (Spieler- und Allianzklasse, Offiziere) werden vorausgesetzt. Zur Bewertung der Ressourcen wird der angegebene Handelskurs verwendet. Bei Minen wird die Änderung der Gesamtproduktion durch erhöhtes Crawler-Limit berücksichtigt, dabei wird der Produktionsfaktor und eine eventuelle Begrenzung wie angegeben verwendet. Für die Astrophysik werden die Forschungskosten und die Kosten für den Bau von Minen auf der neuen Kolonie bis zum Durchschnittslevel berücksichtigt. Die Produktionsänderung wird durch die durchschnittliche Planetenparameter angenähert, da die tatsächliche Produktion von der Temperatur und der Position der neuen Kolonie abhängt. Baukosten für die Energieversorgung oder andere Anlagen werden nicht berücksichtigt.",
+					en: "The payback period is calculated based on the difference in total production and the cost for the target level. Sufficient energy supply and unchanged global production boosters (player and alliance class, officers) are assumed. The configured trade rate is used to value the resources. For mines the change of total production dueto increased crawler limit is taken into account, using the settings from above. For Astrophysics the research cost and the cost of building mines to the average level on the new colony are taken into account. The change in production its approximated by the average planet parameters, because the actual production depends on the new colony's temperature and position. Building costs for energy supply or other facilities are not considered.",
+					es: "El período de amortización está calculado basándose en la diferencia en la producción total y el coste para el nivel objetivo. Se asume un suficiente aprovisionamiento energético y que los mejoradores de producción (clases de jugador y alianza, oficiales) permanecen inalterados. El ratio de cambio configurado se usa para valorar los recursos. Para las minas, se tiene en cuenta el cambio de la producción total debido al incremento de taladradores, usando los ajustes superiores. Para la astrofísica, se tiene en cuenta el coste de investigación y el coste de construcción de minas al nivel promedio en la nueva colonia. El cambio en la producción es aproximado usando parámetros promedio para el planeta, porque la producción real depende de la temperatura y posición de la nueva colonia. No se tienen en cuenta costes de construcción de aprovisionamiento de energía ni de otras instalaciones.",
+					fr: "La période de récupération est calculée en fonction de la différence entre la production totale et le coût pour le niveau cible. Un approvisionnement énergétique suffisant et des boosters de production mondiaux inchangés (classe de joueur et d'alliance, officiers) sont supposés. Le taux d'échange configuré est utilisé pour évaluer les ressources. Pour les mines, le changement de production totale dû à l'augmentation de la limite de foreuses est pris en compte, en utilisant les paramètres ci-dessus. Pour l'astrophysique, le coût de recherche et le coût de construction des mines au niveau moyen de la nouvelle colonie sont pris en compte. Le changement de production est approximé par les paramètres moyens de la planète, car la production réelle dépend de la température et de la position de la nouvelle colonie. Les coûts de construction pour l'approvisionnement en énergie ou d'autres installations ne sont pas pris en compte.",
+					tr: "Geri ödeme süresi, toplam üretimdeki farka ve hedef seviyenin maliyetine göre hesaplanır. Yeterli enerji arzı ve değişmeyen küresel üretim artırıcıları (oyuncu ve ittifak sınıfı, görevliler) varsayılır. Yapılandırılan ticaret oranı, değeri belirlemek için kullanılır. kaynaklar. Madenler için, artan paletli sınırına bağlı olarak toplam üretimdeki değişiklik, yukarıdan yapılan ayarlar kullanılarak dikkate alınır. Astrofizik için araştırma maliyeti ve yeni kolonide mayın inşa etme maliyeti ortalama seviyeye dikkate alınır. Üretimdeki değişiklik, ortalama gezegen parametrelerine yakındır, çünkü gerçek üretim yeni koloninin sıcaklığına ve konumuna bağlıdır. Enerji tedariki veya diğer tesisler için inşaat maliyetleri dikkate alınmaz.",
+				},
+			  /*122*/ {
+					de: "Nur Werte größer gleich 1 ...",
+					en: "Only values greater or equal to 1 allowed...",
+					es: "Sólo valores superiores o iguales a 1 están permitidos...",
+					fr: "Seules les valeurs supérieures ou égales à 1 sont autorisées...",
+					tr: "Sadece 1'e eşit veya daha büyük değerler izin verilir...",
+				},
+			  /*123*/ {
+					de: "Alle Nachrichten löschen",
+					en: "Delete all messages",
+					es: "Borrar todos los mensajes",
+					fr: "Supprimer tous les messages",
+					tr: "Tüm mesajları sil",
+				},
+			  /*124*/ {
+					de: "Feindliche Spionageberichte löschen",
+					en: "Delete enemy spy reports",
+					es: "Borrar los informes de espionaje enemigos",
+					fr: "Supprimer les rapports d'espionnage ennemis",
+					tr: "Düşman casus raporlarını sil",
+				},
+			  /*125*/ {
+					de: "Wenn aktiviert, wird die Anzahl der Crawler mit den derzeit gebauten Crawlern begrenzt.",
+					en: "If activated, the number of crawlers will be limited with the currently built crawlers.",
+					es: "Si está activado, el número de taladradores se limitará al número actual de construidos.",
+					fr: "S'il est activé, le nombre de foreuses sera limité aux foreuses actuellement construits.",
+					tr: "Etkinleştirildiğinde, paletlilerin sayısı şu anda üretilen paletlilerle sınırlanır.",
+				},
+			  /*126*/ {
+					de: "Crawler Produktionsfaktor",
+					en: "Crawler production factor",
+					es: "Factor de producción de los taladradores",
+					fr: "Facteur de production des foreuses",
+					tr: "Paletli üretim faktörü",
+				},
+			  /*127*/ {
+					de: "Ziel",
+					en: "Destination",
+					es: "Destino",
+					fr: "Destination",
+					tr: "Hedef",
+				},
+			  /*128*/ {
+					de: "Ressourcentransport",
+					en: "Resource transport",
+					es: "Transporte de recursos",
+					fr: "Transport des ressources",
+					tr: "Nakliye",
+				},
+			  /*129*/ {
+					de: "Abriss",
+					en: "Demolition",
+					es: "Demolición",
+					fr: "Démolition",
+					tr: "Yıkım",
+				},
+			  /*130*/ {
+					de: "Filter",
+					en: "Filter",
+					es: "Filtro",
+					fr: "Filtre",
+					tr: "Filtre",
+				},
+			  /*131*/ {
+					de: "Kapazität",
+					en: "Capacity",
+					es: "Capacidad",
+					fr: "Capacité",
+					tr: "Kapasite",
+				},
+			  /*132*/ {
+					de: "Füllzeit",
+					en: "Filling time",
+					es: "Tiempo de llenado",
+					fr: "Temps de remplissage",
+					tr: "Dolum süresi",
+				},
+			  /*133*/ {
+					de: "Beitragen oder Bugs melden",
+					en: "Contribute or bug report",
+					es: "Contribuir o reportar errores",
+					fr: "Contribuer ou signaler un bogue",
+					tr: "Katkıda bulunun veya hata bildirin",
+				},
+			  /*134*/ {
+					de: "Flottenaktivität der Planeten anzeigen",
+					en: "Display planets fleet activity",
+					es: "Mostrar actividad de flota de los planetas",
+					fr: "Afficher l'activité de la flotte des planètes",
+					tr: "Gezegenlerin filo etkinliğini görüntüle",
+				},
+			  /*135*/ {
+					de: "Filter invertieren",
+					en: "Invert filter",
+					es: "Invertir filtro",
+					fr: "Inverser le filtre",
+					tr: "Filtreyi ters çevir",
+				},
+			  /*136*/ {
+					de: "Forschungsgeschwindigkeit",
+					en: "Research speed",
+					es: "Velocidad de investigación",
+					fr: "Vitesse de recherche",
+					tr: "Araştırma hızı",
+				},
+			  /*137*/ {
+					de: "Aktivität",
+					en: "Activity",
+					es: "Actividad",
+					fr: "Activité",
+					tr: "Etkinlik",
+				},
+			  /*138*/ {
+					de: "Navigationspfeile in mobiler Version",
+					en: "Navigation arrows in mobile version",
+					es: "Flechas de navegación en versión móvil",
+					fr: "Flèches de navigation en version mobile",
+					tr: "Mobil sürümde gezinme okları",
+				},
+			  /*139*/ {
+					de: "Entdeckung",
+					en: "Discoveries",
+					es: "Exploración",
+					fr: "Exploration",
+					tr: "Keşifler",
+				},
+			  /*140*/ {
+					de: "Menschen",
+					en: "Human",
+					es: "Humanos",
+					fr: "Les humains",
+					tr: "İnsanlar",
+				},
+			  /*141*/ {
+					de: "Rock’tal",
+					en: "Rock’tal",
+					es: "Rock`tal",
+					fr: "Roctas",
+					tr: "Rock’tal",
+				},
+			  /*142*/ {
+					de: "Mechas",
+					en: "Mechas",
+					es: "Mecas",
+					fr: "Mécas",
+					tr: "Mekalar",
+				},
+			  /*143*/ {
+					de: "Kaelesh",
+					en: "Kaelesh",
+					es: "Kaelesh",
+					fr: "Kaeleshs",
+					tr: "Kaelesh",
+				},
+			  /*144*/ {
+					de: "Erfahrung",
+					en: "Experience",
+					es: "Experiencia",
+					fr: "Expérience",
+					tr: "Deneyim",
+				},
+			  /*145*/ {
+					de: "Artefakte",
+					en: "Artefacts",
+					es: "Artefactos",
+					fr: "Artéfacts",
+					tr: "Artefaktlar",
+				},
+			  /*146*/ {
+					de: "Abgeschlossenen Vorgang anzeigen",
+					en: "Indicate finished process",
+					es: "Indicar proceso terminado",
+					fr: "Indiquer le processus terminé",
+					tr: "Tamamlanmış işlemi belirt",
+				},
+			  /*147*/ {
+					de: "Externe Tools",
+					en: "External Tools",
+					es: "Herramientas externas",
+					fr: "Outils externes",
+					tr: "Diğer Araçlar",
+				},
+			  /*148*/ {
+					de: "Standardmissionen",
+					en: "Default missions",
+					es: "Misiónes por defecto",
+					fr: "Missions par défaut",
+					tr: "Tamamlanmış görevler",
+				},
+			  /*149*/ {
+					de: "",
+					en: "",
+					es: "",
+					fr: "",
+					tr: "",
+				},
+			],
+		};
+	}
+
+	text(id, type = "text", html = true) {
+		return this.translation[type][id][this.language];
 	}
 }
 
