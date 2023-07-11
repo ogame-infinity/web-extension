@@ -291,7 +291,7 @@ const MMORPG_LANGS = [
 ]
 
 const PLAYER_CLASS_EXPLORER = 3;
-const PLAYER_CLASS_WARRIOR = 2; // todo: rename to general
+const PLAYER_CLASS_WARRIOR = 2;
 const PLAYER_CLASS_MINER = 1;
 const PLAYER_CLASS_NONE = 0;
 
@@ -1621,6 +1621,39 @@ class OGInfinity {
 
 		/**
 		 * Initiate Feature Components
+		 * 
+		 * done:
+		 * Translation
+		 * 
+		 * todo:
+		 * Links (incl. external links)
+		 * Hotkeys
+		 * Storage - each component has to save/load its own data
+		 * 
+		 * Messages
+		 * Galaxy
+		 * Highscore
+		 * Mmorpg stuff?
+		 * FleetDispatch
+		 * FleetActivity
+		 * 
+		 * Popup
+		 * 	Settings - incl. loading options/setting default values if first time
+		 * 	TargetList
+		 * 	Playersearch
+		 * 	Statistics
+		 * 	Overview
+		 * 
+		 * General Class for all builds?
+		 * Defenses
+		 * Shipyard
+		 * Mines
+		 * Facilities
+		 * Research
+		 * Lifeform Building
+		 * Lifeform Techs
+		 * 
+		 * Utility - class for all kinds of helper functions like formatting etc.
 		 */
 		this.translation = new Translation(this.gameLang)
 	}
