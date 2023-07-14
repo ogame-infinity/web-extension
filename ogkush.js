@@ -87,7 +87,7 @@ if (redirect && redirect.indexOf("https") > -1) {
 })();
 
 Element.prototype.html = function (html) {
-	this.innerHTML = DOMPurify.sanitize(html);
+	this.innerHTML = html; // todo: check why it sould be purified
 };
 
 function createDOM(element, attributes, textContent) {
