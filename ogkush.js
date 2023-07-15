@@ -1719,7 +1719,6 @@ class OGInfinity {
 		this.saveData();
 		document.querySelector("#pageContent").style.width = "1200px";
 
-		this.listenKeyboard();
 		this.sideOptions();
 		this.minesLevel();
 		this.resourceDetail();
@@ -3358,13 +3357,12 @@ class OGInfinity {
 				this.saveData();
 			});
 
+
 			// Add updateMissions methods
 			fleetDispatcher.updateMissions = debounce(() => {
-				if (!fleetDispatcher.NO_UPDATE_MISSIONS) {
-					fleetDispatcher.refreshTarget();
-					fleetDispatcher.updateTarget();
-					fleetDispatcher.fetchTargetPlayerData();
-				}
+				fleetDispatcher.refreshTarget();
+				fleetDispatcher.updateTarget();
+				fleetDispatcher.fetchTargetPlayerData();
 			}, 200);
 		}
 	}
@@ -10506,29 +10504,7 @@ class OGInfinity {
 						deutFiller,
 						document.querySelector("input#deuterium"),
 					]
-				).forEach((elem) => {
-					elem.addEventListener("keyup", (event) => {
-						const CODE = event.code;
-						let factor;
-						let value = fromFormatedNumber(event.target.value.replace("k", "")) || 0;
-						if (CODE === "ArrowUp" || CODE === "ArrowDown" || CODE === "KeyK") {
-							let add = event.ctrlKey ? 100 : event.shiftKey ? 10 : 1;
-							switch (CODE) {
-								case "ArrowUp":
-									value = value + add;
-									break;
-								case "ArrowDown":
-									value = Math.max(value - add, 0);
-									break;
-								case "KeyK":
-									factor = value > 0 && elem.classList.contains("checkThousandSeparator") ? 1 : 1000;
-									value = (value || 1) * factor;
-									break;
-							}
-						}
-						event.target.value = toFormatedNumber(value);
-					});
-				});
+				);
 			} else {
 				(this.hasLifeforms
 					? [
@@ -10548,17 +10524,9 @@ class OGInfinity {
 						deutFiller,
 						document.querySelector("input#deuterium"),
 					]
-				).forEach((elem) => {
-					elem.addEventListener("input", (event) => {
-						if (event.data == "K" || event.data == "k" || event.data == "0k") {
-							event.target.value = toFormatedNumber(1000);
-						} else {
-							let value = fromFormatedNumber(event.target.value.replace("k", "000")) || 0;
-							event.target.value = toFormatedNumber(value);
-						}
-					});
-				});
+				);
 			}
+
 			$("#selectMinMetal").after(createDOM("a", { id: "selectMostMetal", class: "select-most-min" }));
 			$("#selectMinCrystal").after(createDOM("a", { id: "selectMostCrystal", class: "select-most-min" }));
 			$("#selectMinDeuterium").after(createDOM("a", { id: "selectMostDeuterium", class: "select-most-min" }));
@@ -14580,23 +14548,15 @@ class OGInfinity {
 			}
 			return false;
 		};
+
 		document.addEventListener("keydown", (event) => {
+			// Close welcome popup
 			if (event.key == "Escape") {
 				if (this.json.welcome) return;
 				closeDialog();
 			}
-			if (this.page == "galaxy") {
-				if (document.activeElement.getAttribute("type") == "search") {
-					return;
-				}
-				if (event.code == "Space" || event.key == "Enter") {
-					if (document.querySelector(".refreshPhalanxLink")) {
-						document.querySelector(".refreshPhalanxLink").click();
-					} else {
-						submitForm();
-					}
-				}
-			}
+			
+			// Planet quick navigation
 			if (!$(document.activeElement).is("input") && (event.ctrlKey || event.metaKey) && event.code == "ArrowDown") {
 				let planetList = document.querySelectorAll('[id^="planet-"]');
 				let active = 0;
@@ -14631,7 +14591,7 @@ class OGInfinity {
 				event.preventDefault();
 				event.stopPropagation();
 				window.location.href = url;
-			}
+			}			
 			if (!$(event.target).is("input") && (event.ctrlKey || event.metaKey) && event.code == "ArrowUp") {
 				let planetList = document.querySelectorAll('[id^="planet-"]');
 				let active = 0;
@@ -14725,6 +14685,7 @@ class OGInfinity {
 				window.location.href = url;
 			}
 		});
+
 		let actionSkip = () => {
 			if (this.mode == 3 || this.mode == 5) {
 				window.location.href = this.keyboardActionSkip;
@@ -14747,79 +14708,8 @@ class OGInfinity {
 			url.searchParams.set("cp", cp);
 			window.location.href = url.href;
 		};
-		if (this.page == "fleetdispatch") {
-			document.addEventListener("keydown", (event) => {
-				if (fleetDispatcher.currentPage == "fleet1") {
-					if (document.querySelector("#fleetTemplatesEdit")) {
-						if (document.querySelector("#fleetTemplatesEdit").classList.contains("overlayDiv")) return;
-					}
-					if (document.activeElement.tagName != "INPUT") {
-						if (event.code == "KeyE") {
-							document.querySelector(".ogl-expedition").click();
-							document.querySelector("#continueToFleet2").click();
-						}
-						if (event.code == "KeyC") {
-							document.querySelector(".ogl-collect").click();
-							document.querySelector("#continueToFleet2").click();
-						}
-						if (event.code == "KeyN") document.querySelector("#resetall").click();
-						if (event.code == "KeyA") document.querySelector("#sendall").click();
-						if (event.code == "KeyM") document.querySelector("span.select-most").click();
-					} else {
-						const input = document.querySelector("#systemInput");
-						if (document.activeElement == input) {
-							if (event.code == "ArrowUp") {
-								input.value = Number(input.value) + 1;
-								fleetDispatcher.updateTarget();
-								fleetDispatcher.fetchTargetPlayerData();
-							}
-							if (event.code == "ArrowDown") {
-								input.value = Number(input.value) - 1;
-								fleetDispatcher.updateTarget();
-								fleetDispatcher.fetchTargetPlayerData();
-							}
-						}
-					}
-					if (event.code == "KeyC") {
-						document.querySelector(".ogl-collect").click();
-						document.querySelector("#continueToFleet2").click();
-					}
-					if (event.code == "KeyN") document.querySelector("#resetall").click();
-					if (event.code == "KeyA") document.querySelector("#sendall").click();
-					if (event.code == "KeyM") document.querySelector("span.select-most").click();
-					if (event.code == "ArrowUp")
-						document.querySelector("#systemInput").value = Number(document.querySelector("#systemInput").value) + 1;
-					if (event.code == "ArrowDown")
-						document.querySelector("#systemInput").value = Number(document.querySelector("#systemInput").value) - 1;
-				} else if (fleetDispatcher.currentPage == "fleet2") {
-					if (event.code == "KeyA") document.querySelector("#loadAllResources img").click();
-					if (event.code == "KeyM" && !event.shiftKey) document.querySelector("#loadAllResources .select-most").click();
-					if (event.code == "KeyN") document.querySelector("#loadAllResources .send_none").click();
-					if (event.code == "KeyP" && event.shiftKey) document.querySelector("#pbutton").click();
-					if (event.code == "KeyM" && event.shiftKey) document.querySelector("#mbutton").click();
-					if (event.code == "KeyD" && event.shiftKey) document.querySelector("#dbutton").click();
-					if (event.code == "KeyX" && document.querySelector("#button1.on"))
-						document.querySelector("#missionButton1").click(); // attack
-					if (event.code == "KeyX" && event.altKey && document.querySelector("#button2.on"))
-						document.querySelector("#missionButton2").click(); // ACS attack
-					if (event.code == "KeyT" && document.querySelector("#button3.on"))
-						document.querySelector("#missionButton3").click(); // transport
-					if (event.code == "KeyD" && document.querySelector("#button4.on"))
-						document.querySelector("#missionButton4").click(); // deployment
-					if (event.code == "KeyH" && document.querySelector("#button5.on"))
-						document.querySelector("#missionButton5").click(); // hold (ACS defend)
-					if (event.code == "KeyS" && document.querySelector("#button6.on"))
-						document.querySelector("#missionButton6").click(); // espionage
-					if (event.code == "KeyC" && document.querySelector("#button7.on"))
-						document.querySelector("#missionButton7").click(); // colonisation
-					if (event.code == "KeyR" && document.querySelector("#button8.on"))
-						document.querySelector("#missionButton8").click(); // recycle debris field
-					if (event.code == "KeyX" && event.ctrlKey && document.querySelector("#button9.on"))
-						document.querySelector("#missionButton9").click(); // moon destruction
-					if (event.code == "KeyE" && document.querySelector("#button15.on"))
-						document.querySelector("#missionButton15").click(); // expedition
-				}
-			});
+
+		if (this.page == "fleetdispatch") {			
 			document.addEventListener("keydown", (event) => {
 				if (event.key == "Enter") {
 					if (fleetDispatcher.currentPage == "fleet1") {
@@ -17034,65 +16924,6 @@ class OGInfinity {
 				? this.json.selectedLifeforms[elem.href.split("cp=")[1]].lifeform
 				: "";
 			elem.appendChild(createDOM("div", { class: `lifeform-item-icon small ${lf}` }));
-		});
-	}
-
-	listenKeyboard() {
-		if (this.page == "fleetdispatch") {
-			document.querySelectorAll('form[name="shipsChosen"] input').forEach((i) => i.classList.add("ogl-formatInput"));
-		}
-		let listener = this.isMobile ? "input" : "keyup";
-		window.addEventListener(listener, (e) => {
-			const element = document.activeElement;
-			if (!element) return;
-
-			/**
-			 * Make sure that the debounce from fleetDispatcher.updateMissions
-			 * does not conflict with us.
-			 */
-			if (window.fleetDispatcher) {
-				fleetDispatcher.NO_UPDATE_MISSIONS = true;
-			}
-
-			const CODE = e.code;
-
-			// Bind arrow up and down to add or subscract for ogl-formatInput
-			if (
-				element.classList &&
-				(element.classList.contains("ogl-formatInput") || element.classList.contains("checkThousandSeparator"))
-			) {
-				if (this.isMobile) {
-					if (e.data === "K" || e.data === "k" || e.data === "0k") {
-						element.value = toFormatedNumber(1000);
-					} else {
-						let value = fromFormatedNumber(element.value.replace("k", "000")) || 0;
-						element.value = toFormatedNumber(value);
-					}
-				} else {
-					if (CODE === "ArrowUp" || CODE === "ArrowDown" || CODE === "KeyK") {
-						const value = fromFormatedNumber(element.value.replace("k", "")) || 0;
-						const add = e.ctrlKey ? 100 : e.shiftKey ? 10 : 1;
-						let factor;
-						switch (CODE) {
-							case "ArrowUp":
-								element.value = toFormatedNumber(value + add);
-								break;
-							case "ArrowDown":
-								element.value = toFormatedNumber(Math.max(value - add, 0));
-								break;
-							case "KeyK":
-								factor = value > 0 && element.classList.contains("checkThousandSeparator") ? 1 : 1000;
-								element.value = toFormatedNumber((value || 1) * factor);
-								break;
-						}
-					}
-				}
-			}
-			debounce(() => {
-				if (window.fleetDispatcher) {
-					fleetDispatcher.NO_UPDATE_MISSIONS = false;
-				}
-			}, 500);
 		});
 	}
 }
