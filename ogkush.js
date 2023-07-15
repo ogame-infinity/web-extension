@@ -3109,264 +3109,6 @@ class OGInfinity {
 		this.unionInterval = setInterval(update, 200);
 	}
 
-	fleetDispatcher() {
-		if (
-			this.page == "fleetdispatch" &&
-			document.querySelector("#civilships") &&
-			fleetDispatcher.shipsOnPlanet.length != 0
-		) {
-			this.onFleetSent(() => {
-				let pos = document.querySelector("#position").value;
-				let coords =
-					document.querySelector("#galaxy").value + ":" + document.querySelector("#system").value + ":" + pos;
-				let fuel = fleetDispatcher.getConsumption();
-				let dateStr = getFormatedDate(new Date().getTime(), "[d].[m].[y]");
-				let fullCoords = coords;
-				if (fleetDispatcher.targetPlanet.type == fleetDispatcher.fleetHelper.PLANETTYPE_MOON) {
-					coords += "M";
-				} else if (fleetDispatcher.targetPlanet.type == fleetDispatcher.fleetHelper.PLANETTYPE_PLANET) {
-					coords += "P";
-				}
-				let object = this.json.empire[this.current.index];
-				object = this.current.isMoon ? object.moon : object;
-				object.metal = fleetDispatcher.metalOnPlanet - fleetDispatcher.cargoMetal;
-				object.crystal = fleetDispatcher.crystalOnPlanet - fleetDispatcher.cargoCrystal;
-				object.deuterium = fleetDispatcher.deuteriumOnPlanet - fleetDispatcher.cargoDeuterium;
-				object.deuterium -= fuel;
-				if (!this.current.isMoon && object.metal < object.metalStorage && object.production.hourly[0] == 0) {
-					object.production.hourly[0] = Math.floor(
-						(resourcesBar.resources.metal.baseProduction +
-							resourcesBar.techs[1].production.metal * object.production.productionFactor) *
-						3600
-					);
-					object.production.daily[0] =
-						Math.floor(
-							(resourcesBar.resources.metal.baseProduction +
-								resourcesBar.techs[1].production.metal * object.production.productionFactor) *
-							3600
-						) * 24;
-					object.production.weekly[0] =
-						Math.floor(
-							(resourcesBar.resources.metal.baseProduction +
-								resourcesBar.techs[1].production.metal * object.production.productionFactor) *
-							3600
-						) *
-						24 *
-						7;
-				}
-				if (!this.current.isMoon && object.crystal < object.crystalStorage && object.production.hourly[1] == 0) {
-					object.production.hourly[1] = Math.floor(
-						(resourcesBar.resources.crystal.baseProduction +
-							resourcesBar.techs[2].production.crystal * object.production.productionFactor) *
-						3600
-					);
-					object.production.daily[1] =
-						Math.floor(
-							(resourcesBar.resources.crystal.baseProduction +
-								resourcesBar.techs[2].production.crystal * object.production.productionFactor) *
-							3600
-						) * 24;
-					object.production.weekly[1] =
-						Math.floor(
-							(resourcesBar.resources.crystal.baseProduction +
-								resourcesBar.techs[2].production.crystal * object.production.productionFactor) *
-							3600
-						) *
-						24 *
-						7;
-				}
-				if (!this.current.isMoon && object.deuterium < object.deuteriumStorage && object.production.hourly[2] == 0) {
-					object.production.hourly[2] = Math.floor(
-						(resourcesBar.resources.deuterium.baseProduction +
-							resourcesBar.techs[3].production.deuterium * object.production.productionFactor -
-							resourcesBar.techs[12].consumption.deuterium) *
-						3600
-					);
-					object.production.daily[2] =
-						Math.floor(
-							(resourcesBar.resources.deuterium.baseProduction +
-								resourcesBar.techs[3].production.deuterium * object.production.productionFactor -
-								resourcesBar.techs[12].consumption.deuterium) *
-							3600
-						) * 24;
-					object.production.weekly[2] =
-						Math.floor(
-							(resourcesBar.resources.deuterium.baseProduction +
-								resourcesBar.techs[3].production.deuterium * object.production.productionFactor -
-								resourcesBar.techs[12].consumption.deuterium) *
-							3600
-						) *
-						24 *
-						7;
-				}
-				fleetDispatcher.shipsToSend.forEach((ship) => {
-					object[ship.id] -= ship.number;
-				});
-				if (this.json.missing[coords]) {
-					this.json.missing[coords][0] -= fleetDispatcher.cargoMetal;
-					this.json.missing[coords][1] -= fleetDispatcher.cargoCrystal;
-					this.json.missing[coords][2] -= fleetDispatcher.cargoDeuterium;
-				}
-				if (pos == 16) {
-					if (!this.json.expeditionSums[dateStr]) {
-						this.json.expeditionSums[dateStr] = {
-							found: [0, 0, 0, 0],
-							harvest: [0, 0],
-							fleet: {},
-							losses: {},
-							type: {},
-							fuel: 0,
-							adjust: [0, 0, 0],
-						};
-					}
-					this.json.expeditionSums[dateStr].fuel -= fuel;
-				} else {
-					if (!this.json.combatsSums[dateStr]) {
-						this.json.combatsSums[dateStr] = {
-							loot: [0, 0, 0],
-							harvest: [0, 0],
-							losses: {},
-							fuel: 0,
-							adjust: [0, 0, 0],
-							topCombats: [],
-							count: 0,
-							wins: 0,
-							draws: 0,
-						};
-					}
-					this.json.combatsSums[dateStr].fuel -= fuel;
-				}
-				this.saveData();
-				return this.json.href;
-			});
-			$(".send_all").before(createDOM("span", { class: "select-most" }));
-			$(".allornonewrap .select-most").on("click", () => {
-				fleetDispatcher.shipsOnPlanet.forEach((ship) => {
-					let kept =
-						this.json.options.kept[this.current.coords + (this.current.isMoon ? "M" : "P")] ||
-						this.json.options.defaultKept;
-					this.selectShips(ship.id, Math.max(0, ship.number - (kept[ship.id] || 0)));
-				});
-				let elem =
-					document.querySelector(".ogl-planet-icon.ogl-active") ||
-					document.querySelector(".ogl-moon-icon.ogl-active") ||
-					document.querySelector(".ogl-debris-icon.ogl-active");
-				if (elem) elem.click();
-			});
-			let svgButtons = createDOM("div", { class: "ogl-dispatch-icons" });
-			$("#civil").append(svgButtons);
-			const svg1 = createSVG("svg", {
-				x: "0px",
-				y: "0px",
-				viewBox: "0 0 512 512",
-				style: "enable-background:new 0 0 512 512;",
-			});
-			svg1.replaceChildren(
-				createSVG("path", {
-					fill: "white",
-					d:
-						"M268.574,511.69c1.342-0.065,2.678-0.154,4.015-0.239c0.697-0.045,1.396-0.082,2.091-0.133c1.627-0.117,3." +
-						"247-0.259,4.865-0.406c0.37-0.034,0.741-0.063,1.111-0.099c1.895-0.181,3.783-0.387,5.665-0.609c0.056-0.0" +
-						"07,0.111-0.012,0.167-0.019C413.497,495.109,512,387.063,512,256C512,114.618,397.382,0,256,0S0,114.618,0" +
-						",256c0,131.063,98.503,239.109,225.511,254.185c0.056,0.007,0.111,0.013,0.167,0.019c1.883,0.222,3.77,0.4" +
-						"28,5.665,0.609c0.37,0.036,0.741,0.065,1.111,0.099c1.618,0.148,3.239,0.289,4.865,0.406c0.696,0.051,1.39" +
-						"4,0.087,2.091,0.133c1.337,0.086,2.673,0.174,4.015,0.239c1.098,0.054,2.201,0.086,3.301,0.125c0.976,0.03" +
-						"5,1.95,0.081,2.929,0.105c2.111,0.052,4.225,0.08,6.344,0.08s4.234-0.028,6.344-0.08c0.979-0.024,1.952-0." +
-						"07,2.929-0.105C266.374,511.776,267.476,511.743,268.574,511.69z M273.523,468.613c-0.921,0.076-1.844,0.1" +
-						"4-2.767,0.204c-0.814,0.056-1.629,0.109-2.446,0.155c-0.776,0.045-1.553,0.086-2.331,0.122c-1.037,0.048-2" +
-						".077,0.086-3.118,0.118c-0.608,0.019-1.215,0.043-1.823,0.057c-1.675,0.039-3.353,0.064-5.037,0.064s-3.36" +
-						"2-0.025-5.037-0.064c-0.609-0.014-1.216-0.038-1.823-0.057c-1.041-0.033-2.081-0.071-3.118-0.118c-0.778-0" +
-						".036-1.555-0.078-2.331-0.122c-0.817-0.046-1.632-0.099-2.446-0.155c-0.923-0.064-1.846-0.128-2.767-0.204" +
-						"c-0.52-0.042-1.037-0.092-1.555-0.138c-41.142-3.68-79.759-19.195-111.96-44.412c32.024-38.424,79.557-61." +
-						"396,131.038-61.396s99.015,22.972,131.038,61.396c-32.201,25.218-70.819,40.732-111.96,44.412C274.56,468." +
-						"521,274.042,468.571,273.523,468.613z M43.726,277.333h41.608c11.782,0,21.333-9.551,21.333-21.333s-9.551" +
-						"-21.333-21.333-21.333H43.726c4.26-42.904,21.234-82.066,47.099-113.672l29.41,29.41c8.331,8.331,21.839,8" +
-						".331,30.17,0s8.331-21.839,0-30.17l-29.41-29.41c31.607-25.865,70.768-42.838,113.672-47.099v41.608c0,11." +
-						"782,9.551,21.333,21.333,21.333s21.333-9.551,21.333-21.333V43.726c42.904,4.26,82.066,21.234,113.672,47." +
-						"099l-29.41,29.41c-8.331,8.331-8.331,21.839,0,30.17s21.839,8.331,30.17,0l29.41-29.41c25.865,31.607,42.8" +
-						"38,70.768,47.099,113.672h-41.608c-11.782,0-21.333,9.551-21.333,21.333s9.551,21.333,21.333,21.333h41.60" +
-						"8c-4.428,44.592-22.591,85.14-50.194,117.366C378.101,347.932,319.426,320,256,320s-122.101,27.932-162.08" +
-						",74.7C66.317,362.474,48.154,321.926,43.726,277.333z",
-				}),
-				createSVG("path", {
-					fill: "white",
-					d:
-						"M248.077,275.807c10.939,4.376,23.355-0.945,27.73-11.885l42.667-106.667c4.376-10.939-0.945-23.355-11.88" +
-						"5-27.731c-10.939-4.376-23.355,0.945-27.73,11.885l-42.667,106.667C231.817,259.016,237.138,271.432,248.0" +
-						"77,275.807z",
-				})
-			);
-			let svg = svgButtons.appendChild(createDOM("div", { class: "ogi-speed-icon" }).appendChild(svg1).parentElement);
-			svg.addEventListener("mouseover", () => {
-				document.querySelectorAll("#shipsChosen .technology").forEach((elem) => {
-					elem.classList.add("ogi-transparent");
-					let id = elem.getAttribute("data-technology");
-					elem.appendChild(
-						createDOM(
-							"span",
-							{ class: "ogi-speed" },
-							toFormatedNumber(fleetDispatcher.fleetHelper.shipsData[id].speed, 0)
-						)
-					);
-				});
-			});
-			svg.addEventListener("mouseout", () => {
-				document.querySelectorAll("#shipsChosen .technology").forEach((elem) => {
-					elem.classList.remove("ogi-transparent");
-					elem.querySelector(".ogi-speed").remove();
-				});
-			});
-			const svg2 = createSVG("svg", {
-				viewBox: "0 0 300.003 300.003",
-				style: "enable-background:new 0 0 300.003 300.003;",
-			});
-			svg2.appendChild(
-				createSVG("g").appendChild(
-					createSVG("path", {
-						fill: "white",
-						d:
-							"M150,0C67.159,0,0.001,67.159,0.001,150c0,82.838,67.157,150.003,149.997,150.003S300.002,232.838,300.002" +
-							",150C300.002,67.159,232.839,0,150,0z M213.281,166.501h-48.27v50.469c-0.003,8.463-6.863,15.323-15.328,1" +
-							"5.323c-8.468,0-15.328-6.86-15.328-15.328v-50.464H87.37c-8.466-0.003-15.323-6.863-15.328-15.328c0-8.463" +
-							",6.863-15.326,15.328-15.328l46.984,0.003V91.057c0-8.466,6.863-15.328,15.326-15.328c8.468,0,15.331,6.86" +
-							"3,15.328,15.328l0.003,44.787l48.265,0.005c8.466-0.005,15.331,6.86,15.328,15.328C228.607,159.643,221.74" +
-							"2,166.501,213.281,166.501z",
-					})
-				).parentElement
-			);
-			let plusSvg = svgButtons.appendChild(
-				createDOM("div", { class: "ogi-plus-icon" }).appendChild(svg2).parentElement
-			);
-			if (this.json.options.dispatcher) {
-				plusSvg.classList.add("ogl-active");
-			}
-			plusSvg.addEventListener("click", () => {
-				if (this.json.options.dispatcher) {
-					this.json.options.dispatcher = false;
-					document.querySelector(".ogl-dispatch").style.display = "none";
-					plusSvg.classList.remove("ogl-active");
-				} else {
-					this.json.options.dispatcher = true;
-					if (document.querySelector(".ogl-dispatch")) {
-						document.querySelector(".ogl-dispatch").style.display = "flex";
-					} else {
-						this.ressourceFiller();
-					}
-					plusSvg.classList.add("ogl-active");
-				}
-				this.saveData();
-			});
-
-
-			// Add updateMissions methods
-			fleetDispatcher.updateMissions = debounce(() => {
-				fleetDispatcher.refreshTarget();
-				fleetDispatcher.updateTarget();
-				fleetDispatcher.fetchTargetPlayerData();
-			}, 200);
-		}
-	}
-
 	async updateServerSettings(force = false) {
 		const timeSinceServerTimeStamp =
 			document.querySelector("[name='ogame-timestamp']").content - this.json.serverSettingsTimeStamp;
@@ -9699,11 +9441,274 @@ class OGInfinity {
 		});
 	}
 
+	fleetDispatcher() {
+		if (
+			this.page == "fleetdispatch" &&
+			document.querySelector("#civilships") &&
+			fleetDispatcher.shipsOnPlanet.length != 0
+		) {
+			this.onFleetSent(() => {
+				let pos = document.querySelector("#position").value;
+				let coords =
+					document.querySelector("#galaxy").value + ":" + document.querySelector("#system").value + ":" + pos;
+				let fuel = fleetDispatcher.getConsumption();
+				let dateStr = getFormatedDate(new Date().getTime(), "[d].[m].[y]");
+				let fullCoords = coords;
+				if (fleetDispatcher.targetPlanet.type == fleetDispatcher.fleetHelper.PLANETTYPE_MOON) {
+					coords += "M";
+				} else if (fleetDispatcher.targetPlanet.type == fleetDispatcher.fleetHelper.PLANETTYPE_PLANET) {
+					coords += "P";
+				}
+				let object = this.json.empire[this.current.index];
+				object = this.current.isMoon ? object.moon : object;
+				object.metal = fleetDispatcher.metalOnPlanet - fleetDispatcher.cargoMetal;
+				object.crystal = fleetDispatcher.crystalOnPlanet - fleetDispatcher.cargoCrystal;
+				object.deuterium = fleetDispatcher.deuteriumOnPlanet - fleetDispatcher.cargoDeuterium;
+				object.deuterium -= fuel;
+				if (!this.current.isMoon && object.metal < object.metalStorage && object.production.hourly[0] == 0) {
+					object.production.hourly[0] = Math.floor(
+						(resourcesBar.resources.metal.baseProduction +
+							resourcesBar.techs[1].production.metal * object.production.productionFactor) *
+						3600
+					);
+					object.production.daily[0] =
+						Math.floor(
+							(resourcesBar.resources.metal.baseProduction +
+								resourcesBar.techs[1].production.metal * object.production.productionFactor) *
+							3600
+						) * 24;
+					object.production.weekly[0] =
+						Math.floor(
+							(resourcesBar.resources.metal.baseProduction +
+								resourcesBar.techs[1].production.metal * object.production.productionFactor) *
+							3600
+						) *
+						24 *
+						7;
+				}
+				if (!this.current.isMoon && object.crystal < object.crystalStorage && object.production.hourly[1] == 0) {
+					object.production.hourly[1] = Math.floor(
+						(resourcesBar.resources.crystal.baseProduction +
+							resourcesBar.techs[2].production.crystal * object.production.productionFactor) *
+						3600
+					);
+					object.production.daily[1] =
+						Math.floor(
+							(resourcesBar.resources.crystal.baseProduction +
+								resourcesBar.techs[2].production.crystal * object.production.productionFactor) *
+							3600
+						) * 24;
+					object.production.weekly[1] =
+						Math.floor(
+							(resourcesBar.resources.crystal.baseProduction +
+								resourcesBar.techs[2].production.crystal * object.production.productionFactor) *
+							3600
+						) *
+						24 *
+						7;
+				}
+				if (!this.current.isMoon && object.deuterium < object.deuteriumStorage && object.production.hourly[2] == 0) {
+					object.production.hourly[2] = Math.floor(
+						(resourcesBar.resources.deuterium.baseProduction +
+							resourcesBar.techs[3].production.deuterium * object.production.productionFactor -
+							resourcesBar.techs[12].consumption.deuterium) *
+						3600
+					);
+					object.production.daily[2] =
+						Math.floor(
+							(resourcesBar.resources.deuterium.baseProduction +
+								resourcesBar.techs[3].production.deuterium * object.production.productionFactor -
+								resourcesBar.techs[12].consumption.deuterium) *
+							3600
+						) * 24;
+					object.production.weekly[2] =
+						Math.floor(
+							(resourcesBar.resources.deuterium.baseProduction +
+								resourcesBar.techs[3].production.deuterium * object.production.productionFactor -
+								resourcesBar.techs[12].consumption.deuterium) *
+							3600
+						) *
+						24 *
+						7;
+				}
+				fleetDispatcher.shipsToSend.forEach((ship) => {
+					object[ship.id] -= ship.number;
+				});
+				if (this.json.missing[coords]) {
+					this.json.missing[coords][0] -= fleetDispatcher.cargoMetal;
+					this.json.missing[coords][1] -= fleetDispatcher.cargoCrystal;
+					this.json.missing[coords][2] -= fleetDispatcher.cargoDeuterium;
+				}
+				if (pos == 16) {
+					if (!this.json.expeditionSums[dateStr]) {
+						this.json.expeditionSums[dateStr] = {
+							found: [0, 0, 0, 0],
+							harvest: [0, 0],
+							fleet: {},
+							losses: {},
+							type: {},
+							fuel: 0,
+							adjust: [0, 0, 0],
+						};
+					}
+					this.json.expeditionSums[dateStr].fuel -= fuel;
+				} else {
+					if (!this.json.combatsSums[dateStr]) {
+						this.json.combatsSums[dateStr] = {
+							loot: [0, 0, 0],
+							harvest: [0, 0],
+							losses: {},
+							fuel: 0,
+							adjust: [0, 0, 0],
+							topCombats: [],
+							count: 0,
+							wins: 0,
+							draws: 0,
+						};
+					}
+					this.json.combatsSums[dateStr].fuel -= fuel;
+				}
+				this.saveData();
+				return this.json.href;
+			});
+
+			$(".send_all").before(createDOM("span", { class: "select-most" }));
+			$(".allornonewrap .select-most").on("click", () => {
+				fleetDispatcher.shipsOnPlanet.forEach((ship) => {
+					let kept =
+						this.json.options.kept[this.current.coords + (this.current.isMoon ? "M" : "P")] ||
+						this.json.options.defaultKept;
+					this.selectShips(ship.id, Math.max(0, ship.number - (kept[ship.id] || 0)));
+				});
+				let elem =
+					document.querySelector(".ogl-planet-icon.ogl-active") ||
+					document.querySelector(".ogl-moon-icon.ogl-active") ||
+					document.querySelector(".ogl-debris-icon.ogl-active");
+				if (elem) elem.click();
+			});
+
+			// Create container for new buttons
+			let svgButtons = createDOM("div", { class: "ogl-dispatch-icons" });
+			// Add svg buttons to the lower right corner of the civil ships
+			$("#civil").append(svgButtons);
+
+			const speedometerSvg = createSVG("svg", { // todo: put all svgs in a separate component
+				x: "0px",
+				y: "0px",
+				viewBox: "0 0 512 512",
+				style: "enable-background:new 0 0 512 512;",
+			});
+			speedometerSvg.replaceChildren(
+				// define speedometer svg
+				createSVG("path", {
+					fill: "white",
+					d:
+						"M268.574,511.69c1.342-0.065,2.678-0.154,4.015-0.239c0.697-0.045,1.396-0.082,2.091-0.133c1.627-0.117,3." +
+						"247-0.259,4.865-0.406c0.37-0.034,0.741-0.063,1.111-0.099c1.895-0.181,3.783-0.387,5.665-0.609c0.056-0.0" +
+						"07,0.111-0.012,0.167-0.019C413.497,495.109,512,387.063,512,256C512,114.618,397.382,0,256,0S0,114.618,0" +
+						",256c0,131.063,98.503,239.109,225.511,254.185c0.056,0.007,0.111,0.013,0.167,0.019c1.883,0.222,3.77,0.4" +
+						"28,5.665,0.609c0.37,0.036,0.741,0.065,1.111,0.099c1.618,0.148,3.239,0.289,4.865,0.406c0.696,0.051,1.39" +
+						"4,0.087,2.091,0.133c1.337,0.086,2.673,0.174,4.015,0.239c1.098,0.054,2.201,0.086,3.301,0.125c0.976,0.03" +
+						"5,1.95,0.081,2.929,0.105c2.111,0.052,4.225,0.08,6.344,0.08s4.234-0.028,6.344-0.08c0.979-0.024,1.952-0." +
+						"07,2.929-0.105C266.374,511.776,267.476,511.743,268.574,511.69z M273.523,468.613c-0.921,0.076-1.844,0.1" +
+						"4-2.767,0.204c-0.814,0.056-1.629,0.109-2.446,0.155c-0.776,0.045-1.553,0.086-2.331,0.122c-1.037,0.048-2" +
+						".077,0.086-3.118,0.118c-0.608,0.019-1.215,0.043-1.823,0.057c-1.675,0.039-3.353,0.064-5.037,0.064s-3.36" +
+						"2-0.025-5.037-0.064c-0.609-0.014-1.216-0.038-1.823-0.057c-1.041-0.033-2.081-0.071-3.118-0.118c-0.778-0" +
+						".036-1.555-0.078-2.331-0.122c-0.817-0.046-1.632-0.099-2.446-0.155c-0.923-0.064-1.846-0.128-2.767-0.204" +
+						"c-0.52-0.042-1.037-0.092-1.555-0.138c-41.142-3.68-79.759-19.195-111.96-44.412c32.024-38.424,79.557-61." +
+						"396,131.038-61.396s99.015,22.972,131.038,61.396c-32.201,25.218-70.819,40.732-111.96,44.412C274.56,468." +
+						"521,274.042,468.571,273.523,468.613z M43.726,277.333h41.608c11.782,0,21.333-9.551,21.333-21.333s-9.551" +
+						"-21.333-21.333-21.333H43.726c4.26-42.904,21.234-82.066,47.099-113.672l29.41,29.41c8.331,8.331,21.839,8" +
+						".331,30.17,0s8.331-21.839,0-30.17l-29.41-29.41c31.607-25.865,70.768-42.838,113.672-47.099v41.608c0,11." +
+						"782,9.551,21.333,21.333,21.333s21.333-9.551,21.333-21.333V43.726c42.904,4.26,82.066,21.234,113.672,47." +
+						"099l-29.41,29.41c-8.331,8.331-8.331,21.839,0,30.17s21.839,8.331,30.17,0l29.41-29.41c25.865,31.607,42.8" +
+						"38,70.768,47.099,113.672h-41.608c-11.782,0-21.333,9.551-21.333,21.333s9.551,21.333,21.333,21.333h41.60" +
+						"8c-4.428,44.592-22.591,85.14-50.194,117.366C378.101,347.932,319.426,320,256,320s-122.101,27.932-162.08" +
+						",74.7C66.317,362.474,48.154,321.926,43.726,277.333z",
+				}),
+				// define needle for speedometer
+				createSVG("path", {
+					fill: "white",
+					d:
+						"M248.077,275.807c10.939,4.376,23.355-0.945,27.73-11.885l42.667-106.667c4.376-10.939-0.945-23.355-11.88" +
+						"5-27.731c-10.939-4.376-23.355,0.945-27.73,11.885l-42.667,106.667C231.817,259.016,237.138,271.432,248.0" +
+						"77,275.807z",
+				})
+			);
+			let svg = svgButtons.appendChild(createDOM("div", { class: "ogi-speed-icon" }).appendChild(speedometerSvg).parentElement);
+
+			svg.addEventListener("mouseover", () => {
+				document.querySelectorAll("#shipsChosen .technology").forEach((elem) => {
+					elem.classList.add("ogi-transparent");
+					let id = elem.getAttribute("data-technology");
+					elem.appendChild(
+						createDOM("span", { class: "ogi-speed" }, toFormatedNumber(fleetDispatcher.fleetHelper.shipsData[id].speed, 0))
+					);
+				});
+			});
+			svg.addEventListener("mouseout", () => {
+				document.querySelectorAll("#shipsChosen .technology").forEach((elem) => {
+					elem.classList.remove("ogi-transparent");
+					elem.querySelector(".ogi-speed").remove();
+				});
+			});
+
+			// Define plus svg as button to open the detailed dispatch form
+			const plusSignSvg = createSVG("svg", {
+				viewBox: "0 0 300.003 300.003",
+				style: "enable-background:new 0 0 300.003 300.003;",
+			});
+			plusSignSvg.appendChild(
+				createSVG("g").appendChild(
+					createSVG("path", {
+						fill: "white",
+						d:
+							"M150,0C67.159,0,0.001,67.159,0.001,150c0,82.838,67.157,150.003,149.997,150.003S300.002,232.838,300.002" +
+							",150C300.002,67.159,232.839,0,150,0z M213.281,166.501h-48.27v50.469c-0.003,8.463-6.863,15.323-15.328,1" +
+							"5.323c-8.468,0-15.328-6.86-15.328-15.328v-50.464H87.37c-8.466-0.003-15.323-6.863-15.328-15.328c0-8.463" +
+							",6.863-15.326,15.328-15.328l46.984,0.003V91.057c0-8.466,6.863-15.328,15.326-15.328c8.468,0,15.331,6.86" +
+							"3,15.328,15.328l0.003,44.787l48.265,0.005c8.466-0.005,15.331,6.86,15.328,15.328C228.607,159.643,221.74" +
+							"2,166.501,213.281,166.501z",
+					})
+				).parentElement
+			);
+			let plusSvg = svgButtons.appendChild(createDOM("div", { class: "ogi-plus-icon" }).appendChild(plusSignSvg).parentElement);
+			if (this.json.options.dispatcher) {
+				plusSvg.classList.add("ogl-active");
+			}
+			plusSvg.addEventListener("click", () => {
+				if (this.json.options.dispatcher) {
+					this.json.options.dispatcher = false;
+					document.querySelector(".ogl-dispatch").style.display = "none";
+					plusSvg.classList.remove("ogl-active");
+				} else {
+					this.json.options.dispatcher = true;
+					if (document.querySelector(".ogl-dispatch")) {
+						document.querySelector(".ogl-dispatch").style.display = "flex";
+					} else {
+						this.ressourceFiller();
+					}
+					plusSvg.classList.add("ogl-active");
+				}
+				this.saveData();
+			});
+
+
+			// Add updateMissions methods
+			fleetDispatcher.updateMissions = debounce(() => {
+				fleetDispatcher.refreshTarget();
+				fleetDispatcher.updateTarget();
+				fleetDispatcher.fetchTargetPlayerData();
+			}, 200);
+		}
+	}
+
 	betterFleetDispatcher() {
 		if (this.page == "fleetdispatch" && fleetDispatcher.shipsOnPlanet.length == 0) {
 			let metal = Math.max(0, fleetDispatcher.metalOnPlanet);
 			let crystal = Math.max(0, fleetDispatcher.crystalOnPlanet);
 			let deut = Math.max(0, fleetDispatcher.deuteriumOnPlanet);
+
 			let sc = this.calcNeededShips({
 				fret: 202,
 				resources: metal + crystal + deut,
