@@ -1444,6 +1444,102 @@ const TRADER_RESOURCE_BONUS = 0.05;
 const CRAWLER_OVERLOAD_MAX = 1.5;
 
 
+const ShipEnum = {
+	LightFighter: 204,
+	HeavyFighter: 205,
+	Cruiser: 206,
+	Battleship: 207,
+	Battlecruiser: 215,
+	Bomber: 211,
+	Destroyer: 213,
+	Deathstar: 214,
+	Reaper: 218,
+	Pathfinder: 219,
+
+	SmallCargo: 202,
+	LargeCargo: 203,
+	ColonyShip: 208,
+	Recycler: 209,
+	Probe: 210,
+	SolarSatellite: 212,
+	Crawler: 217
+};
+
+const DefenseEnum = {
+	RocketLauncher: 401,
+	LightLaser: 402,
+	HeavyLaser: 403,
+	GaussCannon: 404,
+	IonCannon: 405,
+	PlasmaTurret: 406,
+	SmallShieldDome: 407,
+	LargeShieldDome: 408,
+
+	AntiBallisticMissiles: 502,
+	InterplanetaryMissiles: 503
+};
+
+const SupplyEnum = {
+	MetalMine: 1,
+	CrystalMine: 2,
+	DeuteriumSynthesizer: 3,
+	SolarPlant: 4,
+	FusionReactor: 12,
+	SolarSatellite: 212,
+
+	MetalStorage: 22,
+	CrystalStorage: 23,
+	DeuteriumTank: 24,
+
+	Crawler: 217
+};
+
+const FacilityEnum = {
+	RoboticsFactory: 14,
+	Shipyard: 12,
+	ResearchLab: 31,
+	AllianceDepot: 34,
+	MissileSilo: 44,
+	NaniteFactory: 15,
+	Terraformer: 33,
+	SpaceDock: 36
+};
+
+const ResearchEnum = {
+	EnergyTechnology: 113,
+	LaserTechnology: 120,
+	IonTechnology: 121,
+	HyperspaceTechnology: 114,
+	PlasmaTechnology: 122,
+
+	CombustionDrive: 115,
+	ImpulseDrive: 117,
+	HyperspaceDrive: 118,
+
+	EspionageTechnology: 106,
+	ComputerTechnology: 108,
+	Astrophysics: 124,
+	IntergalacticResearchNetwork: 123,
+	GravitonTechnology: 199,
+
+	WeaponsTechnology: 109,
+	ShieldingTechnology: 110,
+	ArmorTechnology: 111
+};
+
+const MissionEnum = {
+	Expedition: 15,
+	Colonization: 7,
+	RecycleDebrisField: 8,
+	Transport: 3,
+	Deployment: 4,
+	Espionage: 6,
+	AcsDefent: 5,
+	Attack: 1,
+	AcsAttack: 2,
+	MoonDestruction: 9
+};
+
 /**
  * todo: description
  * todo: split functionality more in modules - so redundant code can be removed
@@ -1724,8 +1820,6 @@ class OGInfinity {
 		this.resourceDetail();
 		this.eventBox();
 		this.neededCargo();
-		//this.preselectShips();
-		//this.harvest();
 		this.expedition();
 		this.collect();
 		this.expeditionMessages();
@@ -2562,18 +2656,14 @@ class OGInfinity {
 					let timeDiv = document.querySelector(".build_duration time");
 					let baseTime = getTimeFromString(timeDiv.getAttribute("datetime"));
 
-					if (
-						[
-							202, 203, 208, 209, 210, 204, 205, 206, 219, 207, 215, 211, 212, 217, 213, 218, 214, 401, 402, 403, 404,
-							405, 406, 407, 408, 502, 503,
-						].includes(technologyId)
-					) {
+					if (Object.values(ShipEnum).includes(technologyId) || 
+						Object.values(DefenseEnum).includes(technologyId)) {							
 						let energyDiv;
 						let base;
+
 						if (technologyId == 217) {
 							energyDiv = document.querySelector(".additional_energy_consumption span");
-							base =
-								energyDiv.getAttribute("data-value") *
+							base = energyDiv.getAttribute("data-value") *
 								(that.json.lifeformBonus ? 1 - that.json.lifeformBonus[that.current.id].crawlerBonus.consumption : 1);
 						} else if (technologyId == 212) {
 							energyDiv = document.querySelector(".energy_production span");
@@ -3011,7 +3101,12 @@ class OGInfinity {
 		box.appendChild(createDOM("h1", {}, this.translation.text(29)));
 		let fleet = box.appendChild(createDOM("div", { class: "ogk-bhole-grid" }));
 		let inputs = [];
-		[202, 203, 210, 208, 209, 204, 205, 206, 219, 207, 215, 211, 213, 218, 214].forEach((id) => {
+		[Object.values(ShipEnum)].forEach((id) => { // todo: replace by "CombatShips"
+			// Exclude Solar Sats and Crawler 
+			if (id == ShipEnum.SolarSatellite ||
+				id == ShipEnum.Crawler) {
+				return;
+			}
 			fleet.appendChild(createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-fleet-" + id }));
 			let input = fleet.appendChild(
 				createDOM("input", {
@@ -4018,12 +4113,19 @@ class OGInfinity {
 		let flying = this.getFlyingRes().fleet;
 		for (let id in flying) flyingCount += flying[id];
 		let fleetCount = flyingCount;
-		[202, 203, 208, 209, 210, 204, 205, 206, 219, 207, 215, 211, 213, 218, 214].forEach((id) => {
+		
+		[Object.values(ShipEnum)].forEach((id) => {
+			// Exclude Solar Sats and Crawler 
+			if (id == ShipEnum.SolarSatellite ||
+				id == ShipEnum.Crawler) {
+				return;
+			}
 			this.json.empire.forEach((planet) => {
 				fleetCount += parseInt(planet[id]);
 				if (planet.moon) fleetCount += parseInt(planet.moon[id]);
 			});
 		});
+
 		let per = (flyingCount / fleetCount) * 100;
 		let color = "friendly";
 		if (per >= 90) color = "neutral";
@@ -4847,7 +4949,14 @@ class OGInfinity {
 		let cyclos = 0;
 		let totalSum = 0;
 		let transport = 0;
-		[202, 203, 208, 209, 210, 204, 205, 206, 219, 207, 215, 211, 213, 218, 214].forEach((id) => {
+		
+		[Object.values(ShipEnum)].forEach((id) => {
+			// Exclude Solar Sats and Crawler 
+			if (id == ShipEnum.SolarSatellite ||
+				id == ShipEnum.Crawler) {
+				return;
+			}
+
 			let flyingCount = flying.fleet[id];
 			let sum = 0;
 			if (flyingCount) sum = flyingCount;
@@ -5650,10 +5759,14 @@ class OGInfinity {
 			});
 	}
 
-	// todo: use predefined shiplist instead another hardcoded list
 	getFleetCost(ships) {
 		let fleetRes = [0, 0, 0];
-		[202, 203, 210, 208, 209, 204, 205, 206, 219, 207, 215, 211, 213, 218, 214].forEach((id) => {
+		[Object.values(ShipEnum)].forEach((id) => {
+			// Exclude Solar Sats and Crawler 
+			if (id == ShipEnum.SolarSatellite ||
+				id == ShipEnum.Crawler) {
+				return;
+			}
 			if (ships[id]) {
 				fleetRes[0] += SHIP_COSTS[id][0] * ships[id] * 1e3;
 				fleetRes[1] += SHIP_COSTS[id][1] * ships[id] * 1e3;
@@ -5791,10 +5904,13 @@ class OGInfinity {
 				let dateStr = getFormatedDate(new Date(d).getTime(), "[d].[m].[y]");
 				if (sums[dateStr]) {
 					weekSums.fuel += sums[dateStr].fuel;
-					[202, 203, 210, 208, 209, 204, 205, 206, 219, 207, 215, 211, 213, 218, 214].forEach((id) => {
+					[Object.values(ShipEnum)].forEach((id) => {
+						// Exclude Solar Sats and Crawler 
+						if (id == ShipEnum.SolarSatellite ||
+							id == ShipEnum.Crawler) {
+							return;
+						}
 						weekSums.fleet[id] += sums[dateStr].fleet[id] || 0;
-					});
-					[202, 203, 210, 208, 209, 204, 205, 206, 219, 207, 215, 211, 213, 218, 214].forEach((id) => {
 						weekSums.losses[id] += sums[dateStr].losses[id] || 0;
 					});
 					sums[dateStr].found.forEach((value, index) => {
@@ -6167,7 +6283,12 @@ class OGInfinity {
 				let dateStr = getFormatedDate(new Date(d).getTime(), "[d].[m].[y]");
 				if (sums[dateStr]) {
 					weekSums.fuel += sums[dateStr].fuel;
-					[202, 203, 210, 208, 209, 204, 205, 206, 219, 207, 215, 211, 213, 218, 214].forEach((id) => {
+					[Object.values(ShipEnum)].forEach((id) => {
+						// Exclude Solar Sats and Crawler, Colony Ship and Recycler 
+						if (id == ShipEnum.SolarSatellite ||
+							id == ShipEnum.Crawler) {
+							return;
+						}
 						weekSums.losses[id] += sums[dateStr].losses[id] || 0;
 					});
 					sums[dateStr].loot.forEach((value, index) => {
@@ -6196,6 +6317,7 @@ class OGInfinity {
 			weekSums.topCombats = weekSums.topCombats.slice(0, 3);
 			return weekSums;
 		};
+
 		let getTotal = (sums) => {
 			let total = 0;
 			let losses = this.getFleetCost(sums.losses);
@@ -6371,11 +6493,21 @@ class OGInfinity {
 		let box = createDOM("div", { class: "ogk-box ogk-small" });
 		let fleet = box.appendChild(createDOM("div", { class: "ogk-bhole-grid" }));
 		let inputs = [];
-		[202, 203, 210, 204, 205, 206, 219, 207, 215, 211, 213, 218, 214].forEach((id) => {
+
+		[Object.values(ShipEnum)].forEach((id) => {
+			// Exclude Solar Sats and Crawler, Colony Ship and Recycler 
+			if (id == ShipEnum.SolarSatellite ||
+				id == ShipEnum.Crawler ||
+				id == ShipEnum.ColonyShip ||
+				id == ShipEnum.Recycler) {
+				return;
+			}
+
 			fleet.appendChild(createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-fleet-" + id }));
 			let input = fleet.appendChild(createDOM("input", { class: "ogl-formatInput", type: "text", data: id, value: 0 }));
 			inputs.push(input);
 		});
+
 		if (onValidate) {
 			let btn = box.appendChild(createDOM("button", { class: "btn_blue" }, "OK"));
 			btn.addEventListener("click", () => {
@@ -6394,7 +6526,17 @@ class OGInfinity {
 	shipsBox(ships, minus) {
 		let fleetDetail = createDOM("div", { class: "ogk-box" });
 		let fleet = fleetDetail.appendChild(createDOM("div", { class: "ogk-fleet" }));
-		[202, 203, 210, 204, 205, 206, 219, 207, 215, 211, 213, 218].forEach((id) => {
+
+		[Object.values(ShipEnum)].forEach((id) => {
+			// Exclude Solar Sats and Crawler, Colony Ship, Recycler and Deathstar
+			if (id == ShipEnum.SolarSatellite || 
+				id == ShipEnum.Crawler || 
+				id == ShipEnum.ColonyShip || 
+				id == ShipEnum.Recycler || 
+				id == ShipEnum.Deathstar) {
+				return;
+			}
+
 			let shipDiv = fleet.appendChild(createDOM("div"));
 			shipDiv.appendChild(createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-fleet-" + id }));
 			shipDiv.appendChild(
@@ -8561,10 +8703,14 @@ class OGInfinity {
 		row.appendChild(createDOM("th", { class: "ogl-sum-symbol" }, "Σ"));
 		table.appendChild(row);
 		let flying = this.getFlyingRes();
-		[202, 203, 208, 209, 210, 204, 205, 206, 219, 207, 215, 211, 213, 218, 214].forEach((id) => {
-			if (id == 212 || (id > 400 && id < 410)) {
+
+		[Object.values(ShipEnum)].forEach((id) => {
+			// Exclude Solar Sats and Crawler
+			if (id == ShipEnum.SolarSatellite || 
+				id == ShipEnum.Crawler) {
 				return;
 			}
+
 			row = createDOM("tr");
 			let shipCount = flying.fleet[id];
 			let td = createDOM("td", { class: shipCount ? "" : "ogl-fleet-empty" });
@@ -8634,27 +8780,33 @@ class OGInfinity {
 
 	defenseOverview(moon) {
 		let content = createDOM("div", { class: "ogl-fleet-content" });
+		// todo: remove this shit
 		let shipsInfo = JSON.parse(
 			'{ "212": { "name": "Satellite solaire" }, "401": { "name": "Lanceur de missiles" }, "402": { "name": "Artillerie laser légère" }, "403": { "name": "Artillerie laser lourde" }, "404": { "name": "Canon de Gauss" }, "405": { "name": "Artillerie à ions" }, "406": { "name": "Lanceur de plasma" }, "407": { "name": "Petit bouclier" }, "408": { "name": "Grand bouclier" }, "502": { "name": "Missile d`interception" }, "503": { "name": "Missile interplanétaire" }, "202": { "id": 202, "name": "Petit transporteur", "baseFuelConsumption": 20, "baseFuelCapacity": 5000, "baseCargoCapacity": 7250, "fuelConsumption": 10, "baseSpeed": 10000, "speed": 32000, "cargoCapacity": 7250, "fuelCapacity": 5000, "number": 1, "recycleMode": 0, "rapidfire": { "205": -3, "215": -3, "214": -250, "210": 5, "212": 5, "217": 5 } }, "203": { "id": 203, "name": "Grand transporteur", "baseFuelConsumption": 50, "baseFuelCapacity": 25000, "baseCargoCapacity": 36250, "fuelConsumption": 25, "baseSpeed": 7500, "speed": 18000, "cargoCapacity": 36250, "fuelCapacity": 25000, "number": 1, "recycleMode": 0, "rapidfire": { "215": -3, "214": -250, "210": 5, "212": 5, "217": 5 } }, "204": { "id": 204, "name": "Chasseur léger", "baseFuelConsumption": 20, "baseFuelCapacity": 50, "baseCargoCapacity": 72, "fuelConsumption": 10, "baseSpeed": 12500, "speed": 30000, "cargoCapacity": 72, "fuelCapacity": 50, "number": 1, "recycleMode": 0, "rapidfire": { "206": -6, "214": -200, "219": -3, "210": 5, "212": 5, "217": 5 } }, "205": { "id": 205, "name": "Chasseur lourd", "baseFuelConsumption": 75, "baseFuelCapacity": 100, "baseCargoCapacity": 145, "fuelConsumption": 37, "baseSpeed": 10000, "speed": 32000, "cargoCapacity": 145, "fuelCapacity": 100, "number": 1, "recycleMode": 0, "rapidfire": { "215": -4, "214": -100, "219": -2, "210": 5, "212": 5, "217": 5, "202": 3 } }, "206": { "id": 206, "name": "Croiseur", "baseFuelConsumption": 300, "baseFuelCapacity": 800, "baseCargoCapacity": 1160, "fuelConsumption": 150, "baseSpeed": 15000, "speed": 48000, "cargoCapacity": 1160, "fuelCapacity": 800, "number": 1, "recycleMode": 0, "rapidfire": { "215": -4, "214": -33, "219": 3, "210": 5, "212": 5, "217": 5, "204": 6, "401": 10 } }, "207": { "id": 207, "name": "Vaisseau de bataille", "baseFuelConsumption": 500, "baseFuelCapacity": 1500, "baseCargoCapacity": 2175, "fuelConsumption": 250, "baseSpeed": 10000, "speed": 49000, "cargoCapacity": 2175, "fuelCapacity": 1500, "number": 1, "recycleMode": 0, "rapidfire": { "215": -7, "214": -30, "218": -7, "210": 5, "212": 5, "217": 5, "219": 5 } }, "208": { "id": 208, "name": "Vaisseau de colonisation", "baseFuelConsumption": 1000, "baseFuelCapacity": 7500, "baseCargoCapacity": 10875, "fuelConsumption": 500, "baseSpeed": 2500, "speed": 8000, "cargoCapacity": 10875, "fuelCapacity": 7500, "number": 1, "recycleMode": 0, "rapidfire": { "214": -250, "210": 5, "212": 5, "217": 5 } }, "209": { "id": 209, "name": "Recycleur", "baseFuelConsumption": 300, "baseFuelCapacity": 20000, "baseCargoCapacity": 29000, "fuelConsumption": 150, "baseSpeed": 2000, "speed": 4800, "cargoCapacity": 29000, "fuelCapacity": 20000, "number": 1, "recycleMode": 0, "rapidfire": { "214": -250, "210": 5, "212": 5, "217": 5 } }, "210": { "id": 210, "name": "Sonde despionnage", "baseFuelConsumption": 1, "baseFuelCapacity": 5, "baseCargoCapacity": 7, "fuelConsumption": 0, "baseSpeed": 100000000, "speed": 240000000, "cargoCapacity": 7, "fuelCapacity": 5, "number": 1, "recycleMode": 0, "rapidfire": { "204": -5, "205": -5, "206": -5, "207": -5, "215": -5, "211": -5, "213": -5, "214": -1250, "218": -5, "219": -5, "202": -5, "203": -5, "208": -5, "209": -5 } }, "211": { "id": 211, "name": "Bombardier", "baseFuelConsumption": 700, "baseFuelCapacity": 500, "baseCargoCapacity": 725, "fuelConsumption": 350, "baseSpeed": 5000, "speed": 24500, "cargoCapacity": 725, "fuelCapacity": 500, "number": 1, "recycleMode": 0, "rapidfire": { "214": -25, "218": -4, "210": 5, "212": 5, "217": 5, "401": 20, "402": 20, "403": 10, "405": 10, "404": 5, "406": 5 } }, "213": { "id": 213, "name": "Destructeur", "baseFuelConsumption": 1000, "baseFuelCapacity": 2000, "baseCargoCapacity": 2900, "fuelConsumption": 500, "baseSpeed": 5000, "speed": 24500, "cargoCapacity": 2900, "fuelCapacity": 2000, "number": 1, "recycleMode": 0, "rapidfire": { "214": -5, "218": -3, "210": 5, "212": 5, "217": 5, "402": 10, "215": 2 } }, "214": { "id": 214, "name": "Étoile de la mort", "baseFuelConsumption": 1, "baseFuelCapacity": 1000000, "baseCargoCapacity": 1450000, "fuelConsumption": 0, "baseSpeed": 100, "speed": 490, "cargoCapacity": 1450000, "fuelCapacity": 1000000, "number": 1, "recycleMode": 0, "rapidfire": { "210": 1250, "212": 1250, "204": 200, "205": 100, "206": 33, "207": 30, "211": 25, "213": 5, "202": 250, "203": 250, "208": 250, "209": 250, "401": 200, "402": 200, "403": 100, "405": 100, "404": 50, "215": 15, "219": 30, "218": 10, "217": 1250 } }, "215": { "id": 215, "name": "Traqueur", "baseFuelConsumption": 250, "baseFuelCapacity": 750, "baseCargoCapacity": 1087, "fuelConsumption": 125, "baseSpeed": 10000, "speed": 49000, "cargoCapacity": 1087, "fuelCapacity": 750, "number": 1, "recycleMode": 0, "rapidfire": { "214": -10, "405": -2, "210": 5, "212": 5, "217": 5, "207": 7, "211": 4, "213": 3 } }, "217": { "id": 217, "name": "Foreuse", "baseFuelConsumption": 0, "baseFuelCapacity": 0, "baseCargoCapacity": 0, "fuelConsumption": 0, "baseSpeed": 0, "speed": 0, "cargoCapacity": 0, "fuelCapacity": 0, "number": 1, "recycleMode": 0, "rapidfire": { "204": -5, "205": -5, "206": -5, "207": -5, "215": -5, "211": -5, "213": -5, "214": -1250, "218": -5, "219": -5, "202": -5, "203": -5, "208": -5, "209": -5 } }, "218": { "id": 218, "name": "Faucheur", "baseFuelConsumption": 1100, "baseFuelCapacity": 10000, "baseCargoCapacity": 14500, "fuelConsumption": 550, "baseSpeed": 7000, "speed": 34300, "cargoCapacity": 14500, "fuelCapacity": 10000, "number": 1, "recycleMode": 2, "rapidfire": { "214": -10, "405": -2, "210": 5, "212": 5, "217": 5, "207": 7, "211": 4, "213": 3 } }, "219": { "id": 219, "name": "Éclaireur", "baseFuelConsumption": 300, "baseFuelCapacity": 10000, "baseCargoCapacity": 14500, "fuelConsumption": 150, "baseSpeed": 12000, "speed": 58800, "cargoCapacity": 14500, "fuelCapacity": 10000, "number": 1, "recycleMode": 3, "rapidfire": { "207": -5, "214": -30, "210": 5, "212": 5, "217": 5, "206": 3, "204": 3, "205": 2 } } }'
 		);
+
 		let table = createDOM("table", { class: "ogl-fleet-table" });
 		let row = createDOM("tr");
 		let td = createDOM("td");
 		let planetIcon = createDOM("span", { class: "ogl-planet " + (!moon ? "ogl-active" : "") });
 		let moonIcon = createDOM("span", { class: "ogl-moon " + (moon ? "ogl-active" : "") });
+
 		planetIcon.addEventListener("click", () => {
 			if (!planetIcon.classList.contains("ogl-active")) {
 				content.replaceWith(this.defenseOverview(false));
 			}
 		});
+
 		moonIcon.addEventListener("click", () => {
 			if (!moonIcon.classList.contains("ogl-active")) {
 				content.replaceWith(this.defenseOverview(true));
 			}
 		});
+
 		td.appendChild(planetIcon);
 		td.appendChild(moonIcon);
 		row.appendChild(td);
+
 		this.json.empire.forEach((planet) => {
 			let name = moon ? (planet.moon ? planet.moon.name : "-") : planet.name;
 			let link = `?page=ingame&component=defenses&cp=${planet.id}`;
@@ -8667,8 +8819,10 @@ class OGInfinity {
 				)
 			);
 		});
-		row.appendChild(createDOM("th", { class: "ogl-sum-symbol" }, "Σ"));
+
+		row.appendChild(createDOM("th", { class: "ogl-sum-symbol" }, "Σ"));		
 		table.appendChild(row);
+
 		Object.keys(shipsInfo).forEach((id) => {
 			if (id > 200 && id < 300) {
 				return;
@@ -9373,27 +9527,28 @@ class OGInfinity {
 		});
 		resDiv.appendChild(load);
 		let transport = actions.appendChild(createDOM("div", { class: "ogl-res-transport" }));
-		let ptBtn = transport.appendChild(
-			createDOM("a", { "tech-id": 202, class: "ogl-option ogl-fleet-ship ogl-fleet-202" })
+		let scBtn = transport.appendChild(
+			createDOM("a", { "tech-id": ShipEnum.SmallCargo, class: "ogl-option ogl-fleet-ship ogl-fleet-" + ShipEnum.SmallCargo })
 		);
-		let ptNum = transport.appendChild(createDOM("span", {}, "-"));
+		let scNum = transport.appendChild(createDOM("span", {}, "-"));
 		let gtBtn = transport.appendChild(
-			createDOM("a", { "tech-id": 203, class: "ogl-option ogl-fleet-ship ogl-fleet-203" })
+			createDOM("a", { "tech-id": ShipEnum.LargeCargo, class: "ogl-option ogl-fleet-ship ogl-fleet-" + ShipEnum.LargeCargo })
 		);
 		let gtNum = transport.appendChild(createDOM("span", {}, "-"));
 		let pfBtn = transport.appendChild(
-			createDOM("a", { "tech-id": 219, class: "ogl-option ogl-fleet-ship ogl-fleet-219" })
+			createDOM("a", { "tech-id": ShipEnum.Pathfinder, class: "ogl-option ogl-fleet-ship ogl-fleet-" + ShipEnum.Pathfinder })
 		);
 		let pfNum = transport.appendChild(createDOM("span", {}, "-"));
 		let cyBtn = transport.appendChild(
-			createDOM("a", { "tech-id": 209, class: "ogl-option ogl-fleet-ship ogl-fleet-209" })
+			createDOM("a", { "tech-id": ShipEnum.Recycler, class: "ogl-option ogl-fleet-ship ogl-fleet-" + ShipEnum.Recycler })
 		);
 		let cyNum = transport.appendChild(createDOM("span", {}, "-"));
+
 		let pbBtn;
 		let pbNum;
 		if (this.json.pbFret != 0) {
 			pbBtn = transport.appendChild(
-				createDOM("a", { "tech-id": 210, class: "ogl-option ogl-fleet-ship ogl-fleet-210" })
+				createDOM("a", { "tech-id": ShipEnum.Probe, class: "ogl-option ogl-fleet-ship ogl-fleet-" + ShipEnum.Probe })
 			);
 			pbNum = transport.appendChild(createDOM("span", {}, "-"));
 		}
@@ -9412,6 +9567,7 @@ class OGInfinity {
 			$("#position").val(position);
 			fleetDispatcher.updateTarget();
 		};
+
 		galaxyInput.addEventListener("focusout", () => {
 			udapte();
 		});
@@ -9704,27 +9860,21 @@ class OGInfinity {
 	}
 
 	betterFleetDispatcher() {
-		if (this.page == "fleetdispatch" && fleetDispatcher.shipsOnPlanet.length == 0) {
+		if (this.page != "fleetdispatch")
+			return;
+
+		// Fleet dispatch impossible caption - because no ships available and show how many would be needed for the res on this planet/moon
+		if (fleetDispatcher.shipsOnPlanet.length == 0) {
 			let metal = Math.max(0, fleetDispatcher.metalOnPlanet);
 			let crystal = Math.max(0, fleetDispatcher.crystalOnPlanet);
 			let deut = Math.max(0, fleetDispatcher.deuteriumOnPlanet);
+			let total = metal + crystal + deut;
 
-			let sc = this.calcNeededShips({
-				fret: 202,
-				resources: metal + crystal + deut,
-			});
-			let lc = this.calcNeededShips({
-				fret: 203,
-				resources: metal + crystal + deut,
-			});
-			let pf = this.calcNeededShips({
-				fret: 219,
-				resources: metal + crystal + deut,
-			});
-			let rec = this.calcNeededShips({
-				fret: 209,
-				resources: metal + crystal + deut,
-			});
+			let sc = this.calcNeededShips({ fret: ShipEnum.SmallCargo, resources: total });
+			let lc = this.calcNeededShips({ fret: ShipEnum.LargeCargo, resources: total });
+			let pf = this.calcNeededShips({ fret: ShipEnum.Pathfinder, resources: total });
+			let rec = this.calcNeededShips({ fret: ShipEnum.Recycler, resources: total });
+
 			let warning = document.querySelector("#warning");
 			let neededShips = warning.appendChild(createDOM("div", { class: "noShips" }));
 			let planetId = this.current.isMoon ? this.json.empire[this.current.index].moonID : this.current.id;
@@ -9732,16 +9882,16 @@ class OGInfinity {
 				this.createDOM(
 					"div",
 					{ class: "ogl-res-transport" },
-					`<a tech-id="202" class="ogl-option noShips ogl-fleet-ship ogl-fleet-202" href="https://${window.location.host
+					`<a tech-id="${ShipEnum.SmallCargo}" class="ogl-option noShips ogl-fleet-ship ogl-fleet-${ShipEnum.SmallCargo}" href="https://${window.location.host
 					}${window.location.pathname
 					}?page=ingame&component=shipyard&cp=${planetId}&techId202=${sc}"></a><span>${toFormatedNumber(sc, 0)}</span>
-			<a tech-id="203" class="ogl-option noShips ogl-fleet-ship ogl-fleet-203" href="https://${window.location.host
+			<a tech-id="${ShipEnum.LargeCargo}" class="ogl-option noShips ogl-fleet-ship ogl-fleet-${ShipEnum.LargeCargo}" href="https://${window.location.host
 					}${window.location.pathname
 					}?page=ingame&component=shipyard&cp=${planetId}&techId203=${lc}"></a><span>${toFormatedNumber(lc, 0)}</span>
-			<a tech-id="219" class="ogl-option noShips ogl-fleet-ship ogl-fleet-219" href="https://${window.location.host
+			<a tech-id="${ShipEnum.Pathfinder}" class="ogl-option noShips ogl-fleet-ship ogl-fleet-${ShipEnum.Pathfinder}" href="https://${window.location.host
 					}${window.location.pathname
 					}?page=ingame&component=shipyard&cp=${planetId}&techId219=${pf}"></a><span>${toFormatedNumber(pf, 0)}</span>
-			<a tech-id="209" class="ogl-option noShips ogl-fleet-ship ogl-fleet-209" href="https://${window.location.host
+			<a tech-id="${ShipEnum.Recycler}" class="ogl-option noShips ogl-fleet-ship ogl-fleet-${ShipEnum.Recycler}" href="https://${window.location.host
 					}${window.location.pathname
 					}?page=ingame&component=shipyard&cp=${planetId}&techId209=${rec}"></a><span>${toFormatedNumber(
 						rec,
@@ -9750,16 +9900,15 @@ class OGInfinity {
 				)
 			);
 		}
-		if (
-			this.page == "fleetdispatch" &&
-			document.querySelector("#civilships") &&
-			fleetDispatcher.shipsOnPlanet.length != 0
-		) {
+
+		if (document.querySelector("#civilships") && fleetDispatcher.shipsOnPlanet.length != 0) {
 			let metalAvailable = Math.max(0, fleetDispatcher.metalOnPlanet);
 			let crystalAvailable = Math.max(0, fleetDispatcher.crystalOnPlanet);
 			let deutAvailable = Math.max(0, fleetDispatcher.deuteriumOnPlanet);
+
 			let fleetPageParameters = new URLSearchParams(window.location.search);
 			let selectedMission = null;
+
 			if (fleetPageParameters.has("type") && fleetPageParameters.has("mission")) {
 				if (fleetDispatcher.mission) selectedMission = fleetDispatcher.mission;
 			}
@@ -9780,7 +9929,9 @@ class OGInfinity {
 				});
 				return amount;
 			};
+
 			let highlightFleetTarget = () => {
+				// add highlighting to target planet
 				this.planetList.forEach((planet) => {
 					let targetCoords = planet.querySelector(".planet-koords").textContent.split(":");
 					planet.querySelector(".planetlink") && planet.querySelector(".planetlink").classList.remove("ogl-target");
@@ -9802,6 +9953,7 @@ class OGInfinity {
 					}
 				});
 			};
+
 			let dispatch = document.querySelector("#shipsChosen").appendChild(createDOM("div", { class: "ogl-dispatch" }));
 			if (!this.json.options.dispatcher) {
 				dispatch.style.display = "none";
@@ -10020,6 +10172,7 @@ class OGInfinity {
 						})
 					).parentElement
 				);
+
 				unionsBtn.addEventListener("click", () => {
 					let container = createDOM("div", { class: "ogl-quickLinks", style: "display: flex;flex-direction:column" });
 					for (let i in unions) {
@@ -10054,6 +10207,7 @@ class OGInfinity {
 					this.popup(false, container);
 				});
 			}
+
 			planetList.addEventListener("click", () => {
 				let container = this.openPlanetList(
 					(planet) => {
@@ -10073,6 +10227,7 @@ class OGInfinity {
 				);
 				this.popup(false, container);
 			});
+
 			let briefing = destination.appendChild(createDOM("div", { style: "flex-direction: column" }));
 			let info = briefing.appendChild(createDOM("div", { class: "ogl-info" }));
 			info.appendChild(createDOM("div", {}, "Arrival"));
@@ -10093,7 +10248,7 @@ class OGInfinity {
 						: '<div class="ogl-fleetSpeed">\n        <div data-step="1">10</div>\n        <div data-step="2">20</div>\n        <div data-step="3">30</div>\n        <div data-step="4">40</div>\n        <div data-step="5">50</div>\n        <div data-step="6">60</div>\n        <div data-step="7">70</div>\n        <div data-step="8">80</div>\n        <div data-step="9">90</div>\n        <div class="ogl-active" data-step="10">100</div>\n        </div>'
 				)
 			);
-			let oldDeut = null;
+			
 			$(".ogl-fleetSpeed div").on("click", (event) => {
 				$(".ogl-fleetSpeed div").removeClass("ogl-active");
 				fleetDispatcher.speedPercent = event.target.getAttribute("data-step");
@@ -10101,6 +10256,8 @@ class OGInfinity {
 				update(false);
 				deutLeft.classList.remove("middlemark");
 			});
+
+			let oldDeut = null;
 			$(".ogl-fleetSpeed div").on("mouseover", (event) => {
 				fleetDispatcher.speedPercent = event.target.getAttribute("data-step");
 				if (!oldDeut) oldDeut = deutFiller.value;
@@ -10112,6 +10269,7 @@ class OGInfinity {
 					document.querySelector(".ogi-deuteriumLeft").classList.add("middlemark");
 				}
 			});
+
 			$(".ogl-fleetSpeed div").on("mouseout", (event) => {
 				fleetDispatcher.speedPercent = slider.querySelector(".ogl-active").getAttribute("data-step");
 				deutFiller.value = oldDeut;
@@ -10123,19 +10281,23 @@ class OGInfinity {
 				}
 				update(false);
 			});
+
 			$("a[id^='missionButton']").on("click", () => {
 				document.querySelector("#missionsDiv").setAttribute("data", "false");
 				highlightFleetTarget();
 			});
+
 			$("#resetall").on("click", () => {
 				document.querySelector("#missionsDiv").setAttribute("data", "true");
 			});
+
 			let missionsDiv = destination.appendChild(createDOM("div", { class: "ogl-missions", id: "missionsDiv" }));
 			missionsDiv.replaceChildren(createDOM("span", { style: "color: #9099a3" }, `${that.translation.text(111)}`));
 			let switchToPage = fleetDispatcher.switchToPage.bind(fleetDispatcher);
 			let refresh = fleetDispatcher.refresh.bind(fleetDispatcher);
 			let resetShips = fleetDispatcher.resetShips.bind(fleetDispatcher);
 			let selectShip = fleetDispatcher.selectShip.bind(fleetDispatcher);
+
 			fleetDispatcher.selectShip = (shipId, number) => {
 				selectShip(shipId, number);
 				if (fleetDispatcher.mission == 0) {
@@ -10147,6 +10309,7 @@ class OGInfinity {
 				onResChange(0);
 				onShipsChange();
 			};
+
 			fleetDispatcher.resetShips = () => {
 				resetShips();
 				update(true);
@@ -10155,6 +10318,7 @@ class OGInfinity {
 				onResChange(0);
 				onShipsChange();
 			};
+
 			let isDefaultMission = (index) => {
 				if (this.rawURL.searchParams.get("mission") == 1) {
 					if (index == 1) {
@@ -10290,6 +10454,7 @@ class OGInfinity {
 			let interval;
 			let timeout;
 			let firstLoad = true;
+
 			let update = (submit) => {
 				if (fleetDispatcher.currentPage == "fleet1") {
 					let galaxy = clampInt(galaxyInput.value, 1, fleetDispatcher.fleetHelper.MAX_GALAXY, true);
@@ -10418,6 +10583,7 @@ class OGInfinity {
 						createDOM("strong", {}, returnDivTxt.split(" ")[1])
 					);
 				}, 100);
+
 				highlightFleetTarget();
 				onResChange(2);
 				onResChange(1);
@@ -10447,9 +10613,11 @@ class OGInfinity {
 				fleetDispatcher.fetchTargetPlayerData();
 				update(true);
 			}, 500);
+
 			galaxyInput.addEventListener("keyup", myEfficientFn);
 			systemInput.addEventListener("keyup", myEfficientFn);
 			positionInput.addEventListener("keyup", myEfficientFn);
+			
 			let resFiller = actions.appendChild(createDOM("div", { class: "ogl-res-filler" }));
 			let metalBtn = resFiller.appendChild(createDOM("div"));
 			metalBtn.appendChild(createDOM("div", { class: "resourceIcon metal" }));
@@ -10490,6 +10658,7 @@ class OGInfinity {
 			let selectMaxDeut = deutBtns.appendChild(
 				createDOM("img", { src: "https://gf3.geo.gfsrv.net/cdnea/fa0c8ee62604e3af52e6ef297faf3c.gif" })
 			);
+			
 			if (!this.isMobile) {
 				(this.hasLifeforms
 					? [
@@ -10552,6 +10721,7 @@ class OGInfinity {
 				$("#selectMostCrystal").click();
 				$("#selectMostMetal").click();
 			});
+
 			$("#selectMinMetal").on("click", () => {
 				setTimeout(function () {
 					metalFiller.value = toFormatedNumber(fleetDispatcher.cargoMetal, 0);
@@ -10588,6 +10758,7 @@ class OGInfinity {
 					refreshRes();
 				}, 100);
 			});
+
 			$("#allresources").on("click", () => {
 				setTimeout(function () {
 					metalFiller.value = toFormatedNumber(fleetDispatcher.cargoMetal, 0);
@@ -10605,6 +10776,7 @@ class OGInfinity {
 				deutFiller.value = 0;
 				refreshRes();
 			});
+
 			document.querySelector("input[id=metal]").addEventListener("keyup", () => {
 				let val = fromFormatedNumber(document.querySelector("input#metal").value, true);
 				let capacity = fleetDispatcher.getFreeCargoSpace();
@@ -10641,10 +10813,12 @@ class OGInfinity {
 			let firstResRefresh = true;
 			let refreshRes = () => {
 				let fLeft;
-				if (this.hasLifeforms) fLeft = document.querySelector(".res_wrap .ogi-foodLeft");
+				if (this.hasLifeforms)
+					fLeft = document.querySelector(".res_wrap .ogi-foodLeft");					
 				let mLeft = document.querySelector(".res_wrap .ogi-metalLeft");
 				let cLeft = document.querySelector(".res_wrap .ogi-crystalLeft");
 				let dLeft = document.querySelector(".res_wrap .ogi-deuteriumLeft");
+
 				if (firstResRefresh && fleetDispatcher.currentPage == "fleet1") {
 					firstResRefresh = false;
 					if (deutLeft.classList.contains("overmark")) {
@@ -10666,6 +10840,7 @@ class OGInfinity {
 					mLeft.classList.remove("overmark");
 					dLeft.classList.remove("overmark");
 					dLeft.classList.remove("middlemark");
+
 					let val = fromFormatedNumber(document.querySelector("input#metal").value, true);
 					mLeft.textContent = toFormatedNumber(Math.max(0, metalAvailable - val), 0);
 					val = fromFormatedNumber(document.querySelector("input#crystal").value, true);
@@ -10681,9 +10856,9 @@ class OGInfinity {
 			let kept =
 				this.json.options.kept[this.current.coords + (this.current.isMoon ? "M" : "P")] ||
 				this.json.options.defaultKept;
+
 			$("#selectMostMetal").on("click", () => {
 				let capacity = fleetDispatcher.getFreeCargoSpace();
-				let cargo = Math.min(capacity, metalAvailable - (kept[0] || 0));
 				fleetDispatcher.cargoMetal = Math.min(
 					fleetDispatcher.cargoMetal + capacity,
 					Math.max(0, metalAvailable - (kept[0] || 0))
@@ -10723,12 +10898,14 @@ class OGInfinity {
 					refreshRes();
 				});
 			}
+
 			$("#backToFleet2").on("click", () => {
 				firstResRefresh = true;
 			});
 			$("#backToFleet1").on("click", () => {
 				update(true);
 			});
+
 			document.querySelectorAll("#shipsChosen .technology .icon").forEach((elem) => {
 				elem.addEventListener("click", (event) => {
 					if (event.ctrlKey || event.metaKey) {
@@ -10749,6 +10926,7 @@ class OGInfinity {
 					}
 				});
 			});
+
 			let load = createDOM("div", { class: "ogl-cargo" });
 			let selectMostRes = load.appendChild(createDOM("a", { class: "select-most" }));
 			let selectAllRes = load.appendChild(createDOM("a", { class: "sendall" }));
@@ -10770,6 +10948,7 @@ class OGInfinity {
 				selectMostCrystal.click();
 				selectMostMetal.click();
 			});
+
 			let bar = load.appendChild(createDOM("div"));
 			bar.replaceChildren(
 				createDOM("div", {
@@ -10834,6 +11013,7 @@ class OGInfinity {
 				}
 			};
 			resDiv.appendChild(load);
+
 			selectMinMetal.addEventListener("click", () => {
 				metalFiller.value = 0;
 				onResChange(0);
@@ -10846,6 +11026,7 @@ class OGInfinity {
 				metalFiller.value = toFormatedNumber(Math.max(0, metalAvailable - (kept[0] || 0)), 0);
 				onResChange(0);
 			});
+
 			selectMinCrystal.addEventListener("click", () => {
 				crystalFiller.value = 0;
 				onResChange(1);
@@ -10858,6 +11039,7 @@ class OGInfinity {
 				crystalFiller.value = toFormatedNumber(Math.max(0, crystalAvailable - (kept[1] || 0)), 0);
 				onResChange(1);
 			});
+
 			selectMinDeut.addEventListener("click", () => {
 				deutFiller.value = 0;
 				onResChange(2);
@@ -10873,51 +11055,62 @@ class OGInfinity {
 				);
 				onResChange(2);
 			});
+
 			let transport = actions.appendChild(createDOM("div", { class: "ogl-res-transport" }));
-			let ptBtn = transport.appendChild(
-				createDOM("a", { "tech-id": 202, class: "ogl-option ogl-fleet-ship ogl-fleet-202" })
+			let smallCargoBtn = transport.appendChild(
+				createDOM("a", { "tech-id": ShipEnum.SmallCargo, class: "ogl-option ogl-fleet-ship ogl-fleet-" + ShipEnum.SmallCargo })
 			);
-			let ptNum = transport.appendChild(createDOM("span", { class: "tooltip" }, "-"));
-			let gtBtn = transport.appendChild(
-				createDOM("a", { "tech-id": 203, class: "ogl-option ogl-fleet-ship ogl-fleet-203" })
+			let smallCargoNum = transport.appendChild(createDOM("span", { class: "tooltip" }, "-"));
+
+			let largeCargoBtn = transport.appendChild(
+				createDOM("a", { "tech-id": ShipEnum.LargeCargo, class: "ogl-option ogl-fleet-ship ogl-fleet-" + ShipEnum.LargeCargo })
 			);
-			let gtNum = transport.appendChild(createDOM("span", { class: "tooltip" }, "-"));
-			let pfBtn = transport.appendChild(
-				createDOM("a", { "tech-id": 219, class: "ogl-option ogl-fleet-ship ogl-fleet-219" })
+			let largeCargoNum = transport.appendChild(createDOM("span", { class: "tooltip" }, "-"));
+
+			let pathfinderBtn = transport.appendChild(
+				createDOM("a", { "tech-id": ShipEnum.Pathfinder, class: "ogl-option ogl-fleet-ship ogl-fleet-" + ShipEnum.Pathfinder })
 			);
 			let pfNum = transport.appendChild(createDOM("span", { class: "tooltip" }, "-"));
-			let cyBtn = transport.appendChild(
-				createDOM("a", { "tech-id": 209, class: "ogl-option ogl-fleet-ship ogl-fleet-209" })
+
+			let recyclerBtn = transport.appendChild(
+				createDOM("a", { "tech-id": ShipEnum.Recycler, class: "ogl-option ogl-fleet-ship ogl-fleet-" + ShipEnum.Recycler })
 			);
-			let cyNum = transport.appendChild(createDOM("span", { class: "tooltip" }, "-"));
-			let pbBtn;
-			let pbNum;
-			if (this.json.ships[210].cargoCapacity != 0) {
-				pbBtn = transport.appendChild(
+			let recyclerNum = transport.appendChild(createDOM("span", { class: "tooltip" }, "-"));
+
+			// In case the uni has cargo for probes, add the possibility to ship stuff with probes
+			let probeBtn;
+			let probeNum;
+			if (this.json.ships[ShipEnum.Probe].cargoCapacity != 0) {
+				probeBtn = transport.appendChild(
 					createDOM("a", { "tech-id": 210, class: "ogl-option ogl-fleet-ship ogl-fleet-210" })
 				);
-				pbNum = transport.appendChild(createDOM("span", { class: "tooltip" }, "-"));
+				probeNum = transport.appendChild(createDOM("span", { class: "tooltip" }, "-"));
 			}
+
 			let updateShips = (e) => {
 				let amount = e.target.nextElementSibling.getAttribute("amount");
 				this.selectShips(Number(e.target.getAttribute("tech-id")), amount);
 				fleetDispatcher.updateMissions();
 			};
+
 			document.querySelectorAll("input.ogl-formatInput").forEach((input) => {
 				input.addEventListener("keyup", fleetDispatcher.updateMissions);
 			});
-			ptBtn.addEventListener("click", updateShips);
-			gtBtn.addEventListener("click", updateShips);
-			pfBtn.addEventListener("click", updateShips);
-			cyBtn.addEventListener("click", updateShips);
-			if (pbBtn) {
-				pbBtn.addEventListener("click", updateShips);
-				ptBtn.classList.add("scale");
-				gtBtn.classList.add("scale");
-				pfBtn.classList.add("scale");
-				cyBtn.classList.add("scale");
-				pbBtn.classList.add("scale");
+
+			smallCargoBtn.addEventListener("click", updateShips);
+			largeCargoBtn.addEventListener("click", updateShips);
+			pathfinderBtn.addEventListener("click", updateShips);
+			recyclerBtn.addEventListener("click", updateShips);
+
+			if (probeBtn) {
+				probeBtn.addEventListener("click", updateShips);
+				smallCargoBtn.classList.add("scale");
+				largeCargoBtn.classList.add("scale");
+				pathfinderBtn.classList.add("scale");
+				recyclerBtn.classList.add("scale");
+				probeBtn.classList.add("scale");
 			}
+
 			let onResChange = (index) => {
 				let capacity = fleetDispatcher.getCargoCapacity();
 				if (capacity == 0) {
@@ -10929,6 +11122,7 @@ class OGInfinity {
 					capacity,
 					deutAvailable - fleetDispatcher.getConsumption()
 				);
+
 				if (index == 2) {
 					fleetDispatcher.cargoDeuterium = Math.min(
 						deut,
@@ -10995,44 +11189,58 @@ class OGInfinity {
 						metalReal.textContent = "-";
 					}
 				}
+
 				let ships = {};
 				fleetDispatcher.shipsOnPlanet.forEach((elem) => {
 					ships[elem.id] = elem.number;
 				});
-				ptNum.classList.remove("overmark");
-				gtNum.classList.remove("overmark");
+
+				smallCargoNum.classList.remove("overmark");
+				largeCargoNum.classList.remove("overmark");
 				pfNum.classList.remove("overmark");
-				cyNum.classList.remove("overmark");
-				if (pbNum) pbNum.classList.remove("overmark");
-				let amount = needCargo(202);
-				ptNum.textContent = toFormatedNumber(amount, null, amount > 999999);
-				ptNum.setAttribute("data-title", toFormatedNumber(amount));
-				ptNum.setAttribute("amount", amount);
-				if (amount > (ships[202] || 0)) ptNum.classList.add("overmark");
-				amount = needCargo(203);
-				gtNum.textContent = toFormatedNumber(amount, null, amount > 999999);
-				gtNum.setAttribute("data-title", toFormatedNumber(amount));
-				gtNum.setAttribute("amount", amount);
-				if (amount > (ships[203] || 0)) gtNum.classList.add("overmark");
-				amount = needCargo(219);
+				recyclerNum.classList.remove("overmark");
+
+				if (probeNum)
+					probeNum.classList.remove("overmark");
+
+				let amount = needCargo(ShipEnum.SmallCargo);
+				smallCargoNum.textContent = toFormatedNumber(amount, null, amount > 999999);
+				smallCargoNum.setAttribute("data-title", toFormatedNumber(amount));
+				smallCargoNum.setAttribute("amount", amount);				
+				if (amount > (ships[ShipEnum.SmallCargo] || 0))
+					smallCargoNum.classList.add("overmark");
+
+				amount = needCargo(ShipEnum.LargeCargo);
+				largeCargoNum.textContent = toFormatedNumber(amount, null, amount > 999999);
+				largeCargoNum.setAttribute("data-title", toFormatedNumber(amount));
+				largeCargoNum.setAttribute("amount", amount);
+				if (amount > (ships[ShipEnum.LargeCargo] || 0))
+					largeCargoNum.classList.add("overmark");
+
+				amount = needCargo(ShipEnum.Pathfinder);
 				pfNum.textContent = toFormatedNumber(amount, null, amount > 999999);
 				pfNum.setAttribute("data-title", toFormatedNumber(amount));
 				pfNum.setAttribute("amount", amount);
-				if (amount > (ships[219] || 0)) pfNum.classList.add("overmark");
-				amount = needCargo(209);
-				cyNum.textContent = toFormatedNumber(amount, null, amount > 999999);
-				cyNum.setAttribute("data-title", toFormatedNumber(amount));
-				cyNum.setAttribute("amount", amount);
-				if (amount > (ships[209] || 0)) cyNum.classList.add("overmark");
-				if (pbBtn) {
-					amount = needCargo(210);
-					pbNum.textContent = toFormatedNumber(amount, null, amount > 999999);
-					pbNum.setAttribute("data-title", toFormatedNumber(amount));
-					pbNum.setAttribute("amount", amount);
-					if (amount > (ships[210] || 0)) pbNum.classList.add("overmark");
+				if (amount > (ships[ShipEnum.Pathfinder] || 0))
+					pfNum.classList.add("overmark");
+
+				amount = needCargo(ShipEnum.Recycler);
+				recyclerNum.textContent = toFormatedNumber(amount, null, amount > 999999);
+				recyclerNum.setAttribute("data-title", toFormatedNumber(amount));
+				recyclerNum.setAttribute("amount", amount);
+				if (amount > (ships[ShipEnum.Recycler] || 0))
+					recyclerNum.classList.add("overmark");
+
+				if (probeBtn) {
+					amount = needCargo(ShipEnum.Probe);
+					probeNum.textContent = toFormatedNumber(amount, null, amount > 999999);
+					probeNum.setAttribute("data-title", toFormatedNumber(amount));
+					probeNum.setAttribute("amount", amount);
+					if (amount > (ships[ShipEnum.Probe] || 0)) probeNum.classList.add("overmark");
 				}
 				updateCargo();
 			};
+
 			let onShipsChange = () => {
 				const fleetSelected = document.createDocumentFragment();
 				fleetDispatcher.shipsToSend.forEach((ship) => {
@@ -11052,6 +11260,7 @@ class OGInfinity {
 				});
 				document.querySelector("#ogi-fleet2-ships .content").replaceChildren(fleetSelected);
 			};
+
 			metalFiller.addEventListener("keyup", (e) => {
 				onResChange(0);
 				e.target.focus();
@@ -11064,6 +11273,7 @@ class OGInfinity {
 				onResChange(2);
 				e.target.focus();
 			});
+
 			if (this.mode == 2 || this.mode == 1) {
 				if (this.mode == 1) {
 					metalFiller.value = toFormatedNumber(metalAvailable, 0);
@@ -11098,7 +11308,7 @@ class OGInfinity {
 			this.json.options.kept[this.current.coords + (this.current.isMoon ? "M" : "P")] || this.json.options.defaultKept;
 		if (this.page == "fleetdispatch" && document.querySelector("#shipChosen")) {
 			shipsOnPlanet.forEach((ship) => {
-				if (ship.id == 202 || ship.id == 203) {
+				if (ship.id == ShipEnum.SmallCargo || ship.id == ShipEnum.LargeCargo) {
 					let min = {
 						metal: Math.max(0, fleetDispatcher.metalOnPlanet - kept[0]),
 						crystal: Math.max(0, fleetDispatcher.crystalOnPlanet - kept[1]),
@@ -11185,43 +11395,43 @@ class OGInfinity {
 		if (this.page == "fleetdispatch") {
 			let topScore = this.json.topScore;
 			let maxTotal = 0;
-			let minPT,
+			let minSC,
 				minGT = 0;
 			if (topScore < 1e4) {
 				maxTotal = 4e4;
-				minPT = 273;
+				minSC = 273;
 				minGT = 91;
 			} else if (topScore < 1e5) {
 				maxTotal = 5e5;
-				minPT = 423;
+				minSC = 423;
 				minGT = 141;
 			} else if (topScore < 1e6) {
 				maxTotal = 12e5;
-				minPT = 423;
+				minSC = 423;
 				minGT = 191;
 			} else if (topScore < 5e6) {
 				maxTotal = 18e5;
-				minPT = 423;
+				minSC = 423;
 				minGT = 191;
 			} else if (topScore < 25e6) {
 				maxTotal = 24e5;
-				minPT = 573;
+				minSC = 573;
 				minGT = 191;
 			} else if (topScore < 5e7) {
 				maxTotal = 3e6;
-				minPT = 723;
+				minSC = 723;
 				minGT = 241;
 			} else if (topScore < 75e6) {
 				maxTotal = 36e5;
-				minPT = 873;
+				minSC = 873;
 				minGT = 291;
 			} else if (topScore < 1e8) {
 				maxTotal = 42e5;
-				minPT = 1023;
+				minSC = 1023;
 				minGT = 341;
 			} else {
 				maxTotal = 5e6;
-				minPT = 1223;
+				minSC = 1223;
 				minGT = 417;
 			}
 			maxTotal *= 2; // Pathfinder bonus on expedition
@@ -11231,54 +11441,58 @@ class OGInfinity {
 
 			if (this.json.lifeformBonus && this.json.lifeformBonus[this.current.id])
 				maxTotal *= 1 + this.json.lifeformBonus[this.current.id].expeditionBonus || 0;
-			let maxPT = Math.max(minPT, this.calcNeededShips({ fret: 202, resources: maxTotal }));
-			let maxGT = Math.max(minGT, this.calcNeededShips({ fret: 203, resources: maxTotal }));
+			let maxSC = Math.max(minSC, this.calcNeededShips({ fret: ShipEnum.SmallCargo, resources: maxTotal }));
+			let maxGT = Math.max(minGT, this.calcNeededShips({ fret: ShipEnum.LargeCargo, resources: maxTotal }));
 			if (!document.querySelector("#allornone .allornonewrap")) return;
 			let expCargoChoice = createDOM("div", { class: "ogk-expedition-cargo" });
-			let expType = this.json.options.expFret || 203;
-			let expCount = expType == 202 ? maxPT : maxGT;
+			let expType = this.json.options.expFret || ShipEnum.LargeCargo;
+			let expCount = expType == ShipEnum.SmallCargo ? maxSC : maxGT;
 			let expProbe = this.json.options.expeditionSendProbe;
 			let expCombat = this.json.options.expeditionSendCombat;
+
+			let expoClasses = "ogl-option ogl-fleet-ship choice ogl-fleet-";
 			let btnExpe = document
 				.querySelector("#allornone .secondcol")
-				.appendChild(createDOM("button", { class: `ogl-expedition ${expType == 203 ? "largeCargo" : "smallCargo"} ` }));
+				.appendChild(createDOM("button", { class: `ogl-expedition ${expType == ShipEnum.SmallCargo ? "largeCargo" : "smallCargo"} ` }));
+
 			let sc = expCargoChoice.appendChild(
-				createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-202" })
+				createDOM("div", { class: expoClasses + ShipEnum.SmallCargo })
 			);
 			let lc = expCargoChoice.appendChild(
-				createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-203" })
+				createDOM("div", { class: expoClasses + ShipEnum.LargeCargo })
 			);
+
 			let probe = expCargoChoice.appendChild(
-				createDOM("div", { class: `ogl-option ogl-fleet-ship choice ogl-fleet-210 ${expProbe ? "" : "grey"}` })
+				createDOM("div", { class: expoClasses + `${ShipEnum.Probe} ${expProbe ? "" : "grey"}` })
 			);
 			probe.addEventListener("click", () => {
 				this.json.options.expeditionSendProbe = !this.json.options.expeditionSendProbe;
 				this.saveData();
-				document.querySelector(
-					".ogl-option.ogl-fleet-ship.choice.ogl-fleet-210"
-				).classList = `ogl-option ogl-fleet-ship choice ogl-fleet-210 ${this.json.options.expeditionSendProbe ? "" : "grey"
-					}`;
+				document.querySelector(`.ogl-option.ogl-fleet-ship.choice.ogl-fleet-${ShipEnum.Probe}`)
+					.classList = expoClasses + `${ShipEnum.Probe} ${this.json.options.expeditionSendProbe ? "" : "grey"}`;
 			});
+
 			let combat = expCargoChoice.appendChild(
-				createDOM("div", { class: `ogl-option ogl-fleet-ship choice ogl-fleet-218 ${expCombat ? "" : "grey"}` })
+				createDOM("div", { class: expoClasses + `${ShipEnum.Reaper} ${expCombat ? "" : "grey"}` })
 			);
 			combat.addEventListener("click", () => {
 				this.json.options.expeditionSendCombat = !this.json.options.expeditionSendCombat;
 				this.saveData();
-				document.querySelector(
-					".ogl-option.ogl-fleet-ship.choice.ogl-fleet-218"
-				).classList = `ogl-option ogl-fleet-ship choice ogl-fleet-218 ${this.json.options.expeditionSendCombat ? "" : "grey"
-					}`;
+				document.querySelector(`.ogl-option.ogl-fleet-ship.choice.ogl-fleet-${ShipEnum.Reaper}`)
+					.classList = expoClasses + `${ShipEnum.Reaper} ${this.json.options.expeditionSendCombat ? "" : "grey"}`;
 			});
+
 			let updateDefaultExpoShip = (id) => {
 				this.json.options.expFret = id;
 				this.saveData();
-				document.querySelector(".ogl-expedition").classList = `ogl-expedition ${this.json.options.expFret == 203 ? "largeCargo" : "smallCargo"
+				document.querySelector(".ogl-expedition").classList = `ogl-expedition ${this.json.options.expFret == ShipEnum.LargeCargo ? "largeCargo" : "smallCargo"
 					} `;
 			};
-			sc.addEventListener("click", () => updateDefaultExpoShip(202));
-			lc.addEventListener("click", () => updateDefaultExpoShip(203));
-			btnExpe.addEventListener("mouseover", () => this.tooltip(btnExpe, expCargoChoice, false, false, 750));
+			sc.addEventListener("click", () => updateDefaultExpoShip(ShipEnum.SmallCargo));
+			lc.addEventListener("click", () => updateDefaultExpoShip(ShipEnum.LargeCargo));
+
+			btnExpe.addEventListener("mouseover", () => this.tooltip(btnExpe, expCargoChoice, false, false, 750)); // todo: check timer thing
+
 			let coords = this.current.coords.split(":");
 			btnExpe.addEventListener("click", () => {
 				document.querySelector("#resetall").click();
@@ -11288,9 +11502,9 @@ class OGInfinity {
 				fleetDispatcher.mission = 15;
 				this.json.href = undefined;
 				this.saveData();
-				let expType = this.json.options.expFret || 203;
-				let expCount = expType == 202 ? maxPT : maxGT;
-				let prio = [218, 213, 211, 215, 207];
+				let expType = this.json.options.expFret || ShipEnum.LargeCargo;
+				let expCount = expType == ShipEnum.SmallCargo ? maxSC : maxGT;
+				let prio = [ShipEnum.Reaper, ShipEnum.Destroyer, ShipEnum.Bomber, ShipEnum.Battlecruiser, ShipEnum.Battleship];
 				let bigship = 0;
 				prio.forEach((shipID) => {
 					if (
@@ -11310,7 +11524,7 @@ class OGInfinity {
 					else if (this.json.options.expeditionSendCombat && ship.id == bigship)
 						expShips[1] = this.selectShips(ship.id, 1);
 					else if (this.json.options.expeditionSendProbe && ship.id == 210) expShips[2] = this.selectShips(ship.id, 1);
-					else if (ship.id == 219) expShips[3] = this.selectShips(ship.id, 1);
+					else if (ship.id == ShipEnum.Pathfinder) expShips[3] = this.selectShips(ship.id, 1);
 				});
 				let fadeText = "";
 				let noFade = true;
@@ -13293,22 +13507,22 @@ class OGInfinity {
 			report.apiKey = report.apiKey.split("'")[1];
 			report.pb = this.calcNeededShips({
 				moreFret: true,
-				fret: 210,
+				fret: ShipEnum.Probe,
 				resources: Math.ceil((report.total * report.loot) / 100),
 			});
 			report.pt = this.calcNeededShips({
 				moreFret: true,
-				fret: 202,
+				fret: ShipEnum.SmallCargo,
 				resources: Math.ceil((report.total * report.loot) / 100),
 			});
 			report.gt = this.calcNeededShips({
 				moreFret: true,
-				fret: 203,
+				fret: ShipEnum.LargeCargo,
 				resources: Math.ceil((report.total * report.loot) / 100),
 			});
 			report.pf = this.calcNeededShips({
 				moreFret: true,
-				fret: 219,
+				fret: ShipEnum.Pathfinder,
 				resources: Math.ceil((report.total * report.loot) / 100),
 			});
 			let resRatio = [report.total / report.metal, report.total / report.crystal, report.total / report.deut];
@@ -13410,19 +13624,20 @@ class OGInfinity {
 		header.appendChild(createDOM("th", { "data-filter": "DEF" }, this.translation.text(54)));
 
 		let cargoChoice = createDOM("div", { class: `ogk-cargo${this.json.ships[210].cargoCapacity ? " spio" : ""}` });
-		let sc = cargoChoice.appendChild(createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-202" }));
-		let lc = cargoChoice.appendChild(createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-203" }));
-		let pf = cargoChoice.appendChild(createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-219" }));
+		let sc = cargoChoice.appendChild(createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-" + ShipEnum.SmallCargo }));
+		let lc = cargoChoice.appendChild(createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-" + ShipEnum.LargeCargo }));
+		let pf = cargoChoice.appendChild(createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-" + ShipEnum.Pathfinder }));
 		let updateDefaultShip = (id) => {
 			this.json.options.spyFret = id;
 			this.saveData();
 			location.reload();
 		};
-		sc.addEventListener("click", () => updateDefaultShip(202));
-		lc.addEventListener("click", () => updateDefaultShip(203));
-		pf.addEventListener("click", () => updateDefaultShip(219));
-		if (this.json.ships[210].cargoCapacity != 0) {
-			let pb = cargoChoice.appendChild(createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-210" }));
+		sc.addEventListener("click", () => updateDefaultShip(ShipEnum.SmallCargo));
+		lc.addEventListener("click", () => updateDefaultShip(ShipEnum.LargeCargo));
+		pf.addEventListener("click", () => updateDefaultShip(ShipEnum.Pathfinder));
+
+		if (this.json.ships[ShipEnum.Probe].cargoCapacity != 0) {
+			let pb = cargoChoice.appendChild(createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-" + ShipEnum.Probe }));
 			pb.addEventListener("click", () => updateDefaultShip(210));
 		}
 		let cargo = header.appendChild(
@@ -13519,9 +13734,11 @@ class OGInfinity {
 			} else {
 				shipCount = 0;
 			}
-			if (this.json.options.spyFret == 202) shipCount = report.pt;
-			if (this.json.options.spyFret == 203) shipCount = report.gt;
-			if (this.json.options.spyFret == 219) shipCount = report.pf;
+
+			if (this.json.options.spyFret == ShipEnum.SmallCargo) shipCount = report.pt;
+			if (this.json.options.spyFret == ShipEnum.LargeCargo) shipCount = report.gt;
+			if (this.json.options.spyFret == ShipEnum.Pathfinder) shipCount = report.pf;
+
 			let fleetLink = `?page=ingame&component=fleetdispatch&galaxy=${splittedCoords[0]}&system=${splittedCoords[1]}&position=${splittedCoords[2]}&type=${report.type}&mission=1&am${shipId}=${shipCount}&oglMode=4`;
 			let ship = line.appendChild(createDOM("td"));
 			ship.appendChild(
@@ -13568,13 +13785,13 @@ class OGInfinity {
 			});
 			simulateBtn.addEventListener("click", () => {
 				let apiTechData = {
-					109: { level: this.json.technology[109] },
-					110: { level: this.json.technology[110] },
-					111: { level: this.json.technology[111] },
-					115: { level: this.json.technology[115] },
-					117: { level: this.json.technology[117] },
-					118: { level: this.json.technology[118] },
-					114: { level: this.json.technology[114] },
+					109: { level: this.json.technology[ResearchEnum.WeaponsTechnology] },
+					110: { level: this.json.technology[ResearchEnum.ShieldingTechnology] },
+					111: { level: this.json.technology[ResearchEnum.ArmorTechnology] },
+					115: { level: this.json.technology[ResearchEnum.CombustionDrive] },
+					117: { level: this.json.technology[ResearchEnum.ImpulseDrive] },
+					118: { level: this.json.technology[ResearchEnum.HyperspaceDrive] },
+					114: { level: this.json.technology[ResearchEnum.Astrophysics] },
 				};
 				let coords = this.current.coords.split(":");
 				let json = {
@@ -13884,7 +14101,9 @@ class OGInfinity {
 	}
 
 	calcAvailableFret(shipAmount) {
-		let fret = this.json.options.fret == 203 ? this.json.ships[203].cargoCapacity : this.json.ships[202].cargoCapacity;
+		let fret = this.json.options.fret == ShipEnum.LargeCargo ? 
+			this.json.ships[ShipEnum.LargeCargo].cargoCapacity : 
+			this.json.ships[ShipEnum.SmallCargo].cargoCapacity;
 		return shipAmount * fret;
 	}
 
@@ -14559,135 +14778,6 @@ class OGInfinity {
 			if (event.key == "Escape") {
 				if (this.json.welcome) return;
 				closeDialog();
-			}
-			
-			// Planet quick navigation
-			if (!$(document.activeElement).is("input") && (event.ctrlKey || event.metaKey) && event.code == "ArrowDown") {
-				let planetList = document.querySelectorAll('[id^="planet-"]');
-				let active = 0;
-				let isMoon = 0;
-				let idList = [];
-				planetList.forEach((planet, index) => {
-					idList.push([
-						planet.id.split("-")[1],
-						planet.querySelector(".moonlink") ? planet.querySelector(".moonlink").href.split("cp=")[1] : null,
-					]);
-					if (planet.classList.contains("hightlightMoon")) {
-						isMoon = 1;
-						active = index;
-					}
-					if (planet.classList.contains("hightlightPlanet")) {
-						active = index;
-					}
-				});
-
-				let nextIndex = active + 1 < idList.length ? active + 1 : 0;
-				let nextId = idList[nextIndex][isMoon];
-				if (isMoon) {
-					if (document.querySelectorAll(".moonlink").length == 1) return;
-					while (!idList[nextIndex][isMoon]) {
-						nextIndex = nextIndex + 1 < idList.length ? nextIndex + 1 : 0;
-					}
-				}
-				let url = new URL(window.location.href);
-				url.searchParams.delete("cp");
-				url.searchParams.append("cp", nextId);
-
-				event.preventDefault();
-				event.stopPropagation();
-				window.location.href = url;
-			}			
-			if (!$(event.target).is("input") && (event.ctrlKey || event.metaKey) && event.code == "ArrowUp") {
-				let planetList = document.querySelectorAll('[id^="planet-"]');
-				let active = 0;
-				let isMoon = 0;
-				let idList = [];
-				planetList.forEach((planet, index) => {
-					idList.push([
-						planet.id.split("-")[1],
-						planet.querySelector(".moonlink") ? planet.querySelector(".moonlink").href.split("cp=")[1] : null,
-					]);
-					if (planet.classList.contains("hightlightMoon")) {
-						isMoon = 1;
-						active = index;
-					}
-					if (planet.classList.contains("hightlightPlanet")) {
-						active = index;
-					}
-				});
-
-				let nextIndex = active > 0 ? active - 1 : idList.length - 1;
-				let nextId = idList[nextIndex][isMoon];
-				if (isMoon) {
-					if (document.querySelectorAll(".moonlink").length == 1) return;
-					while (!idList[nextIndex][isMoon]) {
-						nextIndex = nextIndex > 0 ? nextIndex - 1 : idList.length - 1;
-					}
-				}
-				let url = new URL(window.location.href);
-				url.searchParams.delete("cp");
-				url.searchParams.append("cp", nextId);
-				event.preventDefault();
-				event.stopPropagation();
-				window.location.href = url;
-			}
-			if ((event.ctrlKey || event.metaKey) && event.code == "ArrowRight") {
-				let planetList = document.querySelectorAll('[id^="planet-"]');
-				let active = 0;
-				let isMoon = 0;
-				let idList = [];
-				planetList.forEach((planet, index) => {
-					idList.push([
-						planet.id.split("-")[1],
-						planet.querySelector(".moonlink") ? planet.querySelector(".moonlink").href.split("cp=")[1] : null,
-					]);
-					if (planet.classList.contains("hightlightMoon")) {
-						isMoon = 1;
-						active = index;
-					}
-					if (planet.classList.contains("hightlightPlanet")) {
-						active = index;
-					}
-				});
-				if (isMoon || !idList[active][1]) return;
-				let nextId = idList[active][1];
-
-				let url = new URL(window.location.href);
-				url.searchParams.delete("cp");
-				url.searchParams.append("cp", nextId);
-
-				event.preventDefault();
-				event.stopPropagation();
-				window.location.href = url;
-			}
-			if ((event.ctrlKey || event.metaKey) && event.code == "ArrowLeft") {
-				let planetList = document.querySelectorAll('[id^="planet-"]');
-				let active = 0;
-				let isMoon = 0;
-				let idList = [];
-				planetList.forEach((planet, index) => {
-					idList.push([
-						planet.id.split("-")[1],
-						planet.querySelector(".moonlink") ? planet.querySelector(".moonlink").href.split("cp=")[1] : null,
-					]);
-					if (planet.classList.contains("hightlightMoon")) {
-						isMoon = 1;
-						active = index;
-					}
-					if (planet.classList.contains("hightlightPlanet")) {
-						active = index;
-					}
-				});
-				if (!isMoon) return;
-				let nextId = idList[active][0];
-
-				let url = new URL(window.location.href);
-				url.searchParams.delete("cp");
-				url.searchParams.append("cp", nextId);
-
-				event.preventDefault();
-				event.stopPropagation();
-				window.location.href = url;
 			}
 		});
 
@@ -16512,7 +16602,7 @@ class OGInfinity {
 	checkRedirect() {
 		let url = new URL(window.location.href);
 		let technoDetails = url.searchParams.get("technoDetails");
-		[202, 203, 219, 209, 212].forEach((id) => {
+		[ShipEnum.SmallCargo, ShipEnum.LargeCargo, ShipEnum.Pathfinder, ShipEnum.Recycler, ShipEnum.SolarSatellite].forEach((id) => {
 			if (url.searchParams.has(`techId${id}`)) {
 				let needed = Number(url.searchParams.get(`techId${id}`));
 				waitForElementToDisplay(`.hasDetails[data-technology='${id}'] span`, () => {
@@ -16684,14 +16774,14 @@ class OGInfinity {
 						}`,
 				})
 			);
-			let sc = cargoChoice.appendChild(createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-202" }));
-			let lc = cargoChoice.appendChild(createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-203" }));
-			let pf = cargoChoice.appendChild(createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-219" }));
-			let tr = cargoChoice.appendChild(createDOM("div", { class: "ogl-option choice-mission-icon ogl-mission-3" }));
-			let dp = cargoChoice.appendChild(createDOM("div", { class: "ogl-option choice-mission-icon ogl-mission-4" }));
+			let sc = cargoChoice.appendChild(createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-" + ShipEnum.SmallCargo }));
+			let lc = cargoChoice.appendChild(createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-" + ShipEnum.LargeCargo }));
+			let pf = cargoChoice.appendChild(createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-" + ShipEnum.Pathfinder }));
+			let tr = cargoChoice.appendChild(createDOM("div", { class: "ogl-option choice-mission-icon ogl-mission-" + MissionEnum.Transport }));
+			let dp = cargoChoice.appendChild(createDOM("div", { class: "ogl-option choice-mission-icon ogl-mission-" + MissionEnum.Deployment }));
 			let tgt = cargoChoice.appendChild(
 				createDOM("div", {
-					class: `ogl-option choice-target ${this.json.options.collect.target.type == 3 ? "moon" : "planet"}`,
+					class: `ogl-option choice-target ${this.json.options.collect.target.type == MissionEnum.Transport ? "moon" : "planet"}`,
 				})
 			);
 
@@ -16702,33 +16792,37 @@ class OGInfinity {
 				if (classList.contains(remove)) classList.remove(remove);
 				if (!classList.contains(add)) classList.add(add);
 			};
+
 			let updateDefaultCollectShip = (id) => {
 				this.json.options.collect.ship = id;
 				this.saveData();
-				document.querySelector(".ogl-collect").classList = `ogl-collect ${this.json.options.collect.mission == 4 ? "statio" : ""
-					} ${this.json.options.collect.ship == 202
+				document.querySelector(".ogl-collect").classList = `ogl-collect ${this.json.options.collect.mission == MissionEnum.Deployment ? "statio" : ""
+					} ${this.json.options.collect.ship == ShipEnum.SmallCargo
 						? "smallCargo"
-						: this.json.options.collect.ship == 219
+						: this.json.options.collect.ship == ShipEnum.Pathfinder
 							? "pathFinder"
 							: "largeCargo"
 					}`;
 			};
+
 			let updateDefaultCollectMission = (mission) => {
 				this.json.options.collect.mission = mission;
 				this.saveData();
-				document.querySelector(".ogl-collect").classList = `ogl-collect ${this.json.options.collect.mission == 4 ? "statio" : ""
-					} ${this.json.options.collect.ship == 202
+				document.querySelector(".ogl-collect").classList = `ogl-collect ${this.json.options.collect.mission == MissionEnum.Deployment ? "statio" : ""
+					} ${this.json.options.collect.ship == ShipEnum.SmallCargo
 						? "smallCargo"
-						: this.json.options.collect.ship == 219
+						: this.json.options.collect.ship == ShipEnum.Pathfinder
 							? "pathFinder"
 							: "largeCargo"
 					}`;
 			};
-			sc.addEventListener("click", () => updateDefaultCollectShip(202));
-			lc.addEventListener("click", () => updateDefaultCollectShip(203));
-			pf.addEventListener("click", () => updateDefaultCollectShip(219));
-			tr.addEventListener("click", () => updateDefaultCollectMission(3));
-			dp.addEventListener("click", () => updateDefaultCollectMission(4));
+
+			sc.addEventListener("click", () => updateDefaultCollectShip(ShipEnum.SmallCargo));
+			lc.addEventListener("click", () => updateDefaultCollectShip(ShipEnum.LargeCargo));
+			pf.addEventListener("click", () => updateDefaultCollectShip(ShipEnum.Pathfinder));
+			tr.addEventListener("click", () => updateDefaultCollectMission(MissionEnum.Transport));
+			dp.addEventListener("click", () => updateDefaultCollectMission(MissionEnum.Deployment));
+
 			tgt.addEventListener("click", () => {
 				let container = this.openPlanetList(
 					(planet) => {
@@ -16743,6 +16837,7 @@ class OGInfinity {
 				this.popup(false, container);
 				this.saveData();
 			});
+
 			btnCollect.addEventListener("mouseover", () => this.tooltip(btnCollect, cargoChoice, false, false, 500));
 			btnCollect.addEventListener("click", () => {
 				document.querySelector("#resetall").click();
@@ -16823,10 +16918,11 @@ class OGInfinity {
 			let cargoShipsOnPlanet = {};
 			let cargoIds = [];
 			if (preveredShipId) cargoIds.push(preveredShipId);
-			[202, 203, 219, 209].forEach((id) => {
+			[ShipEnum.SmallCargo, ShipEnum.LargeCargo, ShipEnum.Pathfinder, ShipEnum.Recycler].forEach((id) => {
 				if (!cargoIds.includes(id)) cargoIds.push(id);
 			});
-			if (this.json.ships[210].cargoCapacity != 0 && !cargoIds.includes(210)) cargoIds.push(210);
+			// todo: check if this testing of probes with cargo can be centralized and doesnt have to be done in like 20 places all over the place...
+			if (this.json.ships[ShipEnum.Probe].cargoCapacity != 0 && !cargoIds.includes(ShipEnum.Probe)) cargoIds.push(ShipEnum.Probe);
 			fleetDispatcher.shipsOnPlanet.forEach((ship) => {
 				if (cargoIds.includes(ship.id)) cargoShipsOnPlanet[ship.id] = ship.number || 0;
 			});
