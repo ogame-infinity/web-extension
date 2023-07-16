@@ -1455,7 +1455,6 @@ const ShipEnum = {
 	Deathstar: 214,
 	Reaper: 218,
 	Pathfinder: 219,
-
 	SmallCargo: 202,
 	LargeCargo: 203,
 	ColonyShip: 208,
@@ -2669,6 +2668,7 @@ class OGInfinity {
 							energyDiv = document.querySelector(".energy_production span");
 							base = energyDiv.querySelector("span").getAttribute("data-value");
 						}
+
 						titleDiv.appendChild(that.createDOM("div", {}, "&#8205;"));
 						titleDiv.appendChild(createDOM("div", {}, that.translation.text(40)));
 						titleDiv.appendChild(createDOM("div", {}, that.translation.text(39)));
@@ -3101,12 +3101,14 @@ class OGInfinity {
 		box.appendChild(createDOM("h1", {}, this.translation.text(29)));
 		let fleet = box.appendChild(createDOM("div", { class: "ogk-bhole-grid" }));
 		let inputs = [];
-		[Object.values(ShipEnum)].forEach((id) => { // todo: replace by "CombatShips"
+
+		Object.values(ShipEnum).forEach((id) => { // todo: replace by "CombatShips"
 			// Exclude Solar Sats and Crawler 
 			if (id == ShipEnum.SolarSatellite ||
 				id == ShipEnum.Crawler) {
 				return;
 			}
+
 			fleet.appendChild(createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-fleet-" + id }));
 			let input = fleet.appendChild(
 				createDOM("input", {
@@ -3669,14 +3671,6 @@ class OGInfinity {
 			this.scan();
 		};
 
-		// let inter = setInterval(() => {
-		//   if (document.readyState == "complete" && !document.querySelector(".ogl-colors")) {
-		//     clearInterval(inter);
-		//     console.log("clear");
-		//     callback(galaxy, system);
-		//   }
-		// }, 20);
-
 		let dc = displayContentGalaxy;
 		displayContentGalaxy = (b) => {
 			dc(b);
@@ -3724,7 +3718,6 @@ class OGInfinity {
 					(playerDiv && playerDiv.getAttribute("rel") && playerDiv.getAttribute("rel").replace("player", "")) || 99999;
 				let coords = galaxy + ":" + system + ":" + Number(index + 1);
 				let colors = createDOM("div", { class: "ogl-colors", "data-coords": coords, "data-context": "galaxy" });
-				//console.log('Coord: ' + coords + ' parent:' + colors + ' Id:' + id + ' Moon:' + moon);
 				element.insertBefore(colors, element.firstChild);
 				this.addMarkerUI(coords, colors, id, moon);
 			});
@@ -3737,7 +3730,6 @@ class OGInfinity {
 			let playerDiv = element.querySelector(".cellPlayerName > span.tooltipRel");
 			let id = playerDiv && playerDiv.getAttribute("rel") ? playerDiv.getAttribute("rel").replace("player", "") : null;
 			if (this.json.markers[coords]) {
-				//console.log('JSONID:' + this.json.markers[coords].id + ' Id:' + id);
 				if (!id || this.json.markers[coords].id != id) {
 					delete this.json.markers[coords];
 					this.markedPlayers = this.getMarkedPlayers(this.json.markers);
@@ -3747,7 +3739,6 @@ class OGInfinity {
 						document.querySelector(`.ogl-target-list .ogl-stalkPlanets [data-coords="${coords}"]`).remove();
 					}
 				} else {
-					//console.log('marked');
 					element.classList.add("ogl-marked");
 					element.setAttribute("data-marked", this.json.markers[coords].color);
 					this.json.markers[coords].moon = element.querySelector(".cellMoon .tooltipRel") ? true : false;
@@ -3829,7 +3820,6 @@ class OGInfinity {
 		// Stalk = planet list of  pinned target
 		dataHelper.getPlayer(stalk.getAttribute("player-id")).then((player) => {
 			player.planets.forEach((planet) => {
-				//console.log(player.planets);
 				let olds = stalk.querySelectorAll("a");
 				let max;
 				let maxCoords;
@@ -3850,7 +3840,6 @@ class OGInfinity {
 				});
 				if (!found) {
 					$(max).after(this.renderPlanet(planet.coords, false, true, false));
-					//console.log(planet.coords);
 				}
 			});
 			this.highlightTarget();
@@ -4114,7 +4103,7 @@ class OGInfinity {
 		for (let id in flying) flyingCount += flying[id];
 		let fleetCount = flyingCount;
 		
-		[Object.values(ShipEnum)].forEach((id) => {
+		Object.values(ShipEnum).forEach((id) => {
 			// Exclude Solar Sats and Crawler 
 			if (id == ShipEnum.SolarSatellite ||
 				id == ShipEnum.Crawler) {
@@ -4949,8 +4938,8 @@ class OGInfinity {
 		let cyclos = 0;
 		let totalSum = 0;
 		let transport = 0;
-		
-		[Object.values(ShipEnum)].forEach((id) => {
+
+		Object.values(ShipEnum).forEach((id) => {
 			// Exclude Solar Sats and Crawler 
 			if (id == ShipEnum.SolarSatellite ||
 				id == ShipEnum.Crawler) {
@@ -4959,12 +4948,19 @@ class OGInfinity {
 
 			let flyingCount = flying.fleet[id];
 			let sum = 0;
-			if (flyingCount) sum = flyingCount;
+			if (flyingCount)
+				sum = flyingCount;
+
 			this.json.empire.forEach((planet) => {
-				if (planet) sum += Number(planet[id]);
-				if (planet.moon) sum += Number(planet.moon[id]);
+				if (planet)
+					sum += Number(planet[id]);
+				if (planet.moon)
+					sum += Number(planet.moon[id]);
 			});
-			transport += sum * this.json.ships[id].cargoCapacity;
+
+			if (this.json.ships[id] != null)
+				transport += sum * this.json.ships[id].cargoCapacity;
+			
 			totalSum += sum;
 			let shipDiv = fleet.appendChild(createDOM("div"));
 			shipDiv.appendChild(createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-fleet-" + id }));
@@ -4974,11 +4970,13 @@ class OGInfinity {
 			shipDiv.appendChild(createDOM("span", {}, toFormatedNumber(sum)));
 			totalFleet[id] = sum;
 		});
+
 		let fleetInfo = fleetDetail.appendChild(createDOM("div", { class: "ogk-fleet-info" }));
 		let apiBtn = fleetInfo.appendChild(createDOM("span", { class: "show_fleet_apikey" }));
 		apiBtn.addEventListener("click", () => {
 			this.APIStringToClipboard(totalFleet);
 		});
+		
 		fleetInfo.appendChild(
 			this.createDOM(
 				"span",
@@ -5761,7 +5759,7 @@ class OGInfinity {
 
 	getFleetCost(ships) {
 		let fleetRes = [0, 0, 0];
-		[Object.values(ShipEnum)].forEach((id) => {
+		Object.values(ShipEnum).forEach((id) => {
 			// Exclude Solar Sats and Crawler 
 			if (id == ShipEnum.SolarSatellite ||
 				id == ShipEnum.Crawler) {
@@ -5904,7 +5902,7 @@ class OGInfinity {
 				let dateStr = getFormatedDate(new Date(d).getTime(), "[d].[m].[y]");
 				if (sums[dateStr]) {
 					weekSums.fuel += sums[dateStr].fuel;
-					[Object.values(ShipEnum)].forEach((id) => {
+					Object.values(ShipEnum).forEach((id) => {
 						// Exclude Solar Sats and Crawler 
 						if (id == ShipEnum.SolarSatellite ||
 							id == ShipEnum.Crawler) {
@@ -6283,7 +6281,7 @@ class OGInfinity {
 				let dateStr = getFormatedDate(new Date(d).getTime(), "[d].[m].[y]");
 				if (sums[dateStr]) {
 					weekSums.fuel += sums[dateStr].fuel;
-					[Object.values(ShipEnum)].forEach((id) => {
+					Object.values(ShipEnum).forEach((id) => {
 						// Exclude Solar Sats and Crawler, Colony Ship and Recycler 
 						if (id == ShipEnum.SolarSatellite ||
 							id == ShipEnum.Crawler) {
@@ -6494,7 +6492,7 @@ class OGInfinity {
 		let fleet = box.appendChild(createDOM("div", { class: "ogk-bhole-grid" }));
 		let inputs = [];
 
-		[Object.values(ShipEnum)].forEach((id) => {
+		Object.values(ShipEnum).forEach((id) => {
 			// Exclude Solar Sats and Crawler, Colony Ship and Recycler 
 			if (id == ShipEnum.SolarSatellite ||
 				id == ShipEnum.Crawler ||
@@ -6527,7 +6525,7 @@ class OGInfinity {
 		let fleetDetail = createDOM("div", { class: "ogk-box" });
 		let fleet = fleetDetail.appendChild(createDOM("div", { class: "ogk-fleet" }));
 
-		[Object.values(ShipEnum)].forEach((id) => {
+		Object.values(ShipEnum).forEach((id) => {
 			// Exclude Solar Sats and Crawler, Colony Ship, Recycler and Deathstar
 			if (id == ShipEnum.SolarSatellite || 
 				id == ShipEnum.Crawler || 
@@ -8704,7 +8702,7 @@ class OGInfinity {
 		table.appendChild(row);
 		let flying = this.getFlyingRes();
 
-		[Object.values(ShipEnum)].forEach((id) => {
+		Object.values(ShipEnum).forEach((id) => {
 			// Exclude Solar Sats and Crawler
 			if (id == ShipEnum.SolarSatellite || 
 				id == ShipEnum.Crawler) {
@@ -13757,7 +13755,6 @@ class OGInfinity {
 				if (player.id) {
 					this.stalk(link, player);
 				}
-				//console.log(' Coords:' + report.coords + ' comp:'  + colors + ' player:' +  player.id + ' Lune:' +moon )
 				this.addMarkerUI(report.coords, colors, player.id, moon);
 				if (this.json.markers[report.coords]) {
 					line.classList.add("ogl-marked");
@@ -13928,7 +13925,6 @@ class OGInfinity {
 		})
 			.then((response) => response.json())
 			.then((responseData) => {
-				//console.log(responseData);
 				token ? (token = responseData.newAjaxToken) : null;
 				return responseData.newAjaxToken;
 			})
@@ -14536,9 +14532,6 @@ class OGInfinity {
 	}
 
 	research(id, lvl, technocrat, explorer, acceleration, object = null) {
-		// console.log(
-		//   `research(id=${id}, lvl=${lvl}, technocrat=${technocrat}, explorer=${explorer}, acceleration=${acceleration}, object=${object})`
-		// );
 		let labLvl = 1;
 		let timeFactor = 1;
 		let costFactor = 1;
@@ -15244,13 +15237,13 @@ class OGInfinity {
 			let data = fleetDispatcher.fleetHelper.shipsData;
 			for (let id in data) {
 				let infos = `
-		  <div class="ogl-fleetInfo">
-		  ${data[id].name}
-		  <hr>
-		  <div><span>${this.translation.text(47)} </span>${toFormatedNumber(data[id].cargoCapacity, 0)}</div>
-		  <div><span>${this.translation.text(48)} </span>${toFormatedNumber(data[id].speed, 0)}</div>
-		  <div><span>${this.translation.text(49)} </span>${toFormatedNumber(data[id].fuelConsumption, 0)}</div>
-		  </div>`;
+					<div class="ogl-fleetInfo">
+					${data[id].name}
+					<hr>
+					<div><span>${this.translation.text(47)} </span>${toFormatedNumber(data[id].cargoCapacity, 0)}</div>
+					<div><span>${this.translation.text(48)} </span>${toFormatedNumber(data[id].speed, 0)}</div>
+					<div><span>${this.translation.text(49)} </span>${toFormatedNumber(data[id].fuelConsumption, 0)}</div>
+					</div>`;
 				let ship = document.querySelector(`.technology[data-technology="${id}"]`);
 				if (ship) {
 					ship.setAttribute("data-title", infos);
@@ -16062,7 +16055,6 @@ class OGInfinity {
 	}
 
 	roiLfResearch(technoId, baselvl, tolvl, object) {
-		// console.log(`roiLfResearch(${technoId}, ${baselvl}, ${tolvl}, ${object})`);
 		if (!this.json.lifeFormProductionBoostFromResearch[technoId]) return;
 		let techBonusFromLifeformLevel = this.json.selectedLifeforms
 			? 0.001 * this.json.selectedLifeforms[object.id].level
@@ -16093,7 +16085,6 @@ class OGInfinity {
 	}
 
 	roiLfBuilding(technoId, baselvl, tolvl, object) {
-		// console.log(`roiLfBuilding(${technoId}, ${baselvl}, ${tolvl}, ${object})`);
 		if (!this.json.lifeFormProductionBoostFromBuildings[technoId]) return;
 		let bonus = this.json.lifeFormProductionBoostFromBuildings[technoId].map((x) => (x / 100) * (tolvl - baselvl + 1));
 		let tradeRate = this.json.options.tradeRate;
