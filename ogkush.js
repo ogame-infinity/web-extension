@@ -1738,7 +1738,7 @@ class OGInfinity {
 		 * General Class for all builds?
 		 * Defenses
 		 * Shipyard
-		 * Mines
+		 * Mines - caching of production calculations, so this numbers can be fetched anytime - not local storage, something temporarily
 		 * Facilities
 		 * Research
 		 * Lifeform Building
@@ -1781,10 +1781,11 @@ class OGInfinity {
 				this.json.resNames[5] = resourcesBar.resources.population.tooltip.split("|")[0];
 			}
 		}
+
 		if (this.page == "fleetdispatch") {
 			this.json.shipNames = {};
 			for (let id in fleetDispatcher.fleetHelper.shipsData) {
-				this.json.shipNames[fleetDispatcher.fleetHelper.shipsData[id].name] = id;
+				this.json.shipNames[fleetDispatcher.fleetHelper.shipsData[id].name] = id; // todo: remove and make a static list with ids and names?
 				this.json.ships[id] = {
 					name: fleetDispatcher.fleetHelper.shipsData[id].name,
 					cargoCapacity: fleetDispatcher.fleetHelper.shipsData[id].cargoCapacity,
@@ -2648,8 +2649,8 @@ class OGInfinity {
 					let timeDiv = document.querySelector(".build_duration time");
 					let baseTime = getTimeFromString(timeDiv.getAttribute("datetime"));
 
-					if (Object.values(ShipEnum).includes(technologyId) || 
-						Object.values(DefenseEnum).includes(technologyId)) {							
+					if (Object.values(ShipEnum).includes(technologyId) ||
+						Object.values(DefenseEnum).includes(technologyId)) {
 						let energyDiv;
 						let base;
 
@@ -2830,7 +2831,7 @@ class OGInfinity {
 								that.sideLock(true);
 							};
 						};
-						
+
 						updateShipDetails(1);
 						document.querySelector(".maximum") &&
 							document.querySelector(".maximum").addEventListener("click", () => {
@@ -4077,7 +4078,7 @@ class OGInfinity {
 		let flying = this.getFlyingRes().fleet;
 		for (let id in flying) flyingCount += flying[id];
 		let fleetCount = flyingCount;
-		
+
 		Object.values(ShipEnum).forEach((id) => {
 			// Exclude Solar Sats and Crawler 
 			if (id == ShipEnum.SolarSatellite ||
@@ -4935,7 +4936,7 @@ class OGInfinity {
 
 			if (this.json.ships[id] != null)
 				transport += sum * this.json.ships[id].cargoCapacity;
-			
+
 			totalSum += sum;
 			let shipDiv = fleet.appendChild(createDOM("div"));
 			shipDiv.appendChild(createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-fleet-" + id }));
@@ -4951,7 +4952,7 @@ class OGInfinity {
 		apiBtn.addEventListener("click", () => {
 			this.APIStringToClipboard(totalFleet);
 		});
-		
+
 		fleetInfo.appendChild(
 			this.createDOM(
 				"span",
@@ -5134,15 +5135,18 @@ class OGInfinity {
 	}
 
 	cleanupMessages() {
+		// Delete expo messages older than 5 days
 		for (let [id, result] of Object.entries(this.json.expeditions)) {
 			if (!result.favorited && new Date() - new Date(result.date) > 5 * 24 * 60 * 60 * 1e3) {
 				delete this.json.expeditions[id];
 			}
 		}
+		// Delete combat messages older than 10 days
 		for (let [id, result] of Object.entries(this.json.combats)) {
 			if (!result.favorited && new Date() - new Date(result.timestamp) > 10 * 24 * 60 * 60 * 1e3) {
 			}
 		}
+		// Delete harvest messages older than 5 days
 		for (let [id, result] of Object.entries(this.json.harvests)) {
 			if (new Date() - new Date(result.date) > 5 * 24 * 60 * 60 * 1e3) {
 				delete this.json.harvests[id];
@@ -5160,27 +5164,35 @@ class OGInfinity {
 	}
 
 	expeditionMessages() {
+		console.log("fetch messages");
+
 		let normalized = ["Metal", "Crystal", "Deuterium", "AM"];
 		let ressources = this.json.resNames;
 		if (!this.combats) this.combats = {};
 		if (!this.expeditionsIds) this.expeditionsIds = {};
-		let cyclosName = "";
+
+		let recyclerName = "";
 		for (let i in this.json.shipNames) {
-			if (this.json.shipNames[i] == 209) cyclosName = i;
+			if (this.json.shipNames[i] == ShipEnum.Recycler)
+				recyclerName = i;
 		}
+
 		if (this.page == "messages") {
-			this.json.options.timeZone &&
-				document.querySelectorAll("div li.msg").forEach((msg) => {
-					if (!msg.querySelector(".msg_date")) return;
-					let date = msg.querySelector(".msg_date").textContent;
-					if (!msg.querySelector(".msg_date").classList.contains(".ogl-ready")) {
-						msg.querySelector(".msg_date").classList.add(".ogl-ready");
-						msg.querySelector(".msg_date").textContent = getFormatedDate(
-							this.dateStrToDate(date).getTime() + this.json.timezoneDiff * 1e3,
-							"[d].[m].[Y] [H]:[i]:[s]"
-						);
-					}
-				});
+			this.json.options.timeZone && document.querySelectorAll("div li.msg").forEach((msg) => {
+				if (!msg.querySelector(".msg_date"))
+					return;
+
+				let date = msg.querySelector(".msg_date").textContent;
+				if (!msg.querySelector(".msg_date").classList.contains(".ogl-ready")) {
+					msg.querySelector(".msg_date").classList.add(".ogl-ready");
+					msg.querySelector(".msg_date").textContent = getFormatedDate(
+						this.dateStrToDate(date).getTime() + this.json.timezoneDiff * 1e3,
+						"[d].[m].[Y] [H]:[i]:[s]"
+					);
+				}
+			});
+
+			// Check expedition tab
 			if (document.querySelector("li[id=subtabs-nfFleet22].ui-state-active")) {
 				let id = document.querySelector("li[id=subtabs-nfFleet22].ui-state-active").getAttribute("aria-controls");
 				document.querySelectorAll(`div[id=${id}] li.msg`).forEach((msg) => {
@@ -5201,17 +5213,11 @@ class OGInfinity {
 								}
 								if (this.json.expeditions[id].result == "Unknown") {
 									msg.querySelector(".ogl-unknown-warning") ||
-										msg
-											.querySelector(".msg_actions")
-											.appendChild(
-												this.createDOM(
-													"div",
-													{ class: "ogl-unknown-warning" },
-													`${this.translation.text(
-														112
-													)} <a href='https://discord.gg/8Y4SWup'> ${this.translation.text(113)}</a>`
-												)
-											);
+										msg.querySelector(".msg_actions")
+											.appendChild(this.createDOM(
+												"div", { class: "ogl-unknown-warning" },
+												`${this.translation.text(112)} <a href='https://discord.gg/8Y4SWup'> ${this.translation.text(113)}</a>`
+											));
 								} else if (this.json.expeditions[id].busy) {
 									msg.querySelector(".ogl-warning") ||
 										msg
@@ -5243,12 +5249,14 @@ class OGInfinity {
 										fuel: 0,
 									};
 								}
+
 								let objectNode = content.querySelector("a");
 								if (objectNode) {
 									this.json.result = "Object";
 									this.json["object"] = objectNode.textContent;
 									type = "Object";
 								}
+
 								ressources.forEach((res, i) => {
 									if (textContent.includes(res)) {
 										let regex = new RegExp("[0-9]{1,3}(.[0-9]{1,3})*", "gm");
@@ -5259,6 +5267,7 @@ class OGInfinity {
 										}
 									}
 								});
+
 								let fleetMatches = textContent.match(/.*: [1-9].*/gm);
 								fleetMatches &&
 									!normalized.includes(type) &&
@@ -5355,6 +5364,8 @@ class OGInfinity {
 					}
 				});
 			}
+
+			// Check combat report tab
 			if (document.querySelector("li[id=subtabs-nfFleet21].ui-state-active")) {
 				let id = document.querySelector("li[id=subtabs-nfFleet21].ui-state-active").getAttribute("aria-controls");
 				document.querySelectorAll(`div[id=${id}] li.msg`).forEach((msg, ix) => {
@@ -5481,8 +5492,14 @@ class OGInfinity {
 					}, ix * 50);
 				});
 			}
+
+			// Check "other" tab for recycler reports
 			if (document.querySelector("li[id=subtabs-nfFleet24].ui-state-active")) {
+
+				console.log("fetch other messages");
+
 				let id = document.querySelector("li[id=subtabs-nfFleet24].ui-state-active").getAttribute("aria-controls");
+				// Iterate through every message in "others"
 				document.querySelectorAll(`div[id=${id}] li.msg`).forEach((msg) => {
 					let id = msg.getAttribute("data-msg-id");
 					if (id in this.json.harvests) {
@@ -5497,6 +5514,7 @@ class OGInfinity {
 						}
 						return;
 					}
+
 					let date = msg.querySelector(".msg_date").textContent;
 					date = date.split(" ")[0].slice(0, -4) + date.split(" ")[0].slice(-2);
 					let coords = msg.querySelector(".msg_title a");
@@ -5507,16 +5525,18 @@ class OGInfinity {
 						let met = fromFormatedNumber(matches[matches.length - 2]);
 						let cri = fromFormatedNumber(matches[matches.length - 1]);
 						let combat = false;
+
 						if (coords.split(":")[2] == 16) {
 							msg.classList.add("ogk-expedition");
 						} else {
-							if (content.includes(cyclosName)) {
+							if (content.includes(recyclerName)) {
 								msg.classList.add("ogk-harvest");
 							} else {
 								msg.classList.add("ogk-harvest-combat");
 								combat = true;
 							}
 						}
+
 						if (coords.split(":")[2] == 16) {
 							if (!this.json.expeditionSums[date]) {
 								this.json.expeditionSums[date] = {
@@ -5530,7 +5550,7 @@ class OGInfinity {
 								};
 							}
 							this.json.expeditionSums[date].harvest[0] += met;
-							this.json.expeditionSums[date].harvest[1] += cri;
+							this.json.expeditionSums[date].harvest[1] += cri; // todo: what about deut?
 						} else {
 							if (!this.json.combatsSums[date]) {
 								this.json.combatsSums[date] = {
@@ -5559,9 +5579,8 @@ class OGInfinity {
 					}
 				});
 			}
-			setTimeout(() => {
-				this.expeditionMessages();
-			}, 100);
+
+			//setTimeout(() => { this.expeditionMessages(); }, 100); // todo: check why this has to be a timer - define listener for tab change
 		}
 		return;
 	}
@@ -6502,10 +6521,10 @@ class OGInfinity {
 
 		Object.values(ShipEnum).forEach((id) => {
 			// Exclude Solar Sats and Crawler, Colony Ship, Recycler and Deathstar
-			if (id == ShipEnum.SolarSatellite || 
-				id == ShipEnum.Crawler || 
-				id == ShipEnum.ColonyShip || 
-				id == ShipEnum.Recycler || 
+			if (id == ShipEnum.SolarSatellite ||
+				id == ShipEnum.Crawler ||
+				id == ShipEnum.ColonyShip ||
+				id == ShipEnum.Recycler ||
 				id == ShipEnum.Deathstar) {
 				return;
 			}
@@ -8679,7 +8698,7 @@ class OGInfinity {
 
 		Object.values(ShipEnum).forEach((id) => {
 			// Exclude Solar Sats and Crawler
-			if (id == ShipEnum.SolarSatellite || 
+			if (id == ShipEnum.SolarSatellite ||
 				id == ShipEnum.Crawler) {
 				return;
 			}
@@ -8793,7 +8812,7 @@ class OGInfinity {
 			);
 		});
 
-		row.appendChild(createDOM("th", { class: "ogl-sum-symbol" }, "Σ"));		
+		row.appendChild(createDOM("th", { class: "ogl-sum-symbol" }, "Σ"));
 		table.appendChild(row);
 
 		Object.keys(shipsInfo).forEach((id) => {
@@ -9582,12 +9601,13 @@ class OGInfinity {
 					document.querySelector("#galaxy").value + ":" + document.querySelector("#system").value + ":" + pos;
 				let fuel = fleetDispatcher.getConsumption();
 				let dateStr = getFormatedDate(new Date().getTime(), "[d].[m].[y]");
-				let fullCoords = coords;
+
 				if (fleetDispatcher.targetPlanet.type == fleetDispatcher.fleetHelper.PLANETTYPE_MOON) {
 					coords += "M";
 				} else if (fleetDispatcher.targetPlanet.type == fleetDispatcher.fleetHelper.PLANETTYPE_PLANET) {
 					coords += "P";
 				}
+
 				let object = this.json.empire[this.currentLocation.index];
 				object = this.currentLocation.isMoon ? object.moon : object;
 				object.metal = fleetDispatcher.metalOnPlanet - fleetDispatcher.cargoMetal;
@@ -10221,7 +10241,7 @@ class OGInfinity {
 						: '<div class="ogl-fleetSpeed">\n        <div data-step="1">10</div>\n        <div data-step="2">20</div>\n        <div data-step="3">30</div>\n        <div data-step="4">40</div>\n        <div data-step="5">50</div>\n        <div data-step="6">60</div>\n        <div data-step="7">70</div>\n        <div data-step="8">80</div>\n        <div data-step="9">90</div>\n        <div class="ogl-active" data-step="10">100</div>\n        </div>'
 				)
 			);
-			
+
 			$(".ogl-fleetSpeed div").on("click", (event) => {
 				$(".ogl-fleetSpeed div").removeClass("ogl-active");
 				fleetDispatcher.speedPercent = event.target.getAttribute("data-step");
@@ -10590,7 +10610,7 @@ class OGInfinity {
 			galaxyInput.addEventListener("keyup", myEfficientFn);
 			systemInput.addEventListener("keyup", myEfficientFn);
 			positionInput.addEventListener("keyup", myEfficientFn);
-			
+
 			let resFiller = actions.appendChild(createDOM("div", { class: "ogl-res-filler" }));
 			let metalBtn = resFiller.appendChild(createDOM("div"));
 			metalBtn.appendChild(createDOM("div", { class: "resourceIcon metal" }));
@@ -10631,16 +10651,16 @@ class OGInfinity {
 			let selectMaxDeut = deutBtns.appendChild(
 				createDOM("img", { src: "https://gf3.geo.gfsrv.net/cdnea/fa0c8ee62604e3af52e6ef297faf3c.gif" })
 			);
-			
+
 			(this.hasLifeforms ? [
-					metalFiller,
-					document.querySelector("input#metal"),
-					crystalFiller,
-					document.querySelector("input#crystal"),
-					deutFiller,
-					document.querySelector("input#deuterium"),
-					document.querySelector("input#food"),
-				]
+				metalFiller,
+				document.querySelector("input#metal"),
+				crystalFiller,
+				document.querySelector("input#crystal"),
+				deutFiller,
+				document.querySelector("input#deuterium"),
+				document.querySelector("input#food"),
+			]
 				: [
 					metalFiller,
 					document.querySelector("input#metal"),
@@ -10764,7 +10784,7 @@ class OGInfinity {
 			let refreshRes = () => {
 				let fLeft;
 				if (this.hasLifeforms)
-					fLeft = document.querySelector(".res_wrap .ogi-foodLeft");					
+					fLeft = document.querySelector(".res_wrap .ogi-foodLeft");
 				let mLeft = document.querySelector(".res_wrap .ogi-metalLeft");
 				let cLeft = document.querySelector(".res_wrap .ogi-crystalLeft");
 				let dLeft = document.querySelector(".res_wrap .ogi-deuteriumLeft");
@@ -11156,7 +11176,7 @@ class OGInfinity {
 				let amount = needCargo(ShipEnum.SmallCargo);
 				smallCargoNum.textContent = toFormatedNumber(amount, null, amount > 999999);
 				smallCargoNum.setAttribute("data-title", toFormatedNumber(amount));
-				smallCargoNum.setAttribute("amount", amount);				
+				smallCargoNum.setAttribute("amount", amount);
 				if (amount > (ships[ShipEnum.SmallCargo] || 0))
 					smallCargoNum.classList.add("overmark");
 
@@ -12203,7 +12223,7 @@ class OGInfinity {
 
 	resourceDetail() {
 		let rechts = document.querySelector("#rechts");
-		
+
 		rechts.addEventListener("mouseover", () => {
 			let rect = rechts.getBoundingClientRect();
 			if (rect.width + rect.x > window.innerWidth) {
@@ -12211,7 +12231,7 @@ class OGInfinity {
 				rechts.style.right = diff + "px";
 			}
 		});
-		
+
 		rechts.addEventListener("mouseout", (e) => {
 			if (e.target.classList.contains("tooltipRight")) return;
 			if (e.target.classList.contains("tooltipLeft")) return;
@@ -13318,21 +13338,11 @@ class OGInfinity {
 	}
 
 	spyTable() {
-		if (this.page == "fleetdispatch" && this.mode == 4) {
-			let link = "https://" + window.location.host + window.location.pathname + "?page=messages";
-			document.querySelector("#sendFleet").addEventListener("click", () => {
-				localStorage.setItem("ogl-redirect", link);
-			});
-			let sent = false;
-			document.addEventListener("keydown", (event) => {
-				if (!sent && event.keyCode === 13 && fleetDispatcher.currentPage == "fleet3") {
-					localStorage.setItem("ogl-redirect", link);
-					sent = true;
-				}
-			});
-		}
-		if (this.page != "messages") return;
+		if (this.page != "messages")
+			return;
+
 		this.FPSLoop("spyTable");
+
 		if (!this.reportList) {
 			this.reportList = [];
 			document.querySelector(".ogl-spyTable") && document.querySelector(".ogl-spyTable").remove();
@@ -13348,30 +13358,27 @@ class OGInfinity {
 			return;
 		}
 
-		let tab =
-			document.querySelector("#tabs-nfFleets.ui-state-active") ||
+		let tab = document.querySelector("#tabs-nfFleets.ui-state-active") ||
 			document.querySelector("#tabs-nfFavorites.ui-state-active");
-		if (
-			!tab ||
-			!tab.classList.contains("ui-tabs-active") ||
+
+		if (!tab || !tab.classList.contains("ui-tabs-active") ||
 			!document.querySelector(".pagination") ||
 			document.querySelector(".ogl-spyTable")
-		)
+		) {
 			return;
+		}
+
 		tab.classList.add("ogl-spyTableReady");
 		if (!this.json.options.spyTableAppend) {
 			this.reportList = [];
 		}
 		let messages;
 		if (document.querySelector("#tabs-nfFleets.ui-state-active")) {
-			messages = document.querySelectorAll(
-				"#" + document.querySelector("#subtabs-nfFleet20").getAttribute("aria-controls") + " .msg"
-			);
+			messages = document.querySelectorAll("#" + document.querySelector("#subtabs-nfFleet20").getAttribute("aria-controls") + " .msg");
 		} else {
-			messages = document.querySelectorAll(
-				"#" + document.querySelector("#tabs-nfFavorites").getAttribute("aria-controls") + " .msg"
-			);
+			messages = document.querySelectorAll("#" + document.querySelector("#tabs-nfFavorites").getAttribute("aria-controls") + " .msg");
 		}
+
 		let ptreJSON = {};
 		messages.forEach((msg) => {
 			if (msg.classList.contains("ogl-reportReady")) {
@@ -14051,8 +14058,8 @@ class OGInfinity {
 	}
 
 	calcAvailableFret(shipAmount) {
-		let fret = this.json.options.fret == ShipEnum.LargeCargo ? 
-			this.json.ships[ShipEnum.LargeCargo].cargoCapacity : 
+		let fret = this.json.options.fret == ShipEnum.LargeCargo ?
+			this.json.ships[ShipEnum.LargeCargo].cargoCapacity :
 			this.json.ships[ShipEnum.SmallCargo].cargoCapacity;
 		return shipAmount * fret;
 	}
@@ -14749,7 +14756,7 @@ class OGInfinity {
 			window.location.href = url.href;
 		};
 
-		if (this.page == "fleetdispatch") {			
+		if (this.page == "fleetdispatch") {
 			document.addEventListener("keydown", (event) => {
 				if (event.key == "Enter") {
 					if (fleetDispatcher.currentPage == "fleet1") {
@@ -14912,13 +14919,13 @@ class OGInfinity {
 			}
 		});
 		let apiTechData = {
-			109: { level: this.json.technology[109] },
-			110: { level: this.json.technology[110] },
-			111: { level: this.json.technology[111] },
-			115: { level: this.json.technology[115] },
-			117: { level: this.json.technology[117] },
-			118: { level: this.json.technology[118] },
-			114: { level: this.json.technology[114] },
+			109: { level: this.json.technology[ResearchEnum.WeaponsTechnology] },
+			110: { level: this.json.technology[ResearchEnum.ShieldingTechnology] },
+			111: { level: this.json.technology[ResearchEnum.ArmorTechnology] },
+			115: { level: this.json.technology[ResearchEnum.CombustionDrive] },
+			117: { level: this.json.technology[ResearchEnum.ImpulseDrive] },
+			118: { level: this.json.technology[ResearchEnum.HyperspaceDrive] },
+			114: { level: this.json.technology[ResearchEnum.HyperspaceTechnology] },
 		};
 		btn.addEventListener("click", () => {
 			let coords = this.currentLocation.coords.split(":");
@@ -16268,7 +16275,7 @@ class OGInfinity {
 
 	getBestRoi() {
 		let that = this;
-		let astro = that.json.technology[124];
+		let astro = that.json.technology[ResearchEnum.Astrophysics];
 		let roi = [];
 		let totalProd = { metal: 0, crystal: 0, deuterium: 0 };
 		let avgMineLvl = { metal: 0, crystal: 0, deuterium: 0 };
@@ -16565,44 +16572,45 @@ class OGInfinity {
 		}
 	}
 
-	showStorageTimers() {
+	showStorageTimers() { // todo: add support for lifeforms and maybe use cached calculations if feasable?
 		if (this.page == "overview" && this.json.empire[this.currentLocation.index]) {
 			let currentDate = new Date();
 			let timeZoneChange = this.json.options.timeZone ? 0 : this.json.timezoneDiff;
+
 			let metalStorage = resourcesBar.resources.metal.storage;
 			let metalResources = resourcesBar.resources.metal.amount;
-			let metalProduction = this.currentLocation.isMoon
-				? 0
+			let metalProduction = this.currentLocation.isMoon ? 0
 				: Math.floor(this.json.empire[this.currentLocation.index].production.hourly[0]);
 			let metalTime = (metalStorage - metalResources) / metalProduction;
 			let metalDate = new Date(currentDate.getTime() + (metalTime * 3600 - timeZoneChange) * 1e3);
 			let metalFull = metalResources >= metalStorage;
 			if (metalFull) metalProduction = 0;
+
 			let crystalStorage = resourcesBar.resources.crystal.storage;
 			let crystalResources = resourcesBar.resources.crystal.amount;
-			let crystalProduction = this.currentLocation.isMoon
-				? 0
+			let crystalProduction = this.currentLocation.isMoon ? 0
 				: Math.floor(this.json.empire[this.currentLocation.index].production.hourly[1]);
 			let crystalTime = (crystalStorage - crystalResources) / crystalProduction;
 			let crystalDate = new Date(currentDate.getTime() + (crystalTime * 3600 - timeZoneChange) * 1e3);
 			let crystalFull = crystalResources >= crystalStorage;
 			if (crystalFull) crystalProduction = 0;
+
 			let deuteriumStorage = resourcesBar.resources.deuterium.storage;
 			let deuteriumResources = resourcesBar.resources.deuterium.amount;
-			let deuteriumProduction = this.currentLocation.isMoon
-				? 0
+			let deuteriumProduction = this.currentLocation.isMoon ? 0
 				: Math.floor(this.json.empire[this.currentLocation.index].production.hourly[2]);
 			let deuteriumTime = (deuteriumStorage - deuteriumResources) / deuteriumProduction;
 			let deuteriumDate = new Date(currentDate.getTime() + (deuteriumTime * 3600 - timeZoneChange) * 1e3);
 			let deuteriumFull = deuteriumResources >= deuteriumStorage;
 			if (deuteriumFull) deuteriumProduction = 0;
+
 			let table = document.querySelector("#planetDetails tbody");
 			let metal_1 = table.insertBefore(createDOM("tr"), table.children[0]);
+
 			metal_1.appendChild(createDOM("td", { class: "desc" }, `${this.translation.text(22, "tech")}:`));
 			metal_1.appendChild(
 				this.createDOM(
-					"td",
-					{ class: "data" },
+					"td", { class: "data" },
 					`<span class="${metalProduction > 0 ? "undermark" : "overmark"}">(+${toFormatedNumber(
 						metalProduction
 					)})</span><span class="${metalResources >= metalStorage ? " overmark" : ""
@@ -16615,20 +16623,19 @@ class OGInfinity {
 			metal_2.appendChild(createDOM("td", { class: "desc" }, ""));
 			metal_2.appendChild(
 				this.createDOM(
-					"td",
-					{ class: "data" },
+					"td", { class: "data" },
 					`<span class="${metalTime > 0 && metalTime != Infinity ? "ogl-date" : "overmark"}"> ${metalTime > 0 && metalTime != Infinity
 						? getFormatedDate(metalDate.getTime(), "[d].[m].[y] <strong> [G]:[i]:[s]</strong>")
 						: "-"
 					}</span>`
 				)
 			);
+
 			let crystal_1 = table.insertBefore(createDOM("tr"), table.children[2]);
 			crystal_1.appendChild(createDOM("td", { class: "desc" }, `${this.translation.text(23, "tech")}:`));
 			crystal_1.appendChild(
 				this.createDOM(
-					"td",
-					{ class: "data" },
+					"td", { class: "data" },
 					`<span class="${crystalProduction > 0 ? "undermark" : "overmark"}"> (+${toFormatedNumber(
 						crystalProduction
 					)})</span><span class="${crystalResources >= crystalStorage ? " overmark" : ""
@@ -16641,20 +16648,19 @@ class OGInfinity {
 			crystal_2.appendChild(createDOM("td", { class: "desc" }, ""));
 			crystal_2.appendChild(
 				this.createDOM(
-					"td",
-					{ class: "data" },
+					"td", { class: "data" },
 					`<span class="${crystalTime > 0 && crystalTime != Infinity ? "ogl-date" : "overmark"}"> ${crystalTime > 0 && crystalTime != Infinity
 						? getFormatedDate(crystalDate.getTime(), "[d].[m].[y] <strong> [G]:[i]:[s]</strong>")
 						: "-"
 					}</span></span>`
 				)
 			);
+
 			let deuterium_1 = table.insertBefore(createDOM("tr"), table.children[4]);
 			deuterium_1.appendChild(createDOM("td", { class: "desc" }, `${this.translation.text(24, "tech")}:`));
 			deuterium_1.appendChild(
 				this.createDOM(
-					"td",
-					{ class: "data" },
+					"td", { class: "data" },
 					`<span class="${deuteriumProduction > 0 ? "undermark" : "overmark"}"> (+${toFormatedNumber(
 						deuteriumProduction
 					)})</span><span class="${deuteriumResources >= deuteriumStorage ? " overmark" : ""
@@ -16667,14 +16673,14 @@ class OGInfinity {
 			deuterium_2.appendChild(createDOM("td", { class: "desc" }, ""));
 			deuterium_2.appendChild(
 				this.createDOM(
-					"td",
-					{ class: "data" },
+					"td", { class: "data" },
 					`<span class="${deuteriumTime > 0 && deuteriumTime != Infinity ? "ogl-date" : "overmark"}"> ${deuteriumTime > 0 && deuteriumTime != Infinity
 						? getFormatedDate(deuteriumDate.getTime(), "[d].[m].[y] <strong> [G]:[i]:[s]</strong>")
 						: "-"
 					}</span></span>`
 				)
 			);
+
 			let updater = setInterval(() => {
 				let updateTime = new Date().getTime();
 				if (
@@ -16709,11 +16715,11 @@ class OGInfinity {
 			let cargoChoice = createDOM("div", { class: "ogk-collect-cargo" });
 			let btnCollect = document.querySelector("#allornone .secondcol").appendChild(
 				createDOM("button", {
-					class: `ogl-collect ${this.json.options.collect.mission == 4 ? "statio" : ""} ${this.json.options.collect.ship == 202
-							? "smallCargo"
-							: this.json.options.collect.ship == 219
-								? "pathFinder"
-								: "largeCargo"
+					class: `ogl-collect ${this.json.options.collect.mission == MissionEnum.Deployment ? "statio" : ""} ${this.json.options.collect.ship == ShipEnum.SmallCargo
+						? "smallCargo"
+						: this.json.options.collect.ship == ShipEnum.Pathfinder
+							? "pathFinder"
+							: "largeCargo"
 						}`,
 				})
 			);
@@ -16731,9 +16737,14 @@ class OGInfinity {
 			let updateCollectTooltipIcon = () => {
 				let remove = this.json.options.collect.target.type == 1 ? "moon" : "planet";
 				let add = this.json.options.collect.target.type == 3 ? "moon" : "planet";
+
 				let classList = cargoChoice.querySelector(".choice-target").classList;
-				if (classList.contains(remove)) classList.remove(remove);
-				if (!classList.contains(add)) classList.add(add);
+
+				if (classList.contains(remove))
+					classList.remove(remove);
+
+				if (!classList.contains(add))
+					classList.add(add);
 			};
 
 			let updateDefaultCollectShip = (id) => {
@@ -16846,32 +16857,45 @@ class OGInfinity {
 			let metalAvailable = Math.max(0, fleetDispatcher.metalOnPlanet);
 			let crystalAvailable = Math.max(0, fleetDispatcher.crystalOnPlanet);
 			let deutAvailable = Math.max(0, fleetDispatcher.deuteriumOnPlanet);
+
 			let metalFiller = document.querySelector(".resourceIcon.metal+input");
 			let crystalFiller = document.querySelector(".resourceIcon.crystal+input");
 			let deutFiller = document.querySelector(".resourceIcon.deuterium+input");
+
 			let metal = Number(metalFiller.value.split(".").join(""));
 			if (metal > metalAvailable) metalFiller.value = toFormatedNumber(metalAvailable, 0);
+
 			let crystal = Number(crystalFiller.value.split(".").join(""));
 			if (crystal > crystalAvailable) crystalFiller.value = toFormatedNumber(crystalAvailable, 0);
+
 			let deut = Number(deutFiller.value.split(".").join(""));
 			if (deut > deutAvailable)
 				deutFiller.value = toFormatedNumber(Math.max(0, deutAvailable - fleetDispatcher.getConsumption()), 0);
-			let resources =
-				Math.min(metal, metalAvailable) + Math.min(crystal, crystalAvailable) + Math.min(deut, deutAvailable);
+
+			let resources = Math.min(metal, metalAvailable) +
+				Math.min(crystal, crystalAvailable) +
+				Math.min(deut, deutAvailable);
+
 			let cargoShipsOnPlanet = {};
 			let cargoIds = [];
+
 			if (preveredShipId) cargoIds.push(preveredShipId);
 			[ShipEnum.SmallCargo, ShipEnum.LargeCargo, ShipEnum.Pathfinder, ShipEnum.Recycler].forEach((id) => {
 				if (!cargoIds.includes(id)) cargoIds.push(id);
 			});
+
 			// todo: check if this testing of probes with cargo can be centralized and doesnt have to be done in like 20 places all over the place...
-			if (this.json.ships[ShipEnum.Probe].cargoCapacity != 0 && !cargoIds.includes(ShipEnum.Probe)) cargoIds.push(ShipEnum.Probe);
+			if (this.json.ships[ShipEnum.Probe].cargoCapacity != 0 && !cargoIds.includes(ShipEnum.Probe))
+				cargoIds.push(ShipEnum.Probe);
+
 			fleetDispatcher.shipsOnPlanet.forEach((ship) => {
 				if (cargoIds.includes(ship.id)) cargoShipsOnPlanet[ship.id] = ship.number || 0;
 			});
+
 			let enoughCargo = false;
 			let selectedCargoShip;
 			let neededShips;
+
 			cargoIds.forEach((cargoShip) => {
 				if (!enoughCargo) {
 					neededShips = this.calcNeededShips({
@@ -16885,6 +16909,7 @@ class OGInfinity {
 					}
 				}
 			});
+
 			if (enoughCargo) {
 				this.selectShips(selectedCargoShip, neededShips);
 			} else {
@@ -16939,8 +16964,10 @@ class OGInfinity {
 		}
 	}
 
-	async markLifeforms() {
-		if (!this.hasLifeforms || this.json.selectedLifeforms == null) return;
+	markLifeforms() {
+		if (!this.hasLifeforms || this.json.selectedLifeforms == null)
+			return;
+
 		document.querySelectorAll(".smallplanet a.planetlink").forEach((elem) => {
 			let lf = this.json.selectedLifeforms[elem.href.split("cp=")[1]]
 				? this.json.selectedLifeforms[elem.href.split("cp=")[1]].lifeform
