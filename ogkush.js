@@ -1567,7 +1567,6 @@ class OGInfinity {
 		this.planetList = document.querySelectorAll(".smallplanet");
 		this.universe = window.location.host.replace(/\D/g, "");
 		this.geologist = document.querySelector(".geologist.on") ? true : false;
-		this.technocrat = document.querySelector(".technocrat.on") ? true : false;
 		this.engineer = document.querySelector(".engineer.on") ? true : false;
 		this.allOfficers = document.querySelector("#officers.all") ? true : false;
 		this.highlighted = false;
@@ -1626,7 +1625,6 @@ class OGInfinity {
 		this.json.markers = this.json.markers || {};
 		this.json.locked = this.json.locked || {};
 		this.json.missing = this.json.missing || {};
-		this.json.lockTarget = this.json.lockTarget || {};
 		this.json.targetTabs = this.json.targetTabs || { g: 1, s: 0 };
 		this.json.spyProbes = this.json.spyProbes || 5;
 		this.json.openTooltip = this.json.openTooltip || false;
@@ -1978,20 +1976,17 @@ class OGInfinity {
 	* 
 	*/
 	technoDetail() {
-		if (
-			this.page == "research" ||
+		if (this.page == "research" ||
 			this.page == "supplies" ||
 			this.page == "facilities" ||
 			this.page == "shipyard" ||
 			this.page == "defenses" ||
 			this.page == "lfbuildings" ||
-			this.page == "lfresearch"
-		) {
+			this.page == "lfresearch") {
+
 			let lock;
 			let lockListener;
 			let currentEnergy = resourcesBar.resources.energy.amount;
-			let lockTarget = "0";
-
 
 			// todo: restructure this method, as it has kinda redundant components, like the checks for the current page
 			function getTimeFromString(str) {
@@ -2020,11 +2015,10 @@ class OGInfinity {
 			let acceleration = document.querySelector(".acceleration")
 				? document.querySelector(".acceleration").getAttribute("data-value") == 25
 				: false;
-			let that = this;
+
+			let that = this; // make a copy of the current reference to the infinity object, to be able to use it in the following handlers
 
 			let updateResearchDetails = (technoId, baselvl, tolvl) => {
-
-				if (this.page == "research") lockTarget = technoId;
 
 				let object = that.currentLocation.isMoon
 					? that.json.empire[that.currentLocation.index].moon
@@ -2366,7 +2360,7 @@ class OGInfinity {
 				let demolish = [];
 
 				if (baselvl - 1 > tolvl) {
-					demolish = techno.cost.map((x) => Math.floor(x * (1 - IONTECHNOLOGY_BONUS * that.json.technology[121])));
+					demolish = techno.cost.map((x) => Math.floor(x * (1 - IONTECHNOLOGY_BONUS * that.json.technology[ResearchEnum.IonTechnology])));
 				}
 
 				if (techno.cost[0] != 0) {
@@ -2585,13 +2579,12 @@ class OGInfinity {
 					document.querySelector(".ogk-titles").children[2].textContent = that.translation.text(39);
 				}
 
+				let techId = technoId;
+
 				lockListener = () => {
 					let coords = that.currentLocation.coords + (that.currentLocation.isMoon ? "M" : "P");
 					if (!that.json.missing[coords]) {
-						that.json.missing[coords] = [0, 0, 0];
-					}
-					if (!that.json.lockTarget[coords]) {
-						that.json.lockTarget[coords] = "";
+						that.json.missing[coords] = [0, 0, 0, ""];
 					}
 
 					[0, 1, 2].forEach((i) => {
@@ -2601,10 +2594,13 @@ class OGInfinity {
 						}
 					});
 
-					if (that.json.lockTarget[coords].length > 0) {
-						that.json.lockTarget[coords] += "\n";
+					if (!that.json.missing[coords][3]) {
+						that.json.missing[coords][3] = "";
 					}
-					that.json.lockTarget[coords] += lockTarget;
+					if (that.json.missing[coords][3].length > 0) {
+						that.json.missing[coords][3] += "\n";
+					}
+					that.json.missing[coords][3] += techId;// todo: convert id to name
 
 					that.saveData();
 					that.sideLock(true);
@@ -2657,11 +2653,11 @@ class OGInfinity {
 						let energyDiv;
 						let base;
 
-						if (technologyId == 217) {
+						if (technologyId == ShipEnum.Crawler) {
 							energyDiv = document.querySelector(".additional_energy_consumption span");
 							base = energyDiv.getAttribute("data-value") *
 								(that.json.lifeformBonus ? 1 - that.json.lifeformBonus[that.currentLocation.id].crawlerBonus.consumption : 1);
-						} else if (technologyId == 212) {
+						} else if (technologyId == ShipEnum.SolarSatellite) {
 							energyDiv = document.querySelector(".energy_production span");
 							base = energyDiv.querySelector("span").getAttribute("data-value");
 						}
@@ -2669,26 +2665,32 @@ class OGInfinity {
 						titleDiv.appendChild(that.createDOM("div", {}, "&#8205;"));
 						titleDiv.appendChild(createDOM("div", {}, that.translation.text(40)));
 						titleDiv.appendChild(createDOM("div", {}, that.translation.text(39)));
+
 						let resDivs = [
 							costDiv.querySelector(".metal"),
 							costDiv.querySelector(".crystal"),
 							costDiv.querySelector(".deuterium"),
 						];
+
 						let baseCost = [
 							resDivs[0] ? resDivs[0].getAttribute("data-value") : 0,
 							resDivs[1] ? resDivs[1].getAttribute("data-value") : 0,
 							resDivs[2] ? resDivs[2].getAttribute("data-value") : 0,
 						];
+
 						let infoDiv = document
 							.querySelector("#technologydetails .sprite_large")
 							.appendChild(createDOM("div", { class: "ogk-tech-controls" }));
 						lock = infoDiv.appendChild(createDOM("a", { class: "icon icon_lock" }));
+
 						lock.addEventListener("click", () => {
 							lockListener();
 						});
+
 						let helpNode = document.querySelector(".txt_box .details").cloneNode(true);
 						infoDiv.appendChild(helpNode);
 						let input = document.querySelector(".build_amount input");
+
 						let updateShipDetails = (value) => {
 							let missing = [];
 							let resSum = [];
@@ -2719,6 +2721,7 @@ class OGInfinity {
 									)
 								);
 							});
+
 							timeDiv.textContent = formatTimeWrapper(baseTime * value, 2, true, " ", false, "");
 							let currentDate = new Date();
 							let timeZoneChange = that.json.options.timeZone ? 0 : that.json.timezoneDiff;
@@ -2729,7 +2732,8 @@ class OGInfinity {
 									.appendChild(createDOM("strong", {}, `${dateTxt.split(" ")[0]}`))
 									.parentElement.appendChild(document.createTextNode(` -${dateTxt.split("-")[1]}`)).parentElement
 							);
-							if (technologyId == 212) {
+
+							if (technologyId == ShipEnum.SolarSatellite) {
 								let energyBonus =
 									(that.engineer ? ENGINEER_ENERGY_BONUS : 0) +
 									(that.playerClass == PLAYER_CLASS_MINER ? that.json.minerBonusEnergy : 0) +
@@ -2761,7 +2765,7 @@ class OGInfinity {
 										satsInput.dispatchEvent(new KeyboardEvent("keyup", { code: "ArrowDown" }));
 									});
 								}
-							} else if (technologyId == 217) {
+							} else if (technologyId == ShipEnum.Crawler) {
 								let diff = Number(currentEnergy) - value * base;
 
 								energyDiv.replaceChildren(
@@ -2780,7 +2784,7 @@ class OGInfinity {
 									let satsSpan = createDOM("span");
 
 									satsSpan.replaceChildren(
-										createDOM("a", { "tech-id": "212", class: "ogl-option ogl-solar-satellite" }),
+										createDOM("a", { "tech-id": "" + ShipEnum.SolarSatellite, class: "ogl-option ogl-solar-satellite" }),
 										createDOM("span", {}, `+${toFormatedNumber(satsNeeded)}`)
 									);
 
@@ -2788,7 +2792,7 @@ class OGInfinity {
 
 									satsSpan.addEventListener("click", () => {
 										document.querySelector(".solarSatellite.hasDetails span").click();
-										waitForElementToDisplay("#technologydetails[data-technology-id='212']", () => {
+										waitForElementToDisplay("#technologydetails[data-technology-id='" + ShipEnum.SolarSatellite + "']", () => {
 											let satsInput = document.querySelector("#build_amount");
 											satsInput.focus();
 											satsInput.value = satsNeeded;
@@ -2798,26 +2802,30 @@ class OGInfinity {
 								}
 							}
 
-							lockListener = () => {
+							let techId = technoId;
+
+							lockListener = () => { // todo: remove this, as this is a exact copy of line 2590
 								let coords = that.currentLocation.coords + (that.currentLocation.isMoon ? "M" : "P");
 								if (!that.json.missing[coords]) {
-									that.json.missing[coords] = [0, 0, 0];
+									that.json.missing[coords] = [0, 0, 0, ""];
 								}
-								if (!that.json.lockTarget[coords]) {
-									that.json.lockTarget[coords] = "";
-								}
+
+								// Iterate over metal crystal and deuterium
 								[0, 1, 2].forEach((i) => {
 									if (missing[i]) {
 										that.json.missing[coords][i] +=
 											that.json.missing[coords][i] == 0 ? -Math.ceil(missing[i]) : Math.ceil(resSum[i]);
-
-										if (that.json.lockTarget[coords].length > 0) {
-											that.json.lockTarget[coords] += "\n";
-										}
-
-										that.json.lockTarget[coords] += lockTarget;
 									}
 								});
+
+								if (!that.json.missing[coords][3]) {
+									that.json.missing[coords][3] = "";
+								}
+								if (that.json.missing[coords][3].length > 0) {
+									that.json.missing[coords][3] += "\n";
+								}
+								that.json.missing[coords][3] += techId;// todo: convert id to name
+
 								that.saveData();
 								that.sideLock(true);
 							};
@@ -13888,13 +13896,12 @@ class OGInfinity {
 			let splittedCoords = coords.split(":");
 			let missing = this.json.missing[coords];
 
-			let targets = this.json.lockTarget[coords];
-
 			let moon = false;
 			if (coords.includes("M")) {
 				moon = true;
 			}
 			if (missing) {
+				let targets = this.json.missing[coords][3];
 				let btn = createDOM("button", { class: "ogl-sideLock tooltip tooltipClose tooltipLeft" });
 				planet.appendChild(btn);
 				if (moon) {
@@ -13920,7 +13927,6 @@ class OGInfinity {
 
 				deleteBtn.addEventListener("click", () => {
 					delete this.json.missing[coords];
-					delete this.json.lockTarget[coords];
 					this.json.needSync = true;
 					this.saveData();
 					this.sideLock();
@@ -14148,7 +14154,6 @@ class OGInfinity {
 			mainSyncJsonObj.markers = this?.json?.markers;
 			mainSyncJsonObj.sideStargetTabstalk = this?.json?.targetTabs;
 			mainSyncJsonObj.missing = this?.json?.missing;
-			mainSyncJsonObj.lockTarget = this?.json?.lockTarget;
 			mainSyncJsonObj.flying = this?.json?.flying;
 			mainSyncJsonObj.buildingProgress = this?.json?.productionProgress;
 			mainSyncJsonObj.researchProgress = this?.json?.researchProgress;
@@ -14316,7 +14321,6 @@ class OGInfinity {
 						this.json.searchHistory = cloudConsolidated?.searchHistory || this.json.searchHistory;
 						this.json.flying = cloudConsolidated?.flying || this.json.flying;
 						this.json.missing = cloudConsolidated?.missing || this.json.missing;
-						this.json.lockTarget = cloudConsolidated?.lockTarget || this.json.lockTarget;
 						this.json.productionProgress = cloudConsolidated?.buildingProgress || this.json.productionProgress;
 						this.json.researchProgress = cloudConsolidated?.researchProgress || this.json.researchProgress;
 						this.json.pantrySync = Date.now();
