@@ -197,19 +197,24 @@ function fromFormatedNumber(value, int = false) {
 	return int ? parseInt(value) : value;
 }
 
-function waitForElementToDisplay(selector, callback, checkFrequencyInMs = 10, timeoutInMs = 5000) {
-	var startTimeInMs = Date.now();
-	(function loopSearch() {
-		if (document.querySelector(selector) != null) {
-			callback();
-			return;
-		} else {
-			setTimeout(function () {
-				if (timeoutInMs && Date.now() - startTimeInMs > timeoutInMs) return;
-				loopSearch();
-			}, checkFrequencyInMs);
+function waitForElement(selector) {
+	return new Promise(resolve => {
+		if (document.querySelector(selector)) {
+			return resolve(document.querySelector(selector));
 		}
-	})();
+
+		const observer = new MutationObserver(mutations => {
+			if (document.querySelector(selector)) {
+				resolve(document.querySelector(selector));
+				observer.disconnect();
+			}
+		});
+
+		observer.observe(document.body, {
+			childList: true,
+			subtree: true
+		});
+	});
 }
 
 /**
@@ -1443,6 +1448,12 @@ const TRADER_ENERGY_BONUS = 0.05;
 const TRADER_RESOURCE_BONUS = 0.05;
 const CRAWLER_OVERLOAD_MAX = 1.5;
 
+const ResourceEnum = {
+	Metal: 0,
+	Crystal: 1,
+	Deuterium: 2,
+	Food: 3
+}
 
 const ShipEnum = {
 	LightFighter: 204,
@@ -1823,13 +1834,11 @@ class OGInfinity {
 		this.quickPlanetList();
 		this.activitytimers();
 		this.sideStalk();
-		this.checkDebris();
 		this.spyTable();
 		this.keyboardActions();
 		this.betterTooltip();
 		this.utilities();
 		this.chat();
-		this.uvlinks();
 		this.flyingFleet();
 		this.betterHighscore();
 		this.overviewDates();
@@ -1848,6 +1857,7 @@ class OGInfinity {
 		this.showStorageTimers();
 		this.showTabTimer();
 		this.markLifeforms();
+		this.checkDebris();
 
 		this.expedition = false;
 		this.collect = false;
@@ -2222,16 +2232,13 @@ class OGInfinity {
 							consDiv.appendChild(satsSpan);
 							satsSpan.addEventListener("click", () => {
 								document.querySelector(".solarSatellite.hasDetails span").click();
-								waitForElementToDisplay(
-									"#technologydetails[data-technology-id='212']",
-									() => {
+								waitForElement("#technologydetails[data-technology-id='212']")
+									.then(() => {
 										let satsInput = document.querySelector("#build_amount");
 										satsInput.value = satsNeeded;
 										satsInput.dispatchEvent(new KeyboardEvent("keyup", { code: "ArrowDown" }));
-									},
-									10,
-									2000
-								);
+									}
+									);
 							});
 						}
 						prodDiv.html(
@@ -2258,13 +2265,12 @@ class OGInfinity {
 							).parentElement
 						);
 					}
-					if ([22, 23, 24].includes(technoId)) {
-						let production =
-							technoId == 22
-								? resourcesBar.resources.metal.production
-								: technoId == 23
-									? resourcesBar.resources.crystal.production
-									: resourcesBar.resources.deuterium.production;
+					if ([SupplyEnum.MetalStorage, SupplyEnum.CrystalStorage, SupplyEnum.DeuteriumTank].includes(technoId)) {
+						let production = technoId == SupplyEnum.MetalStorage
+							? resourcesBar.resources.metal.production
+							: technoId == SupplyEnum.CrystalStorage
+								? resourcesBar.resources.crystal.production
+								: resourcesBar.resources.deuterium.production;
 						let storageDiv =
 							durationDiv.parentNode.querySelector(".narrow .storage_size") ||
 							durationDiv.parentNode.insertBefore(
@@ -2299,7 +2305,7 @@ class OGInfinity {
 							).parentElement
 						);
 					}
-					if (technoId <= 3) {
+					if (technoId <= 3) { // Metall Mine, Crystal Mine and Deut Synthesizer
 						let roiDiv =
 							durationDiv.parentNode.querySelector(".narrow .roi_duration") ||
 							durationDiv.parentNode.insertBefore(
@@ -2793,7 +2799,7 @@ class OGInfinity {
 
 									satsSpan.addEventListener("click", () => {
 										document.querySelector(".solarSatellite.hasDetails span").click();
-										waitForElementToDisplay("#technologydetails[data-technology-id='" + ShipEnum.SolarSatellite + "']", () => {
+										waitForElement("#technologydetails[data-technology-id='" + ShipEnum.SolarSatellite + "']").then(() => {
 											let satsInput = document.querySelector("#build_amount");
 											satsInput.focus();
 											satsInput.value = satsNeeded;
@@ -2803,7 +2809,7 @@ class OGInfinity {
 								}
 							}
 
-							let techId = technoId;
+							let techId = technologyId;
 
 							lockListener = () => { // todo: remove this, as this is a exact copy of line 2590
 								let coords = that.currentLocation.coords + (that.currentLocation.isMoon ? "M" : "P");
@@ -4254,66 +4260,6 @@ class OGInfinity {
 		});
 	}
 
-	uvlinks() {
-		if (this.page == "messages") {
-			document.querySelectorAll(".msg_actions").forEach((elem) => {
-				if (elem.querySelector(".ogk-trashsim, .ogk-ogotcha")) return;
-				let keyNode = elem.querySelector(".icon_apikey");
-				if (keyNode) {
-					let key = keyNode.getAttribute("title") || keyNode.getAttribute("data-title");
-					key = key.split("'")[1];
-					if (key.startsWith("sr")) {
-						let link = elem.appendChild(
-							createDOM("div", { class: "ogk-trashsim tooltip", target: "_blank", title: "Trahsim" })
-						);
-						let apiTechData = {
-							109: { level: this.json.technology[109] },
-							110: { level: this.json.technology[110] },
-							111: { level: this.json.technology[111] },
-							115: { level: this.json.technology[115] },
-							117: { level: this.json.technology[117] },
-							118: { level: this.json.technology[118] },
-							114: { level: this.json.technology[114] },
-						};
-						link.addEventListener("click", () => {
-							let coords = this.currentLocation.coords.split(":");
-							let json = {
-								0: [
-									{
-										class: this.playerClass,
-										research: apiTechData,
-										planet: {
-											galaxy: coords[0],
-											system: coords[1],
-											position: coords[2],
-										},
-									},
-								],
-							};
-							let base64 = btoa(JSON.stringify(json));
-							window.open(
-								`https://trashsim.oplanet.eu/${this.univerviewLang}?SR_KEY=${key}#prefill=${base64}`,
-								"_blank"
-							);
-						});
-					} else if (key.startsWith("cr")) {
-						let link = elem.appendChild(createDOM("a", { class: "ogk-ogotcha tooltip", title: "Ogotcha" }));
-						link.addEventListener("click", () =>
-							window.open(
-								`https://ogotcha.oplanet.eu/${this.univerviewLang}?CR_KEY=${key}`,
-								"_blank",
-								`location=yes,scrollbars=yes,status=yes,width=${screen.availWidth},height=${screen.availHeight}`
-							)
-						);
-					}
-				}
-			});
-			setTimeout(() => {
-				this.uvlinks();
-			}, 100);
-		}
-	}
-
 	warningCommander() {
 		let content = this.createDOM(
 			"div",
@@ -4392,6 +4338,7 @@ class OGInfinity {
 				}
 			}, 20);
 		});
+
 		overViewBtn.addEventListener("click", (e) => {
 			this.updateEmpireData(e.ctrlKey);
 			let active = document.querySelector(".ogl-option.ogl-active:not(.ogl-overview-icon)");
@@ -4410,6 +4357,7 @@ class OGInfinity {
 			}
 			this.saveData();
 		});
+
 		statsBtn.addEventListener("click", (e) => {
 			this.updateEmpireData(e.ctrlKey);
 			this.loading();
@@ -5025,7 +4973,7 @@ class OGInfinity {
 					clearInterval(inter);
 					showStats();
 				}
-			}, 50);
+			}, 500);
 		} else {
 			showStats();
 		}
@@ -5164,245 +5112,245 @@ class OGInfinity {
 	}
 
 	expeditionMessages() {
-		console.log("fetch messages");
+		let that = this;
 
-		let normalized = ["Metal", "Crystal", "Deuterium", "AM"];
-		let ressources = this.json.resNames;
-		if (!this.combats) this.combats = {};
-		if (!this.expeditionsIds) this.expeditionsIds = {};
+		let messageHandler = () => {
+			let normalized = ["Metal", "Crystal", "Deuterium", "AM"];
+			let ressources = that.json.resNames;
+			if (!that.combats) that.combats = {};
+			if (!that.expeditionsIds) that.expeditionsIds = {};
 
-		let recyclerName = "";
-		for (let i in this.json.shipNames) {
-			if (this.json.shipNames[i] == ShipEnum.Recycler)
-				recyclerName = i;
-		}
+			let recyclerName = "";
+			for (let i in that.json.shipNames) {
+				if (that.json.shipNames[i] == ShipEnum.Recycler)
+					recyclerName = i;
+			}
 
-		if (this.page == "messages") {
-			this.json.options.timeZone && document.querySelectorAll("div li.msg").forEach((msg) => {
-				if (!msg.querySelector(".msg_date"))
-					return;
+			if (that.page == "messages") {
+				that.json.options.timeZone && document.querySelectorAll("div li.msg").forEach((msg) => {
+					if (!msg.querySelector(".msg_date"))
+						return;
 
-				let date = msg.querySelector(".msg_date").textContent;
-				if (!msg.querySelector(".msg_date").classList.contains(".ogl-ready")) {
-					msg.querySelector(".msg_date").classList.add(".ogl-ready");
-					msg.querySelector(".msg_date").textContent = getFormatedDate(
-						this.dateStrToDate(date).getTime() + this.json.timezoneDiff * 1e3,
-						"[d].[m].[Y] [H]:[i]:[s]"
-					);
-				}
-			});
-
-			// Check expedition tab
-			if (document.querySelector("li[id=subtabs-nfFleet22].ui-state-active")) {
-				let id = document.querySelector("li[id=subtabs-nfFleet22].ui-state-active").getAttribute("aria-controls");
-				document.querySelectorAll(`div[id=${id}] li.msg`).forEach((msg) => {
-					let id = msg.getAttribute("data-msg-id");
-					let content = msg.querySelector("span.msg_content");
 					let date = msg.querySelector(".msg_date").textContent;
-					let textContent = content.innerText;
-					let coords = msg.querySelector(".msg_title a");
-					if (coords) {
-						coords = coords.textContent.slice(1, -1);
-						if (coords.split(":")[2] == 16) {
-							if (id in this.json.expeditions && this.json.expeditions[id].result) {
-								if (msg.querySelector(".icon_favorited")) {
-									this.json.expeditions[id].favorited = true;
-									this.json.expeditions[id].date = new Date();
-								} else {
-									this.json.expeditions[id].favorited = false;
+					if (!msg.querySelector(".msg_date").classList.contains(".ogl-ready")) {
+						msg.querySelector(".msg_date").classList.add(".ogl-ready");
+						msg.querySelector(".msg_date").textContent = getFormatedDate(
+							that.dateStrToDate(date).getTime() + that.json.timezoneDiff * 1e3,
+							"[d].[m].[Y] [H]:[i]:[s]"
+						);
+					}
+				});
+
+				// Check expedition tab
+				if (document.querySelector("li[id=subtabs-nfFleet22].ui-state-active")) {
+					let id = document.querySelector("li[id=subtabs-nfFleet22].ui-state-active").getAttribute("aria-controls");
+					document.querySelectorAll(`div[id=${id}] li.msg`).forEach((msg) => {
+						let id = msg.getAttribute("data-msg-id");
+						let content = msg.querySelector("span.msg_content");
+						let date = msg.querySelector(".msg_date").textContent;
+						let textContent = content.innerText;
+						let coords = msg.querySelector(".msg_title a");
+						if (coords) {
+							coords = coords.textContent.slice(1, -1);
+							if (coords.split(":")[2] == 16) {
+								if (id in that.json.expeditions && that.json.expeditions[id].result) {
+									if (msg.querySelector(".icon_favorited")) {
+										that.json.expeditions[id].favorited = true;
+										that.json.expeditions[id].date = new Date();
+									} else {
+										that.json.expeditions[id].favorited = false;
+									}
+									if (that.json.expeditions[id].result == "Unknown") {
+										msg.querySelector(".ogl-unknown-warning") ||
+											msg.querySelector(".msg_actions")
+												.appendChild(that.createDOM(
+													"div", { class: "ogl-unknown-warning" },
+													`${that.translation.text(112)} <a href='https://discord.gg/8Y4SWup'> ${that.translation.text(113)}</a>`
+												));
+									} else if (that.json.expeditions[id].busy) {
+										msg.querySelector(".ogl-warning") ||
+											msg
+												.querySelector(".msg_actions")
+												.appendChild(
+													createDOM("a", { class: "ogl-warning tooltip", "data-title": that.translation.text(114) })
+												);
+									}
+									msg.classList.add("ogk-" + that.json.expeditions[id].result.toLowerCase());
+									return;
+								} else if (id in that.expeditionsIds) {
+									return;
 								}
-								if (this.json.expeditions[id].result == "Unknown") {
-									msg.querySelector(".ogl-unknown-warning") ||
-										msg.querySelector(".msg_actions")
-											.appendChild(this.createDOM(
-												"div", { class: "ogl-unknown-warning" },
-												`${this.translation.text(112)} <a href='https://discord.gg/8Y4SWup'> ${this.translation.text(113)}</a>`
-											));
-								} else if (this.json.expeditions[id].busy) {
-									msg.querySelector(".ogl-warning") ||
+								that.expeditionsIds[id] = true;
+								let content = msg.querySelector("span.msg_content");
+								let date = msg.querySelector(".msg_date").textContent;
+								let textContent = content.innerText;
+								dataHelper.getExpeditionType(textContent).then((type) => {
+									date = date.split(" ")[0].slice(0, -4) + date.split(" ")[0].slice(-2);
+									let sums = that.json.expeditionSums[date];
+									if (!sums) {
+										sums = {
+											found: [0, 0, 0, 0],
+											harvest: [0, 0],
+											losses: {},
+											fleet: {},
+											type: {},
+											adjust: [0, 0, 0],
+											fuel: 0,
+										};
+									}
+
+									let objectNode = content.querySelector("a");
+									if (objectNode) {
+										that.json.result = "Object";
+										that.json["object"] = objectNode.textContent;
+										type = "Object";
+									}
+
+									ressources.forEach((res, i) => {
+										if (textContent.includes(res)) {
+											let regex = new RegExp("[0-9]{1,3}(.[0-9]{1,3})*", "gm");
+											let found = textContent.match(regex);
+											if (found) {
+												type = normalized[i];
+												sums.found[i] += fromFormatedNumber(found[0], true);
+											}
+										}
+									});
+
+									let fleetMatches = textContent.match(/.*: [1-9].*/gm);
+									fleetMatches &&
+										!normalized.includes(type) &&
+										fleetMatches.forEach((result) => {
+											let split = result.split(": ");
+											type = "Fleet";
+											let id = that.json.shipNames[split[0]];
+											let count = Number(split[1]);
+											sums.fleet[id] ? (sums.fleet[id] += count) : (sums.fleet[id] = count);
+										});
+									if (type != "Unknown") {
+										sums.type[type] ? (sums.type[type] += 1) : (sums.type[type] = 1);
+									}
+									that.json.expeditionSums[date] = sums;
+									that.json.expeditions[id] = {
+										result: type,
+										date: new Date(that.dateStrToDate(date)),
+										favorited: msg.querySelector(".icon_favorited") ? true : false,
+									};
+									if (that.json.expeditions[id].result == "Unknown") {
 										msg
 											.querySelector(".msg_actions")
 											.appendChild(
-												createDOM("a", { class: "ogl-warning tooltip", "data-title": this.translation.text(114) })
+												that.createDOM(
+													"div",
+													{ class: "ogl-unknown-warning" },
+													`${that.translation.text(112)} <a href='https://discord.gg/8Y4SWup'> ${that.translation.text(
+														113
+													)}</a>`
+												)
 											);
-								}
-								msg.classList.add("ogk-" + this.json.expeditions[id].result.toLowerCase());
-								return;
-							} else if (id in this.expeditionsIds) {
-								return;
-							}
-							this.expeditionsIds[id] = true;
-							let content = msg.querySelector("span.msg_content");
-							let date = msg.querySelector(".msg_date").textContent;
-							let textContent = content.innerText;
-							dataHelper.getExpeditionType(textContent).then((type) => {
-								date = date.split(" ")[0].slice(0, -4) + date.split(" ")[0].slice(-2);
-								let sums = this.json.expeditionSums[date];
-								if (!sums) {
-									sums = {
-										found: [0, 0, 0, 0],
-										harvest: [0, 0],
-										losses: {},
-										fleet: {},
-										type: {},
-										adjust: [0, 0, 0],
-										fuel: 0,
-									};
-								}
-
-								let objectNode = content.querySelector("a");
-								if (objectNode) {
-									this.json.result = "Object";
-									this.json["object"] = objectNode.textContent;
-									type = "Object";
-								}
-
-								ressources.forEach((res, i) => {
-									if (textContent.includes(res)) {
-										let regex = new RegExp("[0-9]{1,3}(.[0-9]{1,3})*", "gm");
-										let found = textContent.match(regex);
-										if (found) {
-											type = normalized[i];
-											sums.found[i] += fromFormatedNumber(found[0], true);
-										}
-									}
-								});
-
-								let fleetMatches = textContent.match(/.*: [1-9].*/gm);
-								fleetMatches &&
-									!normalized.includes(type) &&
-									fleetMatches.forEach((result) => {
-										let split = result.split(": ");
-										type = "Fleet";
-										let id = this.json.shipNames[split[0]];
-										let count = Number(split[1]);
-										sums.fleet[id] ? (sums.fleet[id] += count) : (sums.fleet[id] = count);
-									});
-								if (type != "Unknown") {
-									sums.type[type] ? (sums.type[type] += 1) : (sums.type[type] = 1);
-								}
-								this.json.expeditionSums[date] = sums;
-								this.json.expeditions[id] = {
-									result: type,
-									date: new Date(this.dateStrToDate(date)),
-									favorited: msg.querySelector(".icon_favorited") ? true : false,
-								};
-								if (this.json.expeditions[id].result == "Unknown") {
-									msg
-										.querySelector(".msg_actions")
-										.appendChild(
-											this.createDOM(
-												"div",
-												{ class: "ogl-unknown-warning" },
-												`${this.translation.text(112)} <a href='https://discord.gg/8Y4SWup'> ${this.translation.text(
-													113
-												)}</a>`
-											)
+									} else if (that.json.expeditions[id].busy) {
+										msg.querySelector(".msg_actions").appendChild(
+											createDOM("a", {
+												class: "ogl-warning tooltipRight ogl-tooltipReady ogl-tooltipInit",
+												"data-title": that.translation.text(114),
+											})
 										);
-								} else if (this.json.expeditions[id].busy) {
-									msg.querySelector(".msg_actions").appendChild(
-										createDOM("a", {
-											class: "ogl-warning tooltipRight ogl-tooltipReady ogl-tooltipInit",
-											"data-title": this.translation.text(114),
-										})
-									);
-								}
-								msg.classList.add("ogk-" + this.json.expeditions[id].result.toLowerCase());
-								this.saveData();
-							});
-						} else {
-							if (!this.json.discoveries[id]) {
-								date = date.split(" ")[0].slice(0, -4) + date.split(" ")[0].slice(-2);
-								let lfFound = ["lifeform1", "lifeform2", "lifeform3", "lifeform4"];
-								let sums = this.json.discoveriesSums[date];
-								if (!sums) {
-									sums = {
-										found: [0, 0, 0, 0],
-										artefacts: 0,
-										type: {},
-									};
-								}
-								let type = "void";
-
-								lfFound.forEach((raceType, i) => {
-									let str = "." + raceType;
-									let objectNode = content.querySelector(str);
-									if (objectNode) {
-										type = raceType;
-										let found = content.innerHTML.match(/[0-9]{4,}/gm);
-										console.log(`type: ${raceType}: ${found}`);
-										if (found) {
-											let count = Number(found[0]);
-											sums.found[i] ? (sums.found[i] += count) : (sums.found[i] = count);
-										}
 									}
+									msg.classList.add("ogk-" + that.json.expeditions[id].result.toLowerCase());
+									that.saveData();
 								});
-
-								let artefactMatches = textContent.match(/.*: [0-9].*/gm);
-								artefactMatches &&
-									artefactMatches.forEach((result) => {
-										let split = result.split(": ");
-										type = "artefacts";
-										let count = Number(split[1]);
-										sums.artefacts ? (sums.artefacts += count) : (sums.artefacts = count);
-									});
-								if (type != "Unknown") {
-									sums.type[type] ? (sums.type[type] += 1) : (sums.type[type] = 1);
-								}
-								this.json.discoveriesSums[date] = sums;
-								this.json.discoveries[id] = {
-									result: type,
-									date: new Date(this.dateStrToDate(date)),
-									favorited: msg.querySelector(".icon_favorited") ? true : false,
-								};
-								msg.classList.add("ogk-" + this.json.discoveries[id].result.toLowerCase());
-								this.saveData();
 							} else {
-								msg.classList.add("ogk-" + this.json.discoveries[id].result.toLowerCase());
+								if (!that.json.discoveries[id]) {
+									date = date.split(" ")[0].slice(0, -4) + date.split(" ")[0].slice(-2);
+									let lfFound = ["lifeform1", "lifeform2", "lifeform3", "lifeform4"];
+									let sums = that.json.discoveriesSums[date];
+									if (!sums) {
+										sums = {
+											found: [0, 0, 0, 0],
+											artefacts: 0,
+											type: {},
+										};
+									}
+									let type = "void";
+
+									lfFound.forEach((raceType, i) => {
+										let str = "." + raceType;
+										let objectNode = content.querySelector(str);
+										if (objectNode) {
+											type = raceType;
+											let found = content.innerHTML.match(/[0-9]{4,}/gm);
+											console.log(`type: ${raceType}: ${found}`);
+											if (found) {
+												let count = Number(found[0]);
+												sums.found[i] ? (sums.found[i] += count) : (sums.found[i] = count);
+											}
+										}
+									});
+
+									let artefactMatches = textContent.match(/.*: [0-9].*/gm);
+									artefactMatches &&
+										artefactMatches.forEach((result) => {
+											let split = result.split(": ");
+											type = "artefacts";
+											let count = Number(split[1]);
+											sums.artefacts ? (sums.artefacts += count) : (sums.artefacts = count);
+										});
+									if (type != "Unknown") {
+										sums.type[type] ? (sums.type[type] += 1) : (sums.type[type] = 1);
+									}
+									that.json.discoveriesSums[date] = sums;
+									that.json.discoveries[id] = {
+										result: type,
+										date: new Date(that.dateStrToDate(date)),
+										favorited: msg.querySelector(".icon_favorited") ? true : false,
+									};
+									msg.classList.add("ogk-" + that.json.discoveries[id].result.toLowerCase());
+									that.saveData();
+								} else {
+									msg.classList.add("ogk-" + that.json.discoveries[id].result.toLowerCase());
+								}
 							}
 						}
-					}
-				});
-			}
+					});
+				}
 
-			// Check combat report tab
-			if (document.querySelector("li[id=subtabs-nfFleet21].ui-state-active")) {
-				let id = document.querySelector("li[id=subtabs-nfFleet21].ui-state-active").getAttribute("aria-controls");
-				document.querySelectorAll(`div[id=${id}] li.msg`).forEach((msg, ix) => {
-					setTimeout(() => {
+				// Check combat report tab
+				if (document.querySelector("li[id=subtabs-nfFleet21].ui-state-active")) {
+					let id = document.querySelector("li[id=subtabs-nfFleet21].ui-state-active").getAttribute("aria-controls");
+					document.querySelectorAll(`div[id=${id}] li.msg`).forEach((msg) => {
 						let id = msg.getAttribute("data-msg-id");
 						let isCR = msg.querySelector(".msg_actions .icon_nf_link");
 						if (!isCR) {
 							msg.classList.add("ogk-combat-contact");
 						}
-						if (id in this.json.combats) {
+						if (id in that.json.combats) {
 							if (msg.querySelector(".icon_favorited")) {
-								this.json.combats[id].favorited = true;
-								this.json.combats[id].date = new Date();
+								that.json.combats[id].favorited = true;
+								that.json.combats[id].date = new Date();
 							} else {
-								this.json.combats[id].favorited = false;
+								that.json.combats[id].favorited = false;
 							}
-							if (this.json.combats[id].coordinates.position == 16) {
+							if (that.json.combats[id].coordinates.position == 16) {
 								msg.classList.add("ogk-expedition");
-							} else if (this.json.combats[id].isProbes) {
+							} else if (that.json.combats[id].isProbes) {
 								msg.classList.add("ogk-combat-probes");
-							} else if (this.json.combats[id].draw) {
+							} else if (that.json.combats[id].draw) {
 								msg.classList.add("ogk-combat-draw");
-							} else if (this.json.combats[id].win) {
+							} else if (that.json.combats[id].win) {
 								msg.classList.add("ogk-combat-win");
 							} else {
 								msg.classList.add("ogk-combat");
 							}
-						} else if (id in this.combats) {
+						} else if (id in that.combats) {
 							return;
 						} else {
-							this.combats[id] = true;
-							this.fetchAndConvertRC(id).then((cr) => {
+							that.combats[id] = true;
+							that.fetchAndConvertRC(id).then((cr) => {
 								if (cr === null) return;
 								let date = getFormatedDate(cr.timestamp, "[d].[m].[y]");
 								if (cr.coordinates.position == 16) {
-									if (!this.json.expeditionSums[date]) {
-										this.json.expeditionSums[date] = {
+									if (!that.json.expeditionSums[date]) {
+										that.json.expeditionSums[date] = {
 											found: [0, 0, 0, 0],
 											harvest: [0, 0],
 											fleet: {},
@@ -5413,15 +5361,15 @@ class OGInfinity {
 										};
 									}
 									for (let [key, value] of Object.entries(cr.losses)) {
-										if (this.json.expeditionSums[date].losses[key]) {
-											this.json.expeditionSums[date].losses[key] += value;
+										if (that.json.expeditionSums[date].losses[key]) {
+											that.json.expeditionSums[date].losses[key] += value;
 										} else {
-											this.json.expeditionSums[date].losses[key] = value;
+											that.json.expeditionSums[date].losses[key] = value;
 										}
 									}
 								} else {
-									if (!this.json.combatsSums[date]) {
-										this.json.combatsSums[date] = {
+									if (!that.json.combatsSums[date]) {
+										that.json.combatsSums[date] = {
 											loot: [0, 0, 0],
 											harvest: [0, 0],
 											losses: {},
@@ -5434,36 +5382,36 @@ class OGInfinity {
 										};
 									}
 									if (!cr.isProbes) {
-										if (cr.win) this.json.combatsSums[date].wins += 1;
-										if (cr.draw) this.json.combatsSums[date].draws += 1;
-										this.json.combatsSums[date].count += 1;
-										this.json.combatsSums[date].topCombats.push({
+										if (cr.win) that.json.combatsSums[date].wins += 1;
+										if (cr.draw) that.json.combatsSums[date].draws += 1;
+										that.json.combatsSums[date].count += 1;
+										that.json.combatsSums[date].topCombats.push({
 											debris: cr.debris.metalTotal + cr.debris.crystalTotal,
 											loot: (cr.loot.metal + cr.loot.crystal + cr.loot.deuterium) * (cr.win ? 1 : -1),
 											ennemi: cr.ennemi.name,
 											losses: cr.ennemi.losses,
 										});
-										this.json.combatsSums[date].topCombats.sort(
+										that.json.combatsSums[date].topCombats.sort(
 											(a, b) => b.debris + Math.abs(b.loot) - (a.debris + Math.abs(a.loot))
 										);
-										if (this.json.combatsSums[date].topCombats.length > 3) {
-											this.json.combatsSums[date].topCombats.pop();
+										if (that.json.combatsSums[date].topCombats.length > 3) {
+											that.json.combatsSums[date].topCombats.pop();
 										}
 									}
 									if (cr.win) {
-										this.json.combatsSums[date].loot[0] += cr.loot.metal;
-										this.json.combatsSums[date].loot[1] += cr.loot.crystal;
-										this.json.combatsSums[date].loot[2] += cr.loot.deuterium;
+										that.json.combatsSums[date].loot[0] += cr.loot.metal;
+										that.json.combatsSums[date].loot[1] += cr.loot.crystal;
+										that.json.combatsSums[date].loot[2] += cr.loot.deuterium;
 									} else {
-										this.json.combatsSums[date].loot[0] -= cr.loot.metal;
-										this.json.combatsSums[date].loot[1] -= cr.loot.crystal;
-										this.json.combatsSums[date].loot[2] -= cr.loot.deuterium;
+										that.json.combatsSums[date].loot[0] -= cr.loot.metal;
+										that.json.combatsSums[date].loot[1] -= cr.loot.crystal;
+										that.json.combatsSums[date].loot[2] -= cr.loot.deuterium;
 									}
 									for (let [key, value] of Object.entries(cr.losses)) {
-										if (this.json.combatsSums[date].losses[key]) {
-											this.json.combatsSums[date].losses[key] += value;
+										if (that.json.combatsSums[date].losses[key]) {
+											that.json.combatsSums[date].losses[key] += value;
 										} else {
-											this.json.combatsSums[date].losses[key] = value;
+											that.json.combatsSums[date].losses[key] = value;
 										}
 									}
 								}
@@ -5478,7 +5426,7 @@ class OGInfinity {
 								} else {
 									msg.classList.add("ogk-combat");
 								}
-								this.json.combats[id] = {
+								that.json.combats[id] = {
 									timestamp: cr.timestamp,
 									favorited: msg.querySelector(".icon_favorited") ? true : false,
 									coordinates: cr.coordinates,
@@ -5486,104 +5434,108 @@ class OGInfinity {
 									draw: cr.draw,
 									isProbes: cr.isProbes,
 								};
-								this.saveData();
+								that.saveData();
 							});
 						}
-					}, ix * 50);
-				});
-			}
+					});
+				}
 
-			// Check "other" tab for recycler reports
-			if (document.querySelector("li[id=subtabs-nfFleet24].ui-state-active")) {
-
-				console.log("fetch other messages");
-
-				let id = document.querySelector("li[id=subtabs-nfFleet24].ui-state-active").getAttribute("aria-controls");
-				// Iterate through every message in "others"
-				document.querySelectorAll(`div[id=${id}] li.msg`).forEach((msg) => {
-					let id = msg.getAttribute("data-msg-id");
-					if (id in this.json.harvests) {
-						if (this.json.harvests[id].coords.split(":")[2] == 16) {
-							msg.classList.add("ogk-expedition");
-						} else {
-							if (this.json.harvests[id].combat) {
-								msg.classList.add("ogk-combat");
+				// Check "other" tab for recycler reports
+				if (document.querySelector("li[id=subtabs-nfFleet24].ui-state-active")) {
+					let id = document.querySelector("li[id=subtabs-nfFleet24].ui-state-active").getAttribute("aria-controls");
+					// Iterate through every message in "others"
+					document.querySelectorAll(`div[id=${id}] li.msg`).forEach((msg) => {
+						let id = msg.getAttribute("data-msg-id");
+						if (id in that.json.harvests) {
+							if (that.json.harvests[id].coords.split(":")[2] == 16) {
+								msg.classList.add("ogk-expedition");
 							} else {
-								msg.classList.add("ogk-harvest");
+								if (that.json.harvests[id].combat) {
+									msg.classList.add("ogk-combat");
+								} else {
+									msg.classList.add("ogk-harvest");
+								}
 							}
+							return;
 						}
-						return;
-					}
 
-					let date = msg.querySelector(".msg_date").textContent;
-					date = date.split(" ")[0].slice(0, -4) + date.split(" ")[0].slice(-2);
-					let coords = msg.querySelector(".msg_title a");
-					if (coords) {
-						let content = msg.querySelector(".msg_content").innerText;
-						coords = coords.textContent.slice(1, -1);
-						let matches = content.match(/[0-9.,]*[0-9]/gm);
-						let met = fromFormatedNumber(matches[matches.length - 2]);
-						let cri = fromFormatedNumber(matches[matches.length - 1]);
-						let combat = false;
+						let date = msg.querySelector(".msg_date").textContent;
+						date = date.split(" ")[0].slice(0, -4) + date.split(" ")[0].slice(-2);
+						let coords = msg.querySelector(".msg_title a");
+						if (coords) {
+							let content = msg.querySelector(".msg_content").innerText;
+							coords = coords.textContent.slice(1, -1);
+							let matches = content.match(/[0-9.,]*[0-9]/gm);
+							let met = fromFormatedNumber(matches[matches.length - 2]);
+							let cri = fromFormatedNumber(matches[matches.length - 1]);
+							let combat = false;
 
-						if (coords.split(":")[2] == 16) {
-							msg.classList.add("ogk-expedition");
-						} else {
-							if (content.includes(recyclerName)) {
-								msg.classList.add("ogk-harvest");
+							if (coords.split(":")[2] == 16) {
+								msg.classList.add("ogk-expedition");
 							} else {
-								msg.classList.add("ogk-harvest-combat");
-								combat = true;
+								if (content.includes(recyclerName)) {
+									msg.classList.add("ogk-harvest");
+								} else {
+									msg.classList.add("ogk-harvest-combat");
+									combat = true;
+								}
 							}
-						}
 
-						if (coords.split(":")[2] == 16) {
-							if (!this.json.expeditionSums[date]) {
-								this.json.expeditionSums[date] = {
-									found: [0, 0, 0, 0],
-									harvest: [0, 0],
-									fleet: {},
-									losses: {},
-									type: {},
-									fuel: 0,
-									adjust: [0, 0, 0],
-								};
+							if (coords.split(":")[2] == 16) {
+								if (!that.json.expeditionSums[date]) {
+									that.json.expeditionSums[date] = {
+										found: [0, 0, 0, 0],
+										harvest: [0, 0],
+										fleet: {},
+										losses: {},
+										type: {},
+										fuel: 0,
+										adjust: [0, 0, 0],
+									};
+								}
+								that.json.expeditionSums[date].harvest[0] += met;
+								that.json.expeditionSums[date].harvest[1] += cri; // todo: what about deut?
+							} else {
+								if (!that.json.combatsSums[date]) {
+									that.json.combatsSums[date] = {
+										loot: [0, 0, 0],
+										losses: {},
+										harvest: [0, 0],
+										adjust: [0, 0, 0],
+										fuel: 0,
+										topCombats: [],
+										count: 0,
+										wins: 0,
+										draws: 0,
+									};
+								}
+								that.json.combatsSums[date].harvest[0] += met;
+								that.json.combatsSums[date].harvest[1] += cri;
 							}
-							this.json.expeditionSums[date].harvest[0] += met;
-							this.json.expeditionSums[date].harvest[1] += cri; // todo: what about deut?
-						} else {
-							if (!this.json.combatsSums[date]) {
-								this.json.combatsSums[date] = {
-									loot: [0, 0, 0],
-									losses: {},
-									harvest: [0, 0],
-									adjust: [0, 0, 0],
-									fuel: 0,
-									topCombats: [],
-									count: 0,
-									wins: 0,
-									draws: 0,
-								};
-							}
-							this.json.combatsSums[date].harvest[0] += met;
-							this.json.combatsSums[date].harvest[1] += cri;
+							that.json.harvests[id] = {
+								date: new Date(that.dateStrToDate(date)),
+								metal: met,
+								crystal: cri,
+								coords: coords,
+								combat: combat,
+							};
+							that.saveData();
 						}
-						this.json.harvests[id] = {
-							date: new Date(this.dateStrToDate(date)),
-							metal: met,
-							crystal: cri,
-							coords: coords,
-							combat: combat,
-						};
-						this.saveData();
-					}
-				});
+					});
+				}
 			}
-
-			//setTimeout(() => { this.expeditionMessages(); }, 100); // todo: check why this has to be a timer - define listener for tab change
+			return;
 		}
+
+		const selectElement = document.querySelector(".content");
+		let messageListener = (e) => {
+			messageHandler();
+		}
+		selectElement.addEventListener("click", messageListener);
 		return;
 	}
+
+
 
 	loading() {
 		const svg = createSVG("svg", {
@@ -9886,7 +9838,7 @@ class OGInfinity {
 					}?page=ingame&component=shipyard&cp=${planetId}&techId219=${pf}"></a><span>${toFormatedNumber(pf, 0)}</span>
 			<a tech-id="${ShipEnum.Recycler}" class="ogl-option noShips ogl-fleet-ship ogl-fleet-${ShipEnum.Recycler}" href="https://${window.location.host
 					}${window.location.pathname
-					}?page=ingame&component=shipyard&cp=${planetId}&techId209=${rec}"></a><span>${toFormatedNumber(
+					}?page=ingame&component=shipyard&cp=${planetId}&techId209=${rec}"></a><span>${toFormatedNumber( // todo: check for error?
 						rec,
 						0
 					)}</span>`
@@ -10556,7 +10508,7 @@ class OGInfinity {
 					}
 					consDiv.classList.remove("overmark");
 				}
-				interval = setInterval(() => {
+				interval = setInterval(() => {  // todo: remove
 					const arrivalDivTxt = getFormatedDate(
 						new Date(serverTime).getTime() + fleetDispatcher.getDuration() * 1e3,
 						"[d].[m].[y] [G]:[i]:[s] "
@@ -10575,7 +10527,7 @@ class OGInfinity {
 						document.createTextNode(`${returnDivTxt.split(" ")[0]}  `),
 						createDOM("strong", {}, returnDivTxt.split(" ")[1])
 					);
-				}, 100);
+				}, 500);
 
 				highlightFleetTarget();
 				onResChange(2);
@@ -11982,10 +11934,6 @@ class OGInfinity {
 		return (oldAct == 0 && newAct > 0) || (oldAct > 0 && newAct == 0) || (oldAct < 61 && newAct == 61);
 	}
 
-	sleep(ms) {
-		return new Promise((resolve) => setTimeout(resolve, ms));
-	}
-
 	recordActivityChange(history, activity) {
 		let ACTIVITY_TYPE = (timer) => {
 			if (timer == 0) return "active";
@@ -12751,7 +12699,7 @@ class OGInfinity {
 					}
 					planetList.appendChild(a);
 				}
-				setTimeout(() => {
+				setTimeout(() => { // todo: remove
 					$(content).mCustomScrollbar({ theme: "ogame" });
 				}, 100);
 			});
@@ -13308,6 +13256,7 @@ class OGInfinity {
 			let expeBox = document.querySelector(".expeditionDebrisSlotBox");
 			if (expeBox && !expeBox.classList.contains("ogl-done")) {
 				expeBox.classList.add("ogl-done");
+
 				const frag = document.createDocumentFragment();
 				frag.appendChild(
 					createDOM("img", { src: "https://gf1.geo.gfsrv.net/cdnc5/fa3e396b8af2ae31e28ef3b44eca91.gif" })
@@ -13337,7 +13286,7 @@ class OGInfinity {
 		}
 	}
 
-	spyTable() {
+	spyTable() { // todo: group with expeditionMessage
 		if (this.page != "messages")
 			return;
 
@@ -14125,8 +14074,9 @@ class OGInfinity {
 	}
 
 	async pantrySync(pantryKey, mainSyncObj, action = 1) {
-		if (!pantryKey) return;
-		//const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+		if (!pantryKey)
+			return;
+
 		const pantryHeaders = new Headers({ "Content-Type": "application/json" });
 		let success = true;
 		let errorCode = null;
@@ -14334,7 +14284,6 @@ class OGInfinity {
 						this.saveData();
 						console.info("[OGInfinity] - Pantry synchronisation complete");
 						let toastText = "OGInfinity - Pantry synchronisation complete.";
-						this.showToast(toastText, "success", "done", null, 3500);
 						sessionStorage.removeItem("lastPantryTry");
 					}
 				}
@@ -14354,40 +14303,7 @@ class OGInfinity {
 			} else {
 				toastText += ": " + (errorMsg && errorMsg != "" ? errorMsg : ": Error " + errorCode);
 			}
-			this.showToast(toastText, "warning", "warning", null, 3500);
 		}
-	}
-
-	showToast(text, type = "info", icon = "info", title = null, duration = 3500) {
-		let totalduration = duration + 2000;
-		let toastHtml = createDOM("div", { class: `ogi-toast ogi-toast-${type}` });
-		let toastContainer = createDOM("div", { class: "ogi-toast-container" });
-		let toastBody = createDOM("span", { class: "ogi-toast-body" });
-		let toastLogoContainer = createDOM("span", { class: "ogi-toast-logo" });
-		let toastLogo = createDOM("div", { class: "material-icons" });
-		toastLogo.textContent = icon;
-		toastBody.textContent = text;
-		if (title) {
-			let toastTitle = createDOM("span", { class: "ogi-toast-title" });
-			let title = document.createElement("h1");
-			title.textContent = title;
-			toastTitle.append(title);
-			toastHtml.append(toastTitle);
-		}
-		toastLogoContainer.append(toastLogo);
-		toastContainer.append(toastLogoContainer);
-		toastContainer.append(toastBody);
-		toastHtml.append(toastContainer);
-		document.body.appendChild(toastHtml);
-		setTimeout(function () {
-			toastHtml.classList.add("toast-show");
-			setTimeout(function () {
-				toastHtml.classList.remove("toast-show");
-				setTimeout(function () {
-					toastHtml.remove();
-				}, 1000);
-			}, totalduration);
-		}, 300);
 	}
 
 	createDOM(element, options, content) {
@@ -14775,10 +14691,10 @@ class OGInfinity {
 		}
 	}
 
-	FPSLoop(callbackAsString, params) {
+	FPSLoop(callbackAsString, params) { // todo: remove
 		setTimeout(() => {
 			requestAnimationFrame(() => this[callbackAsString](params));
-		}, 1e3 / 20);
+		}, 500);
 	}
 
 	tooltip(sender, content, autoHide, side, timer) {
@@ -16555,10 +16471,11 @@ class OGInfinity {
 		[ShipEnum.SmallCargo, ShipEnum.LargeCargo, ShipEnum.Pathfinder, ShipEnum.Recycler, ShipEnum.SolarSatellite].forEach((id) => {
 			if (url.searchParams.has(`techId${id}`)) {
 				let needed = Number(url.searchParams.get(`techId${id}`));
-				waitForElementToDisplay(`.hasDetails[data-technology='${id}'] span`, () => {
+				waitForElement(`.hasDetails[data-technology='${id}'] span`).then(() => {
 					document.querySelector(`.hasDetails[data-technology='${id}'] span`).click();
 				});
-				waitForElementToDisplay(`#technologydetails[data-technology-id='${id}']`, () => {
+
+				waitForElement(`#technologydetails[data-technology-id='${id}']`).then(() => {
 					let input = document.querySelector("#build_amount");
 					input.focus();
 					input.value = needed;
@@ -16568,7 +16485,7 @@ class OGInfinity {
 		});
 		if (technoDetails) {
 			let selector = `.technology[data-technology='${technoDetails}'] span`;
-			waitForElementToDisplay(selector, () => document.querySelector(selector).click());
+			waitForElement(selector).then(() => document.querySelector(selector).click());
 		}
 	}
 
@@ -16978,7 +16895,7 @@ class OGInfinity {
 }
 
 // General debounce function
-const debounce = function (func, wait, immediate) {
+const debounce = function (func, wait, immediate) { // todo: remove
 	var timeout;
 	return function () {
 		var context = this,
@@ -18581,9 +18498,9 @@ class Translation {
 }
 
 (async () => {
-	let ogKush = new OGInfinity();
-	setTimeout(function () {
-		ogKush.init();
-		ogKush.start();
-	}, 0);
+	let infinity = new OGInfinity();
+	waitForElement("#pageContent").then(() => {
+		infinity.init();
+		infinity.start();
+	});
 })();
