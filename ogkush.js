@@ -5528,10 +5528,7 @@ class OGInfinity {
 		}
 
 		const selectElement = document.querySelector(".content");
-		let messageListener = (e) => {
-			messageHandler();
-		}
-		selectElement.addEventListener("click", messageListener);
+		selectElement.addEventListener("DOMSubtreeModified", debounce(messageHandler, 300));
 		return;
 	}
 
@@ -16895,7 +16892,7 @@ class OGInfinity {
 }
 
 // General debounce function
-const debounce = function (func, wait, immediate) { // todo: remove
+const debounce = function (func, wait, immediate) {
 	var timeout;
 	return function () {
 		var context = this,
