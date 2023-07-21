@@ -17281,6 +17281,14 @@ class OGInfinity {
     let srvDatasBtn = createDOM("button", { class: "btn_blue update" }, this.getTranslatedText(23));
     srvDatas.appendChild(srvDatasBtn);
     srvDatasBtn.addEventListener("click", async () => {
+      this.loading();
+      this.isLoading = true;
+      let inter = setInterval(() => {
+        if (!this.isLoading) {
+          clearInterval(inter);
+          document.querySelector(".ogl-dialog .close-tooltip").click();
+        }
+      }, 20);
       this.updateServerSettings(true);
       this.getAllianceClass();
       await this.updateLifeform(true);
