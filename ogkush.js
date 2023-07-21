@@ -2838,6 +2838,23 @@ class OGInfinity {
 							};
 						};
 
+
+						let oldValue;
+						input.onkeydown = () => {
+							oldValue = input.value;
+						};
+
+						input.onkeyup = (event) => {
+							if (event.code == "KeyK") input.value = Math.max(oldValue, 1) * 1e3;
+							let value = 1;
+							if (input.value <= 0 || isNaN(Number(input.value))) {
+								input.value = "";
+							} else {
+								value = input.value;
+							}
+							updateShipDetails(value);
+						};
+
 						updateShipDetails(1);
 						document.querySelector(".maximum") &&
 							document.querySelector(".maximum").addEventListener("click", () => {
@@ -2976,22 +2993,28 @@ class OGInfinity {
 	}
 
 	onFleetSent(callback) {
-		FleetDispatcher.prototype.submitFleet2 = function (force) {
+		FleetDispatcher.prototype.submitFleet2 = function (force) { // todo: remove prototype of fleetDispatcher() function as it makes think only overcomplex
 			force = force || false;
 			let that = this;
 			let params = {};
+
 			this.appendTokenParams(params);
 			this.appendShipParams(params);
 			this.appendTargetParams(params);
 			this.appendCargoParams(params);
 			this.appendPrioParams(params);
+
 			params.mission = this.mission;
 			params.speed = this.speedPercent;
 			params.retreatAfterDefenderRetreat = this.retreatAfterDefenderRetreat === true ? 1 : 0;
 			params.union = this.union;
-			if (force) params.force = force;
+
+			if (force)
+				params.force = force;
+
 			params.holdingtime = this.getHoldingTime();
 			this.startLoading();
+
 			$.post(this.sendFleetUrl, params, function (response) {
 				let data = JSON.parse(response);
 				that.updateToken(data.fleetSendingToken || "");
@@ -9539,8 +9562,7 @@ class OGInfinity {
 	}
 
 	fleetDispatcher() {
-		if (
-			this.page == "fleetdispatch" &&
+		if (this.page == "fleetdispatch" &&
 			document.querySelector("#civilships") &&
 			fleetDispatcher.shipsOnPlanet.length != 0
 		) {
@@ -9559,84 +9581,47 @@ class OGInfinity {
 
 				let object = this.json.empire[this.currentLocation.index];
 				object = this.currentLocation.isMoon ? object.moon : object;
+
 				object.metal = fleetDispatcher.metalOnPlanet - fleetDispatcher.cargoMetal;
 				object.crystal = fleetDispatcher.crystalOnPlanet - fleetDispatcher.cargoCrystal;
 				object.deuterium = fleetDispatcher.deuteriumOnPlanet - fleetDispatcher.cargoDeuterium;
 				object.deuterium -= fuel;
+
 				if (!this.currentLocation.isMoon && object.metal < object.metalStorage && object.production.hourly[0] == 0) {
-					object.production.hourly[0] = Math.floor(
-						(resourcesBar.resources.metal.baseProduction +
-							resourcesBar.techs[1].production.metal * object.production.productionFactor) *
-						3600
-					);
-					object.production.daily[0] =
-						Math.floor(
-							(resourcesBar.resources.metal.baseProduction +
-								resourcesBar.techs[1].production.metal * object.production.productionFactor) *
-							3600
-						) * 24;
-					object.production.weekly[0] =
-						Math.floor(
-							(resourcesBar.resources.metal.baseProduction +
-								resourcesBar.techs[1].production.metal * object.production.productionFactor) *
-							3600
-						) *
-						24 *
-						7;
+					object.production.hourly[0] =
+						Math.floor((resourcesBar.resources.metal.baseProduction +
+							resourcesBar.techs[1].production.metal * object.production.productionFactor) * 3600);
+					object.production.daily[0] = object.production.hourly[0] * 24;
+					object.production.weekly[0] = object.production.weekly[0] * 7;
 				}
+
 				if (!this.currentLocation.isMoon && object.crystal < object.crystalStorage && object.production.hourly[1] == 0) {
-					object.production.hourly[1] = Math.floor(
-						(resourcesBar.resources.crystal.baseProduction +
-							resourcesBar.techs[2].production.crystal * object.production.productionFactor) *
-						3600
-					);
-					object.production.daily[1] =
-						Math.floor(
-							(resourcesBar.resources.crystal.baseProduction +
-								resourcesBar.techs[2].production.crystal * object.production.productionFactor) *
-							3600
-						) * 24;
-					object.production.weekly[1] =
-						Math.floor(
-							(resourcesBar.resources.crystal.baseProduction +
-								resourcesBar.techs[2].production.crystal * object.production.productionFactor) *
-							3600
-						) *
-						24 *
-						7;
+					object.production.hourly[1] =
+						Math.floor((resourcesBar.resources.crystal.baseProduction +
+							resourcesBar.techs[2].production.crystal * object.production.productionFactor) * 3600);
+					object.production.daily[1] = object.production.hourly[1] * 24;
+					object.production.weekly[1] = object.production.weekly[1] * 7;
 				}
+
 				if (!this.currentLocation.isMoon && object.deuterium < object.deuteriumStorage && object.production.hourly[2] == 0) {
-					object.production.hourly[2] = Math.floor(
-						(resourcesBar.resources.deuterium.baseProduction +
-							resourcesBar.techs[3].production.deuterium * object.production.productionFactor -
-							resourcesBar.techs[12].consumption.deuterium) *
-						3600
-					);
-					object.production.daily[2] =
-						Math.floor(
-							(resourcesBar.resources.deuterium.baseProduction +
-								resourcesBar.techs[3].production.deuterium * object.production.productionFactor -
-								resourcesBar.techs[12].consumption.deuterium) *
-							3600
-						) * 24;
-					object.production.weekly[2] =
-						Math.floor(
-							(resourcesBar.resources.deuterium.baseProduction +
-								resourcesBar.techs[3].production.deuterium * object.production.productionFactor -
-								resourcesBar.techs[12].consumption.deuterium) *
-							3600
-						) *
-						24 *
-						7;
+					object.production.hourly[2] =
+						Math.floor((resourcesBar.resources.deuterium.baseProduction +
+							resourcesBar.techs[SupplyEnum.DeuteriumSynthesizer].production.deuterium * object.production.productionFactor -
+							resourcesBar.techs[SupplyEnum.FusionReactor].consumption.deuterium) * 3600);
+					object.production.daily[2] = object.production.hourly[2] * 24;
+					object.production.weekly[2] = object.production.daily[2] * 7;
 				}
+
 				fleetDispatcher.shipsToSend.forEach((ship) => {
 					object[ship.id] -= ship.number;
 				});
+
 				if (this.json.missing[coords]) {
 					this.json.missing[coords][0] -= fleetDispatcher.cargoMetal;
 					this.json.missing[coords][1] -= fleetDispatcher.cargoCrystal;
 					this.json.missing[coords][2] -= fleetDispatcher.cargoDeuterium;
 				}
+
 				if (pos == 16) {
 					if (!this.json.expeditionSums[dateStr]) {
 						this.json.expeditionSums[dateStr] = {
@@ -9666,6 +9651,7 @@ class OGInfinity {
 					}
 					this.json.combatsSums[dateStr].fuel -= fuel;
 				}
+
 				this.saveData();
 				return this.json.href;
 			});
