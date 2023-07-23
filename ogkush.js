@@ -2148,7 +2148,7 @@ class OGInfinity {
           timeSumDiv.textContent = formatTimeWrapper(timeSum, 2, true, " ", false, "");
           finishDate = new Date(currentDate.getTime() + (timeSum - timeZoneChange) * 1e3);
           const dateTxt = getFormatedDate(finishDate.getTime(), "[d].[m] - [G]:[i]:[s]");
-          timeDiv.appendChild(
+          timeSumDiv.appendChild(
             createDOM("div", { class: "ogl-date" })
               .appendChild(createDOM("strong", {}, `${dateTxt.split(" ")[0]}`))
               .parentElement.appendChild(document.createTextNode(` -${dateTxt.split("-")[1]}`)).parentElement
