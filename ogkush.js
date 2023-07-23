@@ -2648,14 +2648,17 @@ class OGInfinity {
               baseTechno = that.building(technologyId, baseLvl, object);
             }
             if (
-              baseTechno.cost[0] != metalCost ||
-              baseTechno.cost[1] != crystalCost ||
-              baseTechno.cost[2] != deuteriumCost
+              baseTechno.cost[0] > metalCost + 1 ||
+              baseTechno.cost[0] < metalCost - 1 ||
+              baseTechno.cost[1] > crystalCost + 1 ||
+              baseTechno.cost[1] < crystalCost - 1 ||
+              baseTechno.cost[2] > deuteriumCost + 1 ||
+              baseTechno.cost[2] < deuteriumCost - 1
             )
               document
                 .querySelector(".costs")
                 .appendChild(
-                  createDOM("div", { class: "overmark" }, "resources not correct, please report to developers!")
+                  createDOM("div", { class: "overmark" }, "resources not correct, try to update LF bonus")
                 );
 
             updateResearchDetails(technologyId, baseLvl, tolvl);
@@ -11855,7 +11858,7 @@ class OGInfinity {
             ? technologyTimeReduction[techId] + bonus
             : bonus;
         });
-        // TODO: add following buildingCostReduction, buildingTimeReduction, consumptionReduction[id] = {energy: 0, deuterium: 0}
+        // TODO: add following consumptionReduction[id] = {energy: 0, deuterium: 0}
         return {
           productionBonus: productionBonus,
           technologyCostReduction: technologyCostReduction,
@@ -14762,15 +14765,15 @@ class OGInfinity {
 
     if (object && this.json.lifeformBonus && this.json.lifeformBonus[object.id]) {
       if (
-        this.json.lifeformBonus[object.id].buildingCostReduction &&
-        this.json.lifeformBonus[object.id].buildingCostReduction[id]
+        this.json.lifeformBonus[object.id].technologyCostReduction &&
+        this.json.lifeformBonus[object.id].technologyCostReduction[id]
       )
-        costFactor -= this.json.lifeformBonus[object.id].buildingCostReduction[id];
+        costFactor -= this.json.lifeformBonus[object.id].technologyCostReduction[id];
       if (
-        this.json.lifeformBonus[object.id].buildingTimeReduction &&
-        this.json.lifeformBonus[object.id].buildingTimeReduction[id]
+        this.json.lifeformBonus[object.id].technologyTimeReduction &&
+        this.json.lifeformBonus[object.id].technologyTimeReduction[id]
       )
-        timeFactor -= this.json.lifeformBonus[object.id].buildingTimeReduction[id];
+        timeFactor -= this.json.lifeformBonus[object.id].technologyTimeReduction[id];
     }
 
     let cost = [
