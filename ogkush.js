@@ -15444,8 +15444,8 @@ class OGInfinity {
         }
         let div = createDOM("div");
         appendMode ? div.appendChild(content) : div.html(content);
+        if (this.hasLifeforms) div.classList.add("hasLifeforms");
         if ((typeof content === "string" || content instanceof String) && content.includes("fleetinfo")) {
-          if (this.hasLifeforms) div.classList.add("hasLifeforms");
           this.trashsimTooltip(div, content);
         }
         let side = {};
