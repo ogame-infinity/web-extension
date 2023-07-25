@@ -2811,7 +2811,7 @@ class OGInfinity {
 								}
 							}
 
-							let techId = technologyId;
+							let techName = input.value + " " + that.translation.text(technologyId, "tech");
 
 							lockListener = () => { // todo: remove this, as this is a exact copy of line 2590
 								let coords = that.currentLocation.coords + (that.currentLocation.isMoon ? "M" : "P");
@@ -2833,7 +2833,7 @@ class OGInfinity {
 								if (that.json.missing[coords][3].length > 0) {
 									that.json.missing[coords][3] += "\n";
 								}
-								that.json.missing[coords][3] += techId;// todo: convert id to name
+								that.json.missing[coords][3] += techName;
 
 								that.saveData();
 								that.sideLock(true);
