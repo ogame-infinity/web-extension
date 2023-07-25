@@ -845,6 +845,7 @@ const TECH_INFO = {
 		factorCons: 1.05,
 	},
 
+	// todo: add ships and defenses
 
 	// research
 	106: {
@@ -1681,7 +1682,11 @@ class OGInfinity {
 		this.json.options.eventBoxExps = this.json.options.eventBoxExps === false ? false : true;
 		this.json.options.eventBoxKeep = this.json.options.eventBoxKeep === true ? true : false;
 		this.json.options = this.json.options || {};
+
 		this.json.options.empire = this.json.options.empire === true ? true : false;
+		this.json.options.disableautofetchempire = this.json.options.disableautofetchempire === true ? true : false;
+		this.json.options.autofetchempire = this.json.options.disableautofetchempire === true ? false : true;
+
 		this.json.options.targetList = this.json.options.targetList === true ? true : false;
 		this.json.options.fret = this.json.options.fret || 202;
 		this.json.options.spyFret = this.json.options.spyFret || 202;
@@ -1693,8 +1698,6 @@ class OGInfinity {
 		this.json.options.expeditionDefaultTime = this.json.options.expeditionDefaultTime || 1;
 		this.json.options.activitytimers = this.json.options.activitytimers === true ? true : false;
 		this.json.options.planetIcons = this.json.options.planetIcons === true ? true : false;
-		this.json.options.disableautofetchempire = this.json.options.disableautofetchempire === true ? true : false;
-		this.json.options.autofetchempire = this.json.options.disableautofetchempire === true ? false : true;
 		this.json.options.spyFilter = this.json.options.spyFilter || "DATE";
 		if (
 			this.json.options.ptreTK &&
@@ -1759,14 +1762,14 @@ class OGInfinity {
 		 * Utility - class for all kinds of helper functions like formatting etc.
 		 */
 		this.translation = new Translation(this.gameLang)
-		this.planetListExtension = new SidebarPlanetListExtension(this);
+		this.empireExtension = new EmpireExtension(this);
 	}
 
 	start() {
 		this.hasLifeforms = document.querySelector(".lifeform") != null;
 		let forceEmpire = document.querySelectorAll("div[id*=planet-").length != this.json.empire.length;
 		this.updateServerSettings();
-		this.updateEmpireData(forceEmpire);
+		this.empireExtension.updateEmpireData(forceEmpire);
 		this.initializeLFTypeName();
 		if (this.json.needLifeformUpdate[this.currentLocation.id] && !this.currentLocation.isMoon) this.updateLifeform();
 
@@ -1826,7 +1829,7 @@ class OGInfinity {
 
 		this.sideOptions();
 		this.minesLevel();
-		this.planetListExtension.resourceDetail();// todo: redo reference
+		this.empireExtension.resourceDetail();
 		this.eventBox();
 		this.neededCargo();
 		this.expedition();
@@ -1834,7 +1837,7 @@ class OGInfinity {
 		this.expeditionMessages();
 		this.cleanupMessages();
 		this.quickPlanetList();
-		this.activitytimers();
+		this.empireExtension.activitytimers();
 		this.sideStalk();
 		this.spyTable();
 		this.keyboardActions();
@@ -1898,36 +1901,6 @@ class OGInfinity {
 			$(".ogk-ping").prepend(
 				createDOM("span", { style: "color: white" }, `(${hourDiff > 0 ? "+" : ""}${toFormatedNumber(hourDiff)}h) `)
 			);
-	}
-
-	updateEmpireData(force = false) {
-		let timeSinceLastUpdate = new Date() - new Date(this.json.lastEmpireUpdate);
-		if (
-			force ||
-			isNaN(new Date(this.json.lastEmpireUpdate)) ||
-			(timeSinceLastUpdate > 5 * 60 * 1e3 && this.json.needsUpdate) ||
-			(timeSinceLastUpdate > 1 * 60 * 1e3 && this.json.options.autofetchempire)
-		) {
-			this.updateInfo();
-		}
-		let stageForUpdate = () => {
-			this.json.needsUpdate = true;
-			this.saveData();
-		};
-		setInterval(() => {
-			document
-				.querySelectorAll(
-					".scrap_it, .build-it_wrap, button.upgrade, .abortNow, .build-faster, .og-button.submit, .abort_link, .js_executeJumpButton"
-				)
-				.forEach((btn) => {
-					if (!btn.classList.contains("ogk-ready")) {
-						btn.classList.add("ogk-ready");
-						btn.addEventListener("click", () => {
-							stageForUpdate();
-						});
-					}
-				});
-		}, 100);
 	}
 
 	overviewDates() {
@@ -3450,7 +3423,7 @@ class OGInfinity {
 											update = true;
 										} else {
 											object.invalidate = true;
-											this.planetListExtension.updateresourceDetail();// todo: redo reference
+											this.empireExtension.updateresourceDetail();// todo: redo reference
 										}
 									}
 									this.saveData();
@@ -3461,13 +3434,13 @@ class OGInfinity {
 					this.json.needsUpdate = update;
 					this.saveData();
 					if (update) {
-						this.updateEmpireData();
+						this.empireExtension.updateEmpireData();
 					}
 					this.json.needSync = true;
 				}
 				this.json.flying = flying;
 				this.saveData();
-				this.planetListExtension.updateresourceDetail();// todo: redo reference
+				this.empireExtension.updateresourceDetail();// todo: redo reference
 			}
 		}, 10);
 
@@ -4355,7 +4328,7 @@ class OGInfinity {
 			this.searchOpened = !this.searchOpened;
 		});
 		empireBtn.addEventListener("click", (e) => {
-			this.updateEmpireData(e.ctrlKey);
+			this.empireExtension.updateEmpireData(e.ctrlKey);
 			this.loading();
 			let inter = setInterval(() => {
 				if (!this.isLoading) {
@@ -4366,7 +4339,7 @@ class OGInfinity {
 		});
 
 		overViewBtn.addEventListener("click", (e) => {
-			this.updateEmpireData(e.ctrlKey);
+			this.empireExtension.updateEmpireData(e.ctrlKey);
 			let active = document.querySelector(".ogl-option.ogl-active:not(.ogl-overview-icon)");
 			if (active) {
 				active.click();
@@ -4379,13 +4352,13 @@ class OGInfinity {
 				this.json.options.empire = false;
 			} else {
 				this.json.options.empire = true;
-				this.planetListExtension.resourceDetail();// todo: redo reference
+				this.empireExtension.resourceDetail();// todo: redo reference
 			}
 			this.saveData();
 		});
 
 		statsBtn.addEventListener("click", (e) => {
-			this.updateEmpireData(e.ctrlKey);
+			this.empireExtension.updateEmpireData(e.ctrlKey);
 			this.loading();
 			let inter = setInterval(() => {
 				if (!this.isLoading) {
@@ -5558,8 +5531,7 @@ class OGInfinity {
 		return;
 	}
 
-
-
+	// todo: move into settings and overview
 	loading() {
 		const svg = createSVG("svg", {
 			width: "200px",
@@ -5599,6 +5571,7 @@ class OGInfinity {
 		this.popup(null, body);
 	}
 
+	// todo: move into settings and overview
 	overview() {
 		let header = createDOM("div", { class: "ogl-tabs" });
 		let minesBtn = header.appendChild(createDOM("span", { class: "ogl-tab ogl-active" }, this.translation.text(90)));
@@ -5743,6 +5716,7 @@ class OGInfinity {
 		return fleetRes;
 	}
 
+	// todo: move into settings and overview
 	expeditionStats() {
 		let ressources = ["Metal", "Crystal", "Deuterium", "AM"];
 		let content = createDOM("div", { class: "ogk-stats-content" });
@@ -6096,6 +6070,7 @@ class OGInfinity {
 		return content;
 	}
 
+	// todo: move into settings and overview
 	combatStats() {
 		let ressources = ["Metal", "Crystal", "Deuterium", "AM"];
 		let content = createDOM("div", { class: "ogk-stats-content" });
@@ -6456,6 +6431,7 @@ class OGInfinity {
 		return content;
 	}
 
+	// todo: move into settings and overview - helper
 	blackHoleBox(onValidate) {
 		let box = createDOM("div", { class: "ogk-box ogk-small" });
 		let fleet = box.appendChild(createDOM("div", { class: "ogk-bhole-grid" }));
@@ -6490,6 +6466,7 @@ class OGInfinity {
 		return box;
 	}
 
+	// todo: move into settings and overview - helper
 	shipsBox(ships, minus) {
 		let fleetDetail = createDOM("div", { class: "ogk-box" });
 		let fleet = fleetDetail.appendChild(createDOM("div", { class: "ogk-fleet" }));
@@ -6517,6 +6494,7 @@ class OGInfinity {
 		return fleetDetail;
 	}
 
+	// todo: move into settings and overview - helper
 	adjustBox(adjustments, onValidate) {
 		let box = createDOM("div", { class: "ogk-box ogk-small" });
 		let prod = box.appendChild(createDOM("div", { class: "ogk-adjust-grid" }));
@@ -6557,6 +6535,7 @@ class OGInfinity {
 		return box;
 	}
 
+	// todo: move into settings and overview
 	resourceBox(rows, am, callback) {
 		let box = createDOM("div", { class: "ogk-box" });
 		let prod = box.appendChild(createDOM("div", { class: "ogk-grid" }));
@@ -6687,6 +6666,7 @@ class OGInfinity {
 		return box;
 	}
 
+	// todo: move into settings and overview
 	expeditionGraph(sums) {
 		let div = createDOM("div");
 		let chartNode = div.appendChild(createDOM("canvas", { id: "piechart", width: "400px", height: "300px" }));
@@ -7016,6 +6996,7 @@ class OGInfinity {
 		}
 	}
 
+	// todo: move into settings and overview
 	minesOverview() {
 		let content = createDOM("div", { class: "ogl-mines-content" });
 		let table = content.appendChild(createDOM("table", { class: "ogl-fleet-table" }));
@@ -7366,6 +7347,7 @@ class OGInfinity {
 		return content;
 	}
 
+	// todo: move into settings and overview
 	minesStats() {
 		let content = createDOM("div", { class: "ogl-prodOverview-content" });
 		let table = content.appendChild(createDOM("table", { class: "ogl-fleet-table" }));
@@ -8634,6 +8616,7 @@ class OGInfinity {
 		return `?page=ingame&component=galaxy&galaxy=${galaxy}&system=${system}&position=${position}`;
 	}
 
+	// todo: move into settings and overview
 	fleetOverview(moon) {
 		let content = createDOM("div", { class: "ogl-fleet-content" });
 		let table = createDOM("table", { class: "ogl-fleet-table" });
@@ -8745,6 +8728,7 @@ class OGInfinity {
 		return content;
 	}
 
+	// todo: move into settings and overview
 	defenseOverview(moon) {
 		let content = createDOM("div", { class: "ogl-fleet-content" });
 		// todo: remove this shit
@@ -8790,7 +8774,7 @@ class OGInfinity {
 		row.appendChild(createDOM("th", { class: "ogl-sum-symbol" }, "Σ"));
 		table.appendChild(row);
 
-		Object.keys(shipsInfo).forEach((id) => {
+		Object.keys(ShipEnum).forEach((id) => {
 			if (id > 200 && id < 300) {
 				return;
 			}
@@ -8842,6 +8826,7 @@ class OGInfinity {
 		return content;
 	}
 
+	// todo: move into settings and overview
 	discoveryStats() {
 		let discoveryCosts = [-5000, -1000, -500];
 		let content = createDOM("div", { class: "ogk-stats-content" });
@@ -9051,6 +9036,7 @@ class OGInfinity {
 		return content;
 	}
 
+	// todo: move into settings and overview
 	discoveryBox(rows, am, callback) {
 		let box = createDOM("div", { class: "ogk-box" });
 		let discovery = box.appendChild(createDOM("div", { class: "ogk-grid-discovery" }));
@@ -9121,6 +9107,7 @@ class OGInfinity {
 		return box;
 	}
 
+	// todo: move into settings and overview
 	discoveryCostsBox(rows, am, callback) {
 		let box = createDOM("div", { class: "ogk-box" });
 		let discovery = box.appendChild(createDOM("div", { class: "ogk-grid-discovery" }));
@@ -9190,6 +9177,7 @@ class OGInfinity {
 		return box;
 	}
 
+	// todo: move into settings and overview
 	discoveryGraph(sums) {
 		let div = createDOM("div");
 		let chartNode = div.appendChild(createDOM("canvas", { id: "piechart", width: "400px", height: "300px" }));
@@ -11495,61 +11483,6 @@ class OGInfinity {
 		}
 	}
 
-	activitytimers() {
-		let now = Date.now();
-		if (!this.json.myActivities[this.currentLocation.coords]) this.json.myActivities[this.currentLocation.coords] = [0, 0];
-		let planetActivity = this.json.myActivities[this.currentLocation.coords][0];
-		let moonActivity = this.json.myActivities[this.currentLocation.coords][1];
-		if (this.currentLocation.isMoon) moonActivity = now;
-		else planetActivity = now;
-		this.json.myActivities[this.currentLocation.coords] = [planetActivity, moonActivity];
-		this.saveData();
-		this.planetList.forEach((planet) => {
-			let coords = planet.querySelector(".planet-koords").textContent;
-			let timers = this.json.myActivities[coords] || [0, 0];
-			let value = Math.min(Math.round((now - timers[0]) / 6e4), 60);
-			let pTimer = planet
-				.querySelector(".planetlink")
-				.appendChild(createDOM("div", { class: "ogl-timer ogl-short ogl-medium", "data-timer": value }));
-			if (this.json.options.activitytimers && value != 60 && value >= 15) {
-				planet.querySelector(".planetlink").appendChild(createDOM("div", { class: "activity showMinutes" }, value));
-			}
-			this.updateTimer(pTimer);
-			setInterval(() => this.updateTimer(pTimer, true), 6e4);
-			value = Math.min(Math.round((now - timers[1]) / 6e4), 60);
-			if (planet.querySelector(".moonlink")) {
-				let mTimer = planet.querySelector(".moonlink").appendChild(
-					createDOM("div", {
-						class: "ogl-timer ogl-short ogl-medium",
-						"data-timer": Math.min(Math.round((now - timers[1]) / 6e4), 60),
-					})
-				);
-				if (this.json.options.activitytimers && value != 60 && value >= 15) {
-					planet.querySelector(".moonlink").appendChild(createDOM("div", { class: "activity showMinutes" }, value));
-				}
-				this.updateTimer(mTimer);
-				setInterval(() => this.updateTimer(mTimer, true), 6e4);
-			}
-		});
-	}
-
-	updateTimer(element, increment) {
-		let time = parseInt(element.getAttribute("data-timer"));
-		if (time <= 61) {
-			if (increment) {
-				time++;
-				element.setAttribute("data-timer", time);
-			}
-			element.title = time;
-			if (time >= 30) {
-				element.classList.remove("ogl-medium");
-			}
-			if (time >= 15) {
-				element.classList.remove("ogl-short");
-			}
-		}
-	}
-
 	async updateLifeform(full = false) {
 		if (!this.hasLifeforms) return;
 
@@ -11573,7 +11506,7 @@ class OGInfinity {
 		this.json.selectedLifeforms[this.currentLocation.id] = await this.getSelectedLifeform(this.currentLocation.id);
 		this.json.needLifeformUpdate[this.currentLocation.id] = false;
 
-		this.updateEmpireProduction();
+		this.empireExtension.updateEmpireProduction();
 		this.saveData();
 
 		if (this.currentLocation.isMoon) {
@@ -11680,133 +11613,6 @@ class OGInfinity {
 					crawlerBonus: { production: crawlerProductionBonus, consumption: crawlerConsumptionBonus },
 				};
 			});
-	}
-
-	async getEmpireInfo() {
-
-		let abortController = new AbortController();
-		this.abordSignal = abortController.signal;
-		window.onbeforeunload = function (e) {
-			abortController.abort();
-		};
-		return fetch(
-			`https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=standalone&component=empire&planetType=0`,
-			{ signal: abortController.signal }
-		)
-			.then((response) => response.text())
-			.then((responseText) => {
-				let planets = JSON.parse(
-					responseText.substring(responseText.indexOf("createImperiumHtml") + 47, responseText.indexOf("initEmpire") - 16)
-				).planets;
-
-				let hasMoon = false;
-				for (let planet of planets) {
-					for (const key in planet) {
-						if (key.includes("html")) {
-							delete planet[key];
-						}
-					}
-					if (planet.moonID) {
-						hasMoon = true;
-					}
-					planet.invalidate = false;
-				}
-				if (hasMoon) {
-					return fetch(
-						`https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=standalone&component=empire&planetType=1`,
-						{ signal: abortController.signal }
-					)
-						.then((rep) => rep.text())
-						.then((str) => {
-							let moons = JSON.parse(
-								str.substring(str.indexOf("createImperiumHtml") + 47, str.indexOf("initEmpire") - 16)
-							).planets;
-							planets.forEach((planet) => {
-								moons.forEach((moon, j) => {
-									if (planet.moonID == moon.id) {
-										for (const key in moon) {
-											if (key.includes("html")) {
-												delete moon[key];
-											}
-										}
-										planet.moon = moon;
-										planet.moon.invalidate = false;
-									}
-								});
-							});
-							return planets;
-						});
-				}
-				return planets;
-			});
-	}
-
-	updateEmpireProduction() {
-		this.json.empire.forEach((planet) => {
-			// Get exact production data (Ogame's empire data has rounding issues)
-			for (let idx = 0; idx < 3; idx++) {
-				let totalProd = 0;
-				let baseProd = planet.production.generalIncoming[idx];
-				totalProd += baseProd;
-				let mineProd = planet.production.production[idx + 1][idx];
-				totalProd += mineProd;
-				planet.production.production[idx + 1][idx] = mineProd;
-				let plasmaProd = mineProd * planet[122] * PLASMATECH_BONUS[idx];
-				totalProd += plasmaProd;
-				planet.production.production[122][idx] = plasmaProd;
-				let geoProd = mineProd * (this.geologist ? GEOLOGIST_RESOURCE_BONUS : 0);
-				totalProd += geoProd;
-				planet.production.production[1001][idx] = geoProd;
-				let officerProd = mineProd * (this.allOfficers ? OFFICER_RESOURCE_BONUS : 0);
-				totalProd += officerProd;
-				planet.production.production[1003][idx] = officerProd;
-				let allyClassProd = mineProd * (this.json.allianceClass == ALLY_CLASS_MINER ? TRADER_RESOURCE_BONUS : 0);
-				totalProd += allyClassProd;
-				planet.production.production[1005][idx] = allyClassProd;
-				let playerClassProd =
-					mineProd * (this.playerClass == PLAYER_CLASS_MINER ? this.json.minerBonusResourceProduction : 0);
-				totalProd += playerClassProd;
-				planet.production.production[1004][idx] = playerClassProd;
-				if (planet.production.production[217][idx] != 0) {
-					let crawlerProd =
-						mineProd *
-						Math.min(planet.production.production[217].number, planet.production.production[217].numberMax) *
-						this.json.resourceBuggyProductionBoost *
-						(this.playerClass == PLAYER_CLASS_MINER ? 1 + this.json.minerBonusAdditionalCrawler : 1) *
-						(this.json.lifeformBonus ? 1 + this.json.lifeformBonus[planet.id].crawlerBonus.production : 1);
-					let crawlerPercent = Math.round((planet.production.production[217][idx] / crawlerProd) * 10) / 10;
-					crawlerProd *= Math.min(crawlerPercent, this.playerClass == PLAYER_CLASS_MINER ? CRAWLER_OVERLOAD_MAX : 1);
-					crawlerProd = Math.min(crawlerProd, mineProd * this.json.resourceBuggyMaxProductionBoost);
-					totalProd += crawlerProd;
-					planet.production.production[217][idx] = crawlerProd;
-				}
-				if (planet.production.production[1000][idx] != 0) {
-					let itemProd = (mineProd * Math.round((planet.production.production[1000][idx] / mineProd) * 10)) / 10;
-					totalProd += itemProd;
-					planet.production.production[1000][idx] = itemProd;
-				}
-				totalProd -= planet.production.production[12][idx];
-				planet.production.hourly[idx] = totalProd;
-				planet.production.daily[idx] = totalProd * 24;
-				planet.production.weekly[idx] = totalProd * 24 * 7;
-			}
-			// lifeform production is not included in ogames empire data, might change in future
-			if (!planet.isMoon && this.json.lifeformBonus && this.json.lifeformBonus[planet.id]) {
-				let bonus = this.json.lifeformBonus[planet.id].productionBonus;
-				let lifeformProduction = [0, 0, 0];
-				for (let idx = 0; idx < 3; idx++) {
-					let oldHourly = planet.production.hourly[idx];
-					let oldDaily = planet.production.daily[idx];
-					let oldWeekly = planet.production.weekly[idx];
-					let mineProd = planet.production.production[idx + 1][idx];
-					lifeformProduction[idx] = mineProd * bonus[idx];
-					planet.production.hourly[idx] = oldHourly + lifeformProduction[idx];
-					planet.production.daily[idx] = oldDaily + mineProd * bonus[idx] * 24;
-					planet.production.weekly[idx] = oldWeekly + mineProd * bonus[idx] * 24 * 7;
-				}
-				planet.production.lifeformProduction = lifeformProduction;
-			}
-		});
 	}
 
 	getFlyingRes() {
@@ -11954,65 +11760,6 @@ class OGInfinity {
 		if (last) {
 			last.end = new Date();
 		}
-	}
-
-	updateInfo() {
-		if (this.isLoading) return;
-		this.isLoading = true;
-		const svg = createSVG("svg", {
-			width: "80px",
-			height: "30px",
-			viewBox: "0 0 187.3 93.7",
-			preserveAspectRatio: "xMidYMid meet",
-		});
-		svg.replaceChildren(
-			createSVG("path", {
-				stroke: "#3c536c",
-				id: "outline",
-				fill: "none",
-				"stroke-width": "4",
-				"stroke-linecap": "round",
-				"stroke-linejoin": "round",
-				"stroke-miterlimit": "10",
-				d:
-					"M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-1" +
-					"3.3,7.2-22.1,17.1c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z",
-			}),
-			createSVG("path", {
-				opacity: "0.1",
-				stroke: "#eee",
-				id: "outline-bg",
-				fill: "none",
-				"stroke-width": "4",
-				"stroke-linecap": "round",
-				"stroke-linejoin": "round",
-				"stroke-miterlimit": "10",
-				d:
-					"M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-1" +
-					"3.3,7.2-22.1,17.1c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z",
-			})
-		);
-		document
-			.querySelector("#countColonies")
-			.appendChild(createDOM("div", { class: "spinner" }).appendChild(svg).parentElement);
-		return this.getEmpireInfo().then((json) => {
-			this.json.empire = json;
-			this.json.lastEmpireUpdate = new Date();
-			this.json.empire.forEach((planet) => {
-				planet.invalidate = false;
-				if (planet.moon) planet.moon.invalidate = false;
-			});
-			this.updateEmpireProduction();
-			this.planetListExtension.updateresourceDetail(); // todo: redo reference
-			this.flyingFleet();
-			this.isLoading = false;
-			this.json.needsUpdate = false;
-			for (let techId in this.json.technology) {
-				this.json.technology[techId] = this.json.empire[0][techId];
-			}
-			this.saveData();
-			document.querySelector(".spinner").remove();
-		});
 	}
 
 	targetList(show) {
@@ -17991,7 +17738,7 @@ class Translation {
 	}
 }
 
-class SidebarPlanetListExtension {
+class EmpireExtension {
 
 	constructor(ogi) {
 		this.ogi = ogi
@@ -18502,6 +18249,278 @@ class SidebarPlanetListExtension {
 		if (document.querySelectorAll(".moonlink").length == 0) {
 			resSumContainerMoon.style.display = "none";
 			moonSumSymbol.style.display = "none";
+		}
+	}
+
+	updateInfo() {
+		if (this.ogi.isLoading)
+			return;
+		this.ogi.isLoading = true;
+		const svg = createSVG("svg", {
+			width: "80px",
+			height: "30px",
+			viewBox: "0 0 187.3 93.7",
+			preserveAspectRatio: "xMidYMid meet",
+		});
+		svg.replaceChildren(
+			createSVG("path", {
+				stroke: "#3c536c",
+				id: "outline",
+				fill: "none",
+				"stroke-width": "4",
+				"stroke-linecap": "round",
+				"stroke-linejoin": "round",
+				"stroke-miterlimit": "10",
+				d:
+					"M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-1" +
+					"3.3,7.2-22.1,17.1c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z",
+			}),
+			createSVG("path", {
+				opacity: "0.1",
+				stroke: "#eee",
+				id: "outline-bg",
+				fill: "none",
+				"stroke-width": "4",
+				"stroke-linecap": "round",
+				"stroke-linejoin": "round",
+				"stroke-miterlimit": "10",
+				d:
+					"M93.9,46.4c9.3,9.5,13.8,17.9,23.5,17.9s17.5-7.8,17.5-17.5s-7.8-17.6-17.5-17.5c-9.7,0.1-1" +
+					"3.3,7.2-22.1,17.1c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z",
+			})
+		);
+		document
+			.querySelector("#countColonies")
+			.appendChild(createDOM("div", { class: "spinner" }).appendChild(svg).parentElement);
+		return this.getEmpireInfo().then((json) => {
+			this.ogi.json.empire = json;
+			this.ogi.json.lastEmpireUpdate = new Date();
+			this.ogi.json.empire.forEach((planet) => {
+				planet.invalidate = false;
+				if (planet.moon) planet.moon.invalidate = false;
+			});
+			this.updateEmpireProduction();
+			this.updateresourceDetail();
+			this.ogi.flyingFleet();
+			this.ogi.isLoading = false;
+			this.ogi.json.needsUpdate = false;
+			for (let techId in this.ogi.json.technology) {
+				this.ogi.json.technology[techId] = this.ogi.json.empire[0][techId];
+			}
+			this.ogi.saveData();
+			document.querySelector(".spinner").remove();
+		});
+	}
+
+	updateEmpireData(force = false) {
+		let timeSinceLastUpdate = new Date() - new Date(this.ogi.json.lastEmpireUpdate);
+		if (
+			force ||
+			isNaN(new Date(this.ogi.json.lastEmpireUpdate)) ||
+			(timeSinceLastUpdate > 5 * 60 * 1e3 && this.ogi.json.needsUpdate) ||
+			(timeSinceLastUpdate > 1 * 60 * 1e3 && this.ogi.json.options.autofetchempire)
+		) {
+			this.updateInfo();
+		}
+		let stageForUpdate = () => {
+			this.ogi.json.needsUpdate = true;
+			this.ogi.saveData();
+		};
+		setInterval(() => {
+			document
+				.querySelectorAll(
+					".scrap_it, .build-it_wrap, button.upgrade, .abortNow, .build-faster, .og-button.submit, .abort_link, .js_executeJumpButton"
+				)
+				.forEach((btn) => {
+					if (!btn.classList.contains("ogk-ready")) {
+						btn.classList.add("ogk-ready");
+						btn.addEventListener("click", () => {
+							stageForUpdate();
+						});
+					}
+				});
+		}, 100);
+	}
+
+	async getEmpireInfo() {
+		let abortController = new AbortController();
+		this.ogi.abordSignal = abortController.signal;
+		window.onbeforeunload = function (e) {
+			abortController.abort();
+		};
+		return fetch(`https://s${this.ogi.universe}-${this.ogi.gameLang}.ogame.gameforge.com/game/index.php?page=standalone&component=empire&planetType=0`,
+			{ signal: abortController.signal })
+			.then((response) => response.text())
+			.then((responseText) => {
+				let planets = JSON.parse(
+					responseText.substring(responseText.indexOf("createImperiumHtml") + 47, responseText.indexOf("initEmpire") - 16)
+				).planets;
+
+				let hasMoon = false;
+				for (let planet of planets) {
+					for (const key in planet) {
+						if (key.includes("html")) {
+							delete planet[key];
+						}
+					}
+					if (planet.moonID) {
+						hasMoon = true;
+					}
+					planet.invalidate = false;
+				}
+				if (hasMoon) {
+					return fetch(
+						`https://s${this.ogi.universe}-${this.ogi.gameLang}.ogame.gameforge.com/game/index.php?page=standalone&component=empire&planetType=1`,
+						{ signal: abortController.signal }
+					)
+						.then((rep) => rep.text())
+						.then((str) => {
+							let moons = JSON.parse(
+								str.substring(str.indexOf("createImperiumHtml") + 47, str.indexOf("initEmpire") - 16)
+							).planets;
+							planets.forEach((planet) => {
+								moons.forEach((moon, j) => {
+									if (planet.moonID == moon.id) {
+										for (const key in moon) {
+											if (key.includes("html")) {
+												delete moon[key];
+											}
+										}
+										planet.moon = moon;
+										planet.moon.invalidate = false;
+									}
+								});
+							});
+							return planets;
+						});
+				}
+				return planets;
+			});
+	}
+
+	updateEmpireProduction() {
+		this.ogi.json.empire.forEach((planet) => {
+			// Get exact production data (Ogame's empire data has rounding issues)
+			for (let idx = 0; idx < 3; idx++) {
+				let totalProd = 0;
+				let baseProd = planet.production.generalIncoming[idx];
+				totalProd += baseProd;
+				let mineProd = planet.production.production[idx + 1][idx];
+				totalProd += mineProd;
+				planet.production.production[idx + 1][idx] = mineProd;
+				let plasmaProd = mineProd * planet[ResearchEnum.PlasmaTechnology] * PLASMATECH_BONUS[idx];
+				totalProd += plasmaProd;
+				planet.production.production[ResearchEnum.PlasmaTechnology][idx] = plasmaProd;
+				let geoProd = mineProd * (this.ogi.geologist ? GEOLOGIST_RESOURCE_BONUS : 0);
+				totalProd += geoProd;
+				planet.production.production[1001][idx] = geoProd;
+				let officerProd = mineProd * (this.ogi.allOfficers ? OFFICER_RESOURCE_BONUS : 0);
+				totalProd += officerProd;
+				planet.production.production[1003][idx] = officerProd;
+				let allyClassProd = mineProd * (this.ogi.json.allianceClass == ALLY_CLASS_MINER ? TRADER_RESOURCE_BONUS : 0);
+				totalProd += allyClassProd;
+				planet.production.production[1005][idx] = allyClassProd;
+				let playerClassProd =
+					mineProd * (this.ogi.playerClass == PLAYER_CLASS_MINER ? this.ogi.json.minerBonusResourceProduction : 0);
+				totalProd += playerClassProd;
+				planet.production.production[1004][idx] = playerClassProd;
+				if (planet.production.production[217][idx] != 0) {
+					let crawlerProd =
+						mineProd *
+						Math.min(planet.production.production[217].number, planet.production.production[217].numberMax) *
+						this.ogi.json.resourceBuggyProductionBoost *
+						(this.ogi.playerClass == PLAYER_CLASS_MINER ? 1 + this.ogi.json.minerBonusAdditionalCrawler : 1) *
+						(this.ogi.json.lifeformBonus ? 1 + this.ogi.json.lifeformBonus[planet.id].crawlerBonus.production : 1);
+					let crawlerPercent = Math.round((planet.production.production[217][idx] / crawlerProd) * 10) / 10;
+					crawlerProd *= Math.min(crawlerPercent, this.ogi.playerClass == PLAYER_CLASS_MINER ? CRAWLER_OVERLOAD_MAX : 1);
+					crawlerProd = Math.min(crawlerProd, mineProd * this.ogi.json.resourceBuggyMaxProductionBoost);
+					totalProd += crawlerProd;
+					planet.production.production[ShipEnum.Crawler][idx] = crawlerProd;
+				}
+				if (planet.production.production[1000][idx] != 0) {
+					let itemProd = (mineProd * Math.round((planet.production.production[1000][idx] / mineProd) * 10)) / 10;
+					totalProd += itemProd;
+					planet.production.production[1000][idx] = itemProd;
+				}
+				totalProd -= planet.production.production[12][idx];
+				planet.production.hourly[idx] = totalProd;
+				planet.production.daily[idx] = totalProd * 24;
+				planet.production.weekly[idx] = totalProd * 24 * 7;
+			}
+			// lifeform production is not included in ogames empire data, might change in future
+			if (!planet.isMoon && this.ogi.json.lifeformBonus && this.ogi.json.lifeformBonus[planet.id]) {
+				let bonus = this.ogi.json.lifeformBonus[planet.id].productionBonus;
+				let lifeformProduction = [0, 0, 0];
+				for (let idx = 0; idx < 3; idx++) {
+					let oldHourly = planet.production.hourly[idx];
+					let oldDaily = planet.production.daily[idx];
+					let oldWeekly = planet.production.weekly[idx];
+					let mineProd = planet.production.production[idx + 1][idx];
+					lifeformProduction[idx] = mineProd * bonus[idx];
+					planet.production.hourly[idx] = oldHourly + lifeformProduction[idx];
+					planet.production.daily[idx] = oldDaily + mineProd * bonus[idx] * 24;
+					planet.production.weekly[idx] = oldWeekly + mineProd * bonus[idx] * 24 * 7;
+				}
+				planet.production.lifeformProduction = lifeformProduction;
+			}
+		});
+	}
+
+
+	// Activity Timers
+	activitytimers() {
+		let now = Date.now();
+		if (!this.ogi.json.myActivities[this.ogi.currentLocation.coords])
+			this.ogi.json.myActivities[this.ogi.currentLocation.coords] = [0, 0];
+		let planetActivity = this.ogi.json.myActivities[this.ogi.currentLocation.coords][0];
+		let moonActivity = this.ogi.json.myActivities[this.ogi.currentLocation.coords][1];
+		if (this.ogi.currentLocation.isMoon) moonActivity = now;
+		else planetActivity = now;
+		this.ogi.json.myActivities[this.ogi.currentLocation.coords] = [planetActivity, moonActivity];
+		this.ogi.saveData();
+		this.ogi.planetList.forEach((planet) => {
+			let coords = planet.querySelector(".planet-koords").textContent;
+			let timers = this.ogi.json.myActivities[coords] || [0, 0];
+			let value = Math.min(Math.round((now - timers[0]) / 6e4), 60);
+			let pTimer = planet
+				.querySelector(".planetlink")
+				.appendChild(createDOM("div", { class: "ogl-timer ogl-short ogl-medium", "data-timer": value }));
+			if (this.ogi.json.options.activitytimers && value != 60 && value >= 15) {
+				planet.querySelector(".planetlink").appendChild(createDOM("div", { class: "activity showMinutes" }, value));
+			}
+			this.updateTimer(pTimer);
+			setInterval(() => this.updateTimer(pTimer, true), 6e4);
+			value = Math.min(Math.round((now - timers[1]) / 6e4), 60);
+			if (planet.querySelector(".moonlink")) {
+				let mTimer = planet.querySelector(".moonlink").appendChild(
+					createDOM("div", {
+						class: "ogl-timer ogl-short ogl-medium",
+						"data-timer": Math.min(Math.round((now - timers[1]) / 6e4), 60),
+					})
+				);
+				if (this.ogi.json.options.activitytimers && value != 60 && value >= 15) {
+					planet.querySelector(".moonlink").appendChild(createDOM("div", { class: "activity showMinutes" }, value));
+				}
+				this.updateTimer(mTimer);
+				setInterval(() => this.updateTimer(mTimer, true), 6e4);
+			}
+		});
+	}
+
+	updateTimer(element, increment) {
+		let time = parseInt(element.getAttribute("data-timer"));
+		if (time <= 61) {
+			if (increment) {
+				time++;
+				element.setAttribute("data-timer", time);
+			}
+			element.title = time;
+			if (time >= 30) {
+				element.classList.remove("ogl-medium");
+			}
+			if (time >= 15) {
+				element.classList.remove("ogl-short");
+			}
 		}
 	}
 }
