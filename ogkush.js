@@ -1856,7 +1856,7 @@ class OGInfinity {
 		this.onGalaxyUpdate();
 		this.timeZone();
 		this.updateFlyings();
-		this.updatePlanets_FleetActivity();
+		this.empireExtension.updatePlanets_FleetActivity();
 		this.checkRedirect();
 		this.updateProductionProgress();
 		this.showStorageTimers();
@@ -14515,6 +14515,7 @@ class OGInfinity {
 		}
 	}
 
+	// todo: move into settings and overview
 	settings() {
 		function download(content, fileName) {
 			var a = document.createElement("a");
@@ -15051,13 +15052,6 @@ class OGInfinity {
 			// Get the direction
 			flying.direction = Array.from(cols[6].classList).includes("icon_movement") ? "go" : "back";
 
-			// Get the direction image (no used as of today, but we never know)
-			const styleDirection = window.getComputedStyle(cols[6]).getPropertyValue("background");
-			flying.directionIcon = styleDirection.substring(
-				styleDirection.indexOf('url("') + 5,
-				styleDirection.indexOf('")')
-			);
-
 			flying.dest = cols[7].textContent.trim();
 			flying.destCoords = cols[8].textContent.replace("[", "").replace("]", "").trim();
 			flying.destLink = cols[8].querySelector("a").href;
@@ -15071,58 +15065,6 @@ class OGInfinity {
 			FLYING_PER_PLANETS[flying.originCoords][flying.missionFleetTitle].data.push(flying);
 		});
 		this.flyingFleetPerPlanets = FLYING_PER_PLANETS;
-	}
-
-	updatePlanets_FleetActivity() {
-		if (this.flyingFleetPerPlanets && this.json.options.fleetActivity) {
-			const planetList = document.getElementById("planetList").children;
-			Array.from(planetList).forEach((planet) => {
-				const planetKoordsEl = planet.querySelector(".planet-koords");
-				if (planetKoordsEl) {
-					const planetKoords = planetKoordsEl.textContent;
-					Object.keys(this.flyingFleetPerPlanets).forEach((key) => {
-						if (planetKoords === key) {
-							const movements = this.flyingFleetPerPlanets[key];
-							const div = document.createElement("div");
-							const sizeDiv = 18;
-							div.style = `
-				  position: absolute !important;
-				  left: -${sizeDiv + 7}px !important;
-				  top: 0px !important;
-				  width: ${sizeDiv + 5}px;
-				  height: ${sizeDiv + 5}px;
-				  display: flex;
-				  flex-direction: row;
-				  flex-wrap: wrap;
-				  direction: rtl;
-				`;
-							planetKoordsEl.parentNode.parentNode.appendChild(div);
-							Object.keys(movements).forEach((movementKey, i) => {
-								if (i < 8) {
-									const nbrMovements = Object.keys(movements).length;
-									const movement = movements[movementKey];
-									let size = sizeDiv;
-									if (nbrMovements > 2) {
-										size = size / 2;
-									}
-									const img = document.createElement("img");
-									img.src = movement.icon;
-									img.style = `position: initial !important; width: ${size}px; height: ${size}px; margin: 1px !important;`;
-									img.title = "";
-									movement.data.forEach((m, i) => {
-										const symbolDirection = m.direction === "go" ? "🡒" : "🡐";
-										const isLast = i == movement.data.length - 1;
-										img.title += `${m.missionFleetTitle}: ${m.origin}[${m.originCoords}] ${symbolDirection} ${m.dest}[${m.destCoords
-											}] @${m.arrivalTime}${!isLast ? "\n" : ""}`;
-									});
-									div.appendChild(img);
-								}
-							});
-						}
-					});
-				}
-			});
-		}
 	}
 
 	getAllianceClass() {
@@ -18464,6 +18406,60 @@ class EmpireExtension {
 				planet.production.lifeformProduction = lifeformProduction;
 			}
 		});
+	}
+
+
+	// Fleet Activity
+	updatePlanets_FleetActivity() {
+		if (this.ogi.flyingFleetPerPlanets && this.ogi.json.options.fleetActivity) {
+			const planetList = document.getElementById("planetList").children;
+			Array.from(planetList).forEach((planet) => {
+				const planetKoordsEl = planet.querySelector(".planet-koords");
+				if (planetKoordsEl) {
+					const planetKoords = planetKoordsEl.textContent;
+					Object.keys(this.ogi.flyingFleetPerPlanets).forEach((key) => {
+						if (planetKoords === key) {
+							const movements = this.ogi.flyingFleetPerPlanets[key];
+							const div = document.createElement("div");
+							const sizeDiv = 18;
+							div.style = `
+				  position: absolute !important;
+				  left: -${sizeDiv + 7}px !important;
+				  top: 0px !important;
+				  width: ${sizeDiv + 5}px;
+				  height: ${sizeDiv + 5}px;
+				  display: flex;
+				  flex-direction: row;
+				  flex-wrap: wrap;
+				  direction: rtl;
+				`;
+							planetKoordsEl.parentNode.parentNode.appendChild(div);
+							Object.keys(movements).forEach((movementKey, i) => {
+								if (i < 8) {
+									const nbrMovements = Object.keys(movements).length;
+									const movement = movements[movementKey];
+									let size = sizeDiv;
+									if (nbrMovements > 2) {
+										size = size / 2;
+									}
+									const img = document.createElement("img");
+									img.src = movement.icon;
+									img.style = `position: initial !important; width: ${size}px; height: ${size}px; margin: 1px !important;`;
+									img.title = "";
+									movement.data.forEach((m, i) => {
+										const symbolDirection = m.direction === "go" ? "🡒" : "🡐";
+										const isLast = i == movement.data.length - 1;
+										img.title += `${m.missionFleetTitle}: ${m.origin}[${m.originCoords}] ${symbolDirection} ${m.dest}[${m.destCoords
+											}] @${m.arrivalTime}${!isLast ? "\n" : ""}`;
+									});
+									div.appendChild(img);
+								}
+							});
+						}
+					});
+				}
+			});
+		}
 	}
 
 
