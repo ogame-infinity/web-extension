@@ -305,7 +305,7 @@ const ALLY_CLASS_WARRIOR = 2;
 const ALLY_CLASS_MINER = 1;
 const ALLY_CLASS_NONE = 0;
 
-const BUIDLING_INFO = {
+const TECH_INFO = {
 	// supplies
 	1: {
 		name: "Metal Mine",
@@ -844,8 +844,8 @@ const BUIDLING_INFO = {
 		baseCons: 100,
 		factorCons: 1.05,
 	},
-};
-const RESEARCH_INFO = {
+
+
 	// research
 	106: {
 		name: "Espionnage Technology",
@@ -1437,6 +1437,7 @@ const RESEARCH_INFO = {
 		factorTime: 1.4,
 	},
 };
+
 const IONTECHNOLOGY_BONUS = 0.04;
 const PLASMATECH_BONUS = [0.01, 0.0066, 0.0033];
 const ENGINEER_ENERGY_BONUS = 0.1;
@@ -2588,6 +2589,7 @@ class OGInfinity {
 				}
 
 				let techName = that.translation.text(technoId, "tech");
+
 				lockListener = () => {
 					let coords = that.currentLocation.coords + (that.currentLocation.isMoon ? "M" : "P");
 					if (!that.json.missing[coords]) {
@@ -13851,9 +13853,9 @@ class OGInfinity {
 	}
 
 	consumption(id, lvl) {
-		if (!BUIDLING_INFO[id].baseCons || !BUIDLING_INFO[id].factorCons) return 0;
+		if (!TECH_INFO[id].baseCons || !TECH_INFO[id].factorCons) return 0;
 		return Math.floor(
-			BUIDLING_INFO[id].baseCons * lvl * Math.pow(BUIDLING_INFO[id].factorCons, id >= 11101 && lvl == 1 ? 0 : lvl) /*
+			TECH_INFO[id].baseCons * lvl * Math.pow(TECH_INFO[id].factorCons, id >= 11101 && lvl == 1 ? 0 : lvl) /*
 		(tthis.json.lifeformBonus? 1-this.json.lifeformBonus[this.current.id].consumptionReduction[id].energy : 1)*/
 			// TODO: add lf consumption reduction bonus
 		);
@@ -13931,31 +13933,31 @@ class OGInfinity {
 		let cost = [
 			Math.floor(
 				Math.floor(
-					RESEARCH_INFO[id].baseCost[0] * Math.pow(RESEARCH_INFO[id].factorCost, lvl - 1) * (id >= 11101 ? lvl : 1)
+					TECH_INFO[id].baseCost[0] * Math.pow(TECH_INFO[id].factorCost, lvl - 1) * (id >= 11101 ? lvl : 1)
 				) * (id >= 11101 && labLvl > 1 ? 1.0 - 0.0025 * labLvl : 1)
 			),
 			Math.floor(
 				Math.floor(
-					RESEARCH_INFO[id].baseCost[1] * Math.pow(RESEARCH_INFO[id].factorCost, lvl - 1) * (id >= 11101 ? lvl : 1)
+					TECH_INFO[id].baseCost[1] * Math.pow(TECH_INFO[id].factorCost, lvl - 1) * (id >= 11101 ? lvl : 1)
 				) * (id >= 11101 && labLvl > 1 ? 1.0 - 0.0025 * labLvl : 1)
 			),
 			Math.floor(
 				Math.floor(
-					RESEARCH_INFO[id].baseCost[2] * Math.pow(RESEARCH_INFO[id].factorCost, lvl - 1) * (id >= 11101 ? lvl : 1)
+					TECH_INFO[id].baseCost[2] * Math.pow(TECH_INFO[id].factorCost, lvl - 1) * (id >= 11101 ? lvl : 1)
 				) * (id >= 11101 && labLvl > 1 ? 1.0 - 0.0025 * labLvl : 1)
 			),
 		];
 
-		if (RESEARCH_INFO[id].baseCost[3]) {
-			cost.push(RESEARCH_INFO[id].baseCost[3] * Math.pow(RESEARCH_INFO[id].factorEnergy, lvl - 1));
+		if (TECH_INFO[id].baseCost[3]) {
+			cost.push(TECH_INFO[id].baseCost[3] * Math.pow(TECH_INFO[id].factorEnergy, lvl - 1));
 		}
 		let time = ((cost[0] + cost[1]) / (this.json.speed * 1000 * (1 + labLvl)) / this.json.researchDivisor) * 3600;
 
 		if (technocrat) time -= time * 0.25;
 		if (explorer) time -= time * 0.25;
 		if (acceleration) time -= time * 0.25;
-		if (RESEARCH_INFO[id].factorTime) {
-			time = (RESEARCH_INFO[id].baseTime * Math.pow(RESEARCH_INFO[id].factorTime, lvl) * lvl) / this.json.speed;
+		if (TECH_INFO[id].factorTime) {
+			time = (TECH_INFO[id].baseTime * Math.pow(TECH_INFO[id].factorTime, lvl) * lvl) / this.json.speed;
 		}
 		time *= timeFactor;
 
@@ -14056,26 +14058,26 @@ class OGInfinity {
 		let cost = [
 			Math.floor(
 				Math.floor(
-					BUIDLING_INFO[id].baseCost[0] * Math.pow(BUIDLING_INFO[id].factorCost, lvl - 1) * (id >= 11101 ? lvl : 1)
+					TECH_INFO[id].baseCost[0] * Math.pow(TECH_INFO[id].factorCost, lvl - 1) * (id >= 11101 ? lvl : 1)
 				) * costFactor
 			),
 			Math.floor(
 				Math.floor(
-					BUIDLING_INFO[id].baseCost[1] * Math.pow(BUIDLING_INFO[id].factorCost, lvl - 1) * (id >= 11101 ? lvl : 1)
+					TECH_INFO[id].baseCost[1] * Math.pow(TECH_INFO[id].factorCost, lvl - 1) * (id >= 11101 ? lvl : 1)
 				) * costFactor
 			),
 			Math.floor(
 				Math.floor(
-					BUIDLING_INFO[id].baseCost[2] * Math.pow(BUIDLING_INFO[id].factorCost, lvl - 1) * (id >= 11101 ? lvl : 1)
+					TECH_INFO[id].baseCost[2] * Math.pow(TECH_INFO[id].factorCost, lvl - 1) * (id >= 11101 ? lvl : 1)
 				) * costFactor
 			),
 		];
-		if (BUIDLING_INFO[id].baseCost[3])
+		if (TECH_INFO[id].baseCost[3])
 			cost.push(
 				Math.floor(
 					Math.floor(
-						BUIDLING_INFO[id].baseCost[3] *
-						Math.pow(BUIDLING_INFO[id].factorEnergy, lvl - (id >= 11101 ? (lvl == 1 ? 1 : 0) : 1)) *
+						TECH_INFO[id].baseCost[3] *
+						Math.pow(TECH_INFO[id].factorEnergy, lvl - (id >= 11101 ? (lvl == 1 ? 1 : 0) : 1)) *
 						(id >= 11101 ? lvl : 1)
 					) * costFactor
 				)
@@ -14092,11 +14094,11 @@ class OGInfinity {
 			),
 			1
 		);
-		if (BUIDLING_INFO[id].factorTime) {
+		if (TECH_INFO[id].factorTime) {
 			time = Math.max(
 				Math.round(
 					Math.floor(
-						(BUIDLING_INFO[id].baseTime * Math.pow(BUIDLING_INFO[id].factorTime, lvl) * lvl) /
+						(TECH_INFO[id].baseTime * Math.pow(TECH_INFO[id].factorTime, lvl) * lvl) /
 						((1 + robotic) * Math.pow(2, nanite) * this.json.speed)
 					) * timeFactor
 				),
@@ -14107,10 +14109,10 @@ class OGInfinity {
 			time: time,
 			cost: cost,
 		};
-		if (BUIDLING_INFO[id].basePop)
+		if (TECH_INFO[id].basePop)
 			// TODO: check if own population factor is needed
 			returnValue.pop = Math.floor(
-				Math.floor(BUIDLING_INFO[id].basePop * Math.pow(BUIDLING_INFO[id].factorPop, lvl - 1)) * costFactor
+				Math.floor(TECH_INFO[id].basePop * Math.pow(TECH_INFO[id].factorPop, lvl - 1)) * costFactor
 			);
 		return returnValue;
 	}
@@ -17981,7 +17983,11 @@ class Translation {
 	}
 
 	text(id, type = "text", html = true) {
-		return this.translation[type][id][this.language];
+		if (id < 10000)
+			return this.translation[type][id][this.language];
+		else {
+			return TECH_INFO[id].name;
+		}
 	}
 }
 
