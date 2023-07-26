@@ -85,9 +85,12 @@ if (redirect && redirect.indexOf("https") > -1) {
   } else requestAnimationFrame(() => goodbyeTipped());
 })();
 
-Element.prototype.html = function (html) {
-  this.innerHTML = DOMPurify.sanitize(html);
-};
+/* Workaround for "DOMPurify not defined issue" */
+waitForDefinition("DOMPurify", () => {
+  Element.prototype.html = function (html) {
+    this.innerHTML = DOMPurify.sanitize(html);
+  };
+}, 10, 20000);
 
 function createDOM(element, attributes, textContent) {
   const e = document.createElement(element);
@@ -194,6 +197,21 @@ function fromFormatedNumber(value, int = false, noGroup = false) {
   value = Number(value.replace(decimalSeparator, "."));
   value *= order;
   return int ? parseInt(value) : value;
+}
+
+function waitForDefinition(object, callback, checkFrequencyInMs = 10, timeoutInMs = 5000) {
+  var startTimeInMs = Date.now();
+  (function loopSearch() {
+    if (window.hasOwnProperty(object)) {
+      callback();
+      return;
+    } else {
+      setTimeout(function () {
+        if (timeoutInMs && Date.now() - startTimeInMs > timeoutInMs) return;
+        loopSearch();
+      }, checkFrequencyInMs);
+    }
+  })();
 }
 
 function waitForElementToDisplay(selector, callback, checkFrequencyInMs = 10, timeoutInMs = 5000) {
