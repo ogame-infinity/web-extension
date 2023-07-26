@@ -17298,6 +17298,7 @@ class OGInfinity {
     let srvDatasBtn = createDOM("button", { class: "btn_blue update" }, this.getTranslatedText(23));
     srvDatas.appendChild(srvDatasBtn);
     srvDatasBtn.addEventListener("click", async () => {
+      this.loading();
       this.updateServerSettings(true);
       this.getAllianceClass();
       await this.updateLifeform(true);
