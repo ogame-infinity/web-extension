@@ -15444,8 +15444,8 @@ class OGInfinity {
         }
         let div = createDOM("div");
         appendMode ? div.appendChild(content) : div.html(content);
+        if (this.hasLifeforms) div.classList.add("hasLifeforms");
         if ((typeof content === "string" || content instanceof String) && content.includes("fleetinfo")) {
-          if (this.hasLifeforms) div.classList.add("hasLifeforms");
           this.trashsimTooltip(div, content);
         }
         let side = {};
@@ -15582,15 +15582,15 @@ class OGInfinity {
         let values = fleetInfo.querySelectorAll("td.value");
         let backed = [0, 0, 0];
         values.forEach((value, index) => {
-          if (index == values.length - 1) {
+          if (index == values.length - 1 - this.hasLifeforms) {
             backed[2] = fromFormatedNumber(value.textContent);
             return;
           }
-          if (index == values.length - 2) {
+          if (index == values.length - 2 - this.hasLifeforms) {
             backed[1] = fromFormatedNumber(value.textContent);
             return;
           }
-          if (index == values.length - 3) {
+          if (index == values.length - 3 - this.hasLifeforms) {
             backed[0] = fromFormatedNumber(value.textContent);
             return;
           }
