@@ -221,26 +221,6 @@ function waitForElement(selector) {
  *  create basic information
  * 
  */
-
-const SHIP_COSTS = {
-	202: [2, 2, 0],
-	203: [6, 6, 0],
-	204: [3, 1, 0],
-	205: [6, 4, 0],
-	206: [20, 7, 2],
-	207: [45, 15, 0],
-	208: [10, 20, 10],
-	209: [10, 6, 2],
-	210: [0, 1, 0],
-	211: [50, 25, 15],
-	212: [0, 2, 0.5],
-	213: [60, 50, 15],
-	214: [5e3, 4e3, 1e3],
-	215: [30, 40, 15],
-	218: [85, 55, 20],
-	219: [8, 15, 8],
-};
-
 const UNIVERSVIEW_LANGS = [
 	"en",
 	"cs",
@@ -845,7 +825,59 @@ const TECH_INFO = {
 		factorCons: 1.05,
 	},
 
-	// todo: add ships and defenses
+	// ships
+	202: {
+		baseCost: [2000, 2000, 0],
+	},
+	203: {
+		baseCost: [6000, 6000, 0],
+	},
+	204: {
+		baseCost: [3000, 1000, 0],
+	},
+	205: {
+		baseCost: [6000, 4000, 0],
+	},
+	206: {
+		baseCost: [20000, 7000, 2000],
+	},
+	207: {
+		baseCost: [45000, 15000, 0],
+	},
+	208: {
+		baseCost: [10000, 20000, 10000],
+	},
+	209: {
+		baseCost: [10000, 6000, 2000],
+	},
+	210: {
+		baseCost: [0, 1000, 0],
+	},
+	211: {
+		baseCost: [50000, 25000, 15000],
+	},
+	212: {
+		baseCost: [0, 2000, 500],
+	},
+	213: {
+		baseCost: [60000, 50000, 15000],
+	},
+	214: {
+		baseCost: [5e3, 4e3, 1e3],
+	},
+	215: {
+		baseCost: [30000, 40000, 15000],
+	},
+	217: {
+		baseCost: [2000, 2000, 1000],
+	},
+	218: {
+		baseCost: [85000, 55000, 20000],
+	},
+	219: {
+		baseCost: [8000, 15000, 8000],
+	},
+
 
 	// research
 	106: {
@@ -929,6 +961,8 @@ const TECH_INFO = {
 		factorCost: 2,
 		factorEnergy: 3,
 	},
+
+
 	// Human
 	11201: {
 		name: "Intergalactic Envoys",
@@ -2648,12 +2682,12 @@ class OGInfinity {
 						titleDiv.appendChild(createDOM("div", {}, that.translation.text(40)));
 						titleDiv.appendChild(createDOM("div", {}, that.translation.text(39)));
 
+						// Query divs from details which contain the cost of the current ship or defense unit
 						let resDivs = [
 							costDiv.querySelector(".metal"),
 							costDiv.querySelector(".crystal"),
 							costDiv.querySelector(".deuterium"),
 						];
-
 						let baseCost = [
 							resDivs[0] ? resDivs[0].getAttribute("data-value") : 0,
 							resDivs[1] ? resDivs[1].getAttribute("data-value") : 0,
@@ -5708,9 +5742,9 @@ class OGInfinity {
 				return;
 			}
 			if (ships[id]) {
-				fleetRes[0] += SHIP_COSTS[id][0] * ships[id] * 1e3;
-				fleetRes[1] += SHIP_COSTS[id][1] * ships[id] * 1e3;
-				fleetRes[2] += SHIP_COSTS[id][2] * ships[id] * 1e3;
+				fleetRes[0] += TECH_INFO[id].baseCost[0] * ships[id];
+				fleetRes[1] += TECH_INFO[id].baseCost[1] * ships[id];
+				fleetRes[2] += TECH_INFO[id].baseCost[2] * ships[id];
 			}
 		});
 		return fleetRes;
@@ -8771,9 +8805,6 @@ class OGInfinity {
 		table.appendChild(row);
 
 		Object.values(DefenseEnum).forEach((id) => {
-			if (id > 200 && id < 300) {
-				return;
-			}
 			row = createDOM("tr");
 			let th = row.appendChild(createDOM("th"));
 			th.appendChild(createDOM("th", { class: "ogl-option ogl-fleet-ship tooltip ogl-fleet-" + id }));
