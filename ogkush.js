@@ -1621,7 +1621,7 @@ class OGInfinity {
         this.json.shipNames[fleetDispatcher.fleetHelper.shipsData[id].name] = id;
         this.json.ships[id] = {
           name: fleetDispatcher.fleetHelper.shipsData[id].name,
-          cargoCapacity: fleetDispatcher.fleetHelper.shipsData[id].cargoCapacity,
+          cargoCapacity: fleetDispatcher.fleetHelper.shipsData[id].baseCargoCapacity,
           speed: fleetDispatcher.fleetHelper.shipsData[id].speed,
           fuelConsumption: fleetDispatcher.fleetHelper.shipsData[id].fuelConsumption,
         };
@@ -15560,7 +15560,7 @@ class OGInfinity {
         <div class="ogl-fleetInfo">
         ${data[id].name}
         <hr>
-        <div><span>${this.getTranslatedText(47)} </span>${toFormatedNumber(data[id].cargoCapacity, 0)}</div>
+        <div><span>${this.getTranslatedText(47)} </span>${toFormatedNumber(data[id].baseCargoCapacity, 0)}</div>
         <div><span>${this.getTranslatedText(48)} </span>${toFormatedNumber(data[id].speed, 0)}</div>
         <div><span>${this.getTranslatedText(49)} </span>${toFormatedNumber(data[id].fuelConsumption, 0)}</div>
         </div>`;
@@ -18810,7 +18810,7 @@ class OGInfinity {
               cargoShipsOnPlanet[ship]
             );
             this.selectShips(ship, numShips);
-            resources -= fleetDispatcher.fleetHelper.shipsData[ship].cargoCapacity * numShips;
+            resources -= fleetDispatcher.fleetHelper.shipsData[ship].baseCargoCapacity * numShips;
             if (resources <= 0) {
               enoughCargo = true;
               return;
