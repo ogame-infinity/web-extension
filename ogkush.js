@@ -85,13 +85,6 @@ if (redirect && redirect.indexOf("https") > -1) {
   } else requestAnimationFrame(() => goodbyeTipped());
 })();
 
-/* Workaround for "DOMPurify not defined issue" */
-waitForDefinition("DOMPurify", () => {
-  Element.prototype.html = function (html) {
-    this.innerHTML = DOMPurify.sanitize(html);
-  };
-}, 10, 20000);
-
 function createDOM(element, attributes, textContent) {
   const e = document.createElement(element);
   for (const key in attributes) {
@@ -19020,6 +19013,12 @@ class AutoQueue extends Queue {
   let ogKush = new OGInfinity();
   setTimeout(function () {
     ogKush.init();
-    ogKush.start();
+    // workaround for "DOMPurify not defined" issue
+    waitForDefinition("DOMPurify", () => {
+      Element.prototype.html = function (html) {
+        this.innerHTML = DOMPurify.sanitize(html);
+      };
+      ogKush.start();
+    });
   }, 0);
 })();
