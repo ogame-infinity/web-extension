@@ -1647,7 +1647,7 @@ class OGInfinity {
     this.sideOptions();
     this.minesLevel();
     this.resourceDetail();
-    this.eventBox();
+    waitForElementToDisplay("#eventContent", () => {this.eventBox();});
     this.neededCargo();
     this.preselectShips();
     this.harvest();
@@ -1665,7 +1665,7 @@ class OGInfinity {
     this.utilities();
     this.chat();
     this.uvlinks();
-    this.flyingFleet();
+    waitForElementToDisplay("#eventContent", () => {this.flyingFleet();});
     this.betterHighscore();
     this.overviewDates();
     this.sideLock();
@@ -1676,8 +1676,10 @@ class OGInfinity {
     this.technoDetail();
     this.onGalaxyUpdate();
     this.timeZone();
-    this.updateFlyings();
-    this.updatePlanets_FleetActivity();
+    waitForElementToDisplay("#eventContent", () => {
+      this.updateFlyings();
+      this.updatePlanets_FleetActivity();
+    });
     this.checkRedirect();
     this.updateProductionProgress();
     this.showStorageTimers();
