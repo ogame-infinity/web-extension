@@ -33,6 +33,6 @@ jobs:
         run: ./packaging.sh ${{ github.event.inputs.version }}
         
       - name: Browser Platform Publish
-        uses: PlasmoHQ/bpp@v2
+        uses: PlasmoHQ/bpp@v3
         with:
          keys: ${{ secrets.BPP_KEYS }}
