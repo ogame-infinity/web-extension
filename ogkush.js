@@ -7417,9 +7417,9 @@ class OGInfinity {
       this.createDOM(
         "div",
         { class: "ogk-filter-grid" },
-        `<select id="filterRoi" size="1"><option value="-1" selected="selected">-</option>${filterOptions}</select><input id="reverseFilter" type="checkbox" title='${this.getTranslatedText(
+        `<select id="filterRoi" size="1"><option value="-1" selected="selected">-</option>${filterOptions}</select><input id="reverseFilter" type="checkbox" title="${this.getTranslatedText(
           135
-        )}' class="tooltip"></input>`
+        )}" class="tooltip"></input>`
       )
     );
     filter.querySelector("#filterRoi").addEventListener("change", () => updateRoi());
@@ -7510,13 +7510,13 @@ class OGInfinity {
         { class: "ogk-crawler-grid" },
         `<select id="crawlerPercent" size="1" class="${crawlerClass(
           crawlerPercent
-        )} tooltip" title='${this.getTranslatedText(126)}'><option value="${
+        )} tooltip" title="${this.getTranslatedText(126)}"><option value="${
           crawlerPercent * 100
         }" selected="selected" hidden="hidden">${toFormatedNumber(
           crawlerPercent * 100
-        )}%</option>${options}</select><input id="optLimitCrawler" type="checkbox" class="tooltip" title='${this.getTranslatedText(
+        )}%</option>${options}</select><input id="optLimitCrawler" type="checkbox" class="tooltip" title="${this.getTranslatedText(
           125
-        )}'> </input>`
+        )}"> </input>`
       )
     );
     crawler.querySelector("#optLimitCrawler").checked = this.json.options.limitCrawler;
