@@ -13444,6 +13444,9 @@ class OGInfinity {
       this.FPSLoop("checkDebris");
       document.querySelectorAll(".cellDebris").forEach((element) => {
         let debris = element.querySelector(".ListLinks");
+        if (!debris || !debris.classList.contains("ogl-debrisReady")) {
+          element.classList.remove("ogl-active");
+        }
         if (debris && !debris.classList.contains("ogl-debrisReady")) {
           debris.classList.add("ogl-debrisReady");
           let total = 0;
@@ -13462,9 +13465,6 @@ class OGInfinity {
           if (total > this.json.options.rvalLimit) {
             element.classList.add("ogl-active");
           }
-        }
-        else if (!debris || !debris.classList.contains("ogl-debrisReady")) {
-          element.classList.remove("ogl-active");
         }
       });
       let expeBox = document.querySelector(".expeditionDebrisSlotBox");
