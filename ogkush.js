@@ -3002,10 +3002,12 @@ class OGInfinity {
 	}
 
 	onFleetSent(callback) {
-		FleetDispatcher.prototype.submitFleet2 = function (force) { // todo: remove prototype of fleetDispatcher() function as it makes think only overcomplex
+		FleetDispatcher.prototype.submitFleet2 = function (force) { // todo: remove prototype of fleetDispatcher() function as it makes things only overcomplex
 			force = force || false;
 			let that = this;
 			let params = {};
+
+			console.log("test");
 
 			this.appendTokenParams(params);
 			this.appendShipParams(params);
@@ -14297,7 +14299,7 @@ class OGInfinity {
 	}
 
 	betterTooltip() {
-		Tipped.show = (e) => {
+		Tipped.show = (e) => { // todo: remove because obsolete?
 			this.showTooltip(e);
 		};
 	}
@@ -14393,14 +14395,15 @@ class OGInfinity {
 		if (this.page == "movement") {
 			let lastFleetId = -1;
 			let lastFleetBtn;
-			let date;
 			document.querySelectorAll(".fleetDetails").forEach((fleet) => {
 				let id = Number(fleet.getAttribute("id").replace("fleet", ""));
+
+				// Check if current fleet mission was canceled and is in reversal now
 				if (id > lastFleetId && fleet.querySelector(".reversal a")) {
 					lastFleetId = id;
 					lastFleetBtn = fleet.querySelector(".reversal a");
 				}
-				let type = fleet.getAttribute("data-mission-type");
+
 				let originCoords = fleet.querySelector(".originCoords").textContent;
 				this.json.empire.forEach((planet) => {
 					if (planet.coordinates == originCoords) {
@@ -14408,82 +14411,94 @@ class OGInfinity {
 						fleet.querySelector(".nextTimer") && fleet.querySelector(".nextTimer").classList.add("friendly");
 					}
 				});
+
+				let type = fleet.getAttribute("data-mission-type");
 				fleet.appendChild(createDOM("a", { class: `ogl-mission-icon ogl-mission-${type}` }));
+
 				let fleetInfo = fleet.querySelector(".fleetinfo");
 				let fleetCount = 0;
-				let values = fleetInfo.querySelectorAll("td.value");
+
 				let backed = [0, 0, 0];
-				values.forEach((value, index) => {
-					if (index == values.length - 2) {
-						backed[2] = fromFormatedNumber(value.textContent);
-						return;
-					}
-					if (index == values.length - 3) {
-						backed[1] = fromFormatedNumber(value.textContent);
-						return;
-					}
-					if (index == values.length - 4) {
-						backed[0] = fromFormatedNumber(value.textContent);
-						return;
-					}
-					fleetCount += fromFormatedNumber(value.textContent);
-				});
-				let destCoords = fleet.querySelector(".destinationCoords a").textContent;
-				let destMoon = fleet.querySelector(".destinationData moon") ? true : false;
-				let coords = destCoords.slice(1, -1) + (destMoon ? "M" : "P");
-				let revesal = fleet.querySelector(".reversal a");
-				if (revesal) {
-					revesal.addEventListener("click", () => {
-						if (this.json.missing[coords]) {
-							this.json.missing[coords][0] += backed[0];
-							this.json.missing[coords][1] += backed[1];
-							this.json.missing[coords][2] += backed[2];
+				// Check if fleetInfo does exist, because explorations dont have any fleet i.e. dont conatin this class
+				if (fleetInfo) {
+					let values = fleetInfo.querySelectorAll("td.value");
+
+					values.forEach((value, index) => {
+						if (index == values.length - 2) {
+							backed[2] = fromFormatedNumber(value.textContent);
+							return;
 						}
-						this.saveData();
+						if (index == values.length - 3) {
+							backed[1] = fromFormatedNumber(value.textContent);
+							return;
+						}
+						if (index == values.length - 4) {
+							backed[0] = fromFormatedNumber(value.textContent);
+							return;
+						}
+						fleetCount += fromFormatedNumber(value.textContent);
 					});
-				}
-				let details = fleet.appendChild(createDOM("div", { class: "ogk-fleet-detail" }));
-				details.appendChild(
-					createDOM(
-						"div",
-						{ class: "ogk-ships-count" },
-						toFormatedNumber(fleetCount, null, true) + " " + this.translation.text(64)
-					)
-				);
-				if (!fleet.querySelector(".reversal")) return;
-				let back =
-					fleet.querySelector(".reversal a").title || fleet.querySelector(".reversal a").getAttribute("data-title");
-				let splitted = back.split("|")[1].replace("<br>", "/").replace(/:|\./g, "/").split("/");
-				let backDate = {
-					year: splitted[2],
-					month: splitted[1],
-					day: splitted[0],
-					h: splitted[3],
-					m: splitted[4],
-					s: splitted[5],
-				};
-				let lastTimer = new Date(
-					backDate.year,
-					backDate.month,
-					backDate.day,
-					backDate.h,
-					backDate.m,
-					backDate.s
-				).getTime();
-				let content = details.appendChild(createDOM("div", { class: "ogl-date" }));
-				let date;
-				let updateTimer = () => {
-					lastTimer += 1e3;
-					date = new Date(lastTimer);
-					const dateTxt = getFormatedDate(date.getTime(), "[d].[m].[y] [G]:[i]:[s] ");
-					content.replaceChildren(
-						document.createTextNode(`${dateTxt.split(" ")[0]}  `),
-						createDOM("strong", {}, dateTxt.split(" ")[1])
+
+					let destCoords = fleet.querySelector(".destinationCoords a").textContent;
+					let destMoon = fleet.querySelector(".destinationData moon") ? true : false;
+					let coords = destCoords.slice(1, -1) + (destMoon ? "M" : "P");
+
+					let reversal = fleet.querySelector(".reversal a");
+					if (reversal) {
+						reversal.addEventListener("click", () => {
+							if (this.json.missing[coords]) {
+								this.json.missing[coords][0] += backed[0];
+								this.json.missing[coords][1] += backed[1];
+								this.json.missing[coords][2] += backed[2];
+							}
+							this.saveData();
+						});
+					}
+
+					let details = fleet.appendChild(createDOM("div", { class: "ogk-fleet-detail" }));
+					details.appendChild(
+						createDOM(
+							"div",
+							{ class: "ogk-ships-count" },
+							toFormatedNumber(fleetCount, null, true) + " " + this.translation.text(64)
+						)
 					);
-				};
-				updateTimer();
-				setInterval(() => updateTimer(), 500);
+					if (!fleet.querySelector(".reversal")) return;
+					let back =
+						fleet.querySelector(".reversal a").title || fleet.querySelector(".reversal a").getAttribute("data-title");
+					let splitted = back.split("|")[1].replace("<br>", "/").replace(/:|\./g, "/").split("/");
+					let backDate = {
+						year: splitted[2],
+						month: splitted[1],
+						day: splitted[0],
+						h: splitted[3],
+						m: splitted[4],
+						s: splitted[5],
+					};
+					let lastTimer = new Date(
+						backDate.year,
+						backDate.month,
+						backDate.day,
+						backDate.h,
+						backDate.m,
+						backDate.s
+					).getTime();
+					let content = details.appendChild(createDOM("div", { class: "ogl-date" }));
+					let date;
+					let updateTimer = () => {
+						lastTimer += 1e3;
+						date = new Date(lastTimer);
+						const dateTxt = getFormatedDate(date.getTime(), "[d].[m].[y] [G]:[i]:[s] ");
+						content.replaceChildren(
+							document.createTextNode(`${dateTxt.split(" ")[0]}  `),
+							createDOM("strong", {}, dateTxt.split(" ")[1])
+						);
+					};
+					updateTimer();
+					setInterval(() => updateTimer(), 500);
+				}
 			});
+
 			if (lastFleetBtn) {
 				lastFleetBtn.style.filter = "hue-rotate(180deg) saturate(150%)";
 				let backlast = document
