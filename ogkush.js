@@ -5543,8 +5543,9 @@ class OGInfinity {
             let content = msg.querySelector(".msg_content").innerText;
             coords = coords.textContent.slice(1, -1);
             let matches = content.match(/[0-9.,]*[0-9]/gm);
-            let met = fromFormatedNumber(matches[matches.length - 2]);
-            let cri = fromFormatedNumber(matches[matches.length - 1]);
+            let met = fromFormatedNumber(matches[matches.length - 3]);
+            let cri = fromFormatedNumber(matches[matches.length - 2]);
+            /* @TODO let deu = fromFormatedNumber(matches[matches.length - 1]); */
             let combat = false;
             if (coords.split(":")[2] == 16) {
               msg.classList.add("ogk-expedition");
