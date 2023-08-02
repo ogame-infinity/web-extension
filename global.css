@@ -5201,17 +5201,18 @@ tr[data-marked="gray"] .galaxyCell {
 }
 
 #galaxyContent .cellDebris.ogl-active {
-  background: #50937A !important;
+  border: #73d2af solid 1px;
   opacity: 1 !important;
 }
 
 #galaxyContent .cellDebris a {
   font-size: 70%;
+  text-decoration: none;
 }
 
-#galaxyContent .cellDebris.ogl-active a {
-  opacity: 1 !important;
-  color: #fff !important;
+.expeditionDebrisSlotBox a[href] {
+  color: #6f9fc8;
+  text-decoration: none;
 }
 
 #galaxyContent .galaxyRow[data-marked]:not([data-marked="gray"]) .galaxyCell {

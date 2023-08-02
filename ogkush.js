@@ -13448,11 +13448,15 @@ class OGInfinity {
           debris.classList.add("ogl-debrisReady");
           let total = 0;
           const frag = document.createDocumentFragment();
+          let i = 0;
           debris.querySelectorAll(".debris-content").forEach((resources) => {
             let value = fromFormatedNumber(resources.textContent.replace(/(\D*)/, ""));
             total += parseInt(value);
-            frag.appendChild(document.createTextNode(toFormatedNumber(value, null, true)));
-            frag.appendChild(document.createElement("br"));
+
+            let classResources = ["ogl-metal", "ogl-crystal", "ogl-deut"];
+            frag.appendChild(
+              createDOM("div", { class:  classResources[i++]}, toFormatedNumber(value, null, true))
+              );
           });
           element.querySelector(".microdebris").appendChild(frag);
           if (total > this.json.options.rvalLimit) {
@@ -13478,7 +13482,7 @@ class OGInfinity {
         debris.appendChild(createDOM("div", { class: "ogl-metal" }, `${res[0]}`));
         debris.appendChild(createDOM("div", { class: "ogl-crystal" }, `${res[1]}`));
         if (res[2]) {
-          debris.appendChild(createDOM("div", { class: "ogl-deuterium" }, `${res[2]}`));
+          debris.appendChild(createDOM("div", { class: "ogl-deut" }, `${res[2]}`));
         }
         frag.appendChild(debris);
         const scouts = expeBox.querySelector(".ListLinks li.debris-recyclers");
