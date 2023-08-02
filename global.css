@@ -5201,7 +5201,7 @@ tr[data-marked="gray"] .galaxyCell {
 }
 
 #galaxyContent .cellDebris.ogl-active {
-  border: #73d2af solid 1px;
+  border: #73d2af solid 1px !important;
   opacity: 1 !important;
 }
 
