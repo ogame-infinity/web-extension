@@ -5200,9 +5200,18 @@ tr[data-marked="gray"] .galaxyCell {
   opacity: 0.2 !important;
 }
 
-#galaxyContent .debris.ogl-active {
-  background: #c14529 !important;
+#galaxyContent .cellDebris.ogl-active {
+  background: #50937A !important;
   opacity: 1 !important;
+}
+
+#galaxyContent .cellDebris a {
+  font-size: 70%;
+}
+
+#galaxyContent .cellDebris.ogl-active a {
+  opacity: 1 !important;
+  color: #fff !important;
 }
 
 #galaxyContent .galaxyRow[data-marked]:not([data-marked="gray"]) .galaxyCell {

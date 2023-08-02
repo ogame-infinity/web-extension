@@ -13458,6 +13458,9 @@ class OGInfinity {
             element.classList.add("ogl-active");
           }
         }
+        else if (!debris || !debris.classList.contains("ogl-debrisReady")) {
+          element.classList.remove("ogl-active");
+        }
       });
       let expeBox = document.querySelector(".expeditionDebrisSlotBox");
       if (expeBox && !expeBox.classList.contains("ogl-done")) {
