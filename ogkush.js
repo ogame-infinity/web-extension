@@ -13860,7 +13860,12 @@ class OGInfinity {
         report.resRatio[0] + report.resRatio[1]
       }%, rgb(166, 224, 176) ${report.resRatio[2]}%)`;
       let fleet = line.appendChild(createDOM("td", {}, toFormatedNumber(report.fleet, null, true)));
-      if (report.fleet > 0 || report.fleet == "No Data") fleet.classList.add("ogl-care");
+      if (
+        Math.round(report.fleet * this.json.universeSettingsTooltip.fleetToTF) >= this.json.options.rvalLimit
+        || report.fleet == "No Data"
+        ) {
+        fleet.classList.add("ogl-care");
+      }
       let defense = line.appendChild(createDOM("td", {}, toFormatedNumber(report.defense, null, true)));
       if (report.defense > 0 || report.defense == "No Data") defense.classList.add("ogl-danger");
       let splittedCoords = report.coords.split(":");
@@ -13964,9 +13969,9 @@ class OGInfinity {
       });
 
       if (
-        this.json.options.autoDeleteEnable &&
-        report.fleet == 0 &&
-        Math.round((report.total * report.loot) / 100) < this.json.options.rvalLimit
+        this.json.options.autoDeleteEnable
+        && Math.round(report.fleet * this.json.universeSettingsTooltip.fleetToTF) < this.json.options.rvalLimit
+        && Math.round((report.total * report.loot) / 100) < this.json.options.rvalLimit
       ) {
         deleteBtn.click();
       }
