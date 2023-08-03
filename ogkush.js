@@ -1843,6 +1843,7 @@ class OGInfinity {
         ? document.querySelector(".acceleration").getAttribute("data-value") == 25
         : false;
       let that = this;
+      let xhrAbortSignal = null;
       let updateResearchDetails = (technoId, baselvl, tolvl) => {
         let object = that.current.isMoon
           ? that.json.empire[that.current.index].moon
@@ -2389,6 +2390,9 @@ class OGInfinity {
         };
       };
       technologyDetails.show = function (technologyId) {
+        if(xhrAbortSignal){
+          xhrAbortSignal.abort();
+        }
         let element = $(".technology.hasDetails[data-technology=" + technologyId + "]");
         let elemTechnologyDetailsWrapper = $("#technologydetails_wrapper");
         let elemTechnologyDetailsContent = $("#technologydetails_content");
@@ -2397,7 +2401,7 @@ class OGInfinity {
         elemTechnologyDetailsWrapper.toggleClass("slide-down", false);
         let locationIndicator = elemTechnologyDetailsContent.ogameLoadingIndicator();
         locationIndicator.show();
-        $.ajax({
+        xhrAbortSignal = $.ajax({
           url: this.technologyDetailsEndpoint,
           data: { technology: technologyId },
         }).done(function (data) {
@@ -2726,6 +2730,7 @@ class OGInfinity {
             });
             infoDiv.appendChild(helpNode);
           }
+          xhrAbortSignal = null;
         });
       };
     }
