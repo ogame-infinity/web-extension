@@ -5200,9 +5200,19 @@ tr[data-marked="gray"] .galaxyCell {
   opacity: 0.2 !important;
 }
 
-#galaxyContent .debris.ogl-active {
-  background: #c14529 !important;
+#galaxyContent .cellDebris.ogl-active {
+  border: #73d2af solid 1px !important;
   opacity: 1 !important;
+}
+
+#galaxyContent .cellDebris a {
+  font-size: 70%;
+  text-decoration: none;
+}
+
+.expeditionDebrisSlotBox a[href] {
+  color: #6f9fc8;
+  text-decoration: none;
 }
 
 #galaxyContent .galaxyRow[data-marked]:not([data-marked="gray"]) .galaxyCell {

@@ -5543,8 +5543,9 @@ class OGInfinity {
             let content = msg.querySelector(".msg_content").innerText;
             coords = coords.textContent.slice(1, -1);
             let matches = content.match(/[0-9.,]*[0-9]/gm);
-            let met = fromFormatedNumber(matches[matches.length - 2]);
-            let cri = fromFormatedNumber(matches[matches.length - 1]);
+            let met = fromFormatedNumber(matches[matches.length - 3]);
+            let cri = fromFormatedNumber(matches[matches.length - 2]);
+            /* @TODO let deu = fromFormatedNumber(matches[matches.length - 1]); */
             let combat = false;
             if (coords.split(":")[2] == 16) {
               msg.classList.add("ogk-expedition");
@@ -7417,9 +7418,9 @@ class OGInfinity {
       this.createDOM(
         "div",
         { class: "ogk-filter-grid" },
-        `<select id="filterRoi" size="1"><option value="-1" selected="selected">-</option>${filterOptions}</select><input id="reverseFilter" type="checkbox" title='${this.getTranslatedText(
+        `<select id="filterRoi" size="1"><option value="-1" selected="selected">-</option>${filterOptions}</select><input id="reverseFilter" type="checkbox" title="${this.getTranslatedText(
           135
-        )}' class="tooltip"></input>`
+        )}" class="tooltip"></input>`
       )
     );
     filter.querySelector("#filterRoi").addEventListener("change", () => updateRoi());
@@ -7510,13 +7511,13 @@ class OGInfinity {
         { class: "ogk-crawler-grid" },
         `<select id="crawlerPercent" size="1" class="${crawlerClass(
           crawlerPercent
-        )} tooltip" title='${this.getTranslatedText(126)}'><option value="${
+        )} tooltip" title="${this.getTranslatedText(126)}"><option value="${
           crawlerPercent * 100
         }" selected="selected" hidden="hidden">${toFormatedNumber(
           crawlerPercent * 100
-        )}%</option>${options}</select><input id="optLimitCrawler" type="checkbox" class="tooltip" title='${this.getTranslatedText(
+        )}%</option>${options}</select><input id="optLimitCrawler" type="checkbox" class="tooltip" title="${this.getTranslatedText(
           125
-        )}'> </input>`
+        )}"> </input>`
       )
     );
     crawler.querySelector("#optLimitCrawler").checked = this.json.options.limitCrawler;
@@ -13443,15 +13444,22 @@ class OGInfinity {
       this.FPSLoop("checkDebris");
       document.querySelectorAll(".cellDebris").forEach((element) => {
         let debris = element.querySelector(".ListLinks");
+        if (!debris || !debris.classList.contains("ogl-debrisReady")) {
+          element.classList.remove("ogl-active");
+        }
         if (debris && !debris.classList.contains("ogl-debrisReady")) {
           debris.classList.add("ogl-debrisReady");
           let total = 0;
           const frag = document.createDocumentFragment();
+          let i = 0;
           debris.querySelectorAll(".debris-content").forEach((resources) => {
             let value = fromFormatedNumber(resources.textContent.replace(/(\D*)/, ""));
             total += parseInt(value);
-            frag.appendChild(document.createTextNode(toFormatedNumber(value, null, true)));
-            frag.appendChild(document.createElement("br"));
+
+            let classResources = ["ogl-metal", "ogl-crystal", "ogl-deut"];
+            frag.appendChild(
+              createDOM("div", { class:  classResources[i++]}, toFormatedNumber(value, null, true))
+              );
           });
           element.querySelector(".microdebris").appendChild(frag);
           if (total > this.json.options.rvalLimit) {
@@ -13474,7 +13482,7 @@ class OGInfinity {
         debris.appendChild(createDOM("div", { class: "ogl-metal" }, `${res[0]}`));
         debris.appendChild(createDOM("div", { class: "ogl-crystal" }, `${res[1]}`));
         if (res[2]) {
-          debris.appendChild(createDOM("div", { class: "ogl-deuterium" }, `${res[2]}`));
+          debris.appendChild(createDOM("div", { class: "ogl-deut" }, `${res[2]}`));
         }
         frag.appendChild(debris);
         const scouts = expeBox.querySelector(".ListLinks li.debris-recyclers");
@@ -13852,7 +13860,12 @@ class OGInfinity {
         report.resRatio[0] + report.resRatio[1]
       }%, rgb(166, 224, 176) ${report.resRatio[2]}%)`;
       let fleet = line.appendChild(createDOM("td", {}, toFormatedNumber(report.fleet, null, true)));
-      if (report.fleet > 0 || report.fleet == "No Data") fleet.classList.add("ogl-care");
+      if (
+        Math.round(report.fleet * this.json.universeSettingsTooltip.fleetToTF) >= this.json.options.rvalLimit
+        || report.fleet == "No Data"
+        ) {
+        fleet.classList.add("ogl-care");
+      }
       let defense = line.appendChild(createDOM("td", {}, toFormatedNumber(report.defense, null, true)));
       if (report.defense > 0 || report.defense == "No Data") defense.classList.add("ogl-danger");
       let splittedCoords = report.coords.split(":");
@@ -13956,9 +13969,9 @@ class OGInfinity {
       });
 
       if (
-        this.json.options.autoDeleteEnable &&
-        report.fleet == 0 &&
-        Math.round((report.total * report.loot) / 100) < this.json.options.rvalLimit
+        this.json.options.autoDeleteEnable
+        && Math.round(report.fleet * this.json.universeSettingsTooltip.fleetToTF) < this.json.options.rvalLimit
+        && Math.round((report.total * report.loot) / 100) < this.json.options.rvalLimit
       ) {
         deleteBtn.click();
       }
