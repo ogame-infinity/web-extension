@@ -30,7 +30,7 @@ cp -r libs/ dist/libs
 cp  $MANIFEST_FILE_NAME ./dist/$MANIFEST_FILE_NAME
 
 cd ./dist
-sed -i "s/__VERSION__/$1/g" "$MANIFEST_FILE_NAME"
+sed -i "s/0\.0\.0/$1/g" "$MANIFEST_FILE_NAME"
 sed -i "s/__VERSION__/$1/g" "$CONTENT_JS_FILE_NAME"
 
 zip -qr -X "ogi-chrome.zip" * 
@@ -49,7 +49,7 @@ cp ../$CSS_FILE_NAME ./$CSS_FILE_NAME
 cp ../$MANIFEST_FILE_NAME_V2 ./$MANIFEST_FILE_NAME
 cp ../readme.md .
 
-sed -i "s/__VERSION__/$1/g" "$MANIFEST_FILE_NAME"
+sed -i "s/0\.0\.0/$1/g" "$MANIFEST_FILE_NAME"
 
 # Modifing chrome-extension:// to moz-extension://
 sed -i "s/chrome/moz/g" "$CSS_FILE_NAME"
