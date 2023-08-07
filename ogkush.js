@@ -1,3 +1,4 @@
+const VERSION = "__VERSION__";
 var dataHelper = (function () {
   var requestId = 0;
 
@@ -17287,7 +17288,7 @@ class OGInfinity {
     let container = createDOM("div", { class: "ogl-dialogContainer ogl-settings" });
     let dataDiv = container.appendChild(createDOM("div"));
     let ogameInfinity = dataDiv.appendChild(createDOM("div"));
-    ogameInfinity.appendChild(createDOM("div", { class: "ogk-logo" }));
+    ogameInfinity.appendChild(createDOM("div", { class: "ogk-logo" }, `v${VERSION}`));
     ogameInfinity.appendChild(
       this.createDOM(
         "div",
@@ -19029,10 +19030,28 @@ class AutoQueue extends Queue {
   }
 }
 
+function versionInStatusBar(){
+  const siteFooterTextRight = document.querySelector("#siteFooter div.fright.textRight");
+  if(!siteFooterTextRight){
+    return;
+  }
+
+  const version = createDOM("a",{class:"ogk-button-version"});
+  const icon = createDOM("div",{class:"ogk-icon"});
+  version.append(icon, ` ${VERSION}`)
+
+  siteFooterTextRight.append(" | ", version);
+}
+
 (async () => {
+  console.info("%c OGame Infinity/v%s ",
+      "background-color: #ebf4fb;color:#004ccc;font-family:monospace;border-radius:0.5em",
+      VERSION);
+
   let ogKush = new OGInfinity();
   setTimeout(function () {
     ogKush.init();
+    versionInStatusBar();
     // workaround for "DOMPurify not defined" issue
     waitForDefinition("DOMPurify", () => {
       Element.prototype.html = function (html) {
