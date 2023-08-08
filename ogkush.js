@@ -85,6 +85,31 @@ if (redirect && redirect.indexOf("https") > -1) {
   } else requestAnimationFrame(() => goodbyeTipped());
 })();
 
+const logger = (function(){
+
+  /** @param {Function} on */
+  function print(on){
+    /**
+     * @param {string} message
+     * @param {any[]} data
+     */
+    return function (message, ...data){
+      on(`%c OGame Infinity/v${VERSION} %c > ${message}`,
+        "background-color: #ebf4fb;color:#004ccc;font-family:monospace;border-radius:0.5em",
+        "color: black", ...data);
+
+    }
+  }
+
+  return {
+    debug: print(console.debug),
+    error: print(console.error),
+    info: print(console.info),
+    log: print(console.log),
+    warn: print(console.warn),
+  }
+})();
+
 function createDOM(element, attributes, textContent) {
   const e = document.createElement(element);
   for (const key in attributes) {
