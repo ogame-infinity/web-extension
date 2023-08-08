@@ -5231,407 +5231,500 @@ class OGInfinity {
   expeditionMessages() {
     let normalized = ["Metal", "Crystal", "Deuterium", "AM"];
     let ressources = this.json.resNames;
-    if (!this.combats) this.combats = {};
-    if (!this.expeditionsIds) this.expeditionsIds = {};
     let cyclosName = "";
-    for (let i in this.json.shipNames) {
-      if (this.json.shipNames[i] == 209) cyclosName = i;
-    }
-    if (this.page == "messages") {
+
+    /**
+     * @typedef MessageSubTabTrigger
+     * @type {Array<[string, string, Function|undefined]>}
+     * * 0 - Tab name
+     * * 1 - Tab document query selector
+     * * 2 - Trigger function
+     */
+
+    /**
+     * @typedef MessageTabTrigger
+     * @type {Array<[string, HTMLElement, Function|undefined]>}
+     * * 0 - Tab name
+     * * 1 - Tab html element
+     * * 2 - Trigger function
+     */
+
+    /** @param {MessageSubTabTrigger} subTabTrigger */
+    const fleetAnalize = (subTabTrigger) => {
+      logger.debug("action:messages.fleets.%s, fn:%o", subTabTrigger[0], subTabTrigger[2])
+
+      ressources = this.json.resNames;
+      if (!this.combats) this.combats = {};
+      if (!this.expeditionsIds) this.expeditionsIds = {};
+      cyclosName = "";
+      for (let i in this.json.shipNames) {
+        if (this.json.shipNames[i] == 209) cyclosName = i;
+      }
+
+      // Fix TimeZone date times.
       this.json.options.timeZone &&
-        document.querySelectorAll("div li.msg").forEach((msg) => {
-          if (!msg.querySelector(".msg_date")) return;
-          let date = msg.querySelector(".msg_date").textContent;
-          if (!msg.querySelector(".msg_date").classList.contains(".ogl-ready")) {
-            msg.querySelector(".msg_date").classList.add(".ogl-ready");
-            msg.querySelector(".msg_date").textContent = getFormatedDate(
+      document.querySelectorAll("div li.msg").forEach((msg) => {
+        if (!msg.querySelector(".msg_date")) return;
+        let date = msg.querySelector(".msg_date").textContent;
+        if (!msg.querySelector(".msg_date").classList.contains(".ogl-ready")) {
+          msg.querySelector(".msg_date").classList.add(".ogl-ready");
+          msg.querySelector(".msg_date").textContent = getFormatedDate(
               this.dateStrToDate(date).getTime() + this.json.timezoneDiff * 1e3,
               "[d].[m].[Y] [H]:[i]:[s]"
-            );
-          }
-        });
-      if (document.querySelector("li[id=subtabs-nfFleet22].ui-state-active")) {
-        let id = document.querySelector("li[id=subtabs-nfFleet22].ui-state-active").getAttribute("aria-controls");
-        document.querySelectorAll(`div[id=${id}] li.msg`).forEach((msg) => {
-          let id = msg.getAttribute("data-msg-id");
-          let content = msg.querySelector("span.msg_content");
-          let date = msg.querySelector(".msg_date").textContent;
-          let textContent = content.innerText;
-          let coords = msg.querySelector(".msg_title a");
-          if (coords) {
-            coords = coords.textContent.slice(1, -1);
-            if (coords.split(":")[2] == 16) {
-              if (id in this.json.expeditions && this.json.expeditions[id].result) {
-                if (msg.querySelector(".icon_favorited")) {
-                  this.json.expeditions[id].favorited = true;
-                  this.json.expeditions[id].date = new Date();
-                } else {
-                  this.json.expeditions[id].favorited = false;
-                }
-                if (this.json.expeditions[id].result == "Unknown") {
-                  msg.querySelector(".ogl-unknown-warning") ||
-                    msg
-                      .querySelector(".msg_actions")
-                      .appendChild(
-                        this.createDOM(
-                          "div",
-                          { class: "ogl-unknown-warning" },
-                          `${this.getTranslatedText(
-                            112
-                          )} <a href='https://discord.gg/8Y4SWup'> ${this.getTranslatedText(113)}</a>`
-                        )
-                      );
-                } else if (this.json.expeditions[id].busy) {
-                  msg.querySelector(".ogl-warning") ||
-                    msg
-                      .querySelector(".msg_actions")
-                      .appendChild(
-                        createDOM("a", { class: "ogl-warning tooltip", "data-title": this.getTranslatedText(114) })
-                      );
-                }
-                msg.classList.add("ogk-" + this.json.expeditions[id].result.toLowerCase());
-                return;
-              } else if (id in this.expeditionsIds) {
-                return;
+          );
+        }
+      });
+
+      if(subTabTrigger[2]) subTabTrigger[2]();
+    }
+
+    const subFleet22_Expeditions = () => {
+      let id = document.querySelector("li[id=subtabs-nfFleet22].ui-state-active").getAttribute("aria-controls");
+      document.querySelectorAll(`div[id=${id}] li.msg`).forEach((msg) => {
+        let id = msg.getAttribute("data-msg-id");
+        let content = msg.querySelector("span.msg_content");
+        let date = msg.querySelector(".msg_date").textContent;
+        let textContent = content.innerText;
+        let coords = msg.querySelector(".msg_title a");
+        if (coords) {
+          coords = coords.textContent.slice(1, -1);
+          if (coords.split(":")[2] == 16) {
+            if (id in this.json.expeditions && this.json.expeditions[id].result) {
+              if (msg.querySelector(".icon_favorited")) {
+                this.json.expeditions[id].favorited = true;
+                this.json.expeditions[id].date = new Date();
+              } else {
+                this.json.expeditions[id].favorited = false;
               }
-              this.expeditionsIds[id] = true;
-              let content = msg.querySelector("span.msg_content");
-              let date = msg.querySelector(".msg_date").textContent;
-              let textContent = content.innerText;
-              dataHelper.getExpeditionType(textContent).then((type) => {
-                date = date.split(" ")[0].slice(0, -4) + date.split(" ")[0].slice(-2);
-                let sums = this.json.expeditionSums[date];
-                if (!sums) {
-                  sums = {
-                    found: [0, 0, 0, 0],
-                    harvest: [0, 0],
-                    losses: {},
-                    fleet: {},
-                    type: {},
-                    adjust: [0, 0, 0],
-                    fuel: 0,
-                  };
-                }
-                let objectNode = content.querySelector("a");
-                if (objectNode) {
-                  this.json.result = "Object";
-                  this.json["object"] = objectNode.textContent;
-                  type = "Object";
-                }
-                ressources.forEach((res, i) => {
-                  if (textContent.includes(res)) {
-                    let regex = new RegExp("[0-9]{1,3}(.[0-9]{1,3})*", "gm");
-                    let found = textContent.match(regex);
-                    if (found) {
-                      type = normalized[i];
-                      sums.found[i] += fromFormatedNumber(found[0], true);
-                    }
-                  }
-                });
-                let fleetMatches = textContent.match(/.*: [1-9].*/gm);
-                fleetMatches &&
-                  !normalized.includes(type) &&
-                  fleetMatches.forEach((result) => {
-                    let split = result.split(": ");
-                    type = "Fleet";
-                    let id = this.json.shipNames[split[0]];
-                    let count = Number(split[1]);
-                    sums.fleet[id] ? (sums.fleet[id] += count) : (sums.fleet[id] = count);
-                  });
-                if (type != "Unknown") {
-                  sums.type[type] ? (sums.type[type] += 1) : (sums.type[type] = 1);
-                }
-                this.json.expeditionSums[date] = sums;
-                this.json.expeditions[id] = {
-                  result: type,
-                  date: new Date(this.dateStrToDate(date)),
-                  favorited: msg.querySelector(".icon_favorited") ? true : false,
-                };
-                if (this.json.expeditions[id].result == "Unknown") {
-                  msg
+              if (this.json.expeditions[id].result == "Unknown") {
+                msg.querySelector(".ogl-unknown-warning") ||
+                msg
                     .querySelector(".msg_actions")
                     .appendChild(
-                      this.createDOM(
-                        "div",
-                        { class: "ogl-unknown-warning" },
-                        `${this.getTranslatedText(112)} <a href='https://discord.gg/8Y4SWup'> ${this.getTranslatedText(
-                          113
-                        )}</a>`
-                      )
+                        this.createDOM(
+                            "div",
+                            { class: "ogl-unknown-warning" },
+                            `${this.getTranslatedText(
+                                112
+                            )} <a href='https://discord.gg/8Y4SWup'> ${this.getTranslatedText(113)}</a>`
+                        )
                     );
-                } else if (this.json.expeditions[id].busy) {
-                  msg.querySelector(".msg_actions").appendChild(
+              }
+              else if (this.json.expeditions[id].busy) {
+                msg.querySelector(".ogl-warning") ||
+                msg
+                    .querySelector(".msg_actions")
+                    .appendChild(
+                        createDOM("a", { class: "ogl-warning tooltip", "data-title": this.getTranslatedText(114) })
+                    );
+              }
+
+              const msgExpeditionClass = `ogk-${this.json.expeditions[id].result.toLowerCase()}`;
+              const msgTitle = msg.querySelector(".msg_head .msg_title");
+              const msgTitleType = createDOM(
+                  "span", {class:`ogk-label ${msgExpeditionClass}`},
+                  // TODO: Need use localized languaje
+                  this.json.expeditions[id].result);
+              msgTitle.append(" ", msgTitleType)
+              msg.classList.add(msgExpeditionClass);
+
+
+              return;
+            } else if (id in this.expeditionsIds) {
+              return;
+            }
+            this.expeditionsIds[id] = true;
+            let content = msg.querySelector("span.msg_content");
+            let date = msg.querySelector(".msg_date").textContent;
+            let textContent = content.innerText;
+            dataHelper.getExpeditionType(textContent).then((type) => {
+              date = date.split(" ")[0].slice(0, -4) + date.split(" ")[0].slice(-2);
+              let sums = this.json.expeditionSums[date];
+              if (!sums) {
+                sums = {
+                  found: [0, 0, 0, 0],
+                  harvest: [0, 0],
+                  losses: {},
+                  fleet: {},
+                  type: {},
+                  adjust: [0, 0, 0],
+                  fuel: 0,
+                };
+              }
+              let objectNode = content.querySelector("a");
+              if (objectNode) {
+                this.json.result = "Object";
+                this.json["object"] = objectNode.textContent;
+                type = "Object";
+              }
+              ressources.forEach((res, i) => {
+                if (textContent.includes(res)) {
+                  let regex = new RegExp("[0-9]{1,3}(.[0-9]{1,3})*", "gm");
+                  let found = textContent.match(regex);
+                  if (found) {
+                    type = normalized[i];
+                    sums.found[i] += fromFormatedNumber(found[0], true);
+                  }
+                }
+              });
+              let fleetMatches = textContent.match(/.*: [1-9].*/gm);
+              fleetMatches &&
+              !normalized.includes(type) &&
+              fleetMatches.forEach((result) => {
+                let split = result.split(": ");
+                type = "Fleet";
+                let id = this.json.shipNames[split[0]];
+                let count = Number(split[1]);
+                sums.fleet[id] ? (sums.fleet[id] += count) : (sums.fleet[id] = count);
+              });
+              if (type != "Unknown") {
+                sums.type[type] ? (sums.type[type] += 1) : (sums.type[type] = 1);
+              }
+              this.json.expeditionSums[date] = sums;
+              this.json.expeditions[id] = {
+                result: type,
+                date: new Date(this.dateStrToDate(date)),
+                favorited: msg.querySelector(".icon_favorited") ? true : false,
+              };
+              if (this.json.expeditions[id].result == "Unknown") {
+                msg
+                    .querySelector(".msg_actions")
+                    .appendChild(
+                        this.createDOM(
+                            "div",
+                            { class: "ogl-unknown-warning" },
+                            `${this.getTranslatedText(112)} <a href='https://discord.gg/8Y4SWup'> ${this.getTranslatedText(
+                                113
+                            )}</a>`
+                        )
+                    );
+              } else if (this.json.expeditions[id].busy) {
+                msg.querySelector(".msg_actions").appendChild(
                     createDOM("a", {
                       class: "ogl-warning tooltipRight ogl-tooltipReady ogl-tooltipInit",
                       "data-title": this.getTranslatedText(114),
                     })
-                  );
-                }
-                msg.classList.add("ogk-" + this.json.expeditions[id].result.toLowerCase());
-                this.saveData();
-              });
-            } else {
-              if (!this.json.discoveries[id]) {
-                date = date.split(" ")[0].slice(0, -4) + date.split(" ")[0].slice(-2);
-                let lfFound = ["lifeform1", "lifeform2", "lifeform3", "lifeform4"];
-                let sums = this.json.discoveriesSums[date];
-                if (!sums) {
-                  sums = {
-                    found: [0, 0, 0, 0],
-                    artefacts: 0,
-                    type: {},
-                  };
-                }
-                let type = "void";
-
-                lfFound.forEach((raceType, i) => {
-                  let str = "." + raceType;
-                  let objectNode = content.querySelector(str);
-                  if (objectNode) {
-                    type = raceType;
-                    let found = content.innerHTML.match(/[0-9]{4,}/gm);
-                    console.log(`type: ${raceType}: ${found}`);
-                    if (found) {
-                      let count = Number(found[0]);
-                      sums.found[i] ? (sums.found[i] += count) : (sums.found[i] = count);
-                    }
-                  }
-                });
-
-                let artefactMatches = textContent.match(/.*: [0-9].*/gm);
-                artefactMatches &&
-                  artefactMatches.forEach((result) => {
-                    let split = result.split(": ");
-                    type = "artefacts";
-                    let count = Number(split[1]);
-                    sums.artefacts ? (sums.artefacts += count) : (sums.artefacts = count);
-                  });
-                if (type != "Unknown") {
-                  sums.type[type] ? (sums.type[type] += 1) : (sums.type[type] = 1);
-                }
-                this.json.discoveriesSums[date] = sums;
-                this.json.discoveries[id] = {
-                  result: type,
-                  date: new Date(this.dateStrToDate(date)),
-                  favorited: msg.querySelector(".icon_favorited") ? true : false,
-                };
-                msg.classList.add("ogk-" + this.json.discoveries[id].result.toLowerCase());
-                this.saveData();
-              } else {
-                msg.classList.add("ogk-" + this.json.discoveries[id].result.toLowerCase());
+                );
               }
+              msg.classList.add("ogk-" + this.json.expeditions[id].result.toLowerCase());
+              this.saveData();
+            });
+          }
+          // For Discovers
+          else {
+            if (!this.json.discoveries[id]) {
+              date = date.split(" ")[0].slice(0, -4) + date.split(" ")[0].slice(-2);
+              let lfFound = ["lifeform1", "lifeform2", "lifeform3", "lifeform4"];
+              let sums = this.json.discoveriesSums[date];
+              if (!sums) {
+                sums = {
+                  found: [0, 0, 0, 0],
+                  artefacts: 0,
+                  type: {},
+                };
+              }
+              let type = "void";
+
+              lfFound.forEach((raceType, i) => {
+                let str = "." + raceType;
+                let objectNode = content.querySelector(str);
+                if (objectNode) {
+                  type = raceType;
+                  let found = content.innerHTML.match(/[0-9]{4,}/gm);
+                  console.log(`type: ${raceType}: ${found}`);
+                  if (found) {
+                    let count = Number(found[0]);
+                    sums.found[i] ? (sums.found[i] += count) : (sums.found[i] = count);
+                  }
+                }
+              });
+
+              let artefactMatches = textContent.match(/.*: [0-9].*/gm);
+              artefactMatches &&
+              artefactMatches.forEach((result) => {
+                let split = result.split(": ");
+                type = "artefacts";
+                let count = Number(split[1]);
+                sums.artefacts ? (sums.artefacts += count) : (sums.artefacts = count);
+              });
+              if (type != "Unknown") {
+                sums.type[type] ? (sums.type[type] += 1) : (sums.type[type] = 1);
+              }
+              this.json.discoveriesSums[date] = sums;
+              this.json.discoveries[id] = {
+                result: type,
+                date: new Date(this.dateStrToDate(date)),
+                favorited: msg.querySelector(".icon_favorited") ? true : false,
+              };
+              msg.classList.add("ogk-" + this.json.discoveries[id].result.toLowerCase());
+              this.saveData();
+            }
+            else {
+              msg.classList.add("ogk-" + this.json.discoveries[id].result.toLowerCase());
             }
           }
-        });
-      }
-      if (document.querySelector("li[id=subtabs-nfFleet21].ui-state-active")) {
-        let id = document.querySelector("li[id=subtabs-nfFleet21].ui-state-active").getAttribute("aria-controls");
-        document.querySelectorAll(`div[id=${id}] li.msg`).forEach((msg, ix) => {
-          setTimeout(() => {
-            let id = msg.getAttribute("data-msg-id");
-            let isCR = msg.querySelector(".msg_actions .icon_nf_link");
-            if (!isCR) {
-              msg.classList.add("ogk-combat-contact");
+        }
+      });
+    }
+
+    const subFleet21_CombatReports = () => {
+      let id = document.querySelector("li[id=subtabs-nfFleet21].ui-state-active").getAttribute("aria-controls");
+      document.querySelectorAll(`div[id=${id}] li.msg`).forEach((msg, ix) => {
+        setTimeout(() => {
+          let id = msg.getAttribute("data-msg-id");
+          let isCR = msg.querySelector(".msg_actions .icon_nf_link");
+          if (!isCR) {
+            msg.classList.add("ogk-combat-contact");
+          }
+          if (id in this.json.combats) {
+            if (msg.querySelector(".icon_favorited")) {
+              this.json.combats[id].favorited = true;
+              this.json.combats[id].date = new Date();
+            } else {
+              this.json.combats[id].favorited = false;
             }
-            if (id in this.json.combats) {
-              if (msg.querySelector(".icon_favorited")) {
-                this.json.combats[id].favorited = true;
-                this.json.combats[id].date = new Date();
+            if (this.json.combats[id].coordinates.position == 16) {
+              msg.classList.add("ogk-expedition");
+            } else if (this.json.combats[id].isProbes) {
+              msg.classList.add("ogk-combat-probes");
+            } else if (this.json.combats[id].draw) {
+              msg.classList.add("ogk-combat-draw");
+            } else if (this.json.combats[id].win) {
+              msg.classList.add("ogk-combat-win");
+            } else {
+              msg.classList.add("ogk-combat");
+            }
+          } else if (id in this.combats) {
+            return;
+          } else {
+            this.combats[id] = true;
+            this.fetchAndConvertRC(id).then((cr) => {
+              if (cr === null) return;
+              let date = getFormatedDate(cr.timestamp, "[d].[m].[y]");
+              if (cr.coordinates.position == 16) {
+                if (!this.json.expeditionSums[date]) {
+                  this.json.expeditionSums[date] = {
+                    found: [0, 0, 0, 0],
+                    harvest: [0, 0],
+                    fleet: {},
+                    losses: {},
+                    type: {},
+                    fuel: 0,
+                    adjust: [0, 0, 0],
+                  };
+                }
+                for (let [key, value] of Object.entries(cr.losses)) {
+                  if (this.json.expeditionSums[date].losses[key]) {
+                    this.json.expeditionSums[date].losses[key] += value;
+                  } else {
+                    this.json.expeditionSums[date].losses[key] = value;
+                  }
+                }
               } else {
-                this.json.combats[id].favorited = false;
+                if (!this.json.combatsSums[date]) {
+                  this.json.combatsSums[date] = {
+                    loot: [0, 0, 0],
+                    harvest: [0, 0],
+                    losses: {},
+                    fuel: 0,
+                    adjust: [0, 0, 0],
+                    topCombats: [],
+                    count: 0,
+                    wins: 0,
+                    draws: 0,
+                  };
+                }
+                if (!cr.isProbes) {
+                  if (cr.win) this.json.combatsSums[date].wins += 1;
+                  if (cr.draw) this.json.combatsSums[date].draws += 1;
+                  this.json.combatsSums[date].count += 1;
+                  this.json.combatsSums[date].topCombats.push({
+                    debris: cr.debris.metalTotal + cr.debris.crystalTotal,
+                    loot: (cr.loot.metal + cr.loot.crystal + cr.loot.deuterium) * (cr.win ? 1 : -1),
+                    ennemi: cr.ennemi.name,
+                    losses: cr.ennemi.losses,
+                  });
+                  this.json.combatsSums[date].topCombats.sort(
+                      (a, b) => b.debris + Math.abs(b.loot) - (a.debris + Math.abs(a.loot))
+                  );
+                  if (this.json.combatsSums[date].topCombats.length > 3) {
+                    this.json.combatsSums[date].topCombats.pop();
+                  }
+                }
+                if (cr.win) {
+                  this.json.combatsSums[date].loot[0] += cr.loot.metal;
+                  this.json.combatsSums[date].loot[1] += cr.loot.crystal;
+                  this.json.combatsSums[date].loot[2] += cr.loot.deuterium;
+                } else {
+                  this.json.combatsSums[date].loot[0] -= cr.loot.metal;
+                  this.json.combatsSums[date].loot[1] -= cr.loot.crystal;
+                  this.json.combatsSums[date].loot[2] -= cr.loot.deuterium;
+                }
+                for (let [key, value] of Object.entries(cr.losses)) {
+                  if (this.json.combatsSums[date].losses[key]) {
+                    this.json.combatsSums[date].losses[key] += value;
+                  } else {
+                    this.json.combatsSums[date].losses[key] = value;
+                  }
+                }
               }
-              if (this.json.combats[id].coordinates.position == 16) {
+              if (cr.coordinates.position == 16) {
                 msg.classList.add("ogk-expedition");
-              } else if (this.json.combats[id].isProbes) {
+              } else if (cr.isProbes) {
                 msg.classList.add("ogk-combat-probes");
-              } else if (this.json.combats[id].draw) {
+              } else if (cr.draw) {
                 msg.classList.add("ogk-combat-draw");
-              } else if (this.json.combats[id].win) {
+              } else if (cr.win) {
                 msg.classList.add("ogk-combat-win");
               } else {
                 msg.classList.add("ogk-combat");
               }
-            } else if (id in this.combats) {
-              return;
-            } else {
-              this.combats[id] = true;
-              this.fetchAndConvertRC(id).then((cr) => {
-                if (cr === null) return;
-                let date = getFormatedDate(cr.timestamp, "[d].[m].[y]");
-                if (cr.coordinates.position == 16) {
-                  if (!this.json.expeditionSums[date]) {
-                    this.json.expeditionSums[date] = {
-                      found: [0, 0, 0, 0],
-                      harvest: [0, 0],
-                      fleet: {},
-                      losses: {},
-                      type: {},
-                      fuel: 0,
-                      adjust: [0, 0, 0],
-                    };
-                  }
-                  for (let [key, value] of Object.entries(cr.losses)) {
-                    if (this.json.expeditionSums[date].losses[key]) {
-                      this.json.expeditionSums[date].losses[key] += value;
-                    } else {
-                      this.json.expeditionSums[date].losses[key] = value;
-                    }
-                  }
-                } else {
-                  if (!this.json.combatsSums[date]) {
-                    this.json.combatsSums[date] = {
-                      loot: [0, 0, 0],
-                      harvest: [0, 0],
-                      losses: {},
-                      fuel: 0,
-                      adjust: [0, 0, 0],
-                      topCombats: [],
-                      count: 0,
-                      wins: 0,
-                      draws: 0,
-                    };
-                  }
-                  if (!cr.isProbes) {
-                    if (cr.win) this.json.combatsSums[date].wins += 1;
-                    if (cr.draw) this.json.combatsSums[date].draws += 1;
-                    this.json.combatsSums[date].count += 1;
-                    this.json.combatsSums[date].topCombats.push({
-                      debris: cr.debris.metalTotal + cr.debris.crystalTotal,
-                      loot: (cr.loot.metal + cr.loot.crystal + cr.loot.deuterium) * (cr.win ? 1 : -1),
-                      ennemi: cr.ennemi.name,
-                      losses: cr.ennemi.losses,
-                    });
-                    this.json.combatsSums[date].topCombats.sort(
-                      (a, b) => b.debris + Math.abs(b.loot) - (a.debris + Math.abs(a.loot))
-                    );
-                    if (this.json.combatsSums[date].topCombats.length > 3) {
-                      this.json.combatsSums[date].topCombats.pop();
-                    }
-                  }
-                  if (cr.win) {
-                    this.json.combatsSums[date].loot[0] += cr.loot.metal;
-                    this.json.combatsSums[date].loot[1] += cr.loot.crystal;
-                    this.json.combatsSums[date].loot[2] += cr.loot.deuterium;
-                  } else {
-                    this.json.combatsSums[date].loot[0] -= cr.loot.metal;
-                    this.json.combatsSums[date].loot[1] -= cr.loot.crystal;
-                    this.json.combatsSums[date].loot[2] -= cr.loot.deuterium;
-                  }
-                  for (let [key, value] of Object.entries(cr.losses)) {
-                    if (this.json.combatsSums[date].losses[key]) {
-                      this.json.combatsSums[date].losses[key] += value;
-                    } else {
-                      this.json.combatsSums[date].losses[key] = value;
-                    }
-                  }
-                }
-                if (cr.coordinates.position == 16) {
-                  msg.classList.add("ogk-expedition");
-                } else if (cr.isProbes) {
-                  msg.classList.add("ogk-combat-probes");
-                } else if (cr.draw) {
-                  msg.classList.add("ogk-combat-draw");
-                } else if (cr.win) {
-                  msg.classList.add("ogk-combat-win");
-                } else {
-                  msg.classList.add("ogk-combat");
-                }
-                this.json.combats[id] = {
-                  timestamp: cr.timestamp,
-                  favorited: msg.querySelector(".icon_favorited") ? true : false,
-                  coordinates: cr.coordinates,
-                  win: cr.win,
-                  draw: cr.draw,
-                  isProbes: cr.isProbes,
-                };
-                this.saveData();
-              });
-            }
-          }, ix * 50);
-        });
-      }
-      if (document.querySelector("li[id=subtabs-nfFleet24].ui-state-active")) {
-        let id = document.querySelector("li[id=subtabs-nfFleet24].ui-state-active").getAttribute("aria-controls");
-        document.querySelectorAll(`div[id=${id}] li.msg`).forEach((msg) => {
-          let id = msg.getAttribute("data-msg-id");
-          if (id in this.json.harvests) {
-            if (this.json.harvests[id].coords.split(":")[2] == 16) {
-              msg.classList.add("ogk-expedition");
-            } else {
-              if (this.json.harvests[id].combat) {
-                msg.classList.add("ogk-combat");
-              } else {
-                msg.classList.add("ogk-harvest");
-              }
-            }
-            return;
+              this.json.combats[id] = {
+                timestamp: cr.timestamp,
+                favorited: msg.querySelector(".icon_favorited") ? true : false,
+                coordinates: cr.coordinates,
+                win: cr.win,
+                draw: cr.draw,
+                isProbes: cr.isProbes,
+              };
+              this.saveData();
+            });
           }
-          let date = msg.querySelector(".msg_date").textContent;
-          date = date.split(" ")[0].slice(0, -4) + date.split(" ")[0].slice(-2);
-          let coords = msg.querySelector(".msg_title a");
-          if (coords) {
-            let content = msg.querySelector(".msg_content").innerText;
-            coords = coords.textContent.slice(1, -1);
-            let matches = content.match(/[0-9.,]*[0-9]/gm);
-            let met = fromFormatedNumber(matches[matches.length - 3]);
-            let cri = fromFormatedNumber(matches[matches.length - 2]);
-            /* @TODO let deu = fromFormatedNumber(matches[matches.length - 1]); */
-            let combat = false;
-            if (coords.split(":")[2] == 16) {
-              msg.classList.add("ogk-expedition");
+        }, ix * 50);
+      });
+    }
+
+    const subFleet24_Others = () => {
+      let id = document.querySelector("li[id=subtabs-nfFleet24].ui-state-active").getAttribute("aria-controls");
+      document.querySelectorAll(`div[id=${id}] li.msg`).forEach((msg) => {
+        let id = msg.getAttribute("data-msg-id");
+        if (id in this.json.harvests) {
+          if (this.json.harvests[id].coords.split(":")[2] == 16) {
+            msg.classList.add("ogk-expedition");
+          } else {
+            if (this.json.harvests[id].combat) {
+              msg.classList.add("ogk-combat");
             } else {
-              if (content.includes(cyclosName)) {
-                msg.classList.add("ogk-harvest");
-              } else {
-                msg.classList.add("ogk-harvest-combat");
-                combat = true;
-              }
+              msg.classList.add("ogk-harvest");
             }
-            if (coords.split(":")[2] == 16) {
-              if (!this.json.expeditionSums[date]) {
-                this.json.expeditionSums[date] = {
-                  found: [0, 0, 0, 0],
-                  harvest: [0, 0],
-                  fleet: {},
-                  losses: {},
-                  type: {},
-                  fuel: 0,
-                  adjust: [0, 0, 0],
-                };
-              }
-              this.json.expeditionSums[date].harvest[0] += met;
-              this.json.expeditionSums[date].harvest[1] += cri;
-            } else {
-              if (!this.json.combatsSums[date]) {
-                this.json.combatsSums[date] = {
-                  loot: [0, 0, 0],
-                  losses: {},
-                  harvest: [0, 0],
-                  adjust: [0, 0, 0],
-                  fuel: 0,
-                  topCombats: [],
-                  count: 0,
-                  wins: 0,
-                  draws: 0,
-                };
-              }
-              this.json.combatsSums[date].harvest[0] += met;
-              this.json.combatsSums[date].harvest[1] += cri;
-            }
-            this.json.harvests[id] = {
-              date: new Date(this.dateStrToDate(date)),
-              metal: met,
-              crystal: cri,
-              coords: coords,
-              combat: combat,
-            };
-            this.saveData();
           }
-        });
+          return;
+        }
+        let date = msg.querySelector(".msg_date").textContent;
+        date = date.split(" ")[0].slice(0, -4) + date.split(" ")[0].slice(-2);
+        let coords = msg.querySelector(".msg_title a");
+        if (coords) {
+          let content = msg.querySelector(".msg_content").innerText;
+          coords = coords.textContent.slice(1, -1);
+          let matches = content.match(/[0-9.,]*[0-9]/gm);
+          let met = fromFormatedNumber(matches[matches.length - 3]);
+          let cri = fromFormatedNumber(matches[matches.length - 2]);
+          /* @TODO let deu = fromFormatedNumber(matches[matches.length - 1]); */
+          let combat = false;
+          if (coords.split(":")[2] == 16) {
+            msg.classList.add("ogk-expedition");
+          } else {
+            if (content.includes(cyclosName)) {
+              msg.classList.add("ogk-harvest");
+            } else {
+              msg.classList.add("ogk-harvest-combat");
+              combat = true;
+            }
+          }
+          if (coords.split(":")[2] == 16) {
+            if (!this.json.expeditionSums[date]) {
+              this.json.expeditionSums[date] = {
+                found: [0, 0, 0, 0],
+                harvest: [0, 0],
+                fleet: {},
+                losses: {},
+                type: {},
+                fuel: 0,
+                adjust: [0, 0, 0],
+              };
+            }
+            this.json.expeditionSums[date].harvest[0] += met;
+            this.json.expeditionSums[date].harvest[1] += cri;
+          } else {
+            if (!this.json.combatsSums[date]) {
+              this.json.combatsSums[date] = {
+                loot: [0, 0, 0],
+                losses: {},
+                harvest: [0, 0],
+                adjust: [0, 0, 0],
+                fuel: 0,
+                topCombats: [],
+                count: 0,
+                wins: 0,
+                draws: 0,
+              };
+            }
+            this.json.combatsSums[date].harvest[0] += met;
+            this.json.combatsSums[date].harvest[1] += cri;
+          }
+          this.json.harvests[id] = {
+            date: new Date(this.dateStrToDate(date)),
+            metal: met,
+            crystal: cri,
+            coords: coords,
+            combat: combat,
+          };
+          this.saveData();
+        }
+      });
+    }
+
+    function mainFleets(){
+      let activeNavigation = mainFleets.getActiveNavigation();
+      if(activeNavigation.length === 0) return;
+      activeNavigation = activeNavigation.shift();
+
+      logger.debug("action:messages.fleets, activeSubNavigation:%o", activeNavigation[0])
+      if(activeNavigation[2]) fleetAnalize(activeNavigation);
+    };
+    mainFleets.getActiveNavigation = () => mainFleets.tabsNavigation.filter(e => {
+      const htmlElm = document.querySelector(e[1]);
+      return htmlElm && htmlElm.classList.contains('ui-state-active');
+    });
+
+    /** @type {MessageSubTabTrigger[]} */
+    mainFleets.tabsNavigation = [
+        ["expeditions", "#subtabs-nfFleet22", subFleet22_Expeditions],
+        ["combatReports", "#subtabs-nfFleet21", subFleet21_CombatReports],
+        ["others", "#subtabs-nfFleet24", subFleet24_Others]
+    ];
+
+    if (this.page == "messages") {
+      const loadShadow = document.querySelector(".ajax_load_shadow");
+      function mainMessagesObserver(mutations, observer) {
+        if($(mutations[0].target).is(':visible')) return;
+
+        let activeNavigation = mainMessagesObserver.getActiveNavigation();
+        if(activeNavigation.length === 0) return;
+        activeNavigation = activeNavigation.shift();
+        logger.debug("action:messages, activeNavigation:%o", activeNavigation[0]);
+        if(activeNavigation[2]) setTimeout(activeNavigation[2], 200);
       }
-      setTimeout(() => {
-        this.expeditionMessages();
-      }, 100);
+      /** @type {MessageTabTrigger[]} */
+      mainMessagesObserver.topNavigations = [
+          ["fleets", document.querySelector('#tabs-nfFleets'), mainFleets],
+          ["communications", document.querySelector('#tabs-nfCommunication'), undefined],
+          ["economy", document.querySelector('#tabs-nfEconomy'), undefined],
+          ["universe", document.querySelector('#tabs-nfUniverse'), undefined],
+          ["system", document.querySelector('#tabs-nfSystem'), undefined],
+          ["favorites", document.querySelector('#tabs-nfFavorites'), undefined]
+      ];
+      mainMessagesObserver.getActiveNavigation = () => mainMessagesObserver.topNavigations
+        .filter(v => v[1].classList.contains('ui-state-active'));
+
+      // Main loader messages
+      const topObserver = (new MutationObserver(mainMessagesObserver))
+        .observe(loadShadow,{attributes:true});
+
+
+      // setTimeout(() => {
+      //   this.expeditionMessages();
+      // }, 100);
     }
     return;
   }
