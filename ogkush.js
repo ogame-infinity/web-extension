@@ -1678,7 +1678,7 @@ class OGInfinity {
     this.harvest();
     this.expedition();
     this.collect();
-    this.expeditionMessages();
+    this.messagesAnalyzer();
     this.cleanupMessages();
     this.quickPlanetList();
     this.activitytimers();
@@ -5228,7 +5228,11 @@ class OGInfinity {
     return new Date(splits.join("/"));
   }
 
-  expeditionMessages() {
+  /**
+   * It is used to analyze the messages viewed on the "messages" page.
+   * @flow page=messages
+   */
+  messagesAnalyzer() {
     let normalized = ["Metal", "Crystal", "Deuterium", "AM"];
     let ressources = this.json.resNames;
     let cyclosName = "";
