@@ -1746,7 +1746,7 @@ class OGInfinity {
     setInterval(() => {
       document
         .querySelectorAll(
-          ".scrap_it, .build-it_wrap, button.upgrade, .abortNow, .build-faster, .og-button.submit, .abort_link, .js_executeJumpButton"
+          ".scrap_it, .build-it_wrap, button.upgrade, button.buildmulti, .abortNow, .build-faster, .og-button.submit, .abort_link, .js_executeJumpButton"
         )
         .forEach((btn) => {
           if (!btn.classList.contains("ogk-ready")) {
