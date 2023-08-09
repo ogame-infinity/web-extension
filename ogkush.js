@@ -1838,7 +1838,7 @@ class OGInfinity {
 				this.json.shipNames[fleetDispatcher.fleetHelper.shipsData[id].name] = id; // todo: remove and make a static list with ids and names?
 				this.json.ships[id] = {
 					name: fleetDispatcher.fleetHelper.shipsData[id].name,
-					cargoCapacity: fleetDispatcher.fleetHelper.shipsData[id].cargoCapacity,
+					cargoCapacity: fleetDispatcher.fleetHelper.shipsData[id].baseCargoCapacity,
 					speed: fleetDispatcher.fleetHelper.shipsData[id].speed,
 					fuelConsumption: fleetDispatcher.fleetHelper.shipsData[id].fuelConsumption,
 				};
@@ -11445,11 +11445,14 @@ class OGInfinity {
 				inputs[2].value = 16;
 				let expShips = [0, 0, 0, 0];
 				shipsOnPlanet.forEach((ship) => {
-					if (ship.id == expType) expShips[0] = this.selectShips(ship.id, expCount);
+					if (ship.id == expType)
+						expShips[0] = this.selectShips(ship.id, expCount);
 					else if (this.json.options.expeditionSendCombat && ship.id == bigship)
 						expShips[1] = this.selectShips(ship.id, 1);
-					else if (this.json.options.expeditionSendProbe && ship.id == 210) expShips[2] = this.selectShips(ship.id, 1);
-					else if (ship.id == ShipEnum.Pathfinder) expShips[3] = this.selectShips(ship.id, 1);
+					else if (this.json.options.expeditionSendProbe && ship.id == ShipEnum.Probe)
+						expShips[2] = this.selectShips(ship.id, 1);
+					else if (ship.id == ShipEnum.Pathfinder)
+						expShips[3] = this.selectShips(ship.id, 1);
 				});
 				let fadeText = "";
 				let noFade = true;
@@ -12799,7 +12802,7 @@ class OGInfinity {
 		header.appendChild(createDOM("th", { "data-filter": "FLEET" }, this.translation.text(100)));
 		header.appendChild(createDOM("th", { "data-filter": "DEF" }, this.translation.text(54)));
 
-		let cargoChoice = createDOM("div", { class: `ogk-cargo${this.json.ships[210].cargoCapacity ? " spio" : ""}` });
+		let cargoChoice = createDOM("div", { class: `ogk-cargo${this.json.ships[ShipEnum.Probe].baseCargoCapacity ? " spio" : ""}` });
 		let sc = cargoChoice.appendChild(createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-" + ShipEnum.SmallCargo }));
 		let lc = cargoChoice.appendChild(createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-" + ShipEnum.LargeCargo }));
 		let pf = cargoChoice.appendChild(createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-" + ShipEnum.Pathfinder }));
@@ -13264,11 +13267,17 @@ class OGInfinity {
 			fromFormatedNumber(document.querySelector("#resources_deuterium").textContent),
 		];
 		resources = resources.reduce((a, b) => parseInt(a) + parseInt(b));
-		if (options.resources || options.resources == 0) resources = options.resources;
+
+		if (options.resources || options.resources == 0)
+			resources = options.resources;
+
 		let type = options.fret || this.json.options.fret;
 		let fret = this.json.ships[type].cargoCapacity;
 		let total = resources / fret;
-		if (options.moreFret) total *= 107 / 100;
+
+		if (options.moreFret)
+			total *= 107 / 100;
+
 		return Math.ceil(total);
 	}
 
