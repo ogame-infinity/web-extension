@@ -18624,7 +18624,7 @@ class OGInfinity {
         } else {
           clearInterval(updater);
         }
-      }, 100);
+      }, 2000);
     }
   }
 
