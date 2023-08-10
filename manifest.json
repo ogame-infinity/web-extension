@@ -29,7 +29,7 @@
   "name": "Ogame Infinity",
   "permissions": ["storage"],
   "update_url": "https://clients2.google.com/service/update2/crx",
-  "version": "12345",
+  "version": "0.0.0",
   "web_accessible_resources": [
     {
       "extension_ids": ["hfojakphgokgpbnejoobfamojbgolcbo"],

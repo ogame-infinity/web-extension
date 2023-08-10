@@ -326,6 +326,20 @@ input[type="password"]::selection {
   background-size: 175px;
 }
 
+/* Version */
+.ogk-button-version {
+  color: #ffffff;
+}
+
+.ogk-button-version .ogk-icon {
+  width: 16px;
+  height: 16px;
+  margin-bottom: -5px;
+  background: url("chrome-extension://__MSG_@@extension_id__/res/logo128.png");
+  background-size: 16px;
+  display: inline-block;
+}
+
 .ogl-notification {
   display: inline-block;
   margin: 2px 0;
@@ -385,6 +399,9 @@ input[type="password"]::selection {
 }
 
 .ogl-settings .ogk-logo {
+  width: inherit;
+  text-align: right;
+  background-repeat: no-repeat;
   transform: scale(0.75);
 }
 

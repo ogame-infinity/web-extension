@@ -1,4 +1,5 @@
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
+const VERSION = "__VERSION__";
 
 var dataHelper = (function () {
   var requestId = 0;
@@ -96,7 +97,7 @@ const logger = (function(){
      * @param {any[]} data
      */
     return function (message, ...data){
-      on(`%c OGame Infinity %c > ${message}`,
+      on(`%c OGame Infinity/v${VERSION} %c > ${message}`,
         "background-color: #ebf4fb;color:#004ccc;font-family:monospace;border-radius:0.5em",
         "color: black", ...data);
 
@@ -1674,7 +1675,9 @@ class OGInfinity {
     this.sideOptions();
     this.minesLevel();
     this.resourceDetail();
-    waitForElementToDisplay("#eventContent", () => {this.eventBox();});
+    waitForElementToDisplay("#eventContent", () => {
+      this.eventBox();
+    });
     this.neededCargo();
     this.preselectShips();
     this.harvest();
@@ -1692,7 +1695,9 @@ class OGInfinity {
     this.utilities();
     this.chat();
     this.uvlinks();
-    waitForElementToDisplay("#eventContent", () => {this.flyingFleet();});
+    waitForElementToDisplay("#eventContent", () => {
+      this.flyingFleet();
+    });
     this.betterHighscore();
     this.overviewDates();
     this.sideLock();
@@ -1768,7 +1773,7 @@ class OGInfinity {
     setInterval(() => {
       document
         .querySelectorAll(
-          ".scrap_it, .build-it_wrap, button.upgrade, .abortNow, .build-faster, .og-button.submit, .abort_link, .js_executeJumpButton"
+          ".scrap_it, .build-it_wrap, button.upgrade, button.buildmulti, .abortNow, .build-faster, .og-button.submit, .abort_link, .js_executeJumpButton"
         )
         .forEach((btn) => {
           if (!btn.classList.contains("ogk-ready")) {
@@ -2417,7 +2422,7 @@ class OGInfinity {
         };
       };
       technologyDetails.show = function (technologyId) {
-        if(xhrAbortSignal){
+        if (xhrAbortSignal) {
           xhrAbortSignal.abort();
         }
         let element = $(".technology.hasDetails[data-technology=" + technologyId + "]");
@@ -2701,9 +2706,7 @@ class OGInfinity {
             )
               document
                 .querySelector(".costs")
-                .appendChild(
-                  createDOM("div", { class: "overmark" }, "resources not correct, try to update LF bonus")
-                );
+                .appendChild(createDOM("div", { class: "overmark" }, "resources not correct, try to update LF bonus"));
 
             updateResearchDetails(technologyId, baseLvl, tolvl);
             let previous = infoDiv.appendChild(createDOM("a", { class: "icon icon_skip_back" }));
@@ -13739,9 +13742,7 @@ class OGInfinity {
             total += parseInt(value);
 
             let classResources = ["ogl-metal", "ogl-crystal", "ogl-deut"];
-            frag.appendChild(
-              createDOM("div", { class:  classResources[i++]}, toFormatedNumber(value, null, true))
-              );
+            frag.appendChild(createDOM("div", { class: classResources[i++] }, toFormatedNumber(value, null, true)));
           });
           element.querySelector(".microdebris").appendChild(frag);
           if (total > this.json.options.rvalLimit) {
@@ -14143,9 +14144,9 @@ class OGInfinity {
       }%, rgb(166, 224, 176) ${report.resRatio[2]}%)`;
       let fleet = line.appendChild(createDOM("td", {}, toFormatedNumber(report.fleet, null, true)));
       if (
-        Math.round(report.fleet * this.json.universeSettingsTooltip.fleetToTF) >= this.json.options.rvalLimit
-        || report.fleet == "No Data"
-        ) {
+        Math.round(report.fleet * this.json.universeSettingsTooltip.fleetToTF) >= this.json.options.rvalLimit ||
+        report.fleet == "No Data"
+      ) {
         fleet.classList.add("ogl-care");
       }
       let defense = line.appendChild(createDOM("td", {}, toFormatedNumber(report.defense, null, true)));
@@ -14251,9 +14252,9 @@ class OGInfinity {
       });
 
       if (
-        this.json.options.autoDeleteEnable
-        && Math.round(report.fleet * this.json.universeSettingsTooltip.fleetToTF) < this.json.options.rvalLimit
-        && Math.round((report.total * report.loot) / 100) < this.json.options.rvalLimit
+        this.json.options.autoDeleteEnable &&
+        Math.round(report.fleet * this.json.universeSettingsTooltip.fleetToTF) < this.json.options.rvalLimit &&
+        Math.round((report.total * report.loot) / 100) < this.json.options.rvalLimit
       ) {
         deleteBtn.click();
       }
@@ -15345,9 +15346,25 @@ class OGInfinity {
     };
     if (this.page == "fleetdispatch") {
       document.addEventListener("keydown", (event) => {
+        if (document.activeElement.classList && document.activeElement.classList.contains("chat_box_textarea")) return;
         if (fleetDispatcher.currentPage == "fleet1") {
           if (document.querySelector("#fleetTemplatesEdit")) {
             if (document.querySelector("#fleetTemplatesEdit").classList.contains("overlayDiv")) return;
+          }
+          const input = document.querySelector("#systemInput");
+          if (document.activeElement == input || document.activeElement.tagName == "BODY") {
+            if (fleetDispatcher.loading == false) {
+              if (event.code == "ArrowUp") {
+                input.value = Number(input.value) + 1;
+                fleetDispatcher.updateTarget();
+                fleetDispatcher.fetchTargetPlayerData();
+              }
+              if (event.code == "ArrowDown") {
+                input.value = Number(input.value) - 1;
+                fleetDispatcher.updateTarget();
+                fleetDispatcher.fetchTargetPlayerData();
+              }
+            }
           }
           if (document.activeElement.tagName != "INPUT") {
             if (event.code == "KeyE") {
@@ -15361,32 +15378,7 @@ class OGInfinity {
             if (event.code == "KeyN") document.querySelector("#resetall").click();
             if (event.code == "KeyA") document.querySelector("#sendall").click();
             if (event.code == "KeyM") document.querySelector("span.select-most").click();
-          } else {
-            const input = document.querySelector("#systemInput");
-            if (document.activeElement == input) {
-              if (event.code == "ArrowUp") {
-                input.value = Number(input.value) + 1;
-                fleetDispatcher.updateTarget();
-                fleetDispatcher.fetchTargetPlayerData();
-              }
-              if (event.code == "ArrowDown") {
-                input.value = Number(input.value) - 1;
-                fleetDispatcher.updateTarget();
-                fleetDispatcher.fetchTargetPlayerData();
-              }
-            }
           }
-          if (event.code == "KeyC") {
-            document.querySelector(".ogl-collect").click();
-            document.querySelector("#continueToFleet2").click();
-          }
-          if (event.code == "KeyN") document.querySelector("#resetall").click();
-          if (event.code == "KeyA") document.querySelector("#sendall").click();
-          if (event.code == "KeyM") document.querySelector("span.select-most").click();
-          if (event.code == "ArrowUp")
-            document.querySelector("#systemInput").value = Number(document.querySelector("#systemInput").value) + 1;
-          if (event.code == "ArrowDown")
-            document.querySelector("#systemInput").value = Number(document.querySelector("#systemInput").value) - 1;
         } else if (fleetDispatcher.currentPage == "fleet2") {
           if (event.code == "KeyA") document.querySelector("#loadAllResources img").click();
           if (event.code == "KeyM" && !event.shiftKey) document.querySelector("#loadAllResources .select-most").click();
@@ -17567,7 +17559,7 @@ class OGInfinity {
     let container = createDOM("div", { class: "ogl-dialogContainer ogl-settings" });
     let dataDiv = container.appendChild(createDOM("div"));
     let ogameInfinity = dataDiv.appendChild(createDOM("div"));
-    ogameInfinity.appendChild(createDOM("div", { class: "ogk-logo" }));
+    ogameInfinity.appendChild(createDOM("div", { class: "ogk-logo" }, `v${VERSION}`));
     ogameInfinity.appendChild(
       this.createDOM(
         "div",
@@ -19309,10 +19301,34 @@ class AutoQueue extends Queue {
   }
 }
 
+function versionInStatusBar() {
+  const siteFooterTextRight = document.querySelector("#siteFooter div.fright.textRight");
+  if (!siteFooterTextRight) {
+    return;
+  }
+
+  const version = createDOM("a", {
+    class: "ogk-button-version",
+    href: `https://github.com/ogame-infinity/web-extension/releases/tag/v${VERSION}`,
+    target: "_blank",
+  });
+  const icon = createDOM("div", { class: "ogk-icon" });
+  version.append(icon, ` ${VERSION}`);
+
+  siteFooterTextRight.append(" | ", version);
+}
+
 (async () => {
+  console.info(
+    "%c OGame Infinity/v%s ",
+    "background-color: #ebf4fb;color:#004ccc;font-family:monospace;border-radius:0.5em",
+    VERSION
+  );
+
   let ogKush = new OGInfinity();
   setTimeout(function () {
     ogKush.init();
+    versionInStatusBar();
     // workaround for "DOMPurify not defined" issue
     waitForDefinition("DOMPurify", () => {
       Element.prototype.html = function (html) {
