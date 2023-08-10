@@ -1805,7 +1805,9 @@ class OGInfinity {
 		this.updateServerSettings();
 		this.empireExtension.updateEmpireData(forceEmpire);
 		this.initializeLFTypeName();
-		if (this.json.needLifeformUpdate[this.currentLocation.id] && !this.currentLocation.isMoon) this.updateLifeform();
+
+		if (this.json.needLifeformUpdate[this.currentLocation.id] && !this.currentLocation.isMoon)
+			this.updateLifeform(true);
 
 		if (UNIVERSVIEW_LANGS.includes(this.gameLang)) {
 			this.univerviewLang = this.gameLang;
