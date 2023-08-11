@@ -18527,7 +18527,7 @@ class OGInfinity {
             metalProduction
           )})</span><span class="${
             metalResources >= metalStorage ? " overmark" : ""
-          }" id="metal-storage"> ${toFormatedNumber(Math.floor(metalResources))}/${toFormatedNumber(
+          }" id="metal-storage"> ${toFormatedNumber(Math.floor(metalResources))} / ${toFormatedNumber(
             metalStorage
           )}</span>`
         )
@@ -18555,7 +18555,7 @@ class OGInfinity {
             crystalProduction
           )})</span><span class="${
             crystalResources >= crystalStorage ? " overmark" : ""
-          }" id="crystal-storage"> ${toFormatedNumber(Math.floor(crystalResources))}/${toFormatedNumber(
+          }" id="crystal-storage"> ${toFormatedNumber(Math.floor(crystalResources))} / ${toFormatedNumber(
             crystalStorage
           )}</span>`
         )
@@ -18583,7 +18583,7 @@ class OGInfinity {
             deuteriumProduction
           )})</span><span class="${
             deuteriumResources >= deuteriumStorage ? " overmark" : ""
-          }" id = "deuterium-storage" > ${toFormatedNumber(Math.floor(deuteriumResources))} /${toFormatedNumber(
+          }" id = "deuterium-storage" > ${toFormatedNumber(Math.floor(deuteriumResources))} / ${toFormatedNumber(
             deuteriumStorage
           )}</span>`
         )
@@ -18614,17 +18614,17 @@ class OGInfinity {
         if (metalProduction + crystalProduction + deuteriumProduction > 0) {
           document.querySelector("#metal-storage").textContent = ` ${toFormatedNumber(
             Math.floor(resourcesBar.resources.metal.amount)
-          )}/${toFormatedNumber(metalStorage)}`;
+          )} / ${toFormatedNumber(metalStorage)}`;
           document.querySelector("#crystal-storage").textContent = ` ${toFormatedNumber(
             Math.floor(resourcesBar.resources.crystal.amount)
-          )}/${toFormatedNumber(crystalStorage)}`;
+          )} / ${toFormatedNumber(crystalStorage)}`;
           document.querySelector("#deuterium-storage").textContent = ` ${toFormatedNumber(
             Math.floor(resourcesBar.resources.deuterium.amount)
-          )}/${toFormatedNumber(deuteriumStorage)}`;
+          )} / ${toFormatedNumber(deuteriumStorage)}`;
         } else {
           clearInterval(updater);
         }
-      }, 100);
+      }, 2000);
     }
   }
 
