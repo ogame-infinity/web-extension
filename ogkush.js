@@ -88,20 +88,21 @@ if (redirect && redirect.indexOf("https") > -1) {
   } else requestAnimationFrame(() => goodbyeTipped());
 })();
 
-const logger = (function(){
-
+const logger = (function () {
   /** @param {Function} on */
-  function print(on){
+  function print(on) {
     /**
      * @param {string} message
      * @param {any[]} data
      */
-    return function (message, ...data){
-      on(`%c OGame Infinity/v${VERSION} %c > ${message}`,
+    return function (message, ...data) {
+      on(
+        `%c OGame Infinity/v${VERSION} %c > ${message}`,
         "background-color: #ebf4fb;color:#004ccc;font-family:monospace;border-radius:0.5em",
-        "color: black", ...data);
-
-    }
+        "color: black",
+        ...data
+      );
+    };
   }
 
   return {
@@ -110,7 +111,7 @@ const logger = (function(){
     info: print(console.info),
     log: print(console.log),
     warn: print(console.warn),
-  }
+  };
 })();
 
 function createDOM(element, attributes, textContent) {
@@ -5238,29 +5239,28 @@ class OGInfinity {
    * @supported page=messages
    */
   messagesAnalyzer() {
-    if(this.page !== "messages") return;
+    if (this.page !== "messages") return;
 
     let normalized = ["Metal", "Crystal", "Deuterium", "AM"];
     let ressources = this.json.resNames;
     let cyclosName = "";
     const updateTimeZone = () => {
       this.json.options.timeZone &&
-      document.querySelectorAll("#content div li.msg").forEach((msg) => {
-        const msgDate = msg.querySelector(".msg_date");
-        if (!msgDate || msgDate.classList.contains('ogl-ready')) return;
+        document.querySelectorAll("#content div li.msg").forEach((msg) => {
+          const msgDate = msg.querySelector(".msg_date");
+          if (!msgDate || msgDate.classList.contains("ogl-ready")) return;
 
-        const serveTimestamp = this.dateStrToDate(msgDate.textContent).getTime();
-        const localDateTime = getFormatedDate(
-          serveTimestamp + this.json.timezoneDiff * 1e3,
-          "[d].[m].[Y] [H]:[i]:[s]"
-        );
+          const serveTimestamp = this.dateStrToDate(msgDate.textContent).getTime();
+          const localDateTime = getFormatedDate(
+            serveTimestamp + this.json.timezoneDiff * 1e3,
+            "[d].[m].[Y] [H]:[i]:[s]"
+          );
 
-        msgDate.setAttribute('data-server-date', serveTimestamp);
-        msgDate.textContent = localDateTime;
-        msgDate.classList.add("ogl-ready");
-
-      });
-    }
+          msgDate.setAttribute("data-server-date", serveTimestamp);
+          msgDate.textContent = localDateTime;
+          msgDate.classList.add("ogl-ready");
+        });
+    };
 
     /**
      * @typedef {Object} SubAnalizer
@@ -5289,7 +5289,7 @@ class OGInfinity {
        */
       constructor(name, subTabQuerySelector, trigger = undefined) {
         this.name = name;
-        this.trigger = (undefined === trigger) ? () => undefined : trigger;
+        this.trigger = undefined === trigger ? () => undefined : trigger;
         this.#tabQuerySelector = subTabQuerySelector;
 
         Object.seal(this);
@@ -5300,7 +5300,6 @@ class OGInfinity {
       get tab() {
         return document.querySelector(this.#tabQuerySelector);
       }
-
     }
 
     class MessageTabTrigger {
@@ -5344,12 +5343,10 @@ class OGInfinity {
       getActiveSubContainer() {
         return this.container.querySelector("div[role=tabpanel][aria-hidden=false]");
       }
-
     }
 
-
     /** @type SubAnalizerBuilder */
-    const subFleetAnalizerBuilder = ((self) => {
+    const subFleetAnalizerBuilder = (self) => {
       /** @type {MessageSubTabTrigger} */
       let _currentSubTabTrigger = undefined;
 
@@ -5357,7 +5354,7 @@ class OGInfinity {
        * @param {MessageSubTabTrigger} subTabTrigger
        */
       const fleetAnalize = (subTabTrigger) => {
-        logger.debug("action:%o, [%s]", `messages.fleets.${subTabTrigger.name}`, typeof subTabTrigger.trigger)
+        logger.debug("action:%o, [%s]", `messages.fleets.${subTabTrigger.name}`, typeof subTabTrigger.trigger);
 
         ressources = this.json.resNames;
         if (!this.combats) this.combats = {};
@@ -5368,47 +5365,53 @@ class OGInfinity {
         }
 
         if (subTabTrigger.trigger) subTabTrigger.trigger();
-      }
+      };
 
       const SUBFLEET_EXPEDITIONS_NAME = "expeditions";
       const SUBFLEET_EXPEDITIONS_ID = "#subtabs-nfFleet22";
       /** @type {MessageSubTabTrigger} */
-      const subFleet22_Expeditions = (()=> {
+      const subFleet22_Expeditions = (() => {
         const view = (msg, isNew = false) => {
           const id = msg.getAttribute("data-msg-id");
-          if (!(
-            this.json.expeditions
-            && this.json.expeditions[id]
-          )) return;
+          if (!(this.json.expeditions && this.json.expeditions[id])) return;
 
           const expeditionData = this.json.expeditions[id];
 
           if (expeditionData.result === "Unknown") {
             msg.querySelector(".ogl-unknown-warning") ||
-            msg.querySelector(".msg_actions")
-              .appendChild(this.createDOM("div", {class: "ogl-unknown-warning"},
-                `${this.getTranslatedText(112)}` +
-                `<a href='${DISCORD_INVITATION_URL}'> ${this.getTranslatedText(113)}</a>`));
+              msg
+                .querySelector(".msg_actions")
+                .appendChild(
+                  this.createDOM(
+                    "div",
+                    { class: "ogl-unknown-warning" },
+                    `${this.getTranslatedText(112)}` +
+                      `<a href='${DISCORD_INVITATION_URL}'> ${this.getTranslatedText(113)}</a>`
+                  )
+                );
           } else if (expeditionData.busy) {
             msg.querySelector(".ogl-warning") ||
-            msg.querySelector(".msg_actions")
-              .appendChild(
+              msg.querySelector(".msg_actions").appendChild(
                 createDOM("a", {
                   class: "ogl-warning tooltipRight ogl-tooltipReady ogl-tooltipInit",
-                  "data-title": this.getTranslatedText(114)
+                  "data-title": this.getTranslatedText(114),
                 })
               );
           }
 
           const msgExpeditionClass = `ogk-${expeditionData.result.toLowerCase()}`;
           const msgTitle = msg.querySelector(".msg_head .msg_title");
-          msgTitle.append(" ", createDOM(
-            "span", {class: `ogk-label ${msgExpeditionClass}`},
-            // TODO: Need use localized languaje
-            this.json.expeditions[id].result))
+          msgTitle.append(
+            " ",
+            createDOM(
+              "span",
+              { class: `ogk-label ${msgExpeditionClass}` },
+              // TODO: Need use localized languaje
+              this.json.expeditions[id].result
+            )
+          );
           msg.classList.add(msgExpeditionClass);
-
-        }
+        };
 
         const callback = () => {
           let id = document.querySelector("li[id=subtabs-nfFleet22].ui-state-active").getAttribute("aria-controls");
@@ -5470,14 +5473,14 @@ class OGInfinity {
                   });
                   let fleetMatches = textContent.match(/.*: [1-9].*/gm);
                   fleetMatches &&
-                  !normalized.includes(type) &&
-                  fleetMatches.forEach((result) => {
-                    let split = result.split(": ");
-                    type = "Fleet";
-                    let id = this.json.shipNames[split[0]];
-                    let count = Number(split[1]);
-                    sums.fleet[id] ? (sums.fleet[id] += count) : (sums.fleet[id] = count);
-                  });
+                    !normalized.includes(type) &&
+                    fleetMatches.forEach((result) => {
+                      let split = result.split(": ");
+                      type = "Fleet";
+                      let id = this.json.shipNames[split[0]];
+                      let count = Number(split[1]);
+                      sums.fleet[id] ? (sums.fleet[id] += count) : (sums.fleet[id] = count);
+                    });
                   if (type != "Unknown") {
                     sums.type[type] ? (sums.type[type] += 1) : (sums.type[type] = 1);
                   }
@@ -5524,12 +5527,12 @@ class OGInfinity {
 
                   let artefactMatches = textContent.match(/.*: [0-9].*/gm);
                   artefactMatches &&
-                  artefactMatches.forEach((result) => {
-                    let split = result.split(": ");
-                    type = "artefacts";
-                    let count = Number(split[1]);
-                    sums.artefacts ? (sums.artefacts += count) : (sums.artefacts = count);
-                  });
+                    artefactMatches.forEach((result) => {
+                      let split = result.split(": ");
+                      type = "artefacts";
+                      let count = Number(split[1]);
+                      sums.artefacts ? (sums.artefacts += count) : (sums.artefacts = count);
+                    });
                   if (type != "Unknown") {
                     sums.type[type] ? (sums.type[type] += 1) : (sums.type[type] = 1);
                   }
@@ -5553,7 +5556,7 @@ class OGInfinity {
       })();
 
       const SUBFLEET_COMBAT_NAME = "combatReports";
-      const SUBFLEET_COMBAT_ID = "#subtabs-nfFleet21"
+      const SUBFLEET_COMBAT_ID = "#subtabs-nfFleet21";
       /** @type {MessageSubTabTrigger} */
       const subFleet21_CombatReports = (() => {
         const callback = () => {
@@ -5681,7 +5684,7 @@ class OGInfinity {
               }
             }, ix * 50);
           });
-        }
+        };
 
         return new MessageSubTabTrigger(SUBFLEET_COMBAT_NAME, SUBFLEET_COMBAT_ID, callback);
       })();
@@ -5768,25 +5771,19 @@ class OGInfinity {
               this.saveData();
             }
           });
-        }
+        };
 
         return new MessageSubTabTrigger(SUBFLEET_OTHERS_NAME, SUBFLEET_OTHERS_ID, callback);
       })();
 
       /** @type {MessageSubTabTrigger[]} */
-      const tabsNavigation = [
-        subFleet22_Expeditions,
-        subFleet21_CombatReports,
-        subFleet24_Others
-      ];
+      const tabsNavigation = [subFleet22_Expeditions, subFleet21_CombatReports, subFleet24_Others];
       Object.seal(tabsNavigation);
       Object.freeze(tabsNavigation);
 
       /** @return {MessageSubTabTrigger|undefinded} */
       function getActiveSubTabTrigger() {
-        return tabsNavigation
-          .filter(e => e.tab.classList.contains('ui-state-active'))
-          .shift();
+        return tabsNavigation.filter((e) => e.tab.classList.contains("ui-state-active")).shift();
       }
 
       function main() {
@@ -5794,28 +5791,28 @@ class OGInfinity {
         _currentSubTabTrigger = activeSubTabTrigger;
         if (!activeSubTabTrigger) return undefined;
 
-        logger.debug("action:messages.fleets, sub:%o", activeSubTabTrigger.name)
+        logger.debug("action:messages.fleets, sub:%o", activeSubTabTrigger.name);
         fleetAnalize(activeSubTabTrigger);
       }
 
       function change(mutation, observer) {
         if (!_currentSubTabTrigger) return;
 
-        logger.debug('action:%o, [mutation]', `messages.fleets.${_currentSubTabTrigger.name}`);
+        logger.debug("action:%o, [mutation]", `messages.fleets.${_currentSubTabTrigger.name}`);
         fleetAnalize(_currentSubTabTrigger);
       }
 
-      return {main, change: change};
-    });
+      return { main, change: change };
+    };
 
     /** @type {MessageTabTrigger[]} */
     const MainTabs = [
       new MessageTabTrigger("fleets", "#tabs-nfFleets", subFleetAnalizerBuilder(this)),
-      new MessageTabTrigger("communications", '#tabs-nfCommunication', undefined),
-      new MessageTabTrigger("economy", '#tabs-nfEconomy', undefined),
-      new MessageTabTrigger("universe", '#tabs-nfUniverse', undefined),
-      new MessageTabTrigger("system", '#tabs-nfSystem', undefined),
-      new MessageTabTrigger("favorites", "#tabs-nfFavorites", undefined)
+      new MessageTabTrigger("communications", "#tabs-nfCommunication", undefined),
+      new MessageTabTrigger("economy", "#tabs-nfEconomy", undefined),
+      new MessageTabTrigger("universe", "#tabs-nfUniverse", undefined),
+      new MessageTabTrigger("system", "#tabs-nfSystem", undefined),
+      new MessageTabTrigger("favorites", "#tabs-nfFavorites", undefined),
     ];
 
     class MainMessagesMutations {
@@ -5836,7 +5833,6 @@ class OGInfinity {
         this.#subTabObserver = undefined;
         this.#predicate = runPredicate;
 
-
         this.#tabObserver = new MutationObserver((mutations, observer) => {
           this.#disconectSubTab();
           if (!this.#predicate()) return;
@@ -5847,11 +5843,10 @@ class OGInfinity {
           if (!this.#currentTabTrigger) return;
 
           this.#connectSubTab();
-          logger.debug("action:%o, sub:%o", 'messages', this.#currentTabTrigger.name);
+          logger.debug("action:%o, sub:%o", "messages", this.#currentTabTrigger.name);
           if (this.#currentTabTrigger.analizer) {
             setTimeout(this.#currentTabTrigger.analizer.main, 1);
           }
-
         });
       }
 
@@ -5864,32 +5859,28 @@ class OGInfinity {
           }
         });
 
-        this.#subTabObserver.observe(this.#currentTabTrigger.getActiveSubContainer(), {childList: true});
-
+        this.#subTabObserver.observe(this.#currentTabTrigger.getActiveSubContainer(), { childList: true });
       }
 
-      #disconectSubTab (){
-        if(!this.#subTabObserver) return;
+      #disconectSubTab() {
+        if (!this.#subTabObserver) return;
         this.#subTabObserver.disconnect();
         this.#subTabObserver = undefined;
       }
 
       observe(target, options = undefined) {
-        this.#tabObserver.observe(target, options)
+        this.#tabObserver.observe(target, options);
       }
 
       /** @return {MessageTabTrigger | undefined} */
       getActiveTab() {
-        return MainTabs.filter(v => v.isTabActive).shift()
+        return MainTabs.filter((v) => v.isTabActive).shift();
       }
-
     }
-
 
     const loadShadow = document.querySelector(".ajax_load_shadow");
     const mainMutations = new MainMessagesMutations(() => window.getComputedStyle(loadShadow).display === "none");
-    mainMutations.observe(loadShadow, {attributes: true});
-
+    mainMutations.observe(loadShadow, { attributes: true });
   }
   loading() {
     const svg = createSVG("svg", {
