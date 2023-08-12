@@ -2115,6 +2115,92 @@ button.build-it_premium:hover {
   background: linear-gradient(to bottom, #1c2934a3 30%, #000000a3 70%, transparent);
   padding: 70px 0;
 }
+.ogk-label{
+  background-color: #111a21;
+  color: #c7c96c;
+  border: 1px solid #709090;
+
+  padding: 0px 1em;
+  border-radius: 1em;
+  margin: 0 0.5em;
+}
+.ogk-label.ogk-metal {
+  color: #ffaacc;
+  border-color: #ffaacc80;
+}
+.ogk-label.ogk-crystal {
+  color: #73e5ff;
+  border-color: #73e5ff80;
+}
+.ogk-label.ogk-deuterium {
+  color: #a6e0b0;
+  border-color: #a6e0b080;
+}
+.ogk-label.ogk-am {
+  color: #dddddd;
+  border-color: #dddddd80;
+}
+.ogk-label.ogk-fleet {
+  color: #fc7e83;
+  border-color: #782c2f80;
+}
+.ogk-label.ogk-object {
+  color: #d69937;
+  border-color: #c0893180;
+}
+.ogk-label.ogk-aliens {
+  color: #36bd00;
+  border-color: #1e690080;
+}
+.ogk-label.ogk-pirates {
+  color: #e3924b;
+  border-color: #734a2680;
+}
+.ogk-label.ogk-late {
+  color: #a5a5a5;
+  border-color: #65656580;
+}
+.ogk-label.ogk-early {
+  color: #adadad;
+  border-color: #adadad80;
+}
+.ogk-label.ogk-bhole {
+  color: #ac95ff;
+  border-color: #614bb180;
+}
+.ogk-label.ogk-merchant {
+  color: #a0c02b;
+  border-color: #a0c02b80;
+}
+.ogk-label.ogk-lifeform1{
+  color: #7fc200;
+  border-color: #ffffff80;
+}
+.ogk-label.ogk-lifeform2 {
+  color: #ec752f;
+  border-color: #ffffff80;
+}
+.ogk-label.ogk-lifeform3 {
+  color: #3c93f0;
+  border-color: #ffffff80;
+}
+.ogk-label.ogk-lifeform4 {
+  color: #9c64ed;
+  border-color: #ffffff80;
+}
+.ogk-label.ogk-void {
+  color: #77aad0;
+  border-color: #22303a80;
+}
+.ogk-label.ogk-artefacts {
+  color: #fdeca6;
+  border-color: #ffffff80;
+}
+
+/* region: Expeditions Messages */
+.msg .msg_head .ogk-label {
+  background-color: transparent;
+}
 
 .msg.ogk-metal .msg_status,
 .msg_new.ogk-metal .msg_status {
@@ -2176,11 +2262,6 @@ button.build-it_premium:hover {
   background-color: #a0c02b !important;
 }
 
-.msg.ogk-merchant .msg_status,
-.msg_new.ogk-merchant .msg_status {
-  background-color: #a0c02b !important;
-}
-
 .msg.ogk-lifeform1 .msg_status,
 .msg_new.ogk-lifeform1 .msg_status {
   background: linear-gradient(80deg, #ffffff 1%, #7fc200 60%) !important
@@ -2206,6 +2287,12 @@ button.build-it_premium:hover {
   background: linear-gradient(80deg, #ffffff 1%, #fdeca6 60%) !important;
 }
 
+.msg.ogk-void .msg_status,
+.msg_new.ogk-void .msg_status {
+  background-color: #22303a !important;
+}
+/* endregion: Expeditions Messages */
+
 .ogk-grid-discovery {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
@@ -2213,11 +2300,6 @@ button.build-it_premium:hover {
   grid-row-gap: 10px;
   width: 100%;
   justify-items: end;
-}
-
-.msg.ogk-void .msg_status,
-.msg_new.ogk-void .msg_status {
-  background-color: #22303a !important;
 }
 
 .msg {
