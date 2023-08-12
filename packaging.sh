@@ -9,7 +9,7 @@ CSS_FILE_NAME="global.css"
 MAIN_JS_FILE_NAME="main.js"
 CONTENT_JS_FILE_NAME="ogkush.js"
 BG_JS_FILE_NAME="background.js"
-VERSION="${1:-`date +%-m.%-d.%-H.%M`}"
+VERSION="${1:-`date +%-m.%-d.%-H.%-M`}"
 
 npx cleancss -o dist/$CSS_FILE_NAME $CSS_FILE_NAME 
 echo "$CSS_FILE_NAME minified"
