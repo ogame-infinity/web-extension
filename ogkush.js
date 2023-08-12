@@ -3385,7 +3385,7 @@ class OGInfinity {
       ).parentElement
     );
     bar.appendChild(
-      createDOM("li").appendChild(createDOM("a", { href: `https://ptre.chez.gg/`, target: "_blank" }, "PTRE"))
+      createDOM("li").appendChild(createDOM("a", { href: "https://ptre.chez.gg/", target: "_blank" }, "PTRE"))
         .parentElement
     );
     const ping = window.performance.timing.domLoading - window.performance.timing.fetchStart;
@@ -4762,35 +4762,35 @@ class OGInfinity {
     detailRankDiv1.replaceChildren(
       createDOM("div", { class: "ogl-ecoIcon" }),
       document.createTextNode(`${toFormatedNumber(parseInt(player.economy.score))} `),
-      createDOM("small", {}, `pts`),
+      createDOM("small", {}, "pts"),
       createDOM("span", { class: "ogl-ranking" }, `#${parseInt(player.economy.position)} `)
     );
     const detailRankDiv2 = createDOM("div");
     detailRankDiv2.replaceChildren(
       createDOM("div", { class: "ogl-techIcon" }),
       document.createTextNode(`${toFormatedNumber(parseInt(player.research.score))} `),
-      createDOM("small", {}, `pts`),
+      createDOM("small", {}, "pts"),
       createDOM("span", { class: "ogl-ranking" }, `#${parseInt(player.research.position)} `)
     );
     const detailRankDiv3 = createDOM("div");
     detailRankDiv3.replaceChildren(
       createDOM("div", { class: "ogl-fleetIcon" }),
       document.createTextNode(`${toFormatedNumber(parseInt(player.military.score))} `),
-      createDOM("small", {}, `pts`),
+      createDOM("small", {}, "pts"),
       createDOM("span", { class: "ogl-ranking" }, `#${toFormatedNumber(parseInt(player.military.position))} `)
     );
     const detailRankDiv4 = createDOM("div");
     detailRankDiv4.replaceChildren(
       createDOM("div", { class: "ogl-fleetIcon grey" }),
       document.createTextNode(`${toFormatedNumber(parseInt(player.def))} `),
-      createDOM("small", {}, `pts`)
+      createDOM("small", {}, "pts")
     );
     const detailRankDiv5 = createDOM("div");
     if (this.hasLifeforms) {
       detailRankDiv5.replaceChildren(
         createDOM("div", { class: "ogl-lfIcon" }),
         document.createTextNode(`${toFormatedNumber(parseInt(player.lifeform.score))} `),
-        createDOM("small", {}, `pts`),
+        createDOM("small", {}, "pts"),
         createDOM("span", { class: "ogl-ranking" }, `#${toFormatedNumber(parseInt(player.lifeform.position))} `)
       );
     }
@@ -6872,37 +6872,37 @@ class OGInfinity {
       detailRankDiv1.replaceChildren(
         createDOM("div", { class: "ogl-totalIcon" }),
         document.createTextNode(` ${toFormatedNumber(Number(player.points.score), null, true)} `),
-        createDOM("small", {}, `pts`)
+        createDOM("small", {}, "pts")
       );
       const detailRankDiv2 = createDOM("div");
       detailRankDiv2.replaceChildren(
         createDOM("div", { class: "ogl-ecoIcon" }),
         document.createTextNode(` ${toFormatedNumber(Number(player.economy.score), null, true)} `),
-        createDOM("small", {}, `pts`)
+        createDOM("small", {}, "pts")
       );
       const detailRankDiv3 = createDOM("div");
       detailRankDiv3.replaceChildren(
         createDOM("div", { class: "ogl-techIcon" }),
         document.createTextNode(` ${toFormatedNumber(Number(player.research.score), null, true)} `),
-        createDOM("small", {}, `pts`)
+        createDOM("small", {}, "pts")
       );
       const detailRankDiv4 = createDOM("div");
       detailRankDiv4.replaceChildren(
         createDOM("div", { class: "ogl-fleetIcon" }),
         document.createTextNode(` ${toFormatedNumber(Number(player.military.score), null, true)} `),
-        createDOM("small", {}, `pts`)
+        createDOM("small", {}, "pts")
       );
       const detailRankDiv5 = createDOM("div");
       detailRankDiv5.replaceChildren(
         createDOM("div", { class: "ogl-fleetIcon grey" }),
         document.createTextNode(` ${toFormatedNumber(Number(player.def), null, true)} `),
-        createDOM("small", {}, `pts`)
+        createDOM("small", {}, "pts")
       );
       const detailRankDiv6 = createDOM("div");
       detailRankDiv6.replaceChildren(
         createDOM("div", { class: "ogl-fleetIcon orange" }),
         document.createTextNode(` ${toFormatedNumber(Number(player.military.ships), null, true)} `),
-        createDOM("small", {}, `ships`)
+        createDOM("small", {}, "ships")
       );
       detailRank.replaceChildren(
         detailRankDiv1,
@@ -13106,37 +13106,37 @@ class OGInfinity {
       detailRankDiv1.replaceChildren(
         createDOM("div", { class: "ogl-totalIcon" }),
         document.createTextNode(` ${toFormatedNumber(Number(player.points.score), null, true)} `),
-        createDOM("small", {}, `pts`)
+        createDOM("small", {}, "pts")
       );
       const detailRankDiv2 = createDOM("div");
       detailRankDiv2.replaceChildren(
         createDOM("div", { class: "ogl-ecoIcon" }),
         document.createTextNode(` ${toFormatedNumber(Number(player.economy.score), null, true)} `),
-        createDOM("small", {}, `pts`)
+        createDOM("small", {}, "pts")
       );
       const detailRankDiv3 = createDOM("div");
       detailRankDiv3.replaceChildren(
         createDOM("div", { class: "ogl-techIcon" }),
         document.createTextNode(` ${toFormatedNumber(Number(player.research.score), null, true)} `),
-        createDOM("small", {}, `pts`)
+        createDOM("small", {}, "pts")
       );
       const detailRankDiv4 = createDOM("div");
       detailRankDiv4.replaceChildren(
         createDOM("div", { class: "ogl-fleetIcon" }),
         document.createTextNode(` ${toFormatedNumber(Number(player.military.score), null, true)} `),
-        createDOM("small", {}, `pts`)
+        createDOM("small", {}, "pts")
       );
       const detailRankDiv5 = createDOM("div");
       detailRankDiv5.replaceChildren(
         createDOM("div", { class: "ogl-fleetIcon grey" }),
         document.createTextNode(` ${toFormatedNumber(Number(player.def), null, true)} `),
-        createDOM("small", {}, `pts`)
+        createDOM("small", {}, "pts")
       );
       const detailRankDiv6 = createDOM("div");
       detailRankDiv6.replaceChildren(
         createDOM("div", { class: "ogl-fleetIcon orange" }),
         document.createTextNode(` ${toFormatedNumber(Number(player.military.ships), null, true)} `),
-        createDOM("small", {}, `ships`)
+        createDOM("small", {}, "ships")
       );
       detailRank.replaceChildren(
         detailRankDiv1,
@@ -18528,7 +18528,9 @@ class OGInfinity {
           )})</span><span class="${
             metalResources >= metalStorage ? " overmark" : ""
           }" id="metal-storage"> ${toFormatedNumber(Math.floor(metalResources))} / ${toFormatedNumber(
-            metalStorage
+            metalStorage,
+            null,
+            true
           )}</span>`
         )
       );
@@ -18556,7 +18558,9 @@ class OGInfinity {
           )})</span><span class="${
             crystalResources >= crystalStorage ? " overmark" : ""
           }" id="crystal-storage"> ${toFormatedNumber(Math.floor(crystalResources))} / ${toFormatedNumber(
-            crystalStorage
+            crystalStorage,
+            null,
+            true
           )}</span>`
         )
       );
@@ -18584,7 +18588,9 @@ class OGInfinity {
           )})</span><span class="${
             deuteriumResources >= deuteriumStorage ? " overmark" : ""
           }" id = "deuterium-storage" > ${toFormatedNumber(Math.floor(deuteriumResources))} / ${toFormatedNumber(
-            deuteriumStorage
+            deuteriumStorage,
+            null,
+            true
           )}</span>`
         )
       );
@@ -18614,13 +18620,13 @@ class OGInfinity {
         if (metalProduction + crystalProduction + deuteriumProduction > 0) {
           document.querySelector("#metal-storage").textContent = ` ${toFormatedNumber(
             Math.floor(resourcesBar.resources.metal.amount)
-          )} / ${toFormatedNumber(metalStorage)}`;
+          )} / ${toFormatedNumber(metalStorage, null, true)}`;
           document.querySelector("#crystal-storage").textContent = ` ${toFormatedNumber(
             Math.floor(resourcesBar.resources.crystal.amount)
-          )} / ${toFormatedNumber(crystalStorage)}`;
+          )} / ${toFormatedNumber(crystalStorage, null, true)}`;
           document.querySelector("#deuterium-storage").textContent = ` ${toFormatedNumber(
             Math.floor(resourcesBar.resources.deuterium.amount)
-          )} / ${toFormatedNumber(deuteriumStorage)}`;
+          )} / ${toFormatedNumber(deuteriumStorage, null, true)}`;
         } else {
           clearInterval(updater);
         }
