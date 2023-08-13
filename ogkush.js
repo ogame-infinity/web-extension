@@ -270,6 +270,25 @@ const SHIP_COSTS = {
   219: [8, 15, 8],
 };
 
+const SHIP_EXPEDITION_POINTS = {
+  202: 20,
+  203: 60,
+  204: 20,
+  205: 50,
+  206: 135,
+  207: 300,
+  210: 5,
+  211: 375,
+  213: 550,
+  215: 350,
+  218: 700,
+  219: 115,
+};
+
+const EXPEDITION_EXPEDITION_POINTS = [200, 2500, 6000, 9000, 12000, 15000, 18000, 21000, 25000];
+const EXPEDITION_MAX_RESOURCES = [4e4, 5e5, 12e5, 18e5, 24e5, 3e6, 36e5, 42e5, 5e6];
+const EXPEDITION_TOP1_POINTS = [1e4, 1e5, 1e6, 5e6, 25e6, 5e7, 75e6, 1e8];
+
 const UNIVERSVIEW_LANGS = [
   "en",
   "cs",
@@ -11787,56 +11806,22 @@ class OGInfinity {
 
   expedition() {
     if (this.page == "fleetdispatch") {
-      let topScore = this.json.topScore;
-      let maxTotal = 0;
-      let minPT,
-        minGT = 0;
-      if (topScore < 1e4) {
-        maxTotal = 4e4;
-        minPT = 273;
-        minGT = 91;
-      } else if (topScore < 1e5) {
-        maxTotal = 5e5;
-        minPT = 423;
-        minGT = 141;
-      } else if (topScore < 1e6) {
-        maxTotal = 12e5;
-        minPT = 423;
-        minGT = 191;
-      } else if (topScore < 5e6) {
-        maxTotal = 18e5;
-        minPT = 423;
-        minGT = 191;
-      } else if (topScore < 25e6) {
-        maxTotal = 24e5;
-        minPT = 573;
-        minGT = 191;
-      } else if (topScore < 5e7) {
-        maxTotal = 3e6;
-        minPT = 723;
-        minGT = 241;
-      } else if (topScore < 75e6) {
-        maxTotal = 36e5;
-        minPT = 873;
-        minGT = 291;
-      } else if (topScore < 1e8) {
-        maxTotal = 42e5;
-        minPT = 1023;
-        minGT = 341;
-      } else {
-        maxTotal = 5e6;
-        minPT = 1223;
-        minGT = 417;
-      }
-      maxTotal *= 2; // Pathfinder bonus on expedition
+      let level = EXPEDITION_TOP1_POINTS.findIndex((points) => points > this.json.topScore);
+      level = level !== -1 ? level : EXPEDITION_TOP1_POINTS.length;
+      const maxExpeditionPoints = EXPEDITION_EXPEDITION_POINTS[level];
+      let maxResources = EXPEDITION_MAX_RESOURCES[level];
+      const minPT = Math.ceil(maxExpeditionPoints / SHIP_EXPEDITION_POINTS[202]);
+      const minGT = Math.ceil(maxExpeditionPoints / SHIP_EXPEDITION_POINTS[203]);
+
+      maxResources *= 2; // Pathfinder bonus on expedition
       if (this.playerClass == PLAYER_CLASS_EXPLORER) {
-        maxTotal *= (1 + this.json.explorerBonusIncreasedExpeditionOutcome) * this.json.speed;
+        maxResources *= (1 + this.json.explorerBonusIncreasedExpeditionOutcome) * this.json.speed;
       }
 
       if (this.json.lifeformBonus && this.json.lifeformBonus[this.current.id])
-        maxTotal *= 1 + this.json.lifeformBonus[this.current.id].expeditionBonus || 0;
-      let maxPT = Math.max(minPT, this.calcNeededShips({ fret: 202, resources: maxTotal }));
-      let maxGT = Math.max(minGT, this.calcNeededShips({ fret: 203, resources: maxTotal }));
+        maxResources *= 1 + this.json.lifeformBonus[this.current.id].expeditionBonus || 0;
+      let maxPT = Math.max(minPT, this.calcNeededShips({ fret: 202, resources: maxResources }));
+      let maxGT = Math.max(minGT, this.calcNeededShips({ fret: 203, resources: maxResources }));
       if (!document.querySelector("#allornone .allornonewrap")) return;
       let expCargoChoice = createDOM("div", { class: "ogk-expedition-cargo" });
       let expType = this.json.options.expFret || 203;
