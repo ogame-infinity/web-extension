@@ -1808,9 +1808,7 @@ class OGInfinity {
         const timeZoneChange = this.json.options.timeZone ? 0 : this.json.timezoneDiff;
         const newDate = new Date(Date.now() + timeLeft - timeZoneChange * 1e3);
         const dateTxt = getFormatedDate(newDate.getTime(), "[d].[m].[y] - [G]:[i]:[s] ");
-        timer.parentNode.appendChild(
-          createDOM("div", { class: "ogl-date" }, dateTxt)
-        );
+        timer.parentNode.appendChild(createDOM("div", { class: "ogl-date" }, dateTxt));
       });
   }
 
@@ -1925,10 +1923,10 @@ class OGInfinity {
                     roi === Infinity
                       ? that.getTranslatedText(118)
                       : `${that.getTranslatedText(119)}: ${toFormatedNumber(
-                          that.json.options.tradeRate[0]
-                        )}:${toFormatedNumber(that.json.options.tradeRate[1])}:${toFormatedNumber(
-                          that.json.options.tradeRate[2]
-                        )}`,
+                        that.json.options.tradeRate[0]
+                      )}:${toFormatedNumber(that.json.options.tradeRate[1])}:${toFormatedNumber(
+                        that.json.options.tradeRate[2]
+                      )}`,
                 })
               );
             roiTimeDiv.textContent = roi === Infinity ? "∞" : formatTimeWrapper(roi, 2, true, " ", false, "");
@@ -2111,8 +2109,8 @@ class OGInfinity {
               technoId == 22
                 ? resourcesBar.resources.metal.production
                 : technoId == 23
-                ? resourcesBar.resources.crystal.production
-                : resourcesBar.resources.deuterium.production;
+                  ? resourcesBar.resources.crystal.production
+                  : resourcesBar.resources.deuterium.production;
             let storageDiv =
               durationDiv.parentNode.querySelector(".narrow .storage_size") ||
               durationDiv.parentNode.insertBefore(
@@ -2183,17 +2181,13 @@ class OGInfinity {
         let finishDate = new Date(currentDate.getTime() + (techno.time - timeZoneChange) * 1e3);
         if (baselvl <= tolvl) {
           const dateTxt = getFormatedDate(finishDate.getTime(), "[d].[m] - [G]:[i]:[s]");
-          timeDiv.appendChild(
-            createDOM("div", { class: "ogl-date" }, dateTxt)
-          );
+          timeDiv.appendChild(createDOM("div", { class: "ogl-date" }, dateTxt));
         }
         if (baselvl < tolvl) {
           timeSumDiv.textContent = formatTimeWrapper(timeSum, 2, true, " ", false, "");
           finishDate = new Date(currentDate.getTime() + (timeSum - timeZoneChange) * 1e3);
           const dateTxt = getFormatedDate(finishDate.getTime(), "[d].[m] - [G]:[i]:[s]");
-          timeSumDiv.appendChild(
-            createDOM("div", { class: "ogl-date" }, dateTxt)
-          );
+          timeSumDiv.appendChild(createDOM("div", { class: "ogl-date" }, dateTxt));
         } else {
           timeSumDiv.replaceChildren();
         }
@@ -2531,9 +2525,7 @@ class OGInfinity {
               let timeZoneChange = that.json.options.timeZone ? 0 : that.json.timezoneDiff;
               let finishDate = new Date(currentDate.getTime() + (baseTime * value - timeZoneChange) * 1e3);
               const dateTxt = getFormatedDate(finishDate.getTime(), "[d].[m] - [G]:[i]:[s]");
-              timeDiv.appendChild(
-                createDOM("div", { class: "ogl-date" }, dateTxt)
-              );
+              timeDiv.appendChild(createDOM("div", { class: "ogl-date" }, dateTxt));
               if (technologyId == 212) {
                 let energyBonus =
                   (that.engineer ? ENGINEER_ENERGY_BONUS : 0) +
@@ -2735,9 +2727,9 @@ class OGInfinity {
               lvlSpan.textContent = toFormatedNumber(tolvl);
               tolvl != 0
                 ? lvl.replaceChildren(
-                    document.createTextNode("Lvl "),
-                    createDOM("strong", {}, `${toFormatedNumber(tolvl)}`)
-                  )
+                  document.createTextNode("Lvl "),
+                  createDOM("strong", {}, `${toFormatedNumber(tolvl)}`)
+                )
                 : lvl.replaceChildren();
               lvlFromTo.replaceChildren(
                 createDOM("strong", {}, `${toFormatedNumber(baseLvl)}`),
@@ -4564,18 +4556,18 @@ class OGInfinity {
       : ["#656565", "#83ba33", "#b73536", "#3d4800"];
     let labels = lf
       ? [
-          this.getTranslatedText(51, "text"),
-          this.getTranslatedText(52, "text"),
-          this.getTranslatedText(53, "text"),
-          this.getTranslatedText(54, "text"),
-          this.getTranslatedText(89, "text"),
-        ]
+        this.getTranslatedText(51, "text"),
+        this.getTranslatedText(52, "text"),
+        this.getTranslatedText(53, "text"),
+        this.getTranslatedText(54, "text"),
+        this.getTranslatedText(89, "text"),
+      ]
       : [
-          this.getTranslatedText(51, "text"),
-          this.getTranslatedText(52, "text"),
-          this.getTranslatedText(53, "text"),
-          this.getTranslatedText(54, "text"),
-        ];
+        this.getTranslatedText(51, "text"),
+        this.getTranslatedText(52, "text"),
+        this.getTranslatedText(53, "text"),
+        this.getTranslatedText(54, "text"),
+      ];
     let config = {
       type: "doughnut",
       data: {
@@ -4710,31 +4702,31 @@ class OGInfinity {
     );
     let playerClassName;
     switch (this.playerClass) {
-      case PLAYER_CLASS_MINER:
-        playerClassName = "miner";
-        break;
-      case PLAYER_CLASS_WARRIOR:
-        playerClassName = "warrior";
-        break;
-      case PLAYER_CLASS_EXPLORER:
-        playerClassName = "explorer";
-        break;
-      default:
-        playerClassName = "";
+    case PLAYER_CLASS_MINER:
+      playerClassName = "miner";
+      break;
+    case PLAYER_CLASS_WARRIOR:
+      playerClassName = "warrior";
+      break;
+    case PLAYER_CLASS_EXPLORER:
+      playerClassName = "explorer";
+      break;
+    default:
+      playerClassName = "";
     }
     let allianceClassName;
     switch (this.json.allianceClass) {
-      case ALLY_CLASS_MINER:
-        allianceClassName = "trader";
-        break;
-      case ALLY_CLASS_WARRIOR:
-        allianceClassName = "warrior";
-        break;
-      case ALLY_CLASS_EXPLORER:
-        allianceClassName = "explorer";
-        break;
-      default:
-        allianceClassName = "";
+    case ALLY_CLASS_MINER:
+      allianceClassName = "trader";
+      break;
+    case ALLY_CLASS_WARRIOR:
+      allianceClassName = "warrior";
+      break;
+    case ALLY_CLASS_EXPLORER:
+      allianceClassName = "explorer";
+      break;
+    default:
+      allianceClassName = "";
     }
     playerDiv.appendChild(
       createDOM("div", {
@@ -5118,21 +5110,21 @@ class OGInfinity {
                             <div class="ptreBestReport">
                                 <div>
                                     <div><b class="ogl_fleet"><i class="material-icons">military_tech</i>${this.formatToUnits(
-                                      result.top_sr_fleet_points
-                                    )} pts</b></div>
+    result.top_sr_fleet_points
+  )} pts</b></div>
                                     <div><b>${new Date(result.top_sr_timestamp * 1000).toLocaleDateString(
-                                      "fr-FR"
-                                    )}</b></div>
+    "fr-FR"
+  )}</b></div>
                                 </div>
                                 <div>
                                     <a class="ogl_button" target="_blank" href="${result.top_sr_link}">${
-            this.gameLang == "fr" ? "Détails du rapport" : "Report Details"
-          }</a>
+  this.gameLang == "fr" ? "Détails du rapport" : "Report Details"
+}</a>
                                     <a class="ogl_button" target="_blank" href="https://ptre.chez.gg/?country=${
-                                      this.gameLang
-                                    }&univers=${this.universe}&player_id=${player.id}">${
-            this.gameLang == "fr" ? "Profil de la cible" : "Target Profile"
-          }</a>
+  this.gameLang
+}&univers=${this.universe}&player_id=${player.id}">${
+  this.gameLang == "fr" ? "Profil de la cible" : "Target Profile"
+}</a>
                                 </div>
                             </div>
                             <div class="splitLine"></div>
@@ -10194,23 +10186,23 @@ class OGInfinity {
             window.location.pathname
           }?page=ingame&component=shipyard&cp=${planetId}&techId202=${sc}"></a><span>${toFormatedNumber(sc, 0)}</span>
           <a tech-id="203" class="ogl-option noShips ogl-fleet-ship ogl-fleet-203" href="https://${
-            window.location.host
-          }${
-            window.location.pathname
-          }?page=ingame&component=shipyard&cp=${planetId}&techId203=${lc}"></a><span>${toFormatedNumber(lc, 0)}</span>
+  window.location.host
+}${
+  window.location.pathname
+}?page=ingame&component=shipyard&cp=${planetId}&techId203=${lc}"></a><span>${toFormatedNumber(lc, 0)}</span>
           <a tech-id="219" class="ogl-option noShips ogl-fleet-ship ogl-fleet-219" href="https://${
-            window.location.host
-          }${
-            window.location.pathname
-          }?page=ingame&component=shipyard&cp=${planetId}&techId219=${pf}"></a><span>${toFormatedNumber(pf, 0)}</span>
+  window.location.host
+}${
+  window.location.pathname
+}?page=ingame&component=shipyard&cp=${planetId}&techId219=${pf}"></a><span>${toFormatedNumber(pf, 0)}</span>
           <a tech-id="209" class="ogl-option noShips ogl-fleet-ship ogl-fleet-209" href="https://${
-            window.location.host
-          }${
-            window.location.pathname
-          }?page=ingame&component=shipyard&cp=${planetId}&techId209=${rec}"></a><span>${toFormatedNumber(
-            rec,
-            0
-          )}</span>`
+  window.location.host
+}${
+  window.location.pathname
+}?page=ingame&component=shipyard&cp=${planetId}&techId209=${rec}"></a><span>${toFormatedNumber(
+  rec,
+  0
+)}</span>`
         )
       );
     }
@@ -10867,18 +10859,14 @@ class OGInfinity {
             new Date(serverTime).getTime() + fleetDispatcher.getDuration() * 1e3,
             "[d].[m].[y] - [G]:[i]:[s] "
           );
-          arrivalDiv.replaceChildren(
-            document.createTextNode(arrivalDivTxt)
-          );
+          arrivalDiv.replaceChildren(document.createTextNode(arrivalDivTxt));
           const returnDivTxt = getFormatedDate(
             new Date(serverTime).getTime() +
               2 * fleetDispatcher.getDuration() * 1e3 +
               (fleetDispatcher.expeditionTime + fleetDispatcher.holdingTime) * 3600 * 1e3,
             "[d].[m].[y] - [G]:[i]:[s] "
           );
-          returnDiv.replaceChildren(
-            document.createTextNode(returnDivTxt)
-          );
+          returnDiv.replaceChildren(document.createTextNode(returnDivTxt));
         }, 100);
         highlightFleetTarget();
         onResChange(2);
@@ -10955,22 +10943,22 @@ class OGInfinity {
       if (!this.isMobile) {
         (this.hasLifeforms
           ? [
-              metalFiller,
-              document.querySelector("input#metal"),
-              crystalFiller,
-              document.querySelector("input#crystal"),
-              deutFiller,
-              document.querySelector("input#deuterium"),
-              document.querySelector("input#food"),
-            ]
+            metalFiller,
+            document.querySelector("input#metal"),
+            crystalFiller,
+            document.querySelector("input#crystal"),
+            deutFiller,
+            document.querySelector("input#deuterium"),
+            document.querySelector("input#food"),
+          ]
           : [
-              metalFiller,
-              document.querySelector("input#metal"),
-              crystalFiller,
-              document.querySelector("input#crystal"),
-              deutFiller,
-              document.querySelector("input#deuterium"),
-            ]
+            metalFiller,
+            document.querySelector("input#metal"),
+            crystalFiller,
+            document.querySelector("input#crystal"),
+            deutFiller,
+            document.querySelector("input#deuterium"),
+          ]
         ).forEach((elem) => {
           elem.addEventListener("keyup", (event) => {
             const CODE = event.code;
@@ -10979,16 +10967,16 @@ class OGInfinity {
             if (CODE === "ArrowUp" || CODE === "ArrowDown" || CODE === "KeyK") {
               let add = event.ctrlKey ? 100 : event.shiftKey ? 10 : 1;
               switch (CODE) {
-                case "ArrowUp":
-                  value = value + add;
-                  break;
-                case "ArrowDown":
-                  value = Math.max(value - add, 0);
-                  break;
-                case "KeyK":
-                  factor = value > 0 && elem.classList.contains("checkThousandSeparator") ? 1 : 1000;
-                  value = (value || 1) * factor;
-                  break;
+              case "ArrowUp":
+                value = value + add;
+                break;
+              case "ArrowDown":
+                value = Math.max(value - add, 0);
+                break;
+              case "KeyK":
+                factor = value > 0 && elem.classList.contains("checkThousandSeparator") ? 1 : 1000;
+                value = (value || 1) * factor;
+                break;
               }
             }
             event.target.value = toFormatedNumber(value);
@@ -10997,22 +10985,22 @@ class OGInfinity {
       } else {
         (this.hasLifeforms
           ? [
-              metalFiller,
-              document.querySelector("input#metal"),
-              crystalFiller,
-              document.querySelector("input#crystal"),
-              deutFiller,
-              document.querySelector("input#deuterium"),
-              document.querySelector("input#food"),
-            ]
+            metalFiller,
+            document.querySelector("input#metal"),
+            crystalFiller,
+            document.querySelector("input#crystal"),
+            deutFiller,
+            document.querySelector("input#deuterium"),
+            document.querySelector("input#food"),
+          ]
           : [
-              metalFiller,
-              document.querySelector("input#metal"),
-              crystalFiller,
-              document.querySelector("input#crystal"),
-              deutFiller,
-              document.querySelector("input#deuterium"),
-            ]
+            metalFiller,
+            document.querySelector("input#metal"),
+            crystalFiller,
+            document.querySelector("input#crystal"),
+            deutFiller,
+            document.querySelector("input#deuterium"),
+          ]
         ).forEach((elem) => {
           elem.addEventListener("input", (event) => {
             if (event.data == "K" || event.data == "k" || event.data == "0k") {
@@ -12089,10 +12077,10 @@ class OGInfinity {
         let htmlDocument = new window.DOMParser().parseFromString(str, "text/html");
         let expeditionBonus = htmlDocument.querySelector("div[data-category='bonus-16'] .bonusValues")
           ? fromFormatedNumber(
-              htmlDocument.querySelector("div[data-category='bonus-16'] .bonusValues").textContent.split("/")[0].trim(),
-              false,
-              true
-            ) / 100 || 0
+            htmlDocument.querySelector("div[data-category='bonus-16'] .bonusValues").textContent.split("/")[0].trim(),
+            false,
+            true
+          ) / 100 || 0
           : 0;
         let crawlerProductionBonus = 0;
         let crawlerConsumptionBonus = 0;
@@ -15928,9 +15916,7 @@ class OGInfinity {
           lastTimer += 1e3;
           date = new Date(lastTimer);
           const dateTxt = getFormatedDate(date.getTime(), "[d].[m].[y] - [G]:[i]:[s] ");
-          content.replaceChildren(
-            document.createTextNode(dateTxt)
-          );
+          content.replaceChildren(document.createTextNode(dateTxt));
         };
         updateTimer();
         setInterval(() => updateTimer(), 500);
@@ -18905,8 +18891,8 @@ class OGInfinity {
             this.json.options.collect.ship == 202
               ? "smallCargo"
               : this.json.options.collect.ship == 219
-              ? "pathFinder"
-              : "largeCargo"
+                ? "pathFinder"
+                : "largeCargo"
           }`,
         })
       );
@@ -18937,8 +18923,8 @@ class OGInfinity {
           this.json.options.collect.ship == 202
             ? "smallCargo"
             : this.json.options.collect.ship == 219
-            ? "pathFinder"
-            : "largeCargo"
+              ? "pathFinder"
+              : "largeCargo"
         }`;
       };
       let updateDefaultCollectMission = (mission) => {
@@ -18950,8 +18936,8 @@ class OGInfinity {
           this.json.options.collect.ship == 202
             ? "smallCargo"
             : this.json.options.collect.ship == 219
-            ? "pathFinder"
-            : "largeCargo"
+              ? "pathFinder"
+              : "largeCargo"
         }`;
       };
       sc.addEventListener("click", () => updateDefaultCollectShip(202));
@@ -19199,16 +19185,16 @@ class OGInfinity {
             const add = e.ctrlKey ? 100 : e.shiftKey ? 10 : 1;
             let factor;
             switch (CODE) {
-              case "ArrowUp":
-                element.value = toFormatedNumber(value + add);
-                break;
-              case "ArrowDown":
-                element.value = toFormatedNumber(Math.max(value - add, 0));
-                break;
-              case "KeyK":
-                factor = value > 0 && element.classList.contains("checkThousandSeparator") ? 1 : 1000;
-                element.value = toFormatedNumber((value || 1) * factor);
-                break;
+            case "ArrowUp":
+              element.value = toFormatedNumber(value + add);
+              break;
+            case "ArrowDown":
+              element.value = toFormatedNumber(Math.max(value - add, 0));
+              break;
+            case "KeyK":
+              factor = value > 0 && element.classList.contains("checkThousandSeparator") ? 1 : 1000;
+              element.value = toFormatedNumber((value || 1) * factor);
+              break;
             }
           }
         }
