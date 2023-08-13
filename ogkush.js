@@ -1807,11 +1807,9 @@ class OGInfinity {
         }
         const timeZoneChange = this.json.options.timeZone ? 0 : this.json.timezoneDiff;
         const newDate = new Date(Date.now() + timeLeft - timeZoneChange * 1e3);
-        const dateTxt = getFormatedDate(newDate.getTime(), "[d].[m].[y] [G]:[i]:[s] ");
+        const dateTxt = getFormatedDate(newDate.getTime(), "[d].[m].[y] - [G]:[i]:[s] ");
         timer.parentNode.appendChild(
-          createDOM("div", { class: "ogl-date" }, `${dateTxt.split(" ")[0]}  `).appendChild(
-            createDOM("strong", {}, dateTxt.split(" ")[1])
-          ).parentElement
+          createDOM("div", { class: "ogl-date" }, dateTxt)
         );
       });
   }
@@ -2186,9 +2184,7 @@ class OGInfinity {
         if (baselvl <= tolvl) {
           const dateTxt = getFormatedDate(finishDate.getTime(), "[d].[m] - [G]:[i]:[s]");
           timeDiv.appendChild(
-            createDOM("div", { class: "ogl-date" })
-              .appendChild(createDOM("strong", {}, `${dateTxt.split(" ")[0]}`))
-              .parentElement.appendChild(document.createTextNode(` -${dateTxt.split("-")[1]}`)).parentElement
+            createDOM("div", { class: "ogl-date" }, dateTxt)
           );
         }
         if (baselvl < tolvl) {
@@ -2196,9 +2192,7 @@ class OGInfinity {
           finishDate = new Date(currentDate.getTime() + (timeSum - timeZoneChange) * 1e3);
           const dateTxt = getFormatedDate(finishDate.getTime(), "[d].[m] - [G]:[i]:[s]");
           timeSumDiv.appendChild(
-            createDOM("div", { class: "ogl-date" })
-              .appendChild(createDOM("strong", {}, `${dateTxt.split(" ")[0]}`))
-              .parentElement.appendChild(document.createTextNode(` -${dateTxt.split("-")[1]}`)).parentElement
+            createDOM("div", { class: "ogl-date" }, dateTxt)
           );
         } else {
           timeSumDiv.replaceChildren();
@@ -2538,9 +2532,7 @@ class OGInfinity {
               let finishDate = new Date(currentDate.getTime() + (baseTime * value - timeZoneChange) * 1e3);
               const dateTxt = getFormatedDate(finishDate.getTime(), "[d].[m] - [G]:[i]:[s]");
               timeDiv.appendChild(
-                createDOM("div", { class: "ogl-date" })
-                  .appendChild(createDOM("strong", {}, `${dateTxt.split(" ")[0]}`))
-                  .parentElement.appendChild(document.createTextNode(` -${dateTxt.split("-")[1]}`)).parentElement
+                createDOM("div", { class: "ogl-date" }, dateTxt)
               );
               if (technologyId == 212) {
                 let energyBonus =
@@ -10873,21 +10865,19 @@ class OGInfinity {
         interval = setInterval(() => {
           const arrivalDivTxt = getFormatedDate(
             new Date(serverTime).getTime() + fleetDispatcher.getDuration() * 1e3,
-            "[d].[m].[y] [G]:[i]:[s] "
+            "[d].[m].[y] - [G]:[i]:[s] "
           );
           arrivalDiv.replaceChildren(
-            document.createTextNode(`${arrivalDivTxt.split(" ")[0]}  `),
-            createDOM("strong", {}, arrivalDivTxt.split(" ")[1])
+            document.createTextNode(arrivalDivTxt)
           );
           const returnDivTxt = getFormatedDate(
             new Date(serverTime).getTime() +
               2 * fleetDispatcher.getDuration() * 1e3 +
               (fleetDispatcher.expeditionTime + fleetDispatcher.holdingTime) * 3600 * 1e3,
-            "[d].[m].[y] [G]:[i]:[s] "
+            "[d].[m].[y] - [G]:[i]:[s] "
           );
           returnDiv.replaceChildren(
-            document.createTextNode(`${returnDivTxt.split(" ")[0]}  `),
-            createDOM("strong", {}, returnDivTxt.split(" ")[1])
+            document.createTextNode(returnDivTxt)
           );
         }, 100);
         highlightFleetTarget();
@@ -15937,10 +15927,9 @@ class OGInfinity {
         let updateTimer = () => {
           lastTimer += 1e3;
           date = new Date(lastTimer);
-          const dateTxt = getFormatedDate(date.getTime(), "[d].[m].[y] [G]:[i]:[s] ");
+          const dateTxt = getFormatedDate(date.getTime(), "[d].[m].[y] - [G]:[i]:[s] ");
           content.replaceChildren(
-            document.createTextNode(`${dateTxt.split(" ")[0]}  `),
-            createDOM("strong", {}, dateTxt.split(" ")[1])
+            document.createTextNode(dateTxt)
           );
         };
         updateTimer();
@@ -18616,8 +18605,8 @@ class OGInfinity {
           .textContent.trim()
           .replace(/[^0-9]/g, "");
         let datestring = document.querySelector("#productionboxbuildingcomponent .ogl-date").textContent.trim();
-        let date = datestring.split("  ")[0].split(".");
-        let time = datestring.split("  ")[1].split(":");
+        let date = datestring.split(" - ")[0].split(".");
+        let time = datestring.split(" - ")[1].split(":");
         let endDate = new Date(
           2000 + parseInt(date[2]),
           parseInt(date[1]) - 1,
@@ -18645,8 +18634,8 @@ class OGInfinity {
           .textContent.trim()
           .replace(/[^0-9]/g, "");
         let datestring = document.querySelector("#productionboxlfbuildingcomponent .ogl-date").textContent.trim();
-        let date = datestring.split("  ")[0].split(".");
-        let time = datestring.split("  ")[1].split(":");
+        let date = datestring.split(" - ")[0].split(".");
+        let time = datestring.split(" - ")[1].split(":");
         let endDate = new Date(
           2000 + parseInt(date[2]),
           parseInt(date[1]) - 1,
@@ -18680,8 +18669,8 @@ class OGInfinity {
           .split("[")[1]
           .split("]")[0];
         let datestring = document.querySelector("#productionboxresearchcomponent .ogl-date").textContent.trim();
-        let date = datestring.split("  ")[0].split(".");
-        let time = datestring.split("  ")[1].split(":");
+        let date = datestring.split(" - ")[0].split(".");
+        let time = datestring.split(" - ")[1].split(":");
         let endDate = new Date(
           2000 + parseInt(date[2]),
           parseInt(date[1]) - 1,
@@ -18711,8 +18700,8 @@ class OGInfinity {
           .textContent.trim()
           .replace(/[^0-9]/g, "");
         let datestring = document.querySelector("#productionboxlfresearchcomponent .ogl-date").textContent.trim();
-        let date = datestring.split("  ")[0].split(".");
-        let time = datestring.split("  ")[1].split(":");
+        let date = datestring.split(" - ")[0].split(".");
+        let time = datestring.split(" - ")[1].split(":");
         let endDate = new Date(
           2000 + parseInt(date[2]),
           parseInt(date[1]) - 1,
@@ -18813,7 +18802,7 @@ class OGInfinity {
           { class: "data" },
           `<span class="${metalTime > 0 && metalTime != Infinity ? "ogl-date" : "overmark"}"> ${
             metalTime > 0 && metalTime != Infinity
-              ? getFormatedDate(metalDate.getTime(), "[d].[m].[y] <strong> [G]:[i]:[s]</strong>")
+              ? getFormatedDate(metalDate.getTime(), "[d].[m].[y] - [G]:[i]:[s]")
               : "-"
           }</span>`
         )
@@ -18843,7 +18832,7 @@ class OGInfinity {
           { class: "data" },
           `<span class="${crystalTime > 0 && crystalTime != Infinity ? "ogl-date" : "overmark"}"> ${
             crystalTime > 0 && crystalTime != Infinity
-              ? getFormatedDate(crystalDate.getTime(), "[d].[m].[y] <strong> [G]:[i]:[s]</strong>")
+              ? getFormatedDate(crystalDate.getTime(), "[d].[m].[y] - [G]:[i]:[s]")
               : "-"
           }</span></span>`
         )
@@ -18873,7 +18862,7 @@ class OGInfinity {
           { class: "data" },
           `<span class="${deuteriumTime > 0 && deuteriumTime != Infinity ? "ogl-date" : "overmark"}"> ${
             deuteriumTime > 0 && deuteriumTime != Infinity
-              ? getFormatedDate(deuteriumDate.getTime(), "[d].[m].[y] <strong> [G]:[i]:[s]</strong>")
+              ? getFormatedDate(deuteriumDate.getTime(), "[d].[m].[y] - [G]:[i]:[s]")
               : "-"
           }</span></span>`
         )
