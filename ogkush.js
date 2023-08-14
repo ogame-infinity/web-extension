@@ -10855,18 +10855,16 @@ class OGInfinity {
           consDiv.classList.remove("overmark");
         }
         interval = setInterval(() => {
-          const arrivalDivTxt = getFormatedDate(
+          arrivalDiv.textContent = getFormatedDate(
             new Date(serverTime).getTime() + fleetDispatcher.getDuration() * 1e3,
             "[d].[m].[y] - [G]:[i]:[s] "
           );
-          arrivalDiv.replaceChildren(document.createTextNode(arrivalDivTxt));
-          const returnDivTxt = getFormatedDate(
+          returnDiv.textContent = getFormatedDate(
             new Date(serverTime).getTime() +
               2 * fleetDispatcher.getDuration() * 1e3 +
               (fleetDispatcher.expeditionTime + fleetDispatcher.holdingTime) * 3600 * 1e3,
             "[d].[m].[y] - [G]:[i]:[s] "
           );
-          returnDiv.replaceChildren(document.createTextNode(returnDivTxt));
         }, 100);
         highlightFleetTarget();
         onResChange(2);
@@ -15915,8 +15913,7 @@ class OGInfinity {
         let updateTimer = () => {
           lastTimer += 1e3;
           date = new Date(lastTimer);
-          const dateTxt = getFormatedDate(date.getTime(), "[d].[m].[y] - [G]:[i]:[s] ");
-          content.replaceChildren(document.createTextNode(dateTxt));
+          content.textContent = getFormatedDate(date.getTime(), "[d].[m].[y] - [G]:[i]:[s] ");
         };
         updateTimer();
         setInterval(() => updateTimer(), 500);
