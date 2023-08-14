@@ -19,7 +19,7 @@ module.exports = {
     "no-prototype-builtins": 0,
     indent: ["error", 2],
     "linebreak-style": ["error", "unix"],
-    quotes: ["error", "double"],
+    quotes: ["error", "double", { avoidEscape: true }],
     semi: ["error", "always"],
   },
 };
