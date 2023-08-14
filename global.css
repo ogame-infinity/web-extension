@@ -4185,6 +4185,10 @@ button.build-it_premium:hover {
   pointer-events: none;
 }
 
+#movement .ogl-date {
+  font-size: inherit;
+}
+
 .missionFleet img {
   opacity: 0.85;
 }
