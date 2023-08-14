@@ -816,14 +816,12 @@ input[type="password"]::selection {
 
 .ogl-dest .ogl-arrival-time {
   color: #ffd700eb;
-  font-style: italic;
 }
 
 .ogl-dest .ogl-return-time {
   color: #9556ce;
   color: #ffd700eb;
   opacity: 0.8;
-  font-style: italic;
 }
 
 .ogl-dest .ogl-arrival-time strong,
