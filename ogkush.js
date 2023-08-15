@@ -152,7 +152,9 @@ function toFormatedNumber(value, precision = null, units = false) {
       "",
       LocalizationStrings["unitKilo"],
       LocalizationStrings["unitMega"],
-      LocalizationStrings["unitMilliard"],
+      document.querySelector("#cookiebanner").getAttribute("data-locale").substring(0, 2) === "fr"
+        ? "G"
+        : LocalizationStrings["unitMilliard"],
       "T",
     ];
     const unrangifiedOrder = Math.floor(Math.log10(Math.abs(value)) / 3);
