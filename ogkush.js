@@ -16479,7 +16479,7 @@ class OGInfinity {
           de: "Fehlerberichte",
           en: "Bug reporting",
           es: "Reporte de errores",
-          fr: "Rapport de bogue",
+          fr: "Rapport de bug",
           tr: "Hata Bildirme",
         },
         /*8*/ {
@@ -16549,14 +16549,14 @@ class OGInfinity {
           de: "Kampfdaten",
           en: "Combats data",
           es: "Datos de combates",
-          fr: "Combat les données",
+          fr: "Données des Combats",
           tr: "Savaş Verileri",
         },
         /*18*/ {
           de: "Zieldaten",
           en: "Targets data",
           es: "Datos de objetivos",
-          fr: "Données cibles",
+          fr: "Données des cibles",
           tr: "Hedef Verileri",
         },
         /*19*/ {
@@ -16948,7 +16948,7 @@ class OGInfinity {
           de: "Beute",
           en: "Loot",
           es: "Botín",
-          fr: "Proie",
+          fr: "Pillage",
           tr: "Ganimet",
         },
         /*75*/ {
@@ -16969,7 +16969,7 @@ class OGInfinity {
           de: "Anpassen",
           en: "Adjust",
           es: "Ajuste",
-          fr: "Régler",
+          fr: "Ajuster",
           tr: "Ayarla",
         },
         /*78*/ {
@@ -16983,7 +16983,7 @@ class OGInfinity {
           de: "Aliens",
           en: "Aliens",
           es: "Alienígenas",
-          fr: "Extraterrestres",
+          fr: "Aliens",
           tr: "Yabancılar",
         },
         /*80*/ {
@@ -17004,7 +17004,7 @@ class OGInfinity {
           de: "Frühzeitig",
           en: "Early",
           es: "Adelanto",
-          fr: "De bonne heure",
+          fr: "En avance",
           tr: "Erken",
         },
         /*83*/ {
@@ -17018,7 +17018,7 @@ class OGInfinity {
           de: "Händler",
           en: "Merchant",
           es: "Mercader",
-          fr: "Marchande",
+          fr: "Marchands",
           tr: "Tüccar",
         },
         /*85*/ {
@@ -17158,7 +17158,7 @@ class OGInfinity {
           de: "Automatisches Löschen von wenig rentablen Berichten aktivieren/deaktivieren",
           en: "Toggle automatic removal of low rentability reports",
           es: "Activar/desactivar el borrado automático de los informes con baja rentabilidad",
-          fr: "Active/désactive la suppression automatique des rapports inintéréssants",
+          fr: "Active/désactive la suppression automatique des rapports non rentables",
           tr: "Düşük karlılık raporlarının otomatik kaldırmasını etkinleştir/devre dışı bırak",
         },
         /*105*/ {
@@ -17186,21 +17186,21 @@ class OGInfinity {
           de: "Kein Kampfschiff...",
           en: "No combat ship...",
           es: "Ninguna nave de combate...",
-          fr: "Pas de vaisseau de chasse...",
+          fr: "Pas de vaisseau militaire...",
           tr: "Savaş gemisi yok...",
         },
         /*109*/ {
           de: "Keine Spionagesonde...",
           en: "No Espionage Probe...",
           es: "Ninguna sonda de espionaje...",
-          fr: "Pas de sonde espion...",
+          fr: "Pas de sonde d'espionnage...",
           tr: "Casusluk Sondası yok...",
         },
         /*110*/ {
           de: "Kein Pathfinder...",
           en: "No Pathfinder...",
           es: "Ningún explorador...",
-          fr: "Pas d'explorateur...",
+          fr: "Pas d'éclaireur...",
           tr: "Rehber yok...",
         },
         /*111*/ {
@@ -17277,7 +17277,7 @@ class OGInfinity {
           de: "Die Amortisationszeit errechnet sich aus der Differenz der Gesamtproduktion und den Kosten für die Zielstufe. Ausreichende Energieversorgung und unveränderte globale Produktionsbooster (Spieler- und Allianzklasse, Offiziere) werden vorausgesetzt. Zur Bewertung der Ressourcen wird der angegebene Handelskurs verwendet. Bei Minen wird die Änderung der Gesamtproduktion durch erhöhtes Crawler-Limit berücksichtigt, dabei wird der Produktionsfaktor und eine eventuelle Begrenzung wie angegeben verwendet. Für die Astrophysik werden die Forschungskosten und die Kosten für den Bau von Minen auf der neuen Kolonie bis zum Durchschnittslevel berücksichtigt. Die Produktionsänderung wird durch die durchschnittliche Planetenparameter angenähert, da die tatsächliche Produktion von der Temperatur und der Position der neuen Kolonie abhängt. Baukosten für die Energieversorgung oder andere Anlagen werden nicht berücksichtigt.",
           en: "The payback period is calculated based on the difference in total production and the cost for the target level. Sufficient energy supply and unchanged global production boosters (player and alliance class, officers) are assumed. The configured trade rate is used to value the resources. For mines the change of total production dueto increased crawler limit is taken into account, using the settings from above. For Astrophysics the research cost and the cost of building mines to the average level on the new colony are taken into account. The change in production its approximated by the average planet parameters, because the actual production depends on the new colony's temperature and position. Building costs for energy supply or other facilities are not considered.",
           es: "El período de amortización está calculado basándose en la diferencia en la producción total y el coste para el nivel objetivo. Se asume un suficiente aprovisionamiento energético y que los mejoradores de producción (clases de jugador y alianza, oficiales) permanecen inalterados. El ratio de cambio configurado se usa para valorar los recursos. Para las minas, se tiene en cuenta el cambio de la producción total debido al incremento de taladradores, usando los ajustes superiores. Para la astrofísica, se tiene en cuenta el coste de investigación y el coste de construcción de minas al nivel promedio en la nueva colonia. El cambio en la producción es aproximado usando parámetros promedio para el planeta, porque la producción real depende de la temperatura y posición de la nueva colonia. No se tienen en cuenta costes de construcción de aprovisionamiento de energía ni de otras instalaciones.",
-          fr: "La période de récupération est calculée en fonction de la différence entre la production totale et le coût pour le niveau cible. Un approvisionnement énergétique suffisant et des boosters de production mondiaux inchangés (classe de joueur et d'alliance, officiers) sont supposés. Le taux d'échange configuré est utilisé pour évaluer les ressources. Pour les mines, le changement de production totale dû à l'augmentation de la limite de foreuses est pris en compte, en utilisant les paramètres ci-dessus. Pour l'astrophysique, le coût de recherche et le coût de construction des mines au niveau moyen de la nouvelle colonie sont pris en compte. Le changement de production est approximé par les paramètres moyens de la planète, car la production réelle dépend de la température et de la position de la nouvelle colonie. Les coûts de construction pour l'approvisionnement en énergie ou d'autres installations ne sont pas pris en compte.",
+          fr: "La période de remboursement est calculée en fonction de la différence entre la production totale et le coût pour le niveau cible. Un approvisionnement énergétique suffisant et des boosters de production globaux inchangés (classe de joueur et d'alliance, officiers) sont supposés. Le taux d'échange configuré est utilisé pour évaluer les ressources. Pour les mines, le changement de production totale dû à l'augmentation de la limite de foreuses est pris en compte, en utilisant les paramètres ci-dessus. Pour l'astrophysique, le coût de recherche et le coût de construction des mines au niveau moyen sur la nouvelle colonie sont pris en compte. Le changement de production est approximé par les paramètres moyens de la planète, car la production réelle dépend de la température et de la position de la nouvelle colonie. Les coûts de construction pour l'approvisionnement en énergie ou d'autres installations ne sont pas pris en compte.",
           tr: "Geri ödeme süresi, toplam üretimdeki farka ve hedef seviyenin maliyetine göre hesaplanır. Yeterli enerji arzı ve değişmeyen küresel üretim artırıcıları (oyuncu ve ittifak sınıfı, görevliler) varsayılır. Yapılandırılan ticaret oranı, değeri belirlemek için kullanılır. kaynaklar. Madenler için, artan paletli sınırına bağlı olarak toplam üretimdeki değişiklik, yukarıdan yapılan ayarlar kullanılarak dikkate alınır. Astrofizik için araştırma maliyeti ve yeni kolonide mayın inşa etme maliyeti ortalama seviyeye dikkate alınır. Üretimdeki değişiklik, ortalama gezegen parametrelerine yakındır, çünkü gerçek üretim yeni koloninin sıcaklığına ve konumuna bağlıdır. Enerji tedariki veya diğer tesisler için inşaat maliyetleri dikkate alınmaz.",
         },
         /*122*/ {
@@ -17305,7 +17305,7 @@ class OGInfinity {
           de: "Wenn aktiviert, wird die Anzahl der Crawler mit den derzeit gebauten Crawlern begrenzt.",
           en: "If activated, the number of crawlers will be limited with the currently built crawlers.",
           es: "Si está activado, el número de taladradores se limitará al número actual de construidos.",
-          fr: "S'il est activé, le nombre de foreuses sera limité aux foreuses actuellement construits.",
+          fr: "S'il est activé, le nombre de foreuses sera limité à celles actuellement construites.",
           tr: "Etkinleştirildiğinde, paletlilerin sayısı şu anda üretilen paletlilerle sınırlanır.",
         },
         /*126*/ {
@@ -17361,7 +17361,7 @@ class OGInfinity {
           de: "Beitragen oder Bugs melden",
           en: "Contribute or bug report",
           es: "Contribuir o reportar errores",
-          fr: "Contribuer ou signaler un bogue",
+          fr: "Contribuer ou signaler un bug",
           tr: "Katkıda bulunun veya hata bildirin",
         },
         /*134*/ {
@@ -17452,7 +17452,7 @@ class OGInfinity {
           de: "Abgeschlossenen Vorgang anzeigen",
           en: "Indicate finished process",
           es: "Indicar proceso terminado",
-          fr: "Indiquer le processus terminé",
+          fr: "Indiquer les processus terminé",
           tr: "Tamamlanmış işlemi belirt",
         },
         /*147*/ {
