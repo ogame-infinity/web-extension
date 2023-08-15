@@ -1923,10 +1923,10 @@ class OGInfinity {
                     roi === Infinity
                       ? that.getTranslatedText(118)
                       : `${that.getTranslatedText(119)}: ${toFormatedNumber(
-                          that.json.options.tradeRate[0]
-                        )}:${toFormatedNumber(that.json.options.tradeRate[1])}:${toFormatedNumber(
-                          that.json.options.tradeRate[2]
-                        )}`,
+                        that.json.options.tradeRate[0]
+                      )}:${toFormatedNumber(that.json.options.tradeRate[1])}:${toFormatedNumber(
+                        that.json.options.tradeRate[2]
+                      )}`,
                 })
               );
             roiTimeDiv.textContent = roi === Infinity ? "∞" : formatTimeWrapper(roi, 2, true, " ", false, "");
@@ -2109,8 +2109,8 @@ class OGInfinity {
               technoId == 22
                 ? resourcesBar.resources.metal.production
                 : technoId == 23
-                ? resourcesBar.resources.crystal.production
-                : resourcesBar.resources.deuterium.production;
+                  ? resourcesBar.resources.crystal.production
+                  : resourcesBar.resources.deuterium.production;
             let storageDiv =
               durationDiv.parentNode.querySelector(".narrow .storage_size") ||
               durationDiv.parentNode.insertBefore(
@@ -2727,9 +2727,9 @@ class OGInfinity {
               lvlSpan.textContent = toFormatedNumber(tolvl);
               tolvl != 0
                 ? lvl.replaceChildren(
-                    document.createTextNode("Lvl "),
-                    createDOM("strong", {}, `${toFormatedNumber(tolvl)}`)
-                  )
+                  document.createTextNode("Lvl "),
+                  createDOM("strong", {}, `${toFormatedNumber(tolvl)}`)
+                )
                 : lvl.replaceChildren();
               lvlFromTo.replaceChildren(
                 createDOM("strong", {}, `${toFormatedNumber(baseLvl)}`),
@@ -4556,18 +4556,18 @@ class OGInfinity {
       : ["#656565", "#83ba33", "#b73536", "#3d4800"];
     let labels = lf
       ? [
-          this.getTranslatedText(51, "text"),
-          this.getTranslatedText(52, "text"),
-          this.getTranslatedText(53, "text"),
-          this.getTranslatedText(54, "text"),
-          this.getTranslatedText(89, "text"),
-        ]
+        this.getTranslatedText(51, "text"),
+        this.getTranslatedText(52, "text"),
+        this.getTranslatedText(53, "text"),
+        this.getTranslatedText(54, "text"),
+        this.getTranslatedText(89, "text"),
+      ]
       : [
-          this.getTranslatedText(51, "text"),
-          this.getTranslatedText(52, "text"),
-          this.getTranslatedText(53, "text"),
-          this.getTranslatedText(54, "text"),
-        ];
+        this.getTranslatedText(51, "text"),
+        this.getTranslatedText(52, "text"),
+        this.getTranslatedText(53, "text"),
+        this.getTranslatedText(54, "text"),
+      ];
     let config = {
       type: "doughnut",
       data: {
@@ -4702,31 +4702,31 @@ class OGInfinity {
     );
     let playerClassName;
     switch (this.playerClass) {
-      case PLAYER_CLASS_MINER:
-        playerClassName = "miner";
-        break;
-      case PLAYER_CLASS_WARRIOR:
-        playerClassName = "warrior";
-        break;
-      case PLAYER_CLASS_EXPLORER:
-        playerClassName = "explorer";
-        break;
-      default:
-        playerClassName = "";
+    case PLAYER_CLASS_MINER:
+      playerClassName = "miner";
+      break;
+    case PLAYER_CLASS_WARRIOR:
+      playerClassName = "warrior";
+      break;
+    case PLAYER_CLASS_EXPLORER:
+      playerClassName = "explorer";
+      break;
+    default:
+      playerClassName = "";
     }
     let allianceClassName;
     switch (this.json.allianceClass) {
-      case ALLY_CLASS_MINER:
-        allianceClassName = "trader";
-        break;
-      case ALLY_CLASS_WARRIOR:
-        allianceClassName = "warrior";
-        break;
-      case ALLY_CLASS_EXPLORER:
-        allianceClassName = "explorer";
-        break;
-      default:
-        allianceClassName = "";
+    case ALLY_CLASS_MINER:
+      allianceClassName = "trader";
+      break;
+    case ALLY_CLASS_WARRIOR:
+      allianceClassName = "warrior";
+      break;
+    case ALLY_CLASS_EXPLORER:
+      allianceClassName = "explorer";
+      break;
+    default:
+      allianceClassName = "";
     }
     playerDiv.appendChild(
       createDOM("div", {
@@ -5110,21 +5110,21 @@ class OGInfinity {
                             <div class="ptreBestReport">
                                 <div>
                                     <div><b class="ogl_fleet"><i class="material-icons">military_tech</i>${this.formatToUnits(
-                                      result.top_sr_fleet_points
-                                    )} pts</b></div>
+    result.top_sr_fleet_points
+  )} pts</b></div>
                                     <div><b>${new Date(result.top_sr_timestamp * 1000).toLocaleDateString(
-                                      "fr-FR"
-                                    )}</b></div>
+    "fr-FR"
+  )}</b></div>
                                 </div>
                                 <div>
                                     <a class="ogl_button" target="_blank" href="${result.top_sr_link}">${
-            this.gameLang == "fr" ? "Détails du rapport" : "Report Details"
-          }</a>
+  this.gameLang == "fr" ? "Détails du rapport" : "Report Details"
+}</a>
                                     <a class="ogl_button" target="_blank" href="https://ptre.chez.gg/?country=${
-                                      this.gameLang
-                                    }&univers=${this.universe}&player_id=${player.id}">${
-            this.gameLang == "fr" ? "Profil de la cible" : "Target Profile"
-          }</a>
+  this.gameLang
+}&univers=${this.universe}&player_id=${player.id}">${
+  this.gameLang == "fr" ? "Profil de la cible" : "Target Profile"
+}</a>
                                 </div>
                             </div>
                             <div class="splitLine"></div>
@@ -5384,15 +5384,25 @@ class OGInfinity {
           }
 
           const msgExpeditionClass = `ogk-${expeditionData.result.toLowerCase()}`;
+          const labels = {
+            "ogk-metal": this.getTranslatedText(0, "res", false),
+            "ogk-crystal": this.getTranslatedText(1, "res", false),
+            "ogk-deuterium": this.getTranslatedText(2, "res", false),
+            "ogk-am": this.getTranslatedText(3, "res", false),
+            "ogk-fleet": this.getTranslatedText(63, "text", false),
+            "ogk-object": this.getTranslatedText(78, "text", false),
+            "ogk-aliens": this.getTranslatedText(79, "text", false),
+            "ogk-pirates": this.getTranslatedText(80, "text", false),
+            "ogk-late": this.getTranslatedText(81, "text", false),
+            "ogk-early": this.getTranslatedText(82, "text", false),
+            "ogk-bhole": this.getTranslatedText(71, "text", false),
+            "ogk-merchant": this.getTranslatedText(84, "text", false),
+            "ogk-void": this.getTranslatedText(83, "text", false),
+          };
           const msgTitle = msg.querySelector(".msg_head .msg_title");
           msgTitle.append(
             " ",
-            createDOM(
-              "span",
-              { class: `ogk-label ${msgExpeditionClass}` },
-              // TODO: Need use localized languaje
-              this.json.expeditions[id].result
-            )
+            createDOM("span", { class: `ogk-label ${msgExpeditionClass}` }, labels[msgExpeditionClass])
           );
           msg.classList.add(msgExpeditionClass);
         };
@@ -10186,23 +10196,23 @@ class OGInfinity {
             window.location.pathname
           }?page=ingame&component=shipyard&cp=${planetId}&techId202=${sc}"></a><span>${toFormatedNumber(sc, 0)}</span>
           <a tech-id="203" class="ogl-option noShips ogl-fleet-ship ogl-fleet-203" href="https://${
-            window.location.host
-          }${
-            window.location.pathname
-          }?page=ingame&component=shipyard&cp=${planetId}&techId203=${lc}"></a><span>${toFormatedNumber(lc, 0)}</span>
+  window.location.host
+}${
+  window.location.pathname
+}?page=ingame&component=shipyard&cp=${planetId}&techId203=${lc}"></a><span>${toFormatedNumber(lc, 0)}</span>
           <a tech-id="219" class="ogl-option noShips ogl-fleet-ship ogl-fleet-219" href="https://${
-            window.location.host
-          }${
-            window.location.pathname
-          }?page=ingame&component=shipyard&cp=${planetId}&techId219=${pf}"></a><span>${toFormatedNumber(pf, 0)}</span>
+  window.location.host
+}${
+  window.location.pathname
+}?page=ingame&component=shipyard&cp=${planetId}&techId219=${pf}"></a><span>${toFormatedNumber(pf, 0)}</span>
           <a tech-id="209" class="ogl-option noShips ogl-fleet-ship ogl-fleet-209" href="https://${
-            window.location.host
-          }${
-            window.location.pathname
-          }?page=ingame&component=shipyard&cp=${planetId}&techId209=${rec}"></a><span>${toFormatedNumber(
-            rec,
-            0
-          )}</span>`
+  window.location.host
+}${
+  window.location.pathname
+}?page=ingame&component=shipyard&cp=${planetId}&techId209=${rec}"></a><span>${toFormatedNumber(
+  rec,
+  0
+)}</span>`
         )
       );
     }
@@ -10941,22 +10951,22 @@ class OGInfinity {
       if (!this.isMobile) {
         (this.hasLifeforms
           ? [
-              metalFiller,
-              document.querySelector("input#metal"),
-              crystalFiller,
-              document.querySelector("input#crystal"),
-              deutFiller,
-              document.querySelector("input#deuterium"),
-              document.querySelector("input#food"),
-            ]
+            metalFiller,
+            document.querySelector("input#metal"),
+            crystalFiller,
+            document.querySelector("input#crystal"),
+            deutFiller,
+            document.querySelector("input#deuterium"),
+            document.querySelector("input#food"),
+          ]
           : [
-              metalFiller,
-              document.querySelector("input#metal"),
-              crystalFiller,
-              document.querySelector("input#crystal"),
-              deutFiller,
-              document.querySelector("input#deuterium"),
-            ]
+            metalFiller,
+            document.querySelector("input#metal"),
+            crystalFiller,
+            document.querySelector("input#crystal"),
+            deutFiller,
+            document.querySelector("input#deuterium"),
+          ]
         ).forEach((elem) => {
           elem.addEventListener("keyup", (event) => {
             const CODE = event.code;
@@ -10965,16 +10975,16 @@ class OGInfinity {
             if (CODE === "ArrowUp" || CODE === "ArrowDown" || CODE === "KeyK") {
               let add = event.ctrlKey ? 100 : event.shiftKey ? 10 : 1;
               switch (CODE) {
-                case "ArrowUp":
-                  value = value + add;
-                  break;
-                case "ArrowDown":
-                  value = Math.max(value - add, 0);
-                  break;
-                case "KeyK":
-                  factor = value > 0 && elem.classList.contains("checkThousandSeparator") ? 1 : 1000;
-                  value = (value || 1) * factor;
-                  break;
+              case "ArrowUp":
+                value = value + add;
+                break;
+              case "ArrowDown":
+                value = Math.max(value - add, 0);
+                break;
+              case "KeyK":
+                factor = value > 0 && elem.classList.contains("checkThousandSeparator") ? 1 : 1000;
+                value = (value || 1) * factor;
+                break;
               }
             }
             event.target.value = toFormatedNumber(value);
@@ -10983,22 +10993,22 @@ class OGInfinity {
       } else {
         (this.hasLifeforms
           ? [
-              metalFiller,
-              document.querySelector("input#metal"),
-              crystalFiller,
-              document.querySelector("input#crystal"),
-              deutFiller,
-              document.querySelector("input#deuterium"),
-              document.querySelector("input#food"),
-            ]
+            metalFiller,
+            document.querySelector("input#metal"),
+            crystalFiller,
+            document.querySelector("input#crystal"),
+            deutFiller,
+            document.querySelector("input#deuterium"),
+            document.querySelector("input#food"),
+          ]
           : [
-              metalFiller,
-              document.querySelector("input#metal"),
-              crystalFiller,
-              document.querySelector("input#crystal"),
-              deutFiller,
-              document.querySelector("input#deuterium"),
-            ]
+            metalFiller,
+            document.querySelector("input#metal"),
+            crystalFiller,
+            document.querySelector("input#crystal"),
+            deutFiller,
+            document.querySelector("input#deuterium"),
+          ]
         ).forEach((elem) => {
           elem.addEventListener("input", (event) => {
             if (event.data == "K" || event.data == "k" || event.data == "0k") {
@@ -12075,10 +12085,10 @@ class OGInfinity {
         let htmlDocument = new window.DOMParser().parseFromString(str, "text/html");
         let expeditionBonus = htmlDocument.querySelector("div[data-category='bonus-16'] .bonusValues")
           ? fromFormatedNumber(
-              htmlDocument.querySelector("div[data-category='bonus-16'] .bonusValues").textContent.split("/")[0].trim(),
-              false,
-              true
-            ) / 100 || 0
+            htmlDocument.querySelector("div[data-category='bonus-16'] .bonusValues").textContent.split("/")[0].trim(),
+            false,
+            true
+          ) / 100 || 0
           : 0;
         let crawlerProductionBonus = 0;
         let crawlerConsumptionBonus = 0;
@@ -18888,8 +18898,8 @@ class OGInfinity {
             this.json.options.collect.ship == 202
               ? "smallCargo"
               : this.json.options.collect.ship == 219
-              ? "pathFinder"
-              : "largeCargo"
+                ? "pathFinder"
+                : "largeCargo"
           }`,
         })
       );
@@ -18920,8 +18930,8 @@ class OGInfinity {
           this.json.options.collect.ship == 202
             ? "smallCargo"
             : this.json.options.collect.ship == 219
-            ? "pathFinder"
-            : "largeCargo"
+              ? "pathFinder"
+              : "largeCargo"
         }`;
       };
       let updateDefaultCollectMission = (mission) => {
@@ -18933,8 +18943,8 @@ class OGInfinity {
           this.json.options.collect.ship == 202
             ? "smallCargo"
             : this.json.options.collect.ship == 219
-            ? "pathFinder"
-            : "largeCargo"
+              ? "pathFinder"
+              : "largeCargo"
         }`;
       };
       sc.addEventListener("click", () => updateDefaultCollectShip(202));
@@ -19182,16 +19192,16 @@ class OGInfinity {
             const add = e.ctrlKey ? 100 : e.shiftKey ? 10 : 1;
             let factor;
             switch (CODE) {
-              case "ArrowUp":
-                element.value = toFormatedNumber(value + add);
-                break;
-              case "ArrowDown":
-                element.value = toFormatedNumber(Math.max(value - add, 0));
-                break;
-              case "KeyK":
-                factor = value > 0 && element.classList.contains("checkThousandSeparator") ? 1 : 1000;
-                element.value = toFormatedNumber((value || 1) * factor);
-                break;
+            case "ArrowUp":
+              element.value = toFormatedNumber(value + add);
+              break;
+            case "ArrowDown":
+              element.value = toFormatedNumber(Math.max(value - add, 0));
+              break;
+            case "KeyK":
+              factor = value > 0 && element.classList.contains("checkThousandSeparator") ? 1 : 1000;
+              element.value = toFormatedNumber((value || 1) * factor);
+              break;
             }
           }
         }
