@@ -39,7 +39,7 @@ Then, make sure to format the code according to our rules before doing any new _
 
 ## Automatic packaging and deployment
 
-GitHub actions are used to automatically package and deploy new updates.
+GitHub's actions are used to automatically package and deploy new updates.
 
 ### Manual packaging
 

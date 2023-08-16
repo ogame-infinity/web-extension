@@ -5,7 +5,8 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "format": "npx prettier --write *.js"
+    "format": "npx prettier --write *.js",
+    "check": "npx eslint *.js"
   },
   "repository": {
     "type": "git",
@@ -28,9 +29,11 @@
   },
   "homepage": "https://github.com/ogame-infinity/web-extension#readme",
   "devDependencies": {
-    "eslint": "^8.25.0",
+    "eslint": "^8.47.0",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.26.0",
-    "prettier": "2.7.1"
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-import": "^2.28.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "prettier": "3.0.2"
   }
 }
