@@ -5386,15 +5386,25 @@ class OGInfinity {
           }
 
           const msgExpeditionClass = `ogk-${expeditionData.result.toLowerCase()}`;
+          const labels = {
+            "ogk-metal": this.getTranslatedText(0, "res", false),
+            "ogk-crystal": this.getTranslatedText(1, "res", false),
+            "ogk-deuterium": this.getTranslatedText(2, "res", false),
+            "ogk-am": this.getTranslatedText(3, "res", false),
+            "ogk-fleet": this.getTranslatedText(63, "text", false),
+            "ogk-object": this.getTranslatedText(78, "text", false),
+            "ogk-aliens": this.getTranslatedText(79, "text", false),
+            "ogk-pirates": this.getTranslatedText(80, "text", false),
+            "ogk-late": this.getTranslatedText(81, "text", false),
+            "ogk-early": this.getTranslatedText(82, "text", false),
+            "ogk-bhole": this.getTranslatedText(71, "text", false),
+            "ogk-merchant": this.getTranslatedText(84, "text", false),
+            "ogk-void": this.getTranslatedText(83, "text", false),
+          };
           const msgTitle = msg.querySelector(".msg_head .msg_title");
           msgTitle.append(
             " ",
-            createDOM(
-              "span",
-              { class: `ogk-label ${msgExpeditionClass}` },
-              // TODO: Need use localized languaje
-              this.json.expeditions[id].result
-            )
+            createDOM("span", { class: `ogk-label ${msgExpeditionClass}` }, labels[msgExpeditionClass])
           );
           msg.classList.add(msgExpeditionClass);
         };
