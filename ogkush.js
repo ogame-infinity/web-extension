@@ -277,9 +277,12 @@ const SHIP_EXPEDITION_POINTS = {
   205: 50,
   206: 135,
   207: 300,
+  208: 150,
+  209: 80,
   210: 5,
   211: 375,
   213: 550,
+  214: 45000,
   215: 350,
   218: 700,
   219: 115,
@@ -1595,6 +1598,9 @@ class OGInfinity {
     this.json.options.spyFret = this.json.options.spyFret || 202;
     this.json.options.harvestMission = this.json.options.harvestMission || 4;
     this.json.options.foreignMission = this.json.options.foreignMission || 3;
+    this.json.options.expeditionCargoShip = this.json.options.expeditionCargoShip || 202;
+    this.json.options.expeditionCombatShip = this.json.options.expeditionCombatShip || 218;
+    this.json.options.expeditionLimitCargo = this.json.options.expeditionLimitCargo || 1;
     this.json.options.expeditionSendCombat = this.json.options.expeditionSendCombat === true ? true : false;
     this.json.options.expeditionSendProbe = this.json.options.expeditionSendProbe === true ? true : false;
     this.json.options.expeditionMission = this.json.options.expeditionMission || 15;
@@ -11805,29 +11811,15 @@ class OGInfinity {
   }
 
   expedition() {
-    if (this.page == "fleetdispatch") {
-      let level = EXPEDITION_TOP1_POINTS.findIndex((points) => points > this.json.topScore);
-      level = level !== -1 ? level : EXPEDITION_TOP1_POINTS.length;
-      const maxExpeditionPoints = EXPEDITION_EXPEDITION_POINTS[level];
-      let maxResources = EXPEDITION_MAX_RESOURCES[level];
-      const minPT = Math.ceil(maxExpeditionPoints / SHIP_EXPEDITION_POINTS[202]);
-      const minGT = Math.ceil(maxExpeditionPoints / SHIP_EXPEDITION_POINTS[203]);
-
-      maxResources *= 2; // Pathfinder bonus on expedition
-      if (this.playerClass == PLAYER_CLASS_EXPLORER) {
-        maxResources *= (1 + this.json.explorerBonusIncreasedExpeditionOutcome) * this.json.speed;
-      }
-
-      if (this.json.lifeformBonus && this.json.lifeformBonus[this.current.id])
-        maxResources *= 1 + this.json.lifeformBonus[this.current.id].expeditionBonus || 0;
-      let maxPT = Math.max(minPT, this.calcNeededShips({ fret: 202, resources: maxResources }));
-      let maxGT = Math.max(minGT, this.calcNeededShips({ fret: 203, resources: maxResources }));
+    if (this.page == "fleetdispatch" && fleetDispatcher.shipsOnPlanet.length !== 0 && !fleetDispatcher.isOnVacation) {
       if (!document.querySelector("#allornone .allornonewrap")) return;
+
+      // TODO: refactor &improve UI, add combatShip & limitCargo choice
       let expCargoChoice = createDOM("div", { class: "ogk-expedition-cargo" });
-      let expType = this.json.options.expFret || 203;
-      let expCount = expType == 202 ? maxPT : maxGT;
+      let expType = this.json.options.expeditionCargoShip;
       let expProbe = this.json.options.expeditionSendProbe;
       let expCombat = this.json.options.expeditionSendCombat;
+
       let btnExpe = document
         .querySelector("#allornone .secondcol")
         .appendChild(createDOM("button", { class: `ogl-expedition ${expType == 203 ? "largeCargo" : "smallCargo"} ` }));
@@ -11862,71 +11854,143 @@ class OGInfinity {
         }`;
       });
       let updateDefaultExpoShip = (id) => {
-        this.json.options.expFret = id;
+        this.json.options.expeditionCargoShip = id;
         this.saveData();
         document.querySelector(".ogl-expedition").classList = `ogl-expedition ${
-          this.json.options.expFret == 203 ? "largeCargo" : "smallCargo"
+          this.json.options.expeditionCargoShip == 203 ? "largeCargo" : "smallCargo"
         } `;
       };
       sc.addEventListener("click", () => updateDefaultExpoShip(202));
       lc.addEventListener("click", () => updateDefaultExpoShip(203));
       btnExpe.addEventListener("mouseover", () => this.tooltip(btnExpe, expCargoChoice, false, false, 750));
-      let coords = this.current.coords.split(":");
+
       btnExpe.addEventListener("click", () => {
         document.querySelector("#resetall").click();
         this.expedition = true;
         this.collect = false;
         document.querySelector("#missionsDiv").setAttribute("data", "false");
-        fleetDispatcher.mission = 15;
         this.json.href = undefined;
         this.saveData();
-        let expType = this.json.options.expFret || 203;
-        let expCount = expType == 202 ? maxPT : maxGT;
-        let prio = [218, 213, 211, 215, 207];
-        let bigship = 0;
-        prio.forEach((shipID) => {
-          if (
-            bigship == 0 &&
-            document.querySelector(`.technology[data-technology="${shipID}"] .amount`).getAttribute("data-value") > 0
-          ) {
-            bigship = shipID;
-          }
+
+        let level = EXPEDITION_TOP1_POINTS.findIndex((points) => points > this.json.topScore);
+        level = level !== -1 ? level : EXPEDITION_TOP1_POINTS.length;
+        const maxExpeditionPoints = EXPEDITION_EXPEDITION_POINTS[level];
+        let maxResources = EXPEDITION_MAX_RESOURCES[level];
+        // Explorer class bonus
+        if (this.playerClass == PLAYER_CLASS_EXPLORER) {
+          maxResources *= (1 + this.json.explorerBonusIncreasedExpeditionOutcome) * this.json.speed;
+        }
+        // LF bonus
+        if (this.json.lifeformBonus && this.json.lifeformBonus[this.current.id]) {
+          maxResources *= 1 + this.json.lifeformBonus[this.current.id].expeditionBonus || 0;
+        }
+
+        const availableShips = {
+          202: 0,
+          203: 0,
+          204: 0,
+          205: 0,
+          206: 0,
+          207: 0,
+          208: 0,
+          209: 0,
+          210: 0,
+          211: 0,
+          213: 0,
+          214: 0,
+          215: 0,
+          218: 0,
+          219: 0,
+        };
+        const selectedShips = {
+          202: 0,
+          203: 0,
+          204: 0,
+          205: 0,
+          206: 0,
+          207: 0,
+          208: 0,
+          209: 0,
+          210: 0,
+          211: 0,
+          213: 0,
+          214: 0,
+          215: 0,
+          218: 0,
+          219: 0,
+        };
+
+        fleetDispatcher.shipsOnPlanet.forEach((ship) => {
+          availableShips[ship.id] = ship.number;
         });
-        let inputs = document.querySelectorAll(".ogl-coords input");
+        let warningText = "";
+
+        if (availableShips[219] > 0) {
+          selectedShips[219] = 1;
+          this.selectShips(219, 1);
+          maxResources *= 2; // Pathfinder bonus
+        } else {
+          warningText += this.getTranslatedText(110) + "<br>";
+        }
+
+        if (this.json.options.expeditionSendProbe) {
+          if (availableShips[210] > 0) {
+            selectedShips[210] = 1;
+            this.selectShips(210, 1);
+          } else {
+            warningText += this.getTranslatedText(109) + "<br>";
+          }
+        }
+
+        if (this.json.options.expeditionSendCombat) {
+          let combatShip = this.json.options.expeditionCombatShip;
+          if (availableShips[combatShip] === 0) {
+            const combatShipPriority = [218, 213, 211, 215, 207, 206, 205, 204];
+            combatShip = combatShipPriority.find((ship) => availableShips[ship] > 0);
+          }
+          if (!!combatShip) {
+            selectedShips[combatShip] = 1;
+            this.selectShips(combatShip, 1);
+          } else {
+            warningText += this.getTranslatedText(108) + "<br>";
+          }
+        }
+
+        let expeditionPoints = 0;
+        for (const ship in selectedShips) {
+          expeditionPoints += selectedShips[ship] * SHIP_EXPEDITION_POINTS[ship];
+        }
+        let cargoCapacity = 0;
+        for (const ship in selectedShips) {
+          cargoCapacity += selectedShips[ship] * this.json.ships[ship].cargoCapacity;
+        }
+        maxResources = Math.floor(maxResources * this.json.options.expeditionLimitCargo);
+        const minSC = Math.ceil((maxExpeditionPoints - expeditionPoints) / SHIP_EXPEDITION_POINTS[202]);
+        const minBC = Math.ceil((maxExpeditionPoints - expeditionPoints) / SHIP_EXPEDITION_POINTS[203]);
+        const maxSC = Math.max(minSC, this.calcNeededShips({ fret: 202, resources: maxResources - cargoCapacity }));
+        const maxBC = Math.max(minBC, this.calcNeededShips({ fret: 203, resources: maxResources - cargoCapacity }));
+        const cargoShip = this.json.options.expeditionCargoShip;
+        const cargoShipsNeeded = cargoShip === 202 ? maxSC : maxBC;
+
+        if (availableShips[cargoShip] >= cargoShipsNeeded) {
+          selectedShips[cargoShip] = cargoShipsNeeded;
+          this.selectShips(cargoShip, selectedShips[cargoShip]);
+        } else {
+          warningText += this.getTranslatedText(107) + "<br>";
+        }
+
+        if (warningText.length > 0) fadeBox(warningText, true);
+        document.querySelector(".send_none").click();
+        const inputs = document.querySelectorAll(".ogl-coords input");
+        const coords = this.current.coords.split(":");
         inputs[0].value = coords[0];
         inputs[1].value = coords[1];
         inputs[2].value = 16;
-        let expShips = [0, 0, 0, 0];
-        shipsOnPlanet.forEach((ship) => {
-          if (ship.id == expType) expShips[0] = this.selectShips(ship.id, expCount);
-          else if (this.json.options.expeditionSendCombat && ship.id == bigship)
-            expShips[1] = this.selectShips(ship.id, 1);
-          else if (this.json.options.expeditionSendProbe && ship.id == 210) expShips[2] = this.selectShips(ship.id, 1);
-          else if (ship.id == 219) expShips[3] = this.selectShips(ship.id, 1);
-        });
-        let fadeText = "";
-        let noFade = true;
-        if (expShips[0] != expCount) {
-          fadeText += this.getTranslatedText(107) + "<br>";
-          noFade = false;
-        }
-        if (this.json.options.expeditionSendCombat && expShips[1] != 1) {
-          fadeText += this.getTranslatedText(108) + "<br>";
-          noFade = false;
-        }
-        if (this.json.options.expeditionSendProbe && expShips[2] != 1) {
-          fadeText += this.getTranslatedText(109) + "<br>";
-          noFade = false;
-        }
-        if (expShips[3] != 1) {
-          fadeText += this.getTranslatedText(110) + "<br>";
-          noFade = false;
-        }
-        if (!noFade) fadeBox(fadeText, true);
-        document.querySelector(".send_none").click();
+        fleetDispatcher.mission = 15;
         fleetDispatcher.targetPlanet.type = 1;
         fleetDispatcher.targetPlanet.position = 16;
-        document.querySelector("#expeditiontime").value = this.json.options.expeditionDefaultTime || 1;
+        document.querySelector("#expeditiontime").value = this.json.options.expeditionDefaultTime;
+        document.querySelector("#expeditiontime + .dropdown > a").textContent = this.json.options.expeditionDefaultTime;
         fleetDispatcher.refreshTarget();
         fleetDispatcher.updateTarget();
         fleetDispatcher.fetchTargetPlayerData();
