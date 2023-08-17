@@ -15,6 +15,10 @@ function _buildRefererEvent(referer) {
   return DATASET_NAME.concat(callbackToken).concat("-").concat(referer);
 }
 
+function _isFirefox() {
+  return navigator.userAgent.indexOf("Firefox") > 0;
+}
+
 /**
  * @typedef {object} RequestCallbackEvent
  * @property {string} referer - Unique request identifier
@@ -100,14 +104,19 @@ export function contentContextInit(callbackCommandMap) {
   document.documentElement.dataset[DATASET_NAME] = callbackToken;
   document.addEventListener(DATASET_NAME.concat(callbackToken), (eRequest) => {
     router.resolve(eRequest.detail).then((response) => {
-      const eResponse = new CustomEvent(_buildRefererEvent(response.referer), { detail: response });
+      let clone = response;
+      if (_isFirefox()) {
+        clone = cloneInto(response, document.defaultView);
+      }
+
+      const eResponse = new CustomEvent(_buildRefererEvent(response.referer), { detail: clone });
       document.dispatchEvent(eResponse);
     });
   });
 }
 
 export function pageContextInit() {
-  if (chrome.runtime) {
+  if (window.chrome !== undefined && window.chrome?.runtime) {
     throw new Error("Invalid context execution");
   }
 

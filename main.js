@@ -1,5 +1,5 @@
 // import { contentContextInit } from "./util/service.callbackEvent.js";
-import("./util/service.callbackEvent.js").then((module) => {
+import(chrome.runtime.getURL("./util/service.callbackEvent.js")).then((module) => {
   module.contentContextInit({
     ptre: {
       galaxy: function (changes, ptreKey = null, serverTime = null) {
