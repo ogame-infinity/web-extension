@@ -5120,13 +5120,13 @@ class OGInfinity {
                                 </div>
                                 <div>
                                     <a class="ogl_button" target="_blank" href="${result.top_sr_link}">${
-            this.gameLang == "fr" ? "Détails du rapport" : "Report Details"
-          }</a>
+                                      this.gameLang == "fr" ? "Détails du rapport" : "Report Details"
+                                    }</a>
                                     <a class="ogl_button" target="_blank" href="https://ptre.chez.gg/?country=${
                                       this.gameLang
                                     }&univers=${this.universe}&player_id=${player.id}">${
-            this.gameLang == "fr" ? "Profil de la cible" : "Target Profile"
-          }</a>
+                                      this.gameLang == "fr" ? "Profil de la cible" : "Target Profile"
+                                    }</a>
                                 </div>
                             </div>
                             <div class="splitLine"></div>
