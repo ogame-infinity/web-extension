@@ -1,3 +1,14 @@
+// import { contentContextInit } from "./util/service.callbackEvent.js";
+import(chrome.runtime.getURL("./util/service.callbackEvent.js")).then((module) => {
+  module.contentContextInit({
+    ptre: {
+      galaxy: function (changes, ptreKey = null, serverTime = null) {
+        return dataHelper.scan(changes, ptreKey, serverTime);
+      },
+    },
+  });
+});
+
 class DataHelper {
   constructor(universe) {
     this.universe = universe;
@@ -204,22 +215,7 @@ class DataHelper {
       }
     });
     this.saveData();
-    if (Object.keys(ptrePosition).length > 0) {
-      //debugger;
-      this.updatePtreGalaxy(ptrePosition);
-    }
-  }
-
-  updatePtreGalaxy(ptrePosition) {
-    fetch("https://ptre.chez.gg/scripts/api_galaxy_import_infos.php?tool=infinity", {
-      priority: "low",
-      method: "POST",
-      body: JSON.stringify(ptrePosition),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.code != 1) console.log("Can't send data to PTRE");
-      });
+    return ptrePosition;
   }
 
   saveData() {
@@ -523,9 +519,7 @@ window.addEventListener(
   },
   false
 );
-document.addEventListener("ogi-galaxy", function (e) {
-  dataHelper.scan(e.detail.changes, e.detail.ptreKey, e.detail.serverTime);
-});
+
 document.addEventListener("ogi-clear", function (e) {
   dataHelper.clearData();
 });

@@ -1,5 +1,11 @@
+import { getLogger } from "./util/logger.js";
+import * as ptreService from "./util/service.ptre.js";
+import { pageContextInit, pageContextRequest } from "./util/service.callbackEvent.js";
+
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 const VERSION = "__VERSION__";
+const logger = getLogger();
+pageContextInit();
 
 var dataHelper = (function () {
   var requestId = 0;
@@ -87,33 +93,6 @@ if (redirect && redirect.indexOf("https") > -1) {
     };
   } else requestAnimationFrame(() => goodbyeTipped());
 })();
-
-const logger = (function () {
-  /** @param {Function} on */
-  function print(on) {
-    /**
-     * @param {string} message
-     * @param {any[]} data
-     */
-    return function (message, ...data) {
-      on(
-        `%c OGame Infinity/v${VERSION} %c > ${message}`,
-        "background-color: #ebf4fb;color:#004ccc;font-family:monospace;border-radius:0.5em",
-        "color: black",
-        ...data
-      );
-    };
-  }
-
-  return {
-    debug: print(console.debug),
-    error: print(console.error),
-    info: print(console.info),
-    log: print(console.log),
-    warn: print(console.warn),
-  };
-})();
-
 function createDOM(element, attributes, textContent) {
   const e = document.createElement(element);
   for (const key in attributes) {
@@ -4012,7 +3991,14 @@ class OGInfinity {
 
     data.serverTime = serverTime && typeof serverTime.getTime !== "undefined" ? serverTime.getTime() : null;
     data.ptreKey = this.json.options.ptreTK ?? null;
-    document.dispatchEvent(new CustomEvent("ogi-galaxy", { detail: data }), true, true);
+    pageContextRequest("ptre", "galaxy", data.changes, data.ptreKey, data.serverTime)
+      .then((value) => {
+        if (Object.keys(value.response).length > 0) {
+          ptreService.updateGalaxy(value.response);
+        }
+      })
+      .finally(() => "nothing");
+    //document.dispatchEvent(new CustomEvent("ogi-galaxy", { detail: data }), true, true);
 
     document.querySelectorAll("div:not(.ogl-target-list) .ogl-stalkPlanets").forEach((reset) => {
       this.refreshStalk(reset);
@@ -5100,14 +5086,12 @@ class OGInfinity {
     }
 
     let cleanPlayerName = encodeURIComponent(player.name);
-    this.getJSON(
-      `https://ptre.chez.gg/scripts/oglight_get_player_infos.php?tool=infinity&team_key=${this.json.options.ptreTK}&pseudo=${cleanPlayerName}&player_id=${player.id}&input_frame=${frame}`,
-      (result) => {
-        if (result.code == 1) {
-          let arrData = result.activity_array.succes == 1 ? JSON.parse(result.activity_array.activity_array) : null;
-          let checkData = result.activity_array.succes == 1 ? JSON.parse(result.activity_array.check_array) : null;
+    ptreService.getPlayerInfos(this.json.options.ptreTK, cleanPlayerName, player.id, frame).then((result) => {
+      if (result.code == 1) {
+        let arrData = result.activity_array.succes == 1 ? JSON.parse(result.activity_array.activity_array) : null;
+        let checkData = result.activity_array.succes == 1 ? JSON.parse(result.activity_array.check_array) : null;
 
-          container.html(`
+        container.html(`
                             <h3>${this.gameLang == "fr" ? "Meilleur Rapport" : "Best Report"} :</h3>
                             <div class="ptreBestReport">
                                 <div>
@@ -5142,56 +5126,53 @@ class OGInfinity {
                             </ul>-->
                         `);
 
-          ["last24h", "2days", "3days", "week", "2weeks", "month"].forEach((f) => {
-            let btn = container.querySelector(".ptreFrames").appendChild(createDOM("div", { class: "ogl_button" }, f));
-            btn.addEventListener("click", () => this.ptreAction(f, player));
+        ["last24h", "2days", "3days", "week", "2weeks", "month"].forEach((f) => {
+          let btn = container.querySelector(".ptreFrames").appendChild(createDOM("div", { class: "ogl_button" }, f));
+          btn.addEventListener("click", () => this.ptreAction(f, player));
+        });
+
+        if (result.activity_array.succes == 1) {
+          arrData.forEach((line, index) => {
+            if (!isNaN(line[1])) {
+              let div = this.createDOM("div", { class: "tooltip" }, `<div>${line[0]}</div>`);
+              let span = div.appendChild(createDOM("span", { class: "ptreDotStats" }));
+              let dot = span.appendChild(createDOM("div", { "data-acti": line[1], "data-check": checkData[index][1] }));
+
+              let dotValue = (line[1] / result.activity_array.max_acti_per_slot) * 100 * 7;
+              dotValue = Math.ceil(dotValue / 30) * 30;
+
+              dot.style.color = `hsl(${Math.max(0, 100 - dotValue)}deg 75% 40%)`;
+              dot.style.opacity = checkData[index][1] + "%";
+              dot.style.padding = "7px";
+
+              let title;
+              let checkValue = Math.max(0, 100 - dotValue);
+
+              if (checkValue === 100) title = "- No activity detected";
+              else if (checkValue >= 60) title = "- A few activities detected";
+              else if (checkValue >= 40) title = "- Some activities detected";
+              else title = "- A lot of activities detected";
+
+              if (checkData[index][1] == 100) title += "<br>- Perfectly checked";
+              else if (checkData[index][1] >= 75) title += "<br>- Nicely checked";
+              else if (checkData[index][1] >= 50) title += "<br>- Decently checked";
+              else if (checkData[index][1] > 0) title = "Poorly checked";
+              else title = "Not checked";
+
+              div.setAttribute("title", title);
+
+              if (checkData[index][1] === 100 && line[1] == 0) dot.classList.add("ogl_active");
+
+              container.querySelector(".ptreActivities > div").appendChild(div);
+            }
           });
-
-          if (result.activity_array.succes == 1) {
-            arrData.forEach((line, index) => {
-              if (!isNaN(line[1])) {
-                let div = this.createDOM("div", { class: "tooltip" }, `<div>${line[0]}</div>`);
-                let span = div.appendChild(createDOM("span", { class: "ptreDotStats" }));
-                let dot = span.appendChild(
-                  createDOM("div", { "data-acti": line[1], "data-check": checkData[index][1] })
-                );
-
-                let dotValue = (line[1] / result.activity_array.max_acti_per_slot) * 100 * 7;
-                dotValue = Math.ceil(dotValue / 30) * 30;
-
-                dot.style.color = `hsl(${Math.max(0, 100 - dotValue)}deg 75% 40%)`;
-                dot.style.opacity = checkData[index][1] + "%";
-                dot.style.padding = "7px";
-
-                let title;
-                let checkValue = Math.max(0, 100 - dotValue);
-
-                if (checkValue === 100) title = "- No activity detected";
-                else if (checkValue >= 60) title = "- A few activities detected";
-                else if (checkValue >= 40) title = "- Some activities detected";
-                else title = "- A lot of activities detected";
-
-                if (checkData[index][1] == 100) title += "<br>- Perfectly checked";
-                else if (checkData[index][1] >= 75) title += "<br>- Nicely checked";
-                else if (checkData[index][1] >= 50) title += "<br>- Decently checked";
-                else if (checkData[index][1] > 0) title = "Poorly checked";
-                else title = "Not checked";
-
-                div.setAttribute("title", title);
-
-                if (checkData[index][1] === 100 && line[1] == 0) dot.classList.add("ogl_active");
-
-                container.querySelector(".ptreActivities > div").appendChild(div);
-              }
-            });
-          } else {
-            container.querySelector(".ptreActivities > span").textContent = result.activity_array.message;
-          }
-        } else container.textContent = result.message;
-        this.isLoading = false;
-        this.popup(null, container);
-      }
-    );
+        } else {
+          container.querySelector(".ptreActivities > span").textContent = result.activity_array.message;
+        }
+      } else container.textContent = result.message;
+      this.isLoading = false;
+      this.popup(null, container);
+    });
   }
 
   cleanupMessages() {
@@ -13942,16 +13923,7 @@ class OGInfinity {
       this.sortTable(this.reportList);
     }
     if (Object.keys(ptreJSON).length > 0) {
-      fetch("https://ptre.chez.gg/scripts/oglight_import_player_activity.php?tool=infinity", {
-        method: "POST",
-        body: JSON.stringify(ptreJSON),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.code != 1) {
-            console.error("PTRE error", data);
-          }
-        });
+      ptreService.importPlayerActivity(ptreJSON).finally(() => "Do nothing");
     }
   }
 
@@ -14172,12 +14144,10 @@ class OGInfinity {
       if (this.json.options.ptreTK) {
         let ptreBtn = opt.appendChild(createDOM("a", { class: "ogl-text-btn" }, "P"));
         ptreBtn.addEventListener("click", () => {
-          this.getJSON(
-            `https://ptre.chez.gg/scripts/oglight_import.php?tool=infinity&team_key=${this.json.options.ptreTK}&sr_id=${report.apiKey}`,
-            (result) => {
-              fadeBox(result.message_verbose, result.code != 1);
-            }
-          );
+          ptreService
+            .importSpy(this.json.options.ptreTK, report.apiKey)
+            .then((result) => fadeBox(result.message_verbose, result.code != 1))
+            .catch((reason) => fadeBox(reason, true));
         });
       }
       let attackBtn = opt.appendChild(createDOM("a", { class: "icon ogl-icon-attack" }, "T"));
@@ -19300,11 +19270,7 @@ function versionInStatusBar() {
 }
 
 (async () => {
-  console.info(
-    "%c OGame Infinity/v%s ",
-    "background-color: #ebf4fb;color:#004ccc;font-family:monospace;border-radius:0.5em",
-    VERSION
-  );
+  logger.info("");
 
   let ogKush = new OGInfinity();
   setTimeout(function () {
