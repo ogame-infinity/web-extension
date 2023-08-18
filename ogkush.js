@@ -13272,7 +13272,7 @@ class OGInfinity {
       actBtn.addEventListener("mouseout", () => {
         this.keepTooltip = false;
       });
-      actBtn.addEventListener("click", () => {
+      actBtn.addEventListener("click", (e) => {
         if (this.page != "galaxy") {
           let coords = document
             .querySelector(".ogl-tooltip .ogl-stalkPlanets a.ogl-main")
