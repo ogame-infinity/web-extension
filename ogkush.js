@@ -15127,7 +15127,13 @@ class OGInfinity {
       return false;
     };
     document.addEventListener("keydown", (event) => {
-      if (document.activeElement.classList.contains("chat_box_textarea")) return;
+      const activeClassList = document.activeElement.classList;
+      if (
+        activeClassList.contains("chat_box_textarea") ||
+        activeClassList.contains("new_msg_textarea") ||
+        activeClassList.contains("textBox")
+      )
+        return;
       if (event.key == "Escape") {
         if (this.json.welcome) return;
         closeDialog();
@@ -15296,7 +15302,13 @@ class OGInfinity {
     };
     if (this.page == "fleetdispatch") {
       document.addEventListener("keydown", (event) => {
-        if (document.activeElement.classList.contains("chat_box_textarea")) return;
+        const activeClassList = document.activeElement.classList;
+        if (
+          activeClassList.contains("chat_box_textarea") ||
+          activeClassList.contains("new_msg_textarea") ||
+          activeClassList.contains("textBox")
+        )
+          return;
         if (fleetDispatcher.currentPage == "fleet1") {
           if (document.querySelector("#fleetTemplatesEdit")) {
             if (document.querySelector("#fleetTemplatesEdit").classList.contains("overlayDiv")) return;
@@ -15359,7 +15371,13 @@ class OGInfinity {
         }
       });
       document.addEventListener("keydown", (event) => {
-        if (document.activeElement.classList.contains("chat_box_textarea")) return;
+        const activeClassList = document.activeElement.classList;
+        if (
+          activeClassList.contains("chat_box_textarea") ||
+          activeClassList.contains("new_msg_textarea") ||
+          activeClassList.contains("textBox")
+        )
+          return;
         if (event.key == "Enter") {
           if (fleetDispatcher.currentPage == "fleet1") {
             document.querySelector("#continueToFleet2").click();
