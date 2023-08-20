@@ -9842,7 +9842,7 @@ class OGInfinity {
     let actions = resDiv.appendChild(createDOM("div", { class: "ogl-transport" }));
     let coords = destination.appendChild(createDOM("div", { class: "ogl-coords" }));
     let warning = coords.appendChild(
-      createDOM("a", { class: "ogl-warning tooltipRight", "data-title": "Error : current planet/moon..." })
+      createDOM("a", { class: "ogl-warning tooltipRight", "data-title": this.getTranslatedText(117) })
     );
     let galaxyInput = coords.appendChild(
       createDOM("input", { type: "text", pattern: "[0-9]*", value: fleetDispatcher.targetPlanet.galaxy })
@@ -10288,7 +10288,7 @@ class OGInfinity {
           )
         );
       let warning = coords.appendChild(
-        createDOM("a", { class: "ogl-warning tooltipRight", "data-title": "Error : current planet/moon..." })
+        createDOM("a", { class: "ogl-warning tooltipRight", "data-title": this.getTranslatedText(117) })
       );
       let galaxyInput = coords.appendChild(
         createDOM("input", {
@@ -10524,14 +10524,14 @@ class OGInfinity {
       });
       let briefing = destination.appendChild(createDOM("div", { style: "flex-direction: column" }));
       let info = briefing.appendChild(createDOM("div", { class: "ogl-info" }));
-      info.appendChild(createDOM("div", {}, "Arrival"));
+      info.appendChild(createDOM("div", {}, this.getTranslatedText(43)));
       let arrivalDiv = info.appendChild(createDOM("div", { class: "ogl-arrival-time" }));
-      info.appendChild(createDOM("div", {}, "Duration"));
+      info.appendChild(createDOM("div", {}, this.getTranslatedText(44)));
       let durationDiv = info.appendChild(createDOM("div", { class: "ogl-duration" }));
-      info.appendChild(createDOM("div", {}, "Return"));
+      info.appendChild(createDOM("div", {}, this.getTranslatedText(45)));
       let returnDiv = info.appendChild(createDOM("div", { class: "ogl-return-time" }));
       returnDiv.style.visibility = "hidden";
-      info.appendChild(createDOM("div", {}, "Consumption"));
+      info.appendChild(createDOM("div", {}, this.getTranslatedText(49)));
       let consDiv = info.appendChild(createDOM("div", { class: "undermark" }));
       let slider = briefing.appendChild(
         this.createDOM(
@@ -10667,7 +10667,7 @@ class OGInfinity {
               .querySelector(".ogl-dispatch .ogl-missions")
               .replaceChildren(createDOM("span", { style: "color: #9099a3" }, `${that.getTranslatedText(111)}`));
             warning.style.visibility = "visible";
-            warning.setAttribute("data-title", "Error : No ships selected");
+            warning.setAttribute("data-title", this.getTranslatedText(115));
             return;
           }
           fleetDispatcher.mission = 0;
@@ -16715,7 +16715,7 @@ class OGInfinity {
           de: "Ankunft",
           en: "Arrival",
           es: "Llegada",
-          fr: "Arrivées",
+          fr: "Arrivée",
           tr: "Varış",
         },
         /*44*/ {
@@ -16729,7 +16729,7 @@ class OGInfinity {
           de: "Rückkehr",
           en: "Return",
           es: "Retorno",
-          fr: "Retourner",
+          fr: "Retour",
           tr: "Dönüş",
         },
         /*46*/ {
