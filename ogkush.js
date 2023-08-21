@@ -11813,57 +11813,75 @@ class OGInfinity {
   expedition() {
     if (this.page == "fleetdispatch" && fleetDispatcher.shipsOnPlanet.length !== 0 && !fleetDispatcher.isOnVacation) {
       if (!document.querySelector("#allornone .allornonewrap")) return;
+      const btnExpe = createDOM("button", {
+        class: `ogl-expedition ${this.json.options.expeditionCargoShip == 202 ? "smallCargo" : "largeCargo"}`,
+      });
+      document.querySelector("#allornone .secondcol").appendChild(btnExpe);
+      const optionsContainerDiv = createDOM("div");
+      const optionsDiv = optionsContainerDiv.appendChild(createDOM("div", { class: "ogk-expedition-options" }));
+      const combatShipDiv = optionsContainerDiv.appendChild(createDOM("div", { class: "ogk-expedition-options" }));
 
-      // TODO: refactor &improve UI, add combatShip & limitCargo choice
-      let expCargoChoice = createDOM("div", { class: "ogk-expedition-cargo" });
-      let expType = this.json.options.expeditionCargoShip;
-      let expProbe = this.json.options.expeditionSendProbe;
-      let expCombat = this.json.options.expeditionSendCombat;
-
-      let btnExpe = document
-        .querySelector("#allornone .secondcol")
-        .appendChild(createDOM("button", { class: `ogl-expedition ${expType == 203 ? "largeCargo" : "smallCargo"} ` }));
-      let sc = expCargoChoice.appendChild(
+      const smallCargo = optionsDiv.appendChild(
         createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-202" })
       );
-      let lc = expCargoChoice.appendChild(
+      smallCargo.classList.toggle("highlight", this.json.options.expeditionCargoShip == 202);
+      const largeCargo = optionsDiv.appendChild(
         createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-203" })
       );
-      let probe = expCargoChoice.appendChild(
-        createDOM("div", { class: `ogl-option ogl-fleet-ship choice ogl-fleet-210 ${expProbe ? "" : "grey"}` })
+      largeCargo.classList.toggle("highlight", this.json.options.expeditionCargoShip == 203);
+      smallCargo.addEventListener("click", () => updateCargoShip(202));
+      largeCargo.addEventListener("click", () => updateCargoShip(203));
+      const updateCargoShip = (ship) => {
+        btnExpe.classList = `ogl-expedition ${ship == 202 ? "smallCargo" : "largeCargo"}`;
+        smallCargo.classList.toggle("highlight", ship == 202);
+        largeCargo.classList.toggle("highlight", ship == 203);
+        this.json.options.expeditionCargoShip = ship;
+        this.saveData();
+      };
+
+      const sendProbe = optionsDiv.appendChild(
+        createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-210" })
       );
-      probe.addEventListener("click", () => {
+      sendProbe.classList.toggle("highlight", this.json.options.expeditionSendProbe);
+      sendProbe.addEventListener("click", () => {
+        sendProbe.classList.toggle("highlight");
         this.json.options.expeditionSendProbe = !this.json.options.expeditionSendProbe;
         this.saveData();
-        document.querySelector(
-          ".ogl-option.ogl-fleet-ship.choice.ogl-fleet-210"
-        ).classList = `ogl-option ogl-fleet-ship choice ogl-fleet-210 ${
-          this.json.options.expeditionSendProbe ? "" : "grey"
-        }`;
       });
-      let combat = expCargoChoice.appendChild(
-        createDOM("div", { class: `ogl-option ogl-fleet-ship choice ogl-fleet-218 ${expCombat ? "" : "grey"}` })
+
+      const sendCombat = optionsDiv.appendChild(
+        createDOM("div", {
+          class: `ogl-option ogl-fleet-ship choice ogl-fleet-${this.json.options.expeditionCombatShip}`,
+        })
       );
-      combat.addEventListener("click", () => {
+      sendCombat.classList.toggle("highlight", this.json.options.expeditionSendCombat);
+      sendCombat.addEventListener("click", () => {
+        sendCombat.classList.toggle("highlight");
         this.json.options.expeditionSendCombat = !this.json.options.expeditionSendCombat;
         this.saveData();
-        document.querySelector(
-          ".ogl-option.ogl-fleet-ship.choice.ogl-fleet-218"
-        ).classList = `ogl-option ogl-fleet-ship choice ogl-fleet-218 ${
-          this.json.options.expeditionSendCombat ? "" : "grey"
-        }`;
       });
-      let updateDefaultExpoShip = (id) => {
-        this.json.options.expeditionCargoShip = id;
-        this.saveData();
-        document.querySelector(".ogl-expedition").classList = `ogl-expedition ${
-          this.json.options.expeditionCargoShip == 203 ? "largeCargo" : "smallCargo"
-        } `;
-      };
-      sc.addEventListener("click", () => updateDefaultExpoShip(202));
-      lc.addEventListener("click", () => updateDefaultExpoShip(203));
-      btnExpe.addEventListener("mouseover", () => this.tooltip(btnExpe, expCargoChoice, false, false, 750));
 
+      const combatShipPriority = [218, 213, 211, 215, 207, 206, 205, 204];
+      combatShipPriority.forEach((ship) => {
+        const element = combatShipDiv.appendChild(
+          createDOM("div", { class: `ogl-option ogl-fleet-ship choice ogl-fleet-${ship}` })
+        );
+        element.classList.toggle("highlight", ship == this.json.options.expeditionCombatShip);
+        element.addEventListener("click", () => updateCombatShip(ship));
+      });
+
+      const updateCombatShip = (ship) => {
+        sendCombat.classList = `ogl-option ogl-fleet-ship choice ogl-fleet-${ship}`;
+        sendCombat.classList.toggle("highlight", this.json.options.expeditionSendCombat);
+        for (const children of combatShipDiv.children) {
+          const id = Number(children.className.match(/(?<=ogl-fleet-)\d+/)[0]);
+          children.classList.toggle("highlight", id == ship);
+        }
+        this.json.options.expeditionCombatShip = ship;
+        this.saveData();
+      };
+
+      btnExpe.addEventListener("mouseover", () => this.tooltip(btnExpe, optionsContainerDiv, false, false, 750));
       btnExpe.addEventListener("click", () => {
         document.querySelector("#resetall").click();
         this.expedition = true;
@@ -11945,7 +11963,7 @@ class OGInfinity {
         if (this.json.options.expeditionSendCombat) {
           let combatShip = this.json.options.expeditionCombatShip;
           if (availableShips[combatShip] === 0) {
-            const combatShipPriority = [218, 213, 211, 215, 207, 206, 205, 204];
+            // TODO: take into account that if pathfinder/largeCargo is available, there is no need of combat ship
             combatShip = combatShipPriority.find((ship) => availableShips[ship] > 0);
           }
           if (!!combatShip) {
@@ -17547,6 +17565,13 @@ class OGInfinity {
           tr: "Tamamlanmış görevler",
         },
         /*149*/ {
+          de: "Expeditionsfrachtlimit (%)",
+          en: "Expedition cargo limit (%)",
+          es: "Límite de carga de expedición (%)",
+          fr: "Limite de fret d'expédition (%)",
+          tr: "Sefer kargo limiti (%)",
+        },
+        /*150*/ {
           de: "",
           en: "",
           es: "",
@@ -17758,6 +17783,14 @@ class OGInfinity {
         type: "text",
         class: "ogl-rvalInput ogl-formatInput",
         value: this.json.options.expeditionDefaultTime,
+      })
+    );
+    optiondiv = featureSettings.appendChild(createDOM("span", {}, this.getTranslatedText(149)));
+    let expeditionLimitCargo = optiondiv.appendChild(
+      createDOM("input", {
+        type: "text",
+        class: "ogl-rvalInput ogl-formatInput",
+        value: 100 * this.json.options.expeditionLimitCargo,
       })
     );
     dataDiv.appendChild(createDOM("hr"));
@@ -18019,7 +18052,8 @@ class OGInfinity {
         // TODO: Display an error message "Invalid PTRE Team Key Format. TK should look like: TM-XXXX-XXXX-XXXX-XXXX"
       }
       this.json.options.pantryKey = pantryInput.value;
-      this.json.options.expeditionDefaultTime = Math.max(1, Math.min(expeditionDefaultTime.value, 16));
+      this.json.options.expeditionDefaultTime = Math.max(1, Math.min(~~expeditionDefaultTime.value, 16));
+      this.json.options.expeditionLimitCargo = Math.max(1, Math.min(~~expeditionLimitCargo.value, 100)) / 100;
       this.json.needSync = true;
       this.saveData();
       document.querySelector(".ogl-dialog .close-tooltip").click();

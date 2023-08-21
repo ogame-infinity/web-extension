@@ -7814,27 +7814,20 @@ li.resource {
   grid-template-columns: repeat(4, 1fr);
 }
 
-.ogl-fleet-210.grey {
-  -webkit-filter: grayscale(100%);
-  filter: grey;
-}
-
-.ogl-fleet-218.grey {
-  -webkit-filter: grayscale(100%);
-  filter: grey;
-}
-
 .ogl-fleet-ship.choice {
-  width: 20px;
-  height: 20px;
+  width: 25px;
+  height: 25px;
+  margin: 2px;
   background-size: calc(50px * 10) !important;
 }
 
 .choice-mission-icon {
   background: url("https://gf2.geo.gfsrv.net/cdn14/f45a18b5e55d2d38e7bdc3151b1fee.jpg") no-repeat;
-  width: 20px;
-  height: 20px;
-  background-size: 220px;
+  width: 25px;
+  height: 25px;
+  margin: 2px;
+  border: solid 1px #5f5d6b;
+  background-size: calc(25px * 11);
   overflow: hidden;
 }
 
@@ -7842,18 +7835,47 @@ li.resource {
   border: solid 1px #da961a;
 }
 
+.choice-mission-icon.ogl-mission-1 {
+  background-position: calc(-25px * 8) calc(-25px * 0) !important;
+}
+
 .choice-mission-icon.ogl-mission-3 {
-  background-position: -100px 0px !important;
+  background-position: calc(-25px * 5) calc(-25px * 0) !important;
 }
 
 .choice-mission-icon.ogl-mission-4 {
-  background-position: -60px 0px !important;
+  background-position: calc(-25px * 3) calc(-25px * 0) !important;
+}
+
+.choice-mission-icon.ogl-mission-6 {
+  background-position: calc(-25px * 6) calc(-25px * 0) !important;
+}
+
+.choice-mission-icon.ogl-mission-1.highlight {
+  background-position: calc(-25px * 8) calc(-25px * 1) !important;
+  border: solid 1px #da961a;
+}
+
+.choice-mission-icon.ogl-mission-3.highlight {
+  background-position: calc(-25px * 5) calc(-25px * 1) !important;
+  border: solid 1px #da961a;
+}
+
+.choice-mission-icon.ogl-mission-4.highlight {
+  background-position: calc(-25px * 3) calc(-25px * 1) !important;
+  border: solid 1px #da961a;
+}
+
+.choice-mission-icon.ogl-mission-6.highlight {
+  background-position: calc(-25px * 6) calc(-25px * 1) !important;
+  border: solid 1px #da961a;
 }
 
 .choice-target {
-  width: 20px;
-  height: 20px;
-  margin-left: 0px !important;
+  width: 25px;
+  height: 25px;
+  margin: 2px; /* ADD */
+  border: solid 1px #5f5d6b;
 }
 
 .choice-target:hover {
@@ -7861,19 +7883,18 @@ li.resource {
 }
 
 .choice-target.planet {
-  width: 20px;
-  height: 20px;
+  width: 25px;
+  height: 25px;
   background: url("chrome-extension://__MSG_@@extension_id__/res/planet.png") no-repeat left top;
-  background-size: 20px 18px;
+  background-size: 25px 25px;
   opacity: 0.6;
 }
 
 .choice-target.moon {
-  width: 20px;
-  height: 20px;
+  width: 25px;
+  height: 25px;
   background: url("chrome-extension://__MSG_@@extension_id__/res/moon.png") no-repeat left top;
-  background-size: 24px 19px;
-  background-position: -2px, 2px;
+  background-size: 25px 25px;
   opacity: 0.6;
 }
 
