@@ -7808,10 +7808,10 @@ li.resource {
   grid-template-columns: repeat(6, 1fr);
 }
 
-.ogl-tooltip .ogk-expedition-cargo {
+.ogl-tooltip .ogk-expedition-options {
   width: auto;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(8, 1fr);
 }
 
 .ogl-fleet-ship.choice {
@@ -7874,7 +7874,7 @@ li.resource {
 .choice-target {
   width: 25px;
   height: 25px;
-  margin: 2px; /* ADD */
+  margin: 2px;
   border: solid 1px #5f5d6b;
 }
 
