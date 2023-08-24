@@ -11813,6 +11813,8 @@ class OGInfinity {
   expedition() {
     if (this.page == "fleetdispatch" && fleetDispatcher.shipsOnPlanet.length !== 0 && !fleetDispatcher.isOnVacation) {
       if (!document.querySelector("#allornone .allornonewrap")) return;
+      document.querySelector("#expeditiontime").value = this.json.options.expeditionDefaultTime;
+      document.querySelector("#expeditiontime + .dropdown > a").textContent = this.json.options.expeditionDefaultTime;
       const btnExpe = createDOM("button", {
         class: `ogl-expedition ${this.json.options.expeditionCargoShip == 202 ? "smallCargo" : "largeCargo"}`,
       });
@@ -12015,8 +12017,6 @@ class OGInfinity {
         fleetDispatcher.mission = 15;
         fleetDispatcher.targetPlanet.type = 1;
         fleetDispatcher.targetPlanet.position = 16;
-        document.querySelector("#expeditiontime").value = this.json.options.expeditionDefaultTime;
-        document.querySelector("#expeditiontime + .dropdown > a").textContent = this.json.options.expeditionDefaultTime;
         fleetDispatcher.refreshTarget();
         fleetDispatcher.updateTarget();
         fleetDispatcher.fetchTargetPlayerData();
