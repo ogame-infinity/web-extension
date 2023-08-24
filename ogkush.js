@@ -11943,7 +11943,7 @@ class OGInfinity {
         });
         let warningText = "";
 
-        if (availableShips[219] > 0) {
+        if (availableShips[219]) {
           selectedShips[219] = 1;
           this.selectShips(219, 1);
           maxResources *= 2; // Pathfinder bonus
@@ -11952,7 +11952,7 @@ class OGInfinity {
         }
 
         if (this.json.options.expeditionSendProbe) {
-          if (availableShips[210] > 0) {
+          if (availableShips[210]) {
             selectedShips[210] = 1;
             this.selectShips(210, 1);
           } else {
@@ -11962,15 +11962,23 @@ class OGInfinity {
 
         if (this.json.options.expeditionSendCombat) {
           let combatShip = this.json.options.expeditionCombatShip;
-          if (availableShips[combatShip] === 0) {
-            // TODO: take into account that if pathfinder/largeCargo is available, there is no need of combat ship
-            combatShip = combatShipPriority.find((ship) => availableShips[ship] > 0);
+          if (!availableShips[combatShip]) {
+            combatShip = combatShipPriority.find((ship) => availableShips[ship]);
+            if (combatShip == 205 || combatShip == 206) {
+              if (selectedShips[219]) {
+                combatShip = 0;
+              }
+            } else if (combatShip == 204) {
+              if (selectedShips[219] || (this.json.options.expeditionCargoShip == 203 && availableShips[203])) {
+                combatShip = 0;
+              }
+            }
           }
-          if (!!combatShip) {
+          if (combatShip) {
             selectedShips[combatShip] = 1;
             this.selectShips(combatShip, 1);
           } else {
-            warningText += this.getTranslatedText(108) + "<br>";
+            if (combatShip !== 0) warningText += this.getTranslatedText(108) + "<br>";
           }
         }
 
@@ -11984,11 +11992,11 @@ class OGInfinity {
         }
         maxResources = Math.floor(maxResources * this.json.options.expeditionLimitCargo);
         const minSC = Math.ceil((maxExpeditionPoints - expeditionPoints) / SHIP_EXPEDITION_POINTS[202]);
-        const minBC = Math.ceil((maxExpeditionPoints - expeditionPoints) / SHIP_EXPEDITION_POINTS[203]);
+        const minLC = Math.ceil((maxExpeditionPoints - expeditionPoints) / SHIP_EXPEDITION_POINTS[203]);
         const maxSC = Math.max(minSC, this.calcNeededShips({ fret: 202, resources: maxResources - cargoCapacity }));
-        const maxBC = Math.max(minBC, this.calcNeededShips({ fret: 203, resources: maxResources - cargoCapacity }));
+        const maxLC = Math.max(minLC, this.calcNeededShips({ fret: 203, resources: maxResources - cargoCapacity }));
         const cargoShip = this.json.options.expeditionCargoShip;
-        const cargoShipsNeeded = cargoShip === 202 ? maxSC : maxBC;
+        const cargoShipsNeeded = cargoShip === 202 ? maxSC : maxLC;
 
         if (availableShips[cargoShip] >= cargoShipsNeeded) {
           selectedShips[cargoShip] = cargoShipsNeeded;
@@ -11997,7 +12005,7 @@ class OGInfinity {
           warningText += this.getTranslatedText(107) + "<br>";
         }
 
-        if (warningText.length > 0) fadeBox(warningText, true);
+        if (warningText.length) fadeBox(warningText, true);
         document.querySelector(".send_none").click();
         const inputs = document.querySelectorAll(".ogl-coords input");
         const coords = this.current.coords.split(":");
