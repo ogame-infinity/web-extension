@@ -222,7 +222,7 @@ function fromFormatedNumber(value, int = false, noGroup = false) {
 }
 
 function waitFor(conditionFn, checkFreqInMs = 10) {
-  const poll = done => {conditionFn() ? done() : setTimeout(() => poll(done), checkFreqInMs)}
+  const poll = (done) => (conditionFn() ? done() : setTimeout(() => poll(done), checkFreqInMs));
   return new Promise(poll);
 }
 // TODO: Include timeout? & refactor the other waitFor* functions
