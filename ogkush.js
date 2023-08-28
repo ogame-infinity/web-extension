@@ -221,6 +221,12 @@ function fromFormatedNumber(value, int = false, noGroup = false) {
   return int ? parseInt(value) : value;
 }
 
+function waitFor(conditionFn, checkFreqInMs = 10) {
+  const poll = done => {conditionFn() ? done() : setTimeout(() => poll(done), checkFreqInMs)}
+  return new Promise(poll);
+}
+// TODO: Include timeout? & refactor the other waitFor* functions
+
 function waitForDefinition(object, callback, checkFrequencyInMs = 10, timeoutInMs = 5000) {
   var startTimeInMs = Date.now();
   (function loopSearch() {
@@ -1484,6 +1490,17 @@ class OGInfinity {
     }
 
     this.mode = this.rawURL.searchParams.get("oglMode") || 0;
+    // TODO: implement more features
+    /*
+     0: default
+     1: harvest (click on planet/moon picture)
+     2: lock (click enabled lock on planet list)
+     3: autoharvest (not in use, remanent code, we have collect() instead, to be reworked to autoharvest to moons?)
+     4: raid (click ship amount in spylist)
+     5: ? (seems some harvest mode, not in use, remanent traces of code, use for autoraid? (to be implemented))
+     6: galaxy expedition autoselection
+     7: autoexpedition (to be implemented)
+     */
     this.planetList = document.querySelectorAll(".smallplanet");
     this.isMobile = "ontouchstart" in document.documentElement;
     this.eventAction = this.isMobile ? "touchstart" : "mouseenter";
@@ -3747,6 +3764,10 @@ class OGInfinity {
     if (this.page != "galaxy") return;
     let timeout;
     let previousSystem = null;
+    doExpedition = () => {
+      const link = `?page=ingame&component=fleetdispatch&galaxy=${galaxy}&system=${system}&position=16&oglMode=6`;
+      window.location.href = "https://" + window.location.host + window.location.pathname + link;
+    };
     let callback = () => {
       this.addGalaxyMarkers();
       this.addGalaxyTooltips();
@@ -11884,7 +11905,8 @@ class OGInfinity {
       };
 
       btnExpe.addEventListener("mouseover", () => this.tooltip(btnExpe, optionsContainerDiv, false, false, 750));
-      btnExpe.addEventListener("click", () => {
+      btnExpe.addEventListener("click", async () => {
+        await waitFor(() => fleetDispatcher.loading == false);
         document.querySelector("#resetall").click();
         this.expedition = true;
         this.collect = false;
@@ -12009,14 +12031,10 @@ class OGInfinity {
 
         if (warningText.length) fadeBox(warningText, true);
         document.querySelector(".send_none").click();
-        const inputs = document.querySelectorAll(".ogl-coords input");
-        const coords = this.current.coords.split(":");
-        inputs[0].value = coords[0];
-        inputs[1].value = coords[1];
-        inputs[2].value = 16;
         fleetDispatcher.mission = 15;
         fleetDispatcher.targetPlanet.type = 1;
         fleetDispatcher.targetPlanet.position = 16;
+        document.querySelector(".ogl-coords #positionInput").value = 16;
         fleetDispatcher.refreshTarget();
         fleetDispatcher.updateTarget();
         fleetDispatcher.fetchTargetPlayerData();
@@ -12026,6 +12044,9 @@ class OGInfinity {
         this.expedition = false;
         this.saveData();
       });
+      if (this.mode == 6) {
+        setTimeout(() => document.querySelector(".ogl-expedition").click(), 0);
+      }
     }
   }
 
