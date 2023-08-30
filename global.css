@@ -6707,13 +6707,6 @@ table.fleetinfo tr:nth-last-child(1),
   font-style: oblique;
 }
 
-.btn_blue {
-  background: #485f93 !important;
-  border: 1px solid #5b77b5 !important;
-  border-radius: 2px !important;
-  user-select: none;
-}
-
 .ogl-btn_red {
   background: #b13131 !important;
   border: 1px solid #de3e3e !important;
@@ -7518,8 +7511,8 @@ span.resbuttons {
   float: left;
 }
 
-#galaxyContent .ctContentRow .cellAction .buddyrequest {
-  display: none;
+#galaxyContent a[class*="buddyrequest"][href*="id=99999"] {
+  visibility: hidden;
 }
 
 #technologydetails .technology_tree {
