@@ -3143,7 +3143,7 @@ class OGInfinity {
           this.json.combatsSums[dateStr].fuel -= fuel;
         }
         this.saveData();
-        return this.json.href;
+        return this.onFleetSentRedirectUrl;
       });
       $(".send_all").before(createDOM("span", { class: "select-most" }));
       $(".allornonewrap .select-most").on("click", () => {
@@ -11911,8 +11911,6 @@ class OGInfinity {
         this.expedition = true;
         this.collect = false;
         document.querySelector("#missionsDiv").setAttribute("data", "false");
-        this.json.href = undefined;
-        this.saveData();
 
         let level = EXPEDITION_TOP1_POINTS.findIndex((points) => points > this.json.topScore);
         level = level !== -1 ? level : EXPEDITION_TOP1_POINTS.length;
@@ -19019,8 +19017,6 @@ class OGInfinity {
 
   collect() {
     if (this.page == "fleetdispatch" && fleetDispatcher.shipsOnPlanet.length !== 0 && !fleetDispatcher.isOnVacation) {
-      this.json.href = undefined;
-      this.saveData();
       let cargoChoice = createDOM("div", { class: "ogk-collect-cargo" });
       let btnCollect = document.querySelector("#allornone .secondcol").appendChild(
         createDOM("button", {
@@ -19103,8 +19099,6 @@ class OGInfinity {
         this.expedition = false;
         document.querySelector("#missionsDiv").setAttribute("data", "false");
         fleetDispatcher.mission = this.json.options.collect.mission;
-        this.json.href = undefined;
-        this.saveData();
         document.querySelector(".ogl-cargo a.send_none").click();
         document.querySelector(".ogl-cargo a.select-most").click();
         fleetDispatcher.resetShips();
@@ -19145,12 +19139,11 @@ class OGInfinity {
         if (this.current.isMoon) {
           nextId = new URL(document.querySelector(`#planet-${nextId} .moonlink`).href).searchParams.get("cp");
         }
-        this.json.href =
+        this.onFleetSentRedirectUrl =
           "https://" +
           window.location.host +
           window.location.pathname +
           `?page=ingame&component=fleetdispatch&cp=${nextId}&galaxy=${this.json.options.collect.target.galaxy}&system=${this.json.options.collect.target.system}&position=${this.json.options.collect.target.position}&type=${this.json.options.collect.target.type}&mission=${this.json.options.collect.mission}&oglMode=0`;
-        this.saveData();
         document.querySelector(".ogl-cargo a.select-most").click();
       });
     }
