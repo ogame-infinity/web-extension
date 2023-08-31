@@ -1498,8 +1498,7 @@ class OGInfinity {
      3: autoharvest (not in use, remanent code, we have collect() instead, to be reworked to autoharvest to moons?)
      4: raid (click ship amount in spylist)
      5: ? (seems some harvest mode, not in use, remanent traces of code, use for autoraid? (to be implemented))
-     6: galaxy expedition autoselection
-     7: autoexpedition (to be implemented)
+     6: autoexpedition (click expedition button/keyE or expedition button in galaxy)
      */
     this.planetList = document.querySelectorAll(".smallplanet");
     this.isMobile = "ontouchstart" in document.documentElement;
@@ -1608,20 +1607,22 @@ class OGInfinity {
     this.json.options.sideStalkVisible = this.json.options.sideStalkVisible === false ? false : true;
     this.json.options.eventBoxExps = this.json.options.eventBoxExps === false ? false : true;
     this.json.options.eventBoxKeep = this.json.options.eventBoxKeep === true ? true : false;
-    this.json.options = this.json.options || {};
     this.json.options.empire = this.json.options.empire === true ? true : false;
     this.json.options.targetList = this.json.options.targetList === true ? true : false;
     this.json.options.fret = this.json.options.fret || 202;
     this.json.options.spyFret = this.json.options.spyFret || 202;
-    this.json.options.harvestMission = this.json.options.harvestMission || 4;
-    this.json.options.foreignMission = this.json.options.foreignMission || 3;
-    this.json.options.expeditionCargoShip = this.json.options.expeditionCargoShip || 202;
-    this.json.options.expeditionCombatShip = this.json.options.expeditionCombatShip || 218;
-    this.json.options.expeditionLimitCargo = this.json.options.expeditionLimitCargo || 1;
-    this.json.options.expeditionSendCombat = this.json.options.expeditionSendCombat === true ? true : false;
-    this.json.options.expeditionSendProbe = this.json.options.expeditionSendProbe === true ? true : false;
     this.json.options.expeditionMission = this.json.options.expeditionMission || 15;
-    this.json.options.expeditionDefaultTime = this.json.options.expeditionDefaultTime || 1;
+    this.json.options.foreignMission = this.json.options.foreignMission || 3;
+    this.json.options.harvestMission = this.json.options.harvestMission || 4;
+    this.json.options.expedition = this.json.options.expedition || {};
+    this.json.options.expedition.cargoShip = this.json.options.expedition.cargoShip || 202; // small cargo
+    this.json.options.expedition.combatShip = this.json.options.expedition.combatShip || 218; // reaper
+    this.json.options.expedition.defaultTime = this.json.options.expedition.defaultTime || 1; // 1 hour
+    this.json.options.expedition.limitCargo = this.json.options.expedition.limitCargo || 1; // 100 %
+    this.json.options.expedition.rotation = this.json.options.expedition.rotation === true ? true : false;
+    this.json.options.expedition.rotationAfter = this.json.options.expedition.rotationAfter || 3;
+    this.json.options.expedition.sendCombat = this.json.options.expedition.sendCombat === true ? true : false;
+    this.json.options.expedition.sendProbe = this.json.options.expedition.sendProbe === true ? true : false;
     this.json.options.activitytimers = this.json.options.activitytimers === true ? true : false;
     this.json.options.planetIcons = this.json.options.planetIcons === true ? true : false;
     this.json.options.disableautofetchempire = this.json.options.disableautofetchempire === true ? true : false;
@@ -3765,7 +3766,7 @@ class OGInfinity {
     let timeout;
     let previousSystem = null;
     doExpedition = () => {
-      const link = `?page=ingame&component=fleetdispatch&galaxy=${galaxy}&system=${system}&position=16&oglMode=6`;
+      const link = `?page=ingame&component=fleetdispatch&oglMode=6&galaxy=${galaxy}&system=${system}`;
       window.location.href = "https://" + window.location.host + window.location.pathname + link;
     };
     let callback = () => {
@@ -11834,10 +11835,10 @@ class OGInfinity {
   expedition() {
     if (this.page == "fleetdispatch" && fleetDispatcher.shipsOnPlanet.length !== 0 && !fleetDispatcher.isOnVacation) {
       if (!document.querySelector("#allornone .allornonewrap")) return;
-      document.querySelector("#expeditiontime").value = this.json.options.expeditionDefaultTime;
-      document.querySelector("#expeditiontime + .dropdown > a").textContent = this.json.options.expeditionDefaultTime;
+      document.querySelector("#expeditiontime").value = this.json.options.expedition.defaultTime;
+      document.querySelector("#expeditiontime + .dropdown > a").textContent = this.json.options.expedition.defaultTime;
       const btnExpe = createDOM("button", {
-        class: `ogl-expedition ${this.json.options.expeditionCargoShip == 202 ? "smallCargo" : "largeCargo"}`,
+        class: `ogl-expedition ${this.json.options.expedition.cargoShip == 202 ? "smallCargo" : "largeCargo"}`,
       });
       document.querySelector("#allornone .secondcol").appendChild(btnExpe);
       const optionsContainerDiv = createDOM("div");
@@ -11847,40 +11848,50 @@ class OGInfinity {
       const smallCargo = optionsDiv.appendChild(
         createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-202" })
       );
-      smallCargo.classList.toggle("highlight", this.json.options.expeditionCargoShip == 202);
+      smallCargo.classList.toggle("highlight", this.json.options.expedition.cargoShip == 202);
       const largeCargo = optionsDiv.appendChild(
         createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-203" })
       );
-      largeCargo.classList.toggle("highlight", this.json.options.expeditionCargoShip == 203);
+      largeCargo.classList.toggle("highlight", this.json.options.expedition.cargoShip == 203);
       smallCargo.addEventListener("click", () => updateCargoShip(202));
       largeCargo.addEventListener("click", () => updateCargoShip(203));
       const updateCargoShip = (ship) => {
         btnExpe.classList = `ogl-expedition ${ship == 202 ? "smallCargo" : "largeCargo"}`;
         smallCargo.classList.toggle("highlight", ship == 202);
         largeCargo.classList.toggle("highlight", ship == 203);
-        this.json.options.expeditionCargoShip = ship;
+        this.json.options.expedition.cargoShip = ship;
         this.saveData();
       };
 
       const sendProbe = optionsDiv.appendChild(
         createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-210" })
       );
-      sendProbe.classList.toggle("highlight", this.json.options.expeditionSendProbe);
+      sendProbe.classList.toggle("highlight", this.json.options.expedition.sendProbe);
       sendProbe.addEventListener("click", () => {
         sendProbe.classList.toggle("highlight");
-        this.json.options.expeditionSendProbe = !this.json.options.expeditionSendProbe;
+        this.json.options.expedition.sendProbe = !this.json.options.expedition.sendProbe;
         this.saveData();
       });
 
       const sendCombat = optionsDiv.appendChild(
         createDOM("div", {
-          class: `ogl-option ogl-fleet-ship choice ogl-fleet-${this.json.options.expeditionCombatShip}`,
+          class: `ogl-option ogl-fleet-ship choice ogl-fleet-${this.json.options.expedition.combatShip}`,
         })
       );
-      sendCombat.classList.toggle("highlight", this.json.options.expeditionSendCombat);
+      sendCombat.classList.toggle("highlight", this.json.options.expedition.sendCombat);
       sendCombat.addEventListener("click", () => {
         sendCombat.classList.toggle("highlight");
-        this.json.options.expeditionSendCombat = !this.json.options.expeditionSendCombat;
+        this.json.options.expedition.sendCombat = !this.json.options.expedition.sendCombat;
+        this.saveData();
+      });
+
+      const expeditionRotation = optionsDiv.appendChild(
+        createDOM("div", { class: "ogl-option choice-expedition-icon expedition-rotation" })
+      );
+      expeditionRotation.classList.toggle("highlight", this.json.options.expedition.rotation);
+      expeditionRotation.addEventListener("click", () => {
+        expeditionRotation.classList.toggle("highlight");
+        this.json.options.expedition.rotation = !this.json.options.expedition.rotation;
         this.saveData();
       });
 
@@ -11889,18 +11900,18 @@ class OGInfinity {
         const element = combatShipDiv.appendChild(
           createDOM("div", { class: `ogl-option ogl-fleet-ship choice ogl-fleet-${ship}` })
         );
-        element.classList.toggle("highlight", ship == this.json.options.expeditionCombatShip);
+        element.classList.toggle("highlight", ship == this.json.options.expedition.combatShip);
         element.addEventListener("click", () => updateCombatShip(ship));
       });
 
       const updateCombatShip = (ship) => {
         sendCombat.classList = `ogl-option ogl-fleet-ship choice ogl-fleet-${ship}`;
-        sendCombat.classList.toggle("highlight", this.json.options.expeditionSendCombat);
+        sendCombat.classList.toggle("highlight", this.json.options.expedition.sendCombat);
         for (const children of combatShipDiv.children) {
           const id = Number(children.className.match(/(?<=ogl-fleet-)\d+/)[0]);
           children.classList.toggle("highlight", id == ship);
         }
-        this.json.options.expeditionCombatShip = ship;
+        this.json.options.expedition.combatShip = ship;
         this.saveData();
       };
 
@@ -11973,7 +11984,7 @@ class OGInfinity {
           warningText += this.getTranslatedText(110) + "<br>";
         }
 
-        if (this.json.options.expeditionSendProbe) {
+        if (this.json.options.expedition.sendProbe) {
           if (availableShips[210]) {
             selectedShips[210] = 1;
             this.selectShips(210, 1);
@@ -11982,8 +11993,8 @@ class OGInfinity {
           }
         }
 
-        if (this.json.options.expeditionSendCombat) {
-          let combatShip = this.json.options.expeditionCombatShip;
+        if (this.json.options.expedition.sendCombat) {
+          let combatShip = this.json.options.expedition.combatShip;
           if (!availableShips[combatShip]) {
             combatShip = combatShipPriority.find((ship) => availableShips[ship]);
             if (combatShip == 205 || combatShip == 206) {
@@ -11991,7 +12002,7 @@ class OGInfinity {
                 combatShip = 0;
               }
             } else if (combatShip == 204) {
-              if (selectedShips[219] || (this.json.options.expeditionCargoShip == 203 && availableShips[203])) {
+              if (selectedShips[219] || (this.json.options.expedition.cargoShip == 203 && availableShips[203])) {
                 combatShip = 0;
               }
             }
@@ -12012,18 +12023,21 @@ class OGInfinity {
         for (const ship in selectedShips) {
           cargoCapacity += selectedShips[ship] * this.json.ships[ship].cargoCapacity;
         }
-        maxResources = Math.floor(maxResources * this.json.options.expeditionLimitCargo);
+        maxResources = Math.floor(maxResources * this.json.options.expedition.limitCargo);
+        // minimum cargo ships needed to fulfill expedition points
         const minSC = Math.ceil((maxExpeditionPoints - expeditionPoints) / SHIP_EXPEDITION_POINTS[202]);
         const minLC = Math.ceil((maxExpeditionPoints - expeditionPoints) / SHIP_EXPEDITION_POINTS[203]);
+        // always fulfill expedition points, cargo ships needed to fulfill desired maximum resources cargo space
         const maxSC = Math.max(minSC, this.calcNeededShips({ fret: 202, resources: maxResources - cargoCapacity }));
         const maxLC = Math.max(minLC, this.calcNeededShips({ fret: 203, resources: maxResources - cargoCapacity }));
-        const cargoShip = this.json.options.expeditionCargoShip;
+        const cargoShip = this.json.options.expedition.cargoShip;
         const cargoShipsNeeded = cargoShip === 202 ? maxSC : maxLC;
 
         if (availableShips[cargoShip] >= cargoShipsNeeded) {
           selectedShips[cargoShip] = cargoShipsNeeded;
           this.selectShips(cargoShip, selectedShips[cargoShip]);
         } else {
+          // TODO: Implement use another cargo ship when not enough available
           warningText += this.getTranslatedText(107) + "<br>";
         }
 
@@ -12039,11 +12053,73 @@ class OGInfinity {
         fleetDispatcher.refresh();
         document.querySelector(".ogl-moon-icon").classList.remove("ogl-active");
         document.querySelector(".ogl-planet-icon").classList.add("ogl-active");
+
+        let link = "?page=ingame&component=fleetdispatch&oglMode=6";
+        const originSystem = this.current.coords.split(":", 2).join(":");
+        const destinationSystem = fleetDispatcher.targetPlanet.galaxy + ":" + fleetDispatcher.targetPlanet.system;
+
+        // do not enable rotation of expeditions in a not own system, but keep same system for auto expedition
+        if (originSystem != destinationSystem) {
+          link += `&galaxy=${fleetDispatcher.targetPlanet.galaxy}&system=${fleetDispatcher.targetPlanet.system}`;
+        } else if (this.json.options.expedition.rotation) {
+
+          const planetSystems = [];
+          document
+            .querySelectorAll(".planet-koords")
+            .forEach((planet) => planetSystems.push(planet.textContent.split(":", 2).join(":")));
+          const moonSystems = [];
+          document
+            .querySelectorAll(".moonlink")
+            .forEach((moon) =>
+              moonSystems.push(moon.parentElement.querySelector(".planet-koords").textContent.split(":", 2).join(":"))
+            );
+
+          // number of expeditions in the same expedition system, including the one we are going to send  
+          let sameExpeditionDestination = 1;
+          document.querySelectorAll(".eventFleet td.destCoords").forEach((coords) => {
+            if (
+              coords.textContent.trim() == "[" + destinationSystem + ":16]" &&
+              coords.parentElement.getAttribute("data-mission-type") == 15 &&
+              coords.parentElement.getAttribute("data-return-flight") == "true"
+            )
+              sameExpeditionDestination++;
+          });
+
+          // there is any other different system to do expeditions?
+          const moreExpeditionPlaces = this.current.isMoon
+            ? moonSystems.some((moon) => moon != originSystem)
+            : planetSystems.some((planet) => planet != originSystem);
+
+          if (moreExpeditionPlaces && sameExpeditionDestination >= this.json.options.expedition.rotationAfter) {
+            let nextPlanet = this.current.planet.nextElementSibling || this.planetList[0];
+            // if same system, try the next planet until we find a different system
+            while (nextPlanet.querySelector(".planet-koords").textContent.split(":", 2).join(":") == originSystem) {
+              nextPlanet = nextPlanet.nextElementSibling || this.planetList[0];
+              // if place is a moon and system does not have it, try next planet until we find one
+              if (this.current.isMoon) {
+                while (!nextPlanet.querySelector(".moonlink")) {
+                  nextPlanet = nextPlanet.nextElementSibling || this.planetList[0];
+                }
+              }
+            }
+            let nextId = nextPlanet.id.split("-")[1];
+            if (this.current.isMoon) {
+              nextId = new URL(document.querySelector(`#planet-${nextId} .moonlink`).href).searchParams.get("cp");
+            }
+            link += `&cp=${nextId}`;
+          }
+
+        }
+        this.onFleetSentRedirectUrl = "https://" + window.location.host + window.location.pathname + link;
         this.expedition = false;
-        this.saveData();
       });
-      if (this.mode == 6) {
-        setTimeout(() => document.querySelector(".ogl-expedition").click(), 0);
+
+      if (
+        this.mode == 6 &&
+        fleetDispatcher.expeditionCount < fleetDispatcher.maxExpeditionCount &&
+        fleetDispatcher.fleetCount < fleetDispatcher.maxFleetCount
+      ) {
+        setTimeout(() => document.querySelector(".ogl-expedition").click(), 200);
       }
     }
   }
@@ -17599,6 +17675,13 @@ class OGInfinity {
           tr: "Sefer kargo limiti (%)",
         },
         /*150*/ {
+          de: "Expeditionen vor der Rotation",
+          en: "Expeditions before rotation",
+          es: "Expediciones antes de rotación",
+          fr: "Expéditions avant rotation",
+          tr: "Rotasyon öncesi keşif gezileri",
+        },
+        /*151*/ {
           de: "",
           en: "",
           es: "",
@@ -17809,7 +17892,7 @@ class OGInfinity {
       createDOM("input", {
         type: "text",
         class: "ogl-rvalInput ogl-formatInput",
-        value: this.json.options.expeditionDefaultTime,
+        value: this.json.options.expedition.defaultTime,
       })
     );
     optiondiv = featureSettings.appendChild(createDOM("span", {}, this.getTranslatedText(149)));
@@ -17817,7 +17900,15 @@ class OGInfinity {
       createDOM("input", {
         type: "text",
         class: "ogl-rvalInput ogl-formatInput",
-        value: 100 * this.json.options.expeditionLimitCargo,
+        value: 100 * this.json.options.expedition.limitCargo,
+      })
+    );
+    optiondiv = featureSettings.appendChild(createDOM("span", {}, this.getTranslatedText(150)));
+    let expeditionRotationAfter = optiondiv.appendChild(
+      createDOM("input", {
+        type: "text",
+        class: "ogl-rvalInput ogl-formatInput",
+        value: this.json.options.expedition.rotationAfter,
       })
     );
     dataDiv.appendChild(createDOM("hr"));
@@ -18079,8 +18170,9 @@ class OGInfinity {
         // TODO: Display an error message "Invalid PTRE Team Key Format. TK should look like: TM-XXXX-XXXX-XXXX-XXXX"
       }
       this.json.options.pantryKey = pantryInput.value;
-      this.json.options.expeditionDefaultTime = Math.max(1, Math.min(~~expeditionDefaultTime.value, 16));
-      this.json.options.expeditionLimitCargo = Math.max(1, Math.min(~~expeditionLimitCargo.value, 100)) / 100;
+      this.json.options.expedition.defaultTime = Math.max(1, Math.min(~~expeditionDefaultTime.value, 16));
+      this.json.options.expedition.limitCargo = Math.max(1, Math.min(~~expeditionLimitCargo.value, 100)) / 100;
+      this.json.options.expedition.rotationAfter = Math.max(1, Math.min(~~expeditionRotationAfter.value, 16));
       this.json.needSync = true;
       this.saveData();
       document.querySelector(".ogl-dialog .close-tooltip").click();
