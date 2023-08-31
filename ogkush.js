@@ -11917,7 +11917,7 @@ class OGInfinity {
 
       btnExpe.addEventListener("mouseover", () => this.tooltip(btnExpe, optionsContainerDiv, false, false, 750));
       btnExpe.addEventListener("click", async () => {
-        await waitFor(() => fleetDispatcher.loading == false);
+        await waitFor(() => !fleetDispatcher.loading);
         document.querySelector("#resetall").click();
         this.expedition = true;
         this.collect = false;
@@ -12062,7 +12062,6 @@ class OGInfinity {
         if (originSystem != destinationSystem) {
           link += `&galaxy=${fleetDispatcher.targetPlanet.galaxy}&system=${fleetDispatcher.targetPlanet.system}`;
         } else if (this.json.options.expedition.rotation) {
-
           const planetSystems = [];
           document
             .querySelectorAll(".planet-koords")
@@ -12074,11 +12073,12 @@ class OGInfinity {
               moonSystems.push(moon.parentElement.querySelector(".planet-koords").textContent.split(":", 2).join(":"))
             );
 
-          // number of expeditions in the same expedition system, including the one we are going to send  
+          // number of expeditions in the same expedition system, including the one we are going to send
           let sameExpeditionDestination = 1;
+          await waitFor(() => document.querySelector("#eventContent"));
           document.querySelectorAll(".eventFleet td.destCoords").forEach((coords) => {
             if (
-              coords.textContent.trim() == "[" + destinationSystem + ":16]" &&
+              coords.textContent.trim() == "[" + originSystem + ":16]" &&
               coords.parentElement.getAttribute("data-mission-type") == 15 &&
               coords.parentElement.getAttribute("data-return-flight") == "true"
             )
@@ -12091,14 +12091,15 @@ class OGInfinity {
             : planetSystems.some((planet) => planet != originSystem);
 
           if (moreExpeditionPlaces && sameExpeditionDestination >= this.json.options.expedition.rotationAfter) {
-            let nextPlanet = this.current.planet.nextElementSibling || this.planetList[0];
+            const rotate = (planet) => planet.nextElementSibling || this.planetList[0];
+            let nextPlanet = this.current.planet;
             // if same system, try the next planet until we find a different system
             while (nextPlanet.querySelector(".planet-koords").textContent.split(":", 2).join(":") == originSystem) {
-              nextPlanet = nextPlanet.nextElementSibling || this.planetList[0];
+              nextPlanet = rotate(nextPlanet);
               // if place is a moon and system does not have it, try next planet until we find one
               if (this.current.isMoon) {
                 while (!nextPlanet.querySelector(".moonlink")) {
-                  nextPlanet = nextPlanet.nextElementSibling || this.planetList[0];
+                  nextPlanet = rotate(nextPlanet);
                 }
               }
             }
@@ -12108,7 +12109,6 @@ class OGInfinity {
             }
             link += `&cp=${nextId}`;
           }
-
         }
         this.onFleetSentRedirectUrl = "https://" + window.location.host + window.location.pathname + link;
         this.expedition = false;
@@ -15514,7 +15514,7 @@ class OGInfinity {
           }
           const input = document.querySelector("#systemInput");
           if (document.activeElement == input || document.activeElement.tagName == "BODY") {
-            if (fleetDispatcher.loading == false) {
+            if (!fleetDispatcher.loading) {
               if (event.code == "ArrowUp") {
                 input.value = Number(input.value) + 1;
                 fleetDispatcher.updateTarget();
