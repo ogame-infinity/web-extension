@@ -7814,6 +7814,30 @@ li.resource {
   grid-template-columns: repeat(8, 1fr);
 }
 
+.choice-expedition-icon {
+  width: 25px;
+  height: 25px;
+  margin: 2px;
+  border: solid 1px #5f5d6b;
+  background: url("https://gf3.geo.gfsrv.net/cdn81/ce44d444b7d14a3ea6fa51fa6c1148.png");
+  background-size: calc(25px * 16) !important;
+  background-position: calc(-25px * 12) calc(-25px * 0) !important;
+  overflow: hidden;
+}
+
+.choice-expedition-icon:hover {
+  border: solid 1px #da961a;
+}
+
+.choice-expedition-icon.expedition-rotation {
+  background-position: calc(-25px * 12) calc(-25px * 0) !important;
+}
+
+.choice-expedition-icon.expedition-rotation.highlight {
+  background-position: calc(-25px * 12) calc(-25px * 1) !important;
+  border: solid 1px #da961a;
+}
+
 .ogl-fleet-ship.choice {
   width: 25px;
   height: 25px;
