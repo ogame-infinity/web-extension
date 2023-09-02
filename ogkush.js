@@ -15126,14 +15126,9 @@ class OGInfinity {
       }
       return false;
     };
+    const avoidIn = ["chat_box_textarea", "markItUpEditor", "textBox"];
     document.addEventListener("keydown", (event) => {
-      const activeClassList = document.activeElement.classList;
-      if (
-        activeClassList.contains("chat_box_textarea") ||
-        activeClassList.contains("new_msg_textarea") ||
-        activeClassList.contains("textBox")
-      )
-        return;
+      if (avoidIn.some(avoidInClass => document.activeElement.classList.contains(avoidInClass))) return;
       if (event.key == "Escape") {
         if (this.json.welcome) return;
         closeDialog();
@@ -15302,13 +15297,7 @@ class OGInfinity {
     };
     if (this.page == "fleetdispatch") {
       document.addEventListener("keydown", (event) => {
-        const activeClassList = document.activeElement.classList;
-        if (
-          activeClassList.contains("chat_box_textarea") ||
-          activeClassList.contains("new_msg_textarea") ||
-          activeClassList.contains("textBox")
-        )
-          return;
+        if (avoidIn.some(avoidInClass => document.activeElement.classList.contains(avoidInClass))) return;
         if (fleetDispatcher.currentPage == "fleet1") {
           if (document.querySelector("#fleetTemplatesEdit")) {
             if (document.querySelector("#fleetTemplatesEdit").classList.contains("overlayDiv")) return;
@@ -15371,13 +15360,7 @@ class OGInfinity {
         }
       });
       document.addEventListener("keydown", (event) => {
-        const activeClassList = document.activeElement.classList;
-        if (
-          activeClassList.contains("chat_box_textarea") ||
-          activeClassList.contains("new_msg_textarea") ||
-          activeClassList.contains("textBox")
-        )
-          return;
+        if (avoidIn.some(avoidInClass => document.activeElement.classList.contains(avoidInClass))) return;
         if (event.key == "Enter") {
           if (fleetDispatcher.currentPage == "fleet1") {
             document.querySelector("#continueToFleet2").click();
