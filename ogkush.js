@@ -12037,7 +12037,18 @@ class OGInfinity {
           selectedShips[cargoShip] = cargoShipsNeeded;
           this.selectShips(cargoShip, selectedShips[cargoShip]);
         } else {
-          // TODO: Implement use another cargo ship when not enough available
+          // select as many cargo ships as we can if there are not enough available
+          const cargoShipExpeditionPoints = availableShips[cargoShip] * SHIP_EXPEDITION_POINTS[cargoShip];
+          const remainingExpeditionPoints = maxExpeditionPoints - expeditionPoints - cargoShipExpeditionPoints;
+          const cargoShipCargoCapacity = availableShips[cargoShip] * this.json.ships[cargoShip].cargoCapacity;
+          const remainingCargoCapacity = maxResources - cargoCapacity - cargoShipCargoCapacity;
+          const otherCargoShip = cargoShip === 202 ? 203 : 202;
+          const maxOtherCargoShip = Math.max(
+            Math.ceil(remainingExpeditionPoints / SHIP_EXPEDITION_POINTS[otherCargoShip]),
+            this.calcNeededShips({ fret: otherCargoShip, resources: remainingCargoCapacity })
+          );
+          this.selectShips(cargoShip, availableShips[cargoShip]);
+          this.selectShips(otherCargoShip, Math.min(maxOtherCargoShip, availableShips[otherCargoShip]));
           warningText += this.getTranslatedText(107) + "<br>";
         }
 
