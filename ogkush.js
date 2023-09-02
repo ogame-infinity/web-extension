@@ -11971,14 +11971,11 @@ class OGInfinity {
           219: 0,
         };
 
-        fleetDispatcher.shipsOnPlanet.forEach((ship) => {
-          availableShips[ship.id] = ship.number;
-        });
+        fleetDispatcher.shipsOnPlanet.forEach((ship) => (availableShips[ship.id] = ship.number));
         let warningText = "";
 
         if (availableShips[219]) {
           selectedShips[219] = 1;
-          this.selectShips(219, 1);
           maxResources *= 2; // Pathfinder bonus
         } else {
           warningText += this.getTranslatedText(110) + "<br>";
@@ -11987,7 +11984,6 @@ class OGInfinity {
         if (this.json.options.expedition.sendProbe) {
           if (availableShips[210]) {
             selectedShips[210] = 1;
-            this.selectShips(210, 1);
           } else {
             warningText += this.getTranslatedText(109) + "<br>";
           }
@@ -12009,18 +12005,15 @@ class OGInfinity {
           }
           if (combatShip) {
             selectedShips[combatShip] = 1;
-            this.selectShips(combatShip, 1);
           } else {
             if (combatShip !== 0) warningText += this.getTranslatedText(108) + "<br>";
           }
         }
 
         let expeditionPoints = 0;
-        for (const ship in selectedShips) {
-          expeditionPoints += selectedShips[ship] * SHIP_EXPEDITION_POINTS[ship];
-        }
         let cargoCapacity = 0;
         for (const ship in selectedShips) {
+          expeditionPoints += selectedShips[ship] * SHIP_EXPEDITION_POINTS[ship];
           cargoCapacity += selectedShips[ship] * this.json.ships[ship].cargoCapacity;
         }
         maxResources = Math.floor(maxResources * this.json.options.expedition.limitCargo);
@@ -12035,7 +12028,6 @@ class OGInfinity {
 
         if (availableShips[cargoShip] >= cargoShipsNeeded) {
           selectedShips[cargoShip] = cargoShipsNeeded;
-          this.selectShips(cargoShip, selectedShips[cargoShip]);
         } else {
           // select as many cargo ships as we can if there are not enough available
           const cargoShipExpeditionPoints = availableShips[cargoShip] * SHIP_EXPEDITION_POINTS[cargoShip];
@@ -12047,12 +12039,14 @@ class OGInfinity {
             Math.ceil(remainingExpeditionPoints / SHIP_EXPEDITION_POINTS[otherCargoShip]),
             this.calcNeededShips({ fret: otherCargoShip, resources: remainingCargoCapacity })
           );
-          this.selectShips(cargoShip, availableShips[cargoShip]);
-          this.selectShips(otherCargoShip, Math.min(maxOtherCargoShip, availableShips[otherCargoShip]));
+          selectedShips[cargoShip] = availableShips[cargoShip];
+          selectedShips[otherCargoShip] = Math.min(maxOtherCargoShip, availableShips[otherCargoShip]);
           warningText += this.getTranslatedText(107) + "<br>";
         }
 
+        for (const ship in selectedShips) this.selectShips(~~ship, selectedShips[ship]);
         if (warningText.length) fadeBox(warningText, true);
+
         document.querySelector(".send_none").click();
         fleetDispatcher.mission = 15;
         fleetDispatcher.targetPlanet.type = 1;
