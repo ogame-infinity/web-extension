@@ -1621,8 +1621,8 @@ class OGInfinity {
     this.json.options.expedition.limitCargo = this.json.options.expedition.limitCargo || 1; // 100 %
     this.json.options.expedition.rotation = this.json.options.expedition.rotation === true ? true : false;
     this.json.options.expedition.rotationAfter = this.json.options.expedition.rotationAfter || 3;
-    this.json.options.expedition.sendCombat = this.json.options.expedition.sendCombat === true ? true : false;
-    this.json.options.expedition.sendProbe = this.json.options.expedition.sendProbe === true ? true : false;
+    this.json.options.expedition.sendCombat = this.json.options.expedition.sendCombat === false ? false : true;
+    this.json.options.expedition.sendProbe = this.json.options.expedition.sendProbe === false ? false : true;
     this.json.options.activitytimers = this.json.options.activitytimers === true ? true : false;
     this.json.options.planetIcons = this.json.options.planetIcons === true ? true : false;
     this.json.options.disableautofetchempire = this.json.options.disableautofetchempire === true ? true : false;
