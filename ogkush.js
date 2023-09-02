@@ -2587,7 +2587,7 @@ class OGInfinity {
             };
             if (!that.isMobile) {
               input.onkeyup = (event) => {
-                if (event.code == "KeyK") input.value = Math.max(oldValue, 1) * 1e3;
+                if (event.key.toUpperCase() == "K") input.value = Math.max(oldValue, 1) * 1e3;
                 let value = 1;
                 if (input.value <= 0 || isNaN(Number(input.value))) {
                   input.value = "";
@@ -10952,22 +10952,15 @@ class OGInfinity {
             ]
         ).forEach((elem) => {
           elem.addEventListener("keyup", (event) => {
-            const CODE = event.code;
             let factor;
             let value = fromFormatedNumber(event.target.value.replace("k", "")) || 0;
-            if (CODE === "ArrowUp" || CODE === "ArrowDown" || CODE === "KeyK") {
+            if (event.key === "ArrowUp" || event.key === "ArrowDown" || event.key.toUpperCase() === "K") {
               let add = event.ctrlKey ? 100 : event.shiftKey ? 10 : 1;
-              switch (CODE) {
-                case "ArrowUp":
-                  value = value + add;
-                  break;
-                case "ArrowDown":
-                  value = Math.max(value - add, 0);
-                  break;
-                case "KeyK":
-                  factor = value > 0 && elem.classList.contains("checkThousandSeparator") ? 1 : 1000;
-                  value = (value || 1) * factor;
-                  break;
+              if (event.key === "ArrowUp") value = value + add;
+              if (event.key === "ArrowDown") value = Math.max(value - add, 0);
+              if (event.key.toUpperCase() === "K") {
+                factor = value > 0 && elem.classList.contains("checkThousandSeparator") ? 1 : 1000;
+                value = (value || 1) * factor;
               }
             }
             event.target.value = toFormatedNumber(value);
@@ -11746,8 +11739,7 @@ class OGInfinity {
           !document.querySelector(".chat_box_textarea:focus")
         ) {
           if (fleetDispatcher.currentPage == "fleet3") {
-            let keycode = event.keyCode ? event.keyCode : event.which;
-            if (keycode == 13) sendFleet();
+            if (event.key == "Enter") sendFleet();
           }
         }
       });
@@ -13750,7 +13742,7 @@ class OGInfinity {
       });
       let sent = false;
       document.addEventListener("keydown", (event) => {
-        if (!sent && event.keyCode === 13 && fleetDispatcher.currentPage == "fleet3") {
+        if (!sent && event.key === "Enter" && fleetDispatcher.currentPage == "fleet3") {
           localStorage.setItem("ogl-redirect", link);
           sent = true;
         }
@@ -15137,7 +15129,7 @@ class OGInfinity {
         if (document.activeElement.getAttribute("type") == "search") {
           return;
         }
-        if (event.code == "Space" || event.key == "Enter") {
+        if (event.key == " " || event.key == "Enter") {
           if (document.querySelector(".refreshPhalanxLink")) {
             document.querySelector(".refreshPhalanxLink").click();
           } else {
@@ -15145,7 +15137,7 @@ class OGInfinity {
           }
         }
       }
-      if (!$(document.activeElement).is("input") && (event.ctrlKey || event.metaKey) && event.code == "ArrowDown") {
+      if (!$(document.activeElement).is("input") && (event.ctrlKey || event.metaKey) && event.key == "ArrowDown") {
         let planetList = document.querySelectorAll('[id^="planet-"]');
         let active = 0;
         let isMoon = 0;
@@ -15180,7 +15172,7 @@ class OGInfinity {
         event.stopPropagation();
         window.location.href = url;
       }
-      if (!$(event.target).is("input") && (event.ctrlKey || event.metaKey) && event.code == "ArrowUp") {
+      if (!$(event.target).is("input") && (event.ctrlKey || event.metaKey) && event.key == "ArrowUp") {
         let planetList = document.querySelectorAll('[id^="planet-"]');
         let active = 0;
         let isMoon = 0;
@@ -15214,7 +15206,7 @@ class OGInfinity {
         event.stopPropagation();
         window.location.href = url;
       }
-      if ((event.ctrlKey || event.metaKey) && event.code == "ArrowRight") {
+      if ((event.ctrlKey || event.metaKey) && event.key == "ArrowRight") {
         let planetList = document.querySelectorAll('[id^="planet-"]');
         let active = 0;
         let isMoon = 0;
@@ -15243,7 +15235,7 @@ class OGInfinity {
         event.stopPropagation();
         window.location.href = url;
       }
-      if ((event.ctrlKey || event.metaKey) && event.code == "ArrowLeft") {
+      if ((event.ctrlKey || event.metaKey) && event.key == "ArrowLeft") {
         let planetList = document.querySelectorAll('[id^="planet-"]');
         let active = 0;
         let isMoon = 0;
@@ -15305,12 +15297,12 @@ class OGInfinity {
           const input = document.querySelector("#systemInput");
           if (document.activeElement == input || document.activeElement.tagName == "BODY") {
             if (fleetDispatcher.loading == false) {
-              if (event.code == "ArrowUp") {
+              if (event.key == "ArrowUp") {
                 input.value = Number(input.value) + 1;
                 fleetDispatcher.updateTarget();
                 fleetDispatcher.fetchTargetPlayerData();
               }
-              if (event.code == "ArrowDown") {
+              if (event.key == "ArrowDown") {
                 input.value = Number(input.value) - 1;
                 fleetDispatcher.updateTarget();
                 fleetDispatcher.fetchTargetPlayerData();
@@ -15318,44 +15310,44 @@ class OGInfinity {
             }
           }
           if (document.activeElement.tagName != "INPUT") {
-            if (event.code == "KeyE") {
+            if (event.key.toUpperCase() == "E") {
               document.querySelector(".ogl-expedition").click();
               document.querySelector("#continueToFleet2").click();
             }
-            if (event.code == "KeyC") {
+            if (event.key.toUpperCase() == "C") {
               document.querySelector(".ogl-collect").click();
               document.querySelector("#continueToFleet2").click();
             }
-            if (event.code == "KeyN") document.querySelector("#resetall").click();
-            if (event.code == "KeyA") document.querySelector("#sendall").click();
-            if (event.code == "KeyM") document.querySelector("span.select-most").click();
+            if (event.key.toUpperCase() == "N") document.querySelector("#resetall").click();
+            if (event.key.toUpperCase() == "A") document.querySelector("#sendall").click();
+            if (event.key.toUpperCase() == "M") document.querySelector("span.select-most").click();
           }
         } else if (fleetDispatcher.currentPage == "fleet2") {
-          if (event.code == "KeyA") document.querySelector("#loadAllResources img").click();
-          if (event.code == "KeyM" && !event.shiftKey) document.querySelector("#loadAllResources .select-most").click();
-          if (event.code == "KeyN") document.querySelector("#loadAllResources .send_none").click();
-          if (event.code == "KeyP" && event.shiftKey) document.querySelector("#pbutton").click();
-          if (event.code == "KeyM" && event.shiftKey) document.querySelector("#mbutton").click();
-          if (event.code == "KeyD" && event.shiftKey) document.querySelector("#dbutton").click();
-          if (event.code == "KeyX" && document.querySelector("#button1.on"))
+          if (event.key.toUpperCase() == "A") document.querySelector("#loadAllResources img").click();
+          if (event.key.toUpperCase() == "M" && !event.shiftKey) document.querySelector("#loadAllResources .select-most").click();
+          if (event.key.toUpperCase() == "N") document.querySelector("#loadAllResources .send_none").click();
+          if (event.key.toUpperCase() == "P" && event.shiftKey) document.querySelector("#pbutton").click();
+          if (event.key.toUpperCase() == "M" && event.shiftKey) document.querySelector("#mbutton").click();
+          if (event.key.toUpperCase() == "D" && event.shiftKey) document.querySelector("#dbutton").click();
+          if (event.key.toUpperCase() == "X" && document.querySelector("#button1.on"))
             document.querySelector("#missionButton1").click(); // attack
-          if (event.code == "KeyX" && event.altKey && document.querySelector("#button2.on"))
+          if (event.key.toUpperCase() == "X" && event.altKey && document.querySelector("#button2.on"))
             document.querySelector("#missionButton2").click(); // ACS attack
-          if (event.code == "KeyT" && document.querySelector("#button3.on"))
+          if (event.key.toUpperCase() == "T" && document.querySelector("#button3.on"))
             document.querySelector("#missionButton3").click(); // transport
-          if (event.code == "KeyD" && document.querySelector("#button4.on"))
+          if (event.key.toUpperCase() == "D" && document.querySelector("#button4.on"))
             document.querySelector("#missionButton4").click(); // deployment
-          if (event.code == "KeyH" && document.querySelector("#button5.on"))
+          if (event.key.toUpperCase() == "H" && document.querySelector("#button5.on"))
             document.querySelector("#missionButton5").click(); // hold (ACS defend)
-          if (event.code == "KeyS" && document.querySelector("#button6.on"))
+          if (event.key.toUpperCase() == "S" && document.querySelector("#button6.on"))
             document.querySelector("#missionButton6").click(); // espionage
-          if (event.code == "KeyC" && document.querySelector("#button7.on"))
+          if (event.key.toUpperCase() == "C" && document.querySelector("#button7.on"))
             document.querySelector("#missionButton7").click(); // colonisation
-          if (event.code == "KeyR" && document.querySelector("#button8.on"))
+          if (event.key.toUpperCase() == "R" && document.querySelector("#button8.on"))
             document.querySelector("#missionButton8").click(); // recycle debris field
-          if (event.code == "KeyX" && event.ctrlKey && document.querySelector("#button9.on"))
+          if (event.key.toUpperCase() == "X" && event.ctrlKey && document.querySelector("#button9.on"))
             document.querySelector("#missionButton9").click(); // moon destruction
-          if (event.code == "KeyE" && document.querySelector("#button15.on"))
+          if (event.key.toUpperCase() == "E" && document.querySelector("#button15.on"))
             document.querySelector("#missionButton15").click(); // expedition
         }
       });
@@ -19147,8 +19139,6 @@ class OGInfinity {
         fleetDispatcher.NO_UPDATE_MISSIONS = true;
       }
 
-      const CODE = e.code;
-
       // Bind arrow up and down to add or subscract for ogl-formatInput
       if (
         element.classList &&
@@ -19162,21 +19152,15 @@ class OGInfinity {
             element.value = toFormatedNumber(value);
           }
         } else {
-          if (CODE === "ArrowUp" || CODE === "ArrowDown" || CODE === "KeyK") {
+          if (e.key === "ArrowUp" || e.key === "ArrowDown" || e.key.toUpperCase() === "K") {
             const value = fromFormatedNumber(element.value.replace("k", "")) || 0;
             const add = e.ctrlKey ? 100 : e.shiftKey ? 10 : 1;
             let factor;
-            switch (CODE) {
-              case "ArrowUp":
-                element.value = toFormatedNumber(value + add);
-                break;
-              case "ArrowDown":
-                element.value = toFormatedNumber(Math.max(value - add, 0));
-                break;
-              case "KeyK":
-                factor = value > 0 && element.classList.contains("checkThousandSeparator") ? 1 : 1000;
-                element.value = toFormatedNumber((value || 1) * factor);
-                break;
+            if (e.key === "ArrowUp") element.value = toFormatedNumber(value + add);
+            if (e.key === "ArrowDown") element.value = toFormatedNumber(Math.max(value - add, 0));
+            if (e.key.toUpperCase() === "K") {
+              factor = value > 0 && element.classList.contains("checkThousandSeparator") ? 1 : 1000;
+              element.value = toFormatedNumber((value || 1) * factor);
             }
           }
         }
