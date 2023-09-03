@@ -6707,13 +6707,6 @@ table.fleetinfo tr:nth-last-child(1),
   font-style: oblique;
 }
 
-.btn_blue {
-  background: #485f93 !important;
-  border: 1px solid #5b77b5 !important;
-  border-radius: 2px !important;
-  user-select: none;
-}
-
 .ogl-btn_red {
   background: #b13131 !important;
   border: 1px solid #de3e3e !important;
@@ -7518,8 +7511,8 @@ span.resbuttons {
   float: left;
 }
 
-#galaxyContent .ctContentRow .cellAction .buddyrequest {
-  display: none;
+#galaxyContent a[class*="buddyrequest"][href*="id=99999"] {
+  visibility: hidden;
 }
 
 #technologydetails .technology_tree {
@@ -7810,33 +7803,55 @@ li.resource {
   grid-template-columns: repeat(6, 1fr);
 }
 
-.ogl-tooltip .ogk-expedition-cargo {
+.ogl-tooltip .ogk-expedition-options {
   width: auto;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(8, 1fr);
 }
 
-.ogl-fleet-210.grey {
-  -webkit-filter: grayscale(100%);
-  filter: grey;
+.choice-expedition-icon {
+  width: 25px;
+  height: 25px;
+  margin: 2px;
+  border: solid 1px #5f5d6b;
+  background: url("https://gf3.geo.gfsrv.net/cdn81/ce44d444b7d14a3ea6fa51fa6c1148.png");
+  background-size: calc(25px * 16) !important;
+  background-position: calc(-25px * 12) calc(-25px * 0) !important;
+  overflow: hidden;
 }
 
-.ogl-fleet-218.grey {
-  -webkit-filter: grayscale(100%);
-  filter: grey;
+.choice-expedition-icon:hover {
+  border: solid 1px #da961a;
+}
+
+.choice-expedition-icon.expedition-rotation {
+  background-position: calc(-25px * 12) calc(-25px * 0) !important;
+}
+
+.choice-expedition-icon.expedition-rotation.highlight {
+  background-position: calc(-25px * 12) calc(-25px * 1) !important;
+  border: solid 1px #da961a;
 }
 
 .ogl-fleet-ship.choice {
-  width: 20px;
-  height: 20px;
+  width: 25px;
+  height: 25px;
+  margin: 2px;
   background-size: calc(50px * 10) !important;
+}
+
+.ogl-fleet-ship.highlight {
+  border: solid 1px #da961a;
+  filter: brightness(1.3);
 }
 
 .choice-mission-icon {
   background: url("https://gf2.geo.gfsrv.net/cdn14/f45a18b5e55d2d38e7bdc3151b1fee.jpg") no-repeat;
-  width: 20px;
-  height: 20px;
-  background-size: 220px;
+  width: 25px;
+  height: 25px;
+  margin: 2px;
+  border: solid 1px #5f5d6b;
+  background-size: calc(25px * 11);
   overflow: hidden;
 }
 
@@ -7844,18 +7859,47 @@ li.resource {
   border: solid 1px #da961a;
 }
 
+.choice-mission-icon.ogl-mission-1 {
+  background-position: calc(-25px * 8) calc(-25px * 0) !important;
+}
+
 .choice-mission-icon.ogl-mission-3 {
-  background-position: -100px 0px !important;
+  background-position: calc(-25px * 5) calc(-25px * 0) !important;
 }
 
 .choice-mission-icon.ogl-mission-4 {
-  background-position: -60px 0px !important;
+  background-position: calc(-25px * 3) calc(-25px * 0) !important;
+}
+
+.choice-mission-icon.ogl-mission-6 {
+  background-position: calc(-25px * 6) calc(-25px * 0) !important;
+}
+
+.choice-mission-icon.ogl-mission-1.highlight {
+  background-position: calc(-25px * 8) calc(-25px * 1) !important;
+  border: solid 1px #da961a;
+}
+
+.choice-mission-icon.ogl-mission-3.highlight {
+  background-position: calc(-25px * 5) calc(-25px * 1) !important;
+  border: solid 1px #da961a;
+}
+
+.choice-mission-icon.ogl-mission-4.highlight {
+  background-position: calc(-25px * 3) calc(-25px * 1) !important;
+  border: solid 1px #da961a;
+}
+
+.choice-mission-icon.ogl-mission-6.highlight {
+  background-position: calc(-25px * 6) calc(-25px * 1) !important;
+  border: solid 1px #da961a;
 }
 
 .choice-target {
-  width: 20px;
-  height: 20px;
-  margin-left: 0px !important;
+  width: 25px;
+  height: 25px;
+  margin: 2px;
+  border: solid 1px #5f5d6b;
 }
 
 .choice-target:hover {
@@ -7863,19 +7907,18 @@ li.resource {
 }
 
 .choice-target.planet {
-  width: 20px;
-  height: 20px;
+  width: 25px;
+  height: 25px;
   background: url("chrome-extension://__MSG_@@extension_id__/res/planet.png") no-repeat left top;
-  background-size: 20px 18px;
+  background-size: 25px 25px;
   opacity: 0.6;
 }
 
 .choice-target.moon {
-  width: 20px;
-  height: 20px;
+  width: 25px;
+  height: 25px;
   background: url("chrome-extension://__MSG_@@extension_id__/res/moon.png") no-repeat left top;
-  background-size: 24px 19px;
-  background-position: -2px, 2px;
+  background-size: 25px 25px;
   opacity: 0.6;
 }
 
