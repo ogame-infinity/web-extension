@@ -10466,6 +10466,10 @@ class OGInfinity {
                   defaultMission = that.json.options.expeditionMission == 15 ? 15 : 6;
                 } else if (fleetDispatcher.targetIsBuddyOrAllyMember) {
                   defaultMission = that.json.options.harvestMission;
+                } else if (!missions.includes(1)) {
+                  // workaround ogame rare bug when does not set targetIsBuddyOrAllyMember to "true" with own planets
+                  // if available missions do not include attack mission, the target is own
+                  defaultMission = that.json.options.harvestMission;
                 } else {
                   defaultMission = that.json.options.foreignMission;
                 }
