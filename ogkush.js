@@ -1,6 +1,6 @@
 import { getLogger } from "./util/logger.js";
-import * as ptreService from "./util/service.ptre.js";
 import { pageContextInit, pageContextRequest } from "./util/service.callbackEvent.js";
+import * as ptreService from "./util/service.ptre.js";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 const VERSION = "__VERSION__";
@@ -5355,7 +5355,14 @@ class OGInfinity {
       }
 
       getActiveSubContainer() {
-        return this.container.querySelector("div[role=tabpanel][aria-hidden=false]");
+        let subContainer = this.container.querySelector("div[role=tabpanel][aria-hidden=false]");
+
+        if (subContainer === null && this.container.hasAttribute("role") && this.container.role === "tabpanel") {
+          /// This active container no has subtabs, is only one option.
+          subContainer = this.container;
+        }
+
+        return subContainer;
       }
     }
 
