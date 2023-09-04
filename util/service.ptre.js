@@ -57,6 +57,7 @@ export function getPlayerInfos(teamKey, cleanPlayerName, playerId, frame) {
  */
 export function updateGalaxy(position) {
   const url = new URL(PTRE_URL.concat("api_galaxy_import_infos.php"));
+  _buildQueryString(url.searchParams);
 
   return fetch(url, {
     method: "POST",
@@ -83,6 +84,7 @@ export function updateGalaxy(position) {
  */
 export function importPlayerActivity(activity) {
   const url = new URL(PTRE_URL.concat("oglight_import_player_activity.php"));
+  _buildQueryString(url.searchParams);
 
   return fetch(url, {
     method: "POST",
