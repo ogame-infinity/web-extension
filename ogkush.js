@@ -5127,51 +5127,73 @@ class OGInfinity {
     let container = createDOM("div", { class: "ptreContent" });
 
     if (!this.json.options.ptreTK) {
-      container.textContent = "Error: no teamkey registered";
+      container.textContent = this.getTranslatedText(151);
       this.popup(null, container);
       return;
     }
-
+    /* @todo */
     let cleanPlayerName = encodeURIComponent(player.name);
     ptreService.getPlayerInfos(this.json.options.ptreTK, cleanPlayerName, player.id, frame).then((result) => {
       if (result.code == 1) {
         let arrData = result.activity_array.succes == 1 ? JSON.parse(result.activity_array.activity_array) : null;
         let checkData = result.activity_array.succes == 1 ? JSON.parse(result.activity_array.check_array) : null;
 
-        container.html(`
-                            <h3>${this.gameLang == "fr" ? "Meilleur Rapport" : "Best Report"} :</h3>
-                            <div class="ptreBestReport">
-                                <div>
-                                    <div><b class="ogl_fleet"><i class="material-icons">military_tech</i>${this.formatToUnits(
-                                      result.top_sr_fleet_points
-                                    )} pts</b></div>
-                                    <div><b>${new Date(result.top_sr_timestamp * 1000).toLocaleDateString(
-                                      "fr-FR"
-                                    )}</b></div>
-                                </div>
-                                <div>
-                                    <a class="ogl_button" target="_blank" href="${result.top_sr_link}">${
-                                      this.gameLang == "fr" ? "Détails du rapport" : "Report Details"
-                                    }</a>
-                                    <a class="ogl_button" target="_blank" href="https://ptre.chez.gg/?country=${
-                                      this.gameLang
-                                    }&univers=${this.universe}&player_id=${player.id}">${
-                                      this.gameLang == "fr" ? "Profil de la cible" : "Target Profile"
-                                    }</a>
-                                </div>
-                            </div>
-                            <div class="splitLine"></div>
-                            <h3>${result.activity_array.title || ""}</h3>
-                            <div class="ptreActivities"><span></span><div></div></div>
-                            <div class="splitLine"></div>
-                            <div class="ptreFrames"></div>
-                            <!--<ul class="ptreLegend">
-                                <li><u>Green circle</u>: no activity detected & fully checked</li>
-                                <li><u>Green dot</u>: no activity detected</li>
-                                <li><u>Red dot</u>: multiple activities detected</li>
-                                <li><u>Transparent dot</u>: not enough planet checked</li>
-                            </ul>-->
-                        `);
+        container.appendChild(createDOM("h3", {}, this.getTranslatedText(152)));
+
+        const ptreBestReport = createDOM("div", { class: "ptreBestReport" });
+
+        const innerDiv1 = createDOM("div", {});
+        ptreBestReport.appendChild(innerDiv1);
+
+        const innerDiv2 = createDOM("div", {});
+        innerDiv1.appendChild(innerDiv2);
+
+        const oglFleet = createDOM("b", { class: "ogl_fleet" });
+        innerDiv2.appendChild(oglFleet);
+
+        oglFleet.appendChild(createDOM("i", { class: "material-icons" }, "military_tech"));
+
+        oglFleet.appendChild(document.createTextNode(this.formatToUnits(result.top_sr_fleet_points) + " pts"));
+
+        const dateDiv = createDOM("div", {});
+        innerDiv2.appendChild(dateDiv);
+
+        const formattedDate = new Date(result.top_sr_timestamp * 1000).toLocaleDateString("fr-FR");
+        dateDiv.appendChild(createDOM("b", {}, formattedDate));
+
+        const buttonsDiv = createDOM("div", {});
+        innerDiv1.appendChild(buttonsDiv);
+
+        buttonsDiv.appendChild(
+          createDOM(
+            "a",
+            { class: "ogl_button", target: "result.top_sr_link", href: result.top_sr_link },
+            this.getTranslatedText(153)
+          )
+        );
+
+        const targetProfileButton = createDOM(
+          "a",
+          {
+            class: "ogl_button",
+            target: "https://ptre.chez.gg/?country=${this.gameLang}&univers=${this.universe}&player_id=${player.id}",
+            href: `https://ptre.chez.gg/?country=${this.gameLang}&univers=${this.universe}&player_id=${player.id}`,
+          },
+          this.getTranslatedText(154)
+        );
+        buttonsDiv.appendChild(targetProfileButton);
+
+        container.appendChild(ptreBestReport);
+        container.appendChild(createDOM("div", { class: "splitLine" }));
+        container.appendChild(createDOM("h3", {}, result.activity_array.title || ""));
+
+        const domPtreActivities = createDOM("div", { class: "ptreActivities" });
+        domPtreActivities.appendChild(createDOM("span"));
+        domPtreActivities.appendChild(createDOM("div"));
+        container.appendChild(domPtreActivities);
+
+        container.appendChild(createDOM("div", { class: "splitLine" }));
+        container.appendChild(createDOM("div", { class: "ptreFrames" }));
 
         ["last24h", "2days", "3days", "week", "2weeks", "month"].forEach((f) => {
           let btn = container.querySelector(".ptreFrames").appendChild(createDOM("div", { class: "ogl_button" }, f));
@@ -5181,7 +5203,8 @@ class OGInfinity {
         if (result.activity_array.succes == 1) {
           arrData.forEach((line, index) => {
             if (!isNaN(line[1])) {
-              let div = this.createDOM("div", { class: "tooltip" }, `<div>${line[0]}</div>`);
+              let div = createDOM("div", { class: "tooltip" });
+              div.appendChild(createDOM("div", {}, line[0]));
               let span = div.appendChild(createDOM("span", { class: "ptreDotStats" }));
               let dot = span.appendChild(createDOM("div", { "data-acti": line[1], "data-check": checkData[index][1] }));
 
@@ -5195,16 +5218,16 @@ class OGInfinity {
               let title;
               let checkValue = Math.max(0, 100 - dotValue);
 
-              if (checkValue === 100) title = "- No activity detected";
-              else if (checkValue >= 60) title = "- A few activities detected";
-              else if (checkValue >= 40) title = "- Some activities detected";
-              else title = "- A lot of activities detected";
+              if (checkValue === 100) title = this.getTranslatedText(155);
+              else if (checkValue >= 60) title = this.getTranslatedText(156);
+              else if (checkValue >= 40) title = this.getTranslatedText(157);
+              else title = this.getTranslatedText(158);
 
-              if (checkData[index][1] == 100) title += "<br>- Perfectly checked";
-              else if (checkData[index][1] >= 75) title += "<br>- Nicely checked";
-              else if (checkData[index][1] >= 50) title += "<br>- Decently checked";
-              else if (checkData[index][1] > 0) title = "Poorly checked";
-              else title = "Not checked";
+              if (checkData[index][1] == 100) title += this.getTranslatedText(159);
+              else if (checkData[index][1] >= 75) title += this.getTranslatedText(160);
+              else if (checkData[index][1] >= 50) title += this.getTranslatedText(161);
+              else if (checkData[index][1] > 0) title = this.getTranslatedText(162);
+              else title = this.getTranslatedText(163);
 
               div.setAttribute("title", title);
 
@@ -7130,15 +7153,13 @@ class OGInfinity {
       let btns = controlRow.appendChild(createDOM("div"));
 
       if (this.json.options.ptreTK) {
-        let ptreLink = btns.appendChild(createDOM("a", { class: "ogl-ptre" }));
-        ptreLink.textContent = "P";
-        ptreLink.addEventListener("click", () => {
-          window.open(
-            this.generatePTRELink(player.id),
-            "_blank",
-            `location=yes,scrollbars=yes,status=yes,width=${screen.availWidth},height=${screen.availHeight}`
-          );
-        });
+        let ptreLink = btns.appendChild(
+          createDOM(
+            "a",
+            { class: "ogl-ptre", href: this.generatePTRELink(player.id), target: this.generatePTRELink(player.id) },
+            "P"
+          )
+        );
       }
 
       let stats = btns.appendChild(createDOM("a", { class: "ogl-mmorpgstats" }));
@@ -13482,20 +13503,25 @@ class OGInfinity {
       let count = content.appendChild(createDOM("div", { class: "ogl-fullGrid ogl-right" }));
       let sideStalk = content.appendChild(createDOM("a", { class: "ogl-pin" }));
       sideStalk.addEventListener("click", () => this.sideStalk(player.id));
-      let stats = content.appendChild(createDOM("a", { class: "ogl-mmorpgstats" }));
-      stats.addEventListener("click", () => {
-        window.open(this.generateMMORPGLink(player.id), "_blank");
-      });
+      let stats = content.appendChild(
+        createDOM(
+          "a",
+          {
+            class: "ogl-mmorpgstats",
+            href: this.generateMMORPGLink(player.id),
+            target: this.generateMMORPGLink(player.id),
+          },
+          "P"
+        )
+      );
       if (this.json.options.ptreTK) {
-        let ptreLink = content.appendChild(createDOM("a", { class: "ogl-ptre" }));
-        ptreLink.textContent = "P";
-        ptreLink.addEventListener("click", () => {
-          window.open(
-            this.generatePTRELink(player.id),
-            "_blank",
-            `location=yes,scrollbars=yes,status=yes,width=${screen.availWidth},height=${screen.availHeight}`
-          );
-        });
+        let ptreLink = content.appendChild(
+          createDOM(
+            "a",
+            { class: "ogl-ptre", href: this.generatePTRELink(player.id), target: this.generatePTRELink(player.id) },
+            "P"
+          )
+        );
       }
       player.planets.forEach((planet) => {
         if (this.activities) {
@@ -17643,6 +17669,97 @@ class OGInfinity {
           tr: "Rotasyon öncesi keşif gezileri",
         },
         /*151*/ {
+          de: "Fehler: kein teamkey registriert",
+          en: "Error: no teamkey registered",
+          es: "Error: ninguna clave de equipo registrada",
+          fr: "Erreur : aucune clé d'équipe enregistrée",
+          tr: "Hata: hiçbir takım anahtarı kaydedilmedi",
+        },
+        /*152*/ {
+          de: "Bester bericht",
+          en: "Best report",
+          es: "Mejor informe",
+          fr: "Meilleur rapport",
+          tr: "En i̇yi rapor",
+        },
+        /*153*/ {
+          de: "Berichtsdetails",
+          en: "Report details",
+          es: "Detalles del informe",
+          fr: "Détails du rapport",
+          tr: "Rapor detayları",
+        },
+        /*154*/ {
+          de: "Zielprofil",
+          en: "Target profile",
+          es: "Perfil del objetivo",
+          fr: "Profil de la cible",
+          tr: "Hedef profili",
+        },
+        /*155*/ {
+          de: "- Keine aktivität erkannt",
+          en: "- No activity detected",
+          es: "- Ninguna actividad detectada",
+          fr: "- Aucune activité détectée",
+          tr: "- Hiçbir etkinlik algılanmadı",
+        },
+        /*156*/ {
+          de: "- Einige aktivitäten erkannt",
+          en: "- A few activities detected",
+          es: "- Unas pocas actividades detectadas",
+          fr: "- Peu d'activités détectées",
+          tr: "- Birkaç etkinlik algılandı",
+        },
+        /*157*/ {
+          de: "- Einige aktivitäten erkannt",
+          en: "- Some activities detected",
+          es: "- Algunas actividades detectadas",
+          fr: "- Quelques activités détectées",
+          tr: "- Bazı etkinlikler algılandı",
+        },
+        /*158*/ {
+          de: "- Viele Aktivitäten erkannt",
+          en: "- A lot of activities detected",
+          es: "- Muchas actividades detectadas",
+          fr: "- Beaucoup d'activités détectées",
+          tr: "- Çok sayıda etkinlik algılandı",
+        },
+        /*159*/ {
+          de: "<br>- Perfekt überprüft",
+          en: "<br>- Perfectly checked",
+          es: "<br>- Perfectamente verificado",
+          fr: "<br>- Parfaitement vérifié",
+          tr: "<br>- Mükemmel kontrol edildi",
+        },
+        /*160*/ {
+          de: "<br>- Gut überprüft",
+          en: "<br>- Nicely checked",
+          es: "<br>- Bien verificado",
+          fr: "<br>- Bien vérifié",
+          tr: "<br>- Güzel kontrol edildi",
+        },
+        /*161*/ {
+          de: "<br>- Ordentlich überprüft",
+          en: "<br>- Decently checked",
+          es: "<br>- Aceptablemente verificado",
+          fr: "<br>- Correctement vérifié",
+          tr: "<br>- Uygun bir şekilde kontrol edildi",
+        },
+        /*162*/ {
+          de: "Schlecht überprüft",
+          en: "Poorly checked",
+          es: "Pobremente verificado",
+          fr: "Mal vérifié",
+          tr: "Kötü kontrol edildi",
+        },
+        /*163*/ {
+          de: "Nicht überprüft",
+          en: "Not checked",
+          es: "No verificado",
+          fr: "Non vérifié",
+          tr: "Kontrol edilmedi",
+        },
+        /*164*/ {
           de: "",
           en: "",
           es: "",

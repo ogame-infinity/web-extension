@@ -7154,6 +7154,7 @@ table.fleetinfo tr:nth-last-child(1),
 .ogl-ptre {
   width: 16px;
   display: inline-block;
+  text-decoration: none;
   text-align: center;
   font-size: inherit;
   cursor: pointer;
