@@ -11812,7 +11812,8 @@ class OGInfinity {
     if (this.page == "fleetdispatch" && fleetDispatcher.shipsOnPlanet.length !== 0 && !fleetDispatcher.isOnVacation) {
       if (!document.querySelector("#allornone .allornonewrap")) return;
       document.querySelector("#expeditiontime").value = this.json.options.expedition.defaultTime;
-      document.querySelector("#expeditiontime + .dropdown > a").textContent = this.json.options.expedition.defaultTime;
+      const dropdown = document.querySelector("#expeditiontime + .dropdown > a");
+      if (dropdown) dropdown.textContent = this.json.options.expedition.defaultTime;
       const btnExpe = createDOM("button", {
         class: `ogl-expedition ${this.json.options.expedition.cargoShip == 202 ? "smallCargo" : "largeCargo"}`,
       });
