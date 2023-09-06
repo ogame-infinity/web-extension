@@ -5141,47 +5141,38 @@ class OGInfinity {
         container.appendChild(createDOM("h3", {}, this.getTranslatedText(152)));
 
         const ptreBestReport = createDOM("div", { class: "ptreBestReport" });
-
-        const innerDiv1 = createDOM("div", {});
-        ptreBestReport.appendChild(innerDiv1);
-
-        const innerDiv2 = createDOM("div", {});
-        innerDiv1.appendChild(innerDiv2);
-
-        const oglFleet = createDOM("b", { class: "ogl_fleet" });
-        innerDiv2.appendChild(oglFleet);
-
-        oglFleet.appendChild(createDOM("i", { class: "material-icons" }, "military_tech"));
-
-        oglFleet.appendChild(document.createTextNode(this.formatToUnits(result.top_sr_fleet_points) + " pts"));
-
-        const dateDiv = createDOM("div", {});
-        innerDiv2.appendChild(dateDiv);
-
-        const formattedDate = new Date(result.top_sr_timestamp * 1000).toLocaleDateString("fr-FR");
-        dateDiv.appendChild(createDOM("b", {}, formattedDate));
-
-        const buttonsDiv = createDOM("div", {});
-        innerDiv1.appendChild(buttonsDiv);
-
-        buttonsDiv.appendChild(
+        const fleetPointsDiv = createDOM("div");
+        fleetPointsDiv.append(
+          createDOM("div").appendChild(
+            createDOM(
+              "b",
+              { class: "ogl_fleet" },
+              this.formatToUnits(result.top_sr_fleet_points) + " pts"
+            ).insertAdjacentElement("afterbegin", createDOM("i", { class: "material-icons" }, "military_tech"))
+              .parentElement
+          ),
+          createDOM("div").appendChild(
+            createDOM("b", {}, new Date(result.top_sr_timestamp * 1000).toLocaleDateString("fr-FR"))
+          ).parentElement
+        );
+        const buttonsDiv = createDOM("div");
+        buttonsDiv.append(
           createDOM(
             "a",
             { class: "ogl_button", target: "result.top_sr_link", href: result.top_sr_link },
             this.getTranslatedText(153)
+          ),
+          createDOM(
+            "a",
+            {
+              class: "ogl_button",
+              target: `https://ptre.chez.gg/?country=${this.gameLang}&univers=${this.universe}&player_id=${player.id}`,
+              href: `https://ptre.chez.gg/?country=${this.gameLang}&univers=${this.universe}&player_id=${player.id}`,
+            },
+            this.getTranslatedText(154)
           )
         );
-
-        const targetProfileButton = createDOM(
-          "a",
-          {
-            class: "ogl_button",
-            target: "https://ptre.chez.gg/?country=${this.gameLang}&univers=${this.universe}&player_id=${player.id}",
-            href: `https://ptre.chez.gg/?country=${this.gameLang}&univers=${this.universe}&player_id=${player.id}`,
-          },
-          this.getTranslatedText(154)
-        );
-        buttonsDiv.appendChild(targetProfileButton);
+        ptreBestReport.append(fleetPointsDiv, buttonsDiv);
 
         container.appendChild(ptreBestReport);
         container.appendChild(createDOM("div", { class: "splitLine" }));
