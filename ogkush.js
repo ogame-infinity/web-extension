@@ -17660,11 +17660,11 @@ class OGInfinity {
           tr: "Rotasyon öncesi keşif gezileri",
         },
         /*151*/ {
-          de: "Fehler: kein teamkey registriert",
-          en: "Error: no teamkey registered",
-          es: "Error: ninguna clave de equipo registrada",
-          fr: "Erreur : aucune clé d'équipe enregistrée",
-          tr: "Hata: hiçbir takım anahtarı kaydedilmedi",
+          de: "Fehler: kein PTRE teamkey registriert",
+          en: "Error: no PTRE teamkey registered",
+          es: "Error: ninguna clave de equipo PTRE registrada",
+          fr: "Erreur : aucune clé d'équipe PTRE enregistrée",
+          tr: "Hata: hiçbir takım anahtarı PTRE kaydedilmedi",
         },
         /*152*/ {
           de: "Bester bericht",
