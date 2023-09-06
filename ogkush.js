@@ -5131,7 +5131,7 @@ class OGInfinity {
       this.popup(null, container);
       return;
     }
-    /* @todo */
+
     let cleanPlayerName = encodeURIComponent(player.name);
     ptreService.getPlayerInfos(this.json.options.ptreTK, cleanPlayerName, player.id, frame).then((result) => {
       if (result.code == 1) {
