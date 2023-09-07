@@ -10471,7 +10471,8 @@ class OGInfinity {
                   defaultMission = missionURL;
                 } else if (fleetDispatcher.targetPlanet.position == 16) {
                   defaultMission = that.json.options.expeditionMission == 15 ? 15 : 6;
-                } else if (fleetDispatcher.targetIsBuddyOrAllyMember) {
+                } else if (fleetDispatcher.targetIsBuddyOrAllyMember || !missions.includes(1)) {
+                  // if available missions do not include attack mission, the target is own planet/moon
                   defaultMission = that.json.options.harvestMission;
                 } else {
                   defaultMission = that.json.options.foreignMission;
