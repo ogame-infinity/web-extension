@@ -17733,7 +17733,7 @@ class OGInfinity {
           de: "<br>- Ordentlich überprüft",
           en: "<br>- Decently checked",
           es: "<br>- Aceptablemente verificado",
-          fr: "<br>- Correctement vérifié",
+          fr: "<br>- Moyennement vérifié",
           tr: "<br>- Uygun bir şekilde kontrol edildi",
         },
         /*162*/ {
