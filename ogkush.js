@@ -1740,7 +1740,7 @@ class OGInfinity {
     this.checkRedirect();
     this.updateProductionProgress();
     this.showStorageTimers();
-    this.showTabTimer();
+    // this.showTabTimer(); TODO: enable when timer is moved to the clock area
     this.markLifeforms();
     this.navigationArrows();
     this.expedition = false;
@@ -19279,6 +19279,15 @@ class OGInfinity {
   }
 
   showTabTimer() {
+    /* TODO:
+    - move to clock area
+    - use ogame timestamp to show last page refesh time
+    - use Date.now()
+    - integrate here timeZone indicator
+    - integrate here ping stat and change it to use perfomance API
+    - maybe add load stat
+    - rename method and enable again
+    */
     let title = document.title;
     let update = setInterval(function () {
       let loadDate = new Date(window.performance.timing.loadEventEnd);
