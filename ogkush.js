@@ -16115,8 +16115,11 @@ class OGInfinity {
     window.onbeforeunload = () => cancelController.abort();
   }
 
-  getTranslatedText(id, type = "text", html = true) {
-    let language = ["de", "en", "es", "fr", "tr"].includes(this.gameLang) ? this.gameLang : "en";
+  getTranslatedText(id, type = "text") {
+    let language = this.gameLang;
+    if (language == "br") language = "pt";
+    language = ["ar", "mx"].includes(language) ? "es" : language;
+    language = ["de", "en", "es", "fr", "tr"].includes(language) ? language : "en";
     let translation = {
       tech: {
         1: {
