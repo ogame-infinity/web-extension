@@ -14682,22 +14682,24 @@ class OGInfinity {
   }
 
   async checkPantrySync(pantryKey) {
-    let lastPantrySync = null;
+    let pantryBasketTime = null;
     let lastLocalSync = this.json.pantrySync;
     let pantrySyncObj = null;
-    if (!pantryKey || !this.json.needSync || (lastLocalSync && Date.now() - lastLocalSync < 180000)) {
+    if (!pantryKey || !this.json.needSync || (lastLocalSync && Date.now() - lastLocalSync < 60000)) {
       return;
     }
     let syncRequest = await fetch(
-      `https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-mainSync`,
+      `https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-test`,
       { priority: "high", method: "GET" }
     ).catch(() => {
       return;
     });
     if (syncRequest?.ok) {
       try {
-        pantrySyncObj = await syncRequest?.json();
-        lastPantrySync = pantrySyncObj?.pantrySync;
+        let rawObject = await syncRequest?.json();
+        pantrySyncObj = JSON.parse(LZString.decompressFromUTF16(rawObject.data));
+        pantryBasketTime = pantrySyncObj?.pantrySync;
+        console.info("Last sync on server: " + pantryBasketTime);
       } catch {}
     } else {
       let responseText = await syncRequest?.text();
@@ -14708,23 +14710,22 @@ class OGInfinity {
 
     let lastPantryTry = sessionStorage.getItem("lastPantryTry") ? parseInt(sessionStorage.getItem("lastPantryTry")) : 0;
     if (
-      !lastPantrySync ||
-      isNaN(lastPantrySync) ||
-      (lastLocalSync && lastLocalSync >= lastPantrySync && Date.now() - lastLocalSync > 300000)
+      !pantryBasketTime ||
+      isNaN(pantryBasketTime) ||
+      (lastLocalSync && lastLocalSync >= pantryBasketTime && Date.now() - lastLocalSync > 300000)
     ) {
-      this.pantrySync(pantryKey, pantrySyncObj, 0);
+      this.pantrySync(pantryKey, pantrySyncObj, "post");
     } else if (
-      (!lastLocalSync || isNaN(lastLocalSync) || lastLocalSync < lastPantrySync) &&
+      (!lastLocalSync || isNaN(lastLocalSync) || lastLocalSync < pantryBasketTime) &&
       Date.now() - lastPantryTry > 10100
     ) {
       sessionStorage.setItem("lastPantryTry", Date.now());
-      this.pantrySync(pantryKey, pantrySyncObj, 1);
+      this.pantrySync(pantryKey, pantrySyncObj, "merge");
     }
   }
 
-  async pantrySync(pantryKey, mainSyncObj, action = 1) {
+  async pantrySync(pantryKey, mainSyncObj, action = "merge") {
     if (!pantryKey) return;
-    //const delay = (ms) => new Promise((res) => setTimeout(res, ms));
     const pantryHeaders = new Headers({ "Content-Type": "application/json" });
     let success = true;
     let errorCode = null;
@@ -14737,19 +14738,9 @@ class OGInfinity {
     loadPantrySync.append(loadIcon);
     loadPantrySync.append(loaderText);
     menuDiv.append(loadPantrySync);
-    if (action === 0) {
-      let expeJsonObj = {};
-      let expeSumsJsonObj = {};
-      let combatJsonObj = {};
-      let combatsSumsJsonObj = {};
-      let harvestJsonObj = {};
+    if (action === "post") {
       let mainSyncJsonObj = {};
-      let pantrySync = { pantrySync: Date.now() };
-      expeJsonObj.expeditions = await this.getObjLastElements(this?.json?.expeditions, 5000);
-      expeSumsJsonObj.expeditionSums = this?.json?.expeditionSums;
-      combatJsonObj.combats = await this.getObjLastElements(this?.json?.combats, 5000);
-      combatsSumsJsonObj.combatsSums = this?.json?.combatsSums;
-      harvestJsonObj.harvests = this?.json?.harvests;
+      mainSyncJsonObj.pantrySync = Date.now();
       mainSyncJsonObj.options = this?.json?.options;
       mainSyncJsonObj.searchHistory = this?.json?.searchHistory;
       mainSyncJsonObj.search = this?.json?.search;
@@ -14761,181 +14752,56 @@ class OGInfinity {
       mainSyncJsonObj.flying = this?.json?.flying;
       mainSyncJsonObj.buildingProgress = this?.json?.productionProgress;
       mainSyncJsonObj.researchProgress = this?.json?.researchProgress;
-      mainSyncJsonObj.pantrySync = mainSyncObj?.pantrySync;
 
-      const mainSyncRequest = fetch(
-        `https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-mainSync`,
-        {
-          priority: "low",
-          method: "POST",
-          headers: pantryHeaders,
-          body: JSON.stringify(mainSyncJsonObj),
-        }
-      );
-      const expeRequest = fetch(
-        `https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-expeditions`,
-        {
-          priority: "low",
-          method: "POST",
-          headers: pantryHeaders,
-          body: JSON.stringify(expeJsonObj),
-        }
-      );
-      const expeSumsRequest = fetch(
-        `https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-expeditionSums`,
-        {
-          priority: "low",
-          method: "POST",
-          headers: pantryHeaders,
-          body: JSON.stringify(expeSumsJsonObj),
-        }
-      );
-      const combatRequest = fetch(
-        `https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-combats`,
-        {
-          priority: "low",
-          method: "POST",
-          headers: pantryHeaders,
-          body: JSON.stringify(combatJsonObj),
-        }
-      );
-      const combatSumsRequest = fetch(
-        `https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-combatSums`,
-        {
-          priority: "low",
-          method: "POST",
-          headers: pantryHeaders,
-          body: JSON.stringify(combatsSumsJsonObj),
-        }
-      );
-      const harvestRequest = fetch(
-        `https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-harvests`,
-        {
-          priority: "low",
-          method: "POST",
-          headers: pantryHeaders,
-          body: JSON.stringify(harvestJsonObj),
-        }
-      );
-      Promise.allSettled([
-        mainSyncRequest,
-        expeRequest,
-        expeSumsRequest,
-        combatRequest,
-        combatSumsRequest,
-        harvestRequest,
-      ]).then(async (requestsPromises) => {
-        document.getElementById("ogi-pantry-sync").remove();
-        for (let i = 0; i < requestsPromises.length; i++) {
-          if (requestsPromises[i].status === "rejected") {
-            success = false;
-          } else {
-            let response = requestsPromises[i].value;
-            let responseText = (await response.text()) || "";
-            if (!response.ok) {
-              success = false;
-              errorCode = errorCode ? errorCode : response.status;
-              errorMsg = errorMsg ? errorMsg : responseText;
-            }
-          }
-        }
-        if (success) {
-          fetch(`https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-mainSync`, {
-            priority: "low",
-            method: "PUT",
-            headers: pantryHeaders,
-            body: JSON.stringify(pantrySync),
-          }).then((res) => {
-            if (res.ok) {
-              this.json.pantrySync = pantrySync.pantrySync;
-              this.saveData();
-            }
-          });
-          console.info("[OGInfinity] - Pantry synchronisation complete");
-        }
-      });
-    } else {
-      const expeRequest = fetch(
-        `https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-expeditions`,
-        { priority: "high", method: "GET" }
-      );
-      const expeSumsRequest = fetch(
-        `https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-expeditionSums`,
-        { priority: "high", method: "GET" }
-      );
-      const combatRequest = fetch(
-        `https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-combats`,
-        { priority: "high", method: "GET" }
-      );
-      const combatSumsRequest = fetch(
-        `https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-combatSums`,
-        { priority: "high", method: "GET" }
-      );
-      const harvestRequest = fetch(
-        `https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-harvests`,
-        { priority: "high", method: "GET" }
-      );
-      await Promise.allSettled([expeRequest, expeSumsRequest, combatRequest, combatSumsRequest, harvestRequest]).then(
-        async (requestsPromises) => {
-          let cloudConsolidated = {
-            markers: mainSyncObj?.markers,
-            options: mainSyncObj?.options,
-            searchHistory: mainSyncObj?.searchHistory,
-          };
+      mainSyncJsonObj.expeditions = await this.getObjLastElements(this?.json?.expeditions, 5000);
+      mainSyncJsonObj.expeditionSums = this?.json?.expeditionSums;
+      mainSyncJsonObj.combats = await this.getObjLastElements(this?.json?.combats, 5000);
+      mainSyncJsonObj.combatsSums = this?.json?.combatsSums;
+      mainSyncJsonObj.harvests = this?.json?.harvests;
+
+      let finalJson = {
+        data: LZString.compressToUTF16(JSON.stringify(mainSyncJsonObj)),
+      };
+
+      fetch(`https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-test`, {
+        priority: "low",
+        method: "POST",
+        headers: pantryHeaders,
+        body: JSON.stringify(finalJson),
+      })
+        .then(async (response) => {
           document.getElementById("ogi-pantry-sync").remove();
-          for (let i = 0; i < requestsPromises.length; i++) {
-            if (requestsPromises[i].status === "rejected") {
-              success = false;
-            } else {
-              let response = requestsPromises[i].value;
-              if (!response.ok) {
-                let responseText = (await response.text()) || "";
-                success = false;
-                errorCode = errorCode ? errorCode : response.status;
-                errorMsg = errorMsg ? errorMsg : responseText;
-              } else {
-                let responseJson = (await response.json()) || null;
-                cloudConsolidated = { ...cloudConsolidated, ...responseJson };
-              }
-            }
+
+          let responseText = (await response.text()) || "";
+          if (!response.ok) {
+            success = false;
+            errorCode = errorCode ? errorCode : response.status;
+            errorMsg = errorMsg ? errorMsg : responseText;
           }
+
           if (success) {
-            this.json.expeditionSums = {
-              ...this.json.expeditionSums,
-              ...cloudConsolidated.expeditionSums,
-            };
-            this.json.expeditions = {
-              ...this.json.expeditions,
-              ...cloudConsolidated.expeditions,
-            };
-            this.json.combatsSums = {
-              ...this.json.combatsSums,
-              ...cloudConsolidated.combatsSums,
-            };
-            this.json.combats = {
-              ...this.json.combats,
-              ...cloudConsolidated.combats,
-            };
-            this.json.harvests = {
-              ...this.json.harvests,
-              ...cloudConsolidated.harvests,
-            };
-            this.json.markers = cloudConsolidated?.markers || this.json.markers;
-            this.json.options = cloudConsolidated?.options || this.json.options;
-            this.json.searchHistory = cloudConsolidated?.searchHistory || this.json.searchHistory;
-            this.json.flying = cloudConsolidated?.flying || this.json.flying;
-            this.json.missing = cloudConsolidated?.missing || this.json.missing;
-            this.json.productionProgress = cloudConsolidated?.buildingProgress || this.json.productionProgress;
-            this.json.researchProgress = cloudConsolidated?.researchProgress || this.json.researchProgress;
-            this.json.pantrySync = Date.now();
+            this.json.pantrySync = mainSyncJsonObj.pantrySync;
             this.saveData();
             console.info("[OGInfinity] - Pantry synchronisation complete");
-            let toastText = "OGInfinity - Pantry synchronisation complete.";
-            this.showToast(toastText, "success", "done", null, 3500);
-            sessionStorage.removeItem("lastPantryTry");
           }
-        }
-      );
+        })
+        .catch(() => {
+          success = false;
+        });
+    } else {
+      document.getElementById("ogi-pantry-sync").remove();
+
+      this.json = {
+        ...this.json,
+        ...mainSyncObj,
+      };
+
+      this.json.pantrySync = Date.now();
+      this.saveData();
+      console.info("[OGInfinity] - Pantry synchronisation complete");
+      let toastText = "OGInfinity - Pantry synchronisation complete.";
+      this.showToast(toastText, "success", "done", null, 3500);
+      sessionStorage.removeItem("lastPantryTry");
     }
     if (!success) {
       console.warn(`[OGInfinity] - Pantry Synch failed with error ${errorCode} => ${errorMsg}`);
