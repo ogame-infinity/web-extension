@@ -14689,7 +14689,7 @@ class OGInfinity {
       return;
     }
     let syncRequest = await fetch(
-      `https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-test`,
+      `https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-full`,
       { priority: "high", method: "GET" }
     ).catch(() => {
       return;
@@ -14763,7 +14763,7 @@ class OGInfinity {
         data: LZString.compressToUTF16(JSON.stringify(mainSyncJsonObj)),
       };
 
-      fetch(`https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-test`, {
+      fetch(`https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-full`, {
         priority: "low",
         method: "POST",
         headers: pantryHeaders,
