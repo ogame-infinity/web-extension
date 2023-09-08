@@ -16085,7 +16085,7 @@ class OGInfinity {
         };
         let lastTimer = new Date(
           backDate.year,
-          backDate.month,
+          backDate.month - 1,
           backDate.day,
           backDate.h,
           backDate.m,
