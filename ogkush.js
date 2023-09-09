@@ -14699,7 +14699,6 @@ class OGInfinity {
         let rawObject = await syncRequest?.json();
         pantrySyncObj = JSON.parse(LZString.decompressFromUTF16(rawObject.data));
         pantryBasketTime = pantrySyncObj?.pantrySync;
-        console.info("Last sync on server: " + pantryBasketTime);
       } catch {}
     } else {
       let responseText = await syncRequest?.text();
