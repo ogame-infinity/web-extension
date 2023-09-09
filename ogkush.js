@@ -14234,7 +14234,8 @@ class OGInfinity {
       let dateDetail = `\n${report.cleanDate.toLocaleDateString()}<br>\n${report.cleanDate.toLocaleTimeString()}<br>\n${this.getTranslatedText(
         137
       )} : ${report.activity}\n`;
-      let dateText = `${this.timeSince(report.cleanDate)}<br>`;
+      const timeZoneChange = this.json.options.timeZone ? this.json.timezoneDiff * 1e3 : 0;
+      let dateText = `${this.timeSince(report.cleanDate - timeZoneChange)}<br>`;
       let date = line.appendChild(this.createDOM("td", { class: "tooltipLeft ogl-date", title: dateDetail }, dateText));
       if (report.activity <= 15) date.classList.add("ogl-danger");
       else if (report.activity < 60) date.classList.add("ogl-care");
