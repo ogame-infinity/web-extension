@@ -11,11 +11,12 @@ It can be loaded as an unpacked extension to be tested locally.
 
 ### Third party dependencies
 
-This extension uses 2 external js libraries:
+This extension uses 3 external js libraries:
 
 - https://github.com/chartjs/Chart.js/releases/download/v2.9.3/Chart.bundle.min.js
 - https://github.com/emn178/chartjs-plugin-labels/blob/v1.1.0/build/chartjs-plugin-labels.min.js
 - https://github.com/cure53/DOMPurify/releases/tag/2.4.1
+- https://github.com/pieroxy/lz-string/releases/tag/1.5.0
 
 ## Contributing
 

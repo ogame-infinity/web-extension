@@ -17,11 +17,11 @@ npx cleancss -o dist/$CSS_FILE_NAME $CSS_FILE_NAME
 echo "$CSS_FILE_NAME minified"
 
 
-npx terser $MAIN_JS_FILE_NAME > ./dist/$MAIN_JS_FILE_NAME
+npx terser $MAIN_JS_FILE_NAME -o ./dist/$MAIN_JS_FILE_NAME
 echo "$MAIN_JS_FILE_NAME minified"
-npx terser $CONTENT_JS_FILE_NAME > ./dist/$CONTENT_JS_FILE_NAME
+npx terser $CONTENT_JS_FILE_NAME -o ./dist/$CONTENT_JS_FILE_NAME
 echo "$CONTENT_JS_FILE_NAME minified"
-npx terser $BG_JS_FILE_NAME > ./dist/$BG_JS_FILE_NAME
+npx terser $BG_JS_FILE_NAME -o ./dist/$BG_JS_FILE_NAME
 echo "$BG_JS_FILE_NAME  minified"
 
 
