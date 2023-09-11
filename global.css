@@ -4073,9 +4073,9 @@ button.build-it_premium:hover {
   opacity: 1;
 }
 
-#chatBar {
+/* #chatBar {
   display: none;
-}
+} */
 
 #movement .ogl-mission-icon {
   width: 20px;

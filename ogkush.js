@@ -1684,7 +1684,6 @@ class OGInfinity {
 		this.json.lfProductionProgress = this.json.lfProductionProgress || {};
 		this.json.researchProgress = this.json.researchProgress || {};
 		this.json.lfResearchProgress = this.json.lfResearchProgress || {};
-		this.json.tchat = this.json.tchat || false;
 		this.json.needSync = this.json.needSync || false;
 		this.json.timezoneDiff = this.json.timezoneDiff || 0;
 		this.json.options = this.json.options || {};
@@ -1862,7 +1861,6 @@ class OGInfinity {
 		this.keyboardActions();
 		this.betterTooltip();
 		this.utilities();
-		this.chat();
 		this.flyingFleet();
 		this.betterHighscore();
 		this.overviewDates();
@@ -5643,13 +5641,16 @@ class OGInfinity {
 			let stats = btns.appendChild(createDOM("a", { class: "ogl-mmorpgstats" }));
 			let pinBtn = btns.appendChild(createDOM("a", { class: "ogl-pin" }));
 
-			let chat = btns.appendChild(createDOM("a", { class: "icon icon_chat" }));
 			pinBtn.addEventListener("click", () => {
 				this.sideStalk(player.id);
 			});
+
+			// Add quick-message button to open chat with the current player
+			let chat = btns.appendChild(createDOM("a", { class: "icon icon_chat" }));
 			chat.addEventListener("click", () => {
-				this.sendMessage(player.id);
+				this.openChatForPlayerWithId(player.id);
 			});
+
 			stats.addEventListener("click", () => {
 				window.open(
 					this.generateMMORPGLink(player.id),
@@ -5778,6 +5779,7 @@ class OGInfinity {
 				if (forced) playerNode.click();
 			});
 		};
+
 		let updateSearch = async (value, alliance, forced) => {
 			searchResult.replaceChildren();
 			if (value.length > 2) {
@@ -10439,20 +10441,12 @@ class OGInfinity {
 		this.markedPlayers = this.getMarkedPlayers(this.json.markers);
 	}
 
-	sendMessage(id) {
-		if (this.tchat) {
+	openChatForPlayerWithId(id) {
+		if (document.querySelector("#chatBar")) {
 			ogame.chat.loadChatLogWithPlayer(Number(id));
 		} else {
 			document.location = `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=chat&playerId=${id}`;
 		}
-	}
-
-	generateIgnoreLink(playerId) {
-		return `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=ignorelist&action=1&id=${playerId}`;
-	}
-
-	generateBuddyLink(playerId) {
-		return `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=ingame&component=buddies&action=7&id=${playerId}&ajax=1`;
 	}
 
 	// todo: rename to something like create mmoprg overlay instead of "stalk" wth
@@ -10475,14 +10469,13 @@ class OGInfinity {
 				createDOM("hr", { style: "margin-bottom: 8px" })
 			);
 			let actions = content.appendChild(createDOM("div", { class: "ogi-actions" }));
-			actions.replaceChildren(
-				createDOM("a", { href: `${this.generateIgnoreLink(player.id)}`, class: "icon icon_against" }),
-				createDOM("a", { href: `${this.generateBuddyLink(player.id)}`, class: "icon icon_user overlay buddyrequest" })
-			);
+
+			// Add quick-message button to open chat with the current player
 			let msgBtn = actions.appendChild(createDOM("a", { class: "icon icon_chat" }));
 			msgBtn.addEventListener("click", () => {
-				this.sendMessage(player.id);
+				this.openChatForPlayerWithId(player.id);
 			});
+
 			let actBtn = actions.appendChild(createDOM("a", { style: "margin-left: 10px", class: "ogl-text-btn" }, "⚠"));
 			let first = false;
 			actBtn.addEventListener("mouseout", () => {
