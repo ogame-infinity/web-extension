@@ -1653,7 +1653,7 @@ class OGInfinity {
 		this.json.resNames = this.json.resNames || false;
 		this.json.autoHarvest = this.json.autoHarvest || ["0:0:0", 3];
 		this.json.myActivities = this.json.myActivities || {};
-		this.json.sideStalk = this.json.sideStalk || [];
+		this.json.trackedPlayer = this.json.trackedPlayer || [];
 		this.json.markers = this.json.markers || {};
 		this.json.locked = this.json.locked || {};
 		this.json.missing = this.json.missing || {};
@@ -1696,7 +1696,7 @@ class OGInfinity {
 		this.json.options.crawlerPercent = this.json.options.crawlerPercent || 1.5;
 		this.json.options.tradeRate = this.json.options.tradeRate || [2.5, 1.5, 1, 0];
 		this.json.options.dispatcher = this.json.options.dispatcher === true ? true : false;
-		this.json.options.sideStalkVisible = this.json.options.sideStalkVisible === false ? false : true;
+		this.json.options.trackedPlayerVisible = this.json.options.trackedPlayerVisible === false ? false : true;
 		this.json.options.eventBoxExps = this.json.options.eventBoxExps === false ? false : true;
 		this.json.options.eventBoxKeep = this.json.options.eventBoxKeep === true ? true : false;
 		this.json.options = this.json.options || {};
@@ -1856,7 +1856,7 @@ class OGInfinity {
 		this.collect();
 		this.quickPlanetList();
 		this.empireExtension.activitytimers();
-		this.sideStalk();
+		this.showTrackedPlayer();
 		this.spyTable();
 		this.keyboardActions();
 		this.betterTooltip();
@@ -3907,7 +3907,7 @@ class OGInfinity {
 				if (
 					this.json.options.ptreTK &&
 					playerId > -1 &&
-					(this.json.sideStalk.indexOf(playerId) > -1 || this.markedPlayers.indexOf(playerId) > -1)
+					(this.json.trackedPlayer.indexOf(playerId) > -1 || this.markedPlayers.indexOf(playerId) > -1)
 				) {
 					let planetActivity = row.querySelector("[data-planet-id] .activity.minute15")
 						? "*"
@@ -4254,45 +4254,6 @@ class OGInfinity {
 		this.popup(null, container);
 	}
 
-	chat() {
-		this.tchat = true;
-		if (!document.querySelector("#chatBar")) {
-			this.tchat = false;
-			return;
-		}
-		let toggleChat = () => {
-			this.json.tchat = !this.json.tchat;
-			this.saveData();
-			document.querySelector("#chatBar").style.display = this.json.tchat ? "block" : "none";
-		};
-		let oldfunc = ogame.chat.loadChatLogWithPlayer;
-		ogame.chat.loadChatLogWithPlayer = (elem, m, cb, uu) => {
-			if (!this.json.tchat) {
-				toggleChat();
-			}
-			oldfunc(elem, m, cb, uu);
-		};
-		let btn = document.querySelector("body").appendChild(createDOM("div", { class: "ogk-chat icon icon_chat" }));
-		if (this.json.tchat) {
-			document.querySelector("#chatBar").style.display = this.json.tchat ? "block" : "none";
-		}
-		btn.addEventListener("click", () => {
-			toggleChat();
-		});
-	}
-
-	warningCommander() {
-		let content = this.createDOM(
-			"div",
-			{
-				class: "ogl-warning-dialog overmark",
-				style: "padding: 25px",
-			},
-			`<div class="premium">\n      <div class="officers100  commander">\n            <a href="https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=premium&openDetail=2" class="detail_button">\n              <span class="ecke">\n                  <span class="level">\n                      <img src="https://gf3.geo.gfsrv.net/cdnbc/aa2ad16d1e00956f7dc8af8be3ca52.gif" width="12" height="11">\n                  </span>\n              </span>\n          </a>\n      </div>\n    </div>\n    The commander officier is required for these features...`
-		);
-		this.popup(null, content);
-	}
-
 	sideOptions() {
 		let harvestOptions = createDOM("div", { class: "ogl-harvestOptions" });
 		let container = document.querySelector("#myPlanets") || document.querySelector("#myWorlds");
@@ -4301,6 +4262,7 @@ class OGInfinity {
 			createDOM("div", { class: "ogl-option ogl-syncOption tooltip", title: this.translation.text(0) })
 		);
 		syncOption.addEventListener("click", () => this.settings());
+
 		let targetList = harvestOptions.appendChild(
 			createDOM("a", { class: "ogl-option ogl-targetIcon tooltip", title: this.translation.text(1) })
 		);
@@ -5642,7 +5604,7 @@ class OGInfinity {
 			let pinBtn = btns.appendChild(createDOM("a", { class: "ogl-pin" }));
 
 			pinBtn.addEventListener("click", () => {
-				this.sideStalk(player.id);
+				this.showTrackedPlayer(player.id);
 			});
 
 			// Add quick-message button to open chat with the current player
@@ -10431,7 +10393,7 @@ class OGInfinity {
 						this.targetList(false);
 						this.targetList(true);
 					}
-					this.sideStalk();
+					this.showTrackedPlayer();
 				});
 			});
 		});
@@ -10514,8 +10476,10 @@ class OGInfinity {
 			content.appendChild(createDOM("hr"));
 			let list = content.appendChild(createDOM("div", { class: "ogl-stalkPlanets", "player-id": player.id }));
 			let count = content.appendChild(createDOM("div", { class: "ogl-fullGrid ogl-right" }));
-			let sideStalk = content.appendChild(createDOM("a", { class: "ogl-pin" }));
-			sideStalk.addEventListener("click", () => this.sideStalk(player.id));
+
+			let trackedPlayer = content.appendChild(createDOM("a", { class: "ogl-pin" }));
+			trackedPlayer.addEventListener("click", () => this.showTrackedPlayer(player.id));
+
 			let stats = content.appendChild(createDOM("a", { class: "ogl-mmorpgstats" }));
 			stats.addEventListener("click", () => {
 				window.open(this.generateMMORPGLink(player.id), "_blank");
@@ -10767,44 +10731,45 @@ class OGInfinity {
 		return domArr;
 	}
 
-	sideStalk(playerid) {
+	showTrackedPlayer(playerid) {
 		if (playerid) {
-			this.json.sideStalk.forEach((e, i, o) => {
+			this.json.trackedPlayer.forEach((e, i, o) => {
 				if (e == playerid) o.splice(i, 1);
 			});
-			this.json.sideStalk.push(playerid);
-			if (this.json.sideStalk.length > 10) {
-				this.json.sideStalk.shift();
+			this.json.trackedPlayer.push(playerid);
+			if (this.json.trackedPlayer.length > 10) {
+				this.json.trackedPlayer.shift();
 			}
 			this.saveData();
 		}
-		let last = this.json.sideStalk[this.json.sideStalk.length - 1];
+
+		let last = this.json.trackedPlayer[this.json.trackedPlayer.length - 1];
 		if (last) {
 			playerid = last;
-			let sideStalk = document.querySelector(".ogl-sideStalk");
-			if (sideStalk) {
-				sideStalk.remove();
+			let trackedPlayer = document.querySelector(".ogl-sideStalk");
+			if (trackedPlayer) {
+				trackedPlayer.remove();
 			}
-			sideStalk = document.querySelector("#links").appendChild(createDOM("div", { class: "ogl-sideStalk" }));
+			trackedPlayer = document.querySelector("#links").appendChild(createDOM("div", { class: "ogl-sideStalk" }));
 			let actBtn, watchlistBtn, ptreBtn;
-			if (!this.json.options.sideStalkVisible) {
-				sideStalk.classList.add("ogi-hidden");
-				sideStalk.addEventListener("click", () => {
-					this.json.options.sideStalkVisible = true;
+			if (!this.json.options.trackedPlayerVisible) {
+				trackedPlayer.classList.add("ogi-hidden");
+				trackedPlayer.addEventListener("click", () => {
+					this.json.options.trackedPlayerVisible = true;
 					this.saveData();
-					this.sideStalk();
+					this.showTrackedPlayer();
 				});
 			} else {
-				watchlistBtn = sideStalk.appendChild(
+				watchlistBtn = trackedPlayer.appendChild(
 					createDOM("a", { class: "ogl-text-btn material-icons", title: "History" }, "history")
 				);
-				actBtn = sideStalk.appendChild(createDOM("a", { class: "ogl-text-btn material-icons", title: "" }, "warning"));
+				actBtn = trackedPlayer.appendChild(createDOM("a", { class: "ogl-text-btn material-icons", title: "" }, "warning"));
 				if (this.json.options.ptreTK) {
-					ptreBtn = sideStalk.appendChild(
+					ptreBtn = trackedPlayer.appendChild(
 						createDOM("a", { class: "ogl-text-btn ogl-ptre-acti tooltip", title: "Display PTRE data" }, "PTRE")
 					);
 				}
-				let closeBtn = sideStalk.appendChild(
+				let closeBtn = trackedPlayer.appendChild(
 					createDOM(
 						"span",
 						{ class: "ogl-text-btn material-icons ogi-sideStalk-minBtn", title: "Minimize" },
@@ -10812,21 +10777,21 @@ class OGInfinity {
 					)
 				);
 				closeBtn.addEventListener("click", () => {
-					this.json.options.sideStalkVisible = false;
+					this.json.options.trackedPlayerVisible = false;
 					this.saveData();
-					this.sideStalk();
+					this.showTrackedPlayer();
 				});
 			}
 			dataHelper.getPlayer(playerid).then((player) => {
-				sideStalk.appendChild(
+				trackedPlayer.appendChild(
 					createDOM(
 						"div",
 						{ style: "cursor: pointer", class: "ogi-title " + this.getPlayerStatus(player.status) },
 						player.name
 					)
 				);
-				sideStalk.appendChild(createDOM("hr"));
-				let container = sideStalk.appendChild(createDOM("div", { class: "ogl-stalkPlanets", "player-id": player.id }));
+				trackedPlayer.appendChild(createDOM("hr"));
+				let container = trackedPlayer.appendChild(createDOM("div", { class: "ogl-stalkPlanets", "player-id": player.id }));
 				let planets = this.updateStalk(player.planets);
 				planets.forEach((dom) => container.appendChild(dom));
 
@@ -10843,10 +10808,10 @@ class OGInfinity {
 							location.href = `?page=ingame&component=galaxy&galaxy=${coords[0]}&system=${coords[1]}&position=${coords[2]}`;
 						}
 						if ($("#galaxyLoading").is(":visible")) return;
-						let active = sideStalk.querySelectorAll("a.ogl-active");
+						let active = trackedPlayer.querySelectorAll("a.ogl-active");
 						let next = active.length > 0 ? active[active.length - 1].nextElementSibling : null;
 						if (!next || !next.getAttribute("data-coords")) {
-							next = sideStalk.querySelectorAll(".ogl-stalkPlanets a")[0];
+							next = trackedPlayer.querySelectorAll(".ogl-stalkPlanets a")[0];
 						}
 						let splits = next.getAttribute("data-coords").split(":");
 						galaxy = $("#galaxy_input").val(splits[0]);
@@ -10855,21 +10820,21 @@ class OGInfinity {
 					});
 				watchlistBtn &&
 					watchlistBtn.addEventListener("click", () => {
-						sideStalk.replaceChildren();
-						sideStalk.appendChild(
-							createDOM("div", { class: "title" }, "Historic " + this.json.sideStalk.length + "/10")
+						trackedPlayer.replaceChildren();
+						trackedPlayer.appendChild(
+							createDOM("div", { class: "title" }, "Historic " + this.json.trackedPlayer.length + "/10")
 						);
-						sideStalk.appendChild(createDOM("hr"));
-						this.json.sideStalk
+						trackedPlayer.appendChild(createDOM("hr"));
+						this.json.trackedPlayer
 							.slice()
 							.reverse()
 							.forEach((id) => {
 								dataHelper.getPlayer(id).then((player) => {
-									let playerDiv = sideStalk.appendChild(createDOM("div", { class: "ogl-player" }));
+									let playerDiv = trackedPlayer.appendChild(createDOM("div", { class: "ogl-player" }));
 									playerDiv.appendChild(createDOM("span", { class: this.getPlayerStatus(player.status) }, player.name));
 									playerDiv.appendChild(createDOM("span", {}, "#" + player.points.position));
 									playerDiv.addEventListener("click", () => {
-										this.sideStalk(player.id);
+										this.showTrackedPlayer(player.id);
 									});
 								});
 							});
@@ -11773,7 +11738,7 @@ class OGInfinity {
 			mainSyncJsonObj.options = this?.json?.options;
 			mainSyncJsonObj.searchHistory = this?.json?.searchHistory;
 			mainSyncJsonObj.search = this?.json?.search;
-			mainSyncJsonObj.sideStalk = this?.json?.sideStalk;
+			mainSyncJsonObj.trackedPlayer = this?.json?.trackedPlayer;
 			mainSyncJsonObj.locked = this?.json?.locked;
 			mainSyncJsonObj.markers = this?.json?.markers;
 			mainSyncJsonObj.sideStargetTabstalk = this?.json?.targetTabs;
