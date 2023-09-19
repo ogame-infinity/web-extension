@@ -1,63 +1,83 @@
 #!/bin/bash
-#set -x # debug
+set -x     #- for debug
 
+npm i -D
 rm -R ./dist
 mkdir ./dist
 
+VERSION="${1:-`date +%-m.%-d.%-H.%-M`}"
+echo "Build version $VERSION"
+
 MANIFEST_FILE_NAME="manifest.json"
 MANIFEST_FILE_NAME_V2="manifestv2.json"
-CSS_FILE_NAME="global.css"
-MAIN_JS_FILE_NAME="main.js"
-CONTENT_JS_FILE_NAME="ogkush.js"
-BG_JS_FILE_NAME="background.js"
+CSS_BUNDLE_FILE="global.css"
 VERSION_JS_FILE_NAME="util/version.js"
-VERSION="${1:-`date +%-m.%-d.%-H.%-M`}"
 
-npx cleancss -o dist/$CSS_FILE_NAME $CSS_FILE_NAME 
-echo "$CSS_FILE_NAME minified"
+##
+## $1: string version in format x.x.x
+##
+function sed_version {
+  sed -i "s/0\.0\.0/$VERSION/g" "${DIST_MODULE}/${MANIFEST_FILE_NAME}"
+  sed -i "s/0\.0\.0/$VERSION/g" "${DIST_MODULE}/${MANIFEST_FILE_NAME_V2}"
+  sed -i "s/__VERSION__/$VERSION/g" "${DIST_MODULE}/${VERSION_JS_FILE_NAME}"
+}
+
+function minified() {
+  for v in "$@"; do
+    npx terser "$v" -o "$v"
+    echo "Minified: $v"
+  done
+}
+export -f minified
+
+function cleancss() {
+  for v in "$@"; do
+    npx cleancss "$v" -o "$v"
+    echo "Minified: $v"
+  done
+}
 
 
-npx terser $MAIN_JS_FILE_NAME -o ./dist/$MAIN_JS_FILE_NAME
-echo "$MAIN_JS_FILE_NAME minified"
-npx terser $CONTENT_JS_FILE_NAME -o ./dist/$CONTENT_JS_FILE_NAME
-echo "$CONTENT_JS_FILE_NAME minified"
-npx terser $BG_JS_FILE_NAME -o ./dist/$BG_JS_FILE_NAME
-echo "$BG_JS_FILE_NAME  minified"
 
+DIST_MODULE="./dist/chrome"
+## ------------------------------------------------------------
+## MODULE -- Edge, Chrome and Chromium
+## ------------------------------------------------------------
+echo "Build Edge, Chrome and Chromium"
+mkdir "${DIST_MODULE}"
+cp -r src/* "${DIST_MODULE}"
 
-echo "Minification complete!"
+sed_version
+find "${DIST_MODULE}" \
+  -type f -iname '*.js' \
+  -not -path '*/libs/*' \
+  -exec bash -c 'minified "$@"' bash {} +
+cleancss "${DIST_MODULE}/${CSS_BUNDLE_FILE}"
 
-cp -r res/ dist/res
-cp -r util/ dist/util
-cp -r libs/ dist/libs
-cp  $MANIFEST_FILE_NAME ./dist/$MANIFEST_FILE_NAME
-
-cd ./dist
-sed -i "s/0\.0\.0/$VERSION/g" "$MANIFEST_FILE_NAME"
-sed -i "s/__VERSION__/$VERSION/g" "$CONTENT_JS_FILE_NAME"
-sed -i "s/__VERSION__/$VERSION/g" "$VERSION_JS_FILE_NAME"
-
-zip -qr -X "ogi-chrome.zip" * 
+(cd "${DIST_MODULE}" && \
+  zip -qr -X "../ogi-chrome.zip" .)
 echo "Packing zip for chrome complete!"
-sed -i '31d' $MANIFEST_FILE_NAME
 
-zip -qr -X "ogi-edge.zip" * -x "ogi-chrome.zip"
+sed -i '31d' "${DIST_MODULE}/${MANIFEST_FILE_NAME}" ##- What is this line for?
+(cd "${DIST_MODULE}" && \
+  zip -qr -X "../ogi-edge.zip" .)
 echo "Packing zip for edge complete!"
+rm -rf "${DIST_MODULE}"
 
 
-rm $MAIN_JS_FILE_NAME $CONTENT_JS_FILE_NAME $BG_JS_FILE_NAME $CSS_FILE_NAME
-cp ../$MAIN_JS_FILE_NAME ./$MAIN_JS_FILE_NAME
-cp ../$CONTENT_JS_FILE_NAME ./$CONTENT_JS_FILE_NAME
-cp ../$BG_JS_FILE_NAME ./$BG_JS_FILE_NAME
-cp ../$CSS_FILE_NAME ./$CSS_FILE_NAME
-cp ../$MANIFEST_FILE_NAME_V2 ./$MANIFEST_FILE_NAME
-cp ../readme.md .
 
-sed -i "s/0\.0\.0/$VERSION/g" "$MANIFEST_FILE_NAME"
-sed -i "s/__VERSION__/$VERSION/g" "$CONTENT_JS_FILE_NAME"
-sed -i "s/__VERSION__/$VERSION/g" "$VERSION_JS_FILE_NAME"
+DIST_MODULE="./dist/firefox"
+## ------------------------------------------------------------
+## MODULE -- Firefox
+## ------------------------------------------------------------
+echo "Build Firefox"
+mkdir "${DIST_MODULE}"
+cp -r src/* "${DIST_MODULE}"
 
-# Modifing chrome-extension:// to moz-extension://
-sed -i "s/chrome/moz/g" "$CSS_FILE_NAME"
-zip -qrm -X "ogi-firefox.zip" * -x "ogi-chrome.zip" "ogi-edge.zip"
+sed_version
+sed -i "s/chrome/moz/g" "${DIST_MODULE}/${CSS_FILE_NAME}"
+(cd "${DIST_MODULE}" && \
+  zip -qr -X "../ogi-firefox.zip" .)
 echo "Packing zip for firefox complete!"
+rm -rf "${DIST_MODULE}"
+
