@@ -1,0 +1,37 @@
+{
+  "name": "Ogame Infinity",
+  "version": "0.0.0",
+  "manifest_version": 2,
+  "description": "OGI - To Ogame's infinity and beyond!",
+  "homepage_url": "https://ogameinfinity.com",
+
+  "content_scripts": [
+    {
+      "exclude_matches": ["https://*.ogame.gameforge.com/game/admin2/*"],
+      "matches": ["https://*.ogame.gameforge.com/game/*"],
+      "js": ["main.js"],
+      "css": ["global.css"],
+      "run_at": "document_start"
+    }
+  ],
+
+  "web_accessible_resources": ["ogkush.js", "libs/*", "assets/*", "util/*"],
+
+  "browser_action": {
+    "default_title": "Ogame Infinity",
+    "default_icon": {
+      "32": "assets/images/logo128.png"
+    }
+  },
+
+  "icons": {
+    "32": "assets/images/logo128.png",
+    "128": "assets/images/logo128.png",
+    "256": "assets/images/logo512.png",
+    "512": "assets/images/logo512.png"
+  },
+  "permissions": ["storage", "https://*.ogame.gameforge.com/game/*"],
+  "background": {
+    "scripts": ["background.js"]
+  }
+}

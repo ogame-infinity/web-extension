@@ -1,9 +1,10 @@
 import { getLogger } from "./util/logger.js";
 import { pageContextInit, pageContextRequest } from "./util/service.callbackEvent.js";
 import * as ptreService from "./util/service.ptre.js";
+import VERSION from "./util/version.js";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
-const VERSION = "__VERSION__";
+//const VERSION = "__VERSION__";
 const logger = getLogger();
 pageContextInit();
 
@@ -15186,7 +15187,7 @@ class OGInfinity {
     };
     const avoidIn = ["chat_box_textarea", "markItUpEditor", "textBox"];
     document.addEventListener("keydown", (event) => {
-      if (avoidIn.some(avoidInClass => document.activeElement.classList.contains(avoidInClass))) return;
+      if (avoidIn.some((avoidInClass) => document.activeElement.classList.contains(avoidInClass))) return;
       if (event.key == "Escape") {
         if (this.json.welcome) return;
         closeDialog();
@@ -15355,7 +15356,7 @@ class OGInfinity {
     };
     if (this.page == "fleetdispatch") {
       document.addEventListener("keydown", (event) => {
-        if (avoidIn.some(avoidInClass => document.activeElement.classList.contains(avoidInClass))) return;
+        if (avoidIn.some((avoidInClass) => document.activeElement.classList.contains(avoidInClass))) return;
         if (fleetDispatcher.currentPage == "fleet1") {
           if (document.querySelector("#fleetTemplatesEdit")) {
             if (document.querySelector("#fleetTemplatesEdit").classList.contains("overlayDiv")) return;
@@ -15390,7 +15391,8 @@ class OGInfinity {
           }
         } else if (fleetDispatcher.currentPage == "fleet2") {
           if (event.key.toUpperCase() == "A") document.querySelector("#loadAllResources img").click();
-          if (event.key.toUpperCase() == "M" && !event.shiftKey) document.querySelector("#loadAllResources .select-most").click();
+          if (event.key.toUpperCase() == "M" && !event.shiftKey)
+            document.querySelector("#loadAllResources .select-most").click();
           if (event.key.toUpperCase() == "N") document.querySelector("#loadAllResources .send_none").click();
           if (event.key.toUpperCase() == "P" && event.shiftKey) document.querySelector("#pbutton").click();
           if (event.key.toUpperCase() == "M" && event.shiftKey) document.querySelector("#mbutton").click();
@@ -15419,7 +15421,7 @@ class OGInfinity {
       });
       let throttleTime = Date.now();
       document.addEventListener("keydown", (event) => {
-        if (avoidIn.some(avoidInClass => document.activeElement.classList.contains(avoidInClass))) return;
+        if (avoidIn.some((avoidInClass) => document.activeElement.classList.contains(avoidInClass))) return;
         if (event.key == "Enter") {
           if (fleetDispatcher.currentPage == "fleet1") {
             document.querySelector("#continueToFleet2").click();
