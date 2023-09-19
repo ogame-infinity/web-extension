@@ -29,11 +29,13 @@
   },
   "homepage": "https://github.com/ogame-infinity/web-extension#readme",
   "devDependencies": {
+    "clean-css": "^5.3.2",
     "eslint": "^8.47.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-import": "^2.28.0",
     "eslint-plugin-prettier": "^5.0.0",
-    "prettier": "3.0.2"
+    "prettier": "3.0.2",
+    "terser": "^5.19.4"
   }
 }
