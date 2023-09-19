@@ -1,3 +1,17 @@
+import { createDOM } from "../../util/dom.js";
+import { getLogger } from "../../util/logger.js";
+import { fromFormattedNumber } from "../../util/numbers.js";
+
+const logger = getLogger("message-analyzer");
+
+/**
+ * @global
+ * @typedef {function} getFormatedDate
+ * @param {number} timestamp
+ * @param {string} format
+ * @return {string}
+ */
+
 /**
  * @this {OGInfinity}
  */
@@ -16,7 +30,7 @@ function analyzer() {
         const serveTimestamp = this.dateStrToDate(msgDate.textContent).getTime();
         const localDateTime = getFormatedDate(serveTimestamp + this.json.timezoneDiff * 1e3, "[d].[m].[Y] [H]:[i]:[s]");
 
-        msgDate.setAttribute("data-server-date", serveTimestamp);
+        msgDate.setAttribute("data-server-date", `${serveTimestamp}`);
         msgDate.textContent = localDateTime;
         msgDate.classList.add("ogl-ready");
       });
@@ -38,7 +52,7 @@ function analyzer() {
     /** @type {string} */
     #tabQuerySelector;
 
-    /** @type {VoidFunction} */
+    /** @type {function(): void} */
     trigger = () => undefined;
 
     /**
@@ -493,9 +507,9 @@ function analyzer() {
             let content = msg.querySelector(".msg_content").innerText;
             coords = coords.textContent.slice(1, -1);
             let matches = content.match(/[0-9.,]*[0-9]/gm);
-            let met = fromFormatedNumber(matches[matches.length - 3]);
-            let cri = fromFormatedNumber(matches[matches.length - 2]);
-            /* @TODO let deu = fromFormatedNumber(matches[matches.length - 1]); */
+            let met = fromFormattedNumber(matches[matches.length - 3]);
+            let cri = fromFormattedNumber(matches[matches.length - 2]);
+            /* @TODO let deu = fromFormattedNumber(matches[matches.length - 1]); */
             let combat = false;
             if (coords.split(":")[2] == 16) {
               msg.classList.add("ogk-expedition");
