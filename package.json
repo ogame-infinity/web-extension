@@ -30,6 +30,7 @@
   "homepage": "https://github.com/ogame-infinity/web-extension#readme",
   "devDependencies": {
     "clean-css": "^5.3.2",
+    "clean-css-cli": "^5.6.2",
     "eslint": "^8.47.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^9.0.0",
