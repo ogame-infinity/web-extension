@@ -6330,6 +6330,7 @@ class OGInfinity {
               fontSize: 12,
               fontStyle: "bold",
               fontColor: "#0d1117",
+              precision: 1,
               render: "percentage",
             },
           ],
