@@ -7807,7 +7807,7 @@ li.resource {
 .ogl-tooltip .ogk-expedition-options {
   width: auto;
   display: grid;
-  grid-template-columns: repeat(8, 1fr);
+  grid-template-columns: repeat(6, 1fr);
 }
 
 .choice-expedition-icon {
@@ -7832,6 +7832,30 @@ li.resource {
 .choice-expedition-icon.expedition-rotation.highlight {
   background-position: calc(-25px * 12) calc(-25px * 1) !important;
   border: solid 1px #da961a;
+}
+
+.choice-expedition-icon.expedition-fleet {
+  background-position: calc(-25px * 4) calc(-25px * 0) !important;
+}
+
+.choice-expedition-icon.expedition-fleet.highlight {
+  background-position: calc(-25px * 4) calc(-25px * 1) !important;
+  border: solid 1px #da961a;
+}
+
+.ogl-mission-icon.ogl-mission-15.ogi-expedition-fleet {
+  width: 14px;
+  height: 14px;
+  margin: 0px;
+  margin-bottom: 1px;
+  background-size: calc(14px * 11) !important;
+  display: inline-block;
+}
+
+.ogl-mission-icon.ogl-mission-15.ogi-expedition-fleet.ogl-active,
+.ogl-mission-icon.ogl-mission-15.ogi-expedition-fleet:hover {
+
+  background-position: 0 calc(-14px * 1) !important;
 }
 
 .ogl-fleet-ship.choice {
