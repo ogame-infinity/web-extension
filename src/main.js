@@ -525,7 +525,7 @@ document.addEventListener("ogi-clear", function (e) {
   dataHelper.clearData();
 });
 document.addEventListener("ogi-notification", function (e) {
-  const msg = Object.assign({ iconUrl: "res/logo128.png" }, e.detail);
+  const msg = Object.assign({ iconUrl: "assets/images/logo128.png" }, e.detail);
   chrome.runtime.sendMessage({ type: "notification", universe: UNIVERSE, message: msg }, function (response) {});
 });
 
@@ -565,7 +565,7 @@ function similarity(s1, s2) {
   return (longerLength - editDistance(longer, shorter)) / parseFloat(longerLength);
 }
 
-const url = chrome.runtime.getURL("res/expeditions.tsv");
+const url = chrome.runtime.getURL("assets/expeditions.tsv");
 let expeditionsMap = {};
 let logbooks = {};
 fetch(url)

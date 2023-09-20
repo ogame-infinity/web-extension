@@ -1,7 +1,8 @@
 # Ogame Infinity
 
 This repository contains the monolithic code mess for the Ogame Infinity extension.
-It can be loaded as an unpacked extension to be tested locally.
+
+Note: since version 2.3.7 it can be no longer loaded directly as an unpacked extension to be tested locally.
 
 ## Downloads
 
@@ -50,10 +51,12 @@ GitHub's actions are used to automatically package and deploy new updates.
     npm install -g clean-css
     npm install -g clean-css-cli
 
-#### Run the packer (only tested on macos atm)
+#### Run the packer
 
     ./packaging.sh {version_number}
 
 Example:
 
     ./packaging.sh 1.5.3
+
+Version number is optional and can be omitted, for example doing test builds, by default the version number will be built based on time and date.
