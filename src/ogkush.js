@@ -2015,7 +2015,7 @@ class OGInfinity {
                   () => {
                     let satsInput = document.querySelector("#build_amount");
                     satsInput.value = satsNeeded;
-                    satsInput.dispatchEvent(new KeyboardEvent("keyup", { code: "ArrowDown" }));
+                    satsInput.dispatchEvent(new KeyboardEvent("keyup", { key: "ArrowDown" }));
                   },
                   10,
                   2000
@@ -2494,7 +2494,7 @@ class OGInfinity {
                     let satsInput = document.querySelector("#build_amount");
                     satsInput.focus();
                     satsInput.value = satsNeeded;
-                    satsInput.dispatchEvent(new KeyboardEvent("keyup", { code: "ArrowDown" }));
+                    satsInput.dispatchEvent(new KeyboardEvent("keyup", { key: "ArrowDown" }));
                   });
                 }
               } else if (technologyId == 217) {
@@ -2523,7 +2523,7 @@ class OGInfinity {
                       let satsInput = document.querySelector("#build_amount");
                       satsInput.focus();
                       satsInput.value = satsNeeded;
-                      satsInput.dispatchEvent(new KeyboardEvent("keyup", { code: "ArrowDown" }));
+                      satsInput.dispatchEvent(new KeyboardEvent("keyup", { key: "ArrowDown" }));
                     });
                   });
                 }
@@ -14624,7 +14624,7 @@ class OGInfinity {
           const input = document.querySelector("#systemInput");
           if (document.activeElement == input || document.activeElement.tagName == "BODY") {
             if (!fleetDispatcher.loading) {
-              if (event.code == "ArrowUp") {
+              if (event.key == "ArrowUp") {
                 input.value = Number(input.value) + 1;
                 fleetDispatcher.updateTarget();
                 fleetDispatcher.fetchTargetPlayerData();
@@ -18154,7 +18154,7 @@ class OGInfinity {
           let input = document.querySelector("#build_amount");
           input.focus();
           input.value = needed;
-          input.dispatchEvent(new KeyboardEvent("keyup", { code: "ArrowDown" }));
+          input.dispatchEvent(new KeyboardEvent("keyup", { key: "ArrowDown" }));
         });
       }
     });
@@ -18539,19 +18539,19 @@ class OGInfinity {
       let navPanel = document.querySelector("#links").appendChild(createDOM("div", { class: "ogk-navPanel" }));
       let left = navPanel.appendChild(createDOM("div", { class: "galaxy_icons ogk-nav left" }));
       left.addEventListener("click", () =>
-        document.dispatchEvent(new KeyboardEvent("keydown", { code: "ArrowLeft", ctrlKey: "true" }))
+        document.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowLeft", ctrlKey: "true" }))
       );
       let right = navPanel.appendChild(createDOM("div", { class: "galaxy_icons ogk-nav right" }));
       right.addEventListener("click", () =>
-        document.dispatchEvent(new KeyboardEvent("keydown", { code: "ArrowRight", ctrlKey: "true" }))
+        document.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", ctrlKey: "true" }))
       );
       let up = navPanel.appendChild(createDOM("div", { class: "galaxy_icons ogk-nav up" }));
       up.addEventListener("click", () =>
-        document.dispatchEvent(new KeyboardEvent("keydown", { code: "ArrowUp", ctrlKey: "true" }))
+        document.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowUp", ctrlKey: "true" }))
       );
       let down = navPanel.appendChild(createDOM("div", { class: "galaxy_icons ogk-nav down" }));
       down.addEventListener("click", () =>
-        document.dispatchEvent(new KeyboardEvent("keydown", { code: "ArrowDown", ctrlKey: "true" }))
+        document.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", ctrlKey: "true" }))
       );
     }
   }
