@@ -3652,7 +3652,7 @@ class OGInfinity {
     let timeout;
     let previousSystem = null;
     doExpedition = () => {
-      const link = `?page=ingame&component=fleetdispatch&oglMode=6&galaxy=${galaxy}&system=${system}`;
+      const link = `?page=ingame&component=fleetdispatch&oglMode=6&galaxy=${galaxy}&system=${system}&position=16`;
       window.location.href = "https://" + window.location.host + window.location.pathname + link;
     };
     let callback = () => {
@@ -11347,10 +11347,17 @@ class OGInfinity {
         if (warningText.length) fadeBox(warningText, true);
 
         document.querySelector(".send_none").click();
+        if (fleetDispatcher.targetPlanet.position != 16) {
+          // force own system in case no other position 16 system was selected
+          // avoids wrong destination problems whith collect button missclicks
+          const coords = this.current.coords.split(":");
+          document.querySelector(".ogl-coords #galaxyInput").value = coords[0];
+          document.querySelector(".ogl-coords #systemInput").value = coords[1];
+        }
+        document.querySelector(".ogl-coords #positionInput").value = 16;
+        fleetDispatcher.targetPlanet.position = 16;
         fleetDispatcher.mission = 15;
         fleetDispatcher.targetPlanet.type = 1;
-        fleetDispatcher.targetPlanet.position = 16;
-        document.querySelector(".ogl-coords #positionInput").value = 16;
         fleetDispatcher.refreshTarget();
         fleetDispatcher.updateTarget();
         fleetDispatcher.fetchTargetPlayerData();
@@ -11365,6 +11372,7 @@ class OGInfinity {
         // do not enable rotation of expeditions in a not own system, but keep same system for auto expedition
         if (originSystem != destinationSystem) {
           link += `&galaxy=${fleetDispatcher.targetPlanet.galaxy}&system=${fleetDispatcher.targetPlanet.system}`;
+          link += "&position=16";
         } else if (this.json.options.expedition.rotation) {
           const planetSystems = [];
           document
