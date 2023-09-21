@@ -1523,6 +1523,8 @@ class OGInfinity {
     this.json.options.expedition.rotationAfter = this.json.options.expedition.rotationAfter || 3;
     this.json.options.expedition.sendCombat = this.json.options.expedition.sendCombat === false ? false : true;
     this.json.options.expedition.sendProbe = this.json.options.expedition.sendProbe === false ? false : true;
+    this.json.options.expedition.standardFleet = this.json.options.expedition.standardFleet === true ? true : false;
+    this.json.options.expedition.standardFleetId = this.json.options.expedition.standardFleetId || 0;
     this.json.options.activitytimers = this.json.options.activitytimers === true ? true : false;
     this.json.options.planetIcons = this.json.options.planetIcons === true ? true : false;
     this.json.options.disableautofetchempire = this.json.options.disableautofetchempire === true ? true : false;
@@ -3650,7 +3652,7 @@ class OGInfinity {
     let timeout;
     let previousSystem = null;
     doExpedition = () => {
-      const link = `?page=ingame&component=fleetdispatch&oglMode=6&galaxy=${galaxy}&system=${system}`;
+      const link = `?page=ingame&component=fleetdispatch&oglMode=6&galaxy=${galaxy}&system=${system}&position=16`;
       window.location.href = "https://" + window.location.host + window.location.pathname + link;
     };
     let callback = () => {
@@ -9760,8 +9762,8 @@ class OGInfinity {
             icon.classList.add("ogl-active");
           }
           fleetDispatcher.selectMission(Number(defaultMission));
-          $(".ogl-mission-icon").on("click", (e) => {
-            $(".ogl-mission-icon").removeClass("ogl-active");
+          $("div.ogl-mission-icon").on("click", (e) => {
+            $("div.ogl-mission-icon").removeClass("ogl-active");
             fleetDispatcher.selectMission(Number(e.target.getAttribute("mission")));
             e.target.classList.add("ogl-active");
             document.querySelector("#missionsDiv").setAttribute("data", "false");
@@ -10040,8 +10042,8 @@ class OGInfinity {
           let icon = document.querySelector(`.ogl-missions .ogl-mission-${defaultMish}`);
           icon.classList.add("ogl-active");
           fleetDispatcher.selectMission(Number(defaultMish));
-          $(".ogl-mission-icon").on("click", (e) => {
-            $(".ogl-mission-icon").removeClass("ogl-active");
+          $("div.ogl-mission-icon").on("click", (e) => {
+            $("div.ogl-mission-icon").removeClass("ogl-active");
             fleetDispatcher.selectMission(Number(e.target.getAttribute("mission")));
             e.target.classList.add("ogl-active");
             update(false);
@@ -10156,7 +10158,7 @@ class OGInfinity {
         }
         let icon = document.querySelectorAll(`div[mission="${fleetDispatcher.mission}"]`)[0];
         if (icon && icon != null) {
-          $(".ogl-mission-icon").removeClass("ogl-active");
+          $("div.ogl-mission-icon").removeClass("ogl-active");
           icon.classList.add("ogl-active");
         }
         durationDiv.replaceChildren(createDOM("strong", {}, formatTime(fleetDispatcher.getDuration())));
@@ -11085,8 +11087,8 @@ class OGInfinity {
       });
       document.querySelector("#allornone .secondcol").appendChild(btnExpe);
       const optionsContainerDiv = createDOM("div");
-      const optionsDiv = optionsContainerDiv.appendChild(createDOM("div", { class: "ogk-expedition-options" }));
       const combatShipDiv = optionsContainerDiv.appendChild(createDOM("div", { class: "ogk-expedition-options" }));
+      const optionsDiv = optionsContainerDiv.appendChild(createDOM("div", { class: "ogk-expedition-options" }));
 
       const smallCargo = optionsDiv.appendChild(
         createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-202" })
@@ -11138,8 +11140,20 @@ class OGInfinity {
         this.saveData();
       });
 
-      const combatShipPriority = [218, 213, 211, 215, 207, 206, 205, 204];
-      combatShipPriority.forEach((ship) => {
+      if (this.commander) {
+        const expeditionFleet = optionsDiv.appendChild(
+          createDOM("div", { class: "ogl-option choice-expedition-icon expedition-fleet" })
+        );
+        expeditionFleet.classList.toggle("highlight", this.json.options.expedition.standardFleet);
+        expeditionFleet.addEventListener("click", () => {
+          expeditionFleet.classList.toggle("highlight");
+          this.json.options.expedition.standardFleet = !this.json.options.expedition.standardFleet;
+          this.saveData();
+        });
+      }
+
+      const combatShip = [218, 213, 211, 215, 207];
+      combatShip.forEach((ship) => {
         const element = combatShipDiv.appendChild(
           createDOM("div", { class: `ogl-option ogl-fleet-ship choice ogl-fleet-${ship}` })
         );
@@ -11157,6 +11171,30 @@ class OGInfinity {
         this.json.options.expedition.combatShip = ship;
         this.saveData();
       };
+
+      if (this.commander) {
+        const editTemplate = document.querySelectorAll("#fleetTemplates .actions a.editTemplate");
+        editTemplate.forEach((editTemplate) => {
+          const fleetId = editTemplate.getAttribute("onclick").match(/\d+(?=\);)/)[0];
+          const a = createDOM("a", {
+            class: "tooltip js_hideTipOnMobile icon_link",
+            title: this.getTranslatedText(165),
+          });
+          const mx = a.appendChild(
+            createDOM("span", { class: "ogl-mission-icon ogl-mission-15 ogi-expedition-fleet", id: fleetId })
+          );
+          mx.classList.toggle("ogl-active", fleetId == this.json.options.expedition.standardFleetId);
+          mx.addEventListener("click", () => updateStandardFleet(fleetId));
+          editTemplate.parentElement.prepend(a);
+        });
+        const updateStandardFleet = (id) => {
+          document.querySelectorAll(".ogl-mission-icon.ogl-mission-15.ogi-expedition-fleet").forEach((mx) => {
+            mx.classList.toggle("ogl-active", mx.id == id);
+          });
+          this.json.options.expedition.standardFleetId = id;
+          this.saveData();
+        };
+      }
 
       btnExpe.addEventListener("mouseover", () => this.tooltip(btnExpe, optionsContainerDiv, false, false, 750));
       btnExpe.addEventListener("click", async () => {
@@ -11235,6 +11273,7 @@ class OGInfinity {
         if (this.json.options.expedition.sendCombat) {
           let combatShip = this.json.options.expedition.combatShip;
           if (!availableShips[combatShip]) {
+            const combatShipPriority = [218, 213, 211, 215, 207, 206, 205, 204];
             combatShip = combatShipPriority.find((ship) => availableShips[ship]);
             if (combatShip == 205 || combatShip == 206) {
               if (selectedShips[219]) {
@@ -11287,14 +11326,38 @@ class OGInfinity {
           warningText += this.getTranslatedText(107) + "<br>";
         }
 
+        if (this.commander && this.json.options.expedition.standardFleet) {
+          standardFleets.forEach((template) => {
+            if (template.id == this.json.options.expedition.standardFleetId) {
+              let enoughShips = true;
+              for (const ship in template.ships) {
+                if (template.ships[ship] > availableShips[ship]) enoughShips = false;
+              }
+              if (enoughShips) {
+                for (const ship in template.ships) selectedShips[ship] = template.ships[ship];
+                warningText = "";
+              } else {
+                warningText = this.getTranslatedText(164) + "<br>" + warningText + "<br>";
+              }
+            }
+          });
+        }
+
         for (const ship in selectedShips) this.selectShips(~~ship, selectedShips[ship]);
         if (warningText.length) fadeBox(warningText, true);
 
         document.querySelector(".send_none").click();
+        if (fleetDispatcher.targetPlanet.position != 16) {
+          // force own system in case no other position 16 system was selected
+          // avoids wrong destination problems whith collect button missclicks
+          const coords = this.current.coords.split(":");
+          document.querySelector(".ogl-coords #galaxyInput").value = coords[0];
+          document.querySelector(".ogl-coords #systemInput").value = coords[1];
+        }
+        document.querySelector(".ogl-coords #positionInput").value = 16;
+        fleetDispatcher.targetPlanet.position = 16;
         fleetDispatcher.mission = 15;
         fleetDispatcher.targetPlanet.type = 1;
-        fleetDispatcher.targetPlanet.position = 16;
-        document.querySelector(".ogl-coords #positionInput").value = 16;
         fleetDispatcher.refreshTarget();
         fleetDispatcher.updateTarget();
         fleetDispatcher.fetchTargetPlayerData();
@@ -11309,6 +11372,7 @@ class OGInfinity {
         // do not enable rotation of expeditions in a not own system, but keep same system for auto expedition
         if (originSystem != destinationSystem) {
           link += `&galaxy=${fleetDispatcher.targetPlanet.galaxy}&system=${fleetDispatcher.targetPlanet.system}`;
+          link += "&position=16";
         } else if (this.json.options.expedition.rotation) {
           const planetSystems = [];
           document
@@ -16888,6 +16952,20 @@ class OGInfinity {
           tr: "Kontrol edilmedi",
         },
         /*164*/ {
+          de: "Fehlende Schiffe für die ausgewählte Flottenzusammensetzung...",
+          en: "Not enough ships for the chosen fleet composition...",
+          es: "No hay suficientes naves para la composición de flota escogida...",
+          fr: "Vaisseaux manquants pour la composition de flotte choisie...",
+          tr: "Seçilen filo bileşimi için eksik gemiler...",
+        },
+        /*165*/ {
+          de: "Verwendung für Expeditionen",
+          en: "Use for expeditions",
+          es: "Usar para expediciones",
+          fr: "Utiliser pour les expéditions",
+          tr: "Keşif gezileri için kullanın",
+        },
+        /*166*/ {
           de: "",
           en: "",
           es: "",
