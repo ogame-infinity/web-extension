@@ -1588,6 +1588,7 @@ class OGInfinity {
 		this.commander = player.hasCommander;
 		this.rawURL = new URL(window.location.href);
 		this.page = this.rawURL.searchParams.get("component") || this.rawURL.searchParams.get("page");
+
 		if (document.querySelector("#characterclass .explorer")) {
 			this.playerClass = PLAYER_CLASS_EXPLORER;
 		} else if (document.querySelector("#characterclass .warrior")) {
@@ -1626,6 +1627,7 @@ class OGInfinity {
 		this.json = res || {};
 
 		this.json.welcome = this.json.welcome === false ? false : true;
+
 		this.json.needLifeformUpdate = this.json.needLifeformUpdate || {};
 		this.json.pantrySync = this.json.pantrySync || "";
 		this.json.empire = this.json.empire || [];
@@ -1712,6 +1714,7 @@ class OGInfinity {
 		this.json.options.autofetchempire = this.json.options.disableautofetchempire === true ? false : true;
 
 		this.json.options.targetList = this.json.options.targetList === true ? true : false;
+
 		this.json.options.fret = this.json.options.fret || 202;
 		this.json.options.spyFret = this.json.options.spyFret || 202;
 		this.json.options.harvestMission = this.json.options.harvestMission || 4;
@@ -1720,9 +1723,11 @@ class OGInfinity {
 		this.json.options.expeditionSendProbe = this.json.options.expeditionSendProbe === true ? true : false;
 		this.json.options.expeditionMission = this.json.options.expeditionMission || 15;
 		this.json.options.expeditionDefaultTime = this.json.options.expeditionDefaultTime || 1;
+
 		this.json.options.activitytimers = this.json.options.activitytimers === true ? true : false;
-		this.json.options.planetIcons = this.json.options.planetIcons === true ? true : false;
+
 		this.json.options.spyFilter = this.json.options.spyFilter || "DATE";
+
 		if (
 			this.json.options.ptreTK &&
 			this.json.options.ptreTK.replace(/-/g, "").length == 18 &&
@@ -1733,19 +1738,22 @@ class OGInfinity {
 			this.json.options.ptreTK = "";
 			// TODO: Remove ptreTK from LocalStorage (it has wrong format)
 		}
+
 		this.json.options.pantryKey = this.json.options.pantryKey || "";
 		this.json.options.rvalLimit = this.json.options.rvalLimit || 4e5 * this.json.speed;
 		this.json.options.spyTableEnable = this.json.options.spyTableEnable === false ? false : true;
 		this.json.options.spyTableAppend = this.json.options.spyTableAppend === false ? false : true;
-		this.json.options.compactViewEnable = this.json.options.compactViewEnable === false ? false : true;
 		this.json.options.autoDeleteEnable = this.json.options.autoDeleteEnable === true ? true : false;
 		this.json.options.kept = this.json.options.kept || {};
 		this.json.options.defaultKept = this.json.options.defaultKept || {};
 		this.json.options.hiddenTargets = this.json.options.hiddenTargets || {};
 		this.json.options.timeZone = this.json.options.timeZone === false ? false : true;
+
 		this.json.selectedLifeforms = this.json.selectedLifeforms || null;
 		this.json.lifeformBonus = this.json.lifeformBonus || null;
+
 		this.gameLang = document.querySelector('meta[name="ogame-language"]').getAttribute("content");
+
 		this.isLoading = false;
 		this.autoQueue = new AutoQueue();
 
@@ -1858,31 +1866,39 @@ class OGInfinity {
 
 		this.sideOptions();
 		this.minesLevel();
+
+		if (this.json.options.fleetActivity) this.empireExtension.updatePlanetsFleetActivity();
 		this.empireExtension.resourceDetail();
+		this.empireExtension.addActivityTimers(this.json.options.activitytimers);
+		this.empireExtension.jumpGate();
+
+		this.addRequestPing();
+		this.setupLocalTimeZone();
+
+
 		this.eventBox();
 		this.neededCargo();
 		this.expedition();
 		this.collect();
-		this.quickPlanetList();
-		this.empireExtension.activitytimers();
+		this.addQuickPlanetListForDispatch();
 		this.showTrackedPlayer();
 		this.spyTable();
 		this.keyboardActions();
 		this.betterTooltip();
-		this.utilities();
+
+
+		this.adjustStyles();
+		this.addMissionAbortBackTime();
 		this.flyingFleet();
+
+
 		this.betterHighscore();
 		this.overviewDates();
 		this.sideLock();
-		this.jumpGate();
-		this.topBarUtilities(); // only shows ping now
 		this.fleetDispatcher();
 		this.betterFleetDispatcher();
 		this.technoDetail(); // todo: currently WIP
 		this.onGalaxyUpdate();
-		this.timeZone();
-		this.updateFlyings();
-		this.empireExtension.updatePlanets_FleetActivity();
 		this.checkRedirect();
 		this.updateProductionProgress();
 		this.showStorageTimers();
@@ -1917,7 +1933,20 @@ class OGInfinity {
 			document.querySelector("#banner_skyscraper").classList.add("fix-banner");
 	}
 
-	timeZone() {
+	addRequestPing() {
+		const bar = document.querySelector("#bar ul");
+		const ping = window.performance.timing.domLoading - window.performance.timing.fetchStart;
+		let colorClass = "friendly";
+		if (ping > 400 && ping < 800) colorClass = "neutral";
+		if (ping > 800) colorClass = "hostile";
+		bar.prepend(
+			createDOM("span", { class: "ogk-ping" })
+				.appendChild(createDOM("span", { class: `${colorClass}` }, `${toFormatedNumber(ping / 1e3, 1)}s`))
+				.parentElement.appendChild(document.createTextNode(" ping")).parentElement
+		);
+	}
+
+	setupLocalTimeZone() {
 		if (window.timeZoneDiffSeconds !== undefined) {
 			this.json.timezoneDiff = timeZoneDiffSeconds;
 			this.saveData();
@@ -3310,19 +3339,6 @@ class OGInfinity {
 			});
 	}
 
-	topBarUtilities() {
-		const bar = document.querySelector("#bar ul");
-		const ping = window.performance.timing.domLoading - window.performance.timing.fetchStart;
-		let colorClass = "friendly";
-		if (ping > 400 && ping < 800) colorClass = "neutral";
-		if (ping > 800) colorClass = "hostile";
-		bar.prepend(
-			createDOM("span", { class: "ogk-ping" })
-				.appendChild(createDOM("span", { class: `${colorClass}` }, `${toFormatedNumber(ping / 1e3, 1)}s`))
-				.parentElement.appendChild(document.createTextNode(" ping")).parentElement
-		);
-	}
-
 	eventBox() {
 		let interval = setInterval(() => {
 			if (document.querySelector("#eventboxLoading").style.display == "none") {
@@ -3945,85 +3961,6 @@ class OGInfinity {
 						});
 				}
 			});
-	}
-
-	jumpGate() {
-		let jumpTimes = [60, 53, 47, 41, 36, 31, 27, 23, 19, 17, 14, 13, 11, 10, 10];
-		for (const [coords, t] of Object.entries(this.json.jumpGate)) {
-			let time = new Date(t);
-			this.planetList.forEach((planet) => {
-				if (planet.querySelector(".planet-koords").textContent == coords) {
-					let moonlink = planet.querySelector(".moonlink");
-					let gateLevel = Number(moonlink.getAttribute("data-jumpgatelevel"));
-					let updateCounter = () => {
-						let diff = (new Date() - time) / 1e3 / 60;
-						let refreshTime = jumpTimes[gateLevel - 1] / this.json.speedFleetWar;
-						let count = Math.round(refreshTime - diff);
-						counter.textContent = count + "'";
-						if (count > 0) {
-							if (count < 10) {
-								counter.classList.add("friendly");
-							} else if (count < 30) {
-								counter.classList.add("neutral");
-							} else {
-								counter.classList.add("hostile");
-							}
-							return true;
-						} else {
-							delete this.json.jumpGate[coords];
-							this.saveData();
-							return false;
-						}
-					};
-					let counter = moonlink.appendChild(createDOM("div", { class: "ogk-gate-counter" }));
-					updateCounter();
-					let inter = setInterval(() => {
-						if (!updateCounter()) clearInterval(inter);
-					}, 1e3);
-				}
-			});
-		}
-		if (!this.currentLocation.isMoon) return;
-		let oj = openJumpgate;
-		openJumpgate = () => {
-			oj();
-			let init = false;
-			let inter = setInterval(() => {
-				try {
-					if (init) {
-						clearInterval(inter);
-						return;
-					}
-					let jg = jumpToTarget;
-					jumpToTarget = () => {
-						origin = this.currentLocation.coords;
-						let dest = document.querySelector(".fright select").selectedOptions[0].text;
-						dest = dest.split("[")[1].replace("]", "").trim();
-						let time = new Date();
-						this.json.jumpGate[dest] = time;
-						this.json.jumpGate[origin] = time;
-						this.saveData();
-						jg();
-					};
-					$("#jumpgate .send_all").after(createDOM("span", { class: "select-most" }));
-					$(".select-most").on("click", () => {
-						let kept =
-							this.json.options.kept[this.currentLocation.coords + (this.currentLocation.isMoon ? "M" : "P")] ||
-							this.json.options.defaultKept;
-						document.querySelectorAll(".ship_input_row input").forEach((elem) => {
-							let id = elem.getAttribute("name").replace("ship_", "");
-							let max = elem.getAttribute("rel");
-							$(elem).val(Math.max(0, max - (kept[id] || 0)));
-						});
-						$("#continue").focus();
-					});
-					init = true;
-				} catch (e) { }
-			}, 100);
-		};
-		if (this.rawURL.searchParams.get("opengate") == "1") {
-			openJumpgate();
-		}
 	}
 
 	timeSince(date) {
@@ -9717,7 +9654,8 @@ class OGInfinity {
 		}
 	}
 
-	quickPlanetList() {
+	// todo: move to fleetdispatcher
+	addQuickPlanetListForDispatch() {
 		if (this.page == "fleetdispatch" && fleetDispatcher) {
 			if (!document.querySelector("#shortcuts .dropdown"))
 				return;
@@ -11802,6 +11740,9 @@ class OGInfinity {
 		}
 	}
 
+
+	// Utility
+
 	createDOM(element, options, content) {
 		let e = document.createElement(element);
 		for (var key in options) {
@@ -11857,6 +11798,259 @@ class OGInfinity {
 		value = value.split(sep).join("");
 		return parseInt(value.replace("|", ".") * factor);
 	}
+
+	convertDuration(t) {
+		//dividing period from time
+		var x = t.split("T"),
+			duration = "",
+			time = {},
+			period = {},
+			//just shortcuts
+			s = "string",
+			v = "variables",
+			l = "letters",
+			// store the information about ISO8601 duration format and the divided strings
+			d = {
+				period: {
+					string: x[0].substring(1, x[0].length),
+					len: 4,
+					// years, months, weeks, days
+					letters: ["Y", "M", "W", "D"],
+					variables: {},
+				},
+				time: {
+					string: x[1],
+					len: 3,
+					// hours, minutes, seconds
+					letters: ["H", "M", "S"],
+					variables: {},
+				},
+			};
+		//in case the duration is a multiple of one day
+		if (!d.time.string) {
+			d.time.string = "";
+		}
+
+		for (var i in d) {
+			var len = d[i].len;
+			for (var j = 0; j < len; j++) {
+				d[i][s] = d[i][s].split(d[i][l][j]);
+				if (d[i][s].length > 1) {
+					d[i][v][d[i][l][j]] = parseInt(d[i][s][0], 10);
+					d[i][s] = d[i][s][1];
+				} else {
+					d[i][v][d[i][l][j]] = 0;
+					d[i][s] = d[i][s][0];
+				}
+			}
+		}
+		period = d.period.variables;
+		time = d.time.variables;
+		time.H += 24 * period.D + 24 * 7 * period.W + 24 * 7 * 4 * period.M + 24 * 7 * 4 * 12 * period.Y;
+
+		if (time.H) {
+			duration = time.H + ":";
+			if (time.M < 10) {
+				time.M = "0" + time.M;
+			}
+		}
+
+		if (time.S < 10) {
+			time.S = "0" + time.S;
+		}
+
+		duration += time.M + ":" + time.S;
+		return duration;
+	}
+
+	FPSLoop(callbackAsString, params) { // todo: remove
+		setTimeout(() => {
+			requestAnimationFrame(() => this[callbackAsString](params));
+		}, 500);
+	}
+
+	tooltip(sender, content, autoHide, side, timer) {
+		side = side || {};
+		timer = timer || 500;
+		let tooltip = document.querySelector(".ogl-tooltip");
+		document.querySelector(".ogl-tooltip > div") && document.querySelector(".ogl-tooltip > div").remove();
+		let close = document.querySelector(".close-tooltip");
+		if (!tooltip) {
+			tooltip = document.body.appendChild(createDOM("div", { class: "ogl-tooltip" }));
+			close = tooltip.appendChild(createDOM("a", { class: "close-tooltip" }));
+			close.addEventListener("click", (e) => {
+				e.stopPropagation();
+				tooltip.classList.remove("ogl-active");
+			});
+			document.body.addEventListener("click", (event) => {
+				if (
+					!event.target.getAttribute("rel") &&
+					!event.target.closest(".tooltipRel") &&
+					!event.target.classList.contains("ogl-colors") &&
+					!tooltip.contains(event.target)
+				) {
+					tooltip.classList.remove("ogl-active");
+					this.keepTooltip = false;
+				}
+			});
+		}
+		tooltip.classList.remove("ogl-update");
+		if (sender != this.oldSender) {
+			tooltip.classList.remove("ogl-active");
+		}
+		tooltip.classList.remove("ogl-autoHide");
+		tooltip.classList.remove("ogl-tooltipLeft");
+		tooltip.classList.remove("ogl-tooltipRight");
+		tooltip.classList.remove("ogl-tooltipBottom");
+		this.oldSender = sender;
+		let rect = sender.getBoundingClientRect();
+		let win = sender.ownerDocument.defaultView;
+		let position = {
+			x: rect.left + win.pageXOffset,
+			y: rect.top + win.pageYOffset,
+		};
+		if (side.left) {
+			tooltip.classList.add("ogl-tooltipLeft");
+			position.y -= 20;
+			position.y += rect.height / 2;
+		} else if (side.right) {
+			tooltip.classList.add("ogl-tooltipRight");
+			position.x += rect.width;
+			position.y -= 20;
+			position.y += rect.height / 2;
+		} else if (side.bottom) {
+			tooltip.classList.add("ogl-tooltipBottom");
+			position.x += rect.width / 2;
+			position.y += rect.height;
+		} else {
+			position.x += rect.width / 2;
+		}
+		if (sender.classList.contains("tooltipOffsetX")) {
+			position.x += 33;
+		}
+		if (autoHide) {
+			tooltip.classList.add("ogl-autoHide");
+		}
+		tooltip.appendChild(content);
+		tooltip.style.top = position.y + "px";
+		tooltip.style.left = position.x + "px";
+		this.tooltipTimer = setTimeout(() => tooltip.classList.add("ogl-active"), timer);
+		if (!sender.classList.contains("ogl-tooltipInit")) {
+			sender.classList.add("ogl-tooltipInit");
+			sender.addEventListener("mouseleave", () => {
+				if (autoHide) {
+					tooltip.classList.remove("ogl-active");
+				}
+				clearTimeout(this.tooltipTimer);
+			});
+		}
+		return tooltip;
+	}
+
+	popup(header, content) {
+		let overlay = document.querySelector(".ogl-dialogOverlay");
+		if (!overlay) {
+			overlay = document.body.appendChild(createDOM("div", { class: "ogl-dialogOverlay" }));
+			overlay.addEventListener("click", (event) => {
+				if (event.target == overlay) {
+					if (this.json.welcome) return;
+					overlay.classList.remove("ogl-active");
+				}
+			});
+		}
+		let dialog = overlay.querySelector(".ogl-dialog");
+		if (!dialog) {
+			dialog = overlay.appendChild(createDOM("div", { class: "ogl-dialog" }));
+			let close = dialog.appendChild(createDOM("div", { class: "close-tooltip" }));
+			close.addEventListener("click", () => {
+				if (this.json.welcome) {
+					this.json.welcome = false;
+					this.saveData();
+					if (this.playerClass == PLAYER_CLASS_NONE) {
+						window.location.href = `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=ingame&component=characterclassselection`;
+					} else {
+						window.location.href = `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=ingame&component=overview`;
+					}
+				}
+				overlay.classList.remove("ogl-active");
+			});
+		}
+		let top = dialog.querySelector("header") || dialog.appendChild(createDOM("header"));
+		let body =
+			dialog.querySelector(".ogl-dialogContent") ||
+			dialog.appendChild(createDOM("div", { class: "ogl-dialogContent" }));
+		top.replaceChildren();
+		body.replaceChildren();
+		if (header) {
+			top.appendChild(header);
+		}
+		if (content) {
+			body.appendChild(content);
+		}
+		overlay.classList.add("ogl-active");
+	}
+
+	showTooltip(sender) {
+		if (
+			!sender.classList.contains("ogl-tooltipReady") &&
+			!sender.classList.contains("ogl-stalkReady") &&
+			!sender.classList.contains("activity")
+		) {
+			sender.classList.add("ogl-tooltipReady");
+			let show = () => {
+				let content;
+				let appendMode = false;
+				this.betterAPITooltip(sender);
+				if (sender.classList.contains("tooltipRel")) {
+					let rel = sender.getAttribute("rel");
+					rel = rel.replace("_oneTimeelement", "");
+					let id = "#" + rel;
+					content = document.querySelector(id).cloneNode(true);
+					appendMode = true;
+				} else {
+					content = sender.getAttribute("data-title");
+				}
+				if (!content) {
+					content = sender.getAttribute("title");
+					if (!content) return;
+					sender.setAttribute("data-title", content);
+				}
+				sender.removeAttribute("title");
+				if (sender.classList.contains("tooltipHTML")) {
+					content = content.replace("|", "<hr>");
+				}
+				if (sender.getAttribute("id") && sender.getAttribute("id").indexOf("route_") == 0) {
+					sender.classList.add("tooltipRight");
+				}
+				let div = createDOM("div");
+				appendMode ? div.appendChild(content) : div.html(content);
+				if ((typeof content === "string" || content instanceof String) && content.includes("fleetinfo")) {
+					if (this.hasLifeforms) div.classList.add("hasLifeforms");
+					this.trashsimTooltip(div, content);
+				}
+				let side = {};
+				side.left = sender.classList.contains("tooltipLeft");
+				side.right = sender.classList.contains("tooltipRight");
+				side.bottom = sender.classList.contains("tooltipBottom");
+				let autoHide = true;
+				if (sender.classList.contains("tooltipClose") || sender.classList.contains("tooltipCustom")) {
+					autoHide = false;
+				}
+				this.tooltip(sender, div, autoHide, side);
+			};
+			sender.addEventListener("mouseenter", () => {
+				show();
+			});
+		}
+	}
+
+	betterTooltip() {
+		Tipped.show = (e) => { // todo: remove because obsolete?
+			this.showTooltip(e);
+		};
+	}
+
+
 
 	consumption(id, lvl) {
 		if (!TECH_INFO[id].baseCons || !TECH_INFO[id].factorCons) return 0;
@@ -11974,70 +12168,6 @@ class OGInfinity {
 			time: Math.max(Math.floor(time), 1),
 			cost: cost.map((x) => Math.floor(x * costFactor)),
 		};
-	}
-
-	convertDuration(t) {
-		//dividing period from time
-		var x = t.split("T"),
-			duration = "",
-			time = {},
-			period = {},
-			//just shortcuts
-			s = "string",
-			v = "variables",
-			l = "letters",
-			// store the information about ISO8601 duration format and the divided strings
-			d = {
-				period: {
-					string: x[0].substring(1, x[0].length),
-					len: 4,
-					// years, months, weeks, days
-					letters: ["Y", "M", "W", "D"],
-					variables: {},
-				},
-				time: {
-					string: x[1],
-					len: 3,
-					// hours, minutes, seconds
-					letters: ["H", "M", "S"],
-					variables: {},
-				},
-			};
-		//in case the duration is a multiple of one day
-		if (!d.time.string) {
-			d.time.string = "";
-		}
-
-		for (var i in d) {
-			var len = d[i].len;
-			for (var j = 0; j < len; j++) {
-				d[i][s] = d[i][s].split(d[i][l][j]);
-				if (d[i][s].length > 1) {
-					d[i][v][d[i][l][j]] = parseInt(d[i][s][0], 10);
-					d[i][s] = d[i][s][1];
-				} else {
-					d[i][v][d[i][l][j]] = 0;
-					d[i][s] = d[i][s][0];
-				}
-			}
-		}
-		period = d.period.variables;
-		time = d.time.variables;
-		time.H += 24 * period.D + 24 * 7 * period.W + 24 * 7 * 4 * period.M + 24 * 7 * 4 * 12 * period.Y;
-
-		if (time.H) {
-			duration = time.H + ":";
-			if (time.M < 10) {
-				time.M = "0" + time.M;
-			}
-		}
-
-		if (time.S < 10) {
-			time.S = "0" + time.S;
-		}
-
-		duration += time.M + ":" + time.S;
-		return duration;
 	}
 
 	building(id, lvl, object = null) {
@@ -12187,133 +12317,6 @@ class OGInfinity {
 		}
 	}
 
-	FPSLoop(callbackAsString, params) { // todo: remove
-		setTimeout(() => {
-			requestAnimationFrame(() => this[callbackAsString](params));
-		}, 500);
-	}
-
-	tooltip(sender, content, autoHide, side, timer) {
-		side = side || {};
-		timer = timer || 500;
-		let tooltip = document.querySelector(".ogl-tooltip");
-		document.querySelector(".ogl-tooltip > div") && document.querySelector(".ogl-tooltip > div").remove();
-		let close = document.querySelector(".close-tooltip");
-		if (!tooltip) {
-			tooltip = document.body.appendChild(createDOM("div", { class: "ogl-tooltip" }));
-			close = tooltip.appendChild(createDOM("a", { class: "close-tooltip" }));
-			close.addEventListener("click", (e) => {
-				e.stopPropagation();
-				tooltip.classList.remove("ogl-active");
-			});
-			document.body.addEventListener("click", (event) => {
-				if (
-					!event.target.getAttribute("rel") &&
-					!event.target.closest(".tooltipRel") &&
-					!event.target.classList.contains("ogl-colors") &&
-					!tooltip.contains(event.target)
-				) {
-					tooltip.classList.remove("ogl-active");
-					this.keepTooltip = false;
-				}
-			});
-		}
-		tooltip.classList.remove("ogl-update");
-		if (sender != this.oldSender) {
-			tooltip.classList.remove("ogl-active");
-		}
-		tooltip.classList.remove("ogl-autoHide");
-		tooltip.classList.remove("ogl-tooltipLeft");
-		tooltip.classList.remove("ogl-tooltipRight");
-		tooltip.classList.remove("ogl-tooltipBottom");
-		this.oldSender = sender;
-		let rect = sender.getBoundingClientRect();
-		let win = sender.ownerDocument.defaultView;
-		let position = {
-			x: rect.left + win.pageXOffset,
-			y: rect.top + win.pageYOffset,
-		};
-		if (side.left) {
-			tooltip.classList.add("ogl-tooltipLeft");
-			position.y -= 20;
-			position.y += rect.height / 2;
-		} else if (side.right) {
-			tooltip.classList.add("ogl-tooltipRight");
-			position.x += rect.width;
-			position.y -= 20;
-			position.y += rect.height / 2;
-		} else if (side.bottom) {
-			tooltip.classList.add("ogl-tooltipBottom");
-			position.x += rect.width / 2;
-			position.y += rect.height;
-		} else {
-			position.x += rect.width / 2;
-		}
-		if (sender.classList.contains("tooltipOffsetX")) {
-			position.x += 33;
-		}
-		if (autoHide) {
-			tooltip.classList.add("ogl-autoHide");
-		}
-		tooltip.appendChild(content);
-		tooltip.style.top = position.y + "px";
-		tooltip.style.left = position.x + "px";
-		this.tooltipTimer = setTimeout(() => tooltip.classList.add("ogl-active"), timer);
-		if (!sender.classList.contains("ogl-tooltipInit")) {
-			sender.classList.add("ogl-tooltipInit");
-			sender.addEventListener("mouseleave", () => {
-				if (autoHide) {
-					tooltip.classList.remove("ogl-active");
-				}
-				clearTimeout(this.tooltipTimer);
-			});
-		}
-		return tooltip;
-	}
-
-	popup(header, content) {
-		let overlay = document.querySelector(".ogl-dialogOverlay");
-		if (!overlay) {
-			overlay = document.body.appendChild(createDOM("div", { class: "ogl-dialogOverlay" }));
-			overlay.addEventListener("click", (event) => {
-				if (event.target == overlay) {
-					if (this.json.welcome) return;
-					overlay.classList.remove("ogl-active");
-				}
-			});
-		}
-		let dialog = overlay.querySelector(".ogl-dialog");
-		if (!dialog) {
-			dialog = overlay.appendChild(createDOM("div", { class: "ogl-dialog" }));
-			let close = dialog.appendChild(createDOM("div", { class: "close-tooltip" }));
-			close.addEventListener("click", () => {
-				if (this.json.welcome) {
-					this.json.welcome = false;
-					this.saveData();
-					if (this.playerClass == PLAYER_CLASS_NONE) {
-						window.location.href = `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=ingame&component=characterclassselection`;
-					} else {
-						window.location.href = `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=ingame&component=overview`;
-					}
-				}
-				overlay.classList.remove("ogl-active");
-			});
-		}
-		let top = dialog.querySelector("header") || dialog.appendChild(createDOM("header"));
-		let body =
-			dialog.querySelector(".ogl-dialogContent") ||
-			dialog.appendChild(createDOM("div", { class: "ogl-dialogContent" }));
-		top.replaceChildren();
-		body.replaceChildren();
-		if (header) {
-			top.appendChild(header);
-		}
-		if (content) {
-			body.appendChild(content);
-		}
-		overlay.classList.add("ogl-active");
-	}
-
 	trashsimTooltip(container, fleetinfo) {
 		let ctn = container.appendChild(createDOM("div", { style: "display:flex;justify-content:center;" }));
 		let btn = ctn.appendChild(createDOM("div", { class: "ogk-trashsim tooltip" }));
@@ -12439,66 +12442,6 @@ class OGInfinity {
 		}
 	}
 
-	showTooltip(sender) {
-		if (
-			!sender.classList.contains("ogl-tooltipReady") &&
-			!sender.classList.contains("ogl-stalkReady") &&
-			!sender.classList.contains("activity")
-		) {
-			sender.classList.add("ogl-tooltipReady");
-			let show = () => {
-				let content;
-				let appendMode = false;
-				this.betterAPITooltip(sender);
-				if (sender.classList.contains("tooltipRel")) {
-					let rel = sender.getAttribute("rel");
-					rel = rel.replace("_oneTimeelement", "");
-					let id = "#" + rel;
-					content = document.querySelector(id).cloneNode(true);
-					appendMode = true;
-				} else {
-					content = sender.getAttribute("data-title");
-				}
-				if (!content) {
-					content = sender.getAttribute("title");
-					if (!content) return;
-					sender.setAttribute("data-title", content);
-				}
-				sender.removeAttribute("title");
-				if (sender.classList.contains("tooltipHTML")) {
-					content = content.replace("|", "<hr>");
-				}
-				if (sender.getAttribute("id") && sender.getAttribute("id").indexOf("route_") == 0) {
-					sender.classList.add("tooltipRight");
-				}
-				let div = createDOM("div");
-				appendMode ? div.appendChild(content) : div.html(content);
-				if ((typeof content === "string" || content instanceof String) && content.includes("fleetinfo")) {
-					if (this.hasLifeforms) div.classList.add("hasLifeforms");
-					this.trashsimTooltip(div, content);
-				}
-				let side = {};
-				side.left = sender.classList.contains("tooltipLeft");
-				side.right = sender.classList.contains("tooltipRight");
-				side.bottom = sender.classList.contains("tooltipBottom");
-				let autoHide = true;
-				if (sender.classList.contains("tooltipClose") || sender.classList.contains("tooltipCustom")) {
-					autoHide = false;
-				}
-				this.tooltip(sender, div, autoHide, side);
-			};
-			sender.addEventListener("mouseenter", () => {
-				show();
-			});
-		}
-	}
-
-	betterTooltip() {
-		Tipped.show = (e) => { // todo: remove because obsolete?
-			this.showTooltip(e);
-		};
-	}
-
 	interceptFleetDispatcher(functionName, param, callbackBefore, callbackAfter) {
 		let old = fleetDispatcher[functionName];
 		fleetDispatcher[functionName] = function (param) {
@@ -12509,91 +12452,17 @@ class OGInfinity {
 		};
 	}
 
-	// todo: move to fleetdispatcher
-	utilities() {
+	adjustStyles() {
 		document.querySelectorAll("#resources .tooltipHTML, #commandercomponent .tooltipHTML").forEach((e) => {
 			e.classList.add("tooltipBottom");
 		});
 
-		// todo: move to fleetdispatcher
 		if (this.page == "fleetdispatch") {
-			document.querySelector(".percentageBarWrapper").classList.add("ogl-hidden");
-
-			let slider = createDOM("div", {
-				class: "ogl-fleetSpeed",
-				style: "margin-top: 10px; margin-left: 10px; margin-right: 10px; display: flex; grid-column: 1/3;",
-			});
-			document.querySelector('div[id="mission"]').appendChild(slider);
-			if (this.playerClass == PLAYER_CLASS_WARRIOR) {
-				slider.replaceChildren(
-					createDOM("div", { "data-step": "0.5", style: "width: 31px;" }, "05"),
-					createDOM("div", { "data-step": "1", style: "width: 31px;" }, "10"),
-					createDOM("div", { "data-step": "1.5", style: "width: 31px;" }, "15"),
-					createDOM("div", { "data-step": "2", style: "width: 31px;" }, "20"),
-					createDOM("div", { "data-step": "2.5", style: "width: 31px;" }, "25"),
-					createDOM("div", { "data-step": "3", style: "width: 31px;" }, "30"),
-					createDOM("div", { "data-step": "3.5", style: "width: 31px;" }, "35"),
-					createDOM("div", { "data-step": "4", style: "width: 31px;" }, "40"),
-					createDOM("div", { "data-step": "4.5", style: "width: 31px;" }, "45"),
-					createDOM("div", { "data-step": "5", style: "width: 31px;" }, "50"),
-					createDOM("div", { "data-step": "5.5", style: "width: 31px;" }, "55"),
-					createDOM("div", { "data-step": "6", style: "width: 31px;" }, "60"),
-					createDOM("div", { "data-step": "6.5", style: "width: 31px;" }, "65"),
-					createDOM("div", { "data-step": "7", style: "width: 31px;" }, "70"),
-					createDOM("div", { "data-step": "7.5", style: "width: 31px;" }, "75"),
-					createDOM("div", { "data-step": "8", style: "width: 31px;" }, "80"),
-					createDOM("div", { "data-step": "8.5", style: "width: 31px;" }, "85"),
-					createDOM("div", { "data-step": "9", style: "width: 31px;" }, "90"),
-					createDOM("div", { "data-step": "9.5", style: "width: 31px;" }, "95"),
-					createDOM("div", { class: "ogl-active", "data-step": "10", style: "width: 31px;" }, "100")
-				);
-			} else {
-				slider.replaceChildren(
-					createDOM("div", { "data-step": "1", style: "width: 62px;" }, "10"),
-					createDOM("div", { "data-step": "2", style: "width: 62px;" }, "20"),
-					createDOM("div", { "data-step": "3", style: "width: 62px;" }, "30"),
-					createDOM("div", { "data-step": "4", style: "width: 62px;" }, "40"),
-					createDOM("div", { "data-step": "5", style: "width: 62px;" }, "50"),
-					createDOM("div", { "data-step": "6", style: "width: 62px;" }, "60"),
-					createDOM("div", { "data-step": "7", style: "width: 62px;" }, "70"),
-					createDOM("div", { "data-step": "8", style: "width: 62px;" }, "80"),
-					createDOM("div", { "data-step": "9", style: "width: 62px;" }, "90"),
-					createDOM("div", { class: "ogl-active", "data-step": "10", style: "width: 62px;" }, "100")
-				);
-			}
-
-			$(".ogl-fleetSpeed div").on("click", (event) => {
-				$(".ogl-fleetSpeed div").removeClass("ogl-active");
-				fleetDispatcher.speedPercent = event.target.getAttribute("data-step");
-				$(`.ogl-fleetSpeed div[data-step="${fleetDispatcher.speedPercent}"]`).addClass("ogl-active");
-			});
-			$(".ogl-fleetSpeed div").on("mouseover", (event) => {
-				fleetDispatcher.speedPercent = event.target.getAttribute("data-step");
-				fleetDispatcher.refresh();
-			});
-			$(".ogl-fleetSpeed div").on("mouseout", (event) => {
-				fleetDispatcher.speedPercent = slider.querySelector(".ogl-active").getAttribute("data-step");
-				fleetDispatcher.refresh();
-			});
-
-			let data = fleetDispatcher.fleetHelper.shipsData;
-			for (let id in data) {
-				let infos = `
-					<div class="ogl-fleetInfo">
-					${data[id].name}
-					<hr>
-					<div><span>${this.translation.text(47)} </span>${toFormatedNumber(data[id].cargoCapacity, 0)}</div>
-					<div><span>${this.translation.text(48)} </span>${toFormatedNumber(data[id].speed, 0)}</div>
-					<div><span>${this.translation.text(49)} </span>${toFormatedNumber(data[id].fuelConsumption, 0)}</div>
-					</div>`;
-				let ship = document.querySelector(`.technology[data-technology="${id}"]`);
-				if (ship) {
-					ship.setAttribute("data-title", infos);
-					ship.removeAttribute("title");
-				}
-			}
+			document.querySelector(".percentageBarWrapper .bar").style.background = "none";
 		}
+	}
 
+	addMissionAbortBackTime() {
 		if (this.page == "movement") {
 			let lastFleetId = -1;
 			let lastFleetBtn;
@@ -12665,39 +12534,34 @@ class OGInfinity {
 							toFormatedNumber(fleetCount, null, true) + " " + this.translation.text(64)
 						)
 					);
-					if (!fleet.querySelector(".reversal")) return;
-					let back =
-						fleet.querySelector(".reversal a").title || fleet.querySelector(".reversal a").getAttribute("data-title");
-					let splitted = back.split("|")[1].replace("<br>", "/").replace(/:|\./g, "/").split("/");
-					let backDate = {
-						year: splitted[2],
-						month: splitted[1],
-						day: splitted[0],
-						h: splitted[3],
-						m: splitted[4],
-						s: splitted[5],
-					};
-					let lastTimer = new Date(
-						backDate.year,
-						backDate.month,
-						backDate.day,
-						backDate.h,
-						backDate.m,
-						backDate.s
-					).getTime();
-					let content = details.appendChild(createDOM("div", { class: "ogl-date" }));
-					let date;
-					let updateTimer = () => {
-						lastTimer += 1e3;
-						date = new Date(lastTimer);
-						const dateTxt = getFormatedDate(date.getTime(), "[d].[m].[y] [G]:[i]:[s] ");
-						content.replaceChildren(
-							document.createTextNode(`${dateTxt.split(" ")[0]}  `),
-							createDOM("strong", {}, dateTxt.split(" ")[1])
-						);
-					};
-					updateTimer();
-					setInterval(() => updateTimer(), 500);
+
+
+					let abortMissionButton = fleet.querySelector(".reversal a");
+					if (abortMissionButton) {
+						let abortMissionTooltip = abortMissionButton.title;
+						// Parse the current dateTime from this string (because javascript cant to it on its own...)
+						let splitDate = abortMissionTooltip.split("|")[1].replace("<br>", "/").replace(/:|\./g, "/").split("/");
+						let backTime = new Date(
+							splitDate[2],
+							splitDate[1],
+							splitDate[0],
+							splitDate[3],
+							splitDate[4],
+							splitDate[5]
+						)
+
+						let content = details.appendChild(createDOM("div", { class: "ogl-date" }));
+						let updateTimer = () => {
+							backTime.setSeconds(backTime.getSeconds() + 1);
+							const dateTxt = getFormatedDate(backTime, "[d].[m].[y] [G]:[i]:[s] "); // todo: consider localtime here
+							content.replaceChildren(
+								document.createTextNode(`${dateTxt.split(" ")[0]}  `),
+								createDOM("strong", {}, dateTxt.split(" ")[1])
+							);
+						};
+						updateTimer();
+						setInterval(() => updateTimer(), 500);
+					}
 				}
 			});
 
@@ -13247,63 +13111,6 @@ class OGInfinity {
 			}
 		});
 		this.popup(false, container);
-	}
-
-	updateFlyings() {
-		const FLYING_PER_PLANETS = {};
-		const eventTable = document.getElementById("eventContent");
-		const ACSrows = eventTable.querySelectorAll("tr.allianceAttack");
-		const unionTable = [];
-		ACSrows.forEach((acsRow) => {
-			const union = Array.from(acsRow.classList)
-				.find((cl) => cl.includes("union"))
-				.split("unionunion")[1];
-			unionTable.push([union, acsRow.querySelectorAll("td")[1].textContent]);
-		});
-		const unionArrivalTime = Object.fromEntries(unionTable);
-		const rows = eventTable.querySelectorAll("#eventContent tr.eventFleet");
-		rows.forEach((row) => {
-			const cols = row.querySelectorAll("td");
-
-			const flying = {};
-			if (!row.classList.contains("partnerInfo")) {
-				flying.arrivalTime = cols[1].textContent;
-			} else {
-				const union = Array.from(row.classList)
-					.find((cl) => cl.includes("union"))
-					.split("union")[1];
-				flying.arrivalTime = unionArrivalTime[union];
-			}
-			flying.missionFleetIcon = cols[2].querySelector("img").src;
-
-			// Get the mission title by removing the suffix "own fleet" and the "return" suffix (eg: "(R)")
-			flying.missionFleetTitle = cols[2].querySelector("img").title.trim();
-			if (flying.missionFleetTitle.includes("|"))
-				flying.missionFleetTitle = flying.missionFleetTitle.split("|")[1].trim();
-			if (flying.missionFleetTitle.includes("("))
-				flying.missionFleetTitle = flying.missionFleetTitle.split("(")[0].trim();
-
-			flying.origin = cols[3].textContent.trim();
-			flying.originCoords = cols[4].textContent.replace("[", "").replace("]", "").trim();
-			flying.originLink = cols[4].querySelector("a").href;
-			flying.fleetCount = cols[5].textContent;
-
-			// Get the direction
-			flying.direction = Array.from(cols[6].classList).includes("icon_movement") ? "go" : "back";
-
-			flying.dest = cols[7].textContent.trim();
-			flying.destCoords = cols[8].textContent.replace("[", "").replace("]", "").trim();
-			flying.destLink = cols[8].querySelector("a").href;
-			if (!FLYING_PER_PLANETS[flying.originCoords]) FLYING_PER_PLANETS[flying.originCoords] = {};
-			if (!FLYING_PER_PLANETS[flying.originCoords][flying.missionFleetTitle]) {
-				FLYING_PER_PLANETS[flying.originCoords][flying.missionFleetTitle] = {
-					icon: flying.missionFleetIcon,
-					data: [],
-				};
-			}
-			FLYING_PER_PLANETS[flying.originCoords][flying.missionFleetTitle].data.push(flying);
-		});
-		this.flyingFleetPerPlanets = FLYING_PER_PLANETS;
 	}
 
 	getAllianceClass() {
@@ -15993,6 +15800,7 @@ class EmpireExtension {
 
 	constructor(ogi) {
 		this.ogi = ogi
+		this.jumpTimes = [60, 53, 47, 41, 36, 31, 27, 23, 19, 17, 14, 13, 11, 10, 10];
 	}
 
 	updateresourceDetail() {
@@ -16719,50 +16527,98 @@ class EmpireExtension {
 	}
 
 
-	// Fleet Activity
-	updatePlanets_FleetActivity() {
-		if (this.ogi.flyingFleetPerPlanets && this.ogi.json.options.fleetActivity) {
+	// Fleet Activity Icons
+	updatePlanetsFleetActivity() {
+		const FLYING_PER_PLANETS = {};
+		const fleetEventTable = document.getElementById("eventContent");
+		if (fleetEventTable) {
+			const ACSrows = fleetEventTable.querySelectorAll("tr.allianceAttack");
+			const unionTable = [];
+			if (ACSrows) {
+				ACSrows.forEach((acsRow) => {
+					const union = Array.from(acsRow.classList)
+						.find((cl) => cl.includes("union"))
+						.split("unionunion")[1];
+					unionTable.push([union, acsRow.querySelectorAll("td")[1].textContent]);
+				});
+			}
+			const unionArrivalTime = Object.fromEntries(unionTable);
+
+			const rows = fleetEventTable.querySelectorAll("tr.eventFleet");
+			rows.forEach((row) => {
+				const cols = row.querySelectorAll("td");
+
+				const flying = {};
+				if (!row.classList.contains("partnerInfo")) {
+					flying.arrivalTime = cols[1].textContent;
+				} else {
+					const union = Array.from(row.classList)
+						.find((cl) => cl.includes("union"))
+						.split("union")[1];
+					flying.arrivalTime = unionArrivalTime[union];
+				}
+
+				flying.missionFleetIcon = cols[2].querySelector("img").src;
+				// Get the mission title by removing the suffix "own fleet" and the "return" suffix (eg: "(R)")
+				flying.missionFleetTitle = cols[2].querySelector("img").title.trim();
+
+				// Clean up mission titles, so it doesnt create an extra mission icon and instead matches the original title
+				// Remove "Own Fleet |" from the mission title
+				if (flying.missionFleetTitle.includes("|"))
+					flying.missionFleetTitle = flying.missionFleetTitle.split("|")[1].trim();
+				// Remove "(R)" from the mission title
+				if (flying.missionFleetTitle.includes("("))
+					flying.missionFleetTitle = flying.missionFleetTitle.split("(")[0].trim();
+
+				flying.originCoords = cols[4].textContent.replace("[", "").replace("]", "").trim();
+
+				if (!FLYING_PER_PLANETS[flying.originCoords])
+					FLYING_PER_PLANETS[flying.originCoords] = {};
+
+				if (!FLYING_PER_PLANETS[flying.originCoords][flying.missionFleetTitle]) {
+					FLYING_PER_PLANETS[flying.originCoords][flying.missionFleetTitle] = {
+						icon: flying.missionFleetIcon,
+						data: [],
+					};
+					FLYING_PER_PLANETS[flying.originCoords][flying.missionFleetTitle].data.push(flying);
+				}
+			});
+
 			const planetList = document.getElementById("planetList").children;
 			Array.from(planetList).forEach((planet) => {
-				const planetKoordsEl = planet.querySelector(".planet-koords");
-				if (planetKoordsEl) {
-					const planetKoords = planetKoordsEl.textContent;
-					Object.keys(this.ogi.flyingFleetPerPlanets).forEach((key) => {
+				const planetCoordinates = planet.querySelector(".planet-koords");
+				if (planetCoordinates) {
+					const planetKoords = planetCoordinates.textContent;
+					Object.keys(FLYING_PER_PLANETS).forEach((key) => {
 						if (planetKoords === key) {
-							const movements = this.ogi.flyingFleetPerPlanets[key];
-							const div = document.createElement("div");
-							const sizeDiv = 18;
-							div.style = `
-				  position: absolute !important;
-				  left: -${sizeDiv + 7}px !important;
-				  top: 0px !important;
-				  width: ${sizeDiv + 5}px;
-				  height: ${sizeDiv + 5}px;
-				  display: flex;
-				  flex-direction: row;
-				  flex-wrap: wrap;
-				  direction: rtl;
-				`;
-							planetKoordsEl.parentNode.parentNode.appendChild(div);
+							const movements = FLYING_PER_PLANETS[key];
+							const iconDiv = document.createElement("div");
+							const divSize = 18;
+							iconDiv.style = `
+								position: absolute !important;
+								left: -${divSize + 7}px !important;
+								top: 0px !important;
+								width: ${divSize + 5}px;
+								height: ${divSize + 5}px;
+								display: flex;
+								flex-direction: row;
+								flex-wrap: wrap;
+								direction: rtl;
+								`;
+							planetCoordinates.parentNode.parentNode.appendChild(iconDiv);
 							Object.keys(movements).forEach((movementKey, i) => {
-								if (i < 8) {
+								if (i < 8) { // todo: check why 8
+									// Check how many movements currently going from the current planet, so that the icon size can be halfed if necessary
 									const nbrMovements = Object.keys(movements).length;
 									const movement = movements[movementKey];
-									let size = sizeDiv;
+									let size = divSize;
 									if (nbrMovements > 2) {
 										size = size / 2;
 									}
 									const img = document.createElement("img");
 									img.src = movement.icon;
 									img.style = `position: initial !important; width: ${size}px; height: ${size}px; margin: 1px !important;`;
-									img.title = "";
-									movement.data.forEach((m, i) => {
-										const symbolDirection = m.direction === "go" ? "🡒" : "🡐";
-										const isLast = i == movement.data.length - 1;
-										img.title += `${m.missionFleetTitle}: ${m.origin}[${m.originCoords}] ${symbolDirection} ${m.dest}[${m.destCoords
-											}] @${m.arrivalTime}${!isLast ? "\n" : ""}`;
-									});
-									div.appendChild(img);
+									iconDiv.appendChild(img);
 								}
 							});
 						}
@@ -16774,51 +16630,61 @@ class EmpireExtension {
 
 
 	// Activity Timers
-	activitytimers() {
+	addActivityTimers(enableTimer = false) {
 		let now = Date.now();
 		if (!this.ogi.json.myActivities[this.ogi.currentLocation.coords])
 			this.ogi.json.myActivities[this.ogi.currentLocation.coords] = [0, 0];
+
 		let planetActivity = this.ogi.json.myActivities[this.ogi.currentLocation.coords][0];
 		let moonActivity = this.ogi.json.myActivities[this.ogi.currentLocation.coords][1];
-		if (this.ogi.currentLocation.isMoon) moonActivity = now;
-		else planetActivity = now;
+
+		if (this.ogi.currentLocation.isMoon)
+			moonActivity = now;
+		else
+			planetActivity = now;
+
 		this.ogi.json.myActivities[this.ogi.currentLocation.coords] = [planetActivity, moonActivity];
 		this.ogi.saveData();
+
 		this.ogi.planetList.forEach((planet) => {
 			let coords = planet.querySelector(".planet-koords").textContent;
 			let timers = this.ogi.json.myActivities[coords] || [0, 0];
-			let value = Math.min(Math.round((now - timers[0]) / 6e4), 60);
-			let pTimer = planet
-				.querySelector(".planetlink")
-				.appendChild(createDOM("div", { class: "ogl-timer ogl-short ogl-medium", "data-timer": value }));
-			if (this.ogi.json.options.activitytimers && value != 60 && value >= 15) {
-				planet.querySelector(".planetlink").appendChild(createDOM("div", { class: "activity showMinutes" }, value));
-			}
-			this.updateTimer(pTimer);
-			setInterval(() => this.updateTimer(pTimer, true), 6e4);
-			value = Math.min(Math.round((now - timers[1]) / 6e4), 60);
-			if (planet.querySelector(".moonlink")) {
-				let mTimer = planet.querySelector(".moonlink").appendChild(
-					createDOM("div", {
-						class: "ogl-timer ogl-short ogl-medium",
-						"data-timer": Math.min(Math.round((now - timers[1]) / 6e4), 60),
-					})
-				);
-				if (this.ogi.json.options.activitytimers && value != 60 && value >= 15) {
-					planet.querySelector(".moonlink").appendChild(createDOM("div", { class: "activity showMinutes" }, value));
-				}
-				this.updateTimer(mTimer);
-				setInterval(() => this.updateTimer(mTimer, true), 6e4);
+
+			// Setup planet timer
+			let planetLink = planet.querySelector(".planetlink");
+			this.setupActivityTimer(planetLink, now, timers[0], enableTimer);
+
+			// Setup moon timer
+			let moonLink = planet.querySelector(".moonlink");
+			if (moonLink) {
+				this.setupActivityTimer(moonLink, now, timers[1], enableTimer);
 			}
 		});
 	}
 
+	setupActivityTimer(link, now, time, enableTimer = false) {
+		let value = Math.min(Math.round((now - time) / 6e4), 60);
+
+		// Add activity icon
+		let timer = link.appendChild(
+			createDOM("div", { class: "ogl-timer ogl-short ogl-medium", "data-timer": Math.min(Math.round((now - time) / 6e4), 60) })
+		);
+		// Add actual timer if its enabled
+		if (enableTimer && value != 60 && value >= 15) {
+			link.appendChild(createDOM("div", { class: "activity showMinutes" }, value));
+		}
+		// Do initial update
+		this.updateTimer(timer);
+		// Continue with 1min timer interval
+		setInterval(() => this.updateTimer(timer, true), 6e4);
+	}
+
 	updateTimer(element, increment) {
 		let time = parseInt(element.getAttribute("data-timer"));
-		if (time <= 61) {
+		if (time <= 60) {
 			if (increment) {
-				time++;
 				element.setAttribute("data-timer", time);
+				time++;
 			}
 			element.title = time;
 			if (time >= 30) {
@@ -16827,6 +16693,97 @@ class EmpireExtension {
 			if (time >= 15) {
 				element.classList.remove("ogl-short");
 			}
+		}
+	}
+
+	// Jumpgate Timers
+	jumpGate() {
+		for (const [coords, t] of Object.entries(this.ogi.json.jumpGate)) {
+			let time = new Date(t);
+			this.ogi.planetList.forEach((planet) => {
+				if (planet.querySelector(".planet-koords").textContent == coords) {
+
+					let moonlink = planet.querySelector(".moonlink");
+					let gateLevel = Number(moonlink.getAttribute("data-jumpgatelevel"));
+
+					let updateCounter = () => {
+						let diff = (new Date() - time) / 1e3 / 60;
+						let refreshTime = this.jumpTimes[gateLevel - 1] / this.ogi.json.speedFleetWar;
+
+						let count = Math.round(refreshTime - diff);
+						counter.textContent = count + "'";
+
+						if (count > 0) {
+							if (count < 10) {
+								counter.classList.add("friendly");
+							} else if (count < 30) {
+								counter.classList.add("neutral");
+							} else {
+								counter.classList.add("hostile");
+							}
+							return true;
+						} else {
+							delete this.ogi.json.jumpGate[coords];
+							this.ogi.saveData();
+							return false;
+						}
+					};
+
+					let counter = moonlink.appendChild(createDOM("div", { class: "ogk-gate-counter" }));
+
+					updateCounter();
+					let inter = setInterval(() => {
+						if (!updateCounter()) clearInterval(inter);
+					}, 1e3);
+				}
+			});
+		}
+
+		if (!this.ogi.currentLocation.isMoon)
+			return;
+
+		let oj = openJumpgate;
+		openJumpgate = () => {
+			oj();
+			let init = false;
+			let inter = setInterval(() => {
+				try {
+					if (init) {
+						clearInterval(inter);
+						return;
+					}
+
+					let jg = jumpToTarget;
+					jumpToTarget = () => {
+						origin = this.ogi.currentLocation.coords;
+						let dest = document.querySelector(".fright select").selectedOptions[0].text;
+						dest = dest.split("[")[1].replace("]", "").trim();
+						let time = new Date();
+						this.ogi.json.jumpGate[dest] = time;
+						this.ogi.json.jumpGate[origin] = time;
+						this.ogi.saveData();
+						jg();
+					};
+
+					$("#jumpgate .send_all").after(createDOM("span", { class: "select-most" }));
+					$(".select-most").on("click", () => {
+						let kept =
+							this.ogi.json.options.kept[this.ogi.currentLocation.coords + (this.ogi.currentLocation.isMoon ? "M" : "P")] ||
+							this.ogi.json.options.defaultKept;
+						document.querySelectorAll(".ship_input_row input").forEach((elem) => {
+							let id = elem.getAttribute("name").replace("ship_", "");
+							let max = elem.getAttribute("rel");
+							$(elem).val(Math.max(0, max - (kept[id] || 0)));
+						});
+						$("#continue").focus();
+					});
+					init = true;
+				} catch (e) { }
+			}, 100);
+		};
+
+		if (this.ogi.rawURL.searchParams.get("opengate") == "1") {
+			openJumpgate();
 		}
 	}
 }
