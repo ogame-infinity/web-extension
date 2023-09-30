@@ -14905,7 +14905,7 @@ class OGInfinity {
     Array.from(p.querySelectorAll(".fleetinfo tr")).forEach((elem) => {
       if (elem.children[1]) {
         let name = elem.children[0].textContent.slice(0, -1);
-        let count = elem.children[1].textContent.split(".").join("");
+        let count = fromFormatedNumber(elem.children[1].textContent, true);
         if (count > 0) {
           ships[this.json.shipNames[name]] = { count: count };
         }
@@ -18534,11 +18534,11 @@ class OGInfinity {
       let metalFiller = document.querySelector(".resourceIcon.metal+input");
       let crystalFiller = document.querySelector(".resourceIcon.crystal+input");
       let deutFiller = document.querySelector(".resourceIcon.deuterium+input");
-      let metal = Number(metalFiller.value.split(".").join(""));
+      let metal = fromFormatedNumber(metalFiller.value, true);
       if (metal > metalAvailable) metalFiller.value = toFormatedNumber(metalAvailable, 0);
-      let crystal = Number(crystalFiller.value.split(".").join(""));
+      let crystal = fromFormatedNumber(crystalFiller.value, true);
       if (crystal > crystalAvailable) crystalFiller.value = toFormatedNumber(crystalAvailable, 0);
-      let deut = Number(deutFiller.value.split(".").join(""));
+      let deut = fromFormatedNumber(deutFiller.value, true);
       if (deut > deutAvailable)
         deutFiller.value = toFormatedNumber(Math.max(0, deutAvailable - fleetDispatcher.getConsumption()), 0);
       let resources =
