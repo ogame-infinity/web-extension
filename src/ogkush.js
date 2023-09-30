@@ -18799,7 +18799,7 @@ function versionInStatusBar() {
 }
 
 (async () => {
-  logger.info("");
+  logger.info("Reveal OGame Infinity");
 
   let ogKush = new OGInfinity();
   setTimeout(function () {
