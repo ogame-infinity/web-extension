@@ -506,7 +506,6 @@ export function main() {
         }
       }
       processData();
-      injectPageContext();
     });
   }
 }

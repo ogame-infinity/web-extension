@@ -10,12 +10,12 @@ Declaration `callbackEvents.contentContextInit(callbackCommandMap)`
 
 ```json
 {
-  ptre: {
-    galaxy: "PtreGalaxyScannerFunction"
+  "ptre": {
+    "galaxy": "PtreGalaxyScannerFunction"
   },
-  messages: {
-    expeditionType: "GetExpeditionTypeFunction"
-  },
+  "messages": {
+    "expeditionType": "GetExpeditionTypeFunction"
+  }
 }
 ```
 
