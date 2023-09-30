@@ -1,3 +1,4 @@
+import { isPluginContext } from "./runContext.js";
 import VERSION from "./version.js";
 
 const APP_VERSION_STYLE = [
@@ -18,7 +19,7 @@ const LOG_NAME_STYLE = [
   "margin-left:0.25em",
 ].join(";");
 
-const importContest = !chrome.runtime ? "🌐" : "📦";
+const importContest = isPluginContext() ? "📦" : "🌐";
 
 /** @param {Function} on */
 function print(on) {
