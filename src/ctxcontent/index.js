@@ -434,11 +434,6 @@ function injectScript(path, cb, module = false) {
   };
 }
 
-window.addEventListener("DOMContentLoaded", (event) => {
-  injectScript("ogkush.js", null, true);
-  injectScript("libs/purify.min.js", null, false);
-  injectScript("libs/lz-string.min.js", null, false);
-});
 document.addEventListener("ogi-chart", function (e) {
   injectScript("libs/chart.min.js", () => {
     injectScript("libs/chartjs-plugin-labels.js");
@@ -511,6 +506,20 @@ export function main() {
         }
       }
       processData();
+      injectPageContext();
     });
   }
+}
+
+window.addEventListener("DOMContentLoaded", (event) => {
+  injectPageContext();
+});
+let isPageContextReady = false;
+
+function injectPageContext() {
+  if (isPageContextReady) return;
+  isPageContextReady = true;
+  injectScript("libs/lz-string.min.js", null, false);
+  injectScript("libs/purify.min.js", null, false);
+  injectScript("ogkush.js", null, true);
 }
