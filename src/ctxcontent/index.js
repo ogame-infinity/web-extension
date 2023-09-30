@@ -243,7 +243,7 @@ class DataHelper {
     const logger = getLogger("updateUniverse");
 
     if (this.loading) return;
-    if (isNaN(this.lastUpdate) || new Date() - this.lastUpdate < 30 * 60 * 1e3) {
+    if (!isNaN(this.lastUpdate) && new Date() - this.lastUpdate < 30 * 60 * 1e3) {
       logger.debug("Last ogame's data update was: " + this.lastUpdate);
       return;
     }
@@ -280,6 +280,8 @@ class DataHelper {
 
       this.players = players;
       this.lastUpdate = new Date();
+      this.lastPlayersUpdate = new Date();
+      this.lastPlanetsUpdate = new Date();
     } catch (err) {
       logger.error(err);
     } finally {
@@ -394,26 +396,6 @@ let universes = {};
 let currentUniverse = null;
 let dataHelper = null;
 
-if (!universes[UNIVERSE] || Object.keys(universes[UNIVERSE]) === 0) {
-  //chrome.storage.local.clear()
-  chrome.storage.local.get([UNIVERSE], function (data) {
-    if (data && Object.keys(data).length > 0) {
-      try {
-        let tempSaveData = data[UNIVERSE];
-        tempSaveData.lastUpdate = new Date(tempSaveData.lastUpdate);
-        tempSaveData.lastPlanetsUpdate = new Date(tempSaveData.lastPlanetsUpdate);
-        tempSaveData.lastPlayersUpdate = new Date(tempSaveData.lastPlayersUpdate);
-        universes[UNIVERSE] = new DataHelper(UNIVERSE);
-        dataHelper = Object.assign(universes[UNIVERSE], tempSaveData);
-      } catch (e) {
-        console.error(e);
-        chrome.storage.local.clear();
-      }
-    }
-    processData();
-  });
-}
-
 function processData() {
   if (dataHelper) {
     universes[UNIVERSE] = dataHelper;
@@ -511,4 +493,24 @@ document.addEventListener("ogi-notification", function (e) {
 
 export function main() {
   mainLogger.log("Starting OGame Infinity");
+
+  if (!universes[UNIVERSE] || Object.keys(universes[UNIVERSE]).length === 0) {
+    //chrome.storage.local.clear()
+    chrome.storage.local.get([UNIVERSE], function (data) {
+      if (data && Object.keys(data).length > 0) {
+        try {
+          let tempSaveData = data[UNIVERSE];
+          tempSaveData.lastUpdate = new Date(tempSaveData.lastUpdate);
+          tempSaveData.lastPlanetsUpdate = new Date(tempSaveData.lastPlanetsUpdate);
+          tempSaveData.lastPlayersUpdate = new Date(tempSaveData.lastPlayersUpdate);
+          universes[UNIVERSE] = new DataHelper(UNIVERSE);
+          dataHelper = Object.assign(universes[UNIVERSE], tempSaveData);
+        } catch (e) {
+          console.error(e);
+          chrome.storage.local.clear();
+        }
+      }
+      processData();
+    });
+  }
 }
