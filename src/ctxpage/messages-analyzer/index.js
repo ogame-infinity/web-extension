@@ -1,6 +1,7 @@
 import { createDOM } from "../../util/dom.js";
 import { getLogger } from "../../util/logger.js";
 import { fromFormattedNumber } from "../../util/numbers.js";
+import { pageContextRequest } from "../../util/service.callbackEvent.js";
 
 const logger = getLogger("message-analyzer");
 
@@ -232,60 +233,62 @@ function analyzer() {
               let content = msg.querySelector("span.msg_content");
               let date = msg.querySelector(".msg_date").textContent;
               let textContent = content.innerText;
-              dataHelper.getExpeditionType(textContent).then((type) => {
-                date = date.split(" ")[0].slice(0, -4) + date.split(" ")[0].slice(-2);
-                let sums = this.json.expeditionSums[date];
-                if (!sums) {
-                  sums = {
-                    found: [0, 0, 0, 0],
-                    harvest: [0, 0],
-                    losses: {},
-                    fleet: {},
-                    type: {},
-                    adjust: [0, 0, 0],
-                    fuel: 0,
-                  };
-                }
-                let objectNode = content.querySelector("a");
-                if (objectNode) {
-                  this.json.result = "Object";
-                  this.json["object"] = objectNode.textContent;
-                  type = "Object";
-                }
-                ressources.forEach((res, i) => {
-                  if (textContent.includes(res)) {
-                    let regex = new RegExp("[0-9]{1,3}(.[0-9]{1,3})*", "gm");
-                    let found = textContent.match(regex);
-                    if (found) {
-                      type = normalized[i];
-                      sums.found[i] += fromFormatedNumber(found[0], true);
-                    }
+              pageContextRequest("messages", "expeditionType", textContent)
+                .then((value) => value.response.type)
+                .then((type) => {
+                  date = date.split(" ")[0].slice(0, -4) + date.split(" ")[0].slice(-2);
+                  let sums = this.json.expeditionSums[date];
+                  if (!sums) {
+                    sums = {
+                      found: [0, 0, 0, 0],
+                      harvest: [0, 0],
+                      losses: {},
+                      fleet: {},
+                      type: {},
+                      adjust: [0, 0, 0],
+                      fuel: 0,
+                    };
                   }
-                });
-                let fleetMatches = textContent.match(/.*: [1-9].*/gm);
-                fleetMatches &&
-                  !normalized.includes(type) &&
-                  fleetMatches.forEach((result) => {
-                    let split = result.split(": ");
-                    type = "Fleet";
-                    let id = this.json.shipNames[split[0]];
-                    let count = Number(split[1]);
-                    sums.fleet[id] ? (sums.fleet[id] += count) : (sums.fleet[id] = count);
+                  let objectNode = content.querySelector("a");
+                  if (objectNode) {
+                    this.json.result = "Object";
+                    this.json["object"] = objectNode.textContent;
+                    type = "Object";
+                  }
+                  ressources.forEach((res, i) => {
+                    if (textContent.includes(res)) {
+                      let regex = new RegExp("[0-9]{1,3}(.[0-9]{1,3})*", "gm");
+                      let found = textContent.match(regex);
+                      if (found) {
+                        type = normalized[i];
+                        sums.found[i] += fromFormattedNumber(found[0], true);
+                      }
+                    }
                   });
-                if (type != "Unknown") {
-                  sums.type[type] ? (sums.type[type] += 1) : (sums.type[type] = 1);
-                }
-                this.json.expeditionSums[date] = sums;
-                this.json.expeditions[id] = {
-                  result: type,
-                  date: new Date(this.dateStrToDate(date)),
-                  favorited: msg.querySelector(".icon_favorited") ? true : false,
-                };
+                  let fleetMatches = textContent.match(/.*: [1-9].*/gm);
+                  fleetMatches &&
+                    !normalized.includes(type) &&
+                    fleetMatches.forEach((result) => {
+                      let split = result.split(": ");
+                      type = "Fleet";
+                      let id = this.json.shipNames[split[0]];
+                      let count = Number(split[1]);
+                      sums.fleet[id] ? (sums.fleet[id] += count) : (sums.fleet[id] = count);
+                    });
+                  if (type !== "Unknown") {
+                    sums.type[type] ? (sums.type[type] += 1) : (sums.type[type] = 1);
+                  }
+                  this.json.expeditionSums[date] = sums;
+                  this.json.expeditions[id] = {
+                    result: type,
+                    date: new Date(this.dateStrToDate(date)),
+                    favorited: msg.querySelector(".icon_favorited") ? true : false,
+                  };
 
-                view(msg, false);
+                  view(msg, false);
 
-                this.saveData();
-              });
+                  this.saveData();
+                });
             }
             // For Discovers
             else {

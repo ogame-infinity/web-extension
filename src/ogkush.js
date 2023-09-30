@@ -17,17 +17,7 @@ var dataHelper = (function () {
 
   function expedition(message) {
     let rid = requestId++;
-    return new Promise(function (resolve, reject) {
-      var listener = function (evt) {
-        if (evt.detail.requestId == rid) {
-          window.removeEventListener("ogi-expedition-rep", listener);
-          resolve(evt.detail.type);
-        }
-      };
-      window.addEventListener("ogi-expedition-rep", listener);
-      var payload = { requestId: rid, message: message };
-      window.dispatchEvent(new CustomEvent("ogi-expedition", { detail: payload }));
-    });
+    return pageContextRequest("messages", "expeditionType", message).then((value) => value.response.type);
   }
 
   function Get(id) {
