@@ -3668,7 +3668,7 @@ class OGInfinity {
         let exploration;
         while ((exploration = document.querySelector(".planetDiscover"))) {
           exploration.click();
-          await sleep(250);
+          await sleep(300);
           await waitFor(() => document.querySelector("#fleetstatusrow div"));
         }
       });
