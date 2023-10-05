@@ -121,11 +121,15 @@ const toFormatedNumber = Numbers.toFormattedNumber;
  */
 const fromFormatedNumber = Numbers.fromFormattedNumber;
 
-function waitFor(conditionFn, checkFreqInMs = 10) {
-  const poll = (done) => (conditionFn() ? done() : setTimeout(() => poll(done), checkFreqInMs));
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function waitFor(conditionFn) {
+  const poll = (done) => (conditionFn() ? done() : setTimeout(() => poll(done), 100));
   return new Promise(poll);
 }
-// TODO: Include timeout? & refactor the other waitFor* functions
+// TODO: add checkfreq, timeout & refactor the other waitFor* functions
 
 function waitForDefinition(object, callback, checkFrequencyInMs = 10, timeoutInMs = 5000) {
   var startTimeInMs = Date.now();
@@ -3649,6 +3653,27 @@ class OGInfinity {
 
   onGalaxyUpdate() {
     if (this.page != "galaxy") return;
+
+    if (this.hasLifeforms) {
+      const explorationButton = createDOM(
+        "div",
+        {
+          class: "btn_blue float_right btn_system_action",
+          id: "explorationbutton",
+        },
+        this.getTranslatedText(166)
+      );
+      document.querySelector(".systembuttons").appendChild(explorationButton);
+      explorationButton.addEventListener("click", async () => {
+        let exploration;
+        while ((exploration = document.querySelector(".planetDiscover"))) {
+          exploration.click();
+          await sleep(250);
+          await waitFor(() => document.querySelector("#fleetstatusrow div"));
+        }
+      });
+    }
+
     let timeout;
     let previousSystem = null;
     doExpedition = () => {
@@ -11896,11 +11921,7 @@ class OGInfinity {
   hasActivityChanged(oldAct, newAct) {
     return (oldAct == 0 && newAct > 0) || (oldAct > 0 && newAct == 0) || (oldAct < 61 && newAct == 61);
   }
-
-  sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-
+  
   recordActivityChange(history, activity) {
     let ACTIVITY_TYPE = (timer) => {
       if (timer == 0) return "active";
@@ -15921,7 +15942,7 @@ class OGInfinity {
           en: "Expeditions data",
           es: "Datos de expediciones",
           fr: "Données d'expéditions",
-          tr: "Keşif Verileri",
+          tr: "Sefer Verileri",
         },
         /*17*/ {
           de: "Kampfdaten",
@@ -16033,7 +16054,7 @@ class OGInfinity {
           en: "Default mission (expedition)",
           es: "Misión por defecto (expedición)",
           fr: "Mission par défaut (expédition)",
-          tr: "Varsayılan görev (keşif)",
+          tr: "Varsayılan görev (sefer)",
         },
         /*33*/ {
           de: "Aktivitätstimer anzeigen",
@@ -16096,7 +16117,7 @@ class OGInfinity {
           en: "Expeditions",
           es: "Expediciones",
           fr: "Expéditions",
-          tr: "Keşif",
+          tr: "Sefer",
         },
         /*42*/ {
           de: "Planet(en)",
@@ -16516,7 +16537,7 @@ class OGInfinity {
           en: "Default expedition time",
           es: "Tiempo de expedición predeterminado",
           fr: "Heure d'expédition par défaut",
-          tr: "Varsayılan keşif süresi",
+          tr: "Varsayılan sefer süresi",
         },
         /*102*/ {
           de: "Aktionen",
@@ -16593,7 +16614,7 @@ class OGInfinity {
           en: "Unknown expedition message...",
           es: "Mensaje de expedición desconocido...",
           fr: "Message d'expédition inconnu...",
-          tr: "Bilinmeyen keşif mesajı...",
+          tr: "Bilinmeyen sefer mesajı...",
         },
         /*113*/ {
           de: "Hilf mir alle zu finden",
@@ -16607,7 +16628,7 @@ class OGInfinity {
           en: "Warning: expedition position is getting weak...",
           es: "Atención: la posición de expediciones está saturándose...",
           fr: "Attention: la position d'expédition devient saturée...",
-          tr: "Uyarı: Keşif konumu zayıflıyor...",
+          tr: "Uyarı: Sefer konumu zayıflıyor...",
         },
         /*115*/ {
           de: "Fehler: Keine Schiffe ausgewählt",
@@ -16859,7 +16880,7 @@ class OGInfinity {
           en: "Expeditions before rotation",
           es: "Expediciones antes de rotación",
           fr: "Expéditions avant rotation",
-          tr: "Rotasyon öncesi keşif gezileri",
+          tr: "Rotasyon öncesi sefer gezileri",
         },
         /*151*/ {
           de: "Fehler: kein PTRE teamkey registriert",
@@ -16964,9 +16985,16 @@ class OGInfinity {
           en: "Use for expeditions",
           es: "Usar para expediciones",
           fr: "Utiliser pour les expéditions",
-          tr: "Keşif gezileri için kullanın",
+          tr: "Sefer gezileri için kullanın",
         },
         /*166*/ {
+          de: "Erkundung",
+          en: "Exploration",
+          es: "Exploración",
+          fr: "Exploration",
+          tr: "Keşif",
+        },
+        /*167*/ {
           de: "",
           en: "",
           es: "",

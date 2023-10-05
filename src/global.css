@@ -3861,6 +3861,22 @@ button.build-it_premium:hover {
   margin-right: 4px !important;
 }
 
+/* hide non-functional system buttons */
+#galaxyHeader .systembuttons > [disabled] {
+  display: none;
+}
+
+#explorationbutton:before {
+  content: "";
+  background-image: url(https://gf2.geo.gfsrv.net/cdn16/1bcb107d4cdd48d0878fe850157e46.png);
+  background-position: calc(-17px * 9);
+  background-repeat: no-repeat;
+  width: 17px;
+  height: 14px;
+  margin-right: 2px;
+  float: left;
+}
+
 #expeditionbutton:before {
   margin: 0px -5px 0px 0px !important;
   position: relative !important;
