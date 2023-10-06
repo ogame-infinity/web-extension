@@ -4686,14 +4686,11 @@ class OGInfinity {
         style: "margin-top: 1px;margin-left: 30px;",
       })
     );
-    let stats = playerDiv.appendChild(createDOM("a", { class: "ogl-mmorpgstats" }));
-    stats.addEventListener("click", () => {
-      window.open(
-        this.generateMMORPGLink(player.id),
-        "_blank",
-        `location=yes,scrollbars=yes,status=yes,width=${screen.availWidth},height=${screen.availHeight}`
-      );
-    });
+    let stats = playerDiv.appendChild(createDOM("a", {
+            class: "ogl-mmorpgstats",
+            href: this.generateMMORPGLink(player.id),
+            target: this.generateMMORPGLink(player.id),
+          }));
     if (!player.id) {
       player.points = { score: 0 };
       player.economy = { score: 0 };
@@ -6414,7 +6411,11 @@ class OGInfinity {
         );
       }
 
-      let stats = btns.appendChild(createDOM("a", { class: "ogl-mmorpgstats" }));
+      let stats = btns.appendChild(createDOM("a", {
+            class: "ogl-mmorpgstats",
+            href: this.generateMMORPGLink(player.id),
+            target: this.generateMMORPGLink(player.id),
+          }));
       let pinBtn = btns.appendChild(createDOM("a", { class: "ogl-pin" }));
 
       let chat = btns.appendChild(createDOM("a", { class: "icon icon_chat" }));
@@ -6423,13 +6424,6 @@ class OGInfinity {
       });
       chat.addEventListener("click", () => {
         this.sendMessage(player.id);
-      });
-      stats.addEventListener("click", () => {
-        window.open(
-          this.generateMMORPGLink(player.id),
-          "_blank",
-          `location=yes,scrollbars=yes,status=yes,width=${screen.availWidth},height=${screen.availHeight}`
-        );
       });
 
       let detailRank = planetsColumn.appendChild(createDOM("div", { class: "ogl-detailRank" }));
