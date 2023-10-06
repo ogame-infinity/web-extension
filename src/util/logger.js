@@ -1,7 +1,8 @@
+import { isPluginContext } from "./runContext.js";
 import VERSION from "./version.js";
 
 const APP_VERSION_STYLE = [
-  "font-size:1.2em",
+  "font-size:1em",
   "background-color:#195ee6",
   "color:#b9f4ff",
   "font-family:monospace",
@@ -9,7 +10,7 @@ const APP_VERSION_STYLE = [
   "padding:0 0.5em",
 ].join(";");
 const LOG_NAME_STYLE = [
-  "font-size:1.2em",
+  "font-size:1em",
   "background-color:#70ce37",
   "color:#16531e",
   "font-family:monospace",
@@ -17,6 +18,8 @@ const LOG_NAME_STYLE = [
   "padding:0 0.5em",
   "margin-left:0.25em",
 ].join(";");
+
+const importContest = isPluginContext() ? "📦" : "🌐";
 
 /** @param {Function} on */
 function print(on) {
@@ -27,12 +30,14 @@ function print(on) {
   return function (message, ...data) {
     const name = this.name ?? "";
 
-    on(
-      `%cOGame Infinity/v${VERSION}%c%s%c > ${message}`,
+    on.call(
+      null,
+      `%cOGame Infinity/v${VERSION}%c%s%c %s> ${message}`,
       APP_VERSION_STYLE,
       LOG_NAME_STYLE,
       name,
       "color: inherit",
+      importContest,
       ...data
     );
   };

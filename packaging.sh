@@ -39,6 +39,26 @@ function cleancss() {
 }
 
 
+DIST_MODULE="./dist/firefox"
+echo '------------------------------------------------------------'
+echo 'MODULE -- Firefox'
+echo '------------------------------------------------------------'
+echo ''
+mkdir "${DIST_MODULE}"
+cp -r src/* "${DIST_MODULE}"
+sed_version
+
+cp readme.md "${DIST_MODULE}"
+## Patch to use manifest v2
+rm "${DIST_MODULE}/${MANIFEST_FILE_NAME}"
+mv "${DIST_MODULE}/${MANIFEST_FILE_NAME_V2}" "${DIST_MODULE}/${MANIFEST_FILE_NAME}"
+## Modifing chrome-extension:// to moz-extension://
+sed -i "s/chrome/moz/g" "${DIST_MODULE}/${CSS_BUNDLE_FILE}"
+(cd "${DIST_MODULE}" && \
+  zip -qr -X "../ogi-firefox.zip" .)
+echo "Packing zip for firefox complete!"
+rm -rf "${DIST_MODULE}"
+
 
 DIST_MODULE="./dist/chrome"
 echo '------------------------------------------------------------'
@@ -64,26 +84,3 @@ sed -i '31d' "${DIST_MODULE}/${MANIFEST_FILE_NAME}" ##- What is this line for?
   zip -qr -X "../ogi-edge.zip" .)
 echo "Packing zip for edge complete!"
 rm -rf "${DIST_MODULE}"
-
-
-
-DIST_MODULE="./dist/firefox"
-echo '------------------------------------------------------------'
-echo 'MODULE -- Firefox'
-echo '------------------------------------------------------------'
-echo ''
-mkdir "${DIST_MODULE}"
-cp -r src/* "${DIST_MODULE}"
-sed_version
-
-cp readme.md "${DIST_MODULE}"
-## Patch to use manifest v2
-rm "${DIST_MODULE}/${MANIFEST_FILE_NAME}"
-mv "${DIST_MODULE}/${MANIFEST_FILE_NAME_V2}" "${DIST_MODULE}/${MANIFEST_FILE_NAME}"
-## Modifing chrome-extension:// to moz-extension://
-sed -i "s/chrome/moz/g" "${DIST_MODULE}/${CSS_BUNDLE_FILE}"
-(cd "${DIST_MODULE}" && \
-  zip -qr -X "../ogi-firefox.zip" .)
-echo "Packing zip for firefox complete!"
-rm -rf "${DIST_MODULE}"
-
