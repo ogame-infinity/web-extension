@@ -18,3 +18,30 @@ export function isPluginContext() {
 
   throw Error("It is not possible to identify the execution context");
 }
+
+/**
+ * **PLUGIN CONTEXT**
+ *
+ * @param {string} path
+ * @param {()=>void} [onLoadCallback]
+ * @param {boolean} [module=false]
+ */
+export function injectScript(path, onLoadCallback, module = false) {
+  if (!isPluginContext()) {
+    throw Error("Invalid execution context");
+  }
+
+  const script = document.createElement("script");
+  script.type = "text/javascript";
+  script.src = chrome.runtime.getURL(path);
+
+  if (module) {
+    script.type = "module";
+  }
+
+  (document.head || document.documentElement).appendChild(script);
+  script.onload = function () {
+    script.remove();
+    onLoadCallback && onLoadCallback();
+  };
+}
