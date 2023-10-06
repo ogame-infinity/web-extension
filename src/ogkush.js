@@ -1366,7 +1366,7 @@ const CRAWLER_OVERLOAD_MAX = 1.5;
 
 class OGInfinity {
   constructor() {
-    this.commander = player.hasCommander;
+    this.commander = document.querySelector("#officers > a.commander.on") !== null;
     this.rawURL = new URL(window.location.href);
     this.page = this.rawURL.searchParams.get("component") || this.rawURL.searchParams.get("page");
     if (document.querySelector("#characterclass .explorer")) {
