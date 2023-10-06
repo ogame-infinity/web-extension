@@ -3866,7 +3866,7 @@ button.build-it_premium:hover {
   display: none;
 }
 
-#explorationbutton:before {
+#discoverbutton:before {
   content: "";
   background-image: url(https://gf2.geo.gfsrv.net/cdn16/1bcb107d4cdd48d0878fe850157e46.png);
   background-position: calc(-17px * 9);

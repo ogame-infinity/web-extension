@@ -3655,19 +3655,19 @@ class OGInfinity {
     if (this.page != "galaxy") return;
 
     if (this.hasLifeforms) {
-      const explorationButton = createDOM(
+      const discoverButton = createDOM(
         "div",
         {
           class: "btn_blue float_right btn_system_action",
-          id: "explorationbutton",
+          id: "discoverbutton",
         },
         this.getTranslatedText(166)
       );
-      document.querySelector(".systembuttons").appendChild(explorationButton);
-      explorationButton.addEventListener("click", async () => {
-        let exploration;
-        while ((exploration = document.querySelector(".planetDiscover"))) {
-          exploration.click();
+      document.querySelector(".systembuttons").appendChild(discoverButton);
+      discoverButton.addEventListener("click", async () => {
+        let discover;
+        while ((discover = document.querySelector(".planetDiscover"))) {
+          discover.click();
           await sleep(300);
           await waitFor(() => document.querySelector("#fleetstatusrow div"));
         }
@@ -16799,10 +16799,10 @@ class OGInfinity {
           tr: "Mobil sürümde gezinme okları",
         },
         /*139*/ {
-          de: "Entdeckung",
+          de: "Entdeckungen",
           en: "Discoveries",
-          es: "Exploración",
-          fr: "Exploration",
+          es: "Descubrimientos",
+          fr: "Découvertes",
           tr: "Keşifler",
         },
         /*140*/ {
@@ -16988,11 +16988,11 @@ class OGInfinity {
           tr: "Sefer gezileri için kullanın",
         },
         /*166*/ {
-          de: "Erkundung",
-          en: "Exploration",
-          es: "Exploración",
-          fr: "Exploration",
-          tr: "Keşif",
+          de: "Entdecken",
+          en: "Discover",
+          es: "Descubrir",
+          fr: "Découvrir",
+          tr: "Keşfetmek",
         },
         /*167*/ {
           de: "",
