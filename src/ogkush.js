@@ -3610,8 +3610,8 @@ class OGInfinity {
         let discover;
         while ((discover = document.querySelector(".planetDiscover"))) {
           discover.click();
-          await wait.delay(300)
-            .then(wait.waitForQuerySelector("#fleetstatusrow div"))
+          await wait.delay(400);
+          await wait.waitForQuerySelector("#fleetstatusrow div");
         }
       });
     }
