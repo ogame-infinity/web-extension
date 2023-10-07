@@ -6,6 +6,7 @@ import * as Numbers from "./util/numbers.js";
 import { pageContextInit, pageContextRequest } from "./util/service.callbackEvent.js";
 import * as ptreService from "./util/service.ptre.js";
 import VERSION from "./util/version.js";
+import * as WaitFor from "./util/waitFor.js";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 //const VERSION = "__VERSION__";
@@ -110,42 +111,6 @@ const toFormatedNumber = Numbers.toFormattedNumber;
  * @type {Numbers.fromFormattedNumber}
  */
 const fromFormatedNumber = Numbers.fromFormattedNumber;
-
-function waitFor(conditionFn, checkFreqInMs = 10) {
-  const poll = (done) => (conditionFn() ? done() : setTimeout(() => poll(done), checkFreqInMs));
-  return new Promise(poll);
-}
-// TODO: Include timeout? & refactor the other waitFor* functions
-
-function waitForDefinition(object, callback, checkFrequencyInMs = 10, timeoutInMs = 5000) {
-  var startTimeInMs = Date.now();
-  (function loopSearch() {
-    if (window.hasOwnProperty(object)) {
-      callback();
-      return;
-    } else {
-      setTimeout(function () {
-        if (timeoutInMs && Date.now() - startTimeInMs > timeoutInMs) return;
-        loopSearch();
-      }, checkFrequencyInMs);
-    }
-  })();
-}
-
-function waitForElementToDisplay(selector, callback, checkFrequencyInMs = 10, timeoutInMs = 5000) {
-  var startTimeInMs = Date.now();
-  (function loopSearch() {
-    if (document.querySelector(selector) != null) {
-      callback();
-      return;
-    } else {
-      setTimeout(function () {
-        if (timeoutInMs && Date.now() - startTimeInMs > timeoutInMs) return;
-        loopSearch();
-      }, checkFrequencyInMs);
-    }
-  })();
-}
 
 const SHIP_COSTS = {
   202: [2, 2, 0],
@@ -1611,9 +1576,7 @@ class OGInfinity {
     this.sideOptions();
     this.minesLevel();
     this.resourceDetail();
-    waitForElementToDisplay("#eventContent", () => {
-      this.eventBox();
-    });
+    WaitFor.waitForQuerySelector("#eventContent").then(() => this.eventBox());
     this.neededCargo();
     this.preselectShips();
     this.harvest();
@@ -1631,9 +1594,7 @@ class OGInfinity {
     this.utilities();
     this.chat();
     this.uvlinks();
-    waitForElementToDisplay("#eventContent", () => {
-      this.flyingFleet();
-    });
+    WaitFor.waitForQuerySelector("#eventContent").then(() => this.flyingFleet());
     this.betterHighscore();
     this.overviewDates();
     this.sideLock();
@@ -1644,7 +1605,7 @@ class OGInfinity {
     this.technoDetail();
     this.onGalaxyUpdate();
     this.timeZone();
-    waitForElementToDisplay("#eventContent", () => {
+    WaitFor.waitForQuerySelector("#eventContent").then(() => {
       this.updateFlyings();
       this.updatePlanets_FleetActivity();
     });
@@ -2002,16 +1963,12 @@ class OGInfinity {
               consDiv.appendChild(satsSpan);
               satsSpan.addEventListener("click", () => {
                 document.querySelector(".solarSatellite.hasDetails span").click();
-                waitForElementToDisplay(
-                  "#technologydetails[data-technology-id='212']",
-                  () => {
+                WaitFor.waitForQuerySelector("#technologydetails[data-technology-id='212']", 10, 2000)
+                  .then(() => {
                     let satsInput = document.querySelector("#build_amount");
                     satsInput.value = satsNeeded;
                     satsInput.dispatchEvent(new KeyboardEvent("keyup", { key: "ArrowDown" }));
-                  },
-                  10,
-                  2000
-                );
+                  });
               });
             }
             prodDiv.html(
@@ -2511,12 +2468,13 @@ class OGInfinity {
                   energyDiv.appendChild(satsSpan);
                   satsSpan.addEventListener("click", () => {
                     document.querySelector(".solarSatellite.hasDetails span").click();
-                    waitForElementToDisplay("#technologydetails[data-technology-id='212']", () => {
-                      let satsInput = document.querySelector("#build_amount");
-                      satsInput.focus();
-                      satsInput.value = satsNeeded;
-                      satsInput.dispatchEvent(new KeyboardEvent("keyup", { key: "ArrowDown" }));
-                    });
+                    WaitFor.waitForQuerySelector("#technologydetails[data-technology-id='212']")
+                      .then(() => {
+                        let satsInput = document.querySelector("#build_amount");
+                        satsInput.focus();
+                        satsInput.value = satsNeeded;
+                        satsInput.dispatchEvent(new KeyboardEvent("keyup", { key: "ArrowDown" }));
+                      });
                   });
                 }
               }
@@ -11189,7 +11147,7 @@ class OGInfinity {
 
       btnExpe.addEventListener("mouseover", () => this.tooltip(btnExpe, optionsContainerDiv, false, false, 750));
       btnExpe.addEventListener("click", async () => {
-        await waitFor(() => !fleetDispatcher.loading);
+        await WaitFor.waitFor(() => !fleetDispatcher.loading);
         document.querySelector("#resetall").click();
         this.expedition = true;
         this.collect = false;
@@ -11378,7 +11336,7 @@ class OGInfinity {
 
           // number of expeditions in the same expedition system, including the one we are going to send
           let sameExpeditionDestination = 1;
-          await waitFor(() => document.querySelector("#eventContent"));
+          await WaitFor.waitFor(() => document.querySelector("#eventContent") !== null);
           document.querySelectorAll(".eventFleet td.destCoords").forEach((coords) => {
             if (
               coords.textContent.trim() == "[" + originSystem + ":16]" &&
@@ -18216,10 +18174,10 @@ class OGInfinity {
     [202, 203, 219, 209, 212].forEach((id) => {
       if (url.searchParams.has(`techId${id}`)) {
         let needed = Number(url.searchParams.get(`techId${id}`));
-        waitForElementToDisplay(`.hasDetails[data-technology='${id}'] span`, () => {
+        WaitFor.waitForQuerySelector(`.hasDetails[data-technology='${id}'] span`).then(() => {
           document.querySelector(`.hasDetails[data-technology='${id}'] span`).click();
         });
-        waitForElementToDisplay(`#technologydetails[data-technology-id='${id}']`, () => {
+        WaitFor.waitForQuerySelector(`#technologydetails[data-technology-id='${id}']`).then(() => {
           let input = document.querySelector("#build_amount");
           input.focus();
           input.value = needed;
@@ -18229,7 +18187,7 @@ class OGInfinity {
     });
     if (technoDetails) {
       let selector = `.technology[data-technology='${technoDetails}'] span`;
-      waitForElementToDisplay(selector, () => document.querySelector(selector).click());
+      WaitFor.waitForQuerySelector(selector).then(() => document.querySelector(selector).click());
     }
   }
 
