@@ -3595,6 +3595,27 @@ class OGInfinity {
 
   onGalaxyUpdate() {
     if (this.page != "galaxy") return;
+
+    if (this.hasLifeforms) {
+      const discoverButton = createDOM(
+        "div",
+        {
+          class: "btn_blue float_right btn_system_action",
+          id: "discoverbutton",
+        },
+        this.getTranslatedText(166)
+      );
+      document.querySelector(".systembuttons").appendChild(discoverButton);
+      discoverButton.addEventListener("click", async () => {
+        let discover;
+        while ((discover = document.querySelector(".planetDiscover"))) {
+          discover.click();
+          await sleep(300);
+          await waitFor(() => document.querySelector("#fleetstatusrow div"));
+        }
+      });
+    }
+
     let timeout;
     let previousSystem = null;
     doExpedition = () => {
@@ -4642,14 +4663,11 @@ class OGInfinity {
         style: "margin-top: 1px;margin-left: 30px;",
       })
     );
-    let stats = playerDiv.appendChild(createDOM("a", { class: "ogl-mmorpgstats" }));
-    stats.addEventListener("click", () => {
-      window.open(
-        this.generateMMORPGLink(player.id),
-        "_blank",
-        `location=yes,scrollbars=yes,status=yes,width=${screen.availWidth},height=${screen.availHeight}`
-      );
-    });
+    let stats = playerDiv.appendChild(createDOM("a", {
+            class: "ogl-mmorpgstats",
+            href: this.generateMMORPGLink(player.id),
+            target: this.generateMMORPGLink(player.id),
+          }));
     if (!player.id) {
       player.points = { score: 0 };
       player.economy = { score: 0 };
@@ -6370,7 +6388,11 @@ class OGInfinity {
         );
       }
 
-      let stats = btns.appendChild(createDOM("a", { class: "ogl-mmorpgstats" }));
+      let stats = btns.appendChild(createDOM("a", {
+            class: "ogl-mmorpgstats",
+            href: this.generateMMORPGLink(player.id),
+            target: this.generateMMORPGLink(player.id),
+          }));
       let pinBtn = btns.appendChild(createDOM("a", { class: "ogl-pin" }));
 
       let chat = btns.appendChild(createDOM("a", { class: "icon icon_chat" }));
@@ -6379,13 +6401,6 @@ class OGInfinity {
       });
       chat.addEventListener("click", () => {
         this.sendMessage(player.id);
-      });
-      stats.addEventListener("click", () => {
-        window.open(
-          this.generateMMORPGLink(player.id),
-          "_blank",
-          `location=yes,scrollbars=yes,status=yes,width=${screen.availWidth},height=${screen.availHeight}`
-        );
       });
 
       let detailRank = planetsColumn.appendChild(createDOM("div", { class: "ogl-detailRank" }));
@@ -15867,7 +15882,7 @@ class OGInfinity {
           en: "Expeditions data",
           es: "Datos de expediciones",
           fr: "Données d'expéditions",
-          tr: "Keşif Verileri",
+          tr: "Sefer Verileri",
         },
         /*17*/ {
           de: "Kampfdaten",
@@ -15979,7 +15994,7 @@ class OGInfinity {
           en: "Default mission (expedition)",
           es: "Misión por defecto (expedición)",
           fr: "Mission par défaut (expédition)",
-          tr: "Varsayılan görev (keşif)",
+          tr: "Varsayılan görev (sefer)",
         },
         /*33*/ {
           de: "Aktivitätstimer anzeigen",
@@ -16042,7 +16057,7 @@ class OGInfinity {
           en: "Expeditions",
           es: "Expediciones",
           fr: "Expéditions",
-          tr: "Keşif",
+          tr: "Sefer",
         },
         /*42*/ {
           de: "Planet(en)",
@@ -16462,7 +16477,7 @@ class OGInfinity {
           en: "Default expedition time",
           es: "Tiempo de expedición predeterminado",
           fr: "Heure d'expédition par défaut",
-          tr: "Varsayılan keşif süresi",
+          tr: "Varsayılan sefer süresi",
         },
         /*102*/ {
           de: "Aktionen",
@@ -16539,7 +16554,7 @@ class OGInfinity {
           en: "Unknown expedition message...",
           es: "Mensaje de expedición desconocido...",
           fr: "Message d'expédition inconnu...",
-          tr: "Bilinmeyen keşif mesajı...",
+          tr: "Bilinmeyen sefer mesajı...",
         },
         /*113*/ {
           de: "Hilf mir alle zu finden",
@@ -16553,7 +16568,7 @@ class OGInfinity {
           en: "Warning: expedition position is getting weak...",
           es: "Atención: la posición de expediciones está saturándose...",
           fr: "Attention: la position d'expédition devient saturée...",
-          tr: "Uyarı: Keşif konumu zayıflıyor...",
+          tr: "Uyarı: Sefer konumu zayıflıyor...",
         },
         /*115*/ {
           de: "Fehler: Keine Schiffe ausgewählt",
@@ -16724,10 +16739,10 @@ class OGInfinity {
           tr: "Mobil sürümde gezinme okları",
         },
         /*139*/ {
-          de: "Entdeckung",
+          de: "Entdeckungen",
           en: "Discoveries",
-          es: "Exploración",
-          fr: "Exploration",
+          es: "Descubrimientos",
+          fr: "Découvertes",
           tr: "Keşifler",
         },
         /*140*/ {
@@ -16805,7 +16820,7 @@ class OGInfinity {
           en: "Expeditions before rotation",
           es: "Expediciones antes de rotación",
           fr: "Expéditions avant rotation",
-          tr: "Rotasyon öncesi keşif gezileri",
+          tr: "Rotasyon öncesi sefer gezileri",
         },
         /*151*/ {
           de: "Fehler: kein PTRE teamkey registriert",
@@ -16910,9 +16925,16 @@ class OGInfinity {
           en: "Use for expeditions",
           es: "Usar para expediciones",
           fr: "Utiliser pour les expéditions",
-          tr: "Keşif gezileri için kullanın",
+          tr: "Sefer gezileri için kullanın",
         },
         /*166*/ {
+          de: "Entdecken",
+          en: "Discover",
+          es: "Descubrir",
+          fr: "Découvrir",
+          tr: "Keşfetmek",
+        },
+        /*167*/ {
           de: "",
           en: "",
           es: "",
