@@ -6,7 +6,7 @@ import * as Numbers from "./util/numbers.js";
 import { pageContextInit, pageContextRequest } from "./util/service.callbackEvent.js";
 import * as ptreService from "./util/service.ptre.js";
 import VERSION from "./util/version.js";
-import * as WaitFor from "./util/waitFor.js";
+import * as wait from "./util/wait.js";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 //const VERSION = "__VERSION__";
@@ -1574,7 +1574,7 @@ class OGInfinity {
     this.sideOptions();
     this.minesLevel();
     this.resourceDetail();
-    WaitFor.waitForQuerySelector("#eventContent").then(() => this.eventBox());
+    wait.waitForQuerySelector("#eventContent").then(() => this.eventBox());
     this.neededCargo();
     this.preselectShips();
     this.harvest();
@@ -1592,7 +1592,7 @@ class OGInfinity {
     this.utilities();
     this.chat();
     this.uvlinks();
-    WaitFor.waitForQuerySelector("#eventContent").then(() => this.flyingFleet());
+    wait.waitForQuerySelector("#eventContent").then(() => this.flyingFleet());
     this.betterHighscore();
     this.overviewDates();
     this.sideLock();
@@ -1603,7 +1603,7 @@ class OGInfinity {
     this.technoDetail();
     this.onGalaxyUpdate();
     this.timeZone();
-    WaitFor.waitForQuerySelector("#eventContent").then(() => {
+    wait.waitForQuerySelector("#eventContent").then(() => {
       this.updateFlyings();
       this.updatePlanets_FleetActivity();
     });
@@ -1961,7 +1961,7 @@ class OGInfinity {
               consDiv.appendChild(satsSpan);
               satsSpan.addEventListener("click", () => {
                 document.querySelector(".solarSatellite.hasDetails span").click();
-                WaitFor.waitForQuerySelector("#technologydetails[data-technology-id='212']", 10, 2000)
+                wait.waitForQuerySelector("#technologydetails[data-technology-id='212']", 10, 2000)
                   .then(() => {
                     let satsInput = document.querySelector("#build_amount");
                     satsInput.value = satsNeeded;
@@ -2466,7 +2466,7 @@ class OGInfinity {
                   energyDiv.appendChild(satsSpan);
                   satsSpan.addEventListener("click", () => {
                     document.querySelector(".solarSatellite.hasDetails span").click();
-                    WaitFor.waitForQuerySelector("#technologydetails[data-technology-id='212']")
+                    wait.waitForQuerySelector("#technologydetails[data-technology-id='212']")
                       .then(() => {
                         let satsInput = document.querySelector("#build_amount");
                         satsInput.focus();
@@ -11145,7 +11145,7 @@ class OGInfinity {
 
       btnExpe.addEventListener("mouseover", () => this.tooltip(btnExpe, optionsContainerDiv, false, false, 750));
       btnExpe.addEventListener("click", async () => {
-        await WaitFor.waitFor(() => !fleetDispatcher.loading);
+        await wait.waitFor(() => !fleetDispatcher.loading);
         document.querySelector("#resetall").click();
         this.expedition = true;
         this.collect = false;
@@ -11334,7 +11334,7 @@ class OGInfinity {
 
           // number of expeditions in the same expedition system, including the one we are going to send
           let sameExpeditionDestination = 1;
-          await WaitFor.waitFor(() => document.querySelector("#eventContent") !== null);
+          await wait.waitFor(() => document.querySelector("#eventContent") !== null);
           document.querySelectorAll(".eventFleet td.destCoords").forEach((coords) => {
             if (
               coords.textContent.trim() == "[" + originSystem + ":16]" &&
@@ -18172,10 +18172,10 @@ class OGInfinity {
     [202, 203, 219, 209, 212].forEach((id) => {
       if (url.searchParams.has(`techId${id}`)) {
         let needed = Number(url.searchParams.get(`techId${id}`));
-        WaitFor.waitForQuerySelector(`.hasDetails[data-technology='${id}'] span`).then(() => {
+        wait.waitForQuerySelector(`.hasDetails[data-technology='${id}'] span`).then(() => {
           document.querySelector(`.hasDetails[data-technology='${id}'] span`).click();
         });
-        WaitFor.waitForQuerySelector(`#technologydetails[data-technology-id='${id}']`).then(() => {
+        wait.waitForQuerySelector(`#technologydetails[data-technology-id='${id}']`).then(() => {
           let input = document.querySelector("#build_amount");
           input.focus();
           input.value = needed;
@@ -18185,7 +18185,7 @@ class OGInfinity {
     });
     if (technoDetails) {
       let selector = `.technology[data-technology='${technoDetails}'] span`;
-      WaitFor.waitForQuerySelector(selector).then(() => document.querySelector(selector).click());
+      wait.waitForQuerySelector(selector).then(() => document.querySelector(selector).click());
     }
   }
 
@@ -18753,7 +18753,7 @@ function versionInStatusBar() {
     versionInStatusBar();
 
     // workaround for "DOMPurify not defined" issue
-    await WaitFor.waitForDefinition(window, "DOMPurify");
+    await wait.waitForDefinition(window, "DOMPurify");
 
     Element.prototype.html = function(html) {
       this.innerHTML = DOMPurify.sanitize(html);

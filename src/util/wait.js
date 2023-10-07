@@ -5,7 +5,7 @@
  * @param {number} timeout waiting time in milliseconds to reject waiting
  * @return {Promise<boolean>}
  */
-export function waitFor(predicateCallback, checkIntervals = 10, timeout = -1) {
+export function waitFor(predicateCallback, checkIntervals = 10, timeout = 5e3) {
   return new Promise((resolve, reject) => {
     let timeoutId = NaN;
     const intervalId = setInterval(() => {
@@ -16,13 +16,11 @@ export function waitFor(predicateCallback, checkIntervals = 10, timeout = -1) {
       }
     }, checkIntervals);
 
-    if (timeout > 0) {
-      timeoutId = setTimeout(() => {
-        clearInterval(intervalId);
-        clearTimeout(timeoutId);
-        reject(new Error("Wait for timeout exception"));
-      }, timeout);
-    }
+    timeoutId = setTimeout(() => {
+      clearInterval(intervalId);
+      clearTimeout(timeoutId);
+      reject(new Error("Wait for timeout exception"));
+    }, timeout);
   });
 }
 
@@ -45,8 +43,20 @@ export function waitForDefinition(object, propertyKey, checkIntervals = 10, time
  *  The first element found which matches this group of selectors stops the awaiting.
  * @param {number} checkIntervals time in milliseconds between each revision of the predicate being satisfied
  * @param {number} timeout waiting time in milliseconds to reject waiting
- * @return {Promise<boolean>}
+ * @return {Promise<HTMLElement>}
  */
 export function waitForQuerySelector(selector, checkIntervals = 10, timeout = 5e3) {
-  return waitFor(() => document.querySelector(selector) !== null, checkIntervals, timeout);
+  return waitFor(() => document.querySelector(selector) !== null, checkIntervals, timeout).then(() => {
+    return document.querySelector(selector);
+  });
+}
+
+/**
+ * @param time waiting time in milliseconds
+ * @return {Promise<void>}
+ */
+export function delay(time) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, time, undefined);
+  });
 }
