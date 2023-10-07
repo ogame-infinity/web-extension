@@ -18747,16 +18747,22 @@ function versionInStatusBar() {
 (async () => {
   logger.info("Reveal OGame Infinity");
 
-  let ogKush = new OGInfinity();
-  setTimeout(function () {
+  try {
+    let ogKush = new OGInfinity();
     ogKush.init();
     versionInStatusBar();
+
     // workaround for "DOMPurify not defined" issue
-    waitForDefinition("DOMPurify", () => {
-      Element.prototype.html = function (html) {
-        this.innerHTML = DOMPurify.sanitize(html);
-      };
-      ogKush.start();
-    });
-  }, 0);
+    await WaitFor.waitForDefinition(window, "DOMPurify");
+
+    Element.prototype.html = function(html) {
+      this.innerHTML = DOMPurify.sanitize(html);
+    };
+
+    ogKush.start();
+
+  } catch (ex) {
+    logger.error(ex);
+  }
+
 })();
