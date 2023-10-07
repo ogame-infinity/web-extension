@@ -3610,8 +3610,8 @@ class OGInfinity {
         let discover;
         while ((discover = document.querySelector(".planetDiscover"))) {
           discover.click();
-          await sleep(300);
-          await waitFor(() => document.querySelector("#fleetstatusrow div"));
+          await wait.delay(300)
+            .then(wait.waitForQuerySelector("#fleetstatusrow div"))
         }
       });
     }
@@ -11856,10 +11856,6 @@ class OGInfinity {
 
   hasActivityChanged(oldAct, newAct) {
     return (oldAct == 0 && newAct > 0) || (oldAct > 0 && newAct == 0) || (oldAct < 61 && newAct == 61);
-  }
-
-  sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   recordActivityChange(history, activity) {
