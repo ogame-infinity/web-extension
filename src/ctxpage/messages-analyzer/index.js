@@ -269,7 +269,7 @@ function analyzer() {
                     }
                   });
 
-                  let fleetMatches = text.match(/.*: [1-9].*/gm);
+                  const fleetMatches = text.match(/.*: [1-9].*/gm);
                   fleetMatches &&
                     !normalized.includes(type) &&
                     fleetMatches.forEach((result) => {
