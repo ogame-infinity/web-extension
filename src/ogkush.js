@@ -11214,10 +11214,8 @@ class OGInfinity {
           maxResources *= (1 + this.json.explorerBonusIncreasedExpeditionOutcome) * this.json.speed;
         }
         // LF bonus
-        if (this.json.lifeformBonus && this.json.lifeformBonus[this.current.id]) {
-          maxResources *= 1 + (this.json.lifeformBonus[this.current.id].expeditionBonus || 0);
-          maxResources *= 1 + (this.json.lifeformBonus[this.current.id].classBonus.expedition || 0);
-        }
+        maxResources *= 1 + (this.json.lifeformBonus?.[this.current.id]?.expeditionBonus || 0);
+        maxResources *= 1 + (this.json.lifeformBonus?.[this.current.id]?.classBonus?.expedition || 0);
 
         const availableShips = {
           202: 0,
