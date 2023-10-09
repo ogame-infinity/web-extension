@@ -6119,11 +6119,6 @@ class OGInfinity {
     let deutInput = prod.appendChild(
       createDOM("input", { class: "ogl-formatInput deuterium", type: "text", value: toFormatedNumber(adjustments[2]) })
     );
-    if (this.hasLifeforms) {
-      let foodInput = prod.appendChild(
-        createDOM("input", { class: "ogl-formatInput food", type: "text", value: toFormatedNumber(adjustments[3]) })
-      );
-    }
     if (onValidate) {
       let btn = box.appendChild(createDOM("button", { class: "btn_blue" }, "OK"));
       btn.addEventListener("click", () => {
@@ -6131,7 +6126,6 @@ class OGInfinity {
           fromFormatedNumber(metInput.value, true),
           fromFormatedNumber(criInput.value, true),
           fromFormatedNumber(deutInput.value, true),
-          fromFormatedNumber(foodInput.value || 0, true),
         ]);
       });
     }
