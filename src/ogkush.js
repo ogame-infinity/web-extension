@@ -6,6 +6,7 @@ import * as Numbers from "./util/numbers.js";
 import { pageContextInit, pageContextRequest } from "./util/service.callbackEvent.js";
 import * as ptreService from "./util/service.ptre.js";
 import VERSION from "./util/version.js";
+import * as wait from "./util/wait.js";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 //const VERSION = "__VERSION__";
@@ -110,46 +111,6 @@ const toFormatedNumber = Numbers.toFormattedNumber;
  * @type {Numbers.fromFormattedNumber}
  */
 const fromFormatedNumber = Numbers.fromFormattedNumber;
-
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-function waitFor(conditionFn) {
-  const poll = (done) => (conditionFn() ? done() : setTimeout(() => poll(done), 100));
-  return new Promise(poll);
-}
-// TODO: add checkfreq, timeout & refactor the other waitFor* functions
-
-function waitForDefinition(object, callback, checkFrequencyInMs = 10, timeoutInMs = 5000) {
-  var startTimeInMs = Date.now();
-  (function loopSearch() {
-    if (window.hasOwnProperty(object)) {
-      callback();
-      return;
-    } else {
-      setTimeout(function () {
-        if (timeoutInMs && Date.now() - startTimeInMs > timeoutInMs) return;
-        loopSearch();
-      }, checkFrequencyInMs);
-    }
-  })();
-}
-
-function waitForElementToDisplay(selector, callback, checkFrequencyInMs = 10, timeoutInMs = 5000) {
-  var startTimeInMs = Date.now();
-  (function loopSearch() {
-    if (document.querySelector(selector) != null) {
-      callback();
-      return;
-    } else {
-      setTimeout(function () {
-        if (timeoutInMs && Date.now() - startTimeInMs > timeoutInMs) return;
-        loopSearch();
-      }, checkFrequencyInMs);
-    }
-  })();
-}
 
 const SHIP_COSTS = {
   202: [2, 2, 0],
@@ -1370,7 +1331,7 @@ const CRAWLER_OVERLOAD_MAX = 1.5;
 
 class OGInfinity {
   constructor() {
-    this.commander = player.hasCommander;
+    this.commander = document.querySelector("#officers > a.commander.on") !== null;
     this.rawURL = new URL(window.location.href);
     this.page = this.rawURL.searchParams.get("component") || this.rawURL.searchParams.get("page");
     if (document.querySelector("#characterclass .explorer")) {
@@ -1406,9 +1367,7 @@ class OGInfinity {
     this.highlighted = false;
     this.tooltipList = {};
     this.current = {};
-    this.current.planet = (
-      document.querySelector(".smallplanet .active") || document.querySelector(".smallplanet .planetlink")
-    ).parentNode;
+    this.current.planet = document.querySelector("#planetList .planetlink.active, #planetList .moonlink.active").parentNode;
     document.querySelectorAll(".planet-koords").forEach((elem) => (elem.textContent = elem.textContent.slice(1, -1)));
     this.current.id = parseInt(this.current.planet.id.split("-")[1]);
     this.current.coords = this.current.planet.querySelector(".planet-koords").textContent;
@@ -1553,7 +1512,7 @@ class OGInfinity {
 
   start() {
     this.hasLifeforms = document.querySelector(".lifeform") != null;
-    let forceEmpire = document.querySelectorAll("div[id*=planet-").length != this.json.empire.length;
+    let forceEmpire = document.querySelectorAll("div[id*=planet-]").length != this.json.empire.length;
     this.updateServerSettings();
     this.updateEmpireData(forceEmpire);
     this.initializeLFTypeName();
@@ -1615,9 +1574,7 @@ class OGInfinity {
     this.sideOptions();
     this.minesLevel();
     this.resourceDetail();
-    waitForElementToDisplay("#eventContent", () => {
-      this.eventBox();
-    });
+    wait.waitForQuerySelector("#eventContent").then(() => this.eventBox());
     this.neededCargo();
     this.preselectShips();
     this.harvest();
@@ -1635,9 +1592,7 @@ class OGInfinity {
     this.utilities();
     this.chat();
     this.uvlinks();
-    waitForElementToDisplay("#eventContent", () => {
-      this.flyingFleet();
-    });
+    wait.waitForQuerySelector("#eventContent").then(() => this.flyingFleet());
     this.betterHighscore();
     this.overviewDates();
     this.sideLock();
@@ -1648,7 +1603,7 @@ class OGInfinity {
     this.technoDetail();
     this.onGalaxyUpdate();
     this.timeZone();
-    waitForElementToDisplay("#eventContent", () => {
+    wait.waitForQuerySelector("#eventContent").then(() => {
       this.updateFlyings();
       this.updatePlanets_FleetActivity();
     });
@@ -2006,16 +1961,12 @@ class OGInfinity {
               consDiv.appendChild(satsSpan);
               satsSpan.addEventListener("click", () => {
                 document.querySelector(".solarSatellite.hasDetails span").click();
-                waitForElementToDisplay(
-                  "#technologydetails[data-technology-id='212']",
-                  () => {
+                wait.waitForQuerySelector("#technologydetails[data-technology-id='212']", 10, 2000)
+                  .then(() => {
                     let satsInput = document.querySelector("#build_amount");
                     satsInput.value = satsNeeded;
                     satsInput.dispatchEvent(new KeyboardEvent("keyup", { key: "ArrowDown" }));
-                  },
-                  10,
-                  2000
-                );
+                  });
               });
             }
             prodDiv.html(
@@ -2515,12 +2466,13 @@ class OGInfinity {
                   energyDiv.appendChild(satsSpan);
                   satsSpan.addEventListener("click", () => {
                     document.querySelector(".solarSatellite.hasDetails span").click();
-                    waitForElementToDisplay("#technologydetails[data-technology-id='212']", () => {
-                      let satsInput = document.querySelector("#build_amount");
-                      satsInput.focus();
-                      satsInput.value = satsNeeded;
-                      satsInput.dispatchEvent(new KeyboardEvent("keyup", { key: "ArrowDown" }));
-                    });
+                    wait.waitForQuerySelector("#technologydetails[data-technology-id='212']")
+                      .then(() => {
+                        let satsInput = document.querySelector("#build_amount");
+                        satsInput.focus();
+                        satsInput.value = satsNeeded;
+                        satsInput.dispatchEvent(new KeyboardEvent("keyup", { key: "ArrowDown" }));
+                      });
                   });
                 }
               }
@@ -3658,8 +3610,8 @@ class OGInfinity {
         let discover;
         while ((discover = document.querySelector(".planetDiscover"))) {
           discover.click();
-          await sleep(300);
-          await waitFor(() => document.querySelector("#fleetstatusrow div"));
+          await wait.delay(400);
+          await wait.waitForQuerySelector("#fleetstatusrow div");
         }
       });
     }
@@ -11202,7 +11154,7 @@ class OGInfinity {
 
       btnExpe.addEventListener("mouseover", () => this.tooltip(btnExpe, optionsContainerDiv, false, false, 750));
       btnExpe.addEventListener("click", async () => {
-        await waitFor(() => !fleetDispatcher.loading);
+        await wait.waitFor(() => !fleetDispatcher.loading);
         document.querySelector("#resetall").click();
         this.expedition = true;
         this.collect = false;
@@ -11391,7 +11343,7 @@ class OGInfinity {
 
           // number of expeditions in the same expedition system, including the one we are going to send
           let sameExpeditionDestination = 1;
-          await waitFor(() => document.querySelector("#eventContent"));
+          await wait.waitFor(() => document.querySelector("#eventContent") !== null);
           document.querySelectorAll(".eventFleet td.destCoords").forEach((coords) => {
             if (
               coords.textContent.trim() == "[" + originSystem + ":16]" &&
@@ -11899,7 +11851,7 @@ class OGInfinity {
   hasActivityChanged(oldAct, newAct) {
     return (oldAct == 0 && newAct > 0) || (oldAct > 0 && newAct == 0) || (oldAct < 61 && newAct == 61);
   }
-  
+
   recordActivityChange(history, activity) {
     let ACTIVITY_TYPE = (timer) => {
       if (timer == 0) return "active";
@@ -18232,10 +18184,10 @@ class OGInfinity {
     [202, 203, 219, 209, 212].forEach((id) => {
       if (url.searchParams.has(`techId${id}`)) {
         let needed = Number(url.searchParams.get(`techId${id}`));
-        waitForElementToDisplay(`.hasDetails[data-technology='${id}'] span`, () => {
+        wait.waitForQuerySelector(`.hasDetails[data-technology='${id}'] span`).then(() => {
           document.querySelector(`.hasDetails[data-technology='${id}'] span`).click();
         });
-        waitForElementToDisplay(`#technologydetails[data-technology-id='${id}']`, () => {
+        wait.waitForQuerySelector(`#technologydetails[data-technology-id='${id}']`).then(() => {
           let input = document.querySelector("#build_amount");
           input.focus();
           input.value = needed;
@@ -18245,7 +18197,7 @@ class OGInfinity {
     });
     if (technoDetails) {
       let selector = `.technology[data-technology='${technoDetails}'] span`;
-      waitForElementToDisplay(selector, () => document.querySelector(selector).click());
+      wait.waitForQuerySelector(selector).then(() => document.querySelector(selector).click());
     }
   }
 
@@ -18807,16 +18759,22 @@ function versionInStatusBar() {
 (async () => {
   logger.info("Reveal OGame Infinity");
 
-  let ogKush = new OGInfinity();
-  setTimeout(function () {
+  try {
+    let ogKush = new OGInfinity();
     ogKush.init();
     versionInStatusBar();
+
     // workaround for "DOMPurify not defined" issue
-    waitForDefinition("DOMPurify", () => {
-      Element.prototype.html = function (html) {
-        this.innerHTML = DOMPurify.sanitize(html);
-      };
-      ogKush.start();
-    });
-  }, 0);
+    await wait.waitForDefinition(window, "DOMPurify");
+
+    Element.prototype.html = function(html) {
+      this.innerHTML = DOMPurify.sanitize(html);
+    };
+
+    ogKush.start();
+
+  } catch (ex) {
+    logger.error(ex);
+  }
+
 })();
