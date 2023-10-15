@@ -5197,7 +5197,7 @@ class OGInfinity {
           "3.3,7.2-22.1,17.1c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z",
       })
     );
-    const body = createDOM("div", { id: "ogk-loadingDialog"} );
+    const body = createDOM("div", { id: "ogk-loadingDialog" });
     const text = createDOM("small", {}, this.getTranslatedText(167));
     body.append(svg, text);
     this.popup(null, body);
