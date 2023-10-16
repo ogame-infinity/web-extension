@@ -1,6 +1,7 @@
 import { getLogger } from "../util/logger.js";
 import { injectScript } from "../util/runContext.js";
 import { contentContextInit } from "../util/service.callbackEvent.js";
+import * as wait from "../util/wait.js";
 import { getExpeditionType } from "./callbacks/expedition-type.js";
 import { DataHelper } from "./data-helper.js";
 
@@ -55,22 +56,20 @@ document.addEventListener("ogi-chart", function (e) {
 window.addEventListener(
   "ogi-players",
   function (evt) {
-    setTimeout(() => {
-      if (!dataHelper) {
-        console.warn("No data helper in ogi-players, returning...");
-        return;
-      }
-      let request = evt.detail;
-      let response = { player: dataHelper.getPlayer(evt.detail.id) };
-      var clone = response;
-      if (navigator.userAgent.indexOf("Firefox") > 0) {
-        clone = cloneInto(response, document.defaultView);
-      }
-      clone.requestId = request.requestId;
-      window.dispatchEvent(new CustomEvent("ogi-players-rep", { detail: clone }));
-    });
+    wait
+      .waitFor(() => dataHelper)
+      .then(() => {
+        let request = evt.detail;
+        let response = { player: dataHelper.getPlayer(evt.detail.id) };
+        var clone = response;
+        if (navigator.userAgent.indexOf("Firefox") > 0) {
+          clone = cloneInto(response, document.defaultView);
+        }
+        clone.requestId = request.requestId;
+        window.dispatchEvent(new CustomEvent("ogi-players-rep", { detail: clone }));
+      });
   },
-  10
+  false
 );
 
 window.addEventListener(
