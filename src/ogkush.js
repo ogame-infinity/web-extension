@@ -5198,7 +5198,7 @@ class OGInfinity {
       })
     );
     const body = createDOM("div", { id: "ogk-loadingDialog" });
-    const text = createDOM("small", {}, this.getTranslatedText(167));
+    const text = createDOM("small", {}, this.getTranslatedText(168));
     body.append(svg, text);
     this.popup(null, body);
   }
@@ -16935,13 +16935,20 @@ class OGInfinity {
           tr: "Keşfetmek",
         },
         /*167*/ {
+          de: "Entdeckungsdaten",
+          en: "Discoveries data",
+          es: "Datos de descubrimientos",
+          fr: "Données de découvertes",
+          tr: "Keşifler Verileri",
+        },
+        /*168*/ {
           de: "Daten werden geladen. Bitte warten...",
           en: "Loading data. Please, wait...",
           es: "Cargando datos. Por favor, espere...",
           fr: "Chargement des données. Veuillez patienter...",
           tr: "Veri yükleniyor. Lütfen bekleyin...",
         },
-        /*168*/ {
+        /*169*/ {
           de: "",
           en: "",
           es: "",
@@ -17188,6 +17195,14 @@ class OGInfinity {
         { class: "ogi-checkbox" },
         `<label for="expeditions">${this.getTranslatedText(16)}</label>
         <input type="checkbox" id="expeditions" name="expeditions">`
+      )
+    );
+    let discoveriesBox = dataManagement.appendChild(
+      this.createDOM(
+        "div",
+        { class: "ogi-checkbox" },
+        `<label for="discoveries">${this.getTranslatedText(167)}</label>
+        <input type="checkbox" id="discoveries" name="discoveries">`
       )
     );
     let combatsBox = dataManagement.appendChild(
@@ -17448,6 +17463,8 @@ class OGInfinity {
         json.options = {};
         json.expeditions = {};
         json.expeditionSums = {};
+        json.discoveries = {};
+        json.discoveriesSums = {};
         json.combats = {};
         json.combatsSums = {};
         if (scanBox.children[1].checked) {
@@ -17469,6 +17486,10 @@ class OGInfinity {
               json.combats[id] = this.json.combats[id];
             }
           }
+        }
+        if (!discoveriesBox.children[1].checked) {
+          json.discoveriesSums = this.json.discoveriesSums;
+          json.discoveries = this.json.discoveries;
         }
         if (!combatsBox.children[1].checked) {
           json.combatsSums = this.json.combatsSums;

@@ -206,16 +206,20 @@ function analyzer() {
       };
 
       const callback = () => {
-        let id = document.querySelector("li[id=subtabs-nfFleet22].ui-state-active").getAttribute("aria-controls");
+        const id = document.querySelector("li[id=subtabs-nfFleet22].ui-state-active").getAttribute("aria-controls");
         document.querySelectorAll(`div[id=${id}] li.msg`).forEach((msg) => {
-          let id = msg.getAttribute("data-msg-id");
-          let content = msg.querySelector("span.msg_content");
+          const id = msg.getAttribute("data-msg-id");
+          const content = msg.querySelector("span.msg_content");
+          const msgTexts = Array.from(content.childNodes, ({ textContent }) =>
+            textContent ? textContent.trim() : "\n"
+          );
           let date = msg.querySelector(".msg_date").textContent;
-          let textContent = content.innerText;
           let coords = msg.querySelector(".msg_title a");
+
           if (coords) {
             coords = coords.textContent.slice(1, -1);
             if (coords.split(":")[2] == 16) {
+              // expeditions
               if (id in this.json.expeditions && this.json.expeditions[id].result) {
                 if (msg.querySelector(".icon_favorited")) {
                   this.json.expeditions[id].favorited = true;
@@ -223,17 +227,15 @@ function analyzer() {
                 } else {
                   this.json.expeditions[id].favorited = false;
                 }
-
                 view(msg, true);
                 return;
               } else if (id in this.expeditionsIds) {
                 return;
               }
+
               this.expeditionsIds[id] = true;
-              let content = msg.querySelector("span.msg_content");
-              let date = msg.querySelector(".msg_date").textContent;
-              let textContent = content.innerText;
-              pageContextRequest("messages", "expeditionType", textContent)
+              const text = msgTexts.join("");
+              pageContextRequest("messages", "expeditionType", text)
                 .then((value) => value.response.type)
                 .then((type) => {
                   date = date.split(" ")[0].slice(0, -4) + date.split(" ")[0].slice(-2);
@@ -249,32 +251,35 @@ function analyzer() {
                       fuel: 0,
                     };
                   }
-                  let objectNode = content.querySelector("a");
+
+                  const objectNode = content.querySelector("a");
                   if (objectNode) {
                     this.json.result = "Object";
                     this.json["object"] = objectNode.textContent;
                     type = "Object";
                   }
+
                   ressources.forEach((res, i) => {
-                    if (textContent.includes(res)) {
-                      let regex = new RegExp("[0-9]{1,3}(.[0-9]{1,3})*", "gm");
-                      let found = textContent.match(regex);
+                    if (text.includes(res)) {
+                      const found = text.match(/[0-9]{1,3}(.[0-9]{1,3})*/gm);
                       if (found) {
                         type = normalized[i];
                         sums.found[i] += fromFormattedNumber(found[0], true);
                       }
                     }
                   });
-                  let fleetMatches = textContent.match(/.*: [1-9].*/gm);
+
+                  const fleetMatches = text.match(/.*: [1-9].*/gm);
                   fleetMatches &&
                     !normalized.includes(type) &&
                     fleetMatches.forEach((result) => {
-                      let split = result.split(": ");
+                      const split = result.split(": ");
                       type = "Fleet";
-                      let id = this.json.shipNames[split[0]];
-                      let count = Number(split[1]);
+                      const id = this.json.shipNames[split[0]];
+                      const count = Number(split[1]);
                       sums.fleet[id] ? (sums.fleet[id] += count) : (sums.fleet[id] = count);
                     });
+
                   if (type !== "Unknown") {
                     sums.type[type] ? (sums.type[type] += 1) : (sums.type[type] = 1);
                   }
@@ -284,17 +289,14 @@ function analyzer() {
                     date: new Date(this.dateStrToDate(date)),
                     favorited: msg.querySelector(".icon_favorited") ? true : false,
                   };
-
                   view(msg, false);
-
                   this.saveData();
                 });
-            }
-            // For Discovers
-            else {
+            } else {
+              // discoveries
               if (!this.json.discoveries[id]) {
                 date = date.split(" ")[0].slice(0, -4) + date.split(" ")[0].slice(-2);
-                let lfFound = ["lifeform1", "lifeform2", "lifeform3", "lifeform4"];
+                const lfFound = ["lifeform1", "lifeform2", "lifeform3", "lifeform4"];
                 let sums = this.json.discoveriesSums[date];
                 if (!sums) {
                   sums = {
@@ -304,43 +306,39 @@ function analyzer() {
                   };
                 }
                 let type = "void";
+                // remove the headers to avoid problems with funny planet names
+                const text = msgTexts.slice(2).join("");
 
                 lfFound.forEach((raceType, i) => {
-                  let str = "." + raceType;
-                  let objectNode = content.querySelector(str);
+                  const objectNode = content.querySelector("." + raceType);
                   if (objectNode) {
                     type = raceType;
-                    let found = content.innerHTML.match(/[0-9]{4,}/gm);
-                    console.log(`type: ${raceType}: ${found}`);
+                    const found = text.match(/[0-9]{4,}/gm);
                     if (found) {
-                      let count = Number(found[0]);
+                      const count = Number(found[0]);
                       sums.found[i] ? (sums.found[i] += count) : (sums.found[i] = count);
                     }
                   }
                 });
 
-                let artefactMatches = textContent.match(/.*: [0-9].*/gm);
+                const artefactMatches = text.match(/.*: [0-9].*/gm);
                 artefactMatches &&
                   artefactMatches.forEach((result) => {
-                    let split = result.split(": ");
                     type = "artefacts";
-                    let count = Number(split[1]);
+                    const count = Number(result.split(": ")[1]);
                     sums.artefacts ? (sums.artefacts += count) : (sums.artefacts = count);
                   });
-                if (type != "Unknown") {
-                  sums.type[type] ? (sums.type[type] += 1) : (sums.type[type] = 1);
-                }
+
+                sums.type[type] ? (sums.type[type] += 1) : (sums.type[type] = 1);
                 this.json.discoveriesSums[date] = sums;
                 this.json.discoveries[id] = {
                   result: type,
                   date: new Date(this.dateStrToDate(date)),
                   favorited: msg.querySelector(".icon_favorited") ? true : false,
                 };
-                msg.classList.add("ogk-" + this.json.discoveries[id].result.toLowerCase());
                 this.saveData();
-              } else {
-                msg.classList.add("ogk-" + this.json.discoveries[id].result.toLowerCase());
               }
+              msg.classList.add("ogk-" + this.json.discoveries[id].result.toLowerCase());
             }
           }
         });
