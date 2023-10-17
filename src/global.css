@@ -309,6 +309,12 @@ input[type="password"]::selection {
   margin: 9px 15px 0 0;
 }
 
+#ogk-loadingDialog {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 #logoLink {
   width: 200px;
   height: 75px;

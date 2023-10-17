@@ -1515,7 +1515,6 @@ class OGInfinity {
     let forceEmpire = document.querySelectorAll("div[id*=planet-]").length != this.json.empire.length;
     this.updateServerSettings();
     this.updateEmpireData(forceEmpire);
-    this.initializeLFTypeName();
     if (this.json.needLifeformUpdate[this.current.id] && !this.current.isMoon) this.updateLifeform();
 
     if (UNIVERSVIEW_LANGS.includes(this.gameLang)) {
@@ -1621,7 +1620,16 @@ class OGInfinity {
     }
     if (this.json.welcome) {
       if (this.page == "fleetdispatch") {
-        this.welcome();
+        wait
+          .waitFor(() => this.json.empire.length)
+          .then(async () => {
+            this.loading();
+            this.updateServerSettings(true);
+            this.getAllianceClass();
+            this.initializeLFTypeName();
+            await this.updateLifeform(true);
+            this.welcome();
+          });
       } else {
         window.location.href = `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=ingame&component=fleetdispatch`;
       }
@@ -5154,6 +5162,7 @@ class OGInfinity {
   messagesAnalyzer() {
     ctxMessageAnalyzer.call(this);
   }
+
   loading() {
     const svg = createSVG("svg", {
       width: "200px",
@@ -5161,7 +5170,7 @@ class OGInfinity {
       viewBox: "0 0 187.3 93.7",
       preserveAspectRatio: "xMidYMid meet",
     });
-    svg.replaceChildren(
+    svg.append(
       createSVG("path", {
         stroke: "#3c536c",
         id: "outline",
@@ -5188,8 +5197,9 @@ class OGInfinity {
           "3.3,7.2-22.1,17.1c-8.9,8.8-15.7,17.9-25.4,17.9s-17.5-7.8-17.5-17.5s7.8-17.5,17.5-17.5S86.2,38.6,93.9,46.4z",
       })
     );
-    let body = createDOM("div");
-    body.appendChild(svg);
+    const body = createDOM("div", { id: "ogk-loadingDialog" });
+    const text = createDOM("small", {}, this.getTranslatedText(168));
+    body.append(svg, text);
     this.popup(null, body);
   }
 
@@ -16932,6 +16942,13 @@ class OGInfinity {
           tr: "Keşifler Verileri",
         },
         /*168*/ {
+          de: "Daten werden geladen. Bitte warten...",
+          en: "Loading data. Please, wait...",
+          es: "Cargando datos. Por favor, espere...",
+          fr: "Chargement des données. Veuillez patienter...",
+          tr: "Veri yükleniyor. Lütfen bekleyin...",
+        },
+        /*169*/ {
           de: "",
           en: "",
           es: "",
