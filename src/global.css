@@ -1244,31 +1244,11 @@ input[type="password"]::selection {
   text-align: right;
 }
 
-#fleet3 #sendfleet #resources .res_wrap {
-  width: 150px !important;
-  z-index: 10;
-}
-
-#fleet3 #sendfleet .res input {
-  width: 93px !important;
-}
-
-#fleet3 #sendfleet #resources #mostresources {
-  position: absolute;
-  top: 10px;
-  left: 35px;
-}
-
-#fleet3 #sendfleet #resources a#allresources {
-  margin-left: 55px !important;
-}
-
-#loadAllResources .select-most {
-  margin: -42px 0 0 20px !important;
-}
-
-#loadAllResources .send_none a {
-  margin: -42px 17px 0 0 !important;
+#fleet2 #resources .allResourcesWrap {
+  display: grid;
+  grid-gap: 2px;
+  grid-template-columns: repeat(3, 1fr);
+  width: min-content !important;
 }
 
 .ogi-actions {
