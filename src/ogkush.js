@@ -11180,9 +11180,8 @@ class OGInfinity {
           maxResources *= (1 + this.json.explorerBonusIncreasedExpeditionOutcome) * this.json.speed;
         }
         // LF bonus
-        if (this.json.lifeformBonus && this.json.lifeformBonus[this.current.id]) {
-          maxResources *= 1 + this.json.lifeformBonus[this.current.id].expeditionBonus || 0;
-        }
+        maxResources *= 1 + (this.json.lifeformBonus?.[this.current.id]?.expeditionBonus || 0);
+        maxResources *= 1 + (this.json.lifeformBonus?.[this.current.id]?.classBonus?.expedition || 0);
 
         const availableShips = {
           202: 0,
@@ -11611,8 +11610,56 @@ class OGInfinity {
             ? technologyTimeReduction[techId] + bonus
             : bonus;
         });
+        const classBonus = {};
+        if (this.playerClass == PLAYER_CLASS_EXPLORER) {
+          htmlDocument.querySelectorAll("div[data-category='bonus-10'] .subItemContent .explorer").forEach((planet) => {
+            const bonusContainer = planet.parentElement.nextElementSibling.querySelectorAll(".innerBonus");
+            const research =
+              fromFormatedNumber(bonusContainer[0].nextElementSibling.textContent.split("/")[0].trim(), false, true) /
+              100; // value extraction not tested
+            const expedition =
+              fromFormatedNumber(bonusContainer[1].nextElementSibling.textContent.split("/")[0].trim(), false, true) /
+              (100 * (1 + this.json.explorerBonusIncreasedExpeditionOutcome) * this.json.speed);
+            // translate weird reported bonus into something useful to apply later
+            const phalanxRange =
+              fromFormatedNumber(bonusContainer[5].nextElementSibling.textContent.split("/")[0].trim(), false, true) /
+              100; // value extraction not tested
+            const inactiveLoot =
+              fromFormatedNumber(bonusContainer[6].nextElementSibling.textContent.split("/")[0].trim(), false, true) /
+              100; // value extraction not tested
+
+            classBonus.research = classBonus.research ? classBonus.research + research : research;
+            classBonus.expedition = classBonus.expedition ? classBonus.expedition + expedition : expedition;
+            classBonus.phalanxRange = classBonus.phalanxRange ? classBonus.phalanxRange + phalanxRange : phalanxRange;
+            classBonus.inactiveLoot = classBonus.inactiveLoot ? classBonus.inactiveLoot + phalanxRange : inactiveLoot;
+            // TODO: only expedition bonus is used in expedition(), use more classBonus where needed
+          });
+        }
+        if (this.playerClass == PLAYER_CLASS_MINER) {
+          htmlDocument.querySelectorAll("div[data-category='bonus-10'] .subItemContent .miner").forEach((planet) => {
+            const bonusContainer = planet.parentElement.nextElementSibling.querySelectorAll(".innerBonus");
+            const production =
+              fromFormatedNumber(bonusContainer[0].nextElementSibling.textContent.split("/")[0].trim(), false, true) /
+              100; // value extraction not tested
+            const energy =
+              fromFormatedNumber(bonusContainer[1].nextElementSibling.textContent.split("/")[0].trim(), false, true) /
+              100; // value extraction not tested
+            const crawler =
+              fromFormatedNumber(bonusContainer[4].nextElementSibling.textContent.split("/")[0].trim(), false, true) /
+              100; // value extraction not tested
+            const maxCrawlers =
+              fromFormatedNumber(bonusContainer[5].nextElementSibling.textContent.split("/")[0].trim(), false, true) /
+              100; // value extraction not tested
+            classBonus.production = classBonus.production ? classBonus.production + production : production;
+            classBonus.energy = classBonus.energy ? classBonus.energy + energy : energy;
+            classBonus.crawler = classBonus.crawler ? classBonus.crawler + crawler : crawler;
+            classBonus.maxCrawlers = classBonus.maxCrawlers ? classBonus.maxCrawlers + maxCrawlers : maxCrawlers;
+            // TODO: use classBonus where needed
+          });
+        }
         // TODO: add following consumptionReduction[id] = {energy: 0, deuterium: 0}
         return {
+          classBonus: classBonus,
           productionBonus: productionBonus,
           technologyCostReduction: technologyCostReduction,
           technologyTimeReduction: technologyTimeReduction,
