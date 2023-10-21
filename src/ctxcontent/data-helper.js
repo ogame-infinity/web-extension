@@ -116,14 +116,12 @@ export class DataHelper {
     }
     if (scannedPlanets) {
       for (let [coords, moon] of Object.entries(scannedPlanets)) {
-        let isMain = false;
         response.planets.forEach((planet, index) => {
           if (coords == planet.coords) {
-            isMain = planet.isMain;
             response.planets.splice(index, 1);
           }
         });
-        let pla = { coords: coords, moon: moon, isMain: isMain, scanned: true };
+        let pla = { coords: coords, moon: moon, scanned: true };
         if (moon == null) {
           pla.deleted = true;
         }

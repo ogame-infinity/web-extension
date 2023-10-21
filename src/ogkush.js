@@ -3950,11 +3950,12 @@ class OGInfinity {
 
   async ptreActivityUpdate(ptreJSON, systemCoords) {
     for (const coords of Object.keys(ptreJSON)) {
-      let pl = await dataHelper.getPlayer(ptreJSON[coords].player_id);
-      let mainPlanet = pl.planets.find((obj) => {
-        return obj.isMain === true;
+      const pl = await dataHelper.getPlayer(ptreJSON[coords].player_id);
+      const mainId = Math.min(...Array.from(pl.planets, (planet) => planet.id));
+      const mainPlanet = pl.planets.find((planet) => {
+        return planet.id == mainId;
       });
-      ptreJSON[coords].main = (mainPlanet && mainPlanet.coords === coords) || false;
+      ptreJSON[coords].main = mainPlanet.coords === coords || false;
     }
 
     fetch("https://ptre.chez.gg/scripts/oglight_import_player_activity.php?tool=infinity", {
@@ -12973,6 +12974,7 @@ class OGInfinity {
       return coordsA - coordsB;
     });
     let domArr = [];
+    const mainId = Math.min(...Array.from(sorted, (planet) => planet.id));
     sorted.forEach((planet) => {
       let coords = planet.coords.split(":");
       let a = createDOM("a");
@@ -12987,7 +12989,7 @@ class OGInfinity {
       planetDiv.appendChild(createDOM("div", { class: "ogl-planet-act" }));
       a.appendChild(createDOM("span", {}, planet.coords));
       a.setAttribute("data-coords", planet.coords);
-      if (planet.isMain) {
+      if (planet.id == mainId) {
         a.classList.add("ogl-main");
         planetIcon.classList.add("ogl-active");
       }
