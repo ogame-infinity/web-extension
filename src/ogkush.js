@@ -10302,7 +10302,7 @@ class OGInfinity {
       $("#selectMaxMetal").after(createDOM("span", { class: "ogi-metalLeft" }, "-"));
       $("#selectMaxCrystal").after(createDOM("span", { class: "ogi-crystalLeft" }, "-"));
       $("#selectMaxDeuterium").after(createDOM("span", { class: "ogi-deuteriumLeft" }, "-"));
-      $("#allresources").after(createDOM("a", { class: "select-most" }));
+      $("#allresources").before(createDOM("a", { class: "select-most" }));
       $("#allresources").after(createDOM("a", { class: "send_none" }).appendChild(createDOM("a")).parentElement);
       $("#loadAllResources .select-most").on("click", () => {
         $("#selectMinDeuterium").click();
