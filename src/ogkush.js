@@ -11397,7 +11397,7 @@ class OGInfinity {
         fleetDispatcher.expeditionCount < fleetDispatcher.maxExpeditionCount &&
         fleetDispatcher.fleetCount < fleetDispatcher.maxFleetCount
       ) {
-        setTimeout(() => document.querySelector(".ogl-expedition").click(), 200);
+        wait.delay(250).then(() => document.querySelector(".ogl-expedition").click());
       }
     }
   }
@@ -14754,25 +14754,32 @@ class OGInfinity {
             document.querySelector("#missionButton15").click(); // expedition
         }
       });
+
+      // TODO: make throttle class for reuse it?
       let throttleTime = Date.now();
+      const throttle = (throttleFn, intervalInMs) => {
+        if (Date.now() > throttleTime + intervalInMs) {
+          throttleTime = Date.now();
+          throttleFn();
+        }
+      };
+
       document.addEventListener("keydown", (event) => {
         if (avoidIn.some((avoidInClass) => document.activeElement.classList.contains(avoidInClass))) return;
         if (event.key == "Enter") {
-          if (fleetDispatcher.currentPage == "fleet1") {
-            document.querySelector("#continueToFleet2").click();
-          } else if (fleetDispatcher.currentPage == "fleet2") {
-            // throttling workaround to avoid errors in fleet2 sending using keeped pressed enter key
-            if (Date.now() > throttleTime + 550) {
+          event.preventDefault();
+          event.stopPropagation();
+          throttle(() => {
+            if (fleetDispatcher.currentPage == "fleet1") {
+              document.querySelector("#continueToFleet2").click();
+            } else if (fleetDispatcher.currentPage == "fleet2") {
               fleetDispatcher.speedPercent = document
                 .querySelector(".ogl-fleetSpeed")
                 .querySelector(".ogl-active")
                 .getAttribute("data-step");
               document.querySelector("#sendFleet").click();
-              throttleTime = Date.now();
             }
-          }
-          event.preventDefault();
-          event.stopPropagation();
+          }, 750);
         }
       });
     }
