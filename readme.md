@@ -12,7 +12,7 @@ Note: since version 2.3.7 it can be no longer loaded directly as an unpacked ext
 
 ### Third party dependencies
 
-This extension uses 3 external js libraries:
+This extension uses 4 external js libraries:
 
 - https://github.com/chartjs/Chart.js/releases/download/v2.9.3/Chart.bundle.min.js
 - https://github.com/emn178/chartjs-plugin-labels/blob/v1.1.0/build/chartjs-plugin-labels.min.js
