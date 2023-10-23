@@ -270,12 +270,14 @@ export class DataHelper {
           alliance: alliance,
           planets: planets,
         };
+        this.names[information.name] = information.id;
       });
 
       this.players = players;
       this.lastUpdate = new Date();
       this.lastPlayersUpdate = new Date();
       this.lastPlanetsUpdate = new Date();
+      this.scannedPlayers = {};
     } catch (err) {
       logger.error(err);
     } finally {
