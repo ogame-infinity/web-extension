@@ -1,4 +1,5 @@
 import { getLogger } from "../util/logger.js";
+import { COORDINATE_PLANET, toNumber as toNumberCoordinate } from "../util/ogame.coordinate.js";
 import { getAlliances } from "./helpers/universe.alliances.js";
 import { getPlayersHighscore, NAN_HIGHSCORE } from "./helpers/universe.highscore.js";
 import { getPlanets } from "./helpers/universe.planets.js";
@@ -254,7 +255,8 @@ export class DataHelper {
       }
 
       [...playerPlanets.keys()].forEach((playerId) => {
-        const planets = playerPlanets.get(playerId);
+        /** @type {PlanetResponse[]} */
+        let planets = playerPlanets.get(playerId);
         const information = playersInformation.get(playerId) ?? DEFAULT_PLAYER;
         const score = playersScore.get(playerId) ?? NAN_HIGHSCORE;
         let alliance = null;
@@ -263,6 +265,12 @@ export class DataHelper {
           const ally = allianceInformation.alliances.get(information.alliance);
           alliance = `[${ally.tag}] ${ally.name}`;
         }
+
+        planets = planets.sort((a, b) => {
+          const aCoords = toNumberCoordinate(a.coords, COORDINATE_PLANET);
+          const bCoords = toNumberCoordinate(b.coords, COORDINATE_PLANET);
+          return aCoords - bCoords;
+        });
 
         players[playerId] = {
           ...information,
