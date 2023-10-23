@@ -8,6 +8,7 @@ export class DataHelper {
   constructor(universe) {
     this.universe = universe;
     this.names = {};
+    this.topScore = 0;
     this.loading = false;
   }
 
@@ -241,6 +242,16 @@ export class DataHelper {
         getPlanets(this.universe),
         getAlliances(this.universe),
       ]);
+
+      // -- TopScore --------------------------------
+      /** @type {HighscoreTypes | undefined} */
+      const highscores = [...playersScore.values()].find(
+        /** @param {HighscoreTypes} highscore */
+        (highscore) => highscore.points.position === 1
+      );
+      if (highscores) {
+        this.topScore = highscores.points.score;
+      }
 
       [...playerPlanets.keys()].forEach((playerId) => {
         const planets = playerPlanets.get(playerId);
