@@ -1,4 +1,5 @@
 import { getLogger } from "../util/logger.js";
+import { COORDINATE_PLANET, toNumber as toNumberCoordinate } from "../util/ogame.coordinate.js";
 import { getAlliances } from "./helpers/universe.alliances.js";
 import { getPlayersHighscore, NAN_HIGHSCORE } from "./helpers/universe.highscore.js";
 import { getPlanets } from "./helpers/universe.planets.js";
@@ -8,6 +9,7 @@ export class DataHelper {
   constructor(universe) {
     this.universe = universe;
     this.names = {};
+    this.topScore = 0;
     this.loading = false;
   }
 
@@ -242,8 +244,19 @@ export class DataHelper {
         getAlliances(this.universe),
       ]);
 
+      // -- TopScore --------------------------------
+      /** @type {HighscoreTypes | undefined} */
+      const highscores = [...playersScore.values()].find(
+        /** @param {HighscoreTypes} highscore */
+        (highscore) => highscore.points.position === 1
+      );
+      if (highscores) {
+        this.topScore = highscores.points.score;
+      }
+
       [...playerPlanets.keys()].forEach((playerId) => {
-        const planets = playerPlanets.get(playerId);
+        /** @type {PlanetResponse[]} */
+        let planets = playerPlanets.get(playerId);
         const information = playersInformation.get(playerId) ?? DEFAULT_PLAYER;
         const score = playersScore.get(playerId) ?? NAN_HIGHSCORE;
         let alliance = null;
@@ -253,18 +266,26 @@ export class DataHelper {
           alliance = `[${ally.tag}] ${ally.name}`;
         }
 
+        planets = planets.sort((a, b) => {
+          const aCoords = toNumberCoordinate(a.coords, COORDINATE_PLANET);
+          const bCoords = toNumberCoordinate(b.coords, COORDINATE_PLANET);
+          return aCoords - bCoords;
+        });
+
         players[playerId] = {
           ...information,
           ...score,
           alliance: alliance,
           planets: planets,
         };
+        this.names[information.name] = information.id;
       });
 
       this.players = players;
       this.lastUpdate = new Date();
       this.lastPlayersUpdate = new Date();
       this.lastPlanetsUpdate = new Date();
+      this.scannedPlayers = {};
     } catch (err) {
       logger.error(err);
     } finally {

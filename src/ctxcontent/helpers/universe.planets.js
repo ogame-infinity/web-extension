@@ -55,6 +55,6 @@ function toPlanetResponse(response) {
  * @property {number} id - planet ID
  * @property {number} player - player ID
  * @property {string} name
- * @property {number} coords
+ * @property {string} coords
  * @property {boolean} moon
  */
