@@ -14756,7 +14756,7 @@ class OGInfinity {
       });
 
       // TODO: make throttle class for reuse it?
-      let throttleTime = Date.now();
+      let throttleTime = 0;
       const throttle = (throttleFn, intervalInMs) => {
         if (Date.now() > throttleTime + intervalInMs) {
           throttleTime = Date.now();
