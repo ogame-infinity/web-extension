@@ -17223,7 +17223,7 @@ class OGInfinity {
       createDOM("input", {
         type: "text",
         class: "ogl-rvalInput ogl-formatInput",
-        value: 100 * this.json.options.expedition.limitCargo,
+        value:  Math.round(100 * this.json.options.expedition.limitCargo),
       })
     );
     optiondiv = featureSettings.appendChild(createDOM("span", {}, this.getTranslatedText(150)));
