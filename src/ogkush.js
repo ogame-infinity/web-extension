@@ -11397,7 +11397,7 @@ class OGInfinity {
         fleetDispatcher.expeditionCount < fleetDispatcher.maxExpeditionCount &&
         fleetDispatcher.fleetCount < fleetDispatcher.maxFleetCount
       ) {
-        wait.delay(250).then(() => document.querySelector(".ogl-expedition").click());
+        document.querySelector(".ogl-expedition").click();
       }
     }
   }
@@ -14779,7 +14779,7 @@ class OGInfinity {
                 .getAttribute("data-step");
               document.querySelector("#sendFleet").click();
             }
-          }, 750);
+          }, 650);
         }
       });
     }
