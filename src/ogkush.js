@@ -11397,7 +11397,7 @@ class OGInfinity {
         fleetDispatcher.expeditionCount < fleetDispatcher.maxExpeditionCount &&
         fleetDispatcher.fleetCount < fleetDispatcher.maxFleetCount
       ) {
-        wait.delay(250).then(() => document.querySelector(".ogl-expedition").click());
+        document.querySelector(".ogl-expedition").click();
       }
     }
   }
@@ -14756,7 +14756,7 @@ class OGInfinity {
       });
 
       // TODO: make throttle class for reuse it?
-      let throttleTime = Date.now();
+      let throttleTime = 0;
       const throttle = (throttleFn, intervalInMs) => {
         if (Date.now() > throttleTime + intervalInMs) {
           throttleTime = Date.now();
@@ -14779,7 +14779,7 @@ class OGInfinity {
                 .getAttribute("data-step");
               document.querySelector("#sendFleet").click();
             }
-          }, 750);
+          }, 650);
         }
       });
     }
