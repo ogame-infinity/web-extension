@@ -11735,6 +11735,7 @@ class OGInfinity {
   updateEmpireProduction() {
     this.json.empire.forEach((planet) => {
 
+      planet.production.productionFactor = 1; // temporary, TODO: change use in fleetDispatcher with computed factor
       planet.production.generalIncoming = {
         0: METAL_GENERAL_INCOMING * METAL_POS_BONUS[planet.position - 1] * this.json.speed,
         1: CRYSTAL_GENERAL_INCOMING * CRYSTAL_POS_BONUS[planet.position - 1] * this.json.speed,
