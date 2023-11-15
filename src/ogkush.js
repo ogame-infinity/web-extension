@@ -1318,6 +1318,7 @@ const RESEARCH_INFO = {
     factorTime: 1.4,
   },
 };
+
 const IONTECHNOLOGY_BONUS = 0.04;
 const PLASMATECH_BONUS = [0.01, 0.0066, 0.0033];
 const ENGINEER_ENERGY_BONUS = 0.1;
@@ -1328,6 +1329,11 @@ const OFFICER_RESOURCE_BONUS = 0.02;
 const TRADER_ENERGY_BONUS = 0.05;
 const TRADER_RESOURCE_BONUS = 0.05;
 const CRAWLER_OVERLOAD_MAX = 1.5;
+const METAL_GENERAL_INCOMING = 30;
+const CRYSTAL_GENERAL_INCOMING = 15;
+const METAL_POS_BONUS = [1, 1, 1, 1, 1, 1.17, 1.23, 1.35, 1.23, 1.17, 1, 1, 1, 1, 1];
+const CRYSTAL_POS_BONUS = [1.4, 1.3, 1.2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+const MAX_CRAWLERS_PER_MINE = 8;
 
 class OGInfinity {
   constructor() {
@@ -11728,6 +11734,115 @@ class OGInfinity {
 
   updateEmpireProduction() {
     this.json.empire.forEach((planet) => {
+
+      planet.production.generalIncoming = {
+        0: METAL_GENERAL_INCOMING * METAL_POS_BONUS[planet.position - 1] * this.json.speed,
+        1: CRYSTAL_GENERAL_INCOMING * CRYSTAL_POS_BONUS[planet.position - 1] * this.json.speed,
+        2: 0,
+        3: 0,
+      };
+
+      planet.production.production = {
+        1: {
+          // metal mine
+          0: Math.floor(30 * planet[1] * 1.1 ** planet[1] * this.json.speed * METAL_POS_BONUS[planet.position - 1]),
+          1: 0,
+          2: 0,
+          3: Math.floor(10 * planet[1] * 1.1 ** planet[1]),
+        },
+        2: {
+          // crystal mine
+          0: 0,
+          1: Math.floor(20 * planet[2] * 1.1 ** planet[2] * this.json.speed * CRYSTAL_POS_BONUS[planet.position - 1]),
+          2: 0,
+          3: Math.floor(10 * planet[2] * 1.1 ** planet[2]),
+        },
+        3: {
+          // deuterium synthesizer
+          0: 0,
+          1: 0,
+          2: Math.floor(10 * planet[3] * 1.1 ** planet[3] * this.json.speed * (1.36 - 0.004 * (planet.db_par2 + 20))),
+          3: Math.floor(20 * planet[3] * 1.1 ** planet[3]),
+        },
+        4: {
+          // solar plant
+          0: 0,
+          1: 0,
+          2: 0,
+          3: Math.floor(20 * planet[4] * 1.1 ** planet[4]),
+        },
+        12: {
+          // fusion reactor
+          0: 0,
+          1: 0,
+          2: Math.floor(10 * planet[12] * 1.1 ** planet[12] * this.json.speed),
+          3: Math.floor(30 * planet[12] * (1.05 + 0.01 * planet[113]) ** planet[12]),
+        },
+        122: {
+          // plasma
+          0: 0,
+          1: 0,
+          2: 0,
+          3: 0,
+        },
+        212: {
+          // solar satellite
+          0: 0,
+          1: 0,
+          2: 0,
+          3: 0, // TODO: compute solar satellite energy production
+        },
+        217: {
+          // crawlers
+          0: 0,
+          1: 0,
+          2: 0,
+          3: 0,
+        },
+        1000: {
+          // items
+          0: 0,
+          1: 0,
+          2: 0,
+          3: 0,
+        },
+        1001: {
+          // geologist
+          0: 0,
+          1: 0,
+          2: 0,
+          3: 0,
+        },
+        1002: {
+          // engineer
+          0: 0,
+          1: 0,
+          2: 0,
+          3: 0, // TODO: compute engineer energy production
+        },
+        1003: {
+          // officers
+          0: 0,
+          1: 0,
+          2: 0,
+          3: 0,
+        },
+        1004: {
+          // playerClass
+          0: 0,
+          1: 0,
+          2: 0,
+          3: 0,
+        },
+        1005: {
+          // allyClass
+          0: 0,
+          1: 0,
+          2: 0,
+          3: 0,
+        },
+      };
+
       // Get exact production data (Ogame's empire data has rounding issues)
       for (let idx = 0; idx < 3; idx++) {
         let totalProd = 0;
@@ -11752,24 +11867,34 @@ class OGInfinity {
           mineProd * (this.playerClass == PLAYER_CLASS_MINER ? this.json.minerBonusResourceProduction : 0);
         totalProd += playerClassProd;
         planet.production.production[1004][idx] = playerClassProd;
-        if (planet.production.production[217][idx] != 0) {
-          let crawlerProd =
-            mineProd *
-            Math.min(planet.production.production[217].number, planet.production.production[217].numberMax) *
-            this.json.resourceBuggyProductionBoost *
-            (this.playerClass == PLAYER_CLASS_MINER ? 1 + this.json.minerBonusAdditionalCrawler : 1) *
-            (this.json.lifeformBonus ? 1 + this.json.lifeformBonus[planet.id].crawlerBonus.production : 1);
-          let crawlerPercent = Math.round((planet.production.production[217][idx] / crawlerProd) * 10) / 10;
-          crawlerProd *= Math.min(crawlerPercent, this.playerClass == PLAYER_CLASS_MINER ? CRAWLER_OVERLOAD_MAX : 1);
-          crawlerProd = Math.min(crawlerProd, mineProd * this.json.resourceBuggyMaxProductionBoost);
-          totalProd += crawlerProd;
-          planet.production.production[217][idx] = crawlerProd;
-        }
+
+        const maxCrawlers = Math.floor(
+          (planet[1] + planet[2] + planet[3]) *
+            MAX_CRAWLERS_PER_MINE *
+            (this.playerClass == PLAYER_CLASS_MINER && this.geologist ? 1 + this.json.minerBonusMaxCrawler : 1)
+        );
+        let crawlerProd =
+          mineProd *
+          Math.min(planet[217], maxCrawlers) *
+          this.json.resourceBuggyProductionBoost *
+          (this.playerClass == PLAYER_CLASS_MINER ? 1 + this.json.minerBonusAdditionalCrawler : 1) *
+          (this.json.lifeformBonus ? 1 + this.json.lifeformBonus[planet.id].crawlerBonus.production : 1);
+        let crawlerPercent = Math.round((planet.production.production[217][idx] / crawlerProd) * 10) / 10;
+        crawlerPercent = this.playerClass == PLAYER_CLASS_MINER ? 1.5 : 1;  // temporary hack TODO: guess true value
+        crawlerProd *= Math.min(crawlerPercent, this.playerClass == PLAYER_CLASS_MINER ? CRAWLER_OVERLOAD_MAX : 1);
+        crawlerProd = Math.min(crawlerProd, mineProd * this.json.resourceBuggyMaxProductionBoost);
+        totalProd += crawlerProd;
+        planet.production.production[217][idx] = crawlerProd;
+
+        // TODO: compute items production
         if (planet.production.production[1000][idx] != 0) {
           let itemProd = (mineProd * Math.round((planet.production.production[1000][idx] / mineProd) * 10)) / 10;
           totalProd += itemProd;
           planet.production.production[1000][idx] = itemProd;
         }
+
+        // TODO: compute production factors per production unit and recompute productions
+
         totalProd -= planet.production.production[12][idx];
         planet.production.hourly[idx] = totalProd;
         planet.production.daily[idx] = totalProd * 24;
