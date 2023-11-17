@@ -1373,7 +1373,10 @@ class OGInfinity {
     this.highlighted = false;
     this.tooltipList = {};
     this.current = {};
-    this.current.planet = document.querySelector("#planetList .planetlink.active, #planetList .moonlink.active").parentNode;
+    this.current.planet = (
+      document.querySelector("#planetList .active") ??
+      document.querySelector("#planetList .planetlink")
+    ).parentNode;
     document.querySelectorAll(".planet-koords").forEach((elem) => (elem.textContent = elem.textContent.slice(1, -1)));
     this.current.id = parseInt(this.current.planet.id.split("-")[1]);
     this.current.coords = this.current.planet.querySelector(".planet-koords").textContent;
