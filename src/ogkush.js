@@ -1405,7 +1405,6 @@ class OGInfinity {
     this.json.expeditionSums = this.json.expeditionSums || {};
     this.json.discoveriesSums = this.json.discoveriesSums || {};
     this.json.discoveries = this.json.discoveries || {};
-    this.json.lfTypeNames = this.json.lfTypeNames || {};
     this.json.flying = this.json.flying || {
       metal: 0,
       crystal: 0,
@@ -1635,7 +1634,6 @@ class OGInfinity {
             this.loading();
             this.updateServerSettings(true);
             this.getAllianceClass();
-            this.initializeLFTypeName();
             await this.updateLifeform(true);
             this.welcome();
           });
@@ -11532,11 +11530,10 @@ class OGInfinity {
     )
       .then((rep) => rep.text())
       .then((str) => {
-        let htmlDocument = new window.DOMParser().parseFromString(str, "text/html");
-        if (htmlDocument.querySelectorAll(".levelinformation .currentlevel").length != 1)
-          return { lifeform: "", level: 0 };
-        let lifeform = htmlDocument.querySelector(".levelinformation").previousElementSibling.classList[1];
-        let level = parseInt(htmlDocument.querySelector(".levelinformation .currentlevel").textContent);
+        const htmlDocument = new window.DOMParser().parseFromString(str, "text/html");
+        const selected = htmlDocument.querySelector("img.lifeformSelectedIcon")?.parentElement;
+        const lifeform = selected ? selected.classList[1] : "";
+        const level = selected ? parseInt(selected.nextElementSibling.querySelector(".currentlevel").textContent) : 0;
         return { lifeform: lifeform, level: level };
       });
   }
@@ -18813,25 +18810,6 @@ class OGInfinity {
       down.addEventListener("click", () =>
         document.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", ctrlKey: "true" }))
       );
-    }
-  }
-
-  initializeLFTypeName() {
-    if (!this.hasLifeforms) return;
-    if (!this.json.lfTypeNames["lifeform1"]) {
-      fetch("/game/index.php?page=ingame&component=lfoverview")
-        .then((rep) => rep.text())
-        .then((str) => {
-          let htmlDocument = new window.DOMParser().parseFromString(str, "text/html");
-          let lfdiv = htmlDocument.querySelector("div[id='lfoverviewcomponent']");
-          let listName = lfdiv.querySelectorAll("h3");
-          listName.forEach((lfName, index) => {
-            if (index != 0) {
-              this.json.lfTypeNames["lifeform" + index] = lfName.textContent;
-            }
-          });
-          this.saveData();
-        });
     }
   }
 
