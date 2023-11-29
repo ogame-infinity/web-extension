@@ -1520,6 +1520,7 @@ class OGInfinity {
   }
 
   start() {
+    if (this.page == "intro") return;
     this.hasLifeforms = document.querySelector(".lifeform") != null;
     let forceEmpire = document.querySelectorAll("div[id*=planet-]").length != this.json.empire.length;
     this.updateServerSettings();
