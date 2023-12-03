@@ -2670,6 +2670,7 @@ class OGInfinity {
       params.mission = this.mission;
       params.speed = this.speedPercent;
       params.retreatAfterDefenderRetreat = this.retreatAfterDefenderRetreat === true ? 1 : 0;
+      params.lootFoodOnAttack = this.lootFoodOnAttack === true ? 1 : 0;
       params.union = this.union;
       if (force) params.force = force;
       params.holdingtime = this.getHoldingTime();
@@ -2695,7 +2696,7 @@ class OGInfinity {
               that.loca.LOCA_ALL_YES,
               that.loca.LOCA_ALL_NO,
               function () {
-                that.submitFleet3(true);
+                that.submitFleet2(true);
               }
             );
           } else {
