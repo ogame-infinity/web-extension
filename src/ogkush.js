@@ -17629,7 +17629,7 @@ class OGInfinity {
       }
       this.json.options.pantryKey = pantryInput.value;
       this.json.options.expedition.defaultTime = Math.max(1, Math.min(~~expeditionDefaultTime.value, 16));
-      this.json.options.expedition.limitCargo = Math.max(1, Math.min(~~expeditionLimitCargo.value, 200)) / 100;
+      this.json.options.expedition.limitCargo = Math.max(1, Math.min(~~expeditionLimitCargo.value, 500)) / 100;
       this.json.options.expedition.rotationAfter = Math.max(1, Math.min(~~expeditionRotationAfter.value, 16));
       this.json.needSync = true;
       this.saveData();
