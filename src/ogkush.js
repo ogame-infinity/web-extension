@@ -11541,54 +11541,61 @@ class OGInfinity {
   }
 
   async getLifeformBonus(planetId) {
-    let abortController = new AbortController();
+    const abortController = new AbortController();
     this.abordSignal = abortController.signal;
     window.onbeforeunload = function (e) {
       abortController.abort();
     };
     return fetch(
-      `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=ingame&component=bonussettings&cp=${planetId}`,
+      `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=ingame&component=lfbonuses&cp=${planetId}`,
       { signal: abortController.signal }
     )
       .then((rep) => rep.text())
       .then((str) => {
-        let htmlDocument = new window.DOMParser().parseFromString(str, "text/html");
-        let expeditionBonus = htmlDocument.querySelector("div[data-category='bonus-16'] .bonusValues")
-          ? fromFormatedNumber(
-              htmlDocument.querySelector("div[data-category='bonus-16'] .bonusValues").textContent.split("/")[0].trim(),
-              false,
-              true
-            ) / 100 || 0
+        const htmlDocument = new window.DOMParser().parseFromString(str, "text/html");
+          
+        const expeditionDiv = htmlDocument.querySelector(
+          "inner-bonus-item-heading[data-toggable='subcategoryResourcesExpedition'] .subCategoryBonus"
+        );
+        const expeditionBonus = expeditionDiv
+          ? fromFormatedNumber(expeditionDiv.textContent.slice(0, -1), false, true) / 100 || 0
           : 0;
-        let crawlerProductionBonus = 0;
-        let crawlerConsumptionBonus = 0;
-        htmlDocument.querySelectorAll("div[data-category='bonus-9'] .subItem").forEach((planet) => {
-          crawlerConsumptionBonus +=
-            fromFormatedNumber(
-              planet.querySelectorAll(".innerBonus")[0].nextElementSibling.textContent.split("/")[0].trim(),
-              false,
-              true
-            ) / 100;
-          crawlerProductionBonus +=
-            fromFormatedNumber(
-              planet.querySelectorAll(".innerBonus")[1].nextElementSibling.textContent.split("/")[0].trim(),
-              false,
-              true
-            ) / 100;
-        });
-        let metalBonus = htmlDocument.querySelector("div[data-category='bonus-1'] .bonusValues");
-        let crystalBonus = htmlDocument.querySelector("div[data-category='bonus-2'] .bonusValues");
-        let deuteriumBonus = htmlDocument.querySelector("div[data-category='bonus-3'] .bonusValues");
-        let energyBonus = htmlDocument.querySelector("div[data-category='bonus-8'] .bonusValues");
-        let productionBonus = [
-          metalBonus ? fromFormatedNumber(metalBonus.textContent.split("/")[0].trim(), false, true) / 100 || 0 : 0,
-          crystalBonus ? fromFormatedNumber(crystalBonus.textContent.split("/")[0].trim(), false, true) / 100 || 0 : 0,
-          deuteriumBonus
-            ? fromFormatedNumber(deuteriumBonus.textContent.split("/")[0].trim(), false, true) / 100 || 0
-            : 0,
-          energyBonus ? fromFormatedNumber(energyBonus.textContent.split("/")[0].trim(), false, true) / 100 || 0 : 0,
+  
+        const crawlerDiv = htmlDocument.querySelectorAll(
+          "inner-bonus-item-heading[data-toggable='subcategoryMiscImprovedCrawler'] bonus-item"
+        );
+        const crawlerConsumptionBonus = crawlerDiv.length
+          ? fromFormatedNumber(crawlerDiv[0].textContent.slice(0, -1), false, true) / 100 || 0
+          : 0;
+        const crawlerProductionBonus = crawlerDiv.length
+          ? fromFormatedNumber(crawlerDiv[1].textContent.slice(0, -1), false, true) / 100 || 0
+          : 0;
+
+        const productionBonus = [0, 0, 0, 0];
+        /* since ogame 11.5.0 disabled, as these bonuses do not include building production bonus anymore
+        const metDiv = htmlDocument.querySelector(
+          "inner-bonus-item-heading[data-toggable='subcategoryResources0'] .subCategoryBonus"
+        );
+        const cryDiv = htmlDocument.querySelector(
+          "inner-bonus-item-heading[data-toggable='subcategoryResources1'] .subCategoryBonus"
+        );
+        const deuDiv = htmlDocument.querySelector(
+          "inner-bonus-item-heading[data-toggable='subcategoryResources2'] .subCategoryBonus"
+        );
+        // since 11.5.0 energy bonus is missing
+        const eneDiv = htmlDocument.querySelector(
+          "inner-bonus-item-heading[data-toggable='subcategoryResources3'] .subCategoryBonus"
+        );
+        const productionBonus = [
+          metDiv ? fromFormatedNumber(metDiv.textContent.slice(0, -1), false, true) / 100 || 0 : 0,
+          cryDiv ? fromFormatedNumber(cryDiv.textContent.slice(0, -1), false, true) / 100 || 0 : 0,
+          deuDiv ? fromFormatedNumber(deuDiv.textContent.slice(0, -1), false, true) / 100 || 0 : 0,
+          eneDiv ? fromFormatedNumber(eneDiv.textContent.slice(0, -1), false, true) / 100 || 0 : 0,
         ];
+        */
+        
         let technologyCostReduction = {};
+        /* since ogame 11.5.0 disabled, as it seems lifeform buildings&techs bonuses are not reported except a few
         htmlDocument.querySelectorAll("div[data-category='bonus-28'] .subItemContent").forEach((tech) => {
           let techId = new URL(tech.querySelector("button").getAttribute("data-target")).searchParams.get(
             "technologyId"
@@ -11603,7 +11610,9 @@ class OGInfinity {
             ? technologyCostReduction[techId] + bonus
             : bonus;
         });
+        */
         let technologyTimeReduction = {};
+        /* since ogame 11.5.0 disabled, as it seems lifeform buildings&techs bonuses are not reported except a few
         htmlDocument.querySelectorAll("div[data-category='bonus-11'] .subItemContent").forEach((tech) => {
           let techId = new URL(tech.querySelector("button").getAttribute("data-target")).searchParams.get(
             "technologyId"
@@ -11618,7 +11627,10 @@ class OGInfinity {
             ? technologyTimeReduction[techId] + bonus
             : bonus;
         });
+        */
+
         const classBonus = {};
+        /* since ogame 11.5.0 disabled, as it seems this bonuses are not reported anymore
         if (this.playerClass == PLAYER_CLASS_EXPLORER) {
           htmlDocument.querySelectorAll("div[data-category='bonus-10'] .subItemContent .explorer").forEach((planet) => {
             const bonusContainer = planet.parentElement.nextElementSibling.querySelectorAll(".innerBonus");
@@ -11665,6 +11677,7 @@ class OGInfinity {
             // TODO: use classBonus where needed
           });
         }
+        */
         // TODO: add following consumptionReduction[id] = {energy: 0, deuterium: 0}
         return {
           classBonus: classBonus,
