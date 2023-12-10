@@ -1374,8 +1374,7 @@ class OGInfinity {
     this.tooltipList = {};
     this.current = {};
     this.current.planet = (
-      document.querySelector("#planetList .active") ??
-      document.querySelector("#planetList .planetlink")
+      document.querySelector("#planetList .active") ?? document.querySelector("#planetList .planetlink")
     ).parentNode;
     document.querySelectorAll(".planet-koords").forEach((elem) => (elem.textContent = elem.textContent.slice(1, -1)));
     this.current.id = parseInt(this.current.planet.id.split("-")[1]);
@@ -1977,12 +1976,11 @@ class OGInfinity {
               consDiv.appendChild(satsSpan);
               satsSpan.addEventListener("click", () => {
                 document.querySelector(".solarSatellite.hasDetails span").click();
-                wait.waitForQuerySelector("#technologydetails[data-technology-id='212']", 10, 2000)
-                  .then(() => {
-                    let satsInput = document.querySelector("#build_amount");
-                    satsInput.value = satsNeeded;
-                    satsInput.dispatchEvent(new KeyboardEvent("keyup", { key: "ArrowDown" }));
-                  });
+                wait.waitForQuerySelector("#technologydetails[data-technology-id='212']", 10, 2000).then(() => {
+                  let satsInput = document.querySelector("#build_amount");
+                  satsInput.value = satsNeeded;
+                  satsInput.dispatchEvent(new KeyboardEvent("keyup", { key: "ArrowDown" }));
+                });
               });
             }
             prodDiv.html(
@@ -2482,13 +2480,12 @@ class OGInfinity {
                   energyDiv.appendChild(satsSpan);
                   satsSpan.addEventListener("click", () => {
                     document.querySelector(".solarSatellite.hasDetails span").click();
-                    wait.waitForQuerySelector("#technologydetails[data-technology-id='212']")
-                      .then(() => {
-                        let satsInput = document.querySelector("#build_amount");
-                        satsInput.focus();
-                        satsInput.value = satsNeeded;
-                        satsInput.dispatchEvent(new KeyboardEvent("keyup", { key: "ArrowDown" }));
-                      });
+                    wait.waitForQuerySelector("#technologydetails[data-technology-id='212']").then(() => {
+                      let satsInput = document.querySelector("#build_amount");
+                      satsInput.focus();
+                      satsInput.value = satsNeeded;
+                      satsInput.dispatchEvent(new KeyboardEvent("keyup", { key: "ArrowDown" }));
+                    });
                   });
                 }
               }
@@ -2598,8 +2595,10 @@ class OGInfinity {
             )
               document
                 .querySelector(".costs")
-                .appendChild(createDOM("div", { class: "overmark" }, "OGi Warning: Lifeform bonus acquisition currently broken."));
-                /* since ogame 11.5.0 disabled, as it seems lifeform buildings&techs bonuses are not reported except a few
+                .appendChild(
+                  createDOM("div", { class: "overmark" }, "OGi Warning: Lifeform bonus acquisition currently broken.")
+                );
+            /* since ogame 11.5.0 disabled, as it seems lifeform buildings&techs bonuses are not reported except a few
                 .appendChild(createDOM("div", { class: "overmark" }, "resources not correct, try to update LF bonus"));
                 */
 
@@ -4684,11 +4683,13 @@ class OGInfinity {
         style: "margin-top: 1px;margin-left: 30px;",
       })
     );
-    let stats = playerDiv.appendChild(createDOM("a", {
-            class: "ogl-mmorpgstats",
-            href: this.generateMMORPGLink(player.id),
-            target: this.generateMMORPGLink(player.id),
-          }));
+    let stats = playerDiv.appendChild(
+      createDOM("a", {
+        class: "ogl-mmorpgstats",
+        href: this.generateMMORPGLink(player.id),
+        target: this.generateMMORPGLink(player.id),
+      })
+    );
     if (!player.id) {
       player.points = { score: 0 };
       player.economy = { score: 0 };
@@ -6405,11 +6406,13 @@ class OGInfinity {
         );
       }
 
-      let stats = btns.appendChild(createDOM("a", {
-            class: "ogl-mmorpgstats",
-            href: this.generateMMORPGLink(player.id),
-            target: this.generateMMORPGLink(player.id),
-          }));
+      let stats = btns.appendChild(
+        createDOM("a", {
+          class: "ogl-mmorpgstats",
+          href: this.generateMMORPGLink(player.id),
+          target: this.generateMMORPGLink(player.id),
+        })
+      );
       let pinBtn = btns.appendChild(createDOM("a", { class: "ogl-pin" }));
 
       let chat = btns.appendChild(createDOM("a", { class: "icon icon_chat" }));
@@ -6955,8 +6958,14 @@ class OGInfinity {
     let header = details.appendChild(createDOM("h1"));
     header.appendChild(createDOM("p", {}, this.getTranslatedText(88)));
     /* since ogame 11.5.0, as it seems lifeform buildings&techs bonuses are not reported except a few */
-    if (this.hasLifeforms){
-      details.appendChild(createDOM("p", { class: "ogk-box ogl-unknown-warning ogl-warning-dialog" }, "Warning: Lifeforms bonus acquisition currently broken; data not accurate."));
+    if (this.hasLifeforms) {
+      details.appendChild(
+        createDOM(
+          "p",
+          { class: "ogk-box ogl-unknown-warning ogl-warning-dialog" },
+          "Warning: Lifeforms bonus acquisition currently broken; data not accurate."
+        )
+      );
     }
     let tradeRateText = createDOM("p", { class: "ogk-tradeRate-text" }, this.getTranslatedText(119));
     let tradeRateGrid = createDOM("div", { class: "ogk-tradeRate-grid" });
@@ -11743,7 +11752,6 @@ class OGInfinity {
 
   updateEmpireProduction() {
     this.json.empire.forEach((planet) => {
-
       planet.production.productionFactor = 1; // temporary, TODO: change use in fleetDispatcher with computed factor
       planet.production.generalIncoming = {
         0: METAL_GENERAL_INCOMING * METAL_POS_BONUS[planet.position - 1] * this.json.speed,
@@ -11890,7 +11898,7 @@ class OGInfinity {
           (this.playerClass == PLAYER_CLASS_MINER ? 1 + this.json.minerBonusAdditionalCrawler : 1) *
           (this.json.lifeformBonus ? 1 + this.json.lifeformBonus[planet.id].crawlerBonus.production : 1);
         let crawlerPercent = Math.round((planet.production.production[217][idx] / crawlerProd) * 10) / 10;
-        crawlerPercent = this.playerClass == PLAYER_CLASS_MINER ? 1.5 : 1;  // temporary hack TODO: guess true value
+        crawlerPercent = this.playerClass == PLAYER_CLASS_MINER ? 1.5 : 1; // temporary hack TODO: guess true value
         crawlerProd *= Math.min(crawlerPercent, this.playerClass == PLAYER_CLASS_MINER ? CRAWLER_OVERLOAD_MAX : 1);
         crawlerProd = Math.min(crawlerProd, mineProd * this.json.resourceBuggyMaxProductionBoost);
         totalProd += crawlerProd;
@@ -17358,7 +17366,7 @@ class OGInfinity {
       createDOM("input", {
         type: "text",
         class: "ogl-rvalInput ogl-formatInput",
-        value:  Math.round(100 * this.json.options.expedition.limitCargo),
+        value: Math.round(100 * this.json.options.expedition.limitCargo),
       })
     );
     optiondiv = featureSettings.appendChild(createDOM("span", {}, this.getTranslatedText(150)));
@@ -18977,14 +18985,12 @@ function versionInStatusBar() {
     // workaround for "DOMPurify not defined" issue
     await wait.waitForDefinition(window, "DOMPurify");
 
-    Element.prototype.html = function(html) {
+    Element.prototype.html = function (html) {
       this.innerHTML = DOMPurify.sanitize(html);
     };
 
     ogKush.start();
-
   } catch (ex) {
     logger.error(ex);
   }
-
 })();
