@@ -2598,7 +2598,10 @@ class OGInfinity {
             )
               document
                 .querySelector(".costs")
+                .appendChild(createDOM("div", { class: "overmark" }, "OGi Warning: Lifeform bonus acquisition currently broken."));
+                /* since ogame 11.5.0 disabled, as it seems lifeform buildings&techs bonuses are not reported except a few
                 .appendChild(createDOM("div", { class: "overmark" }, "resources not correct, try to update LF bonus"));
+                */
 
             updateResearchDetails(technologyId, baseLvl, tolvl);
             let previous = infoDiv.appendChild(createDOM("a", { class: "icon icon_skip_back" }));
@@ -6951,6 +6954,10 @@ class OGInfinity {
     let filter = settings.appendChild(createDOM("div", { class: "ogk-filter-box" }));
     let header = details.appendChild(createDOM("h1"));
     header.appendChild(createDOM("p", {}, this.getTranslatedText(88)));
+    /* since ogame 11.5.0, as it seems lifeform buildings&techs bonuses are not reported except a few */
+    if (this.hasLifeforms){
+      details.appendChild(createDOM("p", { class: "ogk-box ogl-unknown-warning ogl-warning-dialog" }, "Warning: Lifeforms bonus acquisition currently broken; data not accurate."));
+    }
     let tradeRateText = createDOM("p", { class: "ogk-tradeRate-text" }, this.getTranslatedText(119));
     let tradeRateGrid = createDOM("div", { class: "ogk-tradeRate-grid" });
     let box = details.appendChild(createDOM("div", { class: "ogk-box" }));
