@@ -13887,11 +13887,8 @@ class OGInfinity {
 
       if (
         this.json.options.autoDeleteEnable &&
-        (
-          Math.round(report.fleet * this.json.universeSettingsTooltip.fleetToTF) 
-          + Math.round((report.total * report.loot) / 100)
-          + Math.round(report.defense * this.json.universeSettingsTooltip.defToTF)
-          ) < this.json.options.rvalLimit
+        Math.round(report.fleet * this.json.universeSettingsTooltip.fleetToTF) < this.json.options.rvalLimit &&
+        Math.round((report.total * report.loot) / 100) < this.json.options.rvalLimit
       ) {
         deleteBtn.click();
       }
