@@ -3172,8 +3172,8 @@ class OGInfinity {
           donutGalaxy: xml.querySelector("donutGalaxy").innerHTML == 1,
           donutSystem: xml.querySelector("donutSystem").innerHTML == 1,
           bonusFields: Number(xml.querySelector("bonusFields").innerHTML),
-          fleetToTF: Number(xml.querySelector("debrisFactor").innerHTML),
-          defToTF: Number(xml.querySelector("defToTF").innerHTML),
+          debrisFactor: Number(xml.querySelector("debrisFactor").innerHTML),
+          debrisFactorDef: Number(xml.querySelector("debrisFactorDef").innerHTML),
           repairFactor: Number(xml.querySelector("repairFactor").innerHTML),
           fuelConsumption: Number(xml.querySelector("globalDeuteriumSaveFactor").innerHTML),
           probeCargo: Number(xml.querySelector("probeCargo").innerHTML),
@@ -13780,7 +13780,7 @@ class OGInfinity {
       }%, rgb(166, 224, 176) ${report.resRatio[2]}%)`;
       let fleet = line.appendChild(createDOM("td", {}, toFormatedNumber(report.fleet, null, true)));
       if (
-        Math.round(report.fleet * this.json.universeSettingsTooltip.fleetToTF) >= this.json.options.rvalLimit ||
+        Math.round(report.fleet * this.json.universeSettingsTooltip.debrisFactor) >= this.json.options.rvalLimit ||
         report.fleet == "No Data"
       ) {
         fleet.classList.add("ogl-care");
@@ -13888,9 +13888,9 @@ class OGInfinity {
       if (
         this.json.options.autoDeleteEnable &&
         (
-          Math.round(report.fleet * this.json.universeSettingsTooltip.fleetToTF) 
+          Math.round(report.fleet * this.json.universeSettingsTooltip.debrisFactor) 
           + Math.round((report.total * report.loot) / 100)
-          + Math.round(report.defense * this.json.universeSettingsTooltip.defToTF)
+          + Math.round(report.defense * 0.3 * this.json.universeSettingsTooltip.debrisFactorDef)
           ) < this.json.options.rvalLimit
       ) {
         deleteBtn.click();
