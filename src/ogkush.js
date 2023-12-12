@@ -2812,7 +2812,7 @@ class OGInfinity {
         createDOM("button", { class: "btn_blue ogl-btn_red" }, this.getTranslatedText(26))
       );
       resetBtn.addEventListener("click", () => {
-        this.json.options.kept.delete(coords);
+        delete this.json.options.kept[coords];
         this.json.needSync = true;
         this.saveData();
         document.querySelector(".ogl-dialog .close-tooltip").click();
