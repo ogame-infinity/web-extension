@@ -11510,7 +11510,8 @@ class OGInfinity {
   async updateLifeform(full = false) {
     // WIP
     if (!this.hasLifeforms) return;
-    let lifeformBonus = {};
+    const lifeformBonus = {};
+    /*
     if (full) {
       for await (let planet of this.json.empire) {
         if (planet.id !== this.current.id) {
@@ -11523,8 +11524,17 @@ class OGInfinity {
     // last called fetch has to be from current planet/moon else Ogame switches on next refresh
     this.json.lifeformBonus[this.current.id] = await this.getLifeformBonus(this.current.id);
     this.json.needLifeformUpdate[this.current.id] = false;
+    */
+    // temporary hack until code reworked to work with unique lifeformBonus for lf-tech
+    const bonus = await this.getLifeformBonus(this.current.id);
+    this.json.empire.forEach((planet) => {
+      lifeformBonus[planet.id] = bonus;
+      this.json.needLifeformUpdate[planet.id] = false;
+    });
+    this.json.lifeformBonus = lifeformBonus;
     this.updateEmpireProduction();
     this.saveData();
+
     if (this.current.isMoon) {
       let abortController = new AbortController();
       this.abordSignal = abortController.signal;
