@@ -16709,11 +16709,11 @@ class OGInfinity {
           tr: "Seçenekler",
         },
         /*104*/ {
-          de: "Automatisches Löschen von wenig rentablen Berichten aktivieren/deaktivieren",
-          en: "Toggle automatic removal of low rentability reports",
-          es: "Activar/desactivar el borrado automático de los informes con baja rentabilidad",
-          fr: "Active/désactive la suppression automatique des rapports non rentables",
-          tr: "Düşük karlılık raporlarının otomatik kaldırmasını etkinleştir/devre dışı bırak",
+          de: "Automatisches Löschen von nicht rentablen Berichten aktivieren/deaktivieren, unter Berücksichtigung von: Plünderung, Flotten- und Verteidigungs-Trümmerfeld (Deuterium zu Trümmerfeld und 70% Verteidigungsreparatur werden angenommen).",
+          en: "Enable/Disable automatic deletion of unprofitable reports taking into account: looting, fleet and defense debris field (deuterium to debris field and 70% defense repair are assumed).",
+          es: "Habilitar/Deshabilitar la eliminación automática de informes no rentables teniendo en cuenta: saqueo, campo de escombros de flota y defensa (se asume deuterio al campo de escombros y 70% de reparación de defensa).",
+          fr: "Activer/Désactiver la suppression automatique des rapports non rentables en tenant compte  du pillage, du champ de ruine de la flotte et de la défense (on suppose que le deuterium se transforme en champ de ruine et que 70 % de la défense est réparée).",
+          tr: "Karlı olmayan raporların otomatik silinmesini etkinleştir/devre dışı bırakma: yağma, filo ve savunma enkaz alanı (deuteriumdan enkaz alanına ve %70 savunma onarımı varsayılmaktadır).",
         },
         /*105*/ {
           de: "Minimale Rentabilität um als interessant angesehen zu werden",
