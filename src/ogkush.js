@@ -2812,7 +2812,7 @@ class OGInfinity {
         createDOM("button", { class: "btn_blue ogl-btn_red" }, this.getTranslatedText(26))
       );
       resetBtn.addEventListener("click", () => {
-        this.json.options.kept.delete(coords);
+        delete this.json.options.kept[coords];
         this.json.needSync = true;
         this.saveData();
         document.querySelector(".ogl-dialog .close-tooltip").click();
@@ -13887,8 +13887,11 @@ class OGInfinity {
 
       if (
         this.json.options.autoDeleteEnable &&
-        Math.round(report.fleet * this.json.universeSettingsTooltip.fleetToTF) < this.json.options.rvalLimit &&
-        Math.round((report.total * report.loot) / 100) < this.json.options.rvalLimit
+        (
+          Math.round(report.fleet * this.json.universeSettingsTooltip.fleetToTF) 
+          + Math.round((report.total * report.loot) / 100)
+          + Math.round(report.defense * this.json.universeSettingsTooltip.defToTF)
+          ) < this.json.options.rvalLimit
       ) {
         deleteBtn.click();
       }
