@@ -4617,9 +4617,9 @@ class OGInfinity {
   APIStringToClipboard(fleet) {
     let str = "";
     str += `characterClassId;${this.playerClass}|114;${this.json.technology[114]}|`;
-    for (let id in [109, 110, 111, 115, 117, 118]) {
+    [109, 110, 111, 115, 117, 118].forEach((id) => {
       str += id + ";" + this.json.technology[id] + "|";
-    }
+    });
     for (let id in fleet) {
       let count = fleet[id];
       str += `${id};${count}|`;
