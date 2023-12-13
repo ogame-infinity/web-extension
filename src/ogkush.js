@@ -13887,11 +13887,14 @@ class OGInfinity {
 
       if (
         this.json.options.autoDeleteEnable &&
-        (
-          Math.round(report.fleet * this.json.universeSettingsTooltip.debrisFactor) 
-          + Math.round((report.total * report.loot) / 100)
-          + Math.round(report.defense * 0.3 * this.json.universeSettingsTooltip.debrisFactorDef)
-          ) < this.json.options.rvalLimit
+        Math.round(report.fleet * this.json.universeSettingsTooltip.debrisFactor) +
+          Math.round((report.total * report.loot) / 100) +
+          Math.round(
+            report.defense *
+              (1 - this.json.universeSettingsTooltip.repairFactor) *
+              this.json.universeSettingsTooltip.debrisFactorDef
+          ) <
+          this.json.options.rvalLimit
       ) {
         deleteBtn.click();
       }
