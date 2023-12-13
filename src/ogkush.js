@@ -1404,6 +1404,7 @@ class OGInfinity {
     this.json.expeditionSums = this.json.expeditionSums || {};
     this.json.discoveriesSums = this.json.discoveriesSums || {};
     this.json.discoveries = this.json.discoveries || {};
+    this.json.lfTypeNames = this.json.lfTypeNames || {};
     this.json.flying = this.json.flying || {
       metal: 0,
       crystal: 0,
@@ -1510,7 +1511,7 @@ class OGInfinity {
     this.json.options.defaultKept = this.json.options.defaultKept || {};
     this.json.options.hiddenTargets = this.json.options.hiddenTargets || {};
     this.json.options.timeZone = this.json.options.timeZone === false ? false : true;
-    this.json.selectedLifeforms = this.json.selectedLifeforms || null;
+    this.json.selectedLifeforms = this.json.selectedLifeforms || {};
     this.json.lifeformBonus = this.json.lifeformBonus || null;
     this.gameLang = document.querySelector('meta[name="ogame-language"]').getAttribute("content");
     this.isLoading = false;
@@ -1634,6 +1635,7 @@ class OGInfinity {
             this.loading();
             this.updateServerSettings(true);
             this.getAllianceClass();
+            this.initializeLFTypeName();
             await this.updateLifeform(true);
             this.welcome();
           });
@@ -11506,26 +11508,33 @@ class OGInfinity {
   }
 
   async updateLifeform(full = false) {
+    // WIP
     if (!this.hasLifeforms) return;
-    let lifeformBonus = {};
-    let selectedLifeforms = {};
+    const lifeformBonus = {};
+    /*
     if (full) {
       for await (let planet of this.json.empire) {
         if (planet.id !== this.current.id) {
           lifeformBonus[planet.id] = await this.getLifeformBonus(planet.id);
-          selectedLifeforms[planet.id] = await this.getSelectedLifeform(planet.id);
           this.json.needLifeformUpdate[planet.id] = false;
         }
       }
       this.json.lifeformBonus = lifeformBonus;
-      this.json.selectedLifeforms = selectedLifeforms;
     }
     // last called fetch has to be from current planet/moon else Ogame switches on next refresh
     this.json.lifeformBonus[this.current.id] = await this.getLifeformBonus(this.current.id);
-    this.json.selectedLifeforms[this.current.id] = await this.getSelectedLifeform(this.current.id);
     this.json.needLifeformUpdate[this.current.id] = false;
+    */
+    // temporary hack until code reworked to work with unique lifeformBonus for lf-tech
+    const bonus = await this.getLifeformBonus(this.current.id);
+    this.json.empire.forEach((planet) => {
+      lifeformBonus[planet.id] = bonus;
+      this.json.needLifeformUpdate[planet.id] = false;
+    });
+    this.json.lifeformBonus = lifeformBonus;
     this.updateEmpireProduction();
     this.saveData();
+
     if (this.current.isMoon) {
       let abortController = new AbortController();
       this.abordSignal = abortController.signal;
@@ -11536,27 +11545,8 @@ class OGInfinity {
     }
   }
 
-  async getSelectedLifeform(planetId) {
-    let abortController = new AbortController();
-    this.abordSignal = abortController.signal;
-    window.onbeforeunload = function (e) {
-      abortController.abort();
-    };
-    return fetch(
-      `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=ingame&component=lfsettings&cp=${planetId}`,
-      { signal: abortController.signal }
-    )
-      .then((rep) => rep.text())
-      .then((str) => {
-        const htmlDocument = new window.DOMParser().parseFromString(str, "text/html");
-        const selected = htmlDocument.querySelector("img.lifeformSelectedIcon")?.parentElement;
-        const lifeform = selected ? selected.classList[1] : "";
-        const level = selected ? parseInt(selected.nextElementSibling.querySelector(".currentlevel").textContent) : 0;
-        return { lifeform: lifeform, level: level };
-      });
-  }
-
   async getLifeformBonus(planetId) {
+    // WIP
     const abortController = new AbortController();
     this.abordSignal = abortController.signal;
     window.onbeforeunload = function (e) {
@@ -11569,14 +11559,26 @@ class OGInfinity {
       .then((rep) => rep.text())
       .then((str) => {
         const htmlDocument = new window.DOMParser().parseFromString(str, "text/html");
-          
+
+        // update selectedLifeforms & their levels
+        htmlDocument.querySelectorAll(".smallplanet a.planetlink").forEach((elem) => {
+          const name = elem.getAttribute("title").split("<br/>")[1].split(":")[1].trim();
+          this.json.selectedLifeforms[elem.href.split("cp=")[1]] = this.json.lfTypeNames[name];
+        });
+        const lifeformLevel = {};
+        htmlDocument.querySelectorAll("lifeform-level-bonuses div.lifeform-item-icon").forEach((iconDiv) => {
+          const lifeform = iconDiv.classList[1];
+          const level = parseInt(iconDiv.parentElement.parentElement.parentElement.querySelector("strong").textContent);
+          lifeformLevel[lifeform] = level;
+        });
+
         const expeditionDiv = htmlDocument.querySelector(
           "inner-bonus-item-heading[data-toggable='subcategoryResourcesExpedition'] .subCategoryBonus"
         );
         const expeditionBonus = expeditionDiv
           ? fromFormatedNumber(expeditionDiv.textContent.slice(0, -1), false, true) / 100 || 0
           : 0;
-  
+
         const crawlerDiv = htmlDocument.querySelectorAll(
           "inner-bonus-item-heading[data-toggable='subcategoryMiscImprovedCrawler'] bonus-item"
         );
@@ -11609,7 +11611,7 @@ class OGInfinity {
           eneDiv ? fromFormatedNumber(eneDiv.textContent.slice(0, -1), false, true) / 100 || 0 : 0,
         ];
         */
-        
+
         let technologyCostReduction = {};
         /* since ogame 11.5.0 disabled, as it seems lifeform buildings&techs bonuses are not reported except a few
         htmlDocument.querySelectorAll("div[data-category='bonus-28'] .subItemContent").forEach((tech) => {
@@ -11696,6 +11698,7 @@ class OGInfinity {
         */
         // TODO: add following consumptionReduction[id] = {energy: 0, deuterium: 0}
         return {
+          lifeformLevel: lifeformLevel,
           classBonus: classBonus,
           productionBonus: productionBonus,
           technologyCostReduction: technologyCostReduction,
@@ -17258,6 +17261,7 @@ class OGInfinity {
       this.loading();
       this.updateServerSettings(true);
       this.getAllianceClass();
+      this.initializeLFTypeName();
       await this.updateLifeform(true);
       document.querySelector(".ogl-dialog .close-tooltip").click();
     });
@@ -17893,8 +17897,8 @@ class OGInfinity {
   roiLfResearch(technoId, baselvl, tolvl, object) {
     // console.log(`roiLfResearch(${technoId}, ${baselvl}, ${tolvl}, ${object})`);
     if (!this.json.lifeFormProductionBoostFromResearch[technoId]) return;
-    let techBonusFromLifeformLevel = this.json.selectedLifeforms
-      ? 0.001 * this.json.selectedLifeforms[object.id].level
+    let techBonusFromLifeformLevel = this.json.lifeformBonus[object.id]
+      ? 0.001 * this.json.lifeformBonus[object.id].lifeformLevel[this.json.selectedLifeforms[object.id]]
       : 0;
     let bonus = this.json.lifeFormProductionBoostFromResearch[technoId].map(
       (x) => (x / 100) * (1 + techBonusFromLifeformLevel) * (tolvl - baselvl + 1)
@@ -18843,13 +18847,25 @@ class OGInfinity {
     }
   }
 
+  initializeLFTypeName() {
+    if (!this.hasLifeforms) return;
+    fetch("/game/index.php?page=ingame&component=lfsettings")
+      .then((rep) => rep.text())
+      .then((str) => {
+        const htmlDocument = new window.DOMParser().parseFromString(str, "text/html");
+        const listName = htmlDocument.querySelectorAll("div.lfsettingsContent > h3");
+        listName.forEach((lfName) => {
+          const lifeformIcon = lfName.parentElement.querySelector(".lifeform1, .lifeform2, .lifeform3, .lifeform4");
+          this.json.lfTypeNames[lfName.textContent.trim()] = lifeformIcon.classList[1];
+        });
+      });
+  }
+
   async markLifeforms() {
-    if (!this.hasLifeforms || this.json.selectedLifeforms == null) return;
+    if (!this.hasLifeforms) return;
     document.querySelectorAll(".smallplanet a.planetlink").forEach((elem) => {
-      let lf = this.json.selectedLifeforms[elem.href.split("cp=")[1]]
-        ? this.json.selectedLifeforms[elem.href.split("cp=")[1]].lifeform
-        : "";
-      elem.appendChild(createDOM("div", { class: `lifeform-item-icon small ${lf}` }));
+      const lifeform = this.json.selectedLifeforms[elem.href.split("cp=")[1]];
+      elem.appendChild(createDOM("div", { class: `lifeform-item-icon small ${lifeform ? lifeform : ""}` }));
     });
   }
 
