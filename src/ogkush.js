@@ -17898,7 +17898,7 @@ class OGInfinity {
     // console.log(`roiLfResearch(${technoId}, ${baselvl}, ${tolvl}, ${object})`);
     if (!this.json.lifeFormProductionBoostFromResearch[technoId]) return;
     let techBonusFromLifeformLevel = this.json.lifeformBonus[object.id]
-      ? 0.001 * this.json.lifeformBonus[object.id].lifeformLevel[this.selectedLifeforms[object.id]]
+      ? 0.001 * this.json.lifeformBonus[object.id].lifeformLevel[this.json.selectedLifeforms[object.id]]
       : 0;
     let bonus = this.json.lifeFormProductionBoostFromResearch[technoId].map(
       (x) => (x / 100) * (1 + techBonusFromLifeformLevel) * (tolvl - baselvl + 1)
