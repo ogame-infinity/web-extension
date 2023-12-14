@@ -12560,7 +12560,7 @@ class OGInfinity {
     sumPlanet.appendChild(divMoonSum);
     list.appendChild(sumPlanet);
     list.appendChild(flyingSum);
-    let sum = createDOM("div", { class: "smallplanet smaller ogl-summary" });
+
     let sumres = createDOM("div", { class: "ogl-res" });
     sumres.appendChild(
       createDOM(
@@ -12592,9 +12592,38 @@ class OGInfinity {
         toFormatedNumber(Math.floor(dSumP + dSumM + this.json.flying.deuterium), null, true)
       )
     );
+
+    let fullSumresMSU = createDOM("div", { class: "ogl-res ogl-sum-symbol" });
+
+    let tradeRate = this.json.options.tradeRate;
+    let fullSumMSE = 0;
+    let fullSum = [
+      (mSumP + mSumM + this.json.flying.metal),
+      (cSumP + cSumM + this.json.flying.crystal),
+      (dSumP + dSumM + this.json.flying.deuterium),
+    ];
+    fullSumMSE += fullSum.map((x, n) => (x * tradeRate[0]) / tradeRate[n]).reduce((sum, cur) => sum + cur, 0);
+
+    fullSumresMSU.appendChild(
+      createDOM(
+        "span",
+        {
+          class: "tooltip ",
+          "data-title": toFormatedNumber(Math.floor(fullSumMSE)),
+        },
+        toFormatedNumber(Math.floor(fullSumMSE), null, true)
+      )
+    );
+
+    let sum = createDOM("div", { class: "smallplanet smaller ogl-summary" });
     sum.appendChild(createDOM("div", { class: "ogl-sum-symbol" }, "ΣΣ"));
     sum.appendChild(sumres);
     list.appendChild(sum);
+    let sumMSU = createDOM("div", { class: "smallplanet smaller ogl-summary" });
+    sumMSU.appendChild(createDOM("div", { class: "ogl-sum-symbol" }, "ΣΣ MSU"));
+    sumMSU.appendChild(fullSumresMSU);
+    list.appendChild(sumMSU);
+
     if (document.querySelectorAll(".moonlink").length == 0) {
       divMoonSum.style.display = "none";
       moonSumSymbol.style.display = "none";
