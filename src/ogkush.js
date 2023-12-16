@@ -13104,7 +13104,8 @@ class OGInfinity {
     let plaspy = panel.appendChild(createDOM("button", { class: "icon_eye" }));
     let plaFleet = panel.appendChild(createDOM("div", { class: "ogl-atk" }));
     plaspy.addEventListener("click", (e) => {
-      sendShipsWithPopup(6, coords[0], coords[1], coords[2], 0, this.json.spyProbes);
+      // sendShipsWithPopup(6, coords[0], coords[1], coords[2], 0, this.json.spyProbes);
+      // disable direct probing in stalks and target list until better way implemented or GF start to wake up
       e.stopPropagation();
     });
     plaFleet.addEventListener("click", (e) => {
@@ -13130,7 +13131,8 @@ class OGInfinity {
     plaFleet = panel.appendChild(createDOM("div", { class: "ogl-atk" }));
     plaspy = panel.appendChild(createDOM("button", { class: "icon_eye" }));
     plaspy.addEventListener("click", (e) => {
-      sendShipsWithPopup(6, coords[0], coords[1], coords[2], 3, this.json.spyProbes);
+      // sendShipsWithPopup(6, coords[0], coords[1], coords[2], 3, this.json.spyProbes);
+      // disable direct probing in stalks and target list until better way implemented or GF start to wake up
       e.stopPropagation();
     });
     plaFleet.addEventListener("click", (e) => {
@@ -13189,7 +13191,8 @@ class OGInfinity {
       let panel = planetDiv.appendChild(createDOM("div", { class: "ogl-planet-hover" }));
       let plaspy = panel.appendChild(createDOM("button", { class: "icon_eye" }));
       plaspy.addEventListener("click", (e) => {
-        sendShipsWithPopup(6, coords[0], coords[1], coords[2], 0, this.json.spyProbes);
+        // sendShipsWithPopup(6, coords[0], coords[1], coords[2], 0, this.json.spyProbes);
+        // disable direct probing in stalks and target list until better way implemented or GF start to wake up
         e.stopPropagation();
       });
       planetDiv.appendChild(createDOM("div", { class: "ogl-planet-act" }));
@@ -13210,7 +13213,8 @@ class OGInfinity {
       panel = moonDiv.appendChild(createDOM("div", { class: "ogl-moon-hover" }));
       plaspy = panel.appendChild(createDOM("button", { class: "icon_eye" }));
       plaspy.addEventListener("click", (e) => {
-        sendShipsWithPopup(6, coords[0], coords[1], coords[2], 3, this.json.spyProbes);
+        // sendShipsWithPopup(6, coords[0], coords[1], coords[2], 3, this.json.spyProbes);
+        // disable direct probing in stalks and target list until better way implemented or GF start to wake up
         e.stopPropagation();
       });
       a.addEventListener("click", (event) => {
