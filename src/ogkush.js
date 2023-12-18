@@ -1636,7 +1636,7 @@ class OGInfinity {
             this.updateServerSettings(true);
             this.getAllianceClass();
             this.initializeLFTypeName();
-            await this.updateLifeform(true);
+            await this.updateLifeform();
             this.welcome();
           });
       } else {
@@ -11202,13 +11202,15 @@ class OGInfinity {
         level = level !== -1 ? level : EXPEDITION_TOP1_POINTS.length;
         const maxExpeditionPoints = EXPEDITION_EXPEDITION_POINTS[level];
         let maxResources = EXPEDITION_MAX_RESOURCES[level];
-        // Explorer class bonus
+
         if (this.playerClass == PLAYER_CLASS_EXPLORER) {
+          // explorer class bonus
           maxResources *= (1 + this.json.explorerBonusIncreasedExpeditionOutcome) * this.json.speed;
+          // LF character class bonus
+          maxResources *= 1 + (this.json.lifeformBonus?.[this.current.id]?.classBonus.explorer || 0);
         }
-        // LF bonus
+        // LF expedition bonus
         maxResources *= 1 + (this.json.lifeformBonus?.[this.current.id]?.expeditionBonus || 0);
-        maxResources *= 1 + (this.json.lifeformBonus?.[this.current.id]?.classBonus?.expedition || 0);
 
         const availableShips = {
           202: 0,
@@ -11507,26 +11509,13 @@ class OGInfinity {
     }
   }
 
-  async updateLifeform(full = false) {
+  async updateLifeform() {
     // WIP
     if (!this.hasLifeforms) return;
     const lifeformBonus = {};
-    /*
-    if (full) {
-      for await (let planet of this.json.empire) {
-        if (planet.id !== this.current.id) {
-          lifeformBonus[planet.id] = await this.getLifeformBonus(planet.id);
-          this.json.needLifeformUpdate[planet.id] = false;
-        }
-      }
-      this.json.lifeformBonus = lifeformBonus;
-    }
-    // last called fetch has to be from current planet/moon else Ogame switches on next refresh
-    this.json.lifeformBonus[this.current.id] = await this.getLifeformBonus(this.current.id);
-    this.json.needLifeformUpdate[this.current.id] = false;
-    */
-    // temporary hack until code reworked to work with unique lifeformBonus for lf-tech
-    const bonus = await this.getLifeformBonus(this.current.id);
+    const bonus = await this.getLifeformBonus();
+    // temporary hack until code reworked to work with unique lifeformBonus
+    // TODO: implement unique lifeformBonus
     this.json.empire.forEach((planet) => {
       lifeformBonus[planet.id] = bonus;
       this.json.needLifeformUpdate[planet.id] = false;
@@ -11534,26 +11523,16 @@ class OGInfinity {
     this.json.lifeformBonus = lifeformBonus;
     this.updateEmpireProduction();
     this.saveData();
-
-    if (this.current.isMoon) {
-      let abortController = new AbortController();
-      this.abordSignal = abortController.signal;
-      window.onbeforeunload = function (e) {
-        abortController.abort();
-      };
-      fetch(this.current.planet.querySelector(".moonlink").href, { signal: abortController.signal });
-    }
   }
 
-  async getLifeformBonus(planetId) {
-    // WIP
+  async getLifeformBonus() {
     const abortController = new AbortController();
     this.abordSignal = abortController.signal;
     window.onbeforeunload = function (e) {
       abortController.abort();
     };
     return fetch(
-      `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=ingame&component=lfbonuses&cp=${planetId}`,
+      `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=ingame&component=lfbonuses`,
       { signal: abortController.signal }
     )
       .then((rep) => rep.text())
@@ -11572,138 +11551,75 @@ class OGInfinity {
           lifeformLevel[lifeform] = level;
         });
 
-        const expeditionDiv = htmlDocument.querySelector(
-          "inner-bonus-item-heading[data-toggable='subcategoryResourcesExpedition'] .subCategoryBonus"
-        );
-        const expeditionBonus = expeditionDiv
-          ? fromFormatedNumber(expeditionDiv.textContent.slice(0, -1), false, true) / 100 || 0
-          : 0;
+        const parseBonus = (text) => fromFormatedNumber(text.split("%")[0], false, true) / 100 || 0;
 
-        const crawlerDiv = htmlDocument.querySelectorAll(
-          "inner-bonus-item-heading[data-toggable='subcategoryMiscImprovedCrawler'] bonus-item"
-        );
-        const crawlerConsumptionBonus = crawlerDiv.length
-          ? fromFormatedNumber(crawlerDiv[0].textContent.slice(0, -1), false, true) / 100 || 0
-          : 0;
-        const crawlerProductionBonus = crawlerDiv.length
-          ? fromFormatedNumber(crawlerDiv[1].textContent.slice(0, -1), false, true) / 100 || 0
-          : 0;
-
-        const productionBonus = [0, 0, 0, 0];
-        /* since ogame 11.5.0 disabled, as these bonuses do not include building production bonus anymore
-        const metDiv = htmlDocument.querySelector(
+        // production bonus
+        const metalDiv = htmlDocument.querySelector(
           "inner-bonus-item-heading[data-toggable='subcategoryResources0'] .subCategoryBonus"
         );
-        const cryDiv = htmlDocument.querySelector(
+        const crystalDiv = htmlDocument.querySelector(
           "inner-bonus-item-heading[data-toggable='subcategoryResources1'] .subCategoryBonus"
         );
-        const deuDiv = htmlDocument.querySelector(
+        const deuteriumDiv = htmlDocument.querySelector(
           "inner-bonus-item-heading[data-toggable='subcategoryResources2'] .subCategoryBonus"
         );
-        // since 11.5.0 energy bonus is missing
-        const eneDiv = htmlDocument.querySelector(
+        const energyDiv = htmlDocument.querySelector(
           "inner-bonus-item-heading[data-toggable='subcategoryResources3'] .subCategoryBonus"
         );
         const productionBonus = [
-          metDiv ? fromFormatedNumber(metDiv.textContent.slice(0, -1), false, true) / 100 || 0 : 0,
-          cryDiv ? fromFormatedNumber(cryDiv.textContent.slice(0, -1), false, true) / 100 || 0 : 0,
-          deuDiv ? fromFormatedNumber(deuDiv.textContent.slice(0, -1), false, true) / 100 || 0 : 0,
-          eneDiv ? fromFormatedNumber(eneDiv.textContent.slice(0, -1), false, true) / 100 || 0 : 0,
+          metalDiv ? parseBonus(metalDiv.textContent) : 0,
+          crystalDiv ? parseBonus(crystalDiv.textContent) : 0,
+          deuteriumDiv ? parseBonus(deuteriumDiv.textContent) : 0,
+          energyDiv ? parseBonus(energyDiv.textContent) : 0,
         ];
-        */
 
-        let technologyCostReduction = {};
-        /* since ogame 11.5.0 disabled, as it seems lifeform buildings&techs bonuses are not reported except a few
-        htmlDocument.querySelectorAll("div[data-category='bonus-28'] .subItemContent").forEach((tech) => {
-          let techId = new URL(tech.querySelector("button").getAttribute("data-target")).searchParams.get(
-            "technologyId"
-          );
-          let bonus =
-            fromFormatedNumber(
-              tech.querySelector(".innerBonus").nextElementSibling.textContent.split("/")[0].trim(),
-              false,
-              true
-            ) / 100;
-          technologyCostReduction[techId] = technologyCostReduction[techId]
-            ? technologyCostReduction[techId] + bonus
-            : bonus;
-        });
-        */
-        let technologyTimeReduction = {};
-        /* since ogame 11.5.0 disabled, as it seems lifeform buildings&techs bonuses are not reported except a few
-        htmlDocument.querySelectorAll("div[data-category='bonus-11'] .subItemContent").forEach((tech) => {
-          let techId = new URL(tech.querySelector("button").getAttribute("data-target")).searchParams.get(
-            "technologyId"
-          );
-          let bonus =
-            fromFormatedNumber(
-              tech.querySelector(".innerBonus").nextElementSibling.textContent.split("/")[0].trim(),
-              false,
-              true
-            ) / 100;
-          technologyTimeReduction[techId] = technologyTimeReduction[techId]
-            ? technologyTimeReduction[techId] + bonus
-            : bonus;
-        });
-        */
+        // expedition bonus
+        const expeditionDiv = htmlDocument.querySelector(
+          "inner-bonus-item-heading[data-toggable='subcategoryResourcesExpedition'] .subCategoryBonus"
+        );
+        const expeditionBonus = expeditionDiv ? parseBonus(expeditionDiv.textContent) : 0;
 
+        // cost & time reduction bonus
+        const technologyCostReduction = {};
+        const technologyTimeReduction = {};
+        htmlDocument
+          .querySelectorAll("inner-bonus-item-heading[data-toggable^='subcategoryCostAndTime']")
+          .forEach((category) => {
+            const techId = category.getAttribute("data-toggable").split("subcategoryCostAndTime")[1];
+            const bonus = category.querySelectorAll("bonus-item");
+            technologyCostReduction[techId] = parseBonus(bonus[0].textContent);
+            technologyTimeReduction[techId] = parseBonus(bonus[1].textContent);
+          });
+
+        // class bonus
         const classBonus = {};
-        /* since ogame 11.5.0 disabled, as it seems this bonuses are not reported anymore
-        if (this.playerClass == PLAYER_CLASS_EXPLORER) {
-          htmlDocument.querySelectorAll("div[data-category='bonus-10'] .subItemContent .explorer").forEach((planet) => {
-            const bonusContainer = planet.parentElement.nextElementSibling.querySelectorAll(".innerBonus");
-            const research =
-              fromFormatedNumber(bonusContainer[0].nextElementSibling.textContent.split("/")[0].trim(), false, true) /
-              100; // value extraction not tested
-            const expedition =
-              fromFormatedNumber(bonusContainer[1].nextElementSibling.textContent.split("/")[0].trim(), false, true) /
-              (100 * (1 + this.json.explorerBonusIncreasedExpeditionOutcome) * this.json.speed);
-            // translate weird reported bonus into something useful to apply later
-            const phalanxRange =
-              fromFormatedNumber(bonusContainer[5].nextElementSibling.textContent.split("/")[0].trim(), false, true) /
-              100; // value extraction not tested
-            const inactiveLoot =
-              fromFormatedNumber(bonusContainer[6].nextElementSibling.textContent.split("/")[0].trim(), false, true) /
-              100; // value extraction not tested
+        const collectorDiv = htmlDocument.querySelector(
+          "inner-bonus-item-heading[data-toggable='subcategoryCharacterclasses1'] .subCategoryBonus"
+        );
+        const generalDiv = htmlDocument.querySelector(
+          "inner-bonus-item-heading[data-toggable='subcategoryCharacterclasses2'] .subCategoryBonus"
+        );
+        const discovererDiv = htmlDocument.querySelector(
+          "inner-bonus-item-heading[data-toggable='subcategoryCharacterclasses3'] .subCategoryBonus"
+        );
+        classBonus.miner = collectorDiv ? parseBonus(collectorDiv.textContent.split(":")[1]) : 0;
+        classBonus.warrior = generalDiv ? parseBonus(generalDiv.textContent.split(":")[1]) : 0;
+        classBonus.explorer = discovererDiv ? parseBonus(discovererDiv.textContent.split(":")[1]) : 0;
 
-            classBonus.research = classBonus.research ? classBonus.research + research : research;
-            classBonus.expedition = classBonus.expedition ? classBonus.expedition + expedition : expedition;
-            classBonus.phalanxRange = classBonus.phalanxRange ? classBonus.phalanxRange + phalanxRange : phalanxRange;
-            classBonus.inactiveLoot = classBonus.inactiveLoot ? classBonus.inactiveLoot + phalanxRange : inactiveLoot;
-            // TODO: only expedition bonus is used in expedition(), use more classBonus where needed
-          });
-        }
-        if (this.playerClass == PLAYER_CLASS_MINER) {
-          htmlDocument.querySelectorAll("div[data-category='bonus-10'] .subItemContent .miner").forEach((planet) => {
-            const bonusContainer = planet.parentElement.nextElementSibling.querySelectorAll(".innerBonus");
-            const production =
-              fromFormatedNumber(bonusContainer[0].nextElementSibling.textContent.split("/")[0].trim(), false, true) /
-              100; // value extraction not tested
-            const energy =
-              fromFormatedNumber(bonusContainer[1].nextElementSibling.textContent.split("/")[0].trim(), false, true) /
-              100; // value extraction not tested
-            const crawler =
-              fromFormatedNumber(bonusContainer[4].nextElementSibling.textContent.split("/")[0].trim(), false, true) /
-              100; // value extraction not tested
-            const maxCrawlers =
-              fromFormatedNumber(bonusContainer[5].nextElementSibling.textContent.split("/")[0].trim(), false, true) /
-              100; // value extraction not tested
-            classBonus.production = classBonus.production ? classBonus.production + production : production;
-            classBonus.energy = classBonus.energy ? classBonus.energy + energy : energy;
-            classBonus.crawler = classBonus.crawler ? classBonus.crawler + crawler : crawler;
-            classBonus.maxCrawlers = classBonus.maxCrawlers ? classBonus.maxCrawlers + maxCrawlers : maxCrawlers;
-            // TODO: use classBonus where needed
-          });
-        }
-        */
-        // TODO: add following consumptionReduction[id] = {energy: 0, deuterium: 0}
+        // crawler bonus
+        const crawlerDiv = htmlDocument.querySelectorAll(
+          "inner-bonus-item-heading[data-toggable='subcategoryMiscImprovedCrawler'] bonus-item"
+        );
+        const crawlerConsumptionBonus = crawlerDiv.length ? parseBonus(crawlerDiv[0].textContent) : 0;
+        const crawlerProductionBonus = crawlerDiv.length ? parseBonus(crawlerDiv[1].textContent) : 0;
+
         return {
           lifeformLevel: lifeformLevel,
-          classBonus: classBonus,
           productionBonus: productionBonus,
+          expeditionBonus: expeditionBonus,
           technologyCostReduction: technologyCostReduction,
           technologyTimeReduction: technologyTimeReduction,
-          expeditionBonus: expeditionBonus,
+          classBonus: classBonus,
           crawlerBonus: { production: crawlerProductionBonus, consumption: crawlerConsumptionBonus },
         };
       });
@@ -17268,7 +17184,7 @@ class OGInfinity {
       this.updateServerSettings(true);
       this.getAllianceClass();
       this.initializeLFTypeName();
-      await this.updateLifeform(true);
+      await this.updateLifeform();
       document.querySelector(".ogl-dialog .close-tooltip").click();
     });
     dataDiv.appendChild(createDOM("hr"));
