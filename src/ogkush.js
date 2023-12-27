@@ -17937,7 +17937,7 @@ class OGInfinity {
     let prodDiffMSE = prodDiff.map((x, n) => (x * tradeRate[0]) / tradeRate[n]).reduce((sum, cur) => sum + cur, 0);
     let buildingCostMSE = 0;
     for (let lvl = baselvl; lvl <= tolvl; lvl++) {
-      buildingCostMSE += this.building(technoId, lvl, false, false, false, object)
+      buildingCostMSE += this.building(technoId, lvl, object)
         .cost.map((x, n) => (x * tradeRate[0]) / tradeRate[n])
         .reduce((sum, cur) => sum + cur, 0);
     }
