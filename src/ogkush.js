@@ -1513,6 +1513,7 @@ class OGInfinity {
     this.json.options.timeZone = this.json.options.timeZone === false ? false : true;
     this.json.selectedLifeforms = this.json.selectedLifeforms || {};
     this.json.lifeformBonus = this.json.lifeformBonus || null;
+    this.json.lifeformPlanetBonus = this.json.lifeformPlanetBonus || {};
     this.gameLang = document.querySelector('meta[name="ogame-language"]').getAttribute("content");
     this.isLoading = false;
     this.autoQueue = new AutoQueue();
@@ -11625,6 +11626,63 @@ class OGInfinity {
       });
   }
 
+  async updateLifeformPlanetBonus() {
+    const lifeformPlanetBonus = {};
+    this.json.empire.forEach((planet) => {
+      const lifeform = this.json.selectedLifeforms[planet.id];
+
+      // research cost & time reduction bonus
+      const lfLabBuildingId = Number("1" + lifeform?.slice(-1) + "103");
+      const technologyCostReduction = 0.0025 * (planet[lfLabBuildingId] > 1 ? planet[lfLabBuildingId] : 0);
+      const technologyTimeReduction = 0.02 * (planet[lfLabBuildingId] > 1 ? planet[lfLabBuildingId] : 0);
+
+      // building cost & time reduction bonus
+      const buildingCostReduction = {};
+      const buildingTimeReduction = {};
+      if (lifeform == "lifeform2") {
+        const lfCostReduction = 0.01 * planet[12108];
+        const lfTimeReduction = 0.01 * planet[12108];
+        if (lfCostReduction) {
+          Array.from(new Array(12), (x, i) => i + 12101).forEach((id) => {
+            buildingCostReduction[id] = lfCostReduction;
+            buildingTimeReduction[id] = lfTimeReduction;
+          });
+        }
+        const prodCostReduction = 0.005 * planet[12111];
+        if (prodCostReduction) {
+          [1, 2, 3, 4, 12].forEach((id) => (buildingCostReduction[id] = prodCostReduction));
+          [12101, 12102].forEach((id) => (buildingCostReduction[id] += prodCostReduction));
+        }
+      }
+
+      // production bonus
+      const productionBonus = [0, 0, 0, 0];
+      switch (lifeform) {
+        case "lifeform1":
+          productionBonus[0] = 0.0015 * planet[11106];
+          productionBonus[1] = 0.0015 * planet[11108];
+          productionBonus[2] = 0.001 * planet[11108];
+          break;
+        case "lifeform2":
+          productionBonus[0] = 0.002 * planet[12106];
+          productionBonus[1] = 0.002 * planet[12109];
+          productionBonus[2] = 0.002 * planet[12110];
+          break;
+        case "lifeform3":
+          productionBonus[2] = 0.002 * planet[13110];
+      }
+
+      lifeformPlanetBonus[planet.id] = {
+        buildingCostReduction: buildingCostReduction,
+        buildingTimeReduction: buildingTimeReduction,
+        productionBonus: productionBonus,
+        technologyCostReduction: technologyCostReduction,
+        technologyTimeReduction: technologyTimeReduction,
+      };
+    });
+    this.json.lifeformPlanetBonus = lifeformPlanetBonus;
+  }
+
   async getEmpireInfo() {
     let abortController = new AbortController();
     this.abordSignal = abortController.signal;
@@ -12563,6 +12621,7 @@ class OGInfinity {
         planet.invalidate = false;
         if (planet.moon) planet.moon.invalidate = false;
       });
+      this.updateLifeformPlanetBonus();
       this.updateEmpireProduction();
       this.updateresourceDetail();
       this.flyingFleet();
@@ -14394,6 +14453,11 @@ class OGInfinity {
           .sort((a, b) => b - a)
           .slice(0, igfn)
           .map((x) => (labLvl += x));
+      } else {
+        const technologyCostReduction = this.json.lifeformPlanetBonus[object.id]?.technologyCostReduction;
+        const technologyTimeReduction = this.json.lifeformPlanetBonus[object.id]?.technologyTimeReduction;
+        costFactor -= technologyCostReduction ? technologyCostReduction : 0;
+        timeFactor -= technologyTimeReduction ? technologyTimeReduction : 0;
       }
       if (this.json.lifeformBonus && this.json.lifeformBonus[object.id]) {
         if (
@@ -14513,6 +14577,13 @@ class OGInfinity {
     let nanite = object ? (object[15] ? object[15] : 0) : 0;
     if (id >= 11101) lvl = Math.max(lvl, 1); // needed for demolish to lvl 0
 
+    if (object) {
+      const buildingCostReduction = this.json.lifeformPlanetBonus[object.id]?.buildingCostReduction[id];
+      const buildingTimeReduction = this.json.lifeformPlanetBonus[object.id]?.buildingTimeReduction[id];
+      costFactor -= buildingCostReduction ? buildingCostReduction : 0;
+      timeFactor -= buildingTimeReduction ? buildingTimeReduction : 0;
+    }
+
     if (object && this.json.lifeformBonus && this.json.lifeformBonus[object.id]) {
       if (
         this.json.lifeformBonus[object.id].technologyCostReduction &&
@@ -14565,6 +14636,10 @@ class OGInfinity {
       ),
       1
     );
+
+    // remove any time reduction applied by side effect on regular tech by cost reduction LF tech
+    if (costFactor < 1 && id < 11101) time /= costFactor;
+
     if (BUIDLING_INFO[id].factorTime) {
       time = Math.max(
         Math.round(
