@@ -3296,7 +3296,7 @@ class OGInfinity {
     );
     bar.appendChild(
       createDOM("li").appendChild(
-        createDOM("a", { href: `https://trashsim.oplanet.eu/${this.univerviewLang}`, target: "_blank" }, "Trash")
+        createDOM("a", { href: `https://trashsim.stevecohen.fr/${this.univerviewLang}`, target: "_blank" }, "Trash")
       ).parentElement
     );
     bar.appendChild(
@@ -4307,7 +4307,7 @@ class OGInfinity {
               };
               let base64 = btoa(JSON.stringify(json));
               window.open(
-                `https://trashsim.oplanet.eu/${this.univerviewLang}?SR_KEY=${key}#prefill=${base64}`,
+                `https://trashsim.stevecohen.fr/${this.univerviewLang}?SR_KEY=${key}#prefill=${base64}`,
                 "_blank"
               );
             });
@@ -13869,7 +13869,7 @@ class OGInfinity {
         };
         let base64 = btoa(JSON.stringify(json));
         window.open(
-          `https://trashsim.oplanet.eu/${this.univerviewLang}?SR_KEY=${report.apiKey}#prefill=${base64}`,
+          `https://trashsim.stevecohen.fr/${this.univerviewLang}?SR_KEY=${report.apiKey}#prefill=${base64}`,
           "_blank"
         );
       });
@@ -15120,7 +15120,7 @@ class OGInfinity {
         settings: this.json.trashsimSettings,
       };
       let base64 = btoa(JSON.stringify(json));
-      window.open(`https://trashsim.oplanet.eu/${this.univerviewLang}?#prefill=${base64}`, "_blank");
+      window.open(`https://trashsim.stevecohen.fr/${this.univerviewLang}?#prefill=${base64}`, "_blank");
     });
   }
 
