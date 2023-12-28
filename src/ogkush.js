@@ -2589,21 +2589,13 @@ class OGInfinity {
               baseTechno = that.building(technologyId, baseLvl, object);
             }
             if (
-              baseTechno.cost[0] > metalCost + 1 ||
-              baseTechno.cost[0] < metalCost - 1 ||
-              baseTechno.cost[1] > crystalCost + 1 ||
-              baseTechno.cost[1] < crystalCost - 1 ||
-              baseTechno.cost[2] > deuteriumCost + 1 ||
-              baseTechno.cost[2] < deuteriumCost - 1
+              Math.abs((baseTechno.cost[0] - metalCost) / metalCost) > 0.0001 ||
+              Math.abs((baseTechno.cost[1] - crystalCost) / crystalCost) > 0.0001 ||
+              Math.abs((baseTechno.cost[2] - deuteriumCost) / deuteriumCost) > 0.0001
             )
               document
                 .querySelector(".costs")
-                .appendChild(
-                  createDOM("div", { class: "overmark" }, "OGi Warning: Lifeform bonus acquisition currently broken.")
-                );
-            /* since ogame 11.5.0 disabled, as it seems lifeform buildings&techs bonuses are not reported except a few
                 .appendChild(createDOM("div", { class: "overmark" }, "resources not correct, try to update LF bonus"));
-                */
 
             updateResearchDetails(technologyId, baseLvl, tolvl);
             let previous = infoDiv.appendChild(createDOM("a", { class: "icon icon_skip_back" }));
