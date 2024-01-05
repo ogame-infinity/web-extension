@@ -13252,7 +13252,7 @@ class OGInfinity {
         if (e == playerid) o.splice(i, 1);
       });
       this.json.sideStalk.push(playerid);
-      if (this.json.sideStalk.length > 10) {
+      if (this.json.sideStalk.length > 20) {
         this.json.sideStalk.shift();
       }
       this.saveData();
@@ -13336,7 +13336,7 @@ class OGInfinity {
           watchlistBtn.addEventListener("click", () => {
             sideStalk.replaceChildren();
             sideStalk.appendChild(
-              createDOM("div", { class: "title" }, "Historic " + this.json.sideStalk.length + "/10")
+              createDOM("div", { class: "title" }, "Historic " + this.json.sideStalk.length + "/20")
             );
             sideStalk.appendChild(createDOM("hr"));
             this.json.sideStalk
