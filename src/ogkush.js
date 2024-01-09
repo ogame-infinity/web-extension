@@ -3974,28 +3974,20 @@ class OGInfinity {
       }
     }
 
-    fetch("https://ptre.chez.gg/scripts/oglight_import_player_activity.php?tool=infinity&country=" + this.gameLang + "&univers=" + this.universe, {
-      priority: "low",
-      method: "POST",
-      body: JSON.stringify(ptreJSON),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.code == 1) {
-          document
-            .querySelectorAll(`.ogl-stalkPlanets [data-coords^="${systemCoords[0]}:${systemCoords[1]}:"]`)
-            .forEach((e) => {
-              if (!e.classList.contains(".ptre_updated")) {
-                e.classList.add("ptre_updated");
-              }
-            });
-            document.querySelectorAll(`.ogl-active [data-coords^="${systemCoords[0]}:${systemCoords[1]}:"]`).forEach((e) => {
-              if (!e.classList.contains(".ptre_updated")) {
-                e.classList.add("ptre_updated");
-              }
-            });
-        }
-      });
+    ptreService.importPlayerActivity(this.gameLang, this.universe, ptreJSON).then((result) => {
+      if (result.code == 1) {
+        document.querySelectorAll(`.ogl-stalkPlanets [data-coords^="${systemCoords[0]}:${systemCoords[1]}:"]`).forEach((e) => {
+          if (!e.classList.contains(".ptre_updated")) {
+            e.classList.add("ptre_updated");
+          }
+        });
+        document.querySelectorAll(`.ogl-active [data-coords^="${systemCoords[0]}:${systemCoords[1]}:"]`).forEach((e) => {
+          if (!e.classList.contains(".ptre_updated")) {
+            e.classList.add("ptre_updated");
+          }
+        });
+      }
+    });
   }
 
   jumpGate() {
