@@ -3893,11 +3893,10 @@ class OGInfinity {
         }
 
         // PTRE activities
-        if (
-          this.json.options.ptreTK &&
-          playerId > -1 &&
-          (this.json.sideStalk.indexOf(playerId) > -1 || this.markedPlayers.indexOf(playerId) > -1)
-        ) {
+        if ( this.json.options.ptreTK && playerId > -1 &&
+            (this.json.sideStalk.indexOf(playerId) > -1 || 
+             this.markedPlayers.indexOf(playerId) > -1 || 
+             playerId == this.json.searchHistory[this.json.searchHistory.length - 1].id) ) {
           let planetActivity = row.querySelector("[data-planet-id] .activity.minute15")
             ? "*"
             : row.querySelector("[data-planet-id] .activity")?.textContent.trim() || 60;
@@ -3986,6 +3985,11 @@ class OGInfinity {
           document
             .querySelectorAll(`.ogl-stalkPlanets [data-coords^="${systemCoords[0]}:${systemCoords[1]}:"]`)
             .forEach((e) => {
+              if (!e.classList.contains(".ptre_updated")) {
+                e.classList.add("ptre_updated");
+              }
+            });
+            document.querySelectorAll(`.ogl-active [data-coords^="${systemCoords[0]}:${systemCoords[1]}:"]`).forEach((e) => {
               if (!e.classList.contains(".ptre_updated")) {
                 e.classList.add("ptre_updated");
               }
