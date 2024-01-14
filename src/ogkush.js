@@ -3965,7 +3965,7 @@ class OGInfinity {
   async ptreActivityUpdate(ptreJSON, systemCoords) {
     for (const coords of Object.keys(ptreJSON)) {
       const pl = await dataHelper.getPlayer(ptreJSON[coords].player_id);
-      const validIds = sorted.map((planet) => parseFloat(planet.id)).filter((id) => !isNaN(id));
+      const validIds = pl.planets.map((planet) => parseFloat(planet.id)).filter((id) => !isNaN(id));
       const mainId = Math.min(...validIds);
       const mainPlanet = pl.planets.find((planet) => {
         return planet.id == mainId;
