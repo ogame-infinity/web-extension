@@ -31,9 +31,11 @@ function _buildQueryString(params, data = undefined) {
 /**
  * @return {Promise<PtreResponse>}
  */
-export function getPlayerInfos(teamKey, cleanPlayerName, playerId, frame) {
+export function getPlayerInfos(country, universe, teamKey, cleanPlayerName, playerId, frame) {
   const url = new URL(PTRE_URL.concat("oglight_get_player_infos.php"));
   _buildQueryString(url.searchParams, {
+    country: country,
+    univers: universe,
     team_key: teamKey,
     pseudo: cleanPlayerName,
     player_id: playerId,
@@ -55,9 +57,12 @@ export function getPlayerInfos(teamKey, cleanPlayerName, playerId, frame) {
 /**
  * @return {Promise<PtreResponse>}
  */
-export function updateGalaxy(position) {
+export function updateGalaxy(country, universe, position) {
   const url = new URL(PTRE_URL.concat("api_galaxy_import_infos.php"));
-  _buildQueryString(url.searchParams);
+  _buildQueryString(url.searchParams, {
+    country: country,
+    univers: universe,
+  });
 
   return fetch(url, {
     method: "POST",
@@ -82,9 +87,12 @@ export function updateGalaxy(position) {
 /**
  * @return {Promise<PtreResponse>}
  */
-export function importPlayerActivity(activity) {
+export function importPlayerActivity(country, universe, activity) {
   const url = new URL(PTRE_URL.concat("oglight_import_player_activity.php"));
-  _buildQueryString(url.searchParams);
+  _buildQueryString(url.searchParams, {
+    country: country,
+    univers: universe,
+  });
 
   return fetch(url, {
     method: "POST",

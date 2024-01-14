@@ -3951,7 +3951,7 @@ class OGInfinity {
     pageContextRequest("ptre", "galaxy", data.changes, data.ptreKey, data.serverTime)
       .then((value) => {
         if (Object.keys(value.response).length > 0) {
-          ptreService.updateGalaxy(value.response);
+          ptreService.updateGalaxy(this.gameLang, this.universe, value.response);
         }
       })
       .finally(() => "nothing");
@@ -3974,7 +3974,7 @@ class OGInfinity {
       }
     }
 
-    fetch("https://ptre.chez.gg/scripts/oglight_import_player_activity.php?tool=infinity", {
+    fetch("https://ptre.chez.gg/scripts/oglight_import_player_activity.php?tool=infinity&country=" + this.gameLang + "&univers=" + this.universe, {
       priority: "low",
       method: "POST",
       body: JSON.stringify(ptreJSON),
@@ -5050,7 +5050,7 @@ class OGInfinity {
     }
 
     let cleanPlayerName = encodeURIComponent(player.name);
-    ptreService.getPlayerInfos(this.json.options.ptreTK, cleanPlayerName, player.id, frame).then((result) => {
+    ptreService.getPlayerInfos(this.gameLang, this.universe, this.json.options.ptreTK, cleanPlayerName, player.id, frame).then((result) => {
       if (result.code == 1) {
         let arrData = result.activity_array.succes == 1 ? JSON.parse(result.activity_array.activity_array) : null;
         let checkData = result.activity_array.succes == 1 ? JSON.parse(result.activity_array.check_array) : null;
@@ -13620,7 +13620,7 @@ class OGInfinity {
       this.sortTable(this.reportList);
     }
     if (Object.keys(ptreJSON).length > 0) {
-      ptreService.importPlayerActivity(ptreJSON).finally(() => "Do nothing");
+      ptreService.importPlayerActivity(this.gameLang, this.universe, ptreJSON).finally(() => "Do nothing");
     }
   }
 
