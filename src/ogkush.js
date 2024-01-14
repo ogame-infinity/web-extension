@@ -3896,7 +3896,7 @@ class OGInfinity {
         if ( this.json.options.ptreTK && playerId > -1 &&
             (this.json.sideStalk.indexOf(playerId) > -1 || 
              this.markedPlayers.indexOf(playerId) > -1 || 
-             playerId == this.json.searchHistory[this.json.searchHistory.length - 1].id) ) {
+             (this.json.searchHistory.length > 0 && playerId == this.json.searchHistory[this.json.searchHistory.length - 1].id)) ) {
           let planetActivity = row.querySelector("[data-planet-id] .activity.minute15")
             ? "*"
             : row.querySelector("[data-planet-id] .activity")?.textContent.trim() || 60;
