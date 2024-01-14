@@ -12955,6 +12955,17 @@ class OGInfinity {
         this.keepTooltip = false;
       });
       actBtn.addEventListener("click", (e) => {
+        // Add player to History in order to send his activities
+        this.json.searchHistory.forEach((elem, i) => {
+          if (elem.id == player.id) {
+            this.json.searchHistory.splice(i, 1);
+          }
+        });
+        this.json.searchHistory.push(player);
+        if (this.json.searchHistory.length > 5) {
+          this.json.searchHistory.shift();
+        }
+        this.saveData();
         if (this.page != "galaxy") {
           let coords = document
             .querySelector(".ogl-tooltip .ogl-stalkPlanets a.ogl-main")
