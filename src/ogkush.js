@@ -3968,7 +3968,9 @@ class OGInfinity {
       const mainPlanet = pl.planets.find((planet) => {
         return planet.id == mainId;
       });
-      ptreJSON[coords].main = mainPlanet.coords === coords || false;
+      if (typeof mainPlanet !== "undefined") {
+        ptreJSON[coords].main = mainPlanet.coords === coords || false;
+      }
     }
 
     fetch("https://ptre.chez.gg/scripts/oglight_import_player_activity.php?tool=infinity", {
@@ -13513,6 +13515,7 @@ class OGInfinity {
         ptreJSON[id].position = coords[2];
         ptreJSON[id].spy_message_ts = timestamp;
         ptreJSON[id].moon = {};
+        ptreJSON[id].main = false;
         if (type == 1) {
           ptreJSON[id].activity = "*";
           ptreJSON[id].moon.activity = "60";
