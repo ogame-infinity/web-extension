@@ -2853,11 +2853,13 @@ class OGInfinity {
       this.delayDiv2.textContent = timeToJoin;
       this.delayDiv3.textContent = timeToJoin;
       if (end > 0) {
-        this.delayDiv2.setAttribute("style", 'color:"green !important"');
-        this.delayDiv2.setAttribute("style", 'color:"green !important"');
+        this.delayDiv2.setAttribute("style", "color:green !important");
+        this.delayDiv3.setAttribute("style", "color:green !important");
+        this.delayTimeDiv3.setAttribute("style", "position: absolute;left: 65px;color:none");
       } else {
-        this.delayDiv2.classList.remove("ogk-delay-ontime");
-        this.delayDiv2.classList.remove("ogk-delay-ontime");
+        this.delayDiv2.setAttribute("style", "color:none");
+        this.delayDiv3.setAttribute("style", "color:none");
+        this.delayTimeDiv3.setAttribute("style", "position: absolute;left: 65px;color:#d43635 !important");
       }
       const format = "+" + getFormatedTime(flighDiff >= 0 ? flighDiff : 0);
       this.delayTimeDiv.textContent = format;
