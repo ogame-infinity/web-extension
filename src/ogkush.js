@@ -13188,7 +13188,8 @@ class OGInfinity {
       return coordsA - coordsB;
     });
     let domArr = [];
-    const mainId = Math.min(...Array.from(sorted, (planet) => planet.id));
+    const validIds = sorted.map((planet) => parseFloat(planet.id)).filter((id) => !isNaN(id));
+    const mainId = Math.min(...validIds);
     sorted.forEach((planet) => {
       let coords = planet.coords.split(":");
       let a = createDOM("a");
