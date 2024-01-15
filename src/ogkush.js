@@ -17308,6 +17308,7 @@ class OGInfinity {
       this.getAllianceClass();
       this.initializeLFTypeName();
       await this.updateLifeform();
+      await this.updateEmpireData();
       document.querySelector(".ogl-dialog .close-tooltip").click();
     });
     dataDiv.appendChild(createDOM("hr"));
