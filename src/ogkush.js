@@ -11651,17 +11651,17 @@ class OGInfinity {
       const productionBonus = [0, 0, 0, 0];
       switch (lifeform) {
         case "lifeform1":
-          productionBonus[0] = 0.0015 * planet[11106];
-          productionBonus[1] = 0.0015 * planet[11108];
-          productionBonus[2] = 0.001 * planet[11108];
+          productionBonus[0] = 0.015 * planet[11106];
+          productionBonus[1] = 0.015 * planet[11108];
+          productionBonus[2] = 0.01 * planet[11108];
           break;
         case "lifeform2":
-          productionBonus[0] = 0.002 * planet[12106];
-          productionBonus[1] = 0.002 * planet[12109];
-          productionBonus[2] = 0.002 * planet[12110];
+          productionBonus[0] = 0.02 * planet[12106];
+          productionBonus[1] = 0.02 * planet[12109];
+          productionBonus[2] = 0.02 * planet[12110];
           break;
         case "lifeform3":
-          productionBonus[2] = 0.002 * planet[13110];
+          productionBonus[2] = 0.02 * planet[13110];
       }
 
       lifeformPlanetBonus[planet.id] = {
