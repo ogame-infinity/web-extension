@@ -11733,6 +11733,7 @@ class OGInfinity {
   }
 
   updateEmpireProduction() {
+    // WIP
     this.json.empire.forEach((planet) => {
       planet.production.productionFactor = 1; // temporary, TODO: change use in fleetDispatcher with computed factor
       planet.production.generalIncoming = {
@@ -11843,79 +11844,134 @@ class OGInfinity {
         },
       };
 
-      // Get exact production data (Ogame's empire data has rounding issues)
-      for (let idx = 0; idx < 3; idx++) {
-        let totalProd = 0;
-        let baseProd = planet.production.generalIncoming[idx];
-        totalProd += baseProd;
-        let mineProd = planet.production.production[idx + 1][idx];
-        totalProd += mineProd;
-        planet.production.production[idx + 1][idx] = mineProd;
-        let plasmaProd = mineProd * planet[122] * PLASMATECH_BONUS[idx];
-        totalProd += plasmaProd;
-        planet.production.production[122][idx] = plasmaProd;
-        let geoProd = mineProd * (this.geologist ? GEOLOGIST_RESOURCE_BONUS : 0);
-        totalProd += geoProd;
-        planet.production.production[1001][idx] = geoProd;
-        let officerProd = mineProd * (this.allOfficers ? OFFICER_RESOURCE_BONUS : 0);
-        totalProd += officerProd;
-        planet.production.production[1003][idx] = officerProd;
-        let allyClassProd = mineProd * (this.json.allianceClass == ALLY_CLASS_MINER ? TRADER_RESOURCE_BONUS : 0);
-        totalProd += allyClassProd;
-        planet.production.production[1005][idx] = allyClassProd;
-        let playerClassProd =
-          mineProd * (this.playerClass == PLAYER_CLASS_MINER ? this.json.minerBonusResourceProduction : 0);
-        totalProd += playerClassProd;
-        planet.production.production[1004][idx] = playerClassProd;
+      planet.production.lifeformProduction = {
+        0: 0,
+        1: 0,
+        2: 0,
+        3: 0,
+      };
 
-        const maxCrawlers = Math.floor(
-          (planet[1] + planet[2] + planet[3]) *
-            MAX_CRAWLERS_PER_MINE *
-            (this.playerClass == PLAYER_CLASS_MINER && this.geologist ? 1 + this.json.minerBonusMaxCrawler : 1)
-        );
-        let crawlerProd =
-          mineProd *
-          Math.min(planet[217], maxCrawlers) *
-          this.json.resourceBuggyProductionBoost *
-          (this.playerClass == PLAYER_CLASS_MINER ? 1 + this.json.minerBonusAdditionalCrawler : 1) *
-          (this.json.lifeformBonus ? 1 + this.json.lifeformBonus[planet.id].crawlerBonus.production : 1);
-        let crawlerPercent = Math.round((planet.production.production[217][idx] / crawlerProd) * 10) / 10;
-        crawlerPercent = this.playerClass == PLAYER_CLASS_MINER ? 1.5 : 1; // temporary hack TODO: guess true value
-        crawlerProd *= Math.min(crawlerPercent, this.playerClass == PLAYER_CLASS_MINER ? CRAWLER_OVERLOAD_MAX : 1);
-        crawlerProd = Math.min(crawlerProd, mineProd * this.json.resourceBuggyMaxProductionBoost);
-        totalProd += crawlerProd;
-        planet.production.production[217][idx] = crawlerProd;
+      console.log("planet: " + planet.coordinates);
+
+      // TODO: compute energy detailed production if used
+      for (let idx = 0; idx < 3; idx++) {
+        console.log("resource: " + ["metal", "crystal", "deuterium"][idx]);
+
+        const baseProd = planet.production.generalIncoming[idx];
+        const mineProd = planet.production.production[idx + 1][idx];
+        const plasmaProd = mineProd * planet[122] * PLASMATECH_BONUS[idx];
+        const geoProd = mineProd * (this.geologist ? GEOLOGIST_RESOURCE_BONUS : 0);
+        const officerProd = mineProd * (this.allOfficers ? OFFICER_RESOURCE_BONUS : 0);
+        const allyClassProd = mineProd * (this.json.allianceClass == ALLY_CLASS_MINER ? TRADER_RESOURCE_BONUS : 0);
+        const playerClassProd =
+          mineProd * (this.playerClass == PLAYER_CLASS_MINER ? this.json.minerBonusResourceProduction : 0);
 
         // TODO: compute items production
-        if (planet.production.production[1000][idx] != 0) {
-          let itemProd = (mineProd * Math.round((planet.production.production[1000][idx] / mineProd) * 10)) / 10;
-          totalProd += itemProd;
-          planet.production.production[1000][idx] = itemProd;
+        let itemProd = 0;
+
+        const lifeformBonus = this.json.lifeformBonus?.[planet.id];
+        const lifeformProd = lifeformBonus ? mineProd * lifeformBonus.productionBonus[idx] : 0;
+        const lifeformPlanetBonus = this.json.lifeformPlanetBonus[planet.id]?.productionBonus;
+        const lifeformPlanetProd = lifeformPlanetBonus ? mineProd * lifeformPlanetBonus[idx] : 0;
+
+        let totalProd = 0;
+        totalProd += mineProd;
+        totalProd += plasmaProd;
+        totalProd += geoProd;
+        totalProd += officerProd;
+        totalProd += allyClassProd;
+        totalProd += playerClassProd;
+        totalProd += itemProd;
+        totalProd += lifeformProd;
+        totalProd += lifeformPlanetProd;
+        // TODO: compute fusion reactor factor
+        totalProd -= planet.production.production[12][idx];
+
+        let crawlerProd = 0;
+        if (planet[217] > 0) {
+          const maxCrawlers = Math.floor(
+            (planet[1] + planet[2] + planet[3]) *
+              MAX_CRAWLERS_PER_MINE *
+              (this.playerClass == PLAYER_CLASS_MINER && this.geologist ? 1 + this.json.minerBonusMaxCrawler : 1)
+          );
+          crawlerProd =
+            mineProd *
+            Math.min(planet[217], maxCrawlers) *
+            this.json.resourceBuggyProductionBoost *
+            (this.playerClass == PLAYER_CLASS_MINER ? 1 + this.json.minerBonusAdditionalCrawler : 1) *
+            (this.json.lifeformBonus ? 1 + this.json.lifeformBonus[planet.id].crawlerBonus.production : 1);
+          //let crawlerPercent = this.playerClass == PLAYER_CLASS_MINER ? 1.5 : 1;  // TODO: try to guess true value
+          let crawlerPercent = 1;
+          crawlerProd *= Math.min(crawlerPercent, this.playerClass == PLAYER_CLASS_MINER ? CRAWLER_OVERLOAD_MAX : 1);
+          crawlerProd = Math.min(crawlerProd, mineProd * this.json.resourceBuggyMaxProductionBoost);
         }
 
-        // TODO: compute production factors per production unit and recompute productions
+        let prodFactor = 0;
+        let crawlerFactor = this.playerClass == PLAYER_CLASS_MINER ? 1.5 : 1;
 
-        totalProd -= planet.production.production[12][idx];
+        /*
+        for (crawlerFactor; crawlerFactor > 0; crawlerFactor -= 0.1) {
+          crawlerFactor = Math.round(crawlerFactor * 10) / 10;
+          prodFactor = (planet.production.hourly[idx] - baseProd) /
+            (totalProd + Math.min(crawlerProd * crawlerFactor, mineProd * this.json.resourceBuggyMaxProductionBoost));
+          //console.log("prod: " + prodFactor + " crawler: " + crawlerFactor);
+          if (Math.round(prodFactor * 100) / 100 <= 1) break;
+        }
+        */
+
+        prodFactor =
+          (planet.production.hourly[idx] - baseProd) /
+          (totalProd + Math.min(crawlerProd * crawlerFactor, mineProd * this.json.resourceBuggyMaxProductionBoost));
+        prodFactor = Math.round(prodFactor * 100) / 100;
+
+        crawlerProd = Math.min(
+          crawlerProd * crawlerFactor * prodFactor,
+          mineProd * prodFactor * this.json.resourceBuggyMaxProductionBoost
+        );
+
+        totalProd *= prodFactor;
+        totalProd += crawlerProd;
+        totalProd += baseProd;
+
+        console.log("crawler factor: " + crawlerFactor);
+        console.log("production factor: " + prodFactor);
+        console.log("total production (computed): " + totalProd);
+
+        planet.production.production[idx + 1][idx] = mineProd * prodFactor;
+        planet.production.production[122][idx] = plasmaProd * prodFactor;
+        planet.production.production[1001][idx] = geoProd * prodFactor;
+        planet.production.production[1003][idx] = officerProd * prodFactor;
+        planet.production.production[1005][idx] = allyClassProd * prodFactor;
+        planet.production.production[1004][idx] = playerClassProd * prodFactor;
+        planet.production.production[217][idx] = crawlerProd;
+        planet.production.production[1000][idx] = itemProd * prodFactor;
+        planet.production.lifeformProduction[idx] = (lifeformProd + lifeformPlanetProd) * prodFactor;
+
+        console.log("computed detailed production:");
+        console.log("base: " + planet.production.generalIncoming[idx]);
+        console.log("mine: " + planet.production.production[idx + 1][idx]);
+        console.log("plasma: " + planet.production.production[122][idx]);
+        console.log("geo: " + planet.production.production[1001][idx]);
+        console.log("officer: " + planet.production.production[1003][idx]);
+        console.log("ally class: " + planet.production.production[1005][idx]);
+        console.log("player class: " + planet.production.production[1004][idx]);
+        console.log("crawler: " + planet.production.production[217][idx]);
+        console.log("item: " + planet.production.production[1000][idx]);
+        console.log("lifeformTotal: " + planet.production.lifeformProduction[idx]);
+        console.log("lifeformTech: " + lifeformProd * prodFactor);
+        console.log("lifeformPlanet: " + lifeformPlanetProd * prodFactor);
+        console.log("----------------------------------------------");
+
         planet.production.hourly[idx] = totalProd;
         planet.production.daily[idx] = totalProd * 24;
         planet.production.weekly[idx] = totalProd * 24 * 7;
       }
-      // lifeform production is not included in ogames empire data, might change in future
-      if (!planet.isMoon && this.json.lifeformBonus && this.json.lifeformBonus[planet.id]) {
-        let bonus = this.json.lifeformBonus[planet.id].productionBonus;
-        let lifeformProduction = [0, 0, 0];
-        for (let idx = 0; idx < 3; idx++) {
-          let oldHourly = planet.production.hourly[idx];
-          let oldDaily = planet.production.daily[idx];
-          let oldWeekly = planet.production.weekly[idx];
-          let mineProd = planet.production.production[idx + 1][idx];
-          lifeformProduction[idx] = mineProd * bonus[idx];
-          planet.production.hourly[idx] = oldHourly + lifeformProduction[idx];
-          planet.production.daily[idx] = oldDaily + mineProd * bonus[idx] * 24;
-          planet.production.weekly[idx] = oldWeekly + mineProd * bonus[idx] * 24 * 7;
-        }
-        planet.production.lifeformProduction = lifeformProduction;
-      }
+
+      console.log("planet hourly / daily / weekly productions");
+      console.log(planet.production.hourly);
+      console.log(planet.production.daily);
+      console.log(planet.production.weekly);
+      console.log("=================================================");
     });
   }
 
