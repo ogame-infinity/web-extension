@@ -2846,11 +2846,13 @@ class OGInfinity {
       this.delayDiv2.textContent = timeToJoin;
       this.delayDiv3.textContent = timeToJoin;
       if (end > 0) {
-        this.delayDiv2.setAttribute("style", 'color:"green !important"');
-        this.delayDiv2.setAttribute("style", 'color:"green !important"');
+        this.delayDiv2.setAttribute("style", "color:green !important");
+        this.delayDiv3.setAttribute("style", "color:green !important");
+        this.delayTimeDiv3.setAttribute("style", "position: absolute;left: 65px;color:none");
       } else {
-        this.delayDiv2.classList.remove("ogk-delay-ontime");
-        this.delayDiv2.classList.remove("ogk-delay-ontime");
+        this.delayDiv2.setAttribute("style", "color:none");
+        this.delayDiv3.setAttribute("style", "color:none");
+        this.delayTimeDiv3.setAttribute("style", "position: absolute;left: 65px;color:#d43635 !important");
       }
       const format = "+" + getFormatedTime(flighDiff >= 0 ? flighDiff : 0);
       this.delayTimeDiv.textContent = format;
@@ -3884,11 +3886,10 @@ class OGInfinity {
         }
 
         // PTRE activities
-        if (
-          this.json.options.ptreTK &&
-          playerId > -1 &&
-          (this.json.sideStalk.indexOf(playerId) > -1 || this.markedPlayers.indexOf(playerId) > -1)
-        ) {
+        if ( this.json.options.ptreTK && playerId > -1 &&
+            (this.json.sideStalk.indexOf(playerId) > -1 || 
+             this.markedPlayers.indexOf(playerId) > -1 || 
+             (this.json.searchHistory.length > 0 && playerId == this.json.searchHistory[this.json.searchHistory.length - 1].id)) ) {
           let planetActivity = row.querySelector("[data-planet-id] .activity.minute15")
             ? "*"
             : row.querySelector("[data-planet-id] .activity")?.textContent.trim() || 60;
@@ -3943,7 +3944,7 @@ class OGInfinity {
     pageContextRequest("ptre", "galaxy", data.changes, data.ptreKey, data.serverTime)
       .then((value) => {
         if (Object.keys(value.response).length > 0) {
-          ptreService.updateGalaxy(value.response);
+          ptreService.updateGalaxy(this.gameLang, this.universe, value.response);
         }
       })
       .finally(() => "nothing");
@@ -3957,30 +3958,30 @@ class OGInfinity {
   async ptreActivityUpdate(ptreJSON, systemCoords) {
     for (const coords of Object.keys(ptreJSON)) {
       const pl = await dataHelper.getPlayer(ptreJSON[coords].player_id);
-      const mainId = Math.min(...Array.from(pl.planets, (planet) => planet.id));
+      const validIds = pl.planets.map((planet) => parseFloat(planet.id)).filter((id) => !isNaN(id));
+      const mainId = Math.min(...validIds);
       const mainPlanet = pl.planets.find((planet) => {
         return planet.id == mainId;
       });
-      ptreJSON[coords].main = mainPlanet.coords === coords || false;
+      if (typeof mainPlanet !== "undefined") {
+        ptreJSON[coords].main = mainPlanet.coords === coords || false;
+      }
     }
 
-    fetch("https://ptre.chez.gg/scripts/oglight_import_player_activity.php?tool=infinity", {
-      priority: "low",
-      method: "POST",
-      body: JSON.stringify(ptreJSON),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.code == 1) {
-          document
-            .querySelectorAll(`.ogl-stalkPlanets [data-coords^="${systemCoords[0]}:${systemCoords[1]}:"]`)
-            .forEach((e) => {
-              if (!e.classList.contains(".ptre_updated")) {
-                e.classList.add("ptre_updated");
-              }
-            });
-        }
-      });
+    ptreService.importPlayerActivity(this.gameLang, this.universe, ptreJSON).then((result) => {
+      if (result.code == 1) {
+        document.querySelectorAll(`.ogl-stalkPlanets [data-coords^="${systemCoords[0]}:${systemCoords[1]}:"]`).forEach((e) => {
+          if (!e.classList.contains(".ptre_updated")) {
+            e.classList.add("ptre_updated");
+          }
+        });
+        document.querySelectorAll(`.ogl-active [data-coords^="${systemCoords[0]}:${systemCoords[1]}:"]`).forEach((e) => {
+          if (!e.classList.contains(".ptre_updated")) {
+            e.classList.add("ptre_updated");
+          }
+        });
+      }
+    });
   }
 
   jumpGate() {
@@ -5035,7 +5036,7 @@ class OGInfinity {
     }
 
     let cleanPlayerName = encodeURIComponent(player.name);
-    ptreService.getPlayerInfos(this.json.options.ptreTK, cleanPlayerName, player.id, frame).then((result) => {
+    ptreService.getPlayerInfos(this.gameLang, this.universe, this.json.options.ptreTK, cleanPlayerName, player.id, frame).then((result) => {
       if (result.code == 1) {
         let arrData = result.activity_array.succes == 1 ? JSON.parse(result.activity_array.activity_array) : null;
         let checkData = result.activity_array.succes == 1 ? JSON.parse(result.activity_array.check_array) : null;
@@ -12969,6 +12970,17 @@ class OGInfinity {
         this.keepTooltip = false;
       });
       actBtn.addEventListener("click", (e) => {
+        // Add player to History in order to send his activities
+        this.json.searchHistory.forEach((elem, i) => {
+          if (elem.id == player.id) {
+            this.json.searchHistory.splice(i, 1);
+          }
+        });
+        this.json.searchHistory.push(player);
+        if (this.json.searchHistory.length > 5) {
+          this.json.searchHistory.shift();
+        }
+        this.saveData();
         if (this.page != "galaxy") {
           let coords = document
             .querySelector(".ogl-tooltip .ogl-stalkPlanets a.ogl-main")
@@ -13194,7 +13206,8 @@ class OGInfinity {
       return coordsA - coordsB;
     });
     let domArr = [];
-    const mainId = Math.min(...Array.from(sorted, (planet) => planet.id));
+    const validIds = sorted.map((planet) => parseFloat(planet.id)).filter((id) => !isNaN(id));
+    const mainId = Math.min(...validIds);
     sorted.forEach((planet) => {
       let coords = planet.coords.split(":");
       let a = createDOM("a");
@@ -13266,7 +13279,7 @@ class OGInfinity {
         if (e == playerid) o.splice(i, 1);
       });
       this.json.sideStalk.push(playerid);
-      if (this.json.sideStalk.length > 10) {
+      if (this.json.sideStalk.length > 20) {
         this.json.sideStalk.shift();
       }
       this.saveData();
@@ -13350,7 +13363,7 @@ class OGInfinity {
           watchlistBtn.addEventListener("click", () => {
             sideStalk.replaceChildren();
             sideStalk.appendChild(
-              createDOM("div", { class: "title" }, "Historic " + this.json.sideStalk.length + "/10")
+              createDOM("div", { class: "title" }, "Historic " + this.json.sideStalk.length + "/20")
             );
             sideStalk.appendChild(createDOM("hr"));
             this.json.sideStalk
@@ -13527,6 +13540,7 @@ class OGInfinity {
         ptreJSON[id].position = coords[2];
         ptreJSON[id].spy_message_ts = timestamp;
         ptreJSON[id].moon = {};
+        ptreJSON[id].main = false;
         if (type == 1) {
           ptreJSON[id].activity = "*";
           ptreJSON[id].moon.activity = "60";
@@ -13625,7 +13639,7 @@ class OGInfinity {
       this.sortTable(this.reportList);
     }
     if (Object.keys(ptreJSON).length > 0) {
-      ptreService.importPlayerActivity(ptreJSON).finally(() => "Do nothing");
+      ptreService.importPlayerActivity(this.gameLang, this.universe, ptreJSON).finally(() => "Do nothing");
     }
   }
 
