@@ -11851,11 +11851,11 @@ class OGInfinity {
         3: 0,
       };
 
-      console.log("planet: " + planet.coordinates);
+      //console.log("planet: " + planet.coordinates);
 
       // TODO: compute energy detailed production if used
       for (let idx = 0; idx < 3; idx++) {
-        console.log("resource: " + ["metal", "crystal", "deuterium"][idx]);
+        //console.log("resource: " + ["metal", "crystal", "deuterium"][idx]);
 
         const baseProd = planet.production.generalIncoming[idx];
         const mineProd = planet.production.production[idx + 1][idx];
@@ -11933,9 +11933,9 @@ class OGInfinity {
         totalProd += crawlerProd;
         totalProd += baseProd;
 
-        console.log("crawler factor: " + crawlerFactor);
-        console.log("production factor: " + prodFactor);
-        console.log("total production (computed): " + totalProd);
+        //console.log("crawler factor: " + crawlerFactor);
+        //console.log("production factor: " + prodFactor);
+        //console.log("total production (computed): " + totalProd);
 
         planet.production.production[idx + 1][idx] = mineProd * prodFactor;
         planet.production.production[122][idx] = plasmaProd * prodFactor;
@@ -11946,7 +11946,7 @@ class OGInfinity {
         planet.production.production[217][idx] = crawlerProd;
         planet.production.production[1000][idx] = itemProd * prodFactor;
         planet.production.lifeformProduction[idx] = (lifeformProd + lifeformPlanetProd) * prodFactor;
-
+        /*
         console.log("computed detailed production:");
         console.log("base: " + planet.production.generalIncoming[idx]);
         console.log("mine: " + planet.production.production[idx + 1][idx]);
@@ -11961,17 +11961,18 @@ class OGInfinity {
         console.log("lifeformTech: " + lifeformProd * prodFactor);
         console.log("lifeformPlanet: " + lifeformPlanetProd * prodFactor);
         console.log("----------------------------------------------");
-
+        */
         planet.production.hourly[idx] = totalProd;
         planet.production.daily[idx] = totalProd * 24;
         planet.production.weekly[idx] = totalProd * 24 * 7;
       }
-
+      /*
       console.log("planet hourly / daily / weekly productions");
       console.log(planet.production.hourly);
       console.log(planet.production.daily);
       console.log(planet.production.weekly);
       console.log("=================================================");
+      */
     });
   }
 
