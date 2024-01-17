@@ -1513,6 +1513,7 @@ class OGInfinity {
     this.json.options.timeZone = this.json.options.timeZone === false ? false : true;
     this.json.selectedLifeforms = this.json.selectedLifeforms || {};
     this.json.lifeformBonus = this.json.lifeformBonus || null;
+    this.json.lifeformPlanetBonus = this.json.lifeformPlanetBonus || {};
     this.gameLang = document.querySelector('meta[name="ogame-language"]').getAttribute("content");
     this.isLoading = false;
     this.autoQueue = new AutoQueue();
@@ -1636,7 +1637,7 @@ class OGInfinity {
             this.updateServerSettings(true);
             this.getAllianceClass();
             this.initializeLFTypeName();
-            await this.updateLifeform(true);
+            await this.updateLifeform();
             this.welcome();
           });
       } else {
@@ -2588,21 +2589,13 @@ class OGInfinity {
               baseTechno = that.building(technologyId, baseLvl, object);
             }
             if (
-              baseTechno.cost[0] > metalCost + 1 ||
-              baseTechno.cost[0] < metalCost - 1 ||
-              baseTechno.cost[1] > crystalCost + 1 ||
-              baseTechno.cost[1] < crystalCost - 1 ||
-              baseTechno.cost[2] > deuteriumCost + 1 ||
-              baseTechno.cost[2] < deuteriumCost - 1
+              Math.abs((baseTechno.cost[0] - metalCost) / metalCost) > 0.0001 ||
+              Math.abs((baseTechno.cost[1] - crystalCost) / crystalCost) > 0.0001 ||
+              Math.abs((baseTechno.cost[2] - deuteriumCost) / deuteriumCost) > 0.0001
             )
               document
                 .querySelector(".costs")
-                .appendChild(
-                  createDOM("div", { class: "overmark" }, "OGi Warning: Lifeform bonus acquisition currently broken.")
-                );
-            /* since ogame 11.5.0 disabled, as it seems lifeform buildings&techs bonuses are not reported except a few
                 .appendChild(createDOM("div", { class: "overmark" }, "resources not correct, try to update LF bonus"));
-                */
 
             updateResearchDetails(technologyId, baseLvl, tolvl);
             let previous = infoDiv.appendChild(createDOM("a", { class: "icon icon_skip_back" }));
@@ -6960,16 +6953,6 @@ class OGInfinity {
     let filter = settings.appendChild(createDOM("div", { class: "ogk-filter-box" }));
     let header = details.appendChild(createDOM("h1"));
     header.appendChild(createDOM("p", {}, this.getTranslatedText(88)));
-    /* since ogame 11.5.0, as it seems lifeform buildings&techs bonuses are not reported except a few */
-    if (this.hasLifeforms) {
-      details.appendChild(
-        createDOM(
-          "p",
-          { class: "ogk-box ogl-unknown-warning ogl-warning-dialog" },
-          "Warning: Lifeforms bonus acquisition currently broken; data not accurate."
-        )
-      );
-    }
     let tradeRateText = createDOM("p", { class: "ogk-tradeRate-text" }, this.getTranslatedText(119));
     let tradeRateGrid = createDOM("div", { class: "ogk-tradeRate-grid" });
     let box = details.appendChild(createDOM("div", { class: "ogk-box" }));
@@ -11203,13 +11186,15 @@ class OGInfinity {
         level = level !== -1 ? level : EXPEDITION_TOP1_POINTS.length;
         const maxExpeditionPoints = EXPEDITION_EXPEDITION_POINTS[level];
         let maxResources = EXPEDITION_MAX_RESOURCES[level];
-        // Explorer class bonus
+
         if (this.playerClass == PLAYER_CLASS_EXPLORER) {
+          // explorer class bonus
           maxResources *= (1 + this.json.explorerBonusIncreasedExpeditionOutcome) * this.json.speed;
+          // LF character class bonus
+          maxResources *= 1 + (this.json.lifeformBonus?.[this.current.id]?.classBonus.explorer || 0);
         }
-        // LF bonus
+        // LF expedition bonus
         maxResources *= 1 + (this.json.lifeformBonus?.[this.current.id]?.expeditionBonus || 0);
-        maxResources *= 1 + (this.json.lifeformBonus?.[this.current.id]?.classBonus?.expedition || 0);
 
         const availableShips = {
           202: 0,
@@ -11508,26 +11493,13 @@ class OGInfinity {
     }
   }
 
-  async updateLifeform(full = false) {
+  async updateLifeform() {
     // WIP
     if (!this.hasLifeforms) return;
     const lifeformBonus = {};
-    /*
-    if (full) {
-      for await (let planet of this.json.empire) {
-        if (planet.id !== this.current.id) {
-          lifeformBonus[planet.id] = await this.getLifeformBonus(planet.id);
-          this.json.needLifeformUpdate[planet.id] = false;
-        }
-      }
-      this.json.lifeformBonus = lifeformBonus;
-    }
-    // last called fetch has to be from current planet/moon else Ogame switches on next refresh
-    this.json.lifeformBonus[this.current.id] = await this.getLifeformBonus(this.current.id);
-    this.json.needLifeformUpdate[this.current.id] = false;
-    */
-    // temporary hack until code reworked to work with unique lifeformBonus for lf-tech
-    const bonus = await this.getLifeformBonus(this.current.id);
+    const bonus = await this.getLifeformBonus();
+    // temporary hack until code reworked to work with unique lifeformBonus
+    // TODO: implement unique lifeformBonus
     this.json.empire.forEach((planet) => {
       lifeformBonus[planet.id] = bonus;
       this.json.needLifeformUpdate[planet.id] = false;
@@ -11535,26 +11507,16 @@ class OGInfinity {
     this.json.lifeformBonus = lifeformBonus;
     this.updateEmpireProduction();
     this.saveData();
-
-    if (this.current.isMoon) {
-      let abortController = new AbortController();
-      this.abordSignal = abortController.signal;
-      window.onbeforeunload = function (e) {
-        abortController.abort();
-      };
-      fetch(this.current.planet.querySelector(".moonlink").href, { signal: abortController.signal });
-    }
   }
 
-  async getLifeformBonus(planetId) {
-    // WIP
+  async getLifeformBonus() {
     const abortController = new AbortController();
     this.abordSignal = abortController.signal;
     window.onbeforeunload = function (e) {
       abortController.abort();
     };
     return fetch(
-      `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=ingame&component=lfbonuses&cp=${planetId}`,
+      `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=ingame&component=lfbonuses`,
       { signal: abortController.signal }
     )
       .then((rep) => rep.text())
@@ -11573,141 +11535,135 @@ class OGInfinity {
           lifeformLevel[lifeform] = level;
         });
 
-        const expeditionDiv = htmlDocument.querySelector(
-          "inner-bonus-item-heading[data-toggable='subcategoryResourcesExpedition'] .subCategoryBonus"
-        );
-        const expeditionBonus = expeditionDiv
-          ? fromFormatedNumber(expeditionDiv.textContent.slice(0, -1), false, true) / 100 || 0
-          : 0;
+        const parseBonus = (text) => fromFormatedNumber(text.split("%")[0], false, true) / 100 || 0;
 
-        const crawlerDiv = htmlDocument.querySelectorAll(
-          "inner-bonus-item-heading[data-toggable='subcategoryMiscImprovedCrawler'] bonus-item"
-        );
-        const crawlerConsumptionBonus = crawlerDiv.length
-          ? fromFormatedNumber(crawlerDiv[0].textContent.slice(0, -1), false, true) / 100 || 0
-          : 0;
-        const crawlerProductionBonus = crawlerDiv.length
-          ? fromFormatedNumber(crawlerDiv[1].textContent.slice(0, -1), false, true) / 100 || 0
-          : 0;
-
-        const productionBonus = [0, 0, 0, 0];
-        /* since ogame 11.5.0 disabled, as these bonuses do not include building production bonus anymore
-        const metDiv = htmlDocument.querySelector(
+        // production bonus
+        const metalDiv = htmlDocument.querySelector(
           "inner-bonus-item-heading[data-toggable='subcategoryResources0'] .subCategoryBonus"
         );
-        const cryDiv = htmlDocument.querySelector(
+        const crystalDiv = htmlDocument.querySelector(
           "inner-bonus-item-heading[data-toggable='subcategoryResources1'] .subCategoryBonus"
         );
-        const deuDiv = htmlDocument.querySelector(
+        const deuteriumDiv = htmlDocument.querySelector(
           "inner-bonus-item-heading[data-toggable='subcategoryResources2'] .subCategoryBonus"
         );
-        // since 11.5.0 energy bonus is missing
-        const eneDiv = htmlDocument.querySelector(
+        const energyDiv = htmlDocument.querySelector(
           "inner-bonus-item-heading[data-toggable='subcategoryResources3'] .subCategoryBonus"
         );
         const productionBonus = [
-          metDiv ? fromFormatedNumber(metDiv.textContent.slice(0, -1), false, true) / 100 || 0 : 0,
-          cryDiv ? fromFormatedNumber(cryDiv.textContent.slice(0, -1), false, true) / 100 || 0 : 0,
-          deuDiv ? fromFormatedNumber(deuDiv.textContent.slice(0, -1), false, true) / 100 || 0 : 0,
-          eneDiv ? fromFormatedNumber(eneDiv.textContent.slice(0, -1), false, true) / 100 || 0 : 0,
+          metalDiv ? parseBonus(metalDiv.textContent) : 0,
+          crystalDiv ? parseBonus(crystalDiv.textContent) : 0,
+          deuteriumDiv ? parseBonus(deuteriumDiv.textContent) : 0,
+          energyDiv ? parseBonus(energyDiv.textContent) : 0,
         ];
-        */
 
-        let technologyCostReduction = {};
-        /* since ogame 11.5.0 disabled, as it seems lifeform buildings&techs bonuses are not reported except a few
-        htmlDocument.querySelectorAll("div[data-category='bonus-28'] .subItemContent").forEach((tech) => {
-          let techId = new URL(tech.querySelector("button").getAttribute("data-target")).searchParams.get(
-            "technologyId"
-          );
-          let bonus =
-            fromFormatedNumber(
-              tech.querySelector(".innerBonus").nextElementSibling.textContent.split("/")[0].trim(),
-              false,
-              true
-            ) / 100;
-          technologyCostReduction[techId] = technologyCostReduction[techId]
-            ? technologyCostReduction[techId] + bonus
-            : bonus;
-        });
-        */
-        let technologyTimeReduction = {};
-        /* since ogame 11.5.0 disabled, as it seems lifeform buildings&techs bonuses are not reported except a few
-        htmlDocument.querySelectorAll("div[data-category='bonus-11'] .subItemContent").forEach((tech) => {
-          let techId = new URL(tech.querySelector("button").getAttribute("data-target")).searchParams.get(
-            "technologyId"
-          );
-          let bonus =
-            fromFormatedNumber(
-              tech.querySelector(".innerBonus").nextElementSibling.textContent.split("/")[0].trim(),
-              false,
-              true
-            ) / 100;
-          technologyTimeReduction[techId] = technologyTimeReduction[techId]
-            ? technologyTimeReduction[techId] + bonus
-            : bonus;
-        });
-        */
+        // expedition bonus
+        const expeditionDiv = htmlDocument.querySelector(
+          "inner-bonus-item-heading[data-toggable='subcategoryResourcesExpedition'] .subCategoryBonus"
+        );
+        const expeditionBonus = expeditionDiv ? parseBonus(expeditionDiv.textContent) : 0;
 
+        // cost & time reduction bonus
+        const technologyCostReduction = {};
+        const technologyTimeReduction = {};
+        htmlDocument
+          .querySelectorAll("inner-bonus-item-heading[data-toggable^='subcategoryCostAndTime']")
+          .forEach((category) => {
+            const techId = category.getAttribute("data-toggable").split("subcategoryCostAndTime")[1];
+            const bonus = category.querySelectorAll("bonus-item");
+            technologyCostReduction[techId] = parseBonus(bonus[0].textContent);
+            technologyTimeReduction[techId] = parseBonus(bonus[1].textContent);
+          });
+
+        // class bonus
         const classBonus = {};
-        /* since ogame 11.5.0 disabled, as it seems this bonuses are not reported anymore
-        if (this.playerClass == PLAYER_CLASS_EXPLORER) {
-          htmlDocument.querySelectorAll("div[data-category='bonus-10'] .subItemContent .explorer").forEach((planet) => {
-            const bonusContainer = planet.parentElement.nextElementSibling.querySelectorAll(".innerBonus");
-            const research =
-              fromFormatedNumber(bonusContainer[0].nextElementSibling.textContent.split("/")[0].trim(), false, true) /
-              100; // value extraction not tested
-            const expedition =
-              fromFormatedNumber(bonusContainer[1].nextElementSibling.textContent.split("/")[0].trim(), false, true) /
-              (100 * (1 + this.json.explorerBonusIncreasedExpeditionOutcome) * this.json.speed);
-            // translate weird reported bonus into something useful to apply later
-            const phalanxRange =
-              fromFormatedNumber(bonusContainer[5].nextElementSibling.textContent.split("/")[0].trim(), false, true) /
-              100; // value extraction not tested
-            const inactiveLoot =
-              fromFormatedNumber(bonusContainer[6].nextElementSibling.textContent.split("/")[0].trim(), false, true) /
-              100; // value extraction not tested
+        const collectorDiv = htmlDocument.querySelector(
+          "inner-bonus-item-heading[data-toggable='subcategoryCharacterclasses1'] .subCategoryBonus"
+        );
+        const generalDiv = htmlDocument.querySelector(
+          "inner-bonus-item-heading[data-toggable='subcategoryCharacterclasses2'] .subCategoryBonus"
+        );
+        const discovererDiv = htmlDocument.querySelector(
+          "inner-bonus-item-heading[data-toggable='subcategoryCharacterclasses3'] .subCategoryBonus"
+        );
+        classBonus.miner = collectorDiv ? parseBonus(collectorDiv.textContent.split(":")[1]) : 0;
+        classBonus.warrior = generalDiv ? parseBonus(generalDiv.textContent.split(":")[1]) : 0;
+        classBonus.explorer = discovererDiv ? parseBonus(discovererDiv.textContent.split(":")[1]) : 0;
 
-            classBonus.research = classBonus.research ? classBonus.research + research : research;
-            classBonus.expedition = classBonus.expedition ? classBonus.expedition + expedition : expedition;
-            classBonus.phalanxRange = classBonus.phalanxRange ? classBonus.phalanxRange + phalanxRange : phalanxRange;
-            classBonus.inactiveLoot = classBonus.inactiveLoot ? classBonus.inactiveLoot + phalanxRange : inactiveLoot;
-            // TODO: only expedition bonus is used in expedition(), use more classBonus where needed
-          });
-        }
-        if (this.playerClass == PLAYER_CLASS_MINER) {
-          htmlDocument.querySelectorAll("div[data-category='bonus-10'] .subItemContent .miner").forEach((planet) => {
-            const bonusContainer = planet.parentElement.nextElementSibling.querySelectorAll(".innerBonus");
-            const production =
-              fromFormatedNumber(bonusContainer[0].nextElementSibling.textContent.split("/")[0].trim(), false, true) /
-              100; // value extraction not tested
-            const energy =
-              fromFormatedNumber(bonusContainer[1].nextElementSibling.textContent.split("/")[0].trim(), false, true) /
-              100; // value extraction not tested
-            const crawler =
-              fromFormatedNumber(bonusContainer[4].nextElementSibling.textContent.split("/")[0].trim(), false, true) /
-              100; // value extraction not tested
-            const maxCrawlers =
-              fromFormatedNumber(bonusContainer[5].nextElementSibling.textContent.split("/")[0].trim(), false, true) /
-              100; // value extraction not tested
-            classBonus.production = classBonus.production ? classBonus.production + production : production;
-            classBonus.energy = classBonus.energy ? classBonus.energy + energy : energy;
-            classBonus.crawler = classBonus.crawler ? classBonus.crawler + crawler : crawler;
-            classBonus.maxCrawlers = classBonus.maxCrawlers ? classBonus.maxCrawlers + maxCrawlers : maxCrawlers;
-            // TODO: use classBonus where needed
-          });
-        }
-        */
-        // TODO: add following consumptionReduction[id] = {energy: 0, deuterium: 0}
+        // crawler bonus
+        const crawlerDiv = htmlDocument.querySelectorAll(
+          "inner-bonus-item-heading[data-toggable='subcategoryMiscImprovedCrawler'] bonus-item"
+        );
+        const crawlerConsumptionBonus = crawlerDiv.length ? parseBonus(crawlerDiv[0].textContent) : 0;
+        const crawlerProductionBonus = crawlerDiv.length ? parseBonus(crawlerDiv[1].textContent) : 0;
+
         return {
           lifeformLevel: lifeformLevel,
-          classBonus: classBonus,
           productionBonus: productionBonus,
+          expeditionBonus: expeditionBonus,
           technologyCostReduction: technologyCostReduction,
           technologyTimeReduction: technologyTimeReduction,
-          expeditionBonus: expeditionBonus,
+          classBonus: classBonus,
           crawlerBonus: { production: crawlerProductionBonus, consumption: crawlerConsumptionBonus },
         };
       });
+  }
+
+  async updateLifeformPlanetBonus() {
+    const lifeformPlanetBonus = {};
+    this.json.empire.forEach((planet) => {
+      const lifeform = this.json.selectedLifeforms[planet.id];
+
+      // research cost & time reduction bonus
+      const lfLabBuildingId = Number("1" + lifeform?.slice(-1) + "103");
+      const technologyCostReduction = 0.0025 * (planet[lfLabBuildingId] > 1 ? planet[lfLabBuildingId] : 0);
+      const technologyTimeReduction = 0.02 * (planet[lfLabBuildingId] > 1 ? planet[lfLabBuildingId] : 0);
+
+      // building cost & time reduction bonus
+      const buildingCostReduction = {};
+      const buildingTimeReduction = {};
+      if (lifeform == "lifeform2") {
+        const lfCostReduction = 0.01 * planet[12108];
+        const lfTimeReduction = 0.01 * planet[12108];
+        if (lfCostReduction) {
+          Array.from(new Array(12), (x, i) => i + 12101).forEach((id) => {
+            buildingCostReduction[id] = lfCostReduction;
+            buildingTimeReduction[id] = lfTimeReduction;
+          });
+        }
+        const prodCostReduction = 0.005 * planet[12111];
+        if (prodCostReduction) {
+          [1, 2, 3, 4, 12].forEach((id) => (buildingCostReduction[id] = prodCostReduction));
+          [12101, 12102].forEach((id) => (buildingCostReduction[id] += prodCostReduction));
+        }
+      }
+
+      // production bonus
+      const productionBonus = [0, 0, 0, 0];
+      switch (lifeform) {
+        case "lifeform1":
+          productionBonus[0] = 0.015 * planet[11106];
+          productionBonus[1] = 0.015 * planet[11108];
+          productionBonus[2] = 0.01 * planet[11108];
+          break;
+        case "lifeform2":
+          productionBonus[0] = 0.02 * planet[12106];
+          productionBonus[1] = 0.02 * planet[12109];
+          productionBonus[2] = 0.02 * planet[12110];
+          break;
+        case "lifeform3":
+          productionBonus[2] = 0.02 * planet[13110];
+      }
+
+      lifeformPlanetBonus[planet.id] = {
+        buildingCostReduction: buildingCostReduction,
+        buildingTimeReduction: buildingTimeReduction,
+        productionBonus: productionBonus,
+        technologyCostReduction: technologyCostReduction,
+        technologyTimeReduction: technologyTimeReduction,
+      };
+    });
+    this.json.lifeformPlanetBonus = lifeformPlanetBonus;
   }
 
   async getEmpireInfo() {
@@ -11768,6 +11724,7 @@ class OGInfinity {
   }
 
   updateEmpireProduction() {
+    // WIP
     this.json.empire.forEach((planet) => {
       planet.production.productionFactor = 1; // temporary, TODO: change use in fleetDispatcher with computed factor
       planet.production.generalIncoming = {
@@ -11878,79 +11835,135 @@ class OGInfinity {
         },
       };
 
-      // Get exact production data (Ogame's empire data has rounding issues)
-      for (let idx = 0; idx < 3; idx++) {
-        let totalProd = 0;
-        let baseProd = planet.production.generalIncoming[idx];
-        totalProd += baseProd;
-        let mineProd = planet.production.production[idx + 1][idx];
-        totalProd += mineProd;
-        planet.production.production[idx + 1][idx] = mineProd;
-        let plasmaProd = mineProd * planet[122] * PLASMATECH_BONUS[idx];
-        totalProd += plasmaProd;
-        planet.production.production[122][idx] = plasmaProd;
-        let geoProd = mineProd * (this.geologist ? GEOLOGIST_RESOURCE_BONUS : 0);
-        totalProd += geoProd;
-        planet.production.production[1001][idx] = geoProd;
-        let officerProd = mineProd * (this.allOfficers ? OFFICER_RESOURCE_BONUS : 0);
-        totalProd += officerProd;
-        planet.production.production[1003][idx] = officerProd;
-        let allyClassProd = mineProd * (this.json.allianceClass == ALLY_CLASS_MINER ? TRADER_RESOURCE_BONUS : 0);
-        totalProd += allyClassProd;
-        planet.production.production[1005][idx] = allyClassProd;
-        let playerClassProd =
-          mineProd * (this.playerClass == PLAYER_CLASS_MINER ? this.json.minerBonusResourceProduction : 0);
-        totalProd += playerClassProd;
-        planet.production.production[1004][idx] = playerClassProd;
+      planet.production.lifeformProduction = {
+        0: 0,
+        1: 0,
+        2: 0,
+        3: 0,
+      };
 
-        const maxCrawlers = Math.floor(
-          (planet[1] + planet[2] + planet[3]) *
-            MAX_CRAWLERS_PER_MINE *
-            (this.playerClass == PLAYER_CLASS_MINER && this.geologist ? 1 + this.json.minerBonusMaxCrawler : 1)
-        );
-        let crawlerProd =
-          mineProd *
-          Math.min(planet[217], maxCrawlers) *
-          this.json.resourceBuggyProductionBoost *
-          (this.playerClass == PLAYER_CLASS_MINER ? 1 + this.json.minerBonusAdditionalCrawler : 1) *
-          (this.json.lifeformBonus ? 1 + this.json.lifeformBonus[planet.id].crawlerBonus.production : 1);
-        let crawlerPercent = Math.round((planet.production.production[217][idx] / crawlerProd) * 10) / 10;
-        crawlerPercent = this.playerClass == PLAYER_CLASS_MINER ? 1.5 : 1; // temporary hack TODO: guess true value
-        crawlerProd *= Math.min(crawlerPercent, this.playerClass == PLAYER_CLASS_MINER ? CRAWLER_OVERLOAD_MAX : 1);
-        crawlerProd = Math.min(crawlerProd, mineProd * this.json.resourceBuggyMaxProductionBoost);
-        totalProd += crawlerProd;
-        planet.production.production[217][idx] = crawlerProd;
+      //console.log("planet: " + planet.coordinates);
+
+      // TODO: compute energy detailed production if used
+      for (let idx = 0; idx < 3; idx++) {
+        //console.log("resource: " + ["metal", "crystal", "deuterium"][idx]);
+
+        const baseProd = planet.production.generalIncoming[idx];
+        const mineProd = planet.production.production[idx + 1][idx];
+        const plasmaProd = mineProd * planet[122] * PLASMATECH_BONUS[idx];
+        const geoProd = mineProd * (this.geologist ? GEOLOGIST_RESOURCE_BONUS : 0);
+        const officerProd = mineProd * (this.allOfficers ? OFFICER_RESOURCE_BONUS : 0);
+        const allyClassProd = mineProd * (this.json.allianceClass == ALLY_CLASS_MINER ? TRADER_RESOURCE_BONUS : 0);
+        const playerClassProd =
+          mineProd * (this.playerClass == PLAYER_CLASS_MINER ? this.json.minerBonusResourceProduction : 0);
 
         // TODO: compute items production
-        if (planet.production.production[1000][idx] != 0) {
-          let itemProd = (mineProd * Math.round((planet.production.production[1000][idx] / mineProd) * 10)) / 10;
-          totalProd += itemProd;
-          planet.production.production[1000][idx] = itemProd;
+        let itemProd = 0;
+
+        const lifeformBonus = this.json.lifeformBonus?.[planet.id];
+        const lifeformProd = lifeformBonus ? mineProd * lifeformBonus.productionBonus[idx] : 0;
+        const lifeformPlanetBonus = this.json.lifeformPlanetBonus[planet.id]?.productionBonus;
+        const lifeformPlanetProd = lifeformPlanetBonus ? mineProd * lifeformPlanetBonus[idx] : 0;
+
+        let totalProd = 0;
+        totalProd += mineProd;
+        totalProd += plasmaProd;
+        totalProd += geoProd;
+        totalProd += officerProd;
+        totalProd += allyClassProd;
+        totalProd += playerClassProd;
+        totalProd += itemProd;
+        totalProd += lifeformProd;
+        totalProd += lifeformPlanetProd;
+        // TODO: compute fusion reactor factor
+        totalProd -= planet.production.production[12][idx];
+
+        let crawlerProd = 0;
+        if (planet[217] > 0) {
+          const maxCrawlers = Math.floor(
+            (planet[1] + planet[2] + planet[3]) *
+              MAX_CRAWLERS_PER_MINE *
+              (this.playerClass == PLAYER_CLASS_MINER && this.geologist ? 1 + this.json.minerBonusMaxCrawler : 1)
+          );
+          crawlerProd =
+            mineProd *
+            Math.min(planet[217], maxCrawlers) *
+            this.json.resourceBuggyProductionBoost *
+            (this.playerClass == PLAYER_CLASS_MINER ? 1 + this.json.minerBonusAdditionalCrawler : 1) *
+            (this.json.lifeformBonus ? 1 + this.json.lifeformBonus[planet.id].crawlerBonus.production : 1);
+          //let crawlerPercent = this.playerClass == PLAYER_CLASS_MINER ? 1.5 : 1;  // TODO: try to guess true value
+          let crawlerPercent = 1;
+          crawlerProd *= Math.min(crawlerPercent, this.playerClass == PLAYER_CLASS_MINER ? CRAWLER_OVERLOAD_MAX : 1);
+          crawlerProd = Math.min(crawlerProd, mineProd * this.json.resourceBuggyMaxProductionBoost);
         }
 
-        // TODO: compute production factors per production unit and recompute productions
+        let prodFactor = 0;
+        let crawlerFactor = this.playerClass == PLAYER_CLASS_MINER ? 1.5 : 1;
 
-        totalProd -= planet.production.production[12][idx];
+        /*
+        for (crawlerFactor; crawlerFactor > 0; crawlerFactor -= 0.1) {
+          crawlerFactor = Math.round(crawlerFactor * 10) / 10;
+          prodFactor = (planet.production.hourly[idx] - baseProd) /
+            (totalProd + Math.min(crawlerProd * crawlerFactor, mineProd * this.json.resourceBuggyMaxProductionBoost));
+          //console.log("prod: " + prodFactor + " crawler: " + crawlerFactor);
+          if (Math.round(prodFactor * 100) / 100 <= 1) break;
+        }
+        */
+
+        prodFactor =
+          (planet.production.hourly[idx] - baseProd) /
+          (totalProd + Math.min(crawlerProd * crawlerFactor, mineProd * this.json.resourceBuggyMaxProductionBoost));
+        prodFactor = Math.round(prodFactor * 100) / 100;
+
+        crawlerProd = Math.min(
+          crawlerProd * crawlerFactor * prodFactor,
+          mineProd * prodFactor * this.json.resourceBuggyMaxProductionBoost
+        );
+
+        totalProd *= prodFactor;
+        totalProd += crawlerProd;
+        totalProd += baseProd;
+
+        //console.log("crawler factor: " + crawlerFactor);
+        //console.log("production factor: " + prodFactor);
+        //console.log("total production (computed): " + totalProd);
+
+        planet.production.production[idx + 1][idx] = mineProd * prodFactor;
+        planet.production.production[122][idx] = plasmaProd * prodFactor;
+        planet.production.production[1001][idx] = geoProd * prodFactor;
+        planet.production.production[1003][idx] = officerProd * prodFactor;
+        planet.production.production[1005][idx] = allyClassProd * prodFactor;
+        planet.production.production[1004][idx] = playerClassProd * prodFactor;
+        planet.production.production[217][idx] = crawlerProd;
+        planet.production.production[1000][idx] = itemProd * prodFactor;
+        planet.production.lifeformProduction[idx] = (lifeformProd + lifeformPlanetProd) * prodFactor;
+        /*
+        console.log("computed detailed production:");
+        console.log("base: " + planet.production.generalIncoming[idx]);
+        console.log("mine: " + planet.production.production[idx + 1][idx]);
+        console.log("plasma: " + planet.production.production[122][idx]);
+        console.log("geo: " + planet.production.production[1001][idx]);
+        console.log("officer: " + planet.production.production[1003][idx]);
+        console.log("ally class: " + planet.production.production[1005][idx]);
+        console.log("player class: " + planet.production.production[1004][idx]);
+        console.log("crawler: " + planet.production.production[217][idx]);
+        console.log("item: " + planet.production.production[1000][idx]);
+        console.log("lifeformTotal: " + planet.production.lifeformProduction[idx]);
+        console.log("lifeformTech: " + lifeformProd * prodFactor);
+        console.log("lifeformPlanet: " + lifeformPlanetProd * prodFactor);
+        console.log("----------------------------------------------");
+        */
         planet.production.hourly[idx] = totalProd;
         planet.production.daily[idx] = totalProd * 24;
         planet.production.weekly[idx] = totalProd * 24 * 7;
       }
-      // lifeform production is not included in ogames empire data, might change in future
-      if (!planet.isMoon && this.json.lifeformBonus && this.json.lifeformBonus[planet.id]) {
-        let bonus = this.json.lifeformBonus[planet.id].productionBonus;
-        let lifeformProduction = [0, 0, 0];
-        for (let idx = 0; idx < 3; idx++) {
-          let oldHourly = planet.production.hourly[idx];
-          let oldDaily = planet.production.daily[idx];
-          let oldWeekly = planet.production.weekly[idx];
-          let mineProd = planet.production.production[idx + 1][idx];
-          lifeformProduction[idx] = mineProd * bonus[idx];
-          planet.production.hourly[idx] = oldHourly + lifeformProduction[idx];
-          planet.production.daily[idx] = oldDaily + mineProd * bonus[idx] * 24;
-          planet.production.weekly[idx] = oldWeekly + mineProd * bonus[idx] * 24 * 7;
-        }
-        planet.production.lifeformProduction = lifeformProduction;
-      }
+      /*
+      console.log("planet hourly / daily / weekly productions");
+      console.log(planet.production.hourly);
+      console.log(planet.production.daily);
+      console.log(planet.production.weekly);
+      console.log("=================================================");
+      */
     });
   }
 
@@ -12648,6 +12661,7 @@ class OGInfinity {
         planet.invalidate = false;
         if (planet.moon) planet.moon.invalidate = false;
       });
+      this.updateLifeformPlanetBonus();
       this.updateEmpireProduction();
       this.updateresourceDetail();
       this.flyingFleet();
@@ -14492,6 +14506,11 @@ class OGInfinity {
           .sort((a, b) => b - a)
           .slice(0, igfn)
           .map((x) => (labLvl += x));
+      } else {
+        const technologyCostReduction = this.json.lifeformPlanetBonus[object.id]?.technologyCostReduction;
+        const technologyTimeReduction = this.json.lifeformPlanetBonus[object.id]?.technologyTimeReduction;
+        costFactor -= technologyCostReduction ? technologyCostReduction : 0;
+        timeFactor -= technologyTimeReduction ? technologyTimeReduction : 0;
       }
       if (this.json.lifeformBonus && this.json.lifeformBonus[object.id]) {
         if (
@@ -14611,6 +14630,13 @@ class OGInfinity {
     let nanite = object ? (object[15] ? object[15] : 0) : 0;
     if (id >= 11101) lvl = Math.max(lvl, 1); // needed for demolish to lvl 0
 
+    if (object) {
+      const buildingCostReduction = this.json.lifeformPlanetBonus[object.id]?.buildingCostReduction[id];
+      const buildingTimeReduction = this.json.lifeformPlanetBonus[object.id]?.buildingTimeReduction[id];
+      costFactor -= buildingCostReduction ? buildingCostReduction : 0;
+      timeFactor -= buildingTimeReduction ? buildingTimeReduction : 0;
+    }
+
     if (object && this.json.lifeformBonus && this.json.lifeformBonus[object.id]) {
       if (
         this.json.lifeformBonus[object.id].technologyCostReduction &&
@@ -14663,6 +14689,10 @@ class OGInfinity {
       ),
       1
     );
+
+    // remove any time reduction applied by side effect on regular tech by cost reduction LF tech
+    if (costFactor < 1 && id < 11101) time /= costFactor;
+
     if (BUIDLING_INFO[id].factorTime) {
       time = Math.max(
         Math.round(
@@ -17282,7 +17312,8 @@ class OGInfinity {
       this.updateServerSettings(true);
       this.getAllianceClass();
       this.initializeLFTypeName();
-      await this.updateLifeform(true);
+      await this.updateLifeform();
+      await this.updateEmpireData();
       document.querySelector(".ogl-dialog .close-tooltip").click();
     });
     dataDiv.appendChild(createDOM("hr"));
@@ -17960,7 +17991,7 @@ class OGInfinity {
     let prodDiffMSE = prodDiff.map((x, n) => (x * tradeRate[0]) / tradeRate[n]).reduce((sum, cur) => sum + cur, 0);
     let buildingCostMSE = 0;
     for (let lvl = baselvl; lvl <= tolvl; lvl++) {
-      buildingCostMSE += this.building(technoId, lvl, false, false, false, object)
+      buildingCostMSE += this.building(technoId, lvl, object)
         .cost.map((x, n) => (x * tradeRate[0]) / tradeRate[n])
         .reduce((sum, cur) => sum + cur, 0);
     }
