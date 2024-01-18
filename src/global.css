@@ -450,6 +450,21 @@ input[type="password"]::selection {
   width: 180px !important;
 }
 
+.ogl-settings .ogl-simulator {
+  color: #bbb !important;
+  border: solid 1px rgb(58 72 86) !important;
+  box-shadow: none !important;
+  background: -webkit-linear-gradient(top, rgb(14 17 23) 0, rgb(35 43 51) 100%) !important;
+  float: right;
+  height: 16px;
+  line-height: 18px !important;
+  padding: 0 4px;
+  border-width: 1px;
+  text-align: center;
+  vertical-align: middle;
+  width: 190px !important;
+}
+
 .ogl-settings .ogl-right {
   margin-top: 0;
 }
