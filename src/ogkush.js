@@ -1502,6 +1502,7 @@ class OGInfinity {
       // TODO: Remove ptreTK from LocalStorage (it has wrong format)
     }
     this.json.options.pantryKey = this.json.options.pantryKey || "";
+    this.json.options.simulator = this.json.options.simulator || "";
     this.json.options.rvalLimit = this.json.options.rvalLimit || 4e5 * this.json.speed;
     this.json.options.spyTableEnable = this.json.options.spyTableEnable === false ? false : true;
     this.json.options.spyTableAppend = this.json.options.spyTableAppend === false ? false : true;
@@ -3291,7 +3292,7 @@ class OGInfinity {
     );
     bar.appendChild(
       createDOM("li").appendChild(
-        createDOM("a", { href: `https://trashsim.oplanet.eu/${this.univerviewLang}`, target: "_blank" }, "Trash")
+        createDOM("a", { href: `${this.json.options.simulator}${this.univerviewLang}`, target: "_blank" }, "Sim")
       ).parentElement
     );
     bar.appendChild(
@@ -4273,7 +4274,7 @@ class OGInfinity {
           key = key.split("'")[1];
           if (key.startsWith("sr")) {
             let link = elem.appendChild(
-              createDOM("div", { class: "ogk-trashsim tooltip", target: "_blank", title: "Trahsim" })
+              createDOM("div", { class: "ogk-trashsim tooltip", target: "_blank", title: this.getTranslatedText(170) })
             );
             let apiTechData = {
               109: { level: this.json.technology[109] },
@@ -4285,25 +4286,32 @@ class OGInfinity {
               114: { level: this.json.technology[114] },
             };
             link.addEventListener("click", () => {
-              let coords = this.current.coords.split(":");
-              let json = {
-                0: [
-                  {
-                    class: this.playerClass,
-                    research: apiTechData,
-                    planet: {
-                      galaxy: coords[0],
-                      system: coords[1],
-                      position: coords[2],
+              if (!this.json.options.simulator) {
+                this.popup(
+                  null,
+                  this.createDOM("div", { class: "ogl-warning-dialog overmark" }, this.getTranslatedText(169))
+                );
+              } else {
+                let coords = this.current.coords.split(":");
+                let json = {
+                  0: [
+                    {
+                      class: this.playerClass,
+                      research: apiTechData,
+                      planet: {
+                        galaxy: coords[0],
+                        system: coords[1],
+                        position: coords[2],
+                      },
                     },
-                  },
-                ],
-              };
-              let base64 = btoa(JSON.stringify(json));
-              window.open(
-                `https://trashsim.oplanet.eu/${this.univerviewLang}?SR_KEY=${key}#prefill=${base64}`,
-                "_blank"
-              );
+                  ],
+                };
+                let base64 = btoa(JSON.stringify(json));
+                window.open(
+                  `${this.json.options.simulator}${this.univerviewLang}?SR_KEY=${key}#prefill=${base64}`,
+                  "_blank"
+                );
+              }
             });
           } else if (key.startsWith("cr")) {
             let link = elem.appendChild(createDOM("a", { class: "ogk-ogotcha tooltip", title: "Ogotcha" }));
@@ -13872,34 +13880,41 @@ class OGInfinity {
         location.href = fleetLink;
       });
       simulateBtn.addEventListener("click", () => {
-        let apiTechData = {
-          109: { level: this.json.technology[109] },
-          110: { level: this.json.technology[110] },
-          111: { level: this.json.technology[111] },
-          115: { level: this.json.technology[115] },
-          117: { level: this.json.technology[117] },
-          118: { level: this.json.technology[118] },
-          114: { level: this.json.technology[114] },
-        };
-        let coords = this.current.coords.split(":");
-        let json = {
-          0: [
-            {
-              class: this.playerClass,
-              research: apiTechData,
-              planet: {
-                galaxy: coords[0],
-                system: coords[1],
-                position: coords[2],
+        if (!this.json.options.simulator) {
+          this.popup(
+            null,
+            this.createDOM("div", { class: "ogl-warning-dialog overmark" }, this.getTranslatedText(169))
+          );
+        } else {
+          let apiTechData = {
+            109: { level: this.json.technology[109] },
+            110: { level: this.json.technology[110] },
+            111: { level: this.json.technology[111] },
+            115: { level: this.json.technology[115] },
+            117: { level: this.json.technology[117] },
+            118: { level: this.json.technology[118] },
+            114: { level: this.json.technology[114] },
+          };
+          let coords = this.current.coords.split(":");
+          let json = {
+            0: [
+              {
+                class: this.playerClass,
+                research: apiTechData,
+                planet: {
+                  galaxy: coords[0],
+                  system: coords[1],
+                  position: coords[2],
+                },
               },
-            },
-          ],
-        };
-        let base64 = btoa(JSON.stringify(json));
-        window.open(
-          `https://trashsim.oplanet.eu/${this.univerviewLang}?SR_KEY=${report.apiKey}#prefill=${base64}`,
-          "_blank"
-        );
+            ],
+          };
+          let base64 = btoa(JSON.stringify(json));
+          window.open(
+            `${this.json.options.simulator}${this.univerviewLang}?SR_KEY=${report.apiKey}#prefill=${base64}`,
+            "_blank"
+          );
+        }
       });
 
       opt.appendChild(createDOM("button", { class: "icon icon_eye", onclick: report.spy }));
@@ -15147,24 +15162,28 @@ class OGInfinity {
       114: { level: this.json.technology[114] },
     };
     btn.addEventListener("click", () => {
-      let coords = this.current.coords.split(":");
-      let json = {
-        0: [
-          {
-            class: this.playerClass,
-            research: apiTechData,
-            planet: {
-              galaxy: coords[0],
-              system: coords[1],
-              position: coords[2],
+      if (!this.json.options.simulator) {
+        this.popup(null, this.createDOM("div", { class: "ogl-warning-dialog overmark" }, this.getTranslatedText(169)));
+      } else {
+        let coords = this.current.coords.split(":");
+        let json = {
+          0: [
+            {
+              class: this.playerClass,
+              research: apiTechData,
+              planet: {
+                galaxy: coords[0],
+                system: coords[1],
+                position: coords[2],
+              },
+              ships: ships,
             },
-            ships: ships,
-          },
-        ],
-        settings: this.json.trashsimSettings,
-      };
-      let base64 = btoa(JSON.stringify(json));
-      window.open(`https://trashsim.oplanet.eu/${this.univerviewLang}?#prefill=${base64}`, "_blank");
+          ],
+          settings: this.json.trashsimSettings,
+        };
+        let base64 = btoa(JSON.stringify(json));
+        window.open(`${this.json.options.simulator}${this.univerviewLang}?#prefill=${base64}`, "_blank");
+      }
     });
   }
 
@@ -16032,9 +16051,9 @@ class OGInfinity {
       text: [
         /*0*/ {
           de: "Einstellungen",
-          en: "Setting",
+          en: "Settings",
           es: "Ajustes",
-          fr: "Gestion des données",
+          fr: "Paramètres",
           tr: "Ayarlar",
         },
         /*1*/ {
@@ -17214,6 +17233,27 @@ class OGInfinity {
           tr: "Veri yükleniyor. Lütfen bekleyin...",
         },
         /*169*/ {
+          de: "Externes Tool nicht in 'Einstellung' konfiguriert",
+          en: "External tool not configured in 'Settings'",
+          es: "Herramienta externa sin configurar en 'Ajustes'",
+          fr: "Outil externe non configuré dans 'Paramètres'",
+          tr: "Harici takım 'Ayarlar' da yapılandırılmamış",
+        },
+        /*170*/ {
+          de: "Kampfsimulator",
+          en: "Battle simulator",
+          es: "Simulador de batallas",
+          fr: "Simulateur de combat",
+          tr: "Savaş simülatörü",
+        },
+        /*171*/ {
+          de: "Wähle eine Option...",
+          en: "Select option...",
+          es: "Seleccionar opción...",
+          fr: "Sélectionnez l'option...",
+          tr: "Seçeneği seçin...",
+        },
+        /*172*/ {
           de: "",
           en: "",
           es: "",
@@ -17702,6 +17742,17 @@ class OGInfinity {
         placeholder: "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
       })
     );
+    let simulator = keys.appendChild(createDOM("span", {}, this.getTranslatedText(170)));
+    let simulatorInput = createDOM("select", { class: "ogl-simulator tooltip" });
+    simulatorInput.append(
+      createDOM("option", { value: "", disabled: "true" }, this.getTranslatedText(171)),
+      createDOM("option", { value: "https://battlesim.logserver.net/" }, "Logserver - Battlesim"),
+      createDOM("option", { value: "https://obatsim.stevecohen.fr/" }, "Ogame Battle Simulator"),
+      createDOM("option", { value: "https://simulator.ogame-tools.com/" }, "Ogame Tools - Simulator"),
+      createDOM("option", { value: "https://webapp-universe.net/ogf/change_language/" }, "OGF")
+    );
+    simulatorInput.value = this.json.options.simulator;
+    simulator.appendChild(simulatorInput);
     settingDiv.appendChild(saveBtn);
     saveBtn.addEventListener("click", () => {
       this.json.options.rvalLimit = fromFormatedNumber(rvalInput.value, true);
@@ -17712,6 +17763,7 @@ class OGInfinity {
         // TODO: Display an error message "Invalid PTRE Team Key Format. TK should look like: TM-XXXX-XXXX-XXXX-XXXX"
       }
       this.json.options.pantryKey = pantryInput.value;
+      this.json.options.simulator = simulatorInput.value;
       this.json.options.expedition.defaultTime = Math.max(1, Math.min(~~expeditionDefaultTime.value, 16));
       this.json.options.expedition.limitCargo = Math.max(1, Math.min(~~expeditionLimitCargo.value, 500)) / 100;
       this.json.options.expedition.rotationAfter = Math.max(1, Math.min(~~expeditionRotationAfter.value, 16));
