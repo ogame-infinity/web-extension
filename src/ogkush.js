@@ -18952,7 +18952,7 @@ class OGInfinity {
 
   initializeLFTypeName() {
     if (!this.hasLifeforms) return;
-    fetch("/game/index.php?page=ingame&component=lfsettings")
+    fetch(`/game/index.php?page=ingame&component=lfsettings&cp=${this.current.id}`)
       .then((rep) => rep.text())
       .then((str) => {
         const htmlDocument = new window.DOMParser().parseFromString(str, "text/html");
@@ -18961,6 +18961,8 @@ class OGInfinity {
           const lifeformIcon = lfName.parentElement.querySelector(".lifeform1, .lifeform2, .lifeform3, .lifeform4");
           this.json.lfTypeNames[lfName.textContent.trim()] = lifeformIcon.classList[1];
         });
+        // last fetch has to be from current planet/moon else Ogame switches on next refresh
+        if (this.current.isMoon) fetch(this.current.planet.querySelector(".moonlink").href);
       });
   }
 
