@@ -1670,7 +1670,7 @@ class OGInfinity {
       );
   }
 
-  updateEmpireData(force = false) {
+  async updateEmpireData(force = false) {
     let timeSinceLastUpdate = new Date() - new Date(this.json.lastEmpireUpdate);
     if (
       force ||
@@ -1678,7 +1678,7 @@ class OGInfinity {
       (timeSinceLastUpdate > 5 * 60 * 1e3 && this.json.needsUpdate) ||
       (timeSinceLastUpdate > 1 * 60 * 1e3 && this.json.options.autofetchempire)
     ) {
-      this.updateInfo();
+      await this.updateInfo();
     }
     let stageForUpdate = () => {
       this.json.needsUpdate = true;
@@ -17353,7 +17353,7 @@ class OGInfinity {
       this.getAllianceClass();
       this.initializeLFTypeName();
       await this.updateLifeform();
-      await this.updateEmpireData();
+      await this.updateEmpireData(true);
       document.querySelector(".ogl-dialog .close-tooltip").click();
     });
     dataDiv.appendChild(createDOM("hr"));
@@ -18952,7 +18952,7 @@ class OGInfinity {
 
   initializeLFTypeName() {
     if (!this.hasLifeforms) return;
-    fetch("/game/index.php?page=ingame&component=lfsettings")
+    fetch(`/game/index.php?page=ingame&component=lfsettings&cp=${this.current.id}`)
       .then((rep) => rep.text())
       .then((str) => {
         const htmlDocument = new window.DOMParser().parseFromString(str, "text/html");
@@ -18961,6 +18961,8 @@ class OGInfinity {
           const lifeformIcon = lfName.parentElement.querySelector(".lifeform1, .lifeform2, .lifeform3, .lifeform4");
           this.json.lfTypeNames[lfName.textContent.trim()] = lifeformIcon.classList[1];
         });
+        // last fetch has to be from current planet/moon else Ogame switches on next refresh
+        if (this.current.isMoon) fetch(this.current.planet.querySelector(".moonlink").href);
       });
   }
 
