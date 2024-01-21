@@ -151,6 +151,7 @@ const handlerProxy = {
 const proxyOptions = new Proxy(_options, handlerProxy);
 
 /**
+ * Gets all declared options.
  * @return {typeof _options} Proxy
  */
 export function getOptions() {
@@ -158,6 +159,7 @@ export function getOptions() {
 }
 
 /**
+ * Gets the value of an existing option.
  * @param {string} name
  * @return {*|undefined}
  */
@@ -169,6 +171,7 @@ export function getOption(name) {
 }
 
 /**
+ * Allows to set the value of a previously existing or non-existing option.
  * @param {string} name
  * @param {*} value
  */
