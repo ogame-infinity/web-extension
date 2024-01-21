@@ -32,8 +32,8 @@ function print(on) {
 
     if (message instanceof Error) {
       data.push("\n --- stack ---\n");
-      data.push(message.stack);
-      message = message.message;
+      data.push(message);
+      message = `${message.message} ⚠️`;
     }
 
     on(
