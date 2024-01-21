@@ -1,4 +1,5 @@
 /// Page Context Imports
+import { initConfOptions, getOptions } from "./ctxpage/conf-options.js";
 import ctxMessageAnalyzer from "./ctxpage/messages-analyzer/index.js";
 import * as DOM from "./util/dom.js";
 import { getLogger } from "./util/logger.js";
@@ -1455,6 +1456,14 @@ class OGInfinity {
     this.json.tchat = this.json.tchat || false;
     this.json.needSync = this.json.needSync || false;
     this.json.timezoneDiff = this.json.timezoneDiff || 0;
+
+    initConfOptions(this.json.options);
+    // set a proxy for compatibility, important for saving configuration.
+    this.json.options = getOptions();
+
+    /// TODO: Remove this region when test of options is approved
+    /// region this.json.options declaration
+    /*
     this.json.options = this.json.options || {};
     this.json.options.collect = this.json.options.collect || {
       target: { galaxy: 0, system: 0, position: 0, type: 1 },
@@ -1512,6 +1521,9 @@ class OGInfinity {
     this.json.options.defaultKept = this.json.options.defaultKept || {};
     this.json.options.hiddenTargets = this.json.options.hiddenTargets || {};
     this.json.options.timeZone = this.json.options.timeZone === false ? false : true;
+    */
+    /// endregion options
+
     this.json.selectedLifeforms = this.json.selectedLifeforms || {};
     this.json.lifeformBonus = this.json.lifeformBonus || null;
     this.json.lifeformPlanetBonus = this.json.lifeformPlanetBonus || {};
@@ -3888,8 +3900,8 @@ class OGInfinity {
 
         // PTRE activities
         if ( this.json.options.ptreTK && playerId > -1 &&
-            (this.json.sideStalk.indexOf(playerId) > -1 || 
-             this.markedPlayers.indexOf(playerId) > -1 || 
+            (this.json.sideStalk.indexOf(playerId) > -1 ||
+             this.markedPlayers.indexOf(playerId) > -1 ||
              (this.json.searchHistory.length > 0 && playerId == this.json.searchHistory[this.json.searchHistory.length - 1].id)) ) {
           let planetActivity = row.querySelector("[data-planet-id] .activity.minute15")
             ? "*"
