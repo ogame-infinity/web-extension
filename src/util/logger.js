@@ -30,8 +30,13 @@ function print(on) {
   return function (message, ...data) {
     const name = this.name ?? "";
 
-    on.call(
-      null,
+    if (message instanceof Error) {
+      data.push("\n --- stack ---\n");
+      data.push(message);
+      message = `${message.message} ⚠️`;
+    }
+
+    on(
       `%cOGame Infinity/v${VERSION}%c%s%c %s> ${message}`,
       APP_VERSION_STYLE,
       LOG_NAME_STYLE,
