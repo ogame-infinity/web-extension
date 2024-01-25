@@ -3,13 +3,13 @@
  * @property {number} cargoShip
  * @property {number} combatShip
  * @property {number} defaultTime
- * @property {number} limitCargo 1 to 100
+ * @property {number} limitCargo 1 to 500 (is percentage)
  * @property {boolean} rotation
  * @property {number} rotationAfter
  * @property {boolean} sendCombat
  * @property {boolean} sendProbe
  * @property {boolean} standardFleet
- * @property {boolean} standardFleetId
+ * @property {number} standardFleetId
  */
 
 /**
@@ -42,15 +42,14 @@ const _options = {
   expeditionMission: 15,
   foreignMission: 3,
   harvestMission: 4,
-  activitytimers: 0,
-  planetIcons: false,
+  activitytimers: false,
   disableautofetchempire: false,
   autofetchempire: true,
   spyFilter: "DATE",
   ptreTK: "",
   pantryKey: "",
   simulator: "",
-  rvalLimit: undefined,
+  rvalLimit: 1e6, // needs revision to consider the speed of the universe.
   spyTableEnable: true,
   spyTableAppend: true,
   compactViewEnable: true,
