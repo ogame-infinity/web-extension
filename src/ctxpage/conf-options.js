@@ -43,7 +43,6 @@ const _options = {
   foreignMission: 3,
   harvestMission: 4,
   activitytimers: false,
-  disableautofetchempire: false,
   autofetchempire: true,
   spyFilter: "DATE",
   ptreTK: "",

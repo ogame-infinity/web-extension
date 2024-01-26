@@ -17412,10 +17412,10 @@ class OGInfinity {
     );
     let disableautofetchempirebox = optiondiv.appendChild(createDOM("input", { type: "checkbox" }));
     disableautofetchempirebox.addEventListener("change", () => {
-      this.json.options.disableautofetchempire = disableautofetchempirebox.checked;
+      this.json.options.autofetchempire = !disableautofetchempirebox.checked;
       this.saveData();
     });
-    if (this.json.options.disableautofetchempire) {
+    if (!this.json.options.autofetchempire) {
       disableautofetchempirebox.checked = true;
     }
     let fleetActivity = featureSettings.appendChild(
