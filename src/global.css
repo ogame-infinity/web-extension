@@ -5958,6 +5958,24 @@ div[data-marker]:hover {
   filter: sepia(100%) hue-rotate(80deg) saturate(3);
 }
 
+.ogl-sideLockRemove {
+  background: url("https://gf1.geo.gfsrv.net/cdn6f/91ad13c8f9a7e9390085d12adde508.png");
+  background-position: 0 -80px;
+  background-repeat: no-repeat;
+  filter: sepia(100%) hue-rotate(-50deg) saturate(10);
+  height: 16px;
+  position: absolute;
+  left: 100%;
+  width: 16px;
+  z-index: 1;
+  top: 2px;
+}
+
+.ogl-sideLockRemoveFilled {
+  filter: sepia(100%) hue-rotate(80deg) saturate(3);
+  top: 22px;
+}
+
 #allornone .secondcol {
   background: #0d1014;
   border-radius: 5px;

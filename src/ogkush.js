@@ -14050,33 +14050,30 @@ class OGInfinity {
   }
 
   sideLock(add) {
-    document.querySelectorAll(".ogl-sideLock").forEach((e) => e.remove());
-    let handleLock = (coords, planet) => {
-      let splittedCoords = coords.split(":");
-      let missing = this.json.missing[coords];
-      let moon = false;
-      if (coords.includes("M")) {
-        moon = true;
-      }
+    document.querySelectorAll(".ogl-sideLock, .ogl-sideLockRemove").forEach((e) => e.remove());
+    const handleLock = (coords, planet) => {
+      const splittedCoords = coords.split(":");
+      const missing = this.json.missing[coords];
+      const moon = coords.includes("M") ? true : false;
       if (missing) {
-        let btn = createDOM("button", { class: "ogl-sideLock tooltip tooltipClose tooltipLeft" });
-        planet.appendChild(btn);
+        const btn = createDOM("button", { class: "ogl-sideLock tooltip tooltipClose tooltipLeft" });
         if (moon) {
           btn.classList.add("ogl-moonLock");
         }
-        let div = createDOM("div");
-        div.replaceChildren(
-          createDOM("div", { style: "width: 75px" }, "Missing "),
-          createDOM("hr"),
-          createDOM("div", { class: "ogl-metal" }, `M: ${toFormatedNumber(Math.max(0, missing[0]), null, true)}`),
-          createDOM("div", { class: "ogl-crystal" }, `C: ${toFormatedNumber(Math.max(0, missing[1]), null, true)}`),
-          createDOM("div", { class: "ogl-deut" }, `D: ${toFormatedNumber(Math.max(0, missing[2]), null, true)}`),
-          createDOM("hr")
-        );
-        let deleteBtn = div.appendChild(createDOM("div", { style: "width: 75px;", class: "icon icon_against" }));
         if (missing[0] + missing[1] + missing[2] == 0) {
           btn.classList.add("ogl-sideLockFilled");
         }
+        planet.appendChild(btn);
+        const div = createDOM("div");
+        div.append(
+          createDOM("div", { style: "width: 75px" }, this.getTranslatedText(39)),
+          createDOM("hr"),
+          createDOM("div", { class: "ogl-metal" }, `${toFormatedNumber(Math.max(0, missing[0]), null, true)}`),
+          createDOM("div", { class: "ogl-crystal" }, `${toFormatedNumber(Math.max(0, missing[1]), null, true)}`),
+          createDOM("div", { class: "ogl-deut" }, `${toFormatedNumber(Math.max(0, missing[2]), null, true)}`),
+          createDOM("hr")
+        );
+        const deleteBtn = div.appendChild(createDOM("div", { style: "width: 75px;", class: "icon icon_against" }));
         deleteBtn.addEventListener("click", () => {
           delete this.json.missing[coords];
           this.json.needSync = true;
@@ -14091,21 +14088,41 @@ class OGInfinity {
           this.tooltip(btn, div, false, { left: true });
         }
         btn.addEventListener("click", () => {
-          let type = moon ? 3 : 1;
-          let link = `?page=ingame&component=fleetdispatch&galaxy=${splittedCoords[0]}&system=${
-            splittedCoords[1]
-          }&position=${splittedCoords[2].slice(0, -1)}&type=${type}&mission=${
-            this.json.options.harvestMission
-          }&oglMode=2`;
+          const link =
+            `?page=ingame&component=fleetdispatch&galaxy=${splittedCoords[0]}&system=${splittedCoords[1]}` +
+            `&position=${splittedCoords[2].slice(0, -1)}&type=${moon ? 3 : 1}` +
+            `&mission=${this.json.options.harvestMission}&oglMode=2`;
           window.location.href = "https://" + window.location.host + window.location.pathname + link;
         });
       }
     };
     this.planetList.forEach((planet) => {
-      let coords = planet.querySelector(".planet-koords").textContent;
+      const coords = planet.querySelector(".planet-koords").textContent;
       handleLock(coords + "P", planet);
       handleLock(coords + "M", planet);
     });
+    if (document.querySelector(".ogl-sideLock")) {
+      const deleteAllEmpty = createDOM("button", { class: "ogl-sideLockRemove tooltip" });
+      const deleteAllFilled = createDOM("button", { class: "ogl-sideLockRemove ogl-sideLockRemoveFilled tooltip" });
+      document.querySelector("div#cutty").append(deleteAllEmpty, deleteAllFilled);
+      const deleteAll = (condition) => {
+        for (const coords in this.json.missing) {
+          const missing = this.json.missing[coords];
+          if (condition(this.json.missing[coords])) {
+            delete this.json.missing[coords];
+            this.json.needSync = true;
+          }
+        }
+        this.saveData();
+        this.sideLock();
+      };
+      deleteAllEmpty.addEventListener("click", () => {
+        deleteAll((missing) => missing[0] + missing[1] + missing[2] != 0);
+      });
+      deleteAllFilled.addEventListener("click", () => {
+        deleteAll((missing) => missing[0] + missing[1] + missing[2] == 0);
+      });
+    }
   }
 
   highlightTarget() {
