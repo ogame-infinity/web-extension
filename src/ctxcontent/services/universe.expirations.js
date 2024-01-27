@@ -42,7 +42,7 @@ export function isUniverseExpired(universe, name) {
   }
 
   return chrome.storage.local
-    .get(uni)
+    .get(universeExpiryName)
     .then(_fetchTimestamp(universeExpiryName, name), (_) => undefined)
     .then((expiryTimestamp) => {
       if (!expiryTimestamp) {
@@ -69,7 +69,7 @@ export async function setUniverseExpiration(universe, key, date) {
   }
 
   _temp.get(universeExpiryName).set(key, timestamp);
-  chrome.storage.local.set({ [universe]: toNative(_temp.get(universe)) }).then((_) => void 0);
+  chrome.storage.local.set({ [universeExpiryName]: toNative(_temp.get(universeExpiryName)) }).then((_) => void 0);
 }
 
 /**

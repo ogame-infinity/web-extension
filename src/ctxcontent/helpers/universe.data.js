@@ -1,4 +1,3 @@
-import { getLogger } from "../../util/logger.js";
 import { isUniverseExpired, setUniverseExpiration } from "../services/universe.expirations.js";
 import { universeStorageOperator, universeStorageSupplier } from "../services/universe.storage.js";
 import { requestOGameServerData } from "../services/request.ogameServerData.js";
@@ -17,8 +16,12 @@ export function getUniverseData(universe, force) {
 
   const flowRequest = async function () {
     const response = await requestOGameServerData(universe);
+    /** @type {UniverseResponse} */
     const uniInformation = await toUniverseInformation(response);
-    return storage(uniInformation).then();
+    return storage(uniInformation).then((data) => {
+      setUniverseExpiration(universe, STORAGE_KEY, response.expires);
+      return data;
+    });
   };
 
   const dataPromise = async function (isExpired) {

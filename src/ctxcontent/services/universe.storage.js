@@ -1,4 +1,4 @@
-import { fromJSON, toJSON } from "../../util/json.js";
+import { fromNative, toNative } from "../../util/json.js";
 
 const storageUniverseKeyBuilder = (universe, key) => `${universe}-${key}-information`;
 
@@ -13,9 +13,7 @@ const storageUniverseKeyBuilder = (universe, key) => `${universe}-${key}-informa
 export function universeStorageOperator(universe, key) {
   const universeStorageKey = storageUniverseKeyBuilder(universe, key);
   return async (data) => {
-    const json = toJSON(data);
-    const plainObject = JSON.parse(json);
-    chrome.storage.local.set({ [universeStorageKey]: plainObject }).then((_) => void 0);
+    chrome.storage.local.set({ [universeStorageKey]: toNative(data) }).then((_) => void 0);
     return data;
   };
 }
@@ -33,8 +31,7 @@ export function universeStorageSupplier(universe, key) {
   return async () => {
     const result = await chrome.storage.local.get(universeStorageKey);
     if (Object.hasOwn(result, universeStorageKey)) {
-      const plainObjet = result[universeStorageKey];
-      return fromJSON(JSON.stringify(plainObjet));
+      return fromNative(result[universeStorageKey]);
     }
 
     return undefined;
