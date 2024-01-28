@@ -397,7 +397,7 @@ const BUIDLING_INFO = {
   11112: {
     name: "Planetary Shield",
     baseCost: [250000, 125000, 125000],
-    factorCost: 1.2,
+    factorCost: 1.15,
     baseTime: 95000,
     factorTime: 1.2,
     baseCons: 100,
@@ -630,14 +630,14 @@ const BUIDLING_INFO = {
   14102: {
     name: "Antimatter Condenser",
     baseCost: [6, 3, 0, 9],
-    factorCost: 1.21,
+    factorCost: 1.20,
     factorEnergy: 1.02,
     baseTime: 40,
     factorTime: 1.22,
   },
   14103: {
     name: "Vortex Chamber",
-    baseCost: [20000, 20000, 30000],
+    baseCost: [20000, 15000, 15000],
     factorCost: 1.3,
     baseTime: 16000,
     factorTime: 1.25,
@@ -675,7 +675,7 @@ const BUIDLING_INFO = {
   },
   14107: {
     name: "Cloning Laboratory",
-    baseCost: [15000, 15000, 20000],
+    baseCost: [15000, 15000, 5000],
     factorCost: 1.2,
     baseTime: 12000,
     factorTime: 1.2,
@@ -701,7 +701,7 @@ const BUIDLING_INFO = {
   14110: {
     name: "Psionic Modulator",
     baseCost: [150000, 30000, 30000],
-    factorCost: 1.5,
+    factorCost: 1.4,
     baseTime: 52000,
     factorTime: 1.8,
     baseCons: 140,
@@ -841,7 +841,7 @@ const RESEARCH_INFO = {
   11205: {
     name: "Orbital Den",
     baseCost: [25000, 20000, 10000],
-    factorCost: 1.4,
+    factorCost: 1.3,
     baseTime: 4500,
     factorTime: 1.2,
   },
@@ -932,7 +932,7 @@ const RESEARCH_INFO = {
   11218: {
     name: "Supercomputer",
     baseCost: [500000, 300000, 200000],
-    factorCost: 1.3,
+    factorCost: 1.2,
     baseTime: 13000,
     factorTime: 1.3,
   },
