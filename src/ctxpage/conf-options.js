@@ -43,7 +43,7 @@ const _options = {
   foreignMission: 3,
   harvestMission: 4,
   activitytimers: false,
-  autofetchempire: true,
+  lessAggressiveEmpireAutomaticUpdate: false,
   spyFilter: "DATE",
   ptreTK: "",
   pantryKey: "",

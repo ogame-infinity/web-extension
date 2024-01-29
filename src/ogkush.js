@@ -1688,7 +1688,7 @@ class OGInfinity {
       force ||
       isNaN(new Date(this.json.lastEmpireUpdate)) ||
       (timeSinceLastUpdate > 5 * 60 * 1e3 && this.json.needsUpdate) ||
-      (timeSinceLastUpdate > 1 * 60 * 1e3 && this.json.options.autofetchempire)
+      (timeSinceLastUpdate > 1 * 60 * 1e3 && !this.json.options.lessAggressiveEmpireAutomaticUpdate)
     ) {
       await this.updateInfo();
     }
@@ -3401,7 +3401,7 @@ class OGInfinity {
                     if (movement.metal) object.metal += movement.metal;
                     if (movement.crystal) object.crystal += movement.crystal;
                     if (movement.deuterium) object.deuterium += movement.deuterium;
-                    if (this.json.options.autofetchempire) {
+                    if (!this.json.options.lessAggressiveEmpireAutomaticUpdate) {
                       update = true;
                     } else {
                       object.invalidate = true;
@@ -16300,11 +16300,11 @@ class OGInfinity {
           tr: "Etkinlik zamanlayıcılarını göster",
         },
         /*34*/ {
-          de: "Automatisches Abrufen von Imperium deaktivieren",
-          en: "Disable auto fetch Empire",
-          es: "Desactivar la actualización automática del Imperio",
-          fr: "Désactiver la récupération automatique de l'Empire",
-          tr: "İmparatorluğu otomatik getirmeyi devre dışı bırak",
+          de: "Weniger aggressives automatisches Empire-Update",
+          en: "Less aggressive empire automatic update",
+          es: "Actualización automática del Imperio menos agresiva",
+          fr: "Récupération automatique de l'Empire moins agressif",
+          tr: "Daha az agresif imparatorluk otomatik güncellemesi",
         },
         /*35*/ {
           de: "Rentabilitätswert",
@@ -17410,13 +17410,13 @@ class OGInfinity {
         this.getTranslatedText(34)
       )
     );
-    let disableautofetchempirebox = optiondiv.appendChild(createDOM("input", { type: "checkbox" }));
-    disableautofetchempirebox.addEventListener("change", () => {
-      this.json.options.autofetchempire = !disableautofetchempirebox.checked;
+    let lessAggressiveEmpireAutomaticUpdateBox = optiondiv.appendChild(createDOM("input", { type: "checkbox" }));
+    lessAggressiveEmpireAutomaticUpdateBox.addEventListener("change", () => {
+      this.json.options.lessAggressiveEmpireAutomaticUpdate = lessAggressiveEmpireAutomaticUpdateBox.checked;
       this.saveData();
     });
-    if (!this.json.options.autofetchempire) {
-      disableautofetchempirebox.checked = true;
+    if (this.json.options.lessAggressiveEmpireAutomaticUpdate) {
+      lessAggressiveEmpireAutomaticUpdateBox.checked = true;
     }
     let fleetActivity = featureSettings.appendChild(
       this.createDOM(
