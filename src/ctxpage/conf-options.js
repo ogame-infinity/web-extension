@@ -92,13 +92,6 @@ export function initConfOptions(options) {
   const expedition = options?.expedition || _options.expedition;
   delete options["expedition"];
 
-  /** @type {string} */
-  const ptreTK = options.ptreTK || _options.ptreTK;
-  options.ptreTK = "";
-  if (ptreTK && ptreTK.replace(/-/g, "").length === 18 && ptreTK.startsWith("TM")) {
-    options.ptreTK = ptreTK;
-  }
-
   Object.assign(_options, options);
   Object.assign(_options.collect, collect);
   Object.assign(_options.expedition, expedition);

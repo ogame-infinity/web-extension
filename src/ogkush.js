@@ -1461,69 +1461,6 @@ class OGInfinity {
     // set a proxy for compatibility, important for saving configuration.
     this.json.options = getOptions();
 
-    /// TODO: Remove this region when test of options is approved
-    /// region this.json.options declaration
-    /*
-    this.json.options = this.json.options || {};
-    this.json.options.collect = this.json.options.collect || {
-      target: { galaxy: 0, system: 0, position: 0, type: 1 },
-      mission: 3, // 3 = transport, 4 = deployment
-      ship: 202, // 202 = small cargo, 203 = large cargo
-    };
-    this.json.options.maxCrawler = this.json.options.limitCrawler || false;
-    this.json.options.crawlerPercent = this.json.options.crawlerPercent || 1.5;
-    this.json.options.tradeRate = this.json.options.tradeRate || [2.5, 1.5, 1, 0];
-    this.json.options.dispatcher = this.json.options.dispatcher === true ? true : false;
-    this.json.options.sideStalkVisible = this.json.options.sideStalkVisible === false ? false : true;
-    this.json.options.eventBoxExps = this.json.options.eventBoxExps === false ? false : true;
-    this.json.options.eventBoxKeep = this.json.options.eventBoxKeep === true ? true : false;
-    this.json.options.empire = this.json.options.empire === true ? true : false;
-    this.json.options.targetList = this.json.options.targetList === true ? true : false;
-    this.json.options.fret = this.json.options.fret || 202;
-    this.json.options.spyFret = this.json.options.spyFret || 202;
-    this.json.options.expeditionMission = this.json.options.expeditionMission || 15;
-    this.json.options.foreignMission = this.json.options.foreignMission || 3;
-    this.json.options.harvestMission = this.json.options.harvestMission || 4;
-    this.json.options.expedition = this.json.options.expedition || {};
-    this.json.options.expedition.cargoShip = this.json.options.expedition.cargoShip || 202; // small cargo
-    this.json.options.expedition.combatShip = this.json.options.expedition.combatShip || 218; // reaper
-    this.json.options.expedition.defaultTime = this.json.options.expedition.defaultTime || 1; // 1 hour
-    this.json.options.expedition.limitCargo = this.json.options.expedition.limitCargo || 1; // 100 %
-    this.json.options.expedition.rotation = this.json.options.expedition.rotation === true ? true : false;
-    this.json.options.expedition.rotationAfter = this.json.options.expedition.rotationAfter || 3;
-    this.json.options.expedition.sendCombat = this.json.options.expedition.sendCombat === false ? false : true;
-    this.json.options.expedition.sendProbe = this.json.options.expedition.sendProbe === false ? false : true;
-    this.json.options.expedition.standardFleet = this.json.options.expedition.standardFleet === true ? true : false;
-    this.json.options.expedition.standardFleetId = this.json.options.expedition.standardFleetId || 0;
-    this.json.options.activitytimers = this.json.options.activitytimers === true ? true : false;
-    this.json.options.planetIcons = this.json.options.planetIcons === true ? true : false;
-    this.json.options.disableautofetchempire = this.json.options.disableautofetchempire === true ? true : false;
-    this.json.options.autofetchempire = this.json.options.disableautofetchempire === true ? false : true;
-    this.json.options.spyFilter = this.json.options.spyFilter || "DATE";
-    if (
-      this.json.options.ptreTK &&
-      this.json.options.ptreTK.replace(/-/g, "").length == 18 &&
-      this.json.options.ptreTK.indexOf("TM") == 0
-    ) {
-      this.json.options.ptreTK = this.json.options.ptreTK || "";
-    } else {
-      this.json.options.ptreTK = "";
-      // TODO: Remove ptreTK from LocalStorage (it has wrong format)
-    }
-    this.json.options.pantryKey = this.json.options.pantryKey || "";
-    this.json.options.simulator = this.json.options.simulator || "";
-    this.json.options.rvalLimit = this.json.options.rvalLimit || 4e5 * this.json.speed;
-    this.json.options.spyTableEnable = this.json.options.spyTableEnable === false ? false : true;
-    this.json.options.spyTableAppend = this.json.options.spyTableAppend === false ? false : true;
-    this.json.options.compactViewEnable = this.json.options.compactViewEnable === false ? false : true;
-    this.json.options.autoDeleteEnable = this.json.options.autoDeleteEnable === true ? true : false;
-    this.json.options.kept = this.json.options.kept || {};
-    this.json.options.defaultKept = this.json.options.defaultKept || {};
-    this.json.options.hiddenTargets = this.json.options.hiddenTargets || {};
-    this.json.options.timeZone = this.json.options.timeZone === false ? false : true;
-    */
-    /// endregion options
-
     this.json.selectedLifeforms = this.json.selectedLifeforms || {};
     this.json.lifeformBonus = this.json.lifeformBonus || null;
     this.json.lifeformPlanetBonus = this.json.lifeformPlanetBonus || {};
@@ -17768,7 +17705,7 @@ class OGInfinity {
     settingDiv.appendChild(saveBtn);
     saveBtn.addEventListener("click", () => {
       this.json.options.rvalLimit = fromFormatedNumber(rvalInput.value, true);
-      if (ptreInput.value && ptreInput.value.replace(/-/g, "").length == 18 && ptreInput.value.indexOf("TM") == 0) {
+      if (ptreInput.value && ptreInput.value.replace(/-/g, "").length === 18 && ptreInput.value.startsWith("TM")) {
         this.json.options.ptreTK = ptreInput.value;
       } else {
         this.json.options.ptreTK = "";
