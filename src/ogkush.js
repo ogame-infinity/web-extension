@@ -14053,7 +14053,8 @@ class OGInfinity {
     if (document.querySelector(".ogl-sideLock")) {
       const deleteAllEmpty = createDOM("button", { class: "ogl-sideLockRemove tooltip" });
       const deleteAllFilled = createDOM("button", { class: "ogl-sideLockRemove ogl-sideLockRemoveFilled tooltip" });
-      document.querySelector("div#cutty").append(deleteAllEmpty, deleteAllFilled);
+      const sidePlanetDiv = document.querySelector("div#cutty") || document.querySelector("div#norm");
+      sidePlanetDiv.append(deleteAllEmpty, deleteAllFilled);
       const deleteAll = (condition) => {
         for (const coords in this.json.missing) {
           const missing = this.json.missing[coords];
