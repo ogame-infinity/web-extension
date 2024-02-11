@@ -31,8 +31,9 @@ import { getLogger } from "../util/logger.js";
 const log = getLogger("conf-options");
 
 const _options = {
-  maxCrawler: false,
+  limitCrawler: false,
   crawlerPercent: 1.5,
+  reverseFilter: false,
   tradeRate: [2.5, 1.5, 1, 0],
   dispatcher: false,
   sideStalkVisible: true,
@@ -47,6 +48,9 @@ const _options = {
   harvestMission: 4,
   activitytimers: false,
   lessAggressiveEmpireAutomaticUpdate: false,
+  navigationArrows: true,
+  showProgressIndicators: true,
+  fleetActivity: true,
   spyFilter: "DATE",
   ptreTK: "",
   pantryKey: "",
