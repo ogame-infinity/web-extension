@@ -11344,6 +11344,8 @@ class OGInfinity {
             // if same system, try the next planet until we find a different system
             while (nextPlanet.querySelector(".planet-koords").textContent.split(":", 2).join(":") == originSystem) {
               nextPlanet = rotate(nextPlanet);
+              // if place is not a planet row (planet overview on), go to first planet 
+              if (!nextPlanet.querySelector(".planet-koords")) nextPlanet = this.planetList[0];
               // if place is a moon and system does not have it, try next planet until we find one
               if (this.current.isMoon) {
                 while (!nextPlanet.querySelector(".moonlink")) {
