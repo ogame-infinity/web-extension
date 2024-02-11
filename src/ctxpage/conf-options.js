@@ -26,6 +26,9 @@
  * @property {number} mission
  * @property {number} ship
  */
+import { getLogger } from "../util/logger.js";
+
+const log = getLogger("conf-options");
 
 const _options = {
   maxCrawler: false,
@@ -100,16 +103,26 @@ export function initConfOptions(options) {
 /** @type {ProxyHandler} */
 const handlerProxy = {
   set(target, prop, newValue, receiver) {
+    if (!Object.hasOwn(target, prop)) {
+      log.error("Not allowed to set '%s' configuration property from option proxy.", prop);
+      return false;
+    }
+
     if (typeof prop !== "string") {
       return Reflect.set(...arguments);
     }
 
-    if (Object.hasOwn(target, prop)) {
-      target[prop] = newValue;
-    }
+    target[prop] = newValue;
     return true;
   },
   get(target, prop, receiver) {
+    if (prop === "toJSON" && !Object.hasOwn(target, prop)) {
+      // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#tojson_behavior
+      return undefined;
+    } else if (!Object.hasOwn(target, prop)) {
+      log.warn("The configuration '%s' is not defined.", prop);
+      return undefined;
+    }
     return Reflect.get(...arguments);
   },
   ownKeys(target) {
