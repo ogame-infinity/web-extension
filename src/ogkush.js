@@ -4216,7 +4216,7 @@ class OGInfinity {
 
   uvlinks() {
     if (this.page == "messages") {
-      document.querySelectorAll(".msg_actions").forEach((elem) => {
+      document.querySelectorAll(".msg_actions message-footer-actions").forEach((elem) => {
         if (elem.querySelector(".ogk-trashsim, .ogk-ogotcha")) return;
         let keyNode = elem.querySelector(".icon_apikey");
         if (keyNode) {
