@@ -19318,6 +19318,12 @@ function versionInStatusBar() {
 }
 
 (async () => {
+  const rawURL = new URL(window.location.href);
+  const page = rawURL.searchParams.get("component") || rawURL.searchParams.get("page");
+
+  if (page === 'combatsim')
+    return;
+  
   logger.info("Reveal OGame Infinity");
 
   try {
