@@ -1471,7 +1471,7 @@ class OGInfinity {
   }
 
   start() {
-    if (this.page == "intro") return;
+    if (["intro", "combatsim", "empire"].includes(this.page)) return;
     this.hasLifeforms = document.querySelector(".lifeform") != null;
     let forceEmpire = document.querySelectorAll("div[id*=planet-]").length != this.json.empire.length;
     this.updateServerSettings();
@@ -19318,12 +19318,6 @@ function versionInStatusBar() {
 }
 
 (async () => {
-  const rawURL = new URL(window.location.href);
-  const page = rawURL.searchParams.get("component") || rawURL.searchParams.get("page");
-
-  if (page === 'combatsim')
-    return;
-  
   logger.info("Reveal OGame Infinity");
 
   try {
