@@ -13533,7 +13533,7 @@ class OGInfinity {
         .querySelectorAll('span[class^="status"]')[1]
         .textContent.replace(/&nbsp;/g, "")
         .trim();
-      report.spy = msg.querySelector('a[onclick*="sendShipsWithPopup"]').getAttribute("onclick");
+      report.spy = msg.querySelector('.msg_actions [onclick*="sendShipsWithPopup"]').getAttribute("onclick");
       report.activity = parseInt(data[0].querySelectorAll("span.fright")[0].textContent.match(/\d+/)[0]);
       report.coords = /\[.*\]/g.exec(msg.querySelector(".msg_title").innerHTML)[0].slice(1, -1);
       report.coordsLink = msg.querySelector(".msg_title a").href;
