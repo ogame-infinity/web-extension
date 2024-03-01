@@ -13523,7 +13523,7 @@ class OGInfinity {
       report.id = msg.getAttribute("data-msg-id");
       report.new = msg.classList.contains("msg_new");
       report.favorited = msg.querySelector(".icon_favorited");
-      report.attacked = msg.querySelector(".icon_attack img");
+      report.attacked = msg.querySelector(".fleetAction.fleetHostile");
       report.type = msg.querySelector("figure.moon") ? 3 : 1;
       report.name = data[0]
         .querySelectorAll('span[class^="status"]')[0]
