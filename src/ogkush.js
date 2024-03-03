@@ -1604,6 +1604,33 @@ class OGInfinity {
       document.querySelector("#banner_skyscraper").classList.add("fix-banner");
   }
 
+  // remove when complete removal of direct probin in stalks and target list or GF start to wake up
+  probingWarning() {
+    const content = createDOM("div", { style: "text-align: center; width: 550px" });
+    const text1 = createDOM(
+      "span",
+      { class: "overmark", style: "font-size: 15px; font-weight: 800;" },
+      "Direct probing in stalks, player profiles, target lists and highscore is disabled as requested by "
+    );
+    text1.append(
+      createDOM(
+        "a",
+        { href: "https://forum.origin.ogame.gameforge.com/forum/thread/29-forbidden-features/", target: "_blank" },
+        "Gameforge rules"
+      ),
+      createDOM("small", { class: "undermark" }, " ('Automation' and 'Drastic shortcuts' sections)")
+    );
+    content.append(
+      text1,
+      createDOM("br", {}),
+      createDOM("br", {}),
+      createDOM("span", {}, "The icons are not functional until a complete removal of the feature is done"),
+      createDOM("br", {}),
+      createDOM("span", {}, "If you have to blame someone, please do it in the proper direction")
+    );
+    this.popup(null, content);
+  }
+
   timeZone() {
     if (window.timeZoneDiffSeconds !== undefined) {
       this.json.timezoneDiff = timeZoneDiffSeconds;
@@ -13101,7 +13128,9 @@ class OGInfinity {
     let plaspy = panel.appendChild(createDOM("button", { class: "icon_eye" }));
     let plaFleet = panel.appendChild(createDOM("div", { class: "ogl-atk" }));
     plaspy.addEventListener("click", (e) => {
-      sendShipsWithPopup(6, coords[0], coords[1], coords[2], 0, this.json.spyProbes);
+      // sendShipsWithPopup(6, coords[0], coords[1], coords[2], 0, this.json.spyProbes);
+      // disable direct probing in stalks and target list until complete removal or GF start to wake up
+      this.probingWarning();
       e.stopPropagation();
     });
     plaFleet.addEventListener("click", (e) => {
@@ -13127,7 +13156,9 @@ class OGInfinity {
     plaFleet = panel.appendChild(createDOM("div", { class: "ogl-atk" }));
     plaspy = panel.appendChild(createDOM("button", { class: "icon_eye" }));
     plaspy.addEventListener("click", (e) => {
-      sendShipsWithPopup(6, coords[0], coords[1], coords[2], 3, this.json.spyProbes);
+      // sendShipsWithPopup(6, coords[0], coords[1], coords[2], 3, this.json.spyProbes);
+      // disable direct probing in stalks and target list until complete removal or GF start to wake up
+      this.probingWarning();
       e.stopPropagation();
     });
     plaFleet.addEventListener("click", (e) => {
@@ -13187,7 +13218,9 @@ class OGInfinity {
       let panel = planetDiv.appendChild(createDOM("div", { class: "ogl-planet-hover" }));
       let plaspy = panel.appendChild(createDOM("button", { class: "icon_eye" }));
       plaspy.addEventListener("click", (e) => {
-        sendShipsWithPopup(6, coords[0], coords[1], coords[2], 0, this.json.spyProbes);
+        // sendShipsWithPopup(6, coords[0], coords[1], coords[2], 0, this.json.spyProbes);
+        // disable direct probing in stalks and target list until complete removal or GF start to wake up
+        this.probingWarning();
         e.stopPropagation();
       });
       planetDiv.appendChild(createDOM("div", { class: "ogl-planet-act" }));
@@ -13208,7 +13241,9 @@ class OGInfinity {
       panel = moonDiv.appendChild(createDOM("div", { class: "ogl-moon-hover" }));
       plaspy = panel.appendChild(createDOM("button", { class: "icon_eye" }));
       plaspy.addEventListener("click", (e) => {
-        sendShipsWithPopup(6, coords[0], coords[1], coords[2], 3, this.json.spyProbes);
+        // sendShipsWithPopup(6, coords[0], coords[1], coords[2], 3, this.json.spyProbes);
+        // disable direct probing in stalks and target list until complete removal or GF start to wake up
+        this.probingWarning();
         e.stopPropagation();
       });
       a.addEventListener("click", (event) => {
