@@ -4214,7 +4214,7 @@ class OGInfinity {
   }
 
   uvlinks() {
-    if (this.page == "messages") {
+    if (this.page === "messages") {
       document.querySelectorAll(".msg_actions message-footer-actions").forEach((elem) => {
         if (elem.querySelector(".ogk-trashsim, .ogk-ogotcha")) return;
         let keyNode = elem.querySelector(".icon_apikey");
@@ -4222,9 +4222,14 @@ class OGInfinity {
           let key = keyNode.getAttribute("title") || keyNode.getAttribute("data-title");
           key = key.split("'")[1];
           if (key.startsWith("sr")) {
-            let link = elem.appendChild(
-              createDOM("div", { class: "ogk-trashsim tooltip", target: "_blank", title: this.getTranslatedText(170) })
-            );
+            const gradientButton = DOM.createDOM("gradient-button", { sq30: null });
+            const button = DOM.createDOM("button", { class: "custom_btn" });
+            const buttonDiv = DOM.createDOM("div", { class: "ogk-trashsim tooltip", target: "_blank", title: this.getTranslatedText(170) });
+
+            button.appendChild(buttonDiv);
+            gradientButton.appendChild(button);
+
+            let link = elem.appendChild(gradientButton);
             let apiTechData = {
               109: { level: this.json.technology[109] },
               110: { level: this.json.technology[110] },
@@ -4263,7 +4268,14 @@ class OGInfinity {
               }
             });
           } else if (key.startsWith("cr")) {
-            let link = elem.appendChild(createDOM("a", { class: "ogk-ogotcha tooltip", title: "Ogotcha" }));
+            const gradientButton = DOM.createDOM("gradient-button", { sq30: null });
+            const button = DOM.createDOM("button", { class: "custom_btn" });
+            const buttonDiv = DOM.createDOM("div", { class: "ogk-ogotcha tooltip", title: "Ogotcha" });
+
+            button.appendChild(buttonDiv);
+            gradientButton.appendChild(button);
+
+            let link = elem.appendChild(gradientButton);
             link.addEventListener("click", () =>
               window.open(
                 `https://ogotcha.oplanet.eu/${this.univerviewLang}?CR_KEY=${key}`,
