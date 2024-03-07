@@ -3826,10 +3826,11 @@ button.build-it_premium:hover {
   left: 43px !important;
 }
 
-#galaxyHeader .btn_blue {
+#galaxyHeader .btn_blue,
+#galaxyRow16 .btn_blue {
   height: 15px !important;
   line-height: 14px !important;
-  max-width: 91px;
+  max-width: 100px;
   min-width: 20px !important;
   overflow: hidden;
   padding: 1px 9px !important;
@@ -3838,29 +3839,20 @@ button.build-it_premium:hover {
   white-space: nowrap;
 }
 
-#galaxyHeader .btn_blue:not(:hover) {
+#galaxyHeader .btn_blue:not(:hover),
+#galaxyRow16 .btn_blue:not(:hover) {
   border-color: rgb(0 132 141 / 45%) !important;
   background: #002c58 !important;
 }
 
-#galaxyHeader .btn_blue img {
+#galaxyHeader .btn_blue img,
+#galaxyRow16 .btn_blue img {
   margin-right: 4px !important;
 }
 
 /* hide non-functional system buttons */
 #galaxyHeader .systembuttons > [disabled] {
   display: none;
-}
-
-#discoverbutton:before {
-  content: "";
-  background-image: url(https://gf2.geo.gfsrv.net/cdn16/1bcb107d4cdd48d0878fe850157e46.png);
-  background-position: calc(-17px * 9);
-  background-repeat: no-repeat;
-  width: 17px;
-  height: 14px;
-  margin-right: 2px;
-  float: left;
 }
 
 #expeditionbutton:before {

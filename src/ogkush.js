@@ -632,7 +632,7 @@ const BUIDLING_INFO = {
   14102: {
     name: "Antimatter Condenser",
     baseCost: [6, 3, 0, 9],
-    factorCost: 1.20,
+    factorCost: 1.2,
     factorEnergy: 1.02,
     baseTime: 40,
     factorTime: 1.22,
@@ -3589,26 +3589,6 @@ class OGInfinity {
   onGalaxyUpdate() {
     if (this.page != "galaxy") return;
 
-    if (this.hasLifeforms) {
-      const discoverButton = createDOM(
-        "div",
-        {
-          class: "btn_blue float_right btn_system_action",
-          id: "discoverbutton",
-        },
-        this.getTranslatedText(166)
-      );
-      document.querySelector(".systembuttons").appendChild(discoverButton);
-      discoverButton.addEventListener("click", async () => {
-        let discover;
-        while ((discover = document.querySelector(".planetDiscover"))) {
-          discover.click();
-          await wait.delay(400);
-          await wait.waitForQuerySelector("#fleetstatusrow div");
-        }
-      });
-    }
-
     let timeout;
     let previousSystem = null;
     doExpedition = () => {
@@ -3863,10 +3843,14 @@ class OGInfinity {
         }
 
         // PTRE activities
-        if ( this.json.options.ptreTK && playerId > -1 &&
-            (this.json.sideStalk.indexOf(playerId) > -1 ||
-             this.markedPlayers.indexOf(playerId) > -1 ||
-             (this.json.searchHistory.length > 0 && playerId == this.json.searchHistory[this.json.searchHistory.length - 1].id)) ) {
+        if (
+          this.json.options.ptreTK &&
+          playerId > -1 &&
+          (this.json.sideStalk.indexOf(playerId) > -1 ||
+            this.markedPlayers.indexOf(playerId) > -1 ||
+            (this.json.searchHistory.length > 0 &&
+              playerId == this.json.searchHistory[this.json.searchHistory.length - 1].id))
+        ) {
           let planetActivity = row.querySelector("[data-planet-id] .activity.minute15")
             ? "*"
             : row.querySelector("[data-planet-id] .activity")?.textContent.trim() || 60;
@@ -3947,16 +3931,20 @@ class OGInfinity {
 
     ptreService.importPlayerActivity(this.gameLang, this.universe, ptreJSON).then((result) => {
       if (result.code == 1) {
-        document.querySelectorAll(`.ogl-stalkPlanets [data-coords^="${systemCoords[0]}:${systemCoords[1]}:"]`).forEach((e) => {
-          if (!e.classList.contains(".ptre_updated")) {
-            e.classList.add("ptre_updated");
-          }
-        });
-        document.querySelectorAll(`.ogl-active [data-coords^="${systemCoords[0]}:${systemCoords[1]}:"]`).forEach((e) => {
-          if (!e.classList.contains(".ptre_updated")) {
-            e.classList.add("ptre_updated");
-          }
-        });
+        document
+          .querySelectorAll(`.ogl-stalkPlanets [data-coords^="${systemCoords[0]}:${systemCoords[1]}:"]`)
+          .forEach((e) => {
+            if (!e.classList.contains(".ptre_updated")) {
+              e.classList.add("ptre_updated");
+            }
+          });
+        document
+          .querySelectorAll(`.ogl-active [data-coords^="${systemCoords[0]}:${systemCoords[1]}:"]`)
+          .forEach((e) => {
+            if (!e.classList.contains(".ptre_updated")) {
+              e.classList.add("ptre_updated");
+            }
+          });
       }
     });
   }
@@ -4251,7 +4239,11 @@ class OGInfinity {
           if (key.startsWith("sr")) {
             const gradientButton = DOM.createDOM("gradient-button", { sq30: null });
             const button = DOM.createDOM("button", { class: "custom_btn" });
-            const buttonDiv = DOM.createDOM("div", { class: "ogk-trashsim tooltip", target: "_blank", title: this.getTranslatedText(170) });
+            const buttonDiv = DOM.createDOM("div", {
+              class: "ogk-trashsim tooltip",
+              target: "_blank",
+              title: this.getTranslatedText(170),
+            });
 
             button.appendChild(buttonDiv);
             gradientButton.appendChild(button);
@@ -5032,107 +5024,111 @@ class OGInfinity {
     }
 
     let cleanPlayerName = encodeURIComponent(player.name);
-    ptreService.getPlayerInfos(this.gameLang, this.universe, this.json.options.ptreTK, cleanPlayerName, player.id, frame).then((result) => {
-      if (result.code == 1) {
-        let arrData = result.activity_array.succes == 1 ? JSON.parse(result.activity_array.activity_array) : null;
-        let checkData = result.activity_array.succes == 1 ? JSON.parse(result.activity_array.check_array) : null;
+    ptreService
+      .getPlayerInfos(this.gameLang, this.universe, this.json.options.ptreTK, cleanPlayerName, player.id, frame)
+      .then((result) => {
+        if (result.code == 1) {
+          let arrData = result.activity_array.succes == 1 ? JSON.parse(result.activity_array.activity_array) : null;
+          let checkData = result.activity_array.succes == 1 ? JSON.parse(result.activity_array.check_array) : null;
 
-        container.appendChild(createDOM("h3", {}, this.getTranslatedText(152)));
+          container.appendChild(createDOM("h3", {}, this.getTranslatedText(152)));
 
-        const ptreBestReport = createDOM("div", { class: "ptreBestReport" });
-        const fleetPointsDiv = createDOM("div");
-        fleetPointsDiv.append(
-          createDOM("div").appendChild(
+          const ptreBestReport = createDOM("div", { class: "ptreBestReport" });
+          const fleetPointsDiv = createDOM("div");
+          fleetPointsDiv.append(
+            createDOM("div").appendChild(
+              createDOM(
+                "b",
+                { class: "ogl_fleet" },
+                this.formatToUnits(result.top_sr_fleet_points) + " pts"
+              ).insertAdjacentElement("afterbegin", createDOM("i", { class: "material-icons" }, "military_tech"))
+                .parentElement
+            ),
+            createDOM("div").appendChild(
+              createDOM("b", {}, new Date(result.top_sr_timestamp * 1000).toLocaleDateString("fr-FR"))
+            ).parentElement
+          );
+          const buttonsDiv = createDOM("div");
+          buttonsDiv.append(
             createDOM(
-              "b",
-              { class: "ogl_fleet" },
-              this.formatToUnits(result.top_sr_fleet_points) + " pts"
-            ).insertAdjacentElement("afterbegin", createDOM("i", { class: "material-icons" }, "military_tech"))
-              .parentElement
-          ),
-          createDOM("div").appendChild(
-            createDOM("b", {}, new Date(result.top_sr_timestamp * 1000).toLocaleDateString("fr-FR"))
-          ).parentElement
-        );
-        const buttonsDiv = createDOM("div");
-        buttonsDiv.append(
-          createDOM(
-            "a",
-            { class: "ogl_button", target: "result.top_sr_link", href: result.top_sr_link },
-            this.getTranslatedText(153)
-          ),
-          createDOM(
-            "a",
-            {
-              class: "ogl_button",
-              target: `https://ptre.chez.gg/?country=${this.gameLang}&univers=${this.universe}&player_id=${player.id}`,
-              href: `https://ptre.chez.gg/?country=${this.gameLang}&univers=${this.universe}&player_id=${player.id}`,
-            },
-            this.getTranslatedText(154)
-          )
-        );
-        ptreBestReport.append(fleetPointsDiv, buttonsDiv);
+              "a",
+              { class: "ogl_button", target: "result.top_sr_link", href: result.top_sr_link },
+              this.getTranslatedText(153)
+            ),
+            createDOM(
+              "a",
+              {
+                class: "ogl_button",
+                target: `https://ptre.chez.gg/?country=${this.gameLang}&univers=${this.universe}&player_id=${player.id}`,
+                href: `https://ptre.chez.gg/?country=${this.gameLang}&univers=${this.universe}&player_id=${player.id}`,
+              },
+              this.getTranslatedText(154)
+            )
+          );
+          ptreBestReport.append(fleetPointsDiv, buttonsDiv);
 
-        container.appendChild(ptreBestReport);
-        container.appendChild(createDOM("div", { class: "splitLine" }));
-        container.appendChild(createDOM("h3", {}, result.activity_array.title || ""));
+          container.appendChild(ptreBestReport);
+          container.appendChild(createDOM("div", { class: "splitLine" }));
+          container.appendChild(createDOM("h3", {}, result.activity_array.title || ""));
 
-        const domPtreActivities = createDOM("div", { class: "ptreActivities" });
-        domPtreActivities.appendChild(createDOM("span"));
-        domPtreActivities.appendChild(createDOM("div"));
-        container.appendChild(domPtreActivities);
+          const domPtreActivities = createDOM("div", { class: "ptreActivities" });
+          domPtreActivities.appendChild(createDOM("span"));
+          domPtreActivities.appendChild(createDOM("div"));
+          container.appendChild(domPtreActivities);
 
-        container.appendChild(createDOM("div", { class: "splitLine" }));
-        container.appendChild(createDOM("div", { class: "ptreFrames" }));
+          container.appendChild(createDOM("div", { class: "splitLine" }));
+          container.appendChild(createDOM("div", { class: "ptreFrames" }));
 
-        ["last24h", "2days", "3days", "week", "2weeks", "month"].forEach((f) => {
-          let btn = container.querySelector(".ptreFrames").appendChild(createDOM("div", { class: "ogl_button" }, f));
-          btn.addEventListener("click", () => this.ptreAction(f, player));
-        });
-
-        if (result.activity_array.succes == 1) {
-          arrData.forEach((line, index) => {
-            if (!isNaN(line[1])) {
-              let div = createDOM("div", { class: "tooltip" });
-              div.appendChild(createDOM("div", {}, line[0]));
-              let span = div.appendChild(createDOM("span", { class: "ptreDotStats" }));
-              let dot = span.appendChild(createDOM("div", { "data-acti": line[1], "data-check": checkData[index][1] }));
-
-              let dotValue = (line[1] / result.activity_array.max_acti_per_slot) * 100 * 7;
-              dotValue = Math.ceil(dotValue / 30) * 30;
-
-              dot.style.color = `hsl(${Math.max(0, 100 - dotValue)}deg 75% 40%)`;
-              dot.style.opacity = checkData[index][1] + "%";
-              dot.style.padding = "7px";
-
-              let title;
-              let checkValue = Math.max(0, 100 - dotValue);
-
-              if (checkValue === 100) title = this.getTranslatedText(155);
-              else if (checkValue >= 60) title = this.getTranslatedText(156);
-              else if (checkValue >= 40) title = this.getTranslatedText(157);
-              else title = this.getTranslatedText(158);
-
-              if (checkData[index][1] == 100) title += this.getTranslatedText(159);
-              else if (checkData[index][1] >= 75) title += this.getTranslatedText(160);
-              else if (checkData[index][1] >= 50) title += this.getTranslatedText(161);
-              else if (checkData[index][1] > 0) title = this.getTranslatedText(162);
-              else title = this.getTranslatedText(163);
-
-              div.setAttribute("title", title);
-
-              if (checkData[index][1] === 100 && line[1] == 0) dot.classList.add("ogl_active");
-
-              container.querySelector(".ptreActivities > div").appendChild(div);
-            }
+          ["last24h", "2days", "3days", "week", "2weeks", "month"].forEach((f) => {
+            let btn = container.querySelector(".ptreFrames").appendChild(createDOM("div", { class: "ogl_button" }, f));
+            btn.addEventListener("click", () => this.ptreAction(f, player));
           });
-        } else {
-          container.querySelector(".ptreActivities > span").textContent = result.activity_array.message;
-        }
-      } else container.textContent = result.message;
-      this.isLoading = false;
-      this.popup(null, container);
-    });
+
+          if (result.activity_array.succes == 1) {
+            arrData.forEach((line, index) => {
+              if (!isNaN(line[1])) {
+                let div = createDOM("div", { class: "tooltip" });
+                div.appendChild(createDOM("div", {}, line[0]));
+                let span = div.appendChild(createDOM("span", { class: "ptreDotStats" }));
+                let dot = span.appendChild(
+                  createDOM("div", { "data-acti": line[1], "data-check": checkData[index][1] })
+                );
+
+                let dotValue = (line[1] / result.activity_array.max_acti_per_slot) * 100 * 7;
+                dotValue = Math.ceil(dotValue / 30) * 30;
+
+                dot.style.color = `hsl(${Math.max(0, 100 - dotValue)}deg 75% 40%)`;
+                dot.style.opacity = checkData[index][1] + "%";
+                dot.style.padding = "7px";
+
+                let title;
+                let checkValue = Math.max(0, 100 - dotValue);
+
+                if (checkValue === 100) title = this.getTranslatedText(155);
+                else if (checkValue >= 60) title = this.getTranslatedText(156);
+                else if (checkValue >= 40) title = this.getTranslatedText(157);
+                else title = this.getTranslatedText(158);
+
+                if (checkData[index][1] == 100) title += this.getTranslatedText(159);
+                else if (checkData[index][1] >= 75) title += this.getTranslatedText(160);
+                else if (checkData[index][1] >= 50) title += this.getTranslatedText(161);
+                else if (checkData[index][1] > 0) title = this.getTranslatedText(162);
+                else title = this.getTranslatedText(163);
+
+                div.setAttribute("title", title);
+
+                if (checkData[index][1] === 100 && line[1] == 0) dot.classList.add("ogl_active");
+
+                container.querySelector(".ptreActivities > div").appendChild(div);
+              }
+            });
+          } else {
+            container.querySelector(".ptreActivities > span").textContent = result.activity_array.message;
+          }
+        } else container.textContent = result.message;
+        this.isLoading = false;
+        this.popup(null, container);
+      });
   }
 
   cleanupMessages() {
@@ -11383,7 +11379,7 @@ class OGInfinity {
             // if same system, try the next planet until we find a different system
             while (nextPlanet.querySelector(".planet-koords").textContent.split(":", 2).join(":") == originSystem) {
               nextPlanet = rotate(nextPlanet);
-              // if place is not a planet row (planet overview on), go to first planet 
+              // if place is not a planet row (planet overview on), go to first planet
               if (!nextPlanet.querySelector(".planet-koords")) nextPlanet = this.planetList[0];
               // if place is a moon and system does not have it, try next planet until we find one
               if (this.current.isMoon) {
@@ -17240,7 +17236,7 @@ class OGInfinity {
           es: "Velocidad de investigación",
           fr: "Vitesse de recherche",
           tr: "Araştırma hızı",
-          br: "Velocidade de pesquisa"
+          br: "Velocidade de pesquisa",
         },
         /*137*/ {
           de: "Aktivität",
@@ -17475,12 +17471,12 @@ class OGInfinity {
           br: "Usar para expedições",
         },
         /*166*/ {
-          de: "Entdecken",
-          en: "Discover",
-          es: "Descubrir",
-          fr: "Découvrir",
-          tr: "Keşfetmek",
-          br: "Descobrir",
+          de: "",
+          en: "",
+          es: "",
+          fr: "",
+          tr: "",
+          br: "",
         },
         /*167*/ {
           de: "Entdeckungsdaten",
