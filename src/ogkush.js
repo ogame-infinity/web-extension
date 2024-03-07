@@ -3589,26 +3589,6 @@ class OGInfinity {
   onGalaxyUpdate() {
     if (this.page != "galaxy") return;
 
-    if (this.hasLifeforms) {
-      const discoverButton = createDOM(
-        "div",
-        {
-          class: "btn_blue float_right btn_system_action",
-          id: "discoverbutton",
-        },
-        this.getTranslatedText(166)
-      );
-      document.querySelector(".systembuttons").appendChild(discoverButton);
-      discoverButton.addEventListener("click", async () => {
-        let discover;
-        while ((discover = document.querySelector(".planetDiscover"))) {
-          discover.click();
-          await wait.delay(400);
-          await wait.waitForQuerySelector("#fleetstatusrow div");
-        }
-      });
-    }
-
     let timeout;
     let previousSystem = null;
     doExpedition = () => {
@@ -17460,12 +17440,12 @@ class OGInfinity {
           br: "Usar para expedições",
         },
         /*166*/ {
-          de: "Entdecken",
-          en: "Discover",
-          es: "Descubrir",
-          fr: "Découvrir",
-          tr: "Keşfetmek",
-          br: "Descobrir",
+          de: "",
+          en: "",
+          es: "",
+          fr: "",
+          tr: "",
+          br: "",
         },
         /*167*/ {
           de: "Entdeckungsdaten",
