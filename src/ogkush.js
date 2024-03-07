@@ -13434,8 +13434,8 @@ class OGInfinity {
       const expeBox = document.querySelector(".expeditionDebrisSlotBox #expeditionDebris");
       if (expeBox && !expeBox.classList.contains("ogl-done")) {
         document.querySelector("#galaxyContent .expeditionDebrisSlotBox .title").style.width = "auto";
-        document.getElementById('galaxyRow16').style.display = 'grid';
-        document.getElementById('galaxyRow16').style.gridTemplateColumns = 'repeat(3, minmax(0, 1fr))';
+        document.getElementById("galaxyRow16").style.display = "grid";
+        document.getElementById("galaxyRow16").style.gridTemplateColumns = "repeat(3, minmax(0, 1fr))";
         expeBox.classList.add("ogl-done");
         const frag = document.createDocumentFragment();
         const imgDiv = DOM.createDOM("div");
@@ -13443,6 +13443,7 @@ class OGInfinity {
         imgDiv.appendChild(
           DOM.createDOM("img", { src: "https://gf1.geo.gfsrv.net/cdnc5/fa3e396b8af2ae31e28ef3b44eca91.gif" })
         );
+
         frag.appendChild(imgDiv);
 
         const res = [];
@@ -13459,14 +13460,18 @@ class OGInfinity {
         frag.appendChild(debris);
         const scouts = expeBox.querySelector(".ListLinks li.debris-recyclers");
 
-        const link = DOM.createDOM("div");
-        link.style.gap = "1rem";
-        link.appendChild(DOM.createDOM("div", {}, scouts?.textContent || ""));
         const action = expeBox.querySelector(".ListLinks li a");
         if (action) {
+          const link = DOM.createDOM("div");
+          link.style.gap = "1rem";
+          link.appendChild(DOM.createDOM("div", {}, scouts?.textContent || ""));
           link.appendChild(DOM.createDOM("a", { href: "#", onclick: action.getAttribute("onclick") }, action.textContent));
+          frag.appendChild(link);
         }
-        frag.appendChild(link);
+
+        const tooltipDiv = document.getElementById('debris16');
+        frag.appendChild(tooltipDiv);
+
         expeBox.replaceChildren();
         expeBox.appendChild(frag);
       }
