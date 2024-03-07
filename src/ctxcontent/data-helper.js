@@ -77,7 +77,7 @@ export class DataHelper {
     }
     let response = {};
 
-    let player = this.players[id];
+    let player = this.players[id] || null;
     let scannedPlanets = this.scannedPlanets[id];
     let scannedPlayer = this.scannedPlayers[id];
     response.id = id;

@@ -13406,7 +13406,7 @@ class OGInfinity {
   }
 
   checkDebris() {
-    if (this.page == "galaxy") {
+    if (this.page === "galaxy") {
       this.FPSLoop("checkDebris");
       document.querySelectorAll(".cellDebris").forEach((element) => {
         let debris = element.querySelector(".ListLinks");
@@ -13419,11 +13419,11 @@ class OGInfinity {
           const frag = document.createDocumentFragment();
           let i = 0;
           debris.querySelectorAll(".debris-content").forEach((resources) => {
-            let value = fromFormatedNumber(resources.textContent.replace(/(\D*)/, ""));
-            total += parseInt(value);
+            const value = Numbers.fromFormattedNumber(resources.textContent.replace(/(\D*)/, ""));
+            total += value;
 
             let classResources = ["ogl-metal", "ogl-crystal", "ogl-deut"];
-            frag.appendChild(createDOM("div", { class: classResources[i++] }, toFormatedNumber(value, null, true)));
+            frag.appendChild(DOM.createDOM("div", { class: classResources[i++] }, Numbers.toFormattedNumber(value, null, true)));
           });
           element.querySelector(".microdebris").appendChild(frag);
           if (total > this.json.options.rvalLimit) {
@@ -13431,30 +13431,37 @@ class OGInfinity {
           }
         }
       });
-      let expeBox = document.querySelector(".expeditionDebrisSlotBox");
-      if (expeBox && !expeBox.classList.contains("ogl-done")) {
+      const expeBox = document.querySelector(".expeditionDebrisSlotBox");
+      if (expeBox && expeBox.querySelector("#expeditionDebris") && !expeBox.classList.contains("ogl-done")) {
         expeBox.classList.add("ogl-done");
         const frag = document.createDocumentFragment();
-        frag.appendChild(
-          createDOM("img", { src: "https://gf1.geo.gfsrv.net/cdnc5/fa3e396b8af2ae31e28ef3b44eca91.gif" })
+        const imgDiv = DOM.createDOM("div");
+
+        imgDiv.appendChild(
+          DOM.createDOM("img", { src: "https://gf1.geo.gfsrv.net/cdnc5/fa3e396b8af2ae31e28ef3b44eca91.gif" })
         );
+        frag.appendChild(imgDiv);
+
         const res = [];
         expeBox.querySelectorAll(".ListLinks li.debris-content").forEach((element) => {
           res.push(element.textContent.replace(/(\D*)/, ""));
         });
-        const debris = createDOM("div");
-        debris.appendChild(createDOM("div", { class: "ogl-metal" }, `${res[0]}`));
-        debris.appendChild(createDOM("div", { class: "ogl-crystal" }, `${res[1]}`));
+        const debris = DOM.createDOM("div");
+        debris.style.gap = "1rem";
+        debris.appendChild(DOM.createDOM("div", { class: "ogl-metal" }, `${res[0]}`));
+        debris.appendChild(DOM.createDOM("div", { class: "ogl-crystal" }, `${res[1]}`));
         if (res[2]) {
-          debris.appendChild(createDOM("div", { class: "ogl-deut" }, `${res[2]}`));
+          debris.appendChild(DOM.createDOM("div", { class: "ogl-deut" }, `${res[2]}`));
         }
         frag.appendChild(debris);
         const scouts = expeBox.querySelector(".ListLinks li.debris-recyclers");
-        const link = createDOM("div");
-        link.appendChild(createDOM("div", {}, scouts.textContent));
+
+        const link = DOM.createDOM("div");
+        link.style.gap = "1rem";
+        link.appendChild(DOM.createDOM("div", {}, scouts?.textContent || ""));
         const action = expeBox.querySelector(".ListLinks li a");
         if (action) {
-          link.appendChild(createDOM("a", { href: "#", onclick: action.getAttribute("onclick") }, action.textContent));
+          link.appendChild(DOM.createDOM("a", { href: "#", onclick: action.getAttribute("onclick") }, action.textContent));
         }
         frag.appendChild(link);
         expeBox.replaceChildren();
