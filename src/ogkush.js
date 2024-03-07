@@ -13483,11 +13483,13 @@ class OGInfinity {
           const link = DOM.createDOM("div");
           link.style.gap = "1rem";
           link.appendChild(DOM.createDOM("div", {}, scouts?.textContent || ""));
-          link.appendChild(DOM.createDOM("a", { href: "#", onclick: action.getAttribute("onclick") }, action.textContent));
+          link.appendChild(
+            DOM.createDOM("a", { href: "#", onclick: action.getAttribute("onclick") }, action.textContent)
+          );
           frag.appendChild(link);
         }
 
-        const tooltipDiv = document.getElementById('debris16');
+        const tooltipDiv = document.getElementById("debris16");
         frag.appendChild(tooltipDiv);
 
         expeBox.replaceChildren();
