@@ -13431,8 +13431,11 @@ class OGInfinity {
           }
         }
       });
-      const expeBox = document.querySelector(".expeditionDebrisSlotBox");
-      if (expeBox && expeBox.querySelector("#expeditionDebris") && !expeBox.classList.contains("ogl-done")) {
+      const expeBox = document.querySelector(".expeditionDebrisSlotBox #expeditionDebris");
+      if (expeBox && !expeBox.classList.contains("ogl-done")) {
+        document.querySelector("#galaxyContent .expeditionDebrisSlotBox .title").style.width = "auto";
+        document.getElementById('galaxyRow16').style.display = 'grid';
+        document.getElementById('galaxyRow16').style.gridTemplateColumns = 'repeat(3, minmax(0, 1fr))';
         expeBox.classList.add("ogl-done");
         const frag = document.createDocumentFragment();
         const imgDiv = DOM.createDOM("div");
@@ -19380,8 +19383,8 @@ function versionInStatusBar() {
       logger.info("Excluded page: " + page);
       return;
     }
-    
-    let ogKush = new OGInfinity();
+
+    const ogKush = new OGInfinity();
     ogKush.init();
     versionInStatusBar();
 
