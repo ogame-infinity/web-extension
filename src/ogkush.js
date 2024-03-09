@@ -15340,11 +15340,13 @@ class OGInfinity {
     if (sender.classList.contains("show_fleet_apikey")) {
       let data = sender.getAttribute("title") || sender.getAttribute("data-title");
       if (data) {
-        let first = data.indexOf('value="');
-        let second = data.indexOf('"', first + 7);
+        let first = data.indexOf('"{');
+        let second = data.indexOf('}"', first + 1);
+        let tmpDivApiKey = DOM.createDOM("div");
+        tmpDivApiKey.innerHTML = data.substr(first + 1, second - first);
         sender.addEventListener("click", () => {
           fadeBox(`<br/>${this.getTranslatedText(58)}`);
-          navigator.clipboard.writeText(data.substr(first + 7, second - first - 7));
+          navigator.clipboard.writeText(tmpDivApiKey.textContent);
         });
       }
       return true;
