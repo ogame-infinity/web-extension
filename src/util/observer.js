@@ -5,8 +5,13 @@ const OGIObserver = function () {
 
   const MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 
-  return (element, callback, options = { childList: true, subtree: true }) => {
+  return (element, callback, options) => {
     if (!element || element.nodeType !== 1) return;
+
+    options = {
+      ...{ childList: true, subtree: true },
+      ...options,
+    };
 
     const observer = new MutationObserver(callback);
 
