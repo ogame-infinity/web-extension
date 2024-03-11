@@ -9,6 +9,8 @@ export class FetchResponse {
   document;
   /** @type {Headers}  */
   headers;
+  /** @type {number} */
+  #expirationTimestamp = -1;
 
   /**
    * @param {T} document
@@ -17,11 +19,15 @@ export class FetchResponse {
   constructor(document, headers) {
     this.document = document;
     this.headers = headers;
+
+    if (headers.has("Expires")) {
+      this.#expirationTimestamp = new Date(headers.get("Expires")).getTime();
+    }
   }
 
-  /** @return {string|number} */
+  /** @return {number} */
   get expires() {
-    return this.headers.get("Expires") ?? -1;
+    return this.#expirationTimestamp;
   }
 }
 
