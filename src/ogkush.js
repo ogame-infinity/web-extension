@@ -8,6 +8,7 @@ import { pageContextInit, pageContextRequest } from "./util/service.callbackEven
 import * as ptreService from "./util/service.ptre.js";
 import VERSION from "./util/version.js";
 import * as wait from "./util/wait.js";
+import Messages from "./pages/messages/index.js";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 //const VERSION = "__VERSION__";
@@ -19412,6 +19413,8 @@ function versionInStatusBar() {
     const ogKush = new OGInfinity();
     ogKush.init();
     versionInStatusBar();
+
+    const messagesPage = new Messages();()
 
     // workaround for "DOMPurify not defined" issue
     await wait.waitForDefinition(window, "DOMPurify");
