@@ -8,7 +8,7 @@ import { pageContextInit, pageContextRequest } from "./util/service.callbackEven
 import * as ptreService from "./util/service.ptre.js";
 import VERSION from "./util/version.js";
 import * as wait from "./util/wait.js";
-import OGIObserver from "./util/observer.js";
+import Messages from "./pages/messages/index.js";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 //const VERSION = "__VERSION__";
@@ -19386,26 +19386,11 @@ function versionInStatusBar() {
       return;
     }
 
-    if (page === "messages") {
-      const obs = new OGIObserver();
-      // Observe tab change
-      obs(document.querySelector(".tabs_wrap.js_tabs"), (elements) => {
-
-        elements.forEach((element) => {
-          // We want only if nodes has been added
-          if (!element.addedNodes) return;
-
-          if (!element.target.classList.contains("ui-tabs-panel")) return;
-
-          // Message list
-          console.log(element.target.querySelectorAll("ul.tab_inner > li.msg"));
-        });
-      });
-    }
-
     const ogKush = new OGInfinity();
     ogKush.init();
     versionInStatusBar();
+
+    const messagesPage = new Messages();()
 
     // workaround for "DOMPurify not defined" issue
     await wait.waitForDefinition(window, "DOMPurify");
