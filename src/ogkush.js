@@ -15343,6 +15343,7 @@ class OGInfinity {
           rel = rel.replace("_oneTimeelement", "");
           let id = "#" + rel;
           content = document.querySelector(id).cloneNode(true);
+          content.style.display = 'block';
           appendMode = true;
         } else {
           content = sender.getAttribute("data-title");
