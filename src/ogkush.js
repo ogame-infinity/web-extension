@@ -12590,7 +12590,7 @@ class OGInfinity {
     sumPlanet.appendChild(divMoonSum);
     list.appendChild(sumPlanet);
     list.appendChild(flyingSum);
-    let sum = createDOM("div", { class: "smallplanet smaller ogl-summary" });
+
     let sumres = createDOM("div", { class: "ogl-res" });
     sumres.appendChild(
       createDOM(
@@ -12622,12 +12622,55 @@ class OGInfinity {
         toFormatedNumber(Math.floor(dSumP + dSumM + this.json.flying.deuterium), null, true)
       )
     );
+
+    let fullSumresMsu = createDOM("div", { class: "ogl-res ogl-sum-symbol" });
+
+    let tradeRate = this.json.options.tradeRate;
+    let fullSumMsu = 0;
+    let fullSum = [
+      (mSumP + mSumM + this.json.flying.metal),
+      (cSumP + cSumM + this.json.flying.crystal),
+      (dSumP + dSumM + this.json.flying.deuterium),
+    ];
+    fullSumMsu += fullSum.map((x, n) => (x * tradeRate[0]) / tradeRate[n]).reduce((sum, cur) => sum + cur, 0);
+
+    fullSumresMsu.appendChild(
+      createDOM(
+        "span",
+        {
+          class: "tooltip ",
+          "data-title": toFormatedNumber(Math.floor(fullSumMsu)),
+        },
+        toFormatedNumber(Math.floor(fullSumMsu), null, true)
+      )
+    );
+
+    let sum = createDOM("div", { class: "smallplanet smaller ogl-summary" });
     sum.appendChild(createDOM("div", { class: "ogl-sum-symbol" }, "ΣΣ"));
     sum.appendChild(sumres);
+
+    
+    let sumMsuSideDiv = sum.appendChild(createDOM("div", { class: "ogl-sum-symbol tooltip", "data-title": this.getTranslatedText(173)}, this.getTranslatedText(172)));
+    sum.appendChild(fullSumresMsu);
+
     list.appendChild(sum);
+
+    let sumMSU = createDOM("div", { class: "smallplanet smaller ogl-summary" });
+    sumMSU.appendChild(createDOM("div", { class: "ogl-sum-symbol tooltip", "data-title": this.getTranslatedText(173)}, "ΣΣ "+this.getTranslatedText(172)));
+    sumMSU.appendChild(fullSumresMsu.cloneNode(true));
+    list.appendChild(sumMSU);
+
     if (document.querySelectorAll(".moonlink").length == 0) {
       divMoonSum.style.display = "none";
       moonSumSymbol.style.display = "none";
+      sumMSU.style.display = "";
+      sumMsuSideDiv.style.display = "none";
+      fullSumresMsu.style.display = "none";
+    }
+    else {
+      sumMSU.style.display = "none";
+      sumMsuSideDiv.style.display = "";
+      fullSumresMsu.style.display = "";
     }
   }
 
@@ -17543,6 +17586,22 @@ class OGInfinity {
           br: "Selecione uma opção...",
         },
         /*172*/ {
+          de: "MSE",
+          en: "MSU",
+          es: "UME",
+          fr: "USM",
+          tr: "MSB",
+          br: "SEM",
+        },
+        /*173*/ {
+          de: "Summe als Standardmetalleinheit",
+          en: "Sum as Metal standard unit",
+          es: "Suma en unidades de metal equivalente",
+          fr: "Somme en unité standard de métal",
+          tr: "Metal standart birimi olarak toplam",
+          br: "Soma Equivalente em metal",
+        },
+        /*174*/ {
           de: "",
           en: "",
           es: "",
