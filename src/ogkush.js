@@ -15342,11 +15342,9 @@ class OGInfinity {
       if (data) {
         let first = data.indexOf('"{');
         let second = data.indexOf('}"', first + 1);
-        let tmpDivApiKey = DOM.createDOM("div");
-        tmpDivApiKey.innerHTML = data.substr(first + 1, second - first);
         sender.addEventListener("click", () => {
           fadeBox(`<br/>${this.getTranslatedText(58)}`);
-          navigator.clipboard.writeText(tmpDivApiKey.textContent);
+          navigator.clipboard.writeText(data.substr(first + 1, second - first).replace(/&quot;/g, '"'));
         });
       }
       return true;
