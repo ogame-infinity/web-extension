@@ -13615,8 +13615,10 @@ class OGInfinity {
         .textContent.replace(/&nbsp;/g, "")
         .trim();
       report.spy = msg.querySelector('.msg_actions [onclick*="sendShipsWithPopup"]').getAttribute("onclick");
+      if (!msg.querySelector(".msg_title a")) return; 
       report.activity = parseInt(data[0].querySelectorAll("span.fright")[0].textContent.match(/\d+/)[0]);
-      report.coords = /\[.*\]/g.exec(msg.querySelector(".msg_title").innerHTML)[0].slice(1, -1);
+      report.coords = msg.querySelector(".msg_title").textContent.match(/\[.*\]/)?.[0] || "[::]";
+
       report.coordsLink = msg.querySelector(".msg_title a").href;
       report.detail = msg.querySelector(".msg_actions a.fright").href;
       report.delete = msg.querySelector(".msg_head .fright a .icon_refuse");
