@@ -61,3 +61,55 @@ export function fromNative(native) {
   const text = JSON.stringify(native);
   return fromJSON(text);
 }
+
+export class InvalidJSONError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "InvalidJSONError";
+  }
+}
+
+/**
+ * Extracts the first valid JSON object from the given text
+ * and returns the object, its starting position, and its ending position.
+ * If no valid JSON object is found, an InvalidJSONError is thrown.
+ *
+ * @param {string} text - The text to search for a JSON object in.
+ * @return {[result: object, openIndex:number, closeIndex:number]}
+ *  An array containing the extracted JSON object,
+ *  its starting position, and its ending position.
+ * @throws {InvalidJSONError} If no valid JSON object is found in the text.
+ */
+export function extractJSON(text) {
+  let firstOpen = -1,
+    firstClose,
+    candidate;
+  firstOpen = text.indexOf("{", firstOpen + 1);
+
+  if (firstOpen === -1) {
+    throw new InvalidJSONError();
+  }
+
+  do {
+    firstClose = text.lastIndexOf("}");
+    if (firstClose <= firstOpen) {
+      throw new InvalidJSONError();
+    }
+
+    do {
+      candidate = text.substring(firstOpen, firstClose + 1);
+      try {
+        let res = fromJSON(candidate);
+        return [res, firstOpen, firstClose + 1];
+      } catch (e) {
+        // without error capture, continue to analyse
+      }
+      firstClose = text.substring(0, firstClose).lastIndexOf("}");
+    } while (firstClose > firstOpen);
+
+    firstOpen = text.indexOf("{", firstOpen + 1);
+  } while (firstOpen !== -1);
+
+  // This exception is used for flow safety, it is not expected to be reached.
+  throw new InvalidJSONError();
+}

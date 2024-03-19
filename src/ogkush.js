@@ -8,6 +8,7 @@ import { pageContextInit, pageContextRequest } from "./util/service.callbackEven
 import * as ptreService from "./util/service.ptre.js";
 import VERSION from "./util/version.js";
 import * as wait from "./util/wait.js";
+import { extractJSON, toJSON } from "./util/json.js";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 //const VERSION = "__VERSION__";
@@ -13615,7 +13616,7 @@ class OGInfinity {
         .textContent.replace(/&nbsp;/g, "")
         .trim();
       report.spy = msg.querySelector('.msg_actions [onclick*="sendShipsWithPopup"]').getAttribute("onclick");
-      if (!msg.querySelector(".msg_title a")) return; 
+      if (!msg.querySelector(".msg_title a")) return;
       report.activity = parseInt(data[0].querySelectorAll("span.fright")[0].textContent.match(/\d+/)[0]);
       report.coords = msg.querySelector(".msg_title").textContent.match(/\[.*\]/)?.[0] || "[::]";
 
@@ -15340,13 +15341,18 @@ class OGInfinity {
       return true;
     }
     if (sender.classList.contains("show_fleet_apikey")) {
-      let data = sender.getAttribute("title") || sender.getAttribute("data-title");
+      let data =
+        sender.getAttribute("title") || sender.getAttribute("data-title") || $(sender).data().tippedRestoreTitle;
+
       if (data) {
-        let first = data.indexOf('"{');
-        let second = data.indexOf('}"', first + 1);
+        data = data.replaceAll("&quot;", '"');
         sender.addEventListener("click", () => {
-          fadeBox(`<br/>${this.getTranslatedText(58)}`);
-          navigator.clipboard.writeText(data.substr(first + 1, second - first).replace(/&quot;/g, '"'));
+          const inputStr = /<input[^>]*id="FLEETAPI_JSON"[^>]*>/.exec(data);
+          if (inputStr !== null) {
+            const jsonValue = extractJSON(inputStr[0]);
+            navigator.clipboard.writeText(toJSON(jsonValue[0]));
+            fadeBox(`<br/>${this.getTranslatedText(58)}`);
+          }
         });
       }
       return true;
