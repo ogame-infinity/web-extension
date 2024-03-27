@@ -44,7 +44,7 @@ class Messages {
     }
   }
 
-  checkTab(tabElement) {
+  #checkTab(tabElement) {
     const tabId = parseInt(tabElement?.getAttribute("data-tabid") || 0);
 
     if (!tabId) return;
@@ -61,7 +61,7 @@ class Messages {
   #currentTab() {
     const currentTab = document.querySelector(".tabs_wrap.js_tabs > ul.ui-tabs-nav > .ui-tab[aria-selected=true]");
 
-    return this.checkTab(currentTab);
+    return this.#checkTab(currentTab);
   }
 
   #tabControls(tabElement) {
@@ -85,11 +85,11 @@ class Messages {
     if (!elementControls) return;
 
     // If no sub tabs
-    if (elementControls.querySelector(".ui-tab").length) return elementControls;
+    if (elementControls.querySelector(".ui-tab")?.length) return elementControls;
 
     const current_sub_tab = elementControls.querySelector(".ui-tab[aria-selected=true]");
 
-    return this.checkTab(current_sub_tab);
+    return this.#checkTab(current_sub_tab);
   }
 
   #parseMessages() {

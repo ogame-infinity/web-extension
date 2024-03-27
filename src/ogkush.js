@@ -1546,7 +1546,7 @@ class OGInfinity {
     this.activitytimers();
     this.sideStalk();
     this.checkDebris();
-    this.spyTable();
+    // this.spyTable();
     this.keyboardActions();
     this.betterTooltip();
     this.utilities();
@@ -19390,7 +19390,7 @@ function versionInStatusBar() {
     ogKush.init();
     versionInStatusBar();
 
-    const messagesPage = new Messages();()
+    const messagesPage = new Messages();
 
     // workaround for "DOMPurify not defined" issue
     await wait.waitForDefinition(window, "DOMPurify");
