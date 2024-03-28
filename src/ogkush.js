@@ -1680,25 +1680,25 @@ class OGInfinity {
   overviewDates() {
     document
       .querySelectorAll(
-        "#buildingCountdown, #researchCountdown, #shipyardCountdown2, #lfbuildingCountdown, #lfResearchCountdown"
+        ".buildingCountdown, .researchCountdown, .shipyardCountdown2, .lfbuildingCountdown, .lfResearchCountdown"
       )
       .forEach((timer) => {
         let timeLeft = 0;
-        if (timer.getAttribute("id") == "buildingCountdown") {
+        if (timer.classList.contains("buildingCountdown")) {
           timeLeft = restTimebuilding * 1e3;
-        } else if (timer.getAttribute("id") == "researchCountdown") {
+        } else if (timer.classList.contains("researchCountdown")) {
           timeLeft = restTimeresearch * 1e3;
-        } else if (timer.getAttribute("id") == "shipyardCountdown2") {
+        } else if (timer.classList.contains("shipyardCountdown2")) {
           timeLeft = restTimeship2 * 1e3;
-        } else if (timer.getAttribute("id") == "lfbuildingCountdown") {
+        } else if (timer.classList.contains("lfbuildingCountdown")) {
           timeLeft = restTimelfbuilding * 1e3;
-        } else if (timer.getAttribute("id") == "lfResearchCountdown") {
+        } else if (timer.classList.contains("lfResearchCountdown")) {
           timeLeft = restTimelfresearch * 1e3;
         }
         const timeZoneChange = this.json.options.timeZone ? 0 : this.json.timezoneDiff;
         const newDate = new Date(Date.now() + timeLeft - timeZoneChange * 1e3);
         const dateTxt = getFormatedDate(newDate.getTime(), "[d].[m].[y] - [G]:[i]:[s] ");
-        timer.parentNode.appendChild(createDOM("div", { class: "ogl-date" }, dateTxt));
+        timer.parentNode.appendChild(DOM.createDOM("div", { class: "ogl-date" }, dateTxt));
       });
   }
 
