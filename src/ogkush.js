@@ -6,6 +6,7 @@ import { getLogger } from "./util/logger.js";
 import * as Numbers from "./util/numbers.js";
 import { pageContextInit, pageContextRequest } from "./util/service.callbackEvent.js";
 import * as ptreService from "./util/service.ptre.js";
+import * as time from "./util/time.js";
 import VERSION from "./util/version.js";
 import * as wait from "./util/wait.js";
 import { extractJSON, toJSON } from "./util/json.js";
@@ -1735,23 +1736,6 @@ class OGInfinity {
       let lock;
       let lockListener;
       let currentEnergy = resourcesBar.resources.energy.amount;
-
-      function getTimeFromString(str) {
-        var regexStr = str.match(/[a-z]+|[^a-z]+/gi);
-        let time = 0;
-        for (let i = 0; i < regexStr.length; i++) {
-          let num = Number(regexStr[i]);
-          if (!isNaN(num)) {
-            if (regexStr[i + 1] == "M") num *= 60;
-            if (regexStr[i + 1] == "H") num *= 60 * 60;
-            if (regexStr[i + 1] == "DT") num *= 60 * 60 * 24;
-            time += num;
-            i++;
-          }
-        }
-        return time;
-      }
-
       let currentRes = [
         resourcesBar.resources.metal.amount,
         resourcesBar.resources.crystal.amount,
@@ -2334,7 +2318,7 @@ class OGInfinity {
           clone.replaceChildren();
           document.querySelector(".description").appendChild(clone);
           let timeDiv = document.querySelector(".build_duration time");
-          let baseTime = getTimeFromString(timeDiv.getAttribute("datetime"));
+          let baseTime = time.getTimeFromISOString(timeDiv.getAttribute("datetime"));
           if (
             [
               202, 203, 208, 209, 210, 204, 205, 206, 219, 207, 215, 211, 212, 217, 213, 218, 214, 401, 402, 403, 404,
@@ -2536,7 +2520,8 @@ class OGInfinity {
             lock.addEventListener("click", () => {
               lockListener();
             });
-            let initTime = getTimeFromString(document.querySelector(".build_duration time").getAttribute("datetime"));
+            let timeDiv = document.querySelector(".build_duration time");
+            let initTime = time.getTimeFromISOString(timeDiv.getAttribute("datetime"));
             let metalCost = document.querySelector(".costs .metal")
               ? parseInt(document.querySelector(".costs .metal").getAttribute("data-value"))
               : 0;
