@@ -1679,9 +1679,7 @@ class OGInfinity {
   }
 
   overviewDates() {
-    const countdowns = ".buildingCountdown, .lfbuildingCountdown, .researchCountdown, .lfResearchCountdown, " +
-      ".shipyardCountdown, .extendedShipyardCountdown";
-    document.querySelectorAll(countdowns).forEach((timer) => {
+    document.querySelectorAll("#productionboxBottom time[class$='Countdown']").forEach((timer) => {
       const timeLeft = time.getTimeFromISOString(timer.getAttribute("datetime")) * 1e3;
       const timeZoneChange = this.json.options.timeZone ? 0 : this.json.timezoneDiff;
       const newDate = new Date(Date.now() + timeLeft - timeZoneChange * 1e3);
@@ -4206,100 +4204,105 @@ class OGInfinity {
       return;
     }
 
-    document.querySelectorAll(".msg_actions message-footer-actions, .overlayDiv div[data-msg-id] .msg_actions").forEach((elem) => {
-      if (elem.querySelector(".ogk-trashsim, .ogk-ogotcha")) return;
-      const keyNode = elem.querySelector(".icon_apikey");
-      if (!keyNode) return;
+    document
+      .querySelectorAll(".msg_actions message-footer-actions, .overlayDiv div[data-msg-id] .msg_actions")
+      .forEach((elem) => {
+        if (elem.querySelector(".ogk-trashsim, .ogk-ogotcha")) return;
+        const keyNode = elem.querySelector(".icon_apikey");
+        if (!keyNode) return;
 
-      let key = keyNode.getAttribute("title") || keyNode.getAttribute("data-title");
-      key = key.split("'")[1];
+        let key = keyNode.getAttribute("title") || keyNode.getAttribute("data-title");
+        key = key.split("'")[1];
 
-      if (!key.startsWith("sr") && !key.startsWith("cr")) return;
+        if (!key.startsWith("sr") && !key.startsWith("cr")) return;
 
-      const isOverlay = !!elem.closest('.overlayDiv');
-      let linkButton;
-      // Spy rapport
-      if (key.startsWith("sr")) {
-        if (!isOverlay) {
-          linkButton = DOM.createDOM("gradient-button", { sq30: null });
-          const button = DOM.createDOM("button", { class: "custom_btn" });
-          const buttonDiv = DOM.createDOM("div", {
-            class: "ogk-trashsim tooltip",
-            target: "_blank",
-            title: this.getTranslatedText(170),
+        const isOverlay = !!elem.closest(".overlayDiv");
+        let linkButton;
+        // Spy rapport
+        if (key.startsWith("sr")) {
+          if (!isOverlay) {
+            linkButton = DOM.createDOM("gradient-button", { sq30: null });
+            const button = DOM.createDOM("button", { class: "custom_btn" });
+            const buttonDiv = DOM.createDOM("div", {
+              class: "ogk-trashsim tooltip",
+              target: "_blank",
+              title: this.getTranslatedText(170),
+            });
+
+            button.appendChild(buttonDiv);
+            linkButton.appendChild(button);
+          } else {
+            linkButton = elem.appendChild(
+              DOM.createDOM("div", {
+                class: "ogk-trashsim tooltip",
+                target: "_blank",
+                title: this.getTranslatedText(170),
+              })
+            );
+          }
+
+          const apiTechData = {
+            109: { level: this.json.technology[109] },
+            110: { level: this.json.technology[110] },
+            111: { level: this.json.technology[111] },
+            115: { level: this.json.technology[115] },
+            117: { level: this.json.technology[117] },
+            118: { level: this.json.technology[118] },
+            114: { level: this.json.technology[114] },
+          };
+          linkButton.addEventListener("click", () => {
+            if (!this.json.options.simulator) {
+              this.popup(
+                null,
+                this.createDOM("div", { class: "ogl-warning-dialog overmark" }, this.getTranslatedText(169))
+              );
+            } else {
+              const coords = this.current.coords.split(":");
+              const json = {
+                0: [
+                  {
+                    class: this.playerClass,
+                    research: apiTechData,
+                    planet: {
+                      galaxy: coords[0],
+                      system: coords[1],
+                      position: coords[2],
+                    },
+                  },
+                ],
+              };
+              const base64 = btoa(JSON.stringify(json));
+              window.open(
+                `${this.json.options.simulator}${this.univerviewLang}?SR_KEY=${key}#prefill=${base64}`,
+                "_blank"
+              );
+            }
           });
-
-          button.appendChild(buttonDiv);
-          linkButton.appendChild(button);
         }
-        else {
-          linkButton = elem.appendChild(
-            DOM.createDOM("div", { class: "ogk-trashsim tooltip", target: "_blank", title: this.getTranslatedText(170) })
+        // Fight report
+        else if (key.startsWith("cr")) {
+          if (!isOverlay) {
+            linkButton = DOM.createDOM("gradient-button", { sq30: null });
+            const button = DOM.createDOM("button", { class: "custom_btn" });
+            const buttonDiv = DOM.createDOM("div", { class: "ogk-ogotcha tooltip", title: "Ogotcha" });
+
+            button.appendChild(buttonDiv);
+            linkButton.appendChild(button);
+          } else {
+            linkButton = elem.appendChild(DOM.createDOM("a", { class: "ogk-ogotcha tooltip", title: "Ogotcha" }));
+          }
+
+          linkButton.addEventListener("click", () =>
+            window.open(
+              `https://ogotcha.oplanet.eu/${this.univerviewLang}?CR_KEY=${key}`,
+              "_blank",
+              `location=yes,scrollbars=yes,status=yes,width=${screen.availWidth},height=${screen.availHeight}`
+            )
           );
         }
 
-        const apiTechData = {
-          109: { level: this.json.technology[109] },
-          110: { level: this.json.technology[110] },
-          111: { level: this.json.technology[111] },
-          115: { level: this.json.technology[115] },
-          117: { level: this.json.technology[117] },
-          118: { level: this.json.technology[118] },
-          114: { level: this.json.technology[114] },
-        };
-        linkButton.addEventListener("click", () => {
-          if (!this.json.options.simulator) {
-            this.popup(
-              null,
-              this.createDOM("div", { class: "ogl-warning-dialog overmark" }, this.getTranslatedText(169))
-            );
-          } else {
-            const coords = this.current.coords.split(":");
-            const json = {
-              0: [
-                {
-                  class: this.playerClass,
-                  research: apiTechData,
-                  planet: {
-                    galaxy: coords[0],
-                    system: coords[1],
-                    position: coords[2],
-                  },
-                },
-              ],
-            };
-            const base64 = btoa(JSON.stringify(json));
-            window.open(
-              `${this.json.options.simulator}${this.univerviewLang}?SR_KEY=${key}#prefill=${base64}`,
-              "_blank"
-            );
-          }
-        });
-      }
-      // Fight report
-      else if (key.startsWith("cr")) {
-        if (!isOverlay) {
-          linkButton = DOM.createDOM("gradient-button", { sq30: null });
-          const button = DOM.createDOM("button", { class: "custom_btn" });
-          const buttonDiv = DOM.createDOM("div", { class: "ogk-ogotcha tooltip", title: "Ogotcha" });
-
-          button.appendChild(buttonDiv);
-          linkButton.appendChild(button);
-        } else {
-          linkButton = elem.appendChild(DOM.createDOM("a", { class: "ogk-ogotcha tooltip", title: "Ogotcha" }));
-        }
-
-        linkButton.addEventListener("click", () =>
-          window.open(
-            `https://ogotcha.oplanet.eu/${this.univerviewLang}?CR_KEY=${key}`,
-            "_blank",
-            `location=yes,scrollbars=yes,status=yes,width=${screen.availWidth},height=${screen.availHeight}`
-          )
-        );
-      }
-
-      elem.appendChild(linkButton);
-    });
+        elem.appendChild(linkButton);
+      });
 
     setTimeout(() => {
       this.uvlinks();
@@ -13414,7 +13417,9 @@ class OGInfinity {
             total += value;
 
             let classResources = ["ogl-metal", "ogl-crystal", "ogl-deut"];
-            frag.appendChild(DOM.createDOM("div", { class: classResources[i++] }, Numbers.toFormattedNumber(value, null, true)));
+            frag.appendChild(
+              DOM.createDOM("div", { class: classResources[i++] }, Numbers.toFormattedNumber(value, null, true))
+            );
           });
           element.querySelector(".microdebris").appendChild(frag);
           if (total > this.json.options.rvalLimit) {
