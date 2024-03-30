@@ -1679,28 +1679,15 @@ class OGInfinity {
   }
 
   overviewDates() {
-    document
-      .querySelectorAll(
-        ".buildingCountdown, .researchCountdown, .shipyardCountdown2, .lfbuildingCountdown, .lfResearchCountdown"
-      )
-      .forEach((timer) => {
-        let timeLeft = 0;
-        if (timer.classList.contains("buildingCountdown")) {
-          timeLeft = restTimebuilding * 1e3;
-        } else if (timer.classList.contains("researchCountdown")) {
-          timeLeft = restTimeresearch * 1e3;
-        } else if (timer.classList.contains("shipyardCountdown2")) {
-          timeLeft = restTimeship2 * 1e3;
-        } else if (timer.classList.contains("lfbuildingCountdown")) {
-          timeLeft = restTimelfbuilding * 1e3;
-        } else if (timer.classList.contains("lfResearchCountdown")) {
-          timeLeft = restTimelfresearch * 1e3;
-        }
-        const timeZoneChange = this.json.options.timeZone ? 0 : this.json.timezoneDiff;
-        const newDate = new Date(Date.now() + timeLeft - timeZoneChange * 1e3);
-        const dateTxt = getFormatedDate(newDate.getTime(), "[d].[m].[y] - [G]:[i]:[s] ");
-        timer.parentNode.appendChild(DOM.createDOM("div", { class: "ogl-date" }, dateTxt));
-      });
+    const countdowns = ".buildingCountdown, .lfbuildingCountdown, .researchCountdown, .lfResearchCountdown, " +
+      ".shipyardCountdown, .extendedShipyardCountdown";
+    document.querySelectorAll(countdowns).forEach((timer) => {
+      const timeLeft = time.getTimeFromISOString(timer.getAttribute("datetime")) * 1e3;
+      const timeZoneChange = this.json.options.timeZone ? 0 : this.json.timezoneDiff;
+      const newDate = new Date(Date.now() + timeLeft - timeZoneChange * 1e3);
+      const dateTxt = getFormatedDate(newDate.getTime(), "[d].[m].[y] - [G]:[i]:[s] ");
+      timer.parentNode.appendChild(DOM.createDOM("div", { class: "ogl-date" }, dateTxt));
+    });
   }
 
   minesLevel() {
