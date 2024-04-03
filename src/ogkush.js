@@ -15052,7 +15052,7 @@ class OGInfinity {
               document.querySelector("#continueToFleet2").click();
             } else if (fleetDispatcher.currentPage == "fleet2") {
               fleetDispatcher.speedPercent = document
-                .querySelector(".ogl-fleetSpeed")
+                .querySelector("div#mission .ogl-fleetSpeed")
                 .querySelector(".ogl-active")
                 .getAttribute("data-step");
               document.querySelector("#sendFleet").click();
