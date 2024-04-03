@@ -9543,15 +9543,56 @@ class OGInfinity {
       returnDiv.style.visibility = "hidden";
       info.appendChild(createDOM("div", {}, this.getTranslatedText(49)));
       let consDiv = info.appendChild(createDOM("div", { class: "undermark" }));
-      let slider = briefing.appendChild(
-        this.createDOM(
-          "div",
-          { style: "margin-top: 10px" },
-          this.playerClass == PLAYER_CLASS_WARRIOR
-            ? '<div class="ogl-fleetSpeed first"><div data-step="0.5">05</div>\n          <div data-step="1">10</div>\n          <div data-step="1.5">15</div>\n          <div data-step="2">20</div>\n          <div data-step="2.5">25</div>\n          <div data-step="3">30</div>\n          <div data-step="3.5">35</div>\n          <div data-step="4">40</div>\n          <div data-step="4.5">45</div>\n          <div data-step="5">50</div>\n          </div>\n          <div class="ogl-fleetSpeed second">\n          <div data-step="5.5">55</div>\n          <div data-step="6">60</div>\n          <div data-step="6.5">65</div>\n          <div data-step="7">70</div>\n          <div data-step="7.5">75</div>\n          <div data-step="8">80</div>\n          <div data-step="8.5">85</div>\n          <div data-step="9">90</div>\n          <div data-step="9.5">95</div>\n          <div class="ogl-active" data-step="10">100</div>\n          </div>\n          '
-            : '<div class="ogl-fleetSpeed">\n        <div data-step="1">10</div>\n        <div data-step="2">20</div>\n        <div data-step="3">30</div>\n        <div data-step="4">40</div>\n        <div data-step="5">50</div>\n        <div data-step="6">60</div>\n        <div data-step="7">70</div>\n        <div data-step="8">80</div>\n        <div data-step="9">90</div>\n        <div class="ogl-active" data-step="10">100</div>\n        </div>'
-        )
-      );
+      
+      // fleet speed selector in page fleet 1
+      const slider = DOM.createDOM("div", { style: "margin-top: 10px" });
+      if (this.playerClass === PLAYER_CLASS_WARRIOR) {
+        slider
+          .appendChild(DOM.createDOM("div", { class: "ogl-fleetSpeed first" }))
+          .append(
+            DOM.createDOM("div", { "data-step": "0.5" }, "5"),
+            DOM.createDOM("div", { "data-step": "1" }, "10"),
+            DOM.createDOM("div", { "data-step": "1.5" }, "15"),
+            DOM.createDOM("div", { "data-step": "2" }, "20"),
+            DOM.createDOM("div", { "data-step": "2.5" }, "25"),
+            DOM.createDOM("div", { "data-step": "3" }, "30"),
+            DOM.createDOM("div", { "data-step": "3.5" }, "35"),
+            DOM.createDOM("div", { "data-step": "4" }, "40"),
+            DOM.createDOM("div", { "data-step": "4.5" }, "45"),
+            DOM.createDOM("div", { "data-step": "5" }, "50")
+          );
+        slider
+          .appendChild(DOM.createDOM("div", { class: "ogl-fleetSpeed second" }))
+          .append(
+            DOM.createDOM("div", { "data-step": "5.5" }, "55"),
+            DOM.createDOM("div", { "data-step": "6" }, "60"),
+            DOM.createDOM("div", { "data-step": "6.5" }, "65"),
+            DOM.createDOM("div", { "data-step": "7" }, "70"),
+            DOM.createDOM("div", { "data-step": "7.5" }, "75"),
+            DOM.createDOM("div", { "data-step": "8" }, "80"),
+            DOM.createDOM("div", { "data-step": "8.5" }, "85"),
+            DOM.createDOM("div", { "data-step": "9" }, "90"),
+            DOM.createDOM("div", { "data-step": "9.5" }, "95"),
+            DOM.createDOM("div", { class: "ogl-active", "data-step": "10" }, "100")
+          );
+      } else {
+        slider
+          .appendChild(DOM.createDOM("div", { class: "ogl-fleetSpeed" }))
+          .append(
+            DOM.createDOM("div", { "data-step": "1" }, "10"),
+            DOM.createDOM("div", { "data-step": "2" }, "20"),
+            DOM.createDOM("div", { "data-step": "3" }, "30"),
+            DOM.createDOM("div", { "data-step": "4" }, "40"),
+            DOM.createDOM("div", { "data-step": "5" }, "50"),
+            DOM.createDOM("div", { "data-step": "6" }, "60"),
+            DOM.createDOM("div", { "data-step": "7" }, "70"),
+            DOM.createDOM("div", { "data-step": "8" }, "80"),
+            DOM.createDOM("div", { "data-step": "9" }, "90"),
+            DOM.createDOM("div", { class: "ogl-active", "data-step": "10" }, "100")
+          );
+      }
+      briefing.appendChild(slider);
+
       let oldDeut = null;
       $(".ogl-fleetSpeed div").on("click", (event) => {
         $(".ogl-fleetSpeed div").removeClass("ogl-active");
@@ -15122,49 +15163,51 @@ class OGInfinity {
       e.classList.add("tooltipBottom");
     });
     if (this.page == "fleetdispatch") {
+      // fleet speed selector in page fleet 2
       document.querySelector(".percentageBarWrapper").classList.add("ogl-hidden");
-      let slider = createDOM("div", {
+      const slider = DOM.createDOM("div", {
         class: "ogl-fleetSpeed",
         style: "margin-top: 10px; margin-left: 10px; margin-right: 10px; display: flex; grid-column: 1/3;",
       });
-      document.querySelector('div[id="mission"]').appendChild(slider);
       if (this.playerClass == PLAYER_CLASS_WARRIOR) {
-        slider.replaceChildren(
-          createDOM("div", { "data-step": "0.5", style: "width: 31px;" }, "05"),
-          createDOM("div", { "data-step": "1", style: "width: 31px;" }, "10"),
-          createDOM("div", { "data-step": "1.5", style: "width: 31px;" }, "15"),
-          createDOM("div", { "data-step": "2", style: "width: 31px;" }, "20"),
-          createDOM("div", { "data-step": "2.5", style: "width: 31px;" }, "25"),
-          createDOM("div", { "data-step": "3", style: "width: 31px;" }, "30"),
-          createDOM("div", { "data-step": "3.5", style: "width: 31px;" }, "35"),
-          createDOM("div", { "data-step": "4", style: "width: 31px;" }, "40"),
-          createDOM("div", { "data-step": "4.5", style: "width: 31px;" }, "45"),
-          createDOM("div", { "data-step": "5", style: "width: 31px;" }, "50"),
-          createDOM("div", { "data-step": "5.5", style: "width: 31px;" }, "55"),
-          createDOM("div", { "data-step": "6", style: "width: 31px;" }, "60"),
-          createDOM("div", { "data-step": "6.5", style: "width: 31px;" }, "65"),
-          createDOM("div", { "data-step": "7", style: "width: 31px;" }, "70"),
-          createDOM("div", { "data-step": "7.5", style: "width: 31px;" }, "75"),
-          createDOM("div", { "data-step": "8", style: "width: 31px;" }, "80"),
-          createDOM("div", { "data-step": "8.5", style: "width: 31px;" }, "85"),
-          createDOM("div", { "data-step": "9", style: "width: 31px;" }, "90"),
-          createDOM("div", { "data-step": "9.5", style: "width: 31px;" }, "95"),
-          createDOM("div", { class: "ogl-active", "data-step": "10", style: "width: 31px;" }, "100")
+        slider.append(
+          DOM.createDOM("div", { "data-step": "0.5", style: "width: 31px;" }, "5"),
+          DOM.createDOM("div", { "data-step": "1", style: "width: 31px;" }, "10"),
+          DOM.createDOM("div", { "data-step": "1.5", style: "width: 31px;" }, "15"),
+          DOM.createDOM("div", { "data-step": "2", style: "width: 31px;" }, "20"),
+          DOM.createDOM("div", { "data-step": "2.5", style: "width: 31px;" }, "25"),
+          DOM.createDOM("div", { "data-step": "3", style: "width: 31px;" }, "30"),
+          DOM.createDOM("div", { "data-step": "3.5", style: "width: 31px;" }, "35"),
+          DOM.createDOM("div", { "data-step": "4", style: "width: 31px;" }, "40"),
+          DOM.createDOM("div", { "data-step": "4.5", style: "width: 31px;" }, "45"),
+          DOM.createDOM("div", { "data-step": "5", style: "width: 31px;" }, "50"),
+          DOM.createDOM("div", { "data-step": "5.5", style: "width: 31px;" }, "55"),
+          DOM.createDOM("div", { "data-step": "6", style: "width: 31px;" }, "60"),
+          DOM.createDOM("div", { "data-step": "6.5", style: "width: 31px;" }, "65"),
+          DOM.createDOM("div", { "data-step": "7", style: "width: 31px;" }, "70"),
+          DOM.createDOM("div", { "data-step": "7.5", style: "width: 31px;" }, "75"),
+          DOM.createDOM("div", { "data-step": "8", style: "width: 31px;" }, "80"),
+          DOM.createDOM("div", { "data-step": "8.5", style: "width: 31px;" }, "85"),
+          DOM.createDOM("div", { "data-step": "9", style: "width: 31px;" }, "90"),
+          DOM.createDOM("div", { "data-step": "9.5", style: "width: 31px;" }, "95"),
+          DOM.createDOM("div", { class: "ogl-active", "data-step": "10", style: "width: 31px;" }, "100")
         );
       } else {
-        slider.replaceChildren(
-          createDOM("div", { "data-step": "1", style: "width: 62px;" }, "10"),
-          createDOM("div", { "data-step": "2", style: "width: 62px;" }, "20"),
-          createDOM("div", { "data-step": "3", style: "width: 62px;" }, "30"),
-          createDOM("div", { "data-step": "4", style: "width: 62px;" }, "40"),
-          createDOM("div", { "data-step": "5", style: "width: 62px;" }, "50"),
-          createDOM("div", { "data-step": "6", style: "width: 62px;" }, "60"),
-          createDOM("div", { "data-step": "7", style: "width: 62px;" }, "70"),
-          createDOM("div", { "data-step": "8", style: "width: 62px;" }, "80"),
-          createDOM("div", { "data-step": "9", style: "width: 62px;" }, "90"),
-          createDOM("div", { class: "ogl-active", "data-step": "10", style: "width: 62px;" }, "100")
+        slider.append(
+          DOM.createDOM("div", { "data-step": "1", style: "width: 62px;" }, "10"),
+          DOM.createDOM("div", { "data-step": "2", style: "width: 62px;" }, "20"),
+          DOM.createDOM("div", { "data-step": "3", style: "width: 62px;" }, "30"),
+          DOM.createDOM("div", { "data-step": "4", style: "width: 62px;" }, "40"),
+          DOM.createDOM("div", { "data-step": "5", style: "width: 62px;" }, "50"),
+          DOM.createDOM("div", { "data-step": "6", style: "width: 62px;" }, "60"),
+          DOM.createDOM("div", { "data-step": "7", style: "width: 62px;" }, "70"),
+          DOM.createDOM("div", { "data-step": "8", style: "width: 62px;" }, "80"),
+          DOM.createDOM("div", { "data-step": "9", style: "width: 62px;" }, "90"),
+          DOM.createDOM("div", { class: "ogl-active", "data-step": "10", style: "width: 62px;" }, "100")
         );
       }
+      document.querySelector('div[id="mission"]').appendChild(slider);
+
       $(".ogl-fleetSpeed div").on("click", (event) => {
         $(".ogl-fleetSpeed div").removeClass("ogl-active");
         fleetDispatcher.speedPercent = event.target.getAttribute("data-step");
