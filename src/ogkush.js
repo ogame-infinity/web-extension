@@ -9156,57 +9156,47 @@ class OGInfinity {
 
   betterFleetDispatcher() {
     if (this.page == "fleetdispatch" && fleetDispatcher.shipsOnPlanet.length == 0) {
-      let metal = Math.max(0, fleetDispatcher.metalOnPlanet);
-      let crystal = Math.max(0, fleetDispatcher.crystalOnPlanet);
-      let deut = Math.max(0, fleetDispatcher.deuteriumOnPlanet);
-      let sc = this.calcNeededShips({
-        fret: 202,
-        resources: metal + crystal + deut,
-      });
-      let lc = this.calcNeededShips({
-        fret: 203,
-        resources: metal + crystal + deut,
-      });
-      let pf = this.calcNeededShips({
-        fret: 219,
-        resources: metal + crystal + deut,
-      });
-      let rec = this.calcNeededShips({
-        fret: 209,
-        resources: metal + crystal + deut,
-      });
-      let warning = document.querySelector("#warning");
-      let neededShips = warning.appendChild(createDOM("div", { class: "noShips" }));
-      let planetId = this.current.isMoon ? this.json.empire[this.current.index].moonID : this.current.id;
-      neededShips.appendChild(
-        this.createDOM(
-          "div",
-          { class: "ogl-res-transport" },
-          `<a tech-id="202" class="ogl-option noShips ogl-fleet-ship ogl-fleet-202" href="https://${
-            window.location.host
-          }${
-            window.location.pathname
-          }?page=ingame&component=shipyard&cp=${planetId}&techId202=${sc}"></a><span>${toFormatedNumber(sc, 0)}</span>
-          <a tech-id="203" class="ogl-option noShips ogl-fleet-ship ogl-fleet-203" href="https://${
-            window.location.host
-          }${
-            window.location.pathname
-          }?page=ingame&component=shipyard&cp=${planetId}&techId203=${lc}"></a><span>${toFormatedNumber(lc, 0)}</span>
-          <a tech-id="219" class="ogl-option noShips ogl-fleet-ship ogl-fleet-219" href="https://${
-            window.location.host
-          }${
-            window.location.pathname
-          }?page=ingame&component=shipyard&cp=${planetId}&techId219=${pf}"></a><span>${toFormatedNumber(pf, 0)}</span>
-          <a tech-id="209" class="ogl-option noShips ogl-fleet-ship ogl-fleet-209" href="https://${
-            window.location.host
-          }${
-            window.location.pathname
-          }?page=ingame&component=shipyard&cp=${planetId}&techId209=${rec}"></a><span>${toFormatedNumber(
-            rec,
-            0
-          )}</span>`
-        )
+      // shipyard links when no ships on planets
+      const totalResources = Math.max(
+        0,
+        fleetDispatcher.metalOnPlanet + fleetDispatcher.crystalOnPlanet + fleetDispatcher.deuteriumOnPlanet
       );
+      const smallCargo = this.calcNeededShips({ fret: 202, resources: totalResources });
+      const largeCargo = this.calcNeededShips({ fret: 203, resources: totalResources });
+      const pathfinder = this.calcNeededShips({ fret: 219, resources: totalResources });
+      const recycler = this.calcNeededShips({ fret: 209, resources: totalResources });
+      const planetId = this.current.isMoon ? this.json.empire[this.current.index].moonID : this.current.id;
+      const shipyardURL =
+        `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=ingame` +
+        `&component=shipyard&cp=${planetId}`;
+      const neededShipsDiv = DOM.createDOM("div", { class: "noShips" });
+      neededShipsDiv.appendChild(DOM.createDOM("div", { class: "ogl-res-transport" })).append(
+        DOM.createDOM("a", {
+          "tech-id": "202",
+          class: "ogl-option noShips ogl-fleet-ship ogl-fleet-202",
+          href: shipyardURL + `&techId202=${smallCargo}`,
+        }),
+        DOM.createDOM("span", {}, `${toFormatedNumber(smallCargo, 0)}`),
+        DOM.createDOM("a", {
+          "tech-id": "203",
+          class: "ogl-option noShips ogl-fleet-ship ogl-fleet-203",
+          href: shipyardURL + `&techId203=${largeCargo}`,
+        }),
+        DOM.createDOM("span", {}, `${toFormatedNumber(largeCargo, 0)}`),
+        DOM.createDOM("a", {
+          "tech-id": "219",
+          class: "ogl-option noShips ogl-fleet-ship ogl-fleet-219",
+          href: shipyardURL + `&techId219=${pathfinder}`,
+        }),
+        DOM.createDOM("span", {}, `${toFormatedNumber(pathfinder, 0)}`),
+        DOM.createDOM("a", {
+          "tech-id": "209",
+          class: "ogl-option noShips ogl-fleet-ship ogl-fleet-209",
+          href: shipyardURL + `&techId209=${recycler}`,
+        }),
+        DOM.createDOM("span", {}, `${toFormatedNumber(recycler, 0)}`)
+      );
+      document.querySelector("#warning").appendChild(neededShipsDiv);
     }
     if (
       this.page == "fleetdispatch" &&
