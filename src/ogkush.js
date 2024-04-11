@@ -13313,7 +13313,7 @@ class OGInfinity {
       report.spy = msg.querySelector('.msg_actions [onclick*="sendShipsWithPopup"]').getAttribute("onclick");
       if (!msg.querySelector(".msg_title a")) return;
       report.activity = parseInt(data[0].querySelectorAll("span.fright")[0].textContent.match(/\d+/)[0]);
-      report.coords = msg.querySelector(".msg_title").textContent.match(/\[.*\]/)?.[0] || "[::]";
+      report.coords = msg.querySelector(".msg_title").textContent.match(/\[.*\]/)?.[0].slice(1, -1) || "[::]";
 
       report.coordsLink = msg.querySelector(".msg_title a").href;
       report.detail = msg.querySelector(".msg_actions a.fright").href;
