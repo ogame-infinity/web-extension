@@ -6,6 +6,7 @@ import { getLogger } from "./util/logger.js";
 import * as Numbers from "./util/numbers.js";
 import { pageContextInit, pageContextRequest } from "./util/service.callbackEvent.js";
 import * as ptreService from "./util/service.ptre.js";
+import * as time from "./util/time.js";
 import VERSION from "./util/version.js";
 import * as wait from "./util/wait.js";
 import { extractJSON, toJSON } from "./util/json.js";
@@ -1678,28 +1679,13 @@ class OGInfinity {
   }
 
   overviewDates() {
-    document
-      .querySelectorAll(
-        "#buildingCountdown, #researchCountdown, #shipyardCountdown2, #lfbuildingCountdown, #lfResearchCountdown"
-      )
-      .forEach((timer) => {
-        let timeLeft = 0;
-        if (timer.getAttribute("id") == "buildingCountdown") {
-          timeLeft = restTimebuilding * 1e3;
-        } else if (timer.getAttribute("id") == "researchCountdown") {
-          timeLeft = restTimeresearch * 1e3;
-        } else if (timer.getAttribute("id") == "shipyardCountdown2") {
-          timeLeft = restTimeship2 * 1e3;
-        } else if (timer.getAttribute("id") == "lfbuildingCountdown") {
-          timeLeft = restTimelfbuilding * 1e3;
-        } else if (timer.getAttribute("id") == "lfResearchCountdown") {
-          timeLeft = restTimelfresearch * 1e3;
-        }
-        const timeZoneChange = this.json.options.timeZone ? 0 : this.json.timezoneDiff;
-        const newDate = new Date(Date.now() + timeLeft - timeZoneChange * 1e3);
-        const dateTxt = getFormatedDate(newDate.getTime(), "[d].[m].[y] - [G]:[i]:[s] ");
-        timer.parentNode.appendChild(createDOM("div", { class: "ogl-date" }, dateTxt));
-      });
+    document.querySelectorAll("#productionboxBottom time[class$='Countdown']").forEach((timer) => {
+      const timeLeft = time.getTimeFromISOString(timer.getAttribute("datetime")) * 1e3;
+      const timeZoneChange = this.json.options.timeZone ? 0 : this.json.timezoneDiff;
+      const newDate = new Date(Date.now() + timeLeft - timeZoneChange * 1e3);
+      const dateTxt = getFormatedDate(newDate.getTime(), "[d].[m].[y] - [G]:[i]:[s] ");
+      timer.parentNode.appendChild(DOM.createDOM("div", { class: "ogl-date" }, dateTxt));
+    });
   }
 
   minesLevel() {
@@ -1735,23 +1721,6 @@ class OGInfinity {
       let lock;
       let lockListener;
       let currentEnergy = resourcesBar.resources.energy.amount;
-
-      function getTimeFromString(str) {
-        var regexStr = str.match(/[a-z]+|[^a-z]+/gi);
-        let time = 0;
-        for (let i = 0; i < regexStr.length; i++) {
-          let num = Number(regexStr[i]);
-          if (!isNaN(num)) {
-            if (regexStr[i + 1] == "M") num *= 60;
-            if (regexStr[i + 1] == "H") num *= 60 * 60;
-            if (regexStr[i + 1] == "DT") num *= 60 * 60 * 24;
-            time += num;
-            i++;
-          }
-        }
-        return time;
-      }
-
       let currentRes = [
         resourcesBar.resources.metal.amount,
         resourcesBar.resources.crystal.amount,
@@ -2334,7 +2303,7 @@ class OGInfinity {
           clone.replaceChildren();
           document.querySelector(".description").appendChild(clone);
           let timeDiv = document.querySelector(".build_duration time");
-          let baseTime = getTimeFromString(timeDiv.getAttribute("datetime"));
+          let baseTime = time.getTimeFromISOString(timeDiv.getAttribute("datetime"));
           if (
             [
               202, 203, 208, 209, 210, 204, 205, 206, 219, 207, 215, 211, 212, 217, 213, 218, 214, 401, 402, 403, 404,
@@ -2536,7 +2505,8 @@ class OGInfinity {
             lock.addEventListener("click", () => {
               lockListener();
             });
-            let initTime = getTimeFromString(document.querySelector(".build_duration time").getAttribute("datetime"));
+            let timeDiv = document.querySelector(".build_duration time");
+            let initTime = time.getTimeFromISOString(timeDiv.getAttribute("datetime"));
             let metalCost = document.querySelector(".costs .metal")
               ? parseInt(document.querySelector(".costs .metal").getAttribute("data-value"))
               : 0;
@@ -4234,100 +4204,105 @@ class OGInfinity {
       return;
     }
 
-    document.querySelectorAll(".msg_actions message-footer-actions, .overlayDiv div[data-msg-id] .msg_actions").forEach((elem) => {
-      if (elem.querySelector(".ogk-trashsim, .ogk-ogotcha")) return;
-      const keyNode = elem.querySelector(".icon_apikey");
-      if (!keyNode) return;
+    document
+      .querySelectorAll(".msg_actions message-footer-actions, .overlayDiv div[data-msg-id] .msg_actions")
+      .forEach((elem) => {
+        if (elem.querySelector(".ogk-trashsim, .ogk-ogotcha")) return;
+        const keyNode = elem.querySelector(".icon_apikey");
+        if (!keyNode) return;
 
-      let key = keyNode.getAttribute("title") || keyNode.getAttribute("data-title");
-      key = key.split("'")[1];
+        let key = keyNode.getAttribute("title") || keyNode.getAttribute("data-title");
+        key = key.split("'")[1];
 
-      if (!key.startsWith("sr") && !key.startsWith("cr")) return;
+        if (!key.startsWith("sr") && !key.startsWith("cr")) return;
 
-      const isOverlay = !!elem.closest('.overlayDiv');
-      let linkButton;
-      // Spy rapport
-      if (key.startsWith("sr")) {
-        if (!isOverlay) {
-          linkButton = DOM.createDOM("gradient-button", { sq30: null });
-          const button = DOM.createDOM("button", { class: "custom_btn" });
-          const buttonDiv = DOM.createDOM("div", {
-            class: "ogk-trashsim tooltip",
-            target: "_blank",
-            title: this.getTranslatedText(170),
+        const isOverlay = !!elem.closest(".overlayDiv");
+        let linkButton;
+        // Spy rapport
+        if (key.startsWith("sr")) {
+          if (!isOverlay) {
+            linkButton = DOM.createDOM("gradient-button", { sq30: null });
+            const button = DOM.createDOM("button", { class: "custom_btn" });
+            const buttonDiv = DOM.createDOM("div", {
+              class: "ogk-trashsim tooltip",
+              target: "_blank",
+              title: this.getTranslatedText(170),
+            });
+
+            button.appendChild(buttonDiv);
+            linkButton.appendChild(button);
+          } else {
+            linkButton = elem.appendChild(
+              DOM.createDOM("div", {
+                class: "ogk-trashsim tooltip",
+                target: "_blank",
+                title: this.getTranslatedText(170),
+              })
+            );
+          }
+
+          const apiTechData = {
+            109: { level: this.json.technology[109] },
+            110: { level: this.json.technology[110] },
+            111: { level: this.json.technology[111] },
+            115: { level: this.json.technology[115] },
+            117: { level: this.json.technology[117] },
+            118: { level: this.json.technology[118] },
+            114: { level: this.json.technology[114] },
+          };
+          linkButton.addEventListener("click", () => {
+            if (!this.json.options.simulator) {
+              this.popup(
+                null,
+                this.createDOM("div", { class: "ogl-warning-dialog overmark" }, this.getTranslatedText(169))
+              );
+            } else {
+              const coords = this.current.coords.split(":");
+              const json = {
+                0: [
+                  {
+                    class: this.playerClass,
+                    research: apiTechData,
+                    planet: {
+                      galaxy: coords[0],
+                      system: coords[1],
+                      position: coords[2],
+                    },
+                  },
+                ],
+              };
+              const base64 = btoa(JSON.stringify(json));
+              window.open(
+                `${this.json.options.simulator}${this.univerviewLang}?SR_KEY=${key}#prefill=${base64}`,
+                "_blank"
+              );
+            }
           });
-
-          button.appendChild(buttonDiv);
-          linkButton.appendChild(button);
         }
-        else {
-          linkButton = elem.appendChild(
-            DOM.createDOM("div", { class: "ogk-trashsim tooltip", target: "_blank", title: this.getTranslatedText(170) })
+        // Fight report
+        else if (key.startsWith("cr")) {
+          if (!isOverlay) {
+            linkButton = DOM.createDOM("gradient-button", { sq30: null });
+            const button = DOM.createDOM("button", { class: "custom_btn" });
+            const buttonDiv = DOM.createDOM("div", { class: "ogk-ogotcha tooltip", title: "Ogotcha" });
+
+            button.appendChild(buttonDiv);
+            linkButton.appendChild(button);
+          } else {
+            linkButton = elem.appendChild(DOM.createDOM("a", { class: "ogk-ogotcha tooltip", title: "Ogotcha" }));
+          }
+
+          linkButton.addEventListener("click", () =>
+            window.open(
+              `https://ogotcha.oplanet.eu/${this.univerviewLang}?CR_KEY=${key}`,
+              "_blank",
+              `location=yes,scrollbars=yes,status=yes,width=${screen.availWidth},height=${screen.availHeight}`
+            )
           );
         }
 
-        const apiTechData = {
-          109: { level: this.json.technology[109] },
-          110: { level: this.json.technology[110] },
-          111: { level: this.json.technology[111] },
-          115: { level: this.json.technology[115] },
-          117: { level: this.json.technology[117] },
-          118: { level: this.json.technology[118] },
-          114: { level: this.json.technology[114] },
-        };
-        linkButton.addEventListener("click", () => {
-          if (!this.json.options.simulator) {
-            this.popup(
-              null,
-              this.createDOM("div", { class: "ogl-warning-dialog overmark" }, this.getTranslatedText(169))
-            );
-          } else {
-            const coords = this.current.coords.split(":");
-            const json = {
-              0: [
-                {
-                  class: this.playerClass,
-                  research: apiTechData,
-                  planet: {
-                    galaxy: coords[0],
-                    system: coords[1],
-                    position: coords[2],
-                  },
-                },
-              ],
-            };
-            const base64 = btoa(JSON.stringify(json));
-            window.open(
-              `${this.json.options.simulator}${this.univerviewLang}?SR_KEY=${key}#prefill=${base64}`,
-              "_blank"
-            );
-          }
-        });
-      }
-      // Fight report
-      else if (key.startsWith("cr")) {
-        if (!isOverlay) {
-          linkButton = DOM.createDOM("gradient-button", { sq30: null });
-          const button = DOM.createDOM("button", { class: "custom_btn" });
-          const buttonDiv = DOM.createDOM("div", { class: "ogk-ogotcha tooltip", title: "Ogotcha" });
-
-          button.appendChild(buttonDiv);
-          linkButton.appendChild(button);
-        } else {
-          linkButton = elem.appendChild(DOM.createDOM("a", { class: "ogk-ogotcha tooltip", title: "Ogotcha" }));
-        }
-
-        linkButton.addEventListener("click", () =>
-          window.open(
-            `https://ogotcha.oplanet.eu/${this.univerviewLang}?CR_KEY=${key}`,
-            "_blank",
-            `location=yes,scrollbars=yes,status=yes,width=${screen.availWidth},height=${screen.availHeight}`
-          )
-        );
-      }
-
-      elem.appendChild(linkButton);
-    });
+        elem.appendChild(linkButton);
+      });
 
     setTimeout(() => {
       this.uvlinks();
@@ -13442,7 +13417,9 @@ class OGInfinity {
             total += value;
 
             let classResources = ["ogl-metal", "ogl-crystal", "ogl-deut"];
-            frag.appendChild(DOM.createDOM("div", { class: classResources[i++] }, Numbers.toFormattedNumber(value, null, true)));
+            frag.appendChild(
+              DOM.createDOM("div", { class: classResources[i++] }, Numbers.toFormattedNumber(value, null, true))
+            );
           });
           element.querySelector(".microdebris").appendChild(frag);
           if (total > this.json.options.rvalLimit) {
