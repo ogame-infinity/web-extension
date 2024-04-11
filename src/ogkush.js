@@ -9129,372 +9129,49 @@ class OGInfinity {
     return div;
   }
 
-  buildDispatcherUI() {
-    let dispatch = document.querySelector("#shipsChosen").appendChild(createDOM("div", { class: "ogl-dispatch" }));
-    if (!this.json.options.dispatcher) {
-      dispatch.style.display = "none";
-    }
-    let destination = dispatch.appendChild(createDOM("div", { class: "ogl-dest" }));
-    let resDiv = dispatch.appendChild(createDOM("div"));
-    let actions = resDiv.appendChild(createDOM("div", { class: "ogl-transport" }));
-    let coords = destination.appendChild(createDOM("div", { class: "ogl-coords" }));
-    let warning = coords.appendChild(
-      createDOM("a", { class: "ogl-warning tooltipRight", "data-title": this.getTranslatedText(117) })
-    );
-    let galaxyInput = coords.appendChild(
-      createDOM("input", { type: "text", pattern: "[0-9]*", value: fleetDispatcher.targetPlanet.galaxy })
-    );
-    let systemInput = coords.appendChild(
-      createDOM("input", { type: "text", pattern: "[0-9]*", value: fleetDispatcher.targetPlanet.system })
-    );
-    let positionInput = coords.appendChild(
-      createDOM("input", { type: "text", pattern: "[0-9]*", value: fleetDispatcher.targetPlanet.position })
-    );
-    let planet = coords.appendChild(createDOM("a", { class: "ogl-planet-icon" }));
-    let moon = coords.appendChild(createDOM("a", { class: "ogl-moon-icon" }));
-    let debris = coords.appendChild(createDOM("a", { class: "ogl-debris-icon" }));
-    planet.addEventListener("click", () => {});
-    moon.addEventListener("click", () => {
-      fleetDispatcher.targetPlanet.type = fleetDispatcher.fleetHelper.PLANETTYPE_MOON;
-    });
-    debris.addEventListener("click", () => {
-      fleetDispatcher.targetPlanet.type = fleetDispatcher.fleetHelper.PLANETTYPE_DEBRIS;
-    });
-    const homeSvg = createSVG("svg", { height: "12px", viewBox: "0 0 512 512", width: "12px" });
-    homeSvg.appendChild(
-      createSVG("path", {
-        fill: "white",
-        d:
-          "m498.195312 222.695312c-.011718-.011718-.023437-.023437-.035156-.035156l-208.855468-208.847656c-8.902344" +
-          "-8.90625-20.738282-13.8125-33.328126-13.8125-12.589843 0-24.425781 4.902344-33.332031 13.808594l-208.746" +
-          "093 208.742187c-.070313.070313-.140626.144531-.210938.214844-18.28125 18.386719-18.25 48.21875.089844 66" +
-          ".558594 8.378906 8.382812 19.445312 13.238281 31.277344 13.746093.480468.046876.964843.070313 1.453124.0" +
-          "70313h8.324219v153.699219c0 30.414062 24.746094 55.160156 55.167969 55.160156h81.710938c8.28125 0 15-6.7" +
-          "14844 15-15v-120.5c0-13.878906 11.289062-25.167969 25.167968-25.167969h48.195313c13.878906 0 25.167969 1" +
-          "1.289063 25.167969 25.167969v120.5c0 8.285156 6.714843 15 15 15h81.710937c30.421875 0 55.167969-24.74609" +
-          "4 55.167969-55.160156v-153.699219h7.71875c12.585937 0 24.421875-4.902344 33.332031-13.808594 18.359375-1" +
-          "8.371093 18.367187-48.253906.023437-66.636719zm0 0",
-      })
-    );
-    let planetList = coords.appendChild(createDOM("div", { class: "ogl-homes" }).appendChild(homeSvg).parentElement);
-    if (unions.length != 0) {
-      let unionsBtn = coords.appendChild(
-        createDOM("div", { class: "ogl-union-btn" }).appendChild(
-          createDOM("img", {
-            src: "https://gf3.geo.gfsrv.net/cdn56/2ff25995f98351834db4b5aa048c68.gif",
-            height: "16",
-            width: "16",
-          })
-        ).parentElement
-      );
-      unionsBtn.addEventListener("click", () => {
-        let container = createDOM("div", { class: "ogl-quickLinks", style: "display: flex;flex-direction:column" });
-        for (let i in unions) {
-          let union = unions[i];
-          let unionDiv = container.appendChild(
-            createDOM(
-              "div",
-              { class: "ogl-quickPlanet" },
-              `${union.name} [${union.galaxy}:${union.system}:${union.planet}] ${union.planettype == 1 ? "P" : "M"}`
-            )
-          );
-          unionDiv.addEventListener("click", () => {
-            fleetDispatcher.union = union.id;
-            fleetDispatcher.targetPlanet.position = union.planet;
-            fleetDispatcher.targetPlanet.system = union.system;
-            fleetDispatcher.targetPlanet.galaxy = union.galaxy;
-            fleetDispatcher.targetPlanet.type = union.planettype;
-            galaxyInput.value = fleetDispatcher.targetPlanet.galaxy;
-            systemInput.value = fleetDispatcher.targetPlanet.system;
-            positionInput.value = fleetDispatcher.targetPlanet.position;
-            document.querySelector(".ogl-dialog .close-tooltip").click();
-            update(true);
-            this.initUnionCombat(union);
-          });
-        }
-        this.popup(false, container);
-      });
-    }
-    planetList.addEventListener("click", () => {
-      let container = this.openPlanetList((planet) => {
-        fleetDispatcher.targetPlanet = planet;
-        fleetDispatcher.refresh();
-        galaxyInput.value = fleetDispatcher.targetPlanet.galaxy;
-        systemInput.value = fleetDispatcher.targetPlanet.system;
-        positionInput.value = fleetDispatcher.targetPlanet.position;
-        document.querySelector(".ogl-dialogOverlay").classList.remove("ogl-active");
-        update(true);
-      });
-      this.popup(false, container);
-    });
-    let briefing = destination.appendChild(createDOM("div", { style: "flex-direction: column" }));
-    let info = briefing.appendChild(createDOM("div", { class: "ogl-info" }));
-    info.appendChild(createDOM("div", {}, "Arrival"));
-    let arrivalDiv = info.appendChild(createDOM("div", { class: "ogl-arrival-time" }));
-    info.appendChild(createDOM("div", {}, "Duration"));
-    let durationDiv = info.appendChild(createDOM("div", { class: "ogl-duration" }));
-    info.appendChild(createDOM("div", {}, "Return"));
-    let returnDiv = info.appendChild(createDOM("div", { class: "ogl-return-time" }));
-    returnDiv.style.visibility = "hidden";
-    info.appendChild(createDOM("div", {}, "Consumption"));
-    let consDiv = info.appendChild(createDOM("div", { class: "undermark" }));
-    let slider = briefing.appendChild(
-      this.createDOM(
-        "div",
-        { style: "margin-top: 10px" },
-        this.playerClass == PLAYER_CLASS_WARRIOR
-          ? '<div class="ogl-fleetSpeed first"><div data-step="0.5">05</div>\n          <div data-step="1">10</div>\n          <div data-step="1.5">15</div>\n          <div data-step="2">20</div>\n          <div data-step="2.5">25</div>\n          <div data-step="3">30</div>\n          <div data-step="3.5">35</div>\n          <div data-step="4">40</div>\n          <div data-step="4.5">45</div>\n          <div data-step="5">50</div>\n          </div>\n          <div class="ogl-fleetSpeed second">\n          <div data-step="5.5">55</div>\n          <div data-step="6">60</div>\n          <div data-step="6.5">65</div>\n          <div data-step="7">70</div>\n          <div data-step="7.5">75</div>\n          <div data-step="8">80</div>\n          <div data-step="8.5">85</div>\n          <div data-step="9">90</div>\n          <div data-step="9.5">95</div>\n          <div class="ogl-active" data-step="10">100</div>\n          </div>\n          '
-          : '<div class="ogl-fleetSpeed">\n        <div data-step="1">10</div>\n        <div data-step="2">20</div>\n        <div data-step="3">30</div>\n        <div data-step="4">40</div>\n        <div data-step="5">50</div>\n        <div data-step="6">60</div>\n        <div data-step="7">70</div>\n        <div data-step="8">80</div>\n        <div data-step="9">90</div>\n        <div class="ogl-active" data-step="10">100</div>\n        </div>'
-      )
-    );
-    $(".ogl-fleetSpeed div").on("click", (event) => {
-      $(".ogl-fleetSpeed div").removeClass("ogl-active");
-      fleetDispatcher.speedPercent = event.target.getAttribute("data-step");
-      $(`.ogl-fleetSpeed div[data-step="${fleetDispatcher.speedPercent}"]`).addClass("ogl-active");
-      update(false);
-    });
-    $(".ogl-fleetSpeed div").on("mouseover", (event) => {
-      fleetDispatcher.speedPercent = event.target.getAttribute("data-step");
-      let old = deutLeft.textContent;
-      update(false);
-      if (deutLeft.textContent != old) {
-        deutLeft.classList.add("middlemark");
-      }
-    });
-    $(".ogl-fleetSpeed div").on("mouseout", (event) => {
-      fleetDispatcher.speedPercent = slider.querySelector(".ogl-active").getAttribute("data-step");
-      let middle = deutLeft.classList.contains("middlemark");
-      update(false);
-      if (middle) {
-        deutLeft.classList.add("middlemark");
-      }
-    });
-    let missionsDiv = destination.appendChild(createDOM("div", { class: "ogl-missions" }));
-    missionsDiv.replaceChildren(createDOM("span", { style: "color: #9099a3" }, `${that.getTranslatedText(111)}`));
-    let resFiller = actions.appendChild(createDOM("div", { class: "ogl-res-filler" }));
-    let metalBtn = resFiller.appendChild(createDOM("div"));
-    metalBtn.appendChild(createDOM("div", { class: "resourceIcon metal" }));
-    let metalFiller = metalBtn.appendChild(createDOM("input", { type: "text" }));
-    let metalLeft = metalBtn.appendChild(createDOM("span", {}, "-"));
-    let metalReal = metalBtn.appendChild(createDOM("span", { class: "ogk-real-cargo ogk-metal" }, "-"));
-    let btns = metalBtn.appendChild(createDOM("div", { class: "ogl-actions" }));
-    let selectMinMetal = btns.appendChild(
-      createDOM("img", { src: "https://gf2.geo.gfsrv.net/cdn10/45494a6e18d52e5c60c8fb56dfbcc4.gif" })
-    );
-    let selectMostMetal = btns.appendChild(createDOM("a", { class: "select-most-min" }));
-    let selectMaxMetal = btns.appendChild(
-      createDOM("img", { src: "https://gf3.geo.gfsrv.net/cdnea/fa0c8ee62604e3af52e6ef297faf3c.gif" })
-    );
-    let crystalBtn = resFiller.appendChild(createDOM("div"));
-    crystalBtn.appendChild(createDOM("div", { class: "resourceIcon crystal" }));
-    let crystalFiller = crystalBtn.appendChild(createDOM("input", { type: "text" }));
-    let crystalLeft = crystalBtn.appendChild(createDOM("span", {}, "-"));
-    let crystalReal = crystalBtn.appendChild(createDOM("span", { class: "ogk-real-cargo ogk-crystal" }, "-"));
-    let crystalBtns = crystalBtn.appendChild(createDOM("div", { class: "ogl-actions" }));
-    let selectMinCrystal = crystalBtns.appendChild(
-      createDOM("img", { src: "https://gf2.geo.gfsrv.net/cdn10/45494a6e18d52e5c60c8fb56dfbcc4.gif" })
-    );
-    let selectMostCrystal = crystalBtns.appendChild(createDOM("a", { class: "select-most-min" }));
-    let selectMaxCrystal = crystalBtns.appendChild(
-      createDOM("img", { src: "https://gf3.geo.gfsrv.net/cdnea/fa0c8ee62604e3af52e6ef297faf3c.gif" })
-    );
-    let deutBtn = resFiller.appendChild(createDOM("div"));
-    deutBtn.appendChild(createDOM("div", { class: "resourceIcon deuterium" }));
-    let deutFiller = deutBtn.appendChild(createDOM("input", { type: "text" }));
-    let deutLeft = deutBtn.appendChild(createDOM("span", {}, "-"));
-    let deutReal = deutBtn.appendChild(createDOM("span", { class: "ogk-real-cargo ogk-deut" }, "-"));
-    let deutBtns = deutBtn.appendChild(createDOM("div", { class: "ogl-actions" }));
-    let selectMinDeut = deutBtns.appendChild(
-      createDOM("img", { src: "https://gf2.geo.gfsrv.net/cdn10/45494a6e18d52e5c60c8fb56dfbcc4.gif" })
-    );
-    let selectMostDeut = deutBtns.appendChild(createDOM("a", { class: "select-most-min" }));
-    let selectMaxDeut = deutBtns.appendChild(
-      createDOM("img", { src: "https://gf3.geo.gfsrv.net/cdnea/fa0c8ee62604e3af52e6ef297faf3c.gif" })
-    );
-    $("#selectMaxMetal").after(createDOM("span", { class: "ogi-metalLeft" }, "-"));
-    $("#selectMaxCrystal").after(createDOM("span", { class: "ogi-crystalLeft" }, "-"));
-    $("#selectMaxDeuterium").after(createDOM("span", { class: "ogi-deuteriumLeft" }, "-"));
-    $("#allresources").after(createDOM("a", { class: "select-most" }));
-    $("#allresources").after(createDOM("a", { class: "send_none" }).appendChild(createDOM("a")).parentElement);
-    $("#loadAllResources .select-most").on("click", () => {
-      $("#selectMinDeuterium").click();
-      $("#selectMinCrystal").click();
-      $("#selectMinMetal").click();
-      $("#selectMostDeuterium").click();
-      $("#selectMostCrystal").click();
-      $("#selectMostMetal").click();
-    });
-    $("#loadAllResources .send_none").on("click", () => {
-      $("#selectMinDeuterium").click();
-      $("#selectMinCrystal").click();
-      $("#selectMinMetal").click();
-    });
-    let load = createDOM("div", { class: "ogl-cargo" });
-    let selectMostRes = load.appendChild(createDOM("a", { class: "select-most" }));
-    let selectAllRes = load.appendChild(createDOM("a", { class: "sendall" }));
-    let selectNoRes = load.appendChild(
-      createDOM("a", { class: "send_none" }).appendChild(createDOM("a")).parentElement
-    );
-    selectNoRes.addEventListener("click", () => {
-      selectMinDeut.click();
-      selectMinCrystal.click();
-      selectMinMetal.click();
-    });
-    selectAllRes.addEventListener("click", () => {
-      selectMaxDeut.click();
-      selectMaxCrystal.click();
-      selectMaxMetal.click();
-    });
-    selectMostRes.addEventListener("click", () => {
-      selectMostDeut.click();
-      selectMostCrystal.click();
-      selectMostMetal.click();
-    });
-    let bar = load.appendChild(createDOM("div"));
-    bar.replaceChildren(
-      createDOM("div", { class: "fleft bar_container", "data-current-amount": "0", "data-capacity": "0" }).appendChild(
-        createDOM("div", { class: "filllevel_bar" })
-      ).parentElement,
-      createDOM("div")
-        .appendChild(createDOM("span", { class: "undermark" }, "0"))
-        .parentElement.appendChild(document.createTextNode(" / "))
-        .parentElement.appendChild(createDOM("span", {}, "0")).parentElement
-    );
-    let settings = load.appendChild(
-      createDOM("div", { class: "ogl-setting-icon" }).appendChild(
-        createDOM("img", {
-          src: "https://gf3.geo.gfsrv.net/cdne7/1f57d944fff38ee51d49c027f574ef.gif",
-          height: "16",
-          width: "16",
-        })
-      ).parentElement
-    );
-    settings.addEventListener("click", () => {
-      this.popup(null, this.keepOnPlanetDialog(this.current.coords + (this.current.isMoon ? "M" : "P")));
-    });
-    resDiv.appendChild(load);
-    let transport = actions.appendChild(createDOM("div", { class: "ogl-res-transport" }));
-    let ptBtn = transport.appendChild(
-      createDOM("a", { "tech-id": 202, class: "ogl-option ogl-fleet-ship ogl-fleet-202" })
-    );
-    let ptNum = transport.appendChild(createDOM("span", {}, "-"));
-    let gtBtn = transport.appendChild(
-      createDOM("a", { "tech-id": 203, class: "ogl-option ogl-fleet-ship ogl-fleet-203" })
-    );
-    let gtNum = transport.appendChild(createDOM("span", {}, "-"));
-    let pfBtn = transport.appendChild(
-      createDOM("a", { "tech-id": 219, class: "ogl-option ogl-fleet-ship ogl-fleet-219" })
-    );
-    let pfNum = transport.appendChild(createDOM("span", {}, "-"));
-    let cyBtn = transport.appendChild(
-      createDOM("a", { "tech-id": 209, class: "ogl-option ogl-fleet-ship ogl-fleet-209" })
-    );
-    let cyNum = transport.appendChild(createDOM("span", {}, "-"));
-    let pbBtn;
-    let pbNum;
-    if (this.json.pbFret != 0) {
-      pbBtn = transport.appendChild(
-        createDOM("a", { "tech-id": 210, class: "ogl-option ogl-fleet-ship ogl-fleet-210" })
-      );
-      pbNum = transport.appendChild(createDOM("span", {}, "-"));
-    }
-    let onTargetChange = function () {
-      let galaxy = clampInt(galaxyInput.value, 1, fleetDispatcher.fleetHelper.MAX_GALAXY, true);
-      galaxyInput.value = galaxy;
-      let system = clampInt(systemInput.value, 1, fleetDispatcher.fleetHelper.MAX_SYSTEM, true);
-      systemInput.value = system;
-      let position = clampInt(positionInput.value, 1, fleetDispatcher.fleetHelper.MAX_POSITION, true);
-      positionInput.value = position;
-      fleetDispatcher.targetPlanet.galaxy = galaxy;
-      fleetDispatcher.targetPlanet.system = system;
-      fleetDispatcher.targetPlanet.position = position;
-      $("#galaxy").val(galaxy);
-      $("#system").val(system);
-      $("#position").val(position);
-      fleetDispatcher.updateTarget();
-    };
-    galaxyInput.addEventListener("focusout", () => {
-      udapte();
-    });
-    galaxyInput.addEventListener("click", () => {
-      galaxyInput.value = "";
-    });
-    systemInput.addEventListener("focusout", () => {
-      udapte();
-    });
-    systemInput.addEventListener("click", () => {
-      systemInput.value = "";
-    });
-    positionInput.addEventListener("focusout", () => {
-      udapte();
-    });
-    positionInput.addEventListener("click", () => {
-      positionInput.value = "";
-    });
-    galaxyInput.addEventListener("keyup", () => {
-      onTargetChange();
-    });
-    systemInput.addEventListener("keyup", () => {
-      onTargetChange();
-    });
-    positionInput.addEventListener("keyup", () => {
-      onTargetChange();
-    });
-  }
-
   betterFleetDispatcher() {
     if (this.page == "fleetdispatch" && fleetDispatcher.shipsOnPlanet.length == 0) {
-      let metal = Math.max(0, fleetDispatcher.metalOnPlanet);
-      let crystal = Math.max(0, fleetDispatcher.crystalOnPlanet);
-      let deut = Math.max(0, fleetDispatcher.deuteriumOnPlanet);
-      let sc = this.calcNeededShips({
-        fret: 202,
-        resources: metal + crystal + deut,
-      });
-      let lc = this.calcNeededShips({
-        fret: 203,
-        resources: metal + crystal + deut,
-      });
-      let pf = this.calcNeededShips({
-        fret: 219,
-        resources: metal + crystal + deut,
-      });
-      let rec = this.calcNeededShips({
-        fret: 209,
-        resources: metal + crystal + deut,
-      });
-      let warning = document.querySelector("#warning");
-      let neededShips = warning.appendChild(createDOM("div", { class: "noShips" }));
-      let planetId = this.current.isMoon ? this.json.empire[this.current.index].moonID : this.current.id;
-      neededShips.appendChild(
-        this.createDOM(
-          "div",
-          { class: "ogl-res-transport" },
-          `<a tech-id="202" class="ogl-option noShips ogl-fleet-ship ogl-fleet-202" href="https://${
-            window.location.host
-          }${
-            window.location.pathname
-          }?page=ingame&component=shipyard&cp=${planetId}&techId202=${sc}"></a><span>${toFormatedNumber(sc, 0)}</span>
-          <a tech-id="203" class="ogl-option noShips ogl-fleet-ship ogl-fleet-203" href="https://${
-            window.location.host
-          }${
-            window.location.pathname
-          }?page=ingame&component=shipyard&cp=${planetId}&techId203=${lc}"></a><span>${toFormatedNumber(lc, 0)}</span>
-          <a tech-id="219" class="ogl-option noShips ogl-fleet-ship ogl-fleet-219" href="https://${
-            window.location.host
-          }${
-            window.location.pathname
-          }?page=ingame&component=shipyard&cp=${planetId}&techId219=${pf}"></a><span>${toFormatedNumber(pf, 0)}</span>
-          <a tech-id="209" class="ogl-option noShips ogl-fleet-ship ogl-fleet-209" href="https://${
-            window.location.host
-          }${
-            window.location.pathname
-          }?page=ingame&component=shipyard&cp=${planetId}&techId209=${rec}"></a><span>${toFormatedNumber(
-            rec,
-            0
-          )}</span>`
-        )
+      // shipyard links when no ships on planets
+      const totalResources = Math.max(
+        0,
+        fleetDispatcher.metalOnPlanet + fleetDispatcher.crystalOnPlanet + fleetDispatcher.deuteriumOnPlanet
       );
+      const smallCargo = this.calcNeededShips({ fret: 202, resources: totalResources });
+      const largeCargo = this.calcNeededShips({ fret: 203, resources: totalResources });
+      const pathfinder = this.calcNeededShips({ fret: 219, resources: totalResources });
+      const recycler = this.calcNeededShips({ fret: 209, resources: totalResources });
+      const planetId = this.current.isMoon ? this.json.empire[this.current.index].moonID : this.current.id;
+      const shipyardURL =
+        `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=ingame` +
+        `&component=shipyard&cp=${planetId}`;
+      const neededShipsDiv = DOM.createDOM("div", { class: "noShips" });
+      neededShipsDiv.appendChild(DOM.createDOM("div", { class: "ogl-res-transport" })).append(
+        DOM.createDOM("a", {
+          "tech-id": "202",
+          class: "ogl-option noShips ogl-fleet-ship ogl-fleet-202",
+          href: shipyardURL + `&techId202=${smallCargo}`,
+        }),
+        DOM.createDOM("span", {}, `${toFormatedNumber(smallCargo, 0)}`),
+        DOM.createDOM("a", {
+          "tech-id": "203",
+          class: "ogl-option noShips ogl-fleet-ship ogl-fleet-203",
+          href: shipyardURL + `&techId203=${largeCargo}`,
+        }),
+        DOM.createDOM("span", {}, `${toFormatedNumber(largeCargo, 0)}`),
+        DOM.createDOM("a", {
+          "tech-id": "219",
+          class: "ogl-option noShips ogl-fleet-ship ogl-fleet-219",
+          href: shipyardURL + `&techId219=${pathfinder}`,
+        }),
+        DOM.createDOM("span", {}, `${toFormatedNumber(pathfinder, 0)}`),
+        DOM.createDOM("a", {
+          "tech-id": "209",
+          class: "ogl-option noShips ogl-fleet-ship ogl-fleet-209",
+          href: shipyardURL + `&techId209=${recycler}`,
+        }),
+        DOM.createDOM("span", {}, `${toFormatedNumber(recycler, 0)}`)
+      );
+      document.querySelector("#warning").appendChild(neededShipsDiv);
     }
     if (
       this.page == "fleetdispatch" &&
@@ -9831,15 +9508,56 @@ class OGInfinity {
       returnDiv.style.visibility = "hidden";
       info.appendChild(createDOM("div", {}, this.getTranslatedText(49)));
       let consDiv = info.appendChild(createDOM("div", { class: "undermark" }));
-      let slider = briefing.appendChild(
-        this.createDOM(
-          "div",
-          { style: "margin-top: 10px" },
-          this.playerClass == PLAYER_CLASS_WARRIOR
-            ? '<div class="ogl-fleetSpeed first"><div data-step="0.5">05</div>\n          <div data-step="1">10</div>\n          <div data-step="1.5">15</div>\n          <div data-step="2">20</div>\n          <div data-step="2.5">25</div>\n          <div data-step="3">30</div>\n          <div data-step="3.5">35</div>\n          <div data-step="4">40</div>\n          <div data-step="4.5">45</div>\n          <div data-step="5">50</div>\n          </div>\n          <div class="ogl-fleetSpeed second">\n          <div data-step="5.5">55</div>\n          <div data-step="6">60</div>\n          <div data-step="6.5">65</div>\n          <div data-step="7">70</div>\n          <div data-step="7.5">75</div>\n          <div data-step="8">80</div>\n          <div data-step="8.5">85</div>\n          <div data-step="9">90</div>\n          <div data-step="9.5">95</div>\n          <div class="ogl-active" data-step="10">100</div>\n          </div>\n          '
-            : '<div class="ogl-fleetSpeed">\n        <div data-step="1">10</div>\n        <div data-step="2">20</div>\n        <div data-step="3">30</div>\n        <div data-step="4">40</div>\n        <div data-step="5">50</div>\n        <div data-step="6">60</div>\n        <div data-step="7">70</div>\n        <div data-step="8">80</div>\n        <div data-step="9">90</div>\n        <div class="ogl-active" data-step="10">100</div>\n        </div>'
-        )
-      );
+
+      // fleet speed selector in page fleet 1
+      const slider = DOM.createDOM("div", { style: "margin-top: 10px" });
+      if (this.playerClass === PLAYER_CLASS_WARRIOR) {
+        slider
+          .appendChild(DOM.createDOM("div", { class: "ogl-fleetSpeed first" }))
+          .append(
+            DOM.createDOM("div", { "data-step": "0.5" }, "5"),
+            DOM.createDOM("div", { "data-step": "1" }, "10"),
+            DOM.createDOM("div", { "data-step": "1.5" }, "15"),
+            DOM.createDOM("div", { "data-step": "2" }, "20"),
+            DOM.createDOM("div", { "data-step": "2.5" }, "25"),
+            DOM.createDOM("div", { "data-step": "3" }, "30"),
+            DOM.createDOM("div", { "data-step": "3.5" }, "35"),
+            DOM.createDOM("div", { "data-step": "4" }, "40"),
+            DOM.createDOM("div", { "data-step": "4.5" }, "45"),
+            DOM.createDOM("div", { "data-step": "5" }, "50")
+          );
+        slider
+          .appendChild(DOM.createDOM("div", { class: "ogl-fleetSpeed second" }))
+          .append(
+            DOM.createDOM("div", { "data-step": "5.5" }, "55"),
+            DOM.createDOM("div", { "data-step": "6" }, "60"),
+            DOM.createDOM("div", { "data-step": "6.5" }, "65"),
+            DOM.createDOM("div", { "data-step": "7" }, "70"),
+            DOM.createDOM("div", { "data-step": "7.5" }, "75"),
+            DOM.createDOM("div", { "data-step": "8" }, "80"),
+            DOM.createDOM("div", { "data-step": "8.5" }, "85"),
+            DOM.createDOM("div", { "data-step": "9" }, "90"),
+            DOM.createDOM("div", { "data-step": "9.5" }, "95"),
+            DOM.createDOM("div", { class: "ogl-active", "data-step": "10" }, "100")
+          );
+      } else {
+        slider
+          .appendChild(DOM.createDOM("div", { class: "ogl-fleetSpeed" }))
+          .append(
+            DOM.createDOM("div", { "data-step": "1" }, "10"),
+            DOM.createDOM("div", { "data-step": "2" }, "20"),
+            DOM.createDOM("div", { "data-step": "3" }, "30"),
+            DOM.createDOM("div", { "data-step": "4" }, "40"),
+            DOM.createDOM("div", { "data-step": "5" }, "50"),
+            DOM.createDOM("div", { "data-step": "6" }, "60"),
+            DOM.createDOM("div", { "data-step": "7" }, "70"),
+            DOM.createDOM("div", { "data-step": "8" }, "80"),
+            DOM.createDOM("div", { "data-step": "9" }, "90"),
+            DOM.createDOM("div", { class: "ogl-active", "data-step": "10" }, "100")
+          );
+      }
+      briefing.appendChild(slider);
+
       let oldDeut = null;
       $(".ogl-fleetSpeed div").on("click", (event) => {
         $(".ogl-fleetSpeed div").removeClass("ogl-active");
@@ -15029,7 +14747,7 @@ class OGInfinity {
               document.querySelector("#continueToFleet2").click();
             } else if (fleetDispatcher.currentPage == "fleet2") {
               fleetDispatcher.speedPercent = document
-                .querySelector(".ogl-fleetSpeed")
+                .querySelector("div#mission .ogl-fleetSpeed")
                 .querySelector(".ogl-active")
                 .getAttribute("data-step");
               document.querySelector("#sendFleet").click();
@@ -15412,49 +15130,51 @@ class OGInfinity {
       e.classList.add("tooltipBottom");
     });
     if (this.page == "fleetdispatch") {
+      // fleet speed selector in page fleet 2
       document.querySelector(".percentageBarWrapper").classList.add("ogl-hidden");
-      let slider = createDOM("div", {
+      const slider = DOM.createDOM("div", {
         class: "ogl-fleetSpeed",
         style: "margin-top: 10px; margin-left: 10px; margin-right: 10px; display: flex; grid-column: 1/3;",
       });
-      document.querySelector('div[id="mission"]').appendChild(slider);
       if (this.playerClass == PLAYER_CLASS_WARRIOR) {
-        slider.replaceChildren(
-          createDOM("div", { "data-step": "0.5", style: "width: 31px;" }, "05"),
-          createDOM("div", { "data-step": "1", style: "width: 31px;" }, "10"),
-          createDOM("div", { "data-step": "1.5", style: "width: 31px;" }, "15"),
-          createDOM("div", { "data-step": "2", style: "width: 31px;" }, "20"),
-          createDOM("div", { "data-step": "2.5", style: "width: 31px;" }, "25"),
-          createDOM("div", { "data-step": "3", style: "width: 31px;" }, "30"),
-          createDOM("div", { "data-step": "3.5", style: "width: 31px;" }, "35"),
-          createDOM("div", { "data-step": "4", style: "width: 31px;" }, "40"),
-          createDOM("div", { "data-step": "4.5", style: "width: 31px;" }, "45"),
-          createDOM("div", { "data-step": "5", style: "width: 31px;" }, "50"),
-          createDOM("div", { "data-step": "5.5", style: "width: 31px;" }, "55"),
-          createDOM("div", { "data-step": "6", style: "width: 31px;" }, "60"),
-          createDOM("div", { "data-step": "6.5", style: "width: 31px;" }, "65"),
-          createDOM("div", { "data-step": "7", style: "width: 31px;" }, "70"),
-          createDOM("div", { "data-step": "7.5", style: "width: 31px;" }, "75"),
-          createDOM("div", { "data-step": "8", style: "width: 31px;" }, "80"),
-          createDOM("div", { "data-step": "8.5", style: "width: 31px;" }, "85"),
-          createDOM("div", { "data-step": "9", style: "width: 31px;" }, "90"),
-          createDOM("div", { "data-step": "9.5", style: "width: 31px;" }, "95"),
-          createDOM("div", { class: "ogl-active", "data-step": "10", style: "width: 31px;" }, "100")
+        slider.append(
+          DOM.createDOM("div", { "data-step": "0.5", style: "width: 31px;" }, "5"),
+          DOM.createDOM("div", { "data-step": "1", style: "width: 31px;" }, "10"),
+          DOM.createDOM("div", { "data-step": "1.5", style: "width: 31px;" }, "15"),
+          DOM.createDOM("div", { "data-step": "2", style: "width: 31px;" }, "20"),
+          DOM.createDOM("div", { "data-step": "2.5", style: "width: 31px;" }, "25"),
+          DOM.createDOM("div", { "data-step": "3", style: "width: 31px;" }, "30"),
+          DOM.createDOM("div", { "data-step": "3.5", style: "width: 31px;" }, "35"),
+          DOM.createDOM("div", { "data-step": "4", style: "width: 31px;" }, "40"),
+          DOM.createDOM("div", { "data-step": "4.5", style: "width: 31px;" }, "45"),
+          DOM.createDOM("div", { "data-step": "5", style: "width: 31px;" }, "50"),
+          DOM.createDOM("div", { "data-step": "5.5", style: "width: 31px;" }, "55"),
+          DOM.createDOM("div", { "data-step": "6", style: "width: 31px;" }, "60"),
+          DOM.createDOM("div", { "data-step": "6.5", style: "width: 31px;" }, "65"),
+          DOM.createDOM("div", { "data-step": "7", style: "width: 31px;" }, "70"),
+          DOM.createDOM("div", { "data-step": "7.5", style: "width: 31px;" }, "75"),
+          DOM.createDOM("div", { "data-step": "8", style: "width: 31px;" }, "80"),
+          DOM.createDOM("div", { "data-step": "8.5", style: "width: 31px;" }, "85"),
+          DOM.createDOM("div", { "data-step": "9", style: "width: 31px;" }, "90"),
+          DOM.createDOM("div", { "data-step": "9.5", style: "width: 31px;" }, "95"),
+          DOM.createDOM("div", { class: "ogl-active", "data-step": "10", style: "width: 31px;" }, "100")
         );
       } else {
-        slider.replaceChildren(
-          createDOM("div", { "data-step": "1", style: "width: 62px;" }, "10"),
-          createDOM("div", { "data-step": "2", style: "width: 62px;" }, "20"),
-          createDOM("div", { "data-step": "3", style: "width: 62px;" }, "30"),
-          createDOM("div", { "data-step": "4", style: "width: 62px;" }, "40"),
-          createDOM("div", { "data-step": "5", style: "width: 62px;" }, "50"),
-          createDOM("div", { "data-step": "6", style: "width: 62px;" }, "60"),
-          createDOM("div", { "data-step": "7", style: "width: 62px;" }, "70"),
-          createDOM("div", { "data-step": "8", style: "width: 62px;" }, "80"),
-          createDOM("div", { "data-step": "9", style: "width: 62px;" }, "90"),
-          createDOM("div", { class: "ogl-active", "data-step": "10", style: "width: 62px;" }, "100")
+        slider.append(
+          DOM.createDOM("div", { "data-step": "1", style: "width: 62px;" }, "10"),
+          DOM.createDOM("div", { "data-step": "2", style: "width: 62px;" }, "20"),
+          DOM.createDOM("div", { "data-step": "3", style: "width: 62px;" }, "30"),
+          DOM.createDOM("div", { "data-step": "4", style: "width: 62px;" }, "40"),
+          DOM.createDOM("div", { "data-step": "5", style: "width: 62px;" }, "50"),
+          DOM.createDOM("div", { "data-step": "6", style: "width: 62px;" }, "60"),
+          DOM.createDOM("div", { "data-step": "7", style: "width: 62px;" }, "70"),
+          DOM.createDOM("div", { "data-step": "8", style: "width: 62px;" }, "80"),
+          DOM.createDOM("div", { "data-step": "9", style: "width: 62px;" }, "90"),
+          DOM.createDOM("div", { class: "ogl-active", "data-step": "10", style: "width: 62px;" }, "100")
         );
       }
+      document.querySelector('div[id="mission"]').appendChild(slider);
+
       $(".ogl-fleetSpeed div").on("click", (event) => {
         $(".ogl-fleetSpeed div").removeClass("ogl-active");
         fleetDispatcher.speedPercent = event.target.getAttribute("data-step");
