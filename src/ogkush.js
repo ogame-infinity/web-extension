@@ -13454,6 +13454,12 @@ class OGInfinity {
         document.querySelector("#galaxyContent .expeditionDebrisSlotBox .title").style.width = "auto";
         document.getElementById("galaxyRow16").style.display = "grid";
         document.getElementById("galaxyRow16").style.gridTemplateColumns = "repeat(3, minmax(0, 1fr))";
+
+        document.getElementById("galaxyRow16").querySelectorAll(':scope > div').forEach((el) => el.style.width = 'auto');
+        document.getElementById("galaxyRow16").querySelector(':scope > #expeditionDebrisSlotActions').style.flexDirection = 'column';
+        document.getElementById("galaxyRow16").querySelector(':scope > #expeditionDebrisSlotActions > #galaxyExpeditionFleetTemplateContainer').style.flexDirection = 'column';
+        document.getElementById("galaxyRow16").querySelector(':scope > #expeditionDebrisSlotActions > #galaxyExpeditionFleetTemplateContainer').style.width = '100%';
+
         expeBox.classList.add("ogl-done");
         const frag = document.createDocumentFragment();
         const imgDiv = DOM.createDOM("div");
