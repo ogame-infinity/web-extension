@@ -11560,13 +11560,16 @@ class OGInfinity {
         const geoProd = mineProd * (this.geologist ? GEOLOGIST_RESOURCE_BONUS : 0);
         const officerProd = mineProd * (this.allOfficers ? OFFICER_RESOURCE_BONUS : 0);
         const allyClassProd = mineProd * (this.json.allianceClass == ALLY_CLASS_MINER ? TRADER_RESOURCE_BONUS : 0);
-        const playerClassProd =
-          mineProd * (this.playerClass == PLAYER_CLASS_MINER ? this.json.minerBonusResourceProduction : 0);
 
         // TODO: compute items production
         let itemProd = 0;
 
         const lifeformBonus = this.json.lifeformBonus;
+        const playerClassProd =
+          mineProd *
+          (this.playerClass == PLAYER_CLASS_MINER
+            ? this.json.minerBonusResourceProduction * (1 + lifeformBonus.classBonus.miner)
+            : 0);
         const lifeformProd = mineProd * lifeformBonus.productionBonus?.[idx] || 0;
         const lifeformPlanetBonus = this.json.lifeformPlanetBonus[planet.id]?.productionBonus;
         const lifeformPlanetProd = mineProd * lifeformPlanetBonus[idx] || 0;
@@ -11589,13 +11592,17 @@ class OGInfinity {
           const maxCrawlers = Math.floor(
             (planet[1] + planet[2] + planet[3]) *
               MAX_CRAWLERS_PER_MINE *
-              (this.playerClass == PLAYER_CLASS_MINER && this.geologist ? 1 + this.json.minerBonusMaxCrawler : 1)
+              (this.playerClass == PLAYER_CLASS_MINER && this.geologist
+                ? 1 + this.json.minerBonusMaxCrawler * (1 + lifeformBonus.classBonus.miner)
+                : 1)
           );
           crawlerProd =
             mineProd *
             Math.min(planet[217], maxCrawlers) *
             this.json.resourceBuggyProductionBoost *
-            (this.playerClass == PLAYER_CLASS_MINER ? 1 + this.json.minerBonusAdditionalCrawler : 1) *
+            (this.playerClass == PLAYER_CLASS_MINER
+              ? 1 + this.json.minerBonusAdditionalCrawler * (1 + lifeformBonus.classBonus.miner)
+              : 1) *
             (1 + this.json.lifeformBonus.crawlerBonus?.production || 1);
           //let crawlerPercent = this.playerClass == PLAYER_CLASS_MINER ? 1.5 : 1;  // TODO: try to guess true value
           let crawlerPercent = 1;
@@ -18081,7 +18088,9 @@ class OGInfinity {
     );
     let crawlerBonus =
       this.json.resourceBuggyProductionBoost *
-      (this.playerClass == PLAYER_CLASS_MINER ? 1 + this.json.minerBonusAdditionalCrawler : 1) *
+      (this.playerClass == PLAYER_CLASS_MINER
+        ? 1 + this.json.minerBonusAdditionalCrawler * (1 + this.json.lifeformBonus.classBonus.miner)
+        : 1) *
       (1 + this.json.lifeformBonus.crawlerBonus?.production || 1);
     let currentCrawlerBonus = Math.min(
       currentCrawlerCount * crawlerPercent * crawlerBonus,
@@ -18099,7 +18108,11 @@ class OGInfinity {
     ];
     let currentCrawlerProd = currentMineProd.map((x) => x * currentCrawlerBonus);
     let currentPlayerClassProd = currentMineProd.map(
-      (x) => x * (this.playerClass == PLAYER_CLASS_MINER ? this.json.minerBonusResourceProduction : 0)
+      (x) =>
+        x *
+        (this.playerClass == PLAYER_CLASS_MINER
+          ? this.json.minerBonusResourceProduction * (1 + this.json.lifeformBonus.classBonus.miner)
+          : 0)
     );
     let currentGeologistProd = currentMineProd.map((x) => x * (this.geologist ? GEOLOGIST_RESOURCE_BONUS : 0));
     let currentAllyClassProd = currentMineProd.map(
@@ -18177,7 +18190,11 @@ class OGInfinity {
     ];
     let newCrawlerProd = newMineProd.map((x) => x * newCrawlerBonus);
     let newPlayerClassProd = newMineProd.map(
-      (x) => x * (this.playerClass == PLAYER_CLASS_MINER ? this.json.minerBonusResourceProduction : 0)
+      (x) =>
+        x *
+        (this.playerClass == PLAYER_CLASS_MINER
+          ? this.json.minerBonusResourceProduction * (1 + this.json.lifeformBonus.classBonus.miner)
+          : 0)
     );
     let newGeologistProd = newMineProd.map((x) => x * (this.geologist ? GEOLOGIST_RESOURCE_BONUS : 0));
     let newAllyClassProd = newMineProd.map(
