@@ -14281,7 +14281,7 @@ class OGInfinity {
         costFactor -= this.json.lifeformPlanetBonus[object.id]?.technologyCostReduction || 0;
         timeFactor -= this.json.lifeformPlanetBonus[object.id]?.technologyTimeReduction || 0;
       }
-      const key = (id < 11201) ? id : "LfResearch";
+      const key = id < 11201 ? id : "LfResearch";
       costFactor -= this.json.lifeformBonus.technologyCostReduction?.[key] || 0;
       timeFactor -= this.json.lifeformBonus.technologyTimeReduction?.[key] || 0;
     }
