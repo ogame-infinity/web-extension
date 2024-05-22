@@ -2536,9 +2536,9 @@ class OGInfinity {
               baseTechno = that.building(technologyId, baseLvl, object);
             }
             if (
-              Math.abs((baseTechno.cost[0] - metalCost) / metalCost) > 0.0001 ||
-              Math.abs((baseTechno.cost[1] - crystalCost) / crystalCost) > 0.0001 ||
-              Math.abs((baseTechno.cost[2] - deuteriumCost) / deuteriumCost) > 0.0001
+              Math.abs((baseTechno.cost[0] - metalCost) / metalCost) > 0.001 ||
+              Math.abs((baseTechno.cost[1] - crystalCost) / crystalCost) > 0.001 ||
+              Math.abs((baseTechno.cost[2] - deuteriumCost) / deuteriumCost) > 0.001
             )
               document
                 .querySelector(".costs")
