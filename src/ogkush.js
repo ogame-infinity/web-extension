@@ -18068,6 +18068,7 @@ class OGInfinity {
     let plasmaBonus = PLASMATECH_BONUS.map((x) => x * this.json.technology[122]);
     let crawlerCount = this.json.options.limitCrawler ? object[217] : 1000000;
     let lifeFormBonus = this.json.lifeformBonus.productionBonus || [0, 0, 0];
+    let lifeFormPlanetBonus = this.json.lifeformPlanetBonus[object.id]?.productionBonus || [0, 0, 0];
     let crawlerPercent = Math.min(
       this.json.options.crawlerPercent || 1,
       this.playerClass == PLAYER_CLASS_MINER ? CRAWLER_OVERLOAD_MAX : 1
@@ -18110,6 +18111,11 @@ class OGInfinity {
       currentMineProd[1] * lifeFormBonus[1],
       currentMineProd[2] * lifeFormBonus[2],
     ];
+    let currentLifeFormPlanetProd = [
+      currentMineProd[0] * lifeFormPlanetBonus[0],
+      currentMineProd[1] * lifeFormPlanetBonus[1],
+      currentMineProd[2] * lifeFormPlanetBonus[2],
+    ];
     let currentTotalProd = [
       Math.floor(
         currentMineProd[0] +
@@ -18120,6 +18126,7 @@ class OGInfinity {
           currentAllyClassProd[0] +
           currentOfficersProd[0] +
           currentLifeFormProd[0] +
+          currentLifeFormPlanetProd[0] +
           baseProd[0]
       ),
       Math.floor(
@@ -18131,6 +18138,7 @@ class OGInfinity {
           currentAllyClassProd[1] +
           currentOfficersProd[1] +
           currentLifeFormProd[1] +
+          currentLifeFormPlanetProd[1] +
           baseProd[1]
       ),
       Math.floor(
@@ -18142,6 +18150,7 @@ class OGInfinity {
           currentAllyClassProd[2] +
           currentOfficersProd[2] +
           currentLifeFormProd[2] +
+          currentLifeFormPlanetProd[2] +
           baseProd[2]
       ),
     ];
@@ -18180,6 +18189,11 @@ class OGInfinity {
       newMineProd[1] * lifeFormBonus[1],
       newMineProd[2] * lifeFormBonus[2],
     ];
+    let newLifeFormPlanetProd = [
+      newMineProd[0] * lifeFormPlanetBonus[0],
+      newMineProd[1] * lifeFormPlanetBonus[1],
+      newMineProd[2] * lifeFormPlanetBonus[2],
+    ];
     let newTotalProd = [
       Math.floor(
         newMineProd[0] +
@@ -18190,6 +18204,7 @@ class OGInfinity {
           newAllyClassProd[0] +
           newOfficersProd[0] +
           newLifeFormProd[0] +
+          newLifeFormPlanetProd[0] +
           baseProd[0]
       ),
       Math.floor(
@@ -18201,6 +18216,7 @@ class OGInfinity {
           newAllyClassProd[1] +
           newOfficersProd[1] +
           newLifeFormProd[1] +
+          newLifeFormPlanetProd[1] +
           baseProd[1]
       ),
       Math.floor(
@@ -18212,6 +18228,7 @@ class OGInfinity {
           newAllyClassProd[2] +
           newOfficersProd[2] +
           newLifeFormProd[2] +
+          newLifeFormPlanetProd[2] +
           baseProd[2]
       ),
     ];
