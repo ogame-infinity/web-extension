@@ -15406,6 +15406,7 @@ class OGInfinity {
   }
 
   betterTooltip() {
+    if (typeof(Tipped) === 'undefined') return;
     Tipped.show = (e) => {
       this.showTooltip(e);
     };
