@@ -13117,7 +13117,8 @@ class OGInfinity {
     }
   }
 
-  checkDebris() {
+    checkDebris() {
+    // TODO: reuse code?, hide debris image with css?, complete align style with regular debris? 
     if (this.page === "galaxy") {
       this.FPSLoop("checkDebris");
       document.querySelectorAll(".cellDebris").forEach((element) => {
@@ -13145,51 +13146,24 @@ class OGInfinity {
           }
         }
       });
-      const expeBox = document.querySelector(".expeditionDebrisSlotBox #expeditionDebris");
-      if (expeBox && !expeBox.classList.contains("ogl-done")) {
-        document.querySelector("#galaxyContent .expeditionDebrisSlotBox .title").style.width = "auto";
-        document.getElementById("galaxyRow16").style.display = "grid";
-        document.getElementById("galaxyRow16").style.gridTemplateColumns = "repeat(3, minmax(0, 1fr))";
-        expeBox.classList.add("ogl-done");
-        const frag = document.createDocumentFragment();
-        const imgDiv = DOM.createDOM("div");
-
-        imgDiv.appendChild(
-          DOM.createDOM("img", { src: "https://gf1.geo.gfsrv.net/cdnc5/fa3e396b8af2ae31e28ef3b44eca91.gif" })
-        );
-
-        frag.appendChild(imgDiv);
-
-        const res = [];
-        expeBox.querySelectorAll(".ListLinks li.debris-content").forEach((element) => {
-          res.push(element.textContent.replace(/(\D*)/, ""));
-        });
-        const debris = DOM.createDOM("div");
-        debris.style.gap = "1rem";
-        debris.appendChild(DOM.createDOM("div", { class: "ogl-metal" }, `${res[0]}`));
-        debris.appendChild(DOM.createDOM("div", { class: "ogl-crystal" }, `${res[1]}`));
-        if (res[2]) {
-          debris.appendChild(DOM.createDOM("div", { class: "ogl-deut" }, `${res[2]}`));
-        }
-        frag.appendChild(debris);
-        const scouts = expeBox.querySelector(".ListLinks li.debris-recyclers");
-
-        const action = expeBox.querySelector(".ListLinks li a");
-        if (action) {
-          const link = DOM.createDOM("div");
-          link.style.gap = "1rem";
-          link.appendChild(DOM.createDOM("div", {}, scouts?.textContent || ""));
-          link.appendChild(
-            DOM.createDOM("a", { href: "#", onclick: action.getAttribute("onclick") }, action.textContent)
+      const debris16 = document.querySelector(".expeditionDebrisSlotBox #expeditionDebris");
+      if (debris16 && !debris16.classList.contains("ogl-done")) {
+        debris16.classList.add("ogl-done");   
+        const div = DOM.createDOM("div", { class: "cellDebris microdebris debris_1" });  
+        let total = 0;
+        let i = 0;
+        let classResources = ["ogl-metal", "ogl-crystal", "ogl-deut"];       
+        debris16.querySelectorAll(".ListLinks li.debris-content").forEach((element) => {
+          const value = Numbers.fromFormattedNumber(element.textContent.replace(/(\D*)/, ""));
+          total += value;
+          div.appendChild(
+              DOM.createDOM("div", { class: classResources[i++] }, Numbers.toFormattedNumber(value, null, true))
           );
-          frag.appendChild(link);
+        });
+        debris16.replaceChildren(div);
+        if (total > this.json.options.rvalLimit) {
+          debris16.classList.add("ogl-active");
         }
-
-        const tooltipDiv = document.getElementById("debris16");
-        frag.appendChild(tooltipDiv);
-
-        expeBox.replaceChildren();
-        expeBox.appendChild(frag);
       }
     }
   }
