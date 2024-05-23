@@ -62,6 +62,7 @@ if (redirect && redirect.indexOf("https") > -1) {
   window.location.href = redirect;
 }
 
+/* disable betterTooltip(), temporary workaround until a transition in OGI from tipped to tippy is done
 (function goodbyeTipped() {
   if (typeof Tipped !== "undefined") {
     Tipped = {
@@ -92,6 +93,7 @@ if (redirect && redirect.indexOf("https") > -1) {
     };
   } else requestAnimationFrame(() => goodbyeTipped());
 })();
+*/
 
 /**
  * @deprecated Use {@link DOM.createDOM}
@@ -15110,9 +15112,11 @@ class OGInfinity {
   }
 
   betterTooltip() {
+    /* disable betterTooltip, temporary workaround until a transition in OGI from tipped to tippy is done
     Tipped.show = (e) => {
       this.showTooltip(e);
     };
+    */
   }
 
   overwriteFleetDispatcher(functionName, param, callback, callbackAfter) {
