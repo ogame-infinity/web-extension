@@ -3602,7 +3602,7 @@ button.build-it_premium:hover {
 }
 
 #galaxyContent .cellPlanetName {
-  max-width: 145px;
+  max-width: 162px;
 }
 
 #galaxyContent .ctContentRow .cellMoon .moon,
@@ -5295,12 +5295,14 @@ tr[data-marked="gray"] .galaxyCell {
   opacity: 0.2 !important;
 }
 
-#galaxyContent .cellDebris.ogl-active {
+#galaxyContent .cellDebris.ogl-active,
+#galaxyContent #expeditionDebris.ogl-active {
   border: #73d2af solid 1px !important;
   opacity: 1 !important;
 }
 
-#galaxyContent .cellDebris a {
+#galaxyContent .cellDebris a,
+#galaxyContent #expeditionDebris {
   font-size: 70%;
   text-decoration: none;
 }
@@ -7246,10 +7248,8 @@ table.fleetinfo tr:nth-last-child(1),
   width: 10px;
 }
 
-.expeditionDebrisSlotBox {
-  align-items: center;
-  display: grid;
-  grid-template-columns: 20% auto auto auto;
+.expeditionDebrisSlotBox div:first-of-type {
+  max-width: 221px;
 }
 
 .expeditionDebrisSlotBox li {
@@ -7262,8 +7262,8 @@ table.fleetinfo tr:nth-last-child(1),
 }
 
 .expeditionDebrisSlotBox > div {
-  line-height: 1.6;
-  text-align: left;
+  line-height: 1.0;
+  text-align: center;
 }
 
 .expeditionDebrisSlotBox a:hover {
