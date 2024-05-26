@@ -24,11 +24,6 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
-      - name: Install dependencies
-        run: npm install -g terser
-          npm install -g clean-css
-          npm install -g clean-css-cli
-                
       - name: Packaging 
         run: ./packaging.sh ${{ github.event.inputs.version }}
         
