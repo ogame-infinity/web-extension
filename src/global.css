@@ -1745,25 +1745,27 @@ strong {
   color: #ffd700eb;
 }
 
-#roundup #targetPlanet {
+#fleet2 #mission #fleetBriefingPart1 #targetPlanet {
   color: #ccc !important;
 }
 
-#roundup #duration {
+#fleet2 #mission #fleetBriefingPart1 #duration {
   color: #ddd;
   font-weight: 800 !important;
 }
 
-#roundup #arrivalTime {
+#fleet2 #mission #fleetBriefingPart1 #arrivalTime {
   color: #ffd700eb;
   font-weight: 800;
 }
 
-#roundup #returnTime {
+#fleet2 #mission #fleetBriefingPart1 #returnTime {
   color: #ffd700eb;
   font-weight: 800;
   opacity: 0.8;
 }
+
+
 
 .ogl-search-content .mCSB_scrollTools_vertical,
 .ogl-target-list .mCSB_scrollTools_vertical,
