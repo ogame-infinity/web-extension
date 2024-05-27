@@ -2172,7 +2172,13 @@ class OGInfinity {
                 )
               );
             }
-            let prod = document.querySelector(".costs .energy").getAttribute("data-value");
+            let tooltip =
+              document.querySelector("#energy_box").getAttribute("title") ||
+              document.querySelector("#energy_box").getAttribute("data-title") ||
+              document.querySelector("#energy_box").getAttribute("data-tooltip-title");
+            let div = createDOM("div");
+            div.html(tooltip);
+            let prod = div.querySelectorAll("span")[1].textContent.substring(1);
             missing[3] = Math.min(0, fromFormatedNumber(prod, true) - (baselvl - 1 > tolvl ? demolish[3] : resSum[3]));
             if (baselvl - 1 != tolvl && !(baselvl > tolvl && (that.page == "research" || that.page == "lfresearch")))
               energy.appendChild(
