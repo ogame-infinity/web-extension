@@ -3,17 +3,18 @@ import { createDOM } from "./dom.js";
 import { tooltip } from "./tooltip.js";
 import { toFormattedNumber } from "./numbers.js";
 import dateTime from "./dateTime.js";
+import highlightTarget, { setHighlightCoords } from "./highlightTarget.js";
+import player from "./player.js";
 
-let keepTooltip = true;
 const rawUrl = new URL(window.location.href);
 const page = rawUrl.searchParams.get("component") || rawUrl.searchParams.get("page");
 const universe = window.location.host.replace(/\D/g, "");
 const gameLang = document.querySelector('meta[name="ogame-language"]').getAttribute("content");
 const res = JSON.parse(localStorage.getItem("ogk-data"));
 const json = res || {};
+let keepTooltip = json.keepTooltip || true;
 
 function sendMessage(id) {
-
   if (json.tchat) {
     ogame.chat.loadChatLogWithPlayer(Number(id));
   } else {
@@ -109,7 +110,7 @@ function generateGalaxyLink(coords, playerId = undefined) {
   return `?${url.toString()}`;
 }
 
-function stalk(sender, player, delay = undefined) {
+export function stalk(sender, player, delay = undefined) {
   let finalPlayer;
   const render = (player) => {
     finalPlayer = player;
@@ -183,7 +184,7 @@ function stalk(sender, player, delay = undefined) {
 
       document.getElementById("system_input").value = splits[1];
       system = document.getElementById("system_input");
-      // submitForm();
+      submitForm();
       if (!first) first = active;
       e.preventDefault();
       e.stopPropagation();
@@ -196,7 +197,7 @@ function stalk(sender, player, delay = undefined) {
     const list = content.appendChild(createDOM("div", { class: "ogl-stalkPlanets", "player-id": player.id }));
     const count = content.appendChild(createDOM("div", { class: "ogl-fullGrid ogl-right" }));
     const sideStalk = content.appendChild(createDOM("a", { class: "ogl-pin" }));
-    // sideStalk.addEventListener("click", () => this.sideStalk(player.id));
+    sideStalk.addEventListener("click", () => this.sideStalk(player.id));
     content.appendChild(
       createDOM(
         "a",
@@ -227,8 +228,12 @@ function stalk(sender, player, delay = undefined) {
     page === "galaxy" ? (pos = { bottom: pos < 4, top: pos > 4 }) : (pos = {});
     tooltip(sender, content, false, pos, delay);
     const planets = update(player.planets, player.id);
-    planets.forEach((e) => list.appendChild(e));
-    // this.highlightTarget();
+    planets.forEach((e) => {
+      return list.appendChild(e);
+    });
+
+    highlightTarget();
+
     date.textContent = dateTime.timeSince(new Date(player.lastUpdate));
     count.textContent = `${player.planets.length} planets`;
     const detailRankDiv1 = createDOM("div");
@@ -303,7 +308,7 @@ function stalk(sender, player, delay = undefined) {
   }
 }
 
-function update(planets) {
+export function update(planets) {
   const sorted = Object.values(planets);
 
   sorted.sort((a, b) => {
@@ -330,8 +335,8 @@ function update(planets) {
     let panel = planetDiv.appendChild(createDOM("div", { class: "ogl-planet-hover" }));
     let plaspy = panel.appendChild(createDOM("button", { class: "icon_eye" }));
 
-/*    plaspy.addEventListener("click", (e) => {
-      // sendShipsWithPopup(6, coords[0], coords[1], coords[2], 0, this.json.spyProbes);
+    /*    plaspy.addEventListener("click", (e) => {
+      // sendShipsWithPopup(6, coords[0], coords[1], coords[2], 0, json.spyProbes);
       // disable direct probing in stalks and target list until complete removal or GF start to wake up
       this.probingWarning();
       e.stopPropagation();
@@ -358,8 +363,8 @@ function update(planets) {
     panel = moonDiv.appendChild(createDOM("div", { class: "ogl-moon-hover" }));
     plaspy = panel.appendChild(createDOM("button", { class: "icon_eye" }));
 
-/*    plaspy.addEventListener("click", (e) => {
-      // sendShipsWithPopup(6, coords[0], coords[1], coords[2], 3, this.json.spyProbes);
+    /*    plaspy.addEventListener("click", (e) => {
+      // sendShipsWithPopup(6, coords[0], coords[1], coords[2], 3, json.spyProbes);
       // disable direct probing in stalks and target list until complete removal or GF start to wake up
       this.probingWarning();
       e.stopPropagation();
@@ -375,8 +380,8 @@ function update(planets) {
         if (page === "galaxy") {
           document.querySelector("#galaxy_input").value = coords[0];
           document.querySelector("#system_input").value = coords[1];
-          // submitForm();
-          // this.highlighted = coords.join(":");
+          submitForm();
+          setHighlightCoords(coords.join(":"));
         } else window.location.href = link;
       }
     });
@@ -401,7 +406,125 @@ function update(planets) {
   return domArr;
 }
 
-export default {
-  stalk,
-  update,
-};
+export function side(playerId) {
+  if (playerId) {
+    json.sideStalk.forEach((e, i, o) => {
+      if (e === playerId) o.splice(i, 1);
+    });
+
+    json.sideStalk.push(playerId);
+
+    if (json.sideStalk.length > 20) {
+      json.sideStalk.shift();
+    }
+
+    localStorage.setItem("ogk-data", JSON.stringify(json));
+
+    const last = json.sideStalk[json.sideStalk.length - 1];
+    if (last) {
+      playerId = last;
+      let sideStalk = document.querySelector(".ogl-sideStalk");
+      if (sideStalk) {
+        sideStalk.remove();
+      }
+      sideStalk = document.querySelector("#links").appendChild(createDOM("div", { class: "ogl-sideStalk" }));
+      let actBtn, watchlistBtn, ptreBtn;
+      if (!json.options.sideStalkVisible) {
+        sideStalk.classList.add("ogi-hidden");
+        sideStalk.addEventListener("click", () => {
+          json.options.sideStalkVisible = true;
+          this.saveData();
+          this.sideStalk();
+        });
+      } else {
+        watchlistBtn = sideStalk.appendChild(
+          createDOM("a", { class: "ogl-text-btn material-icons", title: "History" }, "history")
+        );
+        actBtn = sideStalk.appendChild(createDOM("a", { class: "ogl-text-btn material-icons", title: "" }, "warning"));
+        if (json.options.ptreTK) {
+          ptreBtn = sideStalk.appendChild(
+            createDOM("a", { class: "ogl-text-btn ogl-ptre-acti tooltip", title: "Display PTRE data" }, "PTRE")
+          );
+        }
+        const closeBtn = sideStalk.appendChild(
+          createDOM(
+            "span",
+            { class: "ogl-text-btn material-icons ogi-sideStalk-minBtn", title: "Minimize" },
+            "close_fullscreen"
+          )
+        );
+        closeBtn.addEventListener("click", () => {
+          json.options.sideStalkVisible = false;
+          this.saveData();
+          this.sideStalk();
+        });
+      }
+      player.get(playerId).then((p) => {
+        sideStalk.appendChild(
+          createDOM("div", { style: "cursor: pointer", class: "ogi-title " + player.status(p.status) }, p.name)
+        );
+        sideStalk.appendChild(createDOM("hr"));
+        let container = sideStalk.appendChild(createDOM("div", { class: "ogl-stalkPlanets", "player-id": p.id }));
+        let planets = update(p.planets);
+        planets.forEach((dom) => container.appendChild(dom));
+
+        this.highlightTarget();
+
+        actBtn &&
+          actBtn.addEventListener("click", () => {
+            if (page !== "galaxy") {
+              let coords = document
+                .querySelector(".ogl-stalkPlanets a.ogl-main")
+                .getAttribute("data-coords")
+                .split(":");
+              location.href = `?page=ingame&component=galaxy&galaxy=${coords[0]}&system=${coords[1]}&position=${coords[2]}`;
+            }
+            if ($("#galaxyLoading").is(":visible")) return;
+            let active = sideStalk.querySelectorAll("a.ogl-active");
+            let next = active.length > 0 ? active[active.length - 1].nextElementSibling : null;
+            if (!next || !next.getAttribute("data-coords")) {
+              next = sideStalk.querySelectorAll(".ogl-stalkPlanets a")[0];
+            }
+            let splits = next.getAttribute("data-coords").split(":");
+            galaxy = document.getElementById("#galaxy_input").value = splits[0];
+            system = document.getElementById("#system_input").value = splits[1];
+            submitForm();
+          });
+        watchlistBtn &&
+          watchlistBtn.addEventListener("click", () => {
+            sideStalk.replaceChildren();
+            sideStalk.appendChild(createDOM("div", { class: "title" }, "Historic " + json.sideStalk.length + "/20"));
+            sideStalk.appendChild(createDOM("hr"));
+            json.sideStalk
+              .slice()
+              .reverse()
+              .forEach((id) => {
+                player.get(id).then((player) => {
+                  let playerDiv = sideStalk.appendChild(createDOM("div", { class: "ogl-player" }));
+                  playerDiv.appendChild(createDOM("span", { class: player.status(player.status) }, player.name));
+                  playerDiv.appendChild(createDOM("span", {}, "#" + player.points.position));
+                  playerDiv.addEventListener("click", () => {
+                    side(player.id);
+                  });
+                });
+              });
+          });
+
+        if (ptreBtn) {
+          ptreBtn.addEventListener("click", () => {
+            this.loading();
+            let inter = setInterval(() => {
+              if (!this.isLoading) {
+                clearInterval(inter);
+                // this.ptreAction(null, p);
+              }
+            }, 20);
+          });
+        }
+        container.appendChild(
+          createDOM("div", { class: "ogl-right ogl-date" }, this.timeSince(new Date(p.lastUpdate)))
+        );
+      });
+    }
+  }
+}
