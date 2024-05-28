@@ -13,6 +13,7 @@ import Markerui from "../../../util/markerui.js";
 import Player from "../../../util/player.js";
 import * as stalk from "../../../util/stalk.js";
 import PlayerClass from "../../../util/enum/playerClass.js";
+import OGIData from "../../../util/OGIData.js";
 
 class SpyMessagesAnalyzer {
   #logger;
@@ -64,20 +65,17 @@ class SpyMessagesAnalyzer {
   }
 
   #displaySpyTable() {
-    const res = JSON.parse(localStorage.getItem("ogk-data"));
-    const json = res || {};
-
     const table = createDOM("table", { class: "ogl-spyTable" });
-    this.#spyTableHeader(table, json);
+    this.#spyTableHeader(table);
 
-    this.#spyTableBody(table, json);
+    this.#spyTableBody(table);
 
     const target = document.querySelector("#messagewrapper .messagePaginator");
 
     target.parentNode.insertBefore(table, target);
   }
 
-  #spyTableHeader(table, json) {
+  #spyTableHeader(table) {
     const thead = createDOM("thead");
     table.appendChild(thead);
 
@@ -92,10 +90,10 @@ class SpyMessagesAnalyzer {
     header.appendChild(createDOM("th", { "data-filter": "FLEET" }, "Fleet"));
     header.appendChild(createDOM("th", { "data-filter": "DEF" }, "Def"));
 
-    const cargoChoice = this.#cargoChoice(json);
+    const cargoChoice = this.#cargoChoice();
     const cargoSpan = createDOM("span", {
       style: "display: flex",
-      class: `ogl-option ogl-fleet-ship choice ogl-fleet-${json.options.spyFret}`,
+      class: `ogl-option ogl-fleet-ship choice ogl-fleet-${OGIData.options.spyFret}`,
     });
 
     const cargo = createDOM("th");
@@ -109,8 +107,8 @@ class SpyMessagesAnalyzer {
     header.appendChild(createDOM("th", {}, "Actions"));
   }
 
-  #cargoChoice(json) {
-    const gridCol = json.ships[ship.EspionnageProbe].cargoCapacity ? 4 : 3;
+  #cargoChoice() {
+    const gridCol = OGIData.ships[ship.EspionnageProbe].cargoCapacity ? 4 : 3;
 
     const cargoChoice = createDOM("div", {
       style: `display: grid; grid-template-columns: repeat(${gridCol}, minmax(0, 1fr))`,
@@ -140,9 +138,9 @@ class SpyMessagesAnalyzer {
     cargoChoice.appendChild(pathFinder);
 
     const saveDefaultCargo = (e) => {
-      json.options.spyFret = parseInt(e.target.getAttribute("data-ship"));
-
-      localStorage.setItem("ogk-data", JSON.stringify(json));
+      const options = OGIData.options;
+      options.spyFret = parseInt(e.target.getAttribute("data-ship"));
+      OGIData.options = options;
 
       window.dispatchEvent(new CustomEvent("ogi-spyTableReload"));
     };
@@ -151,7 +149,7 @@ class SpyMessagesAnalyzer {
     largeCargo.addEventListener("click", saveDefaultCargo);
     pathFinder.addEventListener("click", saveDefaultCargo);
 
-    if (json.ships[ship.EspionnageProbe].cargoCapacity) {
+    if (OGIData.ships[ship.EspionnageProbe].cargoCapacity) {
       cargoChoice.classList.add("spio");
 
       const probe = cargoChoice.appendChild(
@@ -165,7 +163,7 @@ class SpyMessagesAnalyzer {
     return cargoChoice;
   }
 
-  #spyTableBody(table, json) {
+  #spyTableBody(table) {
     const body = createDOM("tbody");
     table.appendChild(body);
 
@@ -261,7 +259,7 @@ class SpyMessagesAnalyzer {
         toFormattedNumber(report.renta, null, true)
       );
 
-      if (json.options.rvalLimit <= Math.round((report.total * report.loot) / 100)) {
+      if (OGIData.options.rvalLimit <= Math.round((report.total * report.loot) / 100)) {
         gainCol.classList.add("ogl-good");
       }
 
@@ -277,7 +275,7 @@ class SpyMessagesAnalyzer {
 
       const fleetCol = createDOM("td", {}, toFormattedNumber(report.fleet, null, true));
       if (
-        Math.round(report.fleet * json.universeSettingsTooltip.debrisFactor) >= json.options.rvalLimit ||
+        Math.round(report.fleet * OGIData.universeSettingsTooltip.debrisFactor) >= OGIData.options.rvalLimit ||
         report.fleet === "No Data"
       ) {
         fleetCol.classList.add("ogl-care");
@@ -290,7 +288,7 @@ class SpyMessagesAnalyzer {
 
       const shipCol = createDOM("td");
       const splittedCoords = report.coords.split(":");
-      const shipId = json.options.spyFret;
+      const shipId = OGIData.options.spyFret;
 
       let shipCount = 0;
 
@@ -323,9 +321,9 @@ class SpyMessagesAnalyzer {
 
         Markerui.add(report.coords, colorsColContent, p.id, false);
 
-        if (json.markers[report.coords]) {
+        if (OGIData.markers[report.coords]) {
           bodyRow.classList.add("ogl-marked");
-          bodyRow.setAttribute("data-marked", json.markers[report.coords].color);
+          bodyRow.setAttribute("data-marked", OGIData.markers[report.coords].color);
         }
       });
 
@@ -353,20 +351,20 @@ class SpyMessagesAnalyzer {
       }
 
       optColSimButton.addEventListener("click", () => {
-        if (!json.options.simulator) {
+        if (!OGIData.options.simulator) {
           this.popup(
             null,
             createDOM("div", { class: "ogl-warning-dialog overmark" }, "External tool not configured in 'Settings'")
           );
         } else {
           let apiTechData = {
-            109: { level: json.technology[109] },
-            110: { level: json.technology[110] },
-            111: { level: json.technology[111] },
-            115: { level: json.technology[115] },
-            117: { level: json.technology[117] },
-            118: { level: json.technology[118] },
-            114: { level: json.technology[114] },
+            109: { level: OGIData.technology[109] },
+            110: { level: OGIData.technology[110] },
+            111: { level: OGIData.technology[111] },
+            115: { level: OGIData.technology[115] },
+            117: { level: OGIData.technology[117] },
+            118: { level: OGIData.technology[118] },
+            114: { level: OGIData.technology[114] },
           };
           let coords = currentCoords.split(":");
           let payloadJson = {
@@ -383,18 +381,18 @@ class SpyMessagesAnalyzer {
             ],
           };
           const base64 = btoa(JSON.stringify(payloadJson));
-          window.open(`${json.options.simulator}en?SR_KEY=${report.apiKey}#prefill=${base64}`, "_blank");
+          window.open(`${OGIData.options.simulator}en?SR_KEY=${report.apiKey}#prefill=${base64}`, "_blank");
         }
       });
       optCol.appendChild(optColSimButton);
 
-      if (json.options.ptreTK) {
+      if (OGIData.options.ptreTK) {
         const optColPtreButton = createDOM("a", { class: "ogl-text-btn" }, "P");
         optCol.appendChild(optColPtreButton);
 
         optColPtreButton.addEventListener("click", () => {
           ptreService
-            .importSpy(json.options.ptreTK, report.apiKey)
+            .importSpy(OGIData.options.ptreTK, report.apiKey)
             .then((result) => fadeBox(result.message_verbose, result.code !== 1))
             .catch((reason) => fadeBox(reason, true));
         });
@@ -442,15 +440,15 @@ class SpyMessagesAnalyzer {
         optCol.appendChild(optColDeleteButton);
 
         if (
-          json.options.autoDeleteEnable &&
-          Math.round(report.fleet * json.universeSettingsTooltip.debrisFactor) +
+          OGIData.options.autoDeleteEnable &&
+          Math.round(report.fleet * OGIData.universeSettingsTooltip.debrisFactor) +
             Math.round((report.total * report.loot) / 100) +
             Math.round(
               report.defense *
-                (1 - json.universeSettingsTooltip.repairFactor) *
-                json.universeSettingsTooltip.debrisFactorDef
+                (1 - OGIData.universeSettingsTooltip.repairFactor) *
+                OGIData.universeSettingsTooltip.debrisFactorDef
             ) <
-            json.options.rvalLimit
+            OGIData.options.rvalLimit
         ) {
           optColDeleteButton.click();
         }
@@ -482,7 +480,7 @@ class SpyMessagesAnalyzer {
         renta[round] = Math.round((report.total * Math.pow(1 - report.loot / 100, round) * report.loot) / 100);
         ships[round] = calcNeededShips({
           moreFret: true,
-          fret: json.options.spyFret,
+          fret: OGIData.options.spyFret,
           resources: Math.ceil((report.total * Math.pow(1 - report.loot / 100, round) * report.loot) / 100),
         });
       }
@@ -534,7 +532,7 @@ class SpyMessagesAnalyzer {
             }%, rgba(115, 229, 255, 0.78) ${report.resRatio[0]}%\n, rgba(115, 229, 255, 0.78) ${
               report.resRatio[0] + report.resRatio[1]
             }%, rgb(166, 224, 176) ${report.resRatio[2]}%)`;
-            if (renta[round] >= json.options.rvalLimit) extraTotal.classList.add("ogl-good");
+            if (renta[round] >= OGIData.options.rvalLimit) extraTotal.classList.add("ogl-good");
 
             extraLine.appendChild(createDOM("td"));
             extraLine.appendChild(createDOM("td"));

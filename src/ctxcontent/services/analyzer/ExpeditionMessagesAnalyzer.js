@@ -1,5 +1,6 @@
 import { getLogger } from "../../../util/logger.js";
 import { messagesTabs } from "../../../ctxpage/messages/index.js";
+import OGIData from "../../../util/OGIData.js";
 
 class ExpeditionMessagesAnalyzer {
   #logger;
@@ -31,25 +32,20 @@ class ExpeditionMessagesAnalyzer {
   }
 
   #parseExpeditions() {
-    const res = JSON.parse(localStorage.getItem("ogk-data"));
-    const json = res || {};
-
     this.#getExpeditionsMessages().forEach((e) => {
       const msgId = e.getAttribute("data-msg-id");
+      const expeditions = OGIData.expeditions;
+      const expeditionSums = OGIData.expeditionSums;
 
-      if (json.expeditions && json.expeditions[msgId]) return;
+      if (expeditions && expeditions[msgId]) return;
 
       const type = e.querySelector(".rawMessageData").getAttribute("data-raw-expeditionresult");
 
-      const dateString = e.querySelector(".msgDate").textContent;
-      const splittedDate = dateString.split(" ");
-      const dateData = splittedDate[0].split(".");
-      const datePoint = [dateData[0], dateData[1], dateData[2].slice(2)].join(".");
-      const date = [dateData[2].slice(2), dateData[1], dateData[0]].join("/");
-      const dateTime = [date, splittedDate[1]].join(" ");
+      const newDate = new Date(e.querySelector(".rawMessageData").getAttribute("data-raw-date"));
+      const datePoint = `${newDate.getDate()}.${(newDate.getMonth() + 1).toString().padStart(2, "0")}.${newDate.getFullYear().toString().slice(2)}`;
       const resourcesGained = JSON.parse(e.querySelector(".rawMessageData")?.getAttribute("data-raw-resourcesgained"));
 
-      let summary = json.expeditionSums[datePoint] || {
+      let summary = expeditionSums[datePoint] || {
         found: [0, 0, 0, 0],
         harvest: [0, 0],
         losses: {},
@@ -60,9 +56,9 @@ class ExpeditionMessagesAnalyzer {
       };
 
       if (type === "darkmatter") {
-        json.expeditions[msgId] = {
+        expeditions[msgId] = {
           result: "AM",
-          date: new Date(dateTime),
+          date: newDate,
         };
 
         summary.found[3] += parseInt(Object.values(resourcesGained)[0]);
@@ -71,9 +67,9 @@ class ExpeditionMessagesAnalyzer {
         const typeFormatted = resourceType.charAt(0).toUpperCase() + resourceType.slice(1);
         summary.type[typeFormatted] ? (summary.type[typeFormatted] += 1) : (summary.type[typeFormatted] = 1);
 
-        json.expeditions[msgId] = {
+        expeditions[msgId] = {
           result: typeFormatted,
-          date: new Date(dateTime),
+          date: newDate,
         };
 
         let key = 0;
@@ -82,9 +78,9 @@ class ExpeditionMessagesAnalyzer {
 
         summary.found[key] += parseInt(Object.values(resourcesGained)[0]);
       } else if (type === "shipwrecks") {
-        json.expeditions[msgId] = {
+        expeditions[msgId] = {
           result: "Fleet",
-          date: new Date(dateTime),
+          date: newDate,
         };
 
         const technologiesGained = JSON.parse(
@@ -105,17 +101,39 @@ class ExpeditionMessagesAnalyzer {
         const type = parseInt(navigation.returnTimeMultiplier) >= 1 ? "Late" : "Early";
         summary.type[type] ? (summary.type[type] += 1) : (summary.type[type] = 1);
 
-        json.expeditions[msgId] = {
+        expeditions[msgId] = {
           result: type,
-          date: new Date(dateTime),
+          date: newDate,
         };
+      } else if (type === "nothing") {
+        expeditions[msgId] = {
+          result: "Void",
+          date: newDate,
+        };
+
+        summary.type["Void"] ? (summary.type["Void"] += 1) : (summary.type["Void"] = 1);
       } else if (type === "fleetLost") {
-        this.#logger.log("Fleet lost", e);
+        expeditions[msgId] = {
+          result: "Bhole",
+          date: newDate,
+        };
+
+        summary.type["Bhole"] ? (summary.type["Bhole"] += 1) : (summary.type["Bhole"] = 1);
+      } else if (type === "items") {
+        expeditions[msgId] = {
+          result: "Object",
+          date: newDate,
+        };
+
+        summary.type["Object"] ? (summary.type["Object"] += 1) : (summary.type["Object"] = 1);
+      } else if (type === "combat") {
+        this.#logger.log("Combat", e);
       }
 
-      json.expeditionSums[datePoint] = summary;
+      expeditionSums[datePoint] = summary;
 
-      localStorage.setItem("ogk-data", JSON.stringify(json));
+      OGIData.expeditions = expeditions;
+      OGIData.expeditionSums = expeditionSums;
     });
   }
 }
