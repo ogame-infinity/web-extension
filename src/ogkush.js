@@ -4214,7 +4214,7 @@ class OGInfinity {
         const keyNode = elem.querySelector(".icon_apikey");
         if (!keyNode) return;
 
-        let key = keyNode.getAttribute("title") || keyNode.getAttribute("data-title");
+        let key = keyNode.getAttribute("title") || keyNode.getAttribute("data-tooltip-title");
         key = key.split("'")[1];
 
         if (!key.startsWith("sr") && !key.startsWith("cr")) return;
@@ -11726,7 +11726,7 @@ class OGInfinity {
       if (type == 16 || type == 18) return;
       let expe = {};
       let div = document.createElement("div");
-      tooltip && div.html(tooltip.getAttribute("title") || tooltip.getAttribute("data-title"));
+      tooltip && div.html(tooltip.getAttribute("title") || tooltip.getAttribute("data-tooltip-title"));
       let addToTotal = false;
       let noRes = false;
       if (type == 4) {
@@ -14923,7 +14923,7 @@ class OGInfinity {
             let playerDiv = position.querySelector(".playername");
             let countDiv = position.querySelector(".score.tooltip");
             if (countDiv) {
-              let count = countDiv.getAttribute("title") || countDiv.getAttribute("data-title");
+              let count = countDiv.getAttribute("title") || countDiv.getAttribute("data-tooltip-title");
               count = count.split(":")[1].trim();
               countDiv.replaceChildren(
                 createDOM("span", { class: "ogi-highscore-ships" }, `(${count})`),
@@ -15003,7 +15003,7 @@ class OGInfinity {
 
   betterAPITooltip(sender) {
     if (sender.classList.contains("icon_apikey")) {
-      let data = sender.getAttribute("title") || sender.getAttribute("data-title");
+      let data = sender.getAttribute("title") || sender.getAttribute("data-tooltip-title");
       let first = data.indexOf("'");
       let second = data.indexOf("'", first + 1);
       sender.addEventListener("click", () => {
@@ -15014,7 +15014,7 @@ class OGInfinity {
     }
     if (sender.classList.contains("show_fleet_apikey")) {
       let data =
-        sender.getAttribute("title") || sender.getAttribute("data-title") || $(sender).data().tippedRestoreTitle;
+        sender.getAttribute("title") || sender.getAttribute("data-tooltip-title") || $(sender).data().tippedRestoreTitle;
 
       if (data) {
         data = data.replaceAll("&quot;", '"');
@@ -15050,7 +15050,7 @@ class OGInfinity {
           content.style.display = "block";
           appendMode = true;
         } else {
-          content = sender.getAttribute("data-title");
+          content = sender.getAttribute("data-tooltip-title");
         }
         if (!content) {
           content = sender.getAttribute("title");
@@ -15246,7 +15246,7 @@ class OGInfinity {
         );
         if (!fleet.querySelector(".reversal")) return;
         let back =
-          fleet.querySelector(".reversal a").title || fleet.querySelector(".reversal a").getAttribute("data-title");
+          fleet.querySelector(".reversal a").title || fleet.querySelector(".reversal a").getAttribute("data-tooltip-title");
         let splitted = back.split("|")[1].replace("<br>", "/").replace(/:|\./g, "/").split("/");
         let backDate = {
           year: splitted[2],
