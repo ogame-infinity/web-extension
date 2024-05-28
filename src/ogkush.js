@@ -15,6 +15,7 @@ import Messages from "./ctxpage/messages/index.js";
 import * as stalkUtil from "./util/stalk.js";
 import * as utilTooltip from "./util/tooltip.js";
 import markerui from "./util/markerui.js";
+import highlight, { setHighlightCoords } from "./util/highlightTarget.js";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 //const VERSION = "__VERSION__";
@@ -1381,8 +1382,6 @@ class OGInfinity {
     this.admiral = document.querySelector(".admiral.on") ? true : false;
     this.engineer = document.querySelector(".engineer.on") ? true : false;
     this.allOfficers = document.querySelector("#officers.all") ? true : false;
-    this.highlighted = false;
-    this.tooltipList = {};
     this.current = {};
     this.current.planet = (
       document.querySelector("#planetList .active") ?? document.querySelector("#planetList .planetlink")
@@ -12660,7 +12659,7 @@ class OGInfinity {
           document.querySelector("#galaxy_input").value = coords[0];
           document.querySelector("#system_input").value = coords[1];
           submitForm();
-          this.highlighted = coords.join(":");
+          setHighlightCoords(coords.join(":"));
         } else window.location.href = link;
       }
     });
@@ -12989,28 +12988,8 @@ class OGInfinity {
       ];
       coords.join(":");
     }
-    Array.from(document.querySelectorAll("#galaxyContent .ogl-highlighted")).forEach(function (el) {
-      el.classList.remove("ogl-highlighted");
-    });
 
-    if (
-      document.querySelector("#galaxy_input").value == coords[0] &&
-      document.querySelector("#system_input").value == coords[1]
-    ) {
-      let target = document.querySelectorAll("#galaxyContent .galaxyRow.ctContentRow")[parseInt(coords[2]) - 1];
-      if (target) target.classList.add("ogl-highlighted");
-    }
-    document.querySelectorAll("a[data-coords]").forEach((a) => {
-      let hCoords = a.getAttribute("data-coords").split(":");
-      if (
-        document.querySelector("#galaxy_input").value == hCoords[0] &&
-        document.querySelector("#system_input").value == hCoords[1]
-      ) {
-        a.classList.add("ogl-active");
-      } else {
-        a.classList.remove("ogl-active");
-      }
-    });
+    highlight(coords);
   }
 
   selectShips(shipID, amount) {

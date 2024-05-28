@@ -132,13 +132,13 @@ export class SpyReport {
       message
         .querySelector(".fleetInfo > .shipsTotal")
         ?.getAttribute("data-tooltip-title")
-        .match(/[\d.]+/)[0] || "No Data"
+        .match(/[\d.]+/)[0] || "0"
     );
     this._defense = cleanValue(
       message
         .querySelector(".defenseInfo > .defenseTotal")
         ?.getAttribute("data-tooltip-title")
-        .match(/[\d.]+/)[0] || "No Data"
+        .match(/[\d.]+/)[0] || "0"
     );
 
     // Date

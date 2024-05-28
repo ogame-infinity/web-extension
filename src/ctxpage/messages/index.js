@@ -1,6 +1,7 @@
 import OGIObserver from "../../util/observer.js";
 import { getLogger } from "../../util/logger.js";
 import SpyMessagesAnalyzer from "../../ctxcontent/services/analyzer/SpyMessagesAnalyzer.js";
+import ExpeditionMessagesAnalyzer from "../../ctxcontent/services/analyzer/ExpeditionMessagesAnalyzer.js";
 
 export const messagesTabs = Object.freeze({
   // Name: ID
@@ -25,7 +26,7 @@ class Messages {
     const obs = new OGIObserver();
     this.#logger = getLogger("messages");
 
-    this.#analyzers = [new SpyMessagesAnalyzer()];
+    this.#analyzers = [new SpyMessagesAnalyzer(), new ExpeditionMessagesAnalyzer()];
 
     // Observe tab change
     obs(document.querySelector("#messagecontainercomponent"), (elements) => {
@@ -102,17 +103,15 @@ class Messages {
 
     if (!elementContent) return;
 
-    const messages = elementContent.querySelectorAll("div.msg");
-
     this.#analyzers.forEach((analyzer) => {
       const tabId =
         parseInt(tab.getAttribute("data-subtab-id")) ||
         parseInt(this.#currentTab().getAttribute("data-subtab-id")) ||
         0;
-      analyzer.clean();
+      if (typeof analyzer.clean === "function") analyzer.clean();
       if (!analyzer.support(tabId)) return;
 
-      analyzer.analyze(messages, tabId);
+      analyzer.analyze(() => elementContent.querySelectorAll("div.msg"), tabId);
     });
   }
 }

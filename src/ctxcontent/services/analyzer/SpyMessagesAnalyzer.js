@@ -11,14 +11,18 @@ import * as ptreService from "../../../util/service.ptre.js";
 import planetType from "../../../util/enum/planetType.js";
 import Markerui from "../../../util/markerui.js";
 import Player from "../../../util/player.js";
-import stalk from "../../../util/stalk.js";
+import * as stalk from "../../../util/stalk.js";
 import PlayerClass from "../../../util/enum/playerClass.js";
 
 class SpyMessagesAnalyzer {
   #logger;
-  #messagesElement;
+  #messageCallable;
   #spyReports;
   #tabId;
+  #deleteClickLoopTime = 500;
+  #deleteClickTime = 0;
+  #countDeletion = 0;
+  #countRestoration = 0;
 
   constructor() {
     this.#logger = getLogger("SpyMessagesAnalyer");
@@ -32,16 +36,17 @@ class SpyMessagesAnalyzer {
     document.querySelector(".ogl-spyTable")?.remove();
   }
 
-  analyze(messagesElement, tabId) {
-    window.addEventListener("ogi-spyTableReload", () => {
-      this.clean();
-      this.analyze(messagesElement, tabId);
-    });
-
+  analyze(messageCallable, tabId) {
     this.#spyReports = [];
     this.#tabId = tabId;
-    this.#messagesElement = messagesElement;
-    messagesElement.forEach((message) => {
+    this.#messageCallable = messageCallable;
+
+    window.addEventListener("ogi-spyTableReload", () => {
+      this.clean();
+      this.analyze(this.#messageCallable, tabId);
+    });
+
+    this.#messageCallable().forEach((message) => {
       if (!this.#isReport(message)) return;
 
       const report = new SpyReport(message);
@@ -378,10 +383,7 @@ class SpyMessagesAnalyzer {
             ],
           };
           const base64 = btoa(JSON.stringify(payloadJson));
-          window.open(
-            `${json.options.simulator}en?SR_KEY=${report.apiKey}#prefill=${base64}`,
-            "_blank"
-          );
+          window.open(`${json.options.simulator}en?SR_KEY=${report.apiKey}#prefill=${base64}`, "_blank");
         }
       });
       optCol.appendChild(optColSimButton);
@@ -418,43 +420,56 @@ class SpyMessagesAnalyzer {
       const optColSpyButton = createDOM("button", { class: "icon icon_eye", onclick: report.spyLink });
       optCol.appendChild(optColSpyButton);
 
-      if (this.#tabId === messagesTabs.SPY) {
+      if (
+        this.#tabId === messagesTabs.SPY &&
+        !document.querySelector('.messagesTrashcanBtns button.custom_btn[disabled="disabled"]')
+      ) {
         const optColDeleteButton = createDOM("button", { class: "icon icon_trash" });
         optColDeleteButton.dataset.id = report.id;
         optColDeleteButton.addEventListener("click", () => {
-          document.querySelector(`.msgDeleteBtn[data-message-id="${report.id}"]`).click();
-
-          window.dispatchEvent(new CustomEvent("ogi-spyTableReload"));
+          this.#countDeletion++;
+          this.#deleteClickTime = this.#deleteClickLoopTime * this.#countDeletion;
+          new Promise((r) => setTimeout(r, this.#deleteClickTime)).then(() => {
+            this.#countDeletion--;
+            if (!document.querySelector(`.msgDeleteBtn[data-message-id="${report.id}"]`)) return;
+            document.querySelector(`.msgDeleteBtn[data-message-id="${report.id}"]`).click();
+          });
+          new Promise((r) => setTimeout(r, this.#deleteClickTime + 300)).then(() => {
+            if (this.#countDeletion > 0) return;
+            window.dispatchEvent(new CustomEvent("ogi-spyTableReload"));
+          });
         });
         optCol.appendChild(optColDeleteButton);
-      } else if (this.#tabId === messagesTabs.TRASH) {
+
+        if (
+          json.options.autoDeleteEnable &&
+          Math.round(report.fleet * json.universeSettingsTooltip.debrisFactor) +
+            Math.round((report.total * report.loot) / 100) +
+            Math.round(
+              report.defense *
+                (1 - json.universeSettingsTooltip.repairFactor) *
+                json.universeSettingsTooltip.debrisFactorDef
+            ) <
+            json.options.rvalLimit
+        ) {
+          optColDeleteButton.click();
+        }
+      } else if (document.querySelector('.messagesTrashcanBtns button.custom_btn[disabled="disabled"]')) {
         const optColRestoreButton = createDOM("button", { class: "icon icon_restore" });
         optColRestoreButton.dataset.id = report.id;
         optColRestoreButton.addEventListener("click", (element) => {
-          const msgId = element.target.dataset.id;
-          /*        this.autoQueue.enqueue(() =>
-            this.deleteMSg(msgId).then((res) => {
-              line.remove();
-              report.delete.closest("li.msg").remove();
-            })
-          );
-   */
+          this.#countRestoration++;
+          new Promise((r) => setTimeout(r, 300)).then(() => {
+            this.#countRestoration--;
+            if (!document.querySelector(`.msgRestoreBtn[data-message-id="${report.id}"]`)) return;
+            document.querySelector(`.msgRestoreBtn[data-message-id="${report.id}"]`).click();
+          });
+          new Promise((r) => setTimeout(r, 800)).then(() => {
+            if (this.#countRestoration > 0) return;
+            window.dispatchEvent(new CustomEvent("ogi-spyTableReload"));
+          });
         });
         optCol.appendChild(optColRestoreButton);
-      }
-
-      if (
-        json.options.autoDeleteEnable &&
-        Math.round(report.fleet * json.universeSettingsTooltip.debrisFactor) +
-          Math.round((report.total * report.loot) / 100) +
-          Math.round(
-            report.defense *
-              (1 - json.universeSettingsTooltip.repairFactor) *
-              json.universeSettingsTooltip.debrisFactorDef
-          ) <
-          json.options.rvalLimit
-      ) {
-        optColDeleteButton.click();
       }
 
       bodyRow.appendChild(optCol);
