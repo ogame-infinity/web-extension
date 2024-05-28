@@ -5,17 +5,16 @@ import { toFormattedNumber } from "./numbers.js";
 import dateTime from "./dateTime.js";
 import highlightTarget, { setHighlightCoords } from "./highlightTarget.js";
 import player from "./player.js";
+import OGIData from "./OGIData.js";
 
 const rawUrl = new URL(window.location.href);
 const page = rawUrl.searchParams.get("component") || rawUrl.searchParams.get("page");
 const universe = window.location.host.replace(/\D/g, "");
 const gameLang = document.querySelector('meta[name="ogame-language"]').getAttribute("content");
-const res = JSON.parse(localStorage.getItem("ogk-data"));
-const json = res || {};
-let keepTooltip = json.keepTooltip || true;
+let keepTooltip = OGIData.keepTooltip || true;
 
 function sendMessage(id) {
-  if (json.tchat) {
+  if (OGIData.tchat) {
     ogame.chat.loadChatLogWithPlayer(Number(id));
   } else {
     const url = new URLSearchParams({
@@ -144,18 +143,20 @@ export function stalk(sender, player, delay = undefined) {
       keepTooltip = false;
     });
     actBtn.addEventListener("click", (e) => {
+      const searchHistory = OGIData.searchHistory;
+
       // Add player to History in order to send his activities
-      json.searchHistory.forEach((elem, i) => {
+      searchHistory.forEach((elem, i) => {
         if (elem.id === player.id) {
-          json.searchHistory.splice(i, 1);
+          searchHistory.splice(i, 1);
         }
       });
-      json.searchHistory.push(player);
-      if (json.searchHistory.length > 5) {
-        json.searchHistory.shift();
+      searchHistory.push(player);
+      if (searchHistory.length > 5) {
+        searchHistory.shift();
       }
 
-      localStorage.setItem("ogk-data", JSON.stringify(json));
+      OGIData.searchHistory = searchHistory;
 
       if (page !== "galaxy") {
         let coords = document
@@ -210,7 +211,7 @@ export function stalk(sender, player, delay = undefined) {
       )
     );
 
-    if (json.options.ptreTK) {
+    if (OGIData.options.ptreTK) {
       content.appendChild(
         createDOM(
           "a",
@@ -391,7 +392,7 @@ export function update(planets) {
       moonDiv.classList.add("ogl-active");
     }
 
-    const targeted = json.markers[planet.coords];
+    const targeted = OGIData.markers[planet.coords];
 
     if (targeted) {
       a.classList.add("ogl-marked");
@@ -408,19 +409,20 @@ export function update(planets) {
 
 export function side(playerId) {
   if (playerId) {
-    json.sideStalk.forEach((e, i, o) => {
+    const sideStalk = OGIData.sideStalk;
+    sideStalk.forEach((e, i, o) => {
       if (e === playerId) o.splice(i, 1);
     });
 
-    json.sideStalk.push(playerId);
+    sideStalk.push(playerId);
 
-    if (json.sideStalk.length > 20) {
-      json.sideStalk.shift();
+    if (sideStalk.length > 20) {
+      sideStalk.shift();
     }
 
-    localStorage.setItem("ogk-data", JSON.stringify(json));
+    OGIData.sideStalk = sideStalk;
 
-    const last = json.sideStalk[json.sideStalk.length - 1];
+    const last = sideStalk[sideStalk.length - 1];
     if (last) {
       playerId = last;
       let sideStalk = document.querySelector(".ogl-sideStalk");
@@ -429,10 +431,10 @@ export function side(playerId) {
       }
       sideStalk = document.querySelector("#links").appendChild(createDOM("div", { class: "ogl-sideStalk" }));
       let actBtn, watchlistBtn, ptreBtn;
-      if (!json.options.sideStalkVisible) {
+      if (!OGIData.options.sideStalkVisible) {
         sideStalk.classList.add("ogi-hidden");
         sideStalk.addEventListener("click", () => {
-          json.options.sideStalkVisible = true;
+          options.sideStalkVisible = true;
           this.saveData();
           this.sideStalk();
         });
@@ -441,7 +443,7 @@ export function side(playerId) {
           createDOM("a", { class: "ogl-text-btn material-icons", title: "History" }, "history")
         );
         actBtn = sideStalk.appendChild(createDOM("a", { class: "ogl-text-btn material-icons", title: "" }, "warning"));
-        if (json.options.ptreTK) {
+        if (OGIData.options.ptreTK) {
           ptreBtn = sideStalk.appendChild(
             createDOM("a", { class: "ogl-text-btn ogl-ptre-acti tooltip", title: "Display PTRE data" }, "PTRE")
           );
@@ -454,9 +456,11 @@ export function side(playerId) {
           )
         );
         closeBtn.addEventListener("click", () => {
-          json.options.sideStalkVisible = false;
-          this.saveData();
-          this.sideStalk();
+          const options = OGIData.options;
+          options.sideStalkVisible = false;
+          OGIData.options = options;
+
+          side();
         });
       }
       player.get(playerId).then((p) => {
@@ -493,9 +497,9 @@ export function side(playerId) {
         watchlistBtn &&
           watchlistBtn.addEventListener("click", () => {
             sideStalk.replaceChildren();
-            sideStalk.appendChild(createDOM("div", { class: "title" }, "Historic " + json.sideStalk.length + "/20"));
+            sideStalk.appendChild(createDOM("div", { class: "title" }, "Historic " + OGIData.sideStalk.length + "/20"));
             sideStalk.appendChild(createDOM("hr"));
-            json.sideStalk
+            OGIData.sideStalk
               .slice()
               .reverse()
               .forEach((id) => {
