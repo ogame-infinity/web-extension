@@ -6691,25 +6691,22 @@ table.fleetinfo tr:nth-child(odd) {
 }
 
 .ogl-metal,
-table.fleetinfo tr:nth-last-child(3),
-.hasLifeforms table.fleetinfo tr:nth-last-child(4) {
+table.fleetinfo tr:nth-last-child(4) {
   color: #ffaacca1 !important;
 }
 
 .ogl-crystal,
-table.fleetinfo tr:nth-last-child(2),
-.hasLifeforms table.fleetinfo tr:nth-last-child(3) {
+table.fleetinfo tr:nth-last-child(3) {
   color: #73e5ffc7 !important;
 }
 
 .ogl-deut,
-table.fleetinfo tr:nth-last-child(1),
-.hasLifeforms table.fleetinfo tr:nth-last-child(2) {
+table.fleetinfo tr:nth-last-child(2) {
   color: #a6e0b0 !important;
 }
 
 .ogl-food,
-.hasLifeforms table.fleetinfo tr:nth-last-child(1) {
+table.fleetinfo tr:nth-last-child(1) {
   color: #f5b739 !important;
 }
 
