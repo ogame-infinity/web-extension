@@ -6,6 +6,7 @@ import dateTime from "./dateTime.js";
 import highlightTarget, { setHighlightCoords } from "./highlightTarget.js";
 import player from "./player.js";
 import OGIData from "./OGIData.js";
+import { loading } from "./loading.js";
 
 const rawUrl = new URL(window.location.href);
 const page = rawUrl.searchParams.get("component") || rawUrl.searchParams.get("page");
@@ -195,7 +196,10 @@ export function stalk(sender, player, delay = undefined) {
     const list = content.appendChild(createDOM("div", { class: "ogl-stalkPlanets", "player-id": player.id }));
     const count = content.appendChild(createDOM("div", { class: "ogl-fullGrid ogl-right" }));
     const sideStalk = content.appendChild(createDOM("a", { class: "ogl-pin" }));
-    sideStalk.addEventListener("click", () => this.sideStalk(player.id));
+    if (OGIData.sideStalk.includes(player.id)) {
+      sideStalk.classList.add("ogl-active");
+    }
+    sideStalk.addEventListener("click", () => side(player.id));
     content.appendChild(
       createDOM(
         "a",
@@ -436,8 +440,8 @@ export function side(playerId) {
         sideStalk.classList.add("ogi-hidden");
         sideStalk.addEventListener("click", () => {
           options.sideStalkVisible = true;
-          this.saveData();
-          this.sideStalk();
+          OGIData.options = options;
+          side();
         });
       } else {
         watchlistBtn = sideStalk.appendChild(
@@ -473,7 +477,7 @@ export function side(playerId) {
         let planets = update(p.planets);
         planets.forEach((dom) => container.appendChild(dom));
 
-        this.highlightTarget();
+        highlightTarget();
 
         actBtn &&
           actBtn.addEventListener("click", () => {
@@ -517,7 +521,7 @@ export function side(playerId) {
 
         if (ptreBtn) {
           ptreBtn.addEventListener("click", () => {
-            this.loading();
+            loading();
             let inter = setInterval(() => {
               if (!this.isLoading) {
                 clearInterval(inter);
@@ -527,7 +531,7 @@ export function side(playerId) {
           });
         }
         container.appendChild(
-          createDOM("div", { class: "ogl-right ogl-date" }, this.timeSince(new Date(p.lastUpdate)))
+          createDOM("div", { class: "ogl-right ogl-date" }, dateTime.timeSince(new Date(p.lastUpdate)))
         );
       });
     }

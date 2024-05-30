@@ -14,6 +14,7 @@ import { extractJSON, toJSON } from "./util/json.js";
 import Messages from "./ctxpage/messages/index.js";
 import * as stalkUtil from "./util/stalk.js";
 import * as utilTooltip from "./util/tooltip.js";
+import * as popupUtil from "./util/popup.js";
 import markerui from "./util/markerui.js";
 import highlight, { setHighlightCoords } from "./util/highlightTarget.js";
 
@@ -13867,46 +13868,7 @@ class OGInfinity {
   }
 
   popup(header, content) {
-    let overlay = document.querySelector(".ogl-dialogOverlay");
-    if (!overlay) {
-      overlay = document.body.appendChild(createDOM("div", { class: "ogl-dialogOverlay" }));
-      overlay.addEventListener("click", (event) => {
-        if (event.target == overlay) {
-          if (this.json.welcome) return;
-          overlay.classList.remove("ogl-active");
-        }
-      });
-    }
-    let dialog = overlay.querySelector(".ogl-dialog");
-    if (!dialog) {
-      dialog = overlay.appendChild(createDOM("div", { class: "ogl-dialog" }));
-      let close = dialog.appendChild(createDOM("div", { class: "close-tooltip" }));
-      close.addEventListener("click", () => {
-        if (this.json.welcome) {
-          this.json.welcome = false;
-          this.saveData();
-          if (this.playerClass == PLAYER_CLASS_NONE) {
-            window.location.href = `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=ingame&component=characterclassselection`;
-          } else {
-            window.location.href = `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=ingame&component=overview`;
-          }
-        }
-        overlay.classList.remove("ogl-active");
-      });
-    }
-    let top = dialog.querySelector("header") || dialog.appendChild(createDOM("header"));
-    let body =
-      dialog.querySelector(".ogl-dialogContent") ||
-      dialog.appendChild(createDOM("div", { class: "ogl-dialogContent" }));
-    top.replaceChildren();
-    body.replaceChildren();
-    if (header) {
-      top.appendChild(header);
-    }
-    if (content) {
-      body.appendChild(content);
-    }
-    overlay.classList.add("ogl-active");
+    popupUtil.popup(header, content);
   }
 
   trashsimTooltip(container, fleetinfo) {
