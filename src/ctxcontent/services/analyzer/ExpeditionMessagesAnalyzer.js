@@ -1,6 +1,7 @@
 import { getLogger } from "../../../util/logger.js";
 import { messagesTabs } from "../../../ctxpage/messages/index.js";
 import OGIData from "../../../util/OGIData.js";
+import { createDOM } from "../../../util/dom.js";
 
 class ExpeditionMessagesAnalyzer {
   #logger;
@@ -38,16 +39,50 @@ class ExpeditionMessagesAnalyzer {
       const expeditions = OGIData.expeditions;
       const expeditionSums = OGIData.expeditionSums;
 
-      if (expeditions && expeditions[msgId]) return;
-
+      const resourcesGained = JSON.parse(e.querySelector(".rawMessageData")?.getAttribute("data-raw-resourcesgained"));
+      const navigation = JSON.parse(e.querySelector(".rawMessageData")?.getAttribute("data-raw-navigation"));
       const type = e.querySelector(".rawMessageData").getAttribute("data-raw-expeditionresult");
+      const resourceType = resourcesGained ? Object.keys(resourcesGained)[0] : undefined;
+      const navigationType =
+        type === "navigation" ? (parseInt(navigation?.returnTimeMultiplier) >= 1 ? "Late" : "Early") : undefined;
+
+      const ogkType = function (type) {
+        type = type.toLowerCase();
+
+        if (type === "shipwrecks") type = "fleet";
+        else if (type === "darkmatter") type = "am";
+
+        return `ogk-${type}`;
+      };
+
+      const msgExpeditionClass = ogkType(resourceType || navigationType || type);
+      const labels = {
+        "ogk-metal": "Metal",
+        "ogk-crystal": "Crystal",
+        "ogk-deuterium": "Deuterium",
+        "ogk-am": "Dark mater",
+        "ogk-fleet": "Fleet",
+        "ogk-object": "Object",
+        "ogk-aliens": "Aliens",
+        "ogk-pirates": "Pirates",
+        "ogk-late": "Late",
+        "ogk-early": "Early",
+        "ogk-bhole": "Black hole",
+        "ogk-merchant": "Merchant",
+        "ogk-void": "Void",
+        "ogk-nothing": "Void",
+      };
+      const msgTitle = e.querySelector(".msgHeadItem .msgTitle");
+      msgTitle.appendChild(createDOM("span", { class: `ogk-label ${msgExpeditionClass}` }, labels[msgExpeditionClass]));
+      e.classList.add(msgExpeditionClass);
+
+      if (expeditions && expeditions[msgId]) return;
 
       const newDate = new Date(e.querySelector(".rawMessageData").getAttribute("data-raw-date"));
       const datePoint = `${newDate.getDate()}.${(newDate.getMonth() + 1).toString().padStart(2, "0")}.${newDate
         .getFullYear()
         .toString()
         .slice(2)}`;
-      const resourcesGained = JSON.parse(e.querySelector(".rawMessageData")?.getAttribute("data-raw-resourcesgained"));
 
       let summary = expeditionSums[datePoint] || {
         found: [0, 0, 0, 0],
@@ -67,7 +102,6 @@ class ExpeditionMessagesAnalyzer {
 
         summary.found[3] += parseInt(Object.values(resourcesGained)[0]);
       } else if (type === "ressources") {
-        const resourceType = Object.keys(resourcesGained)[0];
         const typeFormatted = resourceType.charAt(0).toUpperCase() + resourceType.slice(1);
         summary.type[typeFormatted] ? (summary.type[typeFormatted] += 1) : (summary.type[typeFormatted] = 1);
 
