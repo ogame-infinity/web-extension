@@ -9,7 +9,7 @@ export function setHighlightCoords(coords) {
 export default function () {
   if (page !== "galaxy") return;
 
-  const coords = highlighted;
+  const coords = highlighted.split(":");
 
   document.querySelectorAll("#galaxyContent .ogl-highlighted").forEach(function (el) {
     el.classList.remove("ogl-highlighted");

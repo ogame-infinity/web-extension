@@ -34,51 +34,54 @@ class ExpeditionMessagesAnalyzer {
   }
 
   #parseExpeditions() {
-    this.#getExpeditionsMessages().forEach((e) => {
-      const msgId = e.getAttribute("data-msg-id");
+    this.#getExpeditionsMessages().forEach((message) => {
+      const msgId = message.getAttribute("data-msg-id");
       const expeditions = OGIData.expeditions;
       const expeditionSums = OGIData.expeditionSums;
 
-      const resourcesGained = JSON.parse(e.querySelector(".rawMessageData")?.getAttribute("data-raw-resourcesgained"));
-      const navigation = JSON.parse(e.querySelector(".rawMessageData")?.getAttribute("data-raw-navigation"));
-      const type = e.querySelector(".rawMessageData").getAttribute("data-raw-expeditionresult");
+      const displayLabel = function (message) {
+        if (!expeditions[msgId]) return;
+        
+        const labels = {
+          "ogk-metal": "Metal",
+          "ogk-crystal": "Crystal",
+          "ogk-deuterium": "Deuterium",
+          "ogk-am": "Dark mater",
+          "ogk-fleet": "Fleet",
+          "ogk-object": "Object",
+          "ogk-aliens": "Aliens",
+          "ogk-pirates": "Pirates",
+          "ogk-late": "Late",
+          "ogk-early": "Early",
+          "ogk-bhole": "Black hole",
+          "ogk-merchant": "Merchant",
+          "ogk-void": "Void",
+          "ogk-nothing": "Void",
+        };
+        const classStyle = `ogk-${expeditions[msgId]?.result.toLowerCase()}`;
+
+        const msgTitle = message.querySelector(".msgHeadItem .msgTitle");
+        msgTitle.appendChild(createDOM("span", { class: `ogk-label ${classStyle}` }, labels[classStyle]));
+
+        message.classList.add(classStyle);
+      };
+
+      if (expeditions && expeditions[msgId]) {
+        displayLabel(message);
+
+        return;
+      }
+
+      const resourcesGained = JSON.parse(
+        message.querySelector(".rawMessageData")?.getAttribute("data-raw-resourcesgained")
+      );
+      const navigation = JSON.parse(message.querySelector(".rawMessageData")?.getAttribute("data-raw-navigation"));
+      const type = message.querySelector(".rawMessageData").getAttribute("data-raw-expeditionresult");
       const resourceType = resourcesGained ? Object.keys(resourcesGained)[0] : undefined;
       const navigationType =
         type === "navigation" ? (parseInt(navigation?.returnTimeMultiplier) >= 1 ? "Late" : "Early") : undefined;
 
-      const ogkType = function (type) {
-        type = type.toLowerCase();
-
-        if (type === "shipwrecks") type = "fleet";
-        else if (type === "darkmatter") type = "am";
-
-        return `ogk-${type}`;
-      };
-
-      const msgExpeditionClass = ogkType(resourceType || navigationType || type);
-      const labels = {
-        "ogk-metal": "Metal",
-        "ogk-crystal": "Crystal",
-        "ogk-deuterium": "Deuterium",
-        "ogk-am": "Dark mater",
-        "ogk-fleet": "Fleet",
-        "ogk-object": "Object",
-        "ogk-aliens": "Aliens",
-        "ogk-pirates": "Pirates",
-        "ogk-late": "Late",
-        "ogk-early": "Early",
-        "ogk-bhole": "Black hole",
-        "ogk-merchant": "Merchant",
-        "ogk-void": "Void",
-        "ogk-nothing": "Void",
-      };
-      const msgTitle = e.querySelector(".msgHeadItem .msgTitle");
-      msgTitle.appendChild(createDOM("span", { class: `ogk-label ${msgExpeditionClass}` }, labels[msgExpeditionClass]));
-      e.classList.add(msgExpeditionClass);
-
-      if (expeditions && expeditions[msgId]) return;
-
-      const newDate = new Date(e.querySelector(".rawMessageData").getAttribute("data-raw-date"));
+      const newDate = new Date(message.querySelector(".rawMessageData").getAttribute("data-raw-date"));
       const datePoint = `${newDate.getDate()}.${(newDate.getMonth() + 1).toString().padStart(2, "0")}.${newDate
         .getFullYear()
         .toString()
@@ -122,7 +125,7 @@ class ExpeditionMessagesAnalyzer {
         };
 
         const technologiesGained = JSON.parse(
-          e.querySelector(".rawMessageData")?.getAttribute("data-raw-technologiesgained")
+          message.querySelector(".rawMessageData")?.getAttribute("data-raw-technologiesgained")
         );
 
         for (const key in technologiesGained) {
@@ -134,7 +137,7 @@ class ExpeditionMessagesAnalyzer {
 
         summary.type["Fleet"] ? (summary.type["Fleet"] += 1) : (summary.type["Fleet"] = 1);
       } else if (type === "navigation") {
-        const navigation = JSON.parse(e.querySelector(".rawMessageData")?.getAttribute("data-raw-navigation"));
+        const navigation = JSON.parse(message.querySelector(".rawMessageData")?.getAttribute("data-raw-navigation"));
 
         const type = parseInt(navigation.returnTimeMultiplier) >= 1 ? "Late" : "Early";
         summary.type[type] ? (summary.type[type] += 1) : (summary.type[type] = 1);
@@ -165,8 +168,10 @@ class ExpeditionMessagesAnalyzer {
 
         summary.type["Object"] ? (summary.type["Object"] += 1) : (summary.type["Object"] = 1);
       } else if (type === "combat") {
-        this.#logger.log("Combat", e);
+        this.#logger.log("Combat", message);
       }
+
+      displayLabel(message);
 
       expeditionSums[datePoint] = summary;
 
