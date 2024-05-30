@@ -13120,8 +13120,8 @@ class OGInfinity {
     }
   }
 
-    checkDebris() {
-    // TODO: reuse code?, hide debris image with css?, complete align style with regular debris? 
+  checkDebris() {
+    // TODO: reuse code?, hide debris image with css?, complete align style with regular debris?
     if (this.page === "galaxy") {
       this.FPSLoop("checkDebris");
       document.querySelectorAll(".cellDebris").forEach((element) => {
@@ -13151,16 +13151,16 @@ class OGInfinity {
       });
       const debris16 = document.querySelector(".expeditionDebrisSlotBox #expeditionDebris");
       if (debris16 && !debris16.classList.contains("ogl-done")) {
-        debris16.classList.add("ogl-done");   
-        const div = DOM.createDOM("div", { class: "cellDebris microdebris debris_1" });  
+        debris16.classList.add("ogl-done");
+        const div = DOM.createDOM("div", { class: "cellDebris microdebris debris_1" });
         let total = 0;
         let i = 0;
-        let classResources = ["ogl-metal", "ogl-crystal", "ogl-deut"];       
+        let classResources = ["ogl-metal", "ogl-crystal", "ogl-deut"];
         debris16.querySelectorAll(".ListLinks li.debris-content").forEach((element) => {
           const value = Numbers.fromFormattedNumber(element.textContent.replace(/(\D*)/, ""));
           total += value;
           div.appendChild(
-              DOM.createDOM("div", { class: classResources[i++] }, Numbers.toFormattedNumber(value, null, true))
+            DOM.createDOM("div", { class: classResources[i++] }, Numbers.toFormattedNumber(value, null, true))
           );
         });
         debris16.replaceChildren(div);
@@ -13290,7 +13290,11 @@ class OGInfinity {
       report.spy = msg.querySelector('.msg_actions [onclick*="sendShipsWithPopup"]').getAttribute("onclick");
       if (!msg.querySelector(".msg_title a")) return;
       report.activity = parseInt(data[0].querySelectorAll("span.fright")[0].textContent.match(/\d+/)[0]);
-      report.coords = msg.querySelector(".msg_title").textContent.match(/\[.*\]/)?.[0].slice(1, -1) || "[::]";
+      report.coords =
+        msg
+          .querySelector(".msg_title")
+          .textContent.match(/\[.*\]/)?.[0]
+          .slice(1, -1) || "[::]";
 
       report.coordsLink = msg.querySelector(".msg_title a").href;
       report.detail = msg.querySelector(".msg_actions a.fright").href;
@@ -15014,7 +15018,9 @@ class OGInfinity {
     }
     if (sender.classList.contains("show_fleet_apikey")) {
       let data =
-        sender.getAttribute("title") || sender.getAttribute("data-tooltip-title") || $(sender).data().tippedRestoreTitle;
+        sender.getAttribute("title") ||
+        sender.getAttribute("data-tooltip-title") ||
+        $(sender).data().tippedRestoreTitle;
 
       if (data) {
         data = data.replaceAll("&quot;", '"');
@@ -15246,7 +15252,8 @@ class OGInfinity {
         );
         if (!fleet.querySelector(".reversal")) return;
         let back =
-          fleet.querySelector(".reversal a").title || fleet.querySelector(".reversal a").getAttribute("data-tooltip-title");
+          fleet.querySelector(".reversal a").title ||
+          fleet.querySelector(".reversal a").getAttribute("data-tooltip-title");
         let splitted = back.split("|")[1].replace("<br>", "/").replace(/:|\./g, "/").split("/");
         let backDate = {
           year: splitted[2],
@@ -15892,7 +15899,7 @@ class OGInfinity {
           br: "Visão geral",
         },
         /*5*/ {
-          de: "Planeten Übersicht",
+          de: "Planetenübersicht",
           en: "Planets overview",
           es: "Visión general de planetas",
           fr: "Aperçu des planètes",
@@ -16020,7 +16027,7 @@ class OGInfinity {
           br: "Dados das opções",
         },
         /*21*/ {
-          de: "Cache und Temporäre Daten",
+          de: "Cache und temporäre Daten",
           en: "Cache and Temp data",
           es: "Caché y datos temporales",
           fr: "Données de cache et temporaires",
@@ -16124,7 +16131,7 @@ class OGInfinity {
           br: "Mostrar times de atividade",
         },
         /*34*/ {
-          de: "Weniger aggressives automatisches Empire-Update",
+          de: "Weniger aggressive automatische Aktualisierung des Imperiums",
           en: "Less aggressive empire automatic update",
           es: "Actualización automática del Imperio menos agresiva",
           fr: "Récupération automatique de l'Empire moins agressif",
@@ -16500,7 +16507,7 @@ class OGInfinity {
           br: "Piratas",
         },
         /*81*/ {
-          de: "Spät",
+          de: "Verspätung",
           en: "Late",
           es: "Retraso",
           fr: "En retard",
@@ -16684,7 +16691,7 @@ class OGInfinity {
           br: "Opções",
         },
         /*104*/ {
-          de: "Automatisches Löschen von nicht rentablen Berichten aktivieren/deaktivieren, unter Berücksichtigung von: Plünderung, Flotten- und Verteidigungs-Trümmerfeld (Deuterium zu Trümmerfeld und 70% Verteidigungsreparatur werden angenommen).",
+          de: "Automatisches Löschen von nicht rentablen Berichten aktivieren/deaktivieren, unter Berücksichtigung von: Plünderung, Flotten- und Verteidigungstrümmerfeld (Deuterium zu Trümmerfeld und 70% Verteidigungsreparatur werden angenommen).",
           en: "Enable/Disable automatic deletion of unprofitable reports taking into account: looting, fleet and defense debris field (deuterium to debris field and 70% defense repair are assumed).",
           es: "Habilitar/Deshabilitar la eliminación automática de informes no rentables teniendo en cuenta: saqueo, campo de escombros de flota y defensa (se asume deuterio al campo de escombros y 70% de reparación de defensa).",
           fr: "Activer/Désactiver la suppression automatique des rapports non rentables en tenant compte  du pillage, du champ de ruine de la flotte et de la défense (on suppose que le deuterium se transforme en champ de ruine et que 70 % de la défense est réparée).",
@@ -16692,7 +16699,7 @@ class OGInfinity {
           br: "Ativar/Desativar atuomaticamente a detecção de reports não rentavéis: faturamento, destroços de frota e defesa (Deutério gasto até os destroços e custos de reparo de 70% da defesa são considerados)",
         },
         /*105*/ {
-          de: "Minimale Rentabilität um als interessant angesehen zu werden",
+          de: "Minimale Rentabilität, um als interessant angesehen zu werden",
           en: "Minimal target rentability to be considered as interesting",
           es: "Retabilidad mínima de un objetivo para ser considerado interesante",
           fr: "Rentabilité minimale d'une cible pour être considéré comme intéressante",
@@ -16828,7 +16835,7 @@ class OGInfinity {
           br: "O período de retorno é calculado baseado na diferença no total de produção e o custo para o level alvo. Assume-se que haja energia suficiente e reforços de produção globais (classes de jogador, aliança e oficiais) são considerados. A taxa de negociação configurada é considerada para avaliar os recursos. Para minas, a alteração da produção total devido ao aumento do limite re rastreadores é considerado, usando as configurações acima. Para astrofísica, são levados em consideração o custo da pesquisa e o custo médio de construção das minas ao nivel médio de uma nova colônia. A mudança na produção é aproximada pelos parâmetros médios pois a produção real depende da temperatura e posição da nova colônia. Os custos para construção de fornecimento de energia e outras instalações não são considerados.",
         },
         /*122*/ {
-          de: "Nur Werte größer gleich 1 ...",
+          de: "Nur Werte größer oder gleich 1 ...",
           en: "Only values greater or equal to 1 allowed...",
           es: "Sólo valores superiores o iguales a 1 están permitidos...",
           fr: "Seules les valeurs supérieures ou égales à 1 sont autorisées...",
@@ -16956,7 +16963,7 @@ class OGInfinity {
           br: "Atividade",
         },
         /*138*/ {
-          de: "Navigationspfeile in mobiler Version",
+          de: "Navigationspfeile in mobiler Version anzeigen",
           en: "Navigation arrows in mobile version",
           es: "Flechas de navegación en versión móvil",
           fr: "Flèches de navigation en version mobile",
@@ -17060,7 +17067,7 @@ class OGInfinity {
           br: "Número de expedições antes da rotação",
         },
         /*151*/ {
-          de: "Fehler: kein PTRE teamkey registriert",
+          de: "Fehler: kein PTRE-Teamkey registriert",
           en: "Error: no PTRE teamkey registered",
           es: "Error: ninguna clave de equipo PTRE registrada",
           fr: "Erreur : aucune clé d'équipe PTRE enregistrée",
@@ -17068,7 +17075,7 @@ class OGInfinity {
           br: "Erro: Sem chave de equipe do PTRE registrada",
         },
         /*152*/ {
-          de: "Bester bericht",
+          de: "Bester Bericht",
           en: "Best report",
           es: "Mejor informe",
           fr: "Meilleur rapport",
@@ -17092,7 +17099,7 @@ class OGInfinity {
           br: "Perfil do alvo",
         },
         /*155*/ {
-          de: "- Keine aktivität erkannt",
+          de: "- Keine Aktivität erkannt",
           en: "- No activity detected",
           es: "- Ninguna actividad detectada",
           fr: "- Aucune activité détectée",
@@ -17100,7 +17107,7 @@ class OGInfinity {
           br: "- Sem atividade detectada",
         },
         /*156*/ {
-          de: "- Einige aktivitäten erkannt",
+          de: "- Einige Aktivitäten erkannt",
           en: "- A few activities detected",
           es: "- Unas pocas actividades detectadas",
           fr: "- Peu d'activités détectées",
@@ -17108,7 +17115,7 @@ class OGInfinity {
           br: "- Pouca atividade detectada",
         },
         /*157*/ {
-          de: "- Einige aktivitäten erkannt",
+          de: "- Einige Aktivitäten erkannt",
           en: "- Some activities detected",
           es: "- Algunas actividades detectadas",
           fr: "- Quelques activités détectées",
