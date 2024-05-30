@@ -3,13 +3,13 @@ const page = rawUrl.searchParams.get("component") || rawUrl.searchParams.get("pa
 let highlighted = [0, 0, 0];
 
 export function setHighlightCoords(coords) {
-  highlighted = coords;
+  highlighted = coords.split(":");
 }
 
 export default function () {
   if (page !== "galaxy") return;
 
-  const coords = highlighted.split(":");
+  const coords = highlighted;
 
   document.querySelectorAll("#galaxyContent .ogl-highlighted").forEach(function (el) {
     el.classList.remove("ogl-highlighted");
