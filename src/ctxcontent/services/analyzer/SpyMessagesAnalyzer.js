@@ -70,6 +70,21 @@ class SpyMessagesAnalyzer {
 
   #displaySpyTable() {
     const table = createDOM("table", { class: "ogl-spyTable" });
+
+    this.#spyReports.sort((a, b) => {
+      if (OGIData.options.spyFilter === "$") {
+        return b.renta - a.renta;
+      } else if (OGIData.options.spyFilter === "DATE") {
+        return a.deltaDate - b.deltaDate;
+      } else if (OGIData.options.spyFilter === "COORDS") {
+        return a.tmpCoords - b.tmpCoords;
+      } else if (OGIData.options.spyFilter === "FLEET") {
+        return b.fleet - a.fleet;
+      } else if (OGIData.options.spyFilter === "DEF") {
+        return b.defense - a.defense;
+      }
+    });
+
     this.#spyTableOptions();
     this.#spyTableHeader(table);
     this.#spyTableBody(table);
@@ -80,6 +95,7 @@ class SpyMessagesAnalyzer {
   }
 
   #spyTableOptions() {
+    if (document.querySelector('.messagesTrashcanBtns button.custom_btn[disabled="disabled"]')) return;
     const options = OGIData.options;
 
     const tableOptions = createDOM("div", { class: "ogl-tableOptions" });
@@ -141,13 +157,31 @@ class SpyMessagesAnalyzer {
     header.appendChild(createDOM("th", { "data-filter": "FLEET" }, "Fleet"));
     header.appendChild(createDOM("th", { "data-filter": "DEF" }, "Def"));
 
+    header.querySelectorAll("th").forEach((th) => {
+      const filter = th.getAttribute("data-filter");
+      const options = OGIData.options;
+      if (options.spyFilter === filter) th.classList.add("ogl-active");
+
+      th.addEventListener("click", () => {
+        if (filter) {
+          options.spyFilter = filter;
+
+          OGIData.options = options;
+
+          window.dispatchEvent(new CustomEvent("ogi-spyTableReload"));
+        }
+      });
+    });
+
     const cargoChoice = this.#cargoChoice();
     const cargoSpan = createDOM("span", {
-      style: "display: flex",
+      style: "display: flex;",
       class: `ogl-option ogl-fleet-ship choice ogl-fleet-${OGIData.options.spyFret}`,
     });
 
-    const cargo = createDOM("th");
+    const cargo = createDOM("th", {
+      style: " place-items: center; display: flex; height: 31px; place-content: center;",
+    });
 
     cargo.addEventListener("mouseover", () => tooltip(cargo, cargoChoice, false, false, 50));
 
@@ -204,7 +238,10 @@ class SpyMessagesAnalyzer {
       cargoChoice.classList.add("spio");
 
       const probe = cargoChoice.appendChild(
-        createDOM("div", { class: `ogl-option ogl-fleet-ship choice ogl-fleet-${ship.EspionnageProbe}` })
+        createDOM("div", {
+          class: `ogl-option ogl-fleet-ship choice ogl-fleet-${ship.EspionnageProbe}`,
+          "data-ship": ship.EspionnageProbe,
+        })
       );
 
       cargoChoice.appendChild(probe);
@@ -344,7 +381,7 @@ class SpyMessagesAnalyzer {
 
       let shipCount = 0;
 
-      if (report.defense === 0 && report.fleet === 0 && shipId === ship.EspionnageProbe) {
+      if (parseInt(report.defense) === 0 && parseInt(report.fleet) === 0 && shipId === ship.EspionnageProbe) {
         shipCount = report.pb;
       }
 
@@ -478,12 +515,12 @@ class SpyMessagesAnalyzer {
         optColDeleteButton.dataset.id = report.id;
         optColDeleteButton.addEventListener("click", () => {
           bodyRow.classList.add("hide");
-          this.#countDeletion++;
           this.#deleteClickTime = this.#deleteClickLoopTime * this.#countDeletion;
+          this.#countDeletion++;
           new Promise((r) => setTimeout(r, this.#deleteClickTime)).then(() => {
-            this.#countDeletion--;
             if (!document.querySelector(`.msgDeleteBtn[data-message-id="${report.id}"]`)) return;
             document.querySelector(`.msgDeleteBtn[data-message-id="${report.id}"]`).click();
+            this.#countDeletion--;
           });
           new Promise((r) => setTimeout(r, this.#deleteClickTime + 300)).then(() => {
             if (this.#countDeletion > 0) return;

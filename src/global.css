@@ -2361,7 +2361,7 @@ button.build-it_premium:hover {
   vertical-align: sub;
 }
 
-.ogl-spyTable tr:not(:first-child):hover {
+.ogl-spyTable tbody tr:hover {
   outline: 1px solid #ffc937;
 }
 
