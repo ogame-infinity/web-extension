@@ -12679,7 +12679,7 @@ class OGInfinity {
   }
 
   updateStalk(planets) {
-    stalkUtil.update(planets);
+    return stalkUtil.update(planets);
   }
 
   sideStalk(playerid) {
@@ -12861,7 +12861,7 @@ class OGInfinity {
 
   spyTable() {
     if (this.page == "fleetdispatch" && this.mode == 4) {
-      let link = "https://" + window.location.host + window.location.pathname + "?page=messages";
+      let link = "https://" + window.location.host + window.location.pathname + "?page=ingame&component=messages";
       document.querySelector("#sendFleet").addEventListener("click", () => {
         localStorage.setItem("ogl-redirect", link);
       });
@@ -13863,7 +13863,7 @@ class OGInfinity {
   }
 
   tooltip(sender, content, autoHide, side, timer) {
-    utilTooltip(sender, content, autoHide, side, timer);
+    utilTooltip.tooltip(sender, content, autoHide, side, timer);
   }
 
   popup(header, content) {

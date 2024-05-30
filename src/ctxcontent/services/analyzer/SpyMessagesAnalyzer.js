@@ -61,7 +61,10 @@ class SpyMessagesAnalyzer {
   }
 
   #isReport(message) {
-    return message.querySelector(".msgContent .espionageInfo") !== null;
+    return (
+      message.querySelector(".msgContent .espionageInfo") !== null &&
+      message.querySelector(".rawMessageData[data-raw-playername]").getAttribute("data-raw-playername").length
+    );
   }
 
   #displaySpyTable() {
@@ -177,20 +180,21 @@ class SpyMessagesAnalyzer {
       }
 
       if (report.attacked) {
-        indexCol.classList.add("ogi-attacked");
+        bodyRow.classList.add("ogi-attacked");
       }
 
       bodyRow.appendChild(indexCol);
 
       // Date
-      const dateDetail = `\n${report.cleanDate.toLocaleDateString()}<br>\n${report.cleanDate.toLocaleTimeString()}<br>\nActivity : ${
-        report.activity
-      }\n`;
-      const dateCol = createDOM(
-        "td",
-        { class: "tooltipLeft ogl-date", title: dateDetail },
-        DateTime.timeSince(report.cleanDate)
-      );
+      const dateDetail = createDOM("div");
+
+      dateDetail.appendChild(createDOM("div", undefined, report.cleanDate.toLocaleDateString()));
+      dateDetail.appendChild(createDOM("div", undefined, report.cleanDate.toLocaleTimeString()));
+      dateDetail.appendChild(createDOM("div", undefined, `Activity: ${report.activity}`));
+
+      const dateCol = createDOM("td", { class: "ogl-tooltipLeft ogl-date" }, DateTime.timeSince(report.cleanDate));
+
+      dateCol.addEventListener("mouseover", () => tooltip(dateCol, dateDetail, true, false, 50));
 
       if (report.activity <= 15) dateCol.classList.add("ogl-danger");
       else if (report.activity < 60) dateCol.classList.add("ogl-care");
@@ -222,7 +226,7 @@ class SpyMessagesAnalyzer {
         "(vi)": "status_abbr_vacation",
       };
 
-      const nameColLink = createDOM("a", { class: classByStatus[report.status] }, `${report.name} ${report.status}`);
+      const nameColLink = createDOM("a", { class: report.statusCssClass }, `${report.name} ${report.status}`);
       nameCol.appendChild(nameColLink);
       bodyRow.appendChild(nameCol);
 
@@ -300,7 +304,7 @@ class SpyMessagesAnalyzer {
       else if (shipId === ship.LargeCargo) shipCount = report.gt;
       else if (shipId === ship.PathFinder) shipCount = report.pf;
 
-      const fleetLink = `?page=ingame&component=fleetdispatch&galaxy=${splittedCoords[0]}&system=${splittedCoords[1]}&position=${splittedCoords[2]}&type=${report.type}&mission=1&am${shipId}=${shipCount}&oglMode=4`;
+      const fleetLink = `?page=ingame&component=fleetdispatch&galaxy=${splittedCoords[0]}&system=${splittedCoords[1]}&position=${splittedCoords[2]}&type=${report.planetTargetType}&mission=1&am${shipId}=${shipCount}&oglMode=4`;
       const shipLink = createDOM("a", { href: fleetLink }, toFormattedNumber(shipCount));
       shipCol.appendChild(shipLink);
       bodyRow.appendChild(shipCol);
@@ -425,6 +429,7 @@ class SpyMessagesAnalyzer {
         const optColDeleteButton = createDOM("button", { class: "icon icon_trash" });
         optColDeleteButton.dataset.id = report.id;
         optColDeleteButton.addEventListener("click", () => {
+          bodyRow.classList.add("hide");
           this.#countDeletion++;
           this.#deleteClickTime = this.#deleteClickLoopTime * this.#countDeletion;
           new Promise((r) => setTimeout(r, this.#deleteClickTime)).then(() => {
@@ -441,10 +446,10 @@ class SpyMessagesAnalyzer {
 
         if (
           OGIData.options.autoDeleteEnable &&
-          Math.round(report.fleet * OGIData.universeSettingsTooltip.debrisFactor) +
-            Math.round((report.total * report.loot) / 100) +
+          Math.round((parseInt(report.fleet) || 0) * OGIData.universeSettingsTooltip.debrisFactor) +
+            Math.round(((parseInt(report.total) || 0) * (parseInt(report.loot) || 0)) / 100) +
             Math.round(
-              report.defense *
+              (parseInt(report.defense) || 0) *
                 (1 - OGIData.universeSettingsTooltip.repairFactor) *
                 OGIData.universeSettingsTooltip.debrisFactorDef
             ) <
@@ -455,7 +460,9 @@ class SpyMessagesAnalyzer {
       } else if (document.querySelector('.messagesTrashcanBtns button.custom_btn[disabled="disabled"]')) {
         const optColRestoreButton = createDOM("button", { class: "icon icon_restore" });
         optColRestoreButton.dataset.id = report.id;
-        optColRestoreButton.addEventListener("click", (element) => {
+
+        optColRestoreButton.addEventListener("click", () => {
+          bodyRow.classList.add("hide");
           this.#countRestoration++;
           new Promise((r) => setTimeout(r, 300)).then(() => {
             this.#countRestoration--;
@@ -507,26 +514,37 @@ class SpyMessagesAnalyzer {
             extraLine.appendChild(createDOM("td", { class: "ogl-date" }));
             extraLine.appendChild(createDOM("td"));
             extraLine.appendChild(createDOM("td", { class: "ogl-name" }));
-            const extraDetail = `\n<div class="ogl-metal">Metal: ${toFormattedNumber(
-              renta[round] * report.resRatio[0],
-              null,
-              true
-            )}</div>\n<div class="ogl-crystal">Crystal: ${toFormattedNumber(
-              renta[round] * report.resRatio[1],
-              null,
-              true
-            )}</div>\n<div class="ogl-deut">Deuterium: ${toFormattedNumber(
-              renta[round] * report.resRatio[2],
-              null,
-              true
-            )}</div>\n<div class="splitLine"></div>\nTotal: ${toFormattedNumber(renta[round], null, true)}\n`;
-            const extraTotal = extraLine.appendChild(
-              createDOM(
-                "td",
-                { class: "tooltipLeft ogl-lootable", title: extraDetail },
-                toFormattedNumber(renta[round], null, true)
-              )
+
+            const extraDetail = createDOM("div");
+            const extraDetailMetal = createDOM(
+              "div",
+              { class: "ogl-metal" },
+              `Metal : ${toFormattedNumber(renta[round] * report.resRatio[0], null, true)}`
             );
+            const extraDetailCrystal = createDOM(
+              "div",
+              { class: "ogl-crystal" },
+              `Crystal : ${toFormattedNumber(renta[round] * report.resRatio[1], null, true)}`
+            );
+            const extraDetailDeut = createDOM(
+              "div",
+              { class: "ogl-deut" },
+              `Deuterium : ${toFormattedNumber(renta[round] * report.resRatio[2], null, true)}`
+            );
+            const extraDetailSplitLine = createDOM(
+              "div",
+              { class: "splitline" },
+              `Total : ${toFormattedNumber(renta[round], null, true)}`
+            );
+
+            extraDetail.appendChild(extraDetailMetal);
+            extraDetail.appendChild(extraDetailCrystal);
+            extraDetail.appendChild(extraDetailDeut);
+            extraDetail.appendChild(extraDetailSplitLine);
+            const extraTotal = extraLine.appendChild(
+              createDOM("td", { class: "ogl-tooltipLeft ogl-lootable" }, toFormattedNumber(renta[round], null, true))
+            );
+            extraTotal.addEventListener("mouseover", () => tooltip(extraTotal, extraDetail, true, false, 50));
             extraTotal.style.background = `linear-gradient(to right, rgba(255, 170, 204, 0.63) ${
               report.resRatio[0]
             }%, rgba(115, 229, 255, 0.78) ${report.resRatio[0]}%\n, rgba(115, 229, 255, 0.78) ${
@@ -549,7 +567,7 @@ class SpyMessagesAnalyzer {
             });
 
             // Use set to dynamic query key
-            extraFleetQueryParams.set(`am${shipId}`, renta[round]);
+            extraFleetQueryParams.set(`am${shipId}`, ships[round]);
 
             const extraShip = extraLine.appendChild(createDOM("td"));
             extraShip.appendChild(
