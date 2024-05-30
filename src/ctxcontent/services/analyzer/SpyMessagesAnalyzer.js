@@ -35,6 +35,7 @@ class SpyMessagesAnalyzer {
 
   clean() {
     document.querySelector(".ogl-spyTable")?.remove();
+    document.querySelector(".ogl-tableOptions")?.remove();
   }
 
   analyze(messageCallable, tabId) {
@@ -69,13 +70,60 @@ class SpyMessagesAnalyzer {
 
   #displaySpyTable() {
     const table = createDOM("table", { class: "ogl-spyTable" });
+    this.#spyTableOptions();
     this.#spyTableHeader(table);
-
     this.#spyTableBody(table);
 
     const target = document.querySelector("#messagewrapper .messagePaginator");
 
     target.parentNode.insertBefore(table, target);
+  }
+
+  #spyTableOptions() {
+    const options = OGIData.options;
+
+    const tableOptions = createDOM("div", { class: "ogl-tableOptions" });
+    const enableTable = tableOptions.appendChild(
+      createDOM("button", { class: "icon icon_eye tooltip", title: "Toggle spy table" })
+    );
+    if (options.spyTableEnable) enableTable.classList.add("ogl-active");
+    enableTable.addEventListener("click", () => {
+      options.spyTableEnable = !options.spyTableEnable;
+      OGIData.options = options;
+      window.dispatchEvent(new CustomEvent("ogi-spyTableReload"));
+    });
+
+    const appendOption = tableOptions.appendChild(
+      createDOM("button", {
+        class: "icon icon_plus tooltip",
+        title: "Minimal target rentability to be considered as interesting",
+      })
+    );
+    if (options.spyTableAppend) appendOption.classList.add("ogl-active");
+    appendOption.addEventListener("click", () => {
+      options.spyTableAppend = !options.spyTableAppend;
+      OGIData.options = options;
+      window.dispatchEvent(new CustomEvent("ogi-spyTableReload"));
+    });
+
+    const autoDelete = tableOptions.appendChild(
+      createDOM("button", {
+        class: "icon icon_trash tooltip",
+        title:
+          "Enable/Disable automatic deletion of unprofitable reports taking into account: looting, fleet and defense debris field (deuterium to debris field and 70% defense repair are assumed).",
+      })
+    );
+    if (options.autoDeleteEnable) autoDelete.classList.add("ogl-active");
+    autoDelete.addEventListener("click", () => {
+      options.autoDeleteEnable = !options.autoDeleteEnable;
+      OGIData.options = options;
+      window.dispatchEvent(new CustomEvent("ogi-spyTableReload"));
+    });
+
+    tableOptions.appendChild(createDOM("div", { style: "height:1px;width:20px;" }));
+
+    const target = document.querySelector("#messagewrapper .messagePaginator");
+    target.parentNode.insertBefore(tableOptions, target);
   }
 
   #spyTableHeader(table) {
