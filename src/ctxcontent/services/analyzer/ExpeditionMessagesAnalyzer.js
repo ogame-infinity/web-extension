@@ -34,14 +34,42 @@ class ExpeditionMessagesAnalyzer {
   }
 
   #parseExpeditions() {
+    const expeditions = OGIData.expeditions;
+    const expeditionSums = OGIData.expeditionSums;
+    const options = OGIData.options;
+
+    if (!options.fixExpedition) {
+      for (let expeditionsKey in expeditions) {
+        if (new Date(expeditions[expeditionsKey].date) < new Date("2024-05-28")) continue;
+        if (new Date(expeditions[expeditionsKey].date) > new Date("2024-05-31")) continue;
+
+        delete expeditions[expeditionsKey];
+      }
+      OGIData.expeditions = expeditions;
+
+      for (let expeditionSumsKey in expeditionSums) {
+        const dateExploded = expeditionSumsKey.split(".");
+        const dateString = `20${dateExploded[2]}-${dateExploded[1]}-${dateExploded[0]}`;
+
+        if (new Date(dateString) < new Date("2024-05-28")) continue;
+        if (new Date(dateString) > new Date("2024-05-31")) continue;
+
+        delete expeditionSums[expeditionSumsKey];
+      }
+
+      options.fixExpedition = true;
+      OGIData.options = options;
+      OGIData.expeditionSums = expeditionSums;
+    }
+
     this.#getExpeditionsMessages().forEach((message) => {
-      const msgId = message.getAttribute("data-msg-id");
       const expeditions = OGIData.expeditions;
       const expeditionSums = OGIData.expeditionSums;
+      const msgId = message.getAttribute("data-msg-id");
 
       const displayLabel = function (message) {
         if (!expeditions[msgId]) return;
-        
+
         const labels = {
           "ogk-metal": "Metal",
           "ogk-crystal": "Crystal",
@@ -75,11 +103,8 @@ class ExpeditionMessagesAnalyzer {
       const resourcesGained = JSON.parse(
         message.querySelector(".rawMessageData")?.getAttribute("data-raw-resourcesgained")
       );
-      const navigation = JSON.parse(message.querySelector(".rawMessageData")?.getAttribute("data-raw-navigation"));
       const type = message.querySelector(".rawMessageData").getAttribute("data-raw-expeditionresult");
       const resourceType = resourcesGained ? Object.keys(resourcesGained)[0] : undefined;
-      const navigationType =
-        type === "navigation" ? (parseInt(navigation?.returnTimeMultiplier) >= 1 ? "Late" : "Early") : undefined;
 
       const newDate = new Date(message.querySelector(".rawMessageData").getAttribute("data-raw-date"));
       const datePoint = `${newDate.getDate()}.${(newDate.getMonth() + 1).toString().padStart(2, "0")}.${newDate
@@ -104,6 +129,7 @@ class ExpeditionMessagesAnalyzer {
         };
 
         summary.found[3] += parseInt(Object.values(resourcesGained)[0]);
+        summary.type["AM"] ? (summary.type["AM"] += 1) : (summary.type["AM"] = 1);
       } else if (type === "ressources") {
         const typeFormatted = resourceType.charAt(0).toUpperCase() + resourceType.slice(1);
         summary.type[typeFormatted] ? (summary.type[typeFormatted] += 1) : (summary.type[typeFormatted] = 1);
