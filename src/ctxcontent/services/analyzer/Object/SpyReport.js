@@ -79,6 +79,9 @@ export class SpyReport {
   get status() {
     return this._status;
   }
+  get statusCssClass() {
+    return this._statusCssClass;
+  }
   get name() {
     return this._name;
   }
@@ -113,12 +116,13 @@ export class SpyReport {
 
     this._status = "";
 
-/*    this._status = message
-      .getAttribute("data-messages-filters-status")
-      .replace(/&nbsp;/g, "")
-      .replace(/-/g, "")
-      .trim();
-*/
+    const classes = Array.from(message.querySelector(".playerName > span:last-child")?.classList);
+    this._statusCssClass = classes.find((c) => c.substring(0, 12) === "status_abbr_");
+
+    if (message.querySelectorAll(`.playerName > span.${this._statusCssClass}`).length === 2) {
+      this._status = message.querySelector(`.playerName > span.${this._statusCssClass}:last-child`)?.textContent;
+    }
+
     this._spyLink = message.querySelector('.msg_actions [onclick*="sendShipsWithPopup"]').getAttribute("onclick");
     const textContent = message.getAttribute("data-messages-filters-activity");
     this._activity = parseInt(textContent.match(/\d+/) ? textContent.match(/\d+/)[0] : 60);
@@ -128,18 +132,34 @@ export class SpyReport {
     this._detailLink = message.querySelector(".msg_actions message-footer-details a.fright").href;
     this._deleteLink = message.querySelector(".msgHead .msgDeleteBtn");
 
-    this._fleet = cleanValue(
-      message
-        .querySelector(".fleetInfo > .shipsTotal")
-        ?.getAttribute("data-tooltip-title")
-        .match(/[\d.]+/)[0] || "0"
-    );
-    this._defense = cleanValue(
-      message
-        .querySelector(".defenseInfo > .defenseTotal")
-        ?.getAttribute("data-tooltip-title")
-        .match(/[\d.]+/)[0] || "0"
-    );
+    const fleet = message.getAttribute("data-messages-filters-fleet");
+    const defense = message.getAttribute("data-messages-filters-defense");
+
+    if (fleet === "-") {
+      this._fleet = "No data";
+    } else if (fleet === "0") {
+      this._fleet = "0";
+    } else {
+      this._fleet = cleanValue(
+        message
+          .querySelector(".fleetInfo > .shipsTotal")
+          ?.getAttribute("data-tooltip-title")
+          .match(/[\d.]+/)[0]
+      );
+    }
+
+    if (defense === "-") {
+      this._defense = "No data";
+    } else if (defense === "0") {
+      this._defense = "0";
+    } else {
+      this._defense = cleanValue(
+        message
+          .querySelector(".defenseInfo > .defenseTotal")
+          ?.getAttribute("data-tooltip-title")
+          .match(/[\d.]+/)[0]
+      );
+    }
 
     // Date
     const rawDate = message.getAttribute("data-messages-filters-datetime").split(/\.| /g);

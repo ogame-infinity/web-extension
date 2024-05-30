@@ -50,11 +50,27 @@ class OGIData {
 
     this.#save();
   }
+  get discoveries() {
+    return this._json.discoveries;
+  }
+  set discoveries(discoveries) {
+    this._json.discoveries = discoveries;
+
+    this.#save();
+  }
   get expeditionSums() {
     return this._json.expeditionSums;
   }
   set expeditionSums(expeditionSums) {
     this._json.expeditionSums = expeditionSums;
+
+    this.#save();
+  }
+  get discoveriesSums() {
+    return this._json.discoveriesSums;
+  }
+  set discoveriesSums(discoveriesSums) {
+    this._json.discoveriesSums = discoveriesSums;
 
     this.#save();
   }

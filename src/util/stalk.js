@@ -139,9 +139,6 @@ export function stalk(sender, player, delay = undefined) {
     });
     const actBtn = actions.appendChild(createDOM("a", { style: "margin-left: 10px", class: "ogl-text-btn" }, "⚠"));
     let first = false;
-    actBtn.addEventListener("mouseout", () => {
-      keepTooltip = false;
-    });
     actBtn.addEventListener("click", (e) => {
       const searchHistory = OGIData.searchHistory;
 
@@ -167,8 +164,8 @@ export function stalk(sender, player, delay = undefined) {
         location.href = generateGalaxyLink(coords, player.id);
       }
 
-      if (keepTooltip) return;
       keepTooltip = true;
+      OGIData.keepTooltip = keepTooltip;
 
       let active = document.querySelectorAll(".ogl-tooltip .ogl-stalkPlanets a.ogl-active");
       active = active[active.length - 1];
@@ -303,8 +300,12 @@ export function stalk(sender, player, delay = undefined) {
       render(p);
       document.querySelector(".ogl-tooltip").addEventListener("mouseover", () => {
         keepTooltip = false;
+
+        OGIData.keepTooltip = keepTooltip;
       });
       keepTooltip = true;
+
+      OGIData.keepTooltip = keepTooltip;
     });
   }
 }

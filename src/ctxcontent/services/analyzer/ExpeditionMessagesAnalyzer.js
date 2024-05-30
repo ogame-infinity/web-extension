@@ -18,6 +18,7 @@ class ExpeditionMessagesAnalyzer {
     this.#messages = messageCallable();
 
     this.#parseExpeditions();
+    this.#parseDiscovery();
   }
 
   #getExpeditionsMessages() {
@@ -42,7 +43,10 @@ class ExpeditionMessagesAnalyzer {
       const type = e.querySelector(".rawMessageData").getAttribute("data-raw-expeditionresult");
 
       const newDate = new Date(e.querySelector(".rawMessageData").getAttribute("data-raw-date"));
-      const datePoint = `${newDate.getDate()}.${(newDate.getMonth() + 1).toString().padStart(2, "0")}.${newDate.getFullYear().toString().slice(2)}`;
+      const datePoint = `${newDate.getDate()}.${(newDate.getMonth() + 1).toString().padStart(2, "0")}.${newDate
+        .getFullYear()
+        .toString()
+        .slice(2)}`;
       const resourcesGained = JSON.parse(e.querySelector(".rawMessageData")?.getAttribute("data-raw-resourcesgained"));
 
       let summary = expeditionSums[datePoint] || {
@@ -134,6 +138,71 @@ class ExpeditionMessagesAnalyzer {
 
       OGIData.expeditions = expeditions;
       OGIData.expeditionSums = expeditionSums;
+    });
+  }
+
+  #getDiscoveryMessages() {
+    const messages = [];
+    this.#messages.forEach((e) => {
+      if (e.querySelector(".rawMessageData")?.getAttribute("data-raw-messagetype") !== "61") return;
+
+      messages.push(e);
+    });
+
+    return messages;
+  }
+
+  #parseDiscovery() {
+    const messages = this.#getDiscoveryMessages();
+
+    messages.forEach((message) => {
+      const discoveries = OGIData.discoveries;
+      const discoveriesSums = OGIData.discoveriesSums;
+
+      const msgId = message.getAttribute("data-msg-id");
+
+      if (discoveries && discoveries[msgId]) return;
+
+      const newDate = new Date(message.querySelector(".rawMessageData").getAttribute("data-raw-date"));
+      const datePoint = `${newDate.getDate()}.${(newDate.getMonth() + 1).toString().padStart(2, "0")}.${newDate
+        .getFullYear()
+        .toString()
+        .slice(2)}`;
+
+      const sums = discoveriesSums[datePoint] || {
+        found: [0, 0, 0, 0],
+        artefacts: 0,
+        type: {},
+      };
+
+      const type = message.querySelector(".rawMessageData").getAttribute("data-raw-discoverytype");
+      let discoveryType = "void";
+
+      if (type === "lifeform-xp") {
+        const lifeForm = message.querySelector(".rawMessageData").getAttribute("data-raw-lifeform");
+        const experience = parseInt(
+          message.querySelector(".rawMessageData").getAttribute("data-raw-lifeformgainedexperience")
+        );
+        discoveryType = `lifeform${lifeForm}`;
+
+        sums.found[lifeForm - 1] ? (sums.found[lifeForm - 1] += experience) : (sums.found[lifeForm - 1] = experience);
+      } else if (type === "artifacts") {
+        const artifacts = parseInt(message.querySelector(".rawMessageData").getAttribute("data-raw-artifactsfound"));
+        discoveryType = "artefacts";
+        sums.artefacts += artifacts;
+      }
+
+      sums.type[discoveryType] ? (sums.type[discoveryType] += 1) : (sums.type[discoveryType] = 1);
+
+      discoveriesSums[datePoint] = sums;
+      discoveries[msgId] = {
+        result: type,
+        date: newDate,
+        favorited: !!message.querySelector(".icon_favorited"),
+      };
+
+      OGIData.discoveries = discoveries;
+      OGIData.discoveriesSums = discoveriesSums;
     });
   }
 }

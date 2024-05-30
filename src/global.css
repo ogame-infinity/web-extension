@@ -2451,8 +2451,8 @@ button.build-it_premium:hover {
   margin: 0 1px;
 }
 
-.ogl-spyTable .ogl-attacked td,
-.ogl-spyTable .ogl-attacked td:not(.ogl-spyOptions) a {
+.ogl-spyTable .ogi-attacked td,
+.ogl-spyTable .ogi-attacked td:not(.ogl-spyOptions) a {
   color: #f49cf5 !important;
 }
 
