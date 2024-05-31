@@ -29,10 +29,10 @@ export function popup(header, content) {
     dialog = overlay.appendChild(createDOM("div", { class: "ogl-dialog" }));
     let close = dialog.appendChild(createDOM("div", { class: "close-tooltip" }));
     close.addEventListener("click", () => {
-      const options = OGIData.options;
-      if (options.welcome) {
-        options.welcome = false;
-        OGIData.options = options;
+      let welcome = OGIData.welcome;
+      if (welcome) {
+        welcome = false;
+        OGIData.welcome = welcome;
         if (playerClass === PlayerClass.NONE) {
           window.location.href = `https://s${universe}-${gameLang}.ogame.gameforge.com/game/index.php?page=ingame&component=characterclassselection`;
         } else {
