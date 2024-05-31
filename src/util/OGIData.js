@@ -113,6 +113,8 @@ class OGIData {
 
   set welcome(welcome) {
     this._json.welcome = welcome;
+  
+    this.#save();
   }
 
   get json() {
