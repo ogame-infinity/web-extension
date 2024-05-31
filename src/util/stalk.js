@@ -436,7 +436,8 @@ export function side(playerId) {
       }
       sideStalk = document.querySelector("#links").appendChild(createDOM("div", { class: "ogl-sideStalk" }));
       let actBtn, watchlistBtn, ptreBtn;
-      if (!OGIData.options.sideStalkVisible) {
+      const options = OGIData.options;
+      if (!options.sideStalkVisible) {
         sideStalk.classList.add("ogi-hidden");
         sideStalk.addEventListener("click", () => {
           options.sideStalkVisible = true;

@@ -17,6 +17,7 @@ import * as utilTooltip from "./util/tooltip.js";
 import * as popupUtil from "./util/popup.js";
 import markerui from "./util/markerui.js";
 import highlight, { setHighlightCoords } from "./util/highlightTarget.js";
+import OGIData from "./util/OGIData.js";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 //const VERSION = "__VERSION__";
@@ -3593,7 +3594,7 @@ class OGInfinity {
     displayContentGalaxy = (b) => {
       dc(b);
       var json = $.parseJSON(b);
-      if (!this.keepTooltip) {
+      if (!OGIData.keepTooltip) {
         document.querySelector(".ogl-tooltip") && document.querySelector(".ogl-tooltip").classList.remove("ogl-active");
         if (timeout) clearTimeout(timeout);
         timeout = setTimeout(() => {
@@ -3601,13 +3602,13 @@ class OGInfinity {
           timeout = null;
         }, 200);
       }
-      this.keepTooltip = false;
+      OGIData.keepTooltip = false;
       callback(galaxy, system);
     };
     let rc = renderContentGalaxy;
     renderContentGalaxy = (b) => {
       rc(b);
-      if (!this.keepTooltip) {
+      if (!OGIData.keepTooltip) {
         document.querySelector(".ogl-tooltip") && document.querySelector(".ogl-tooltip").classList.remove("ogl-active");
         if (timeout) clearTimeout(timeout);
         timeout = setTimeout(() => {
@@ -3615,7 +3616,7 @@ class OGInfinity {
           timeout = null;
         }, 200);
       }
-      this.keepTooltip = false;
+      OGIData.keepTooltip = false;
       callback(galaxy, system);
     };
 
