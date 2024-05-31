@@ -107,6 +107,14 @@ class OGIData {
     this.#save();
   }
 
+  get welcome() {
+    return this._json.welcome;
+  }
+
+  set welcome(welcome) {
+    this._json.welcome = welcome;
+  }
+
   get json() {
     return this._json;
   }
