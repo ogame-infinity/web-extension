@@ -106,6 +106,17 @@ class OGIData {
 
     this.#save();
   }
+
+  get json() {
+    return this._json;
+  }
+
+  set json(json) {
+    this._json = json;
+
+    this.#save();
+  }
+
   constructor() {
     const res = JSON.parse(localStorage.getItem(localStorageKey));
     this._json = res || {};
