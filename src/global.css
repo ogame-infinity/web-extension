@@ -1740,6 +1740,10 @@ strong {
   font-weight: 800;
   color: #a6e0b0 !important;
 }
+#resourcesbarcomponent #resources_population.overmark,
+#resourcesbarcomponent #resources_food.overmark {
+  color: #99CC00 !important;
+}
 
 .ogk-time {
   color: #ffd700eb;
