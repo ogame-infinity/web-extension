@@ -17,6 +17,7 @@ import * as utilTooltip from "./util/tooltip.js";
 import * as popupUtil from "./util/popup.js";
 import markerui from "./util/markerui.js";
 import highlight, { setHighlightCoords } from "./util/highlightTarget.js";
+import OGIData from "./util/OGIData.js";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 //const VERSION = "__VERSION__";
@@ -1396,8 +1397,7 @@ class OGInfinity {
   }
 
   init() {
-    let res = JSON.parse(localStorage.getItem("ogk-data"));
-    this.json = res || {};
+    this.json = OGIData.json;
     this.json.welcome = this.json.welcome === false ? false : true;
     this.json.needLifeformUpdate = this.json.needLifeformUpdate || {};
     this.json.pantrySync = this.json.pantrySync || "";
@@ -13055,7 +13055,7 @@ class OGInfinity {
   }
 
   saveData() {
-    localStorage.setItem("ogk-data", JSON.stringify(this.json));
+    OGIData.json = this.json;
   }
 
   async getObjLastElements(obj, elementsToReturn) {
