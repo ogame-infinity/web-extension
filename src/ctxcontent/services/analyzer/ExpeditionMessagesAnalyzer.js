@@ -107,10 +107,9 @@ class ExpeditionMessagesAnalyzer {
       const resourceType = resourcesGained ? Object.keys(resourcesGained)[0] : undefined;
 
       const newDate = new Date(message.querySelector(".rawMessageData").getAttribute("data-raw-date"));
-      const datePoint = `${newDate.getDate()}.${(newDate.getMonth() + 1).toString().padStart(2, "0")}.${newDate
-        .getFullYear()
+      const datePoint = `${newDate.getDate().toString().padStart(2, "0")}.${(newDate.getMonth() + 1)
         .toString()
-        .slice(2)}`;
+        .padStart(2, "0")}.${newDate.getFullYear().toString().slice(2)}`;
 
       let summary = expeditionSums[datePoint] || {
         found: [0, 0, 0, 0],
