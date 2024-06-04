@@ -41,7 +41,6 @@ const _options = {
   eventBoxKeep: false,
   empire: false,
   targetList: false,
-  fixExpedition: false,
   fret: 202,
   spyFret: 202,
   expeditionMission: 15,

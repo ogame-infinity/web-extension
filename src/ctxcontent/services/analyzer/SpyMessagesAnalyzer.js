@@ -737,8 +737,6 @@ class SpyMessagesAnalyzer {
         new Promise((r) => setTimeout(r, 100)).then(() => {
           obj.deleteReports();
         });
-      } else {
-        // window.dispatchEvent(new CustomEvent("ogi-spyTableReload"));
       }
     });
   }
