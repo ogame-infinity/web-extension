@@ -18,12 +18,8 @@ import OGIData from "../../../util/OGIData.js";
 class SpyMessagesAnalyzer {
   #logger;
   #messageCallable;
-  #spyReports;
   #tabId;
   #onTrash = false;
-  #deleteClickLoopTime = 500;
-  #deleteClickTime = 0;
-  #countDeletion = 0;
   reportsToDelete = [];
   #countRestoration = 0;
   #spyReports = [];
@@ -56,7 +52,6 @@ class SpyMessagesAnalyzer {
   }
 
   analyze(messageCallable, tabId) {
-    this.#spyReports = [];
     this.reportsToDelete = [];
     this.#tabId = tabId;
     this.#messageCallable = messageCallable;
@@ -85,7 +80,7 @@ class SpyMessagesAnalyzer {
   #displaySpyTable() {
     let table = document.querySelector(".ogl-spyTable");
 
-    if (!OGIData.options.spyTableAppend || !table) {
+    if (!table) {
       const target = document.querySelector("#messagewrapper .messagePaginator");
       table = createDOM("table", { class: "ogl-spyTable" });
       target.parentNode.insertBefore(table, target);
