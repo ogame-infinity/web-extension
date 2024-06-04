@@ -58,9 +58,6 @@ export class SpyReport {
   get fleet() {
     return this._fleet;
   }
-  get deleteLink() {
-    return this._deleteLink;
-  }
   get detailLink() {
     return this._detailLink;
   }
@@ -130,7 +127,6 @@ export class SpyReport {
     this._coordsLink = message.querySelector(".msgTitle a")?.href || "#";
 
     this._detailLink = message.querySelector(".msg_actions message-footer-details a.fright").href;
-    this._deleteLink = message.querySelector(".msgHead .msgDeleteBtn");
 
     const fleet = message.getAttribute("data-messages-filters-fleet");
     const defense = message.getAttribute("data-messages-filters-defense");
