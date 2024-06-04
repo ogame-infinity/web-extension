@@ -108,7 +108,7 @@ class Messages {
         parseInt(tab.getAttribute("data-subtab-id")) ||
         parseInt(this.#currentTab().getAttribute("data-subtab-id")) ||
         0;
-      if (typeof analyzer.clean === "function") analyzer.clean();
+      if (typeof analyzer.clean === "function") analyzer.clean(true);
       if (!analyzer.support(tabId)) return;
 
       analyzer.analyze(() => elementContent.querySelectorAll("div.msg"), tabId);

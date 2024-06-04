@@ -36,8 +36,8 @@ class SpyMessagesAnalyzer {
     return [messagesTabs.SPY, messagesTabs.TRASH, messagesTabs.FAVORITES].includes(tabId);
   }
 
-  clean() {
-    if (OGIData.options.spyTableAppend) return;
+  clean(force) {
+    if (OGIData.options.spyTableAppend && !force) return;
 
     document.querySelector(".ogl-spyTable")?.remove();
     document.querySelector(".ogl-tableOptions")?.remove();
