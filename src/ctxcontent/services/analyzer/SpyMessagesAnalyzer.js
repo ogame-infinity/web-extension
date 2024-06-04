@@ -144,8 +144,7 @@ class SpyMessagesAnalyzer {
 
     tableOptions.appendChild(createDOM("div", { style: "height:1px;width:20px;" }));
 
-    const target = document.querySelector("#messagewrapper .messagePaginator");
-    target.parentNode.insertBefore(tableOptions, target);
+    table.parentNode.insertBefore(tableOptions, table);
   }
 
   #spyTableHeader(table) {
