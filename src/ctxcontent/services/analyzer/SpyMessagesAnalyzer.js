@@ -20,8 +20,13 @@ class SpyMessagesAnalyzer {
   #messageCallable;
   #spyReports;
   #tabId;
+  #onTrash = false;
+  #deleteClickLoopTime = 500;
+  #deleteClickTime = 0;
+  #countDeletion = 0;
   reportsToDelete = [];
   #countRestoration = 0;
+  #spyReports = [];
 
   constructor() {
     this.#logger = getLogger("SpyMessagesAnalyer");
@@ -37,7 +42,14 @@ class SpyMessagesAnalyzer {
   }
 
   clean(force) {
-    if (OGIData.options.spyTableAppend && !force) return;
+    if (
+      OGIData.options.spyTableAppend &&
+      !force &&
+      this.#onTrash === !!document.querySelector('.messagesTrashcanBtns button.custom_btn[disabled="disabled"]')
+    )
+      return;
+
+    this.#spyReports = [];
 
     document.querySelector(".ogl-spyTable")?.remove();
     document.querySelector(".ogl-tableOptions")?.remove();
@@ -48,6 +60,7 @@ class SpyMessagesAnalyzer {
     this.reportsToDelete = [];
     this.#tabId = tabId;
     this.#messageCallable = messageCallable;
+    this.#onTrash = !!document.querySelector('.messagesTrashcanBtns button.custom_btn[disabled="disabled"]');
 
     this.#messageCallable().forEach((message) => {
       if (!this.#isReport(message)) return;
@@ -110,7 +123,7 @@ class SpyMessagesAnalyzer {
     );
     if (options.spyTableEnable) enableTable.classList.add("ogl-active");
     enableTable.addEventListener("click", () => {
-      table.classList.toggle("ogl-hidden")
+      table.classList.toggle("ogl-hidden");
       options.spyTableEnable = !options.spyTableEnable;
       OGIData.options = options;
     });
@@ -121,11 +134,13 @@ class SpyMessagesAnalyzer {
         title: "Minimal target rentability to be considered as interesting",
       })
     );
+
     if (options.spyTableAppend) appendOption.classList.add("ogl-active");
+
     appendOption.addEventListener("click", () => {
+      appendOption.classList.toggle("ogl-active");
       options.spyTableAppend = !options.spyTableAppend;
       OGIData.options = options;
-      window.dispatchEvent(new CustomEvent("ogi-spyTableReload"));
     });
 
     const autoDelete = tableOptions.appendChild(
@@ -170,10 +185,13 @@ class SpyMessagesAnalyzer {
       th.addEventListener("click", () => {
         if (filter) {
           options.spyFilter = filter;
+          header.querySelector("th.ogl-active")?.classList?.remove("ogl-active");
+          th.classList.add("ogl-active");
 
           OGIData.options = options;
 
-          window.dispatchEvent(new CustomEvent("ogi-spyTableReload"));
+          table.querySelector("tbody")?.remove();
+          this.#displaySpyTable();
         }
       });
     });
@@ -258,17 +276,30 @@ class SpyMessagesAnalyzer {
 
   #spyTableBody(table) {
     let body = table.querySelector("tbody");
-    const row = table.querySelectorAll("tbody > tr").length;
 
     if (!OGIData.options.spyTableAppend || !body) {
       body = createDOM("tbody");
       table.appendChild(body);
     }
 
-    this.#spyReports.forEach(async (report, index) => {
-      const bodyRow = createDOM("tr", { data: "closed" });
+    const row = body.querySelectorAll("tr").length;
+    let index = 0;
 
-      const indexCol = createDOM("td", {}, row + index + 1);
+    this.#spyReports.forEach((report) => {
+      let bodyRow = body.querySelector(`[data-report-id="${report.id}"]`);
+
+      if (bodyRow) {
+        body.appendChild(bodyRow);
+
+        return;
+      }
+
+      bodyRow = createDOM("tr", { data: "closed", "data-report-id": report.id });
+      body.appendChild(bodyRow);
+
+      index++;
+
+      const indexCol = createDOM("td", {}, row + index);
 
       if (report.new) {
         indexCol.classList.add("ogi-new");
@@ -566,8 +597,6 @@ class SpyMessagesAnalyzer {
       }
 
       bodyRow.appendChild(optCol);
-
-      body.appendChild(bodyRow);
 
       const renta = [];
       const ships = [];
