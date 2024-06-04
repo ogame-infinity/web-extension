@@ -3608,7 +3608,7 @@ button.build-it_premium:hover {
 }
 
 #galaxyContent .cellPlanetName {
-  max-width: 162px;
+  max-width: 145px;
 }
 
 #galaxyContent .ctContentRow .cellMoon .moon,
@@ -7255,7 +7255,7 @@ table.fleetinfo tr:nth-last-child(1),
 }
 
 .expeditionDebrisSlotBox div:first-of-type {
-  max-width: 221px;
+  max-width: 204px;
 }
 
 .expeditionDebrisSlotBox li {
