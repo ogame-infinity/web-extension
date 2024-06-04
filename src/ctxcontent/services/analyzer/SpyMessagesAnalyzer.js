@@ -37,6 +37,8 @@ class SpyMessagesAnalyzer {
   }
 
   clean() {
+    if (OGIData.options.spyTableAppend) return;
+
     document.querySelector(".ogl-spyTable")?.remove();
     document.querySelector(".ogl-tableOptions")?.remove();
   }
@@ -68,7 +70,16 @@ class SpyMessagesAnalyzer {
   }
 
   #displaySpyTable() {
-    const table = createDOM("table", { class: "ogl-spyTable" });
+    let table = document.querySelector(".ogl-spyTable");
+
+    if (!OGIData.options.spyTableAppend || !table) {
+      const target = document.querySelector("#messagewrapper .messagePaginator");
+      table = createDOM("table", { class: "ogl-spyTable" });
+      target.parentNode.insertBefore(table, target);
+
+      this.#spyTableOptions(table);
+      this.#spyTableHeader(table);
+    }
 
     if (!OGIData.options.spyTableEnable) table.classList.add("ogl-hidden");
 
@@ -86,13 +97,7 @@ class SpyMessagesAnalyzer {
       }
     });
 
-    this.#spyTableOptions(table);
-    this.#spyTableHeader(table);
     this.#spyTableBody(table);
-
-    const target = document.querySelector("#messagewrapper .messagePaginator");
-
-    target.parentNode.insertBefore(table, target);
   }
 
   #spyTableOptions(table) {
@@ -253,13 +258,18 @@ class SpyMessagesAnalyzer {
   }
 
   #spyTableBody(table) {
-    const body = createDOM("tbody");
-    table.appendChild(body);
+    let body = table.querySelector("tbody");
+    const row = table.querySelectorAll("tbody > tr").length;
+
+    if (!OGIData.options.spyTableAppend || !body) {
+      body = createDOM("tbody");
+      table.appendChild(body);
+    }
 
     this.#spyReports.forEach(async (report, index) => {
       const bodyRow = createDOM("tr", { data: "closed" });
 
-      const indexCol = createDOM("td", {}, index + 1);
+      const indexCol = createDOM("td", {}, row + index + 1);
 
       if (report.new) {
         indexCol.classList.add("ogi-new");
