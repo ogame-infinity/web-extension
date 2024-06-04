@@ -8240,3 +8240,7 @@ table.flyingFleet td.friendly {
   top: 1px !important;
   z-index: auto;
 }
+
+div#eventboxFilled p.event_list {
+  position: relative;
+}
