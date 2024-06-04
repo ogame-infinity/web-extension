@@ -20,13 +20,16 @@ class SpyMessagesAnalyzer {
   #messageCallable;
   #spyReports;
   #tabId;
-  #deleteClickLoopTime = 500;
-  #deleteClickTime = 0;
-  #countDeletion = 0;
+  reportsToDelete = [];
   #countRestoration = 0;
 
   constructor() {
     this.#logger = getLogger("SpyMessagesAnalyer");
+
+    window.addEventListener("ogi-spyTableReload", () => {
+      this.clean();
+      this.analyze(this.#messageCallable, this.#tabId);
+    });
   }
 
   support(tabId) {
@@ -40,13 +43,9 @@ class SpyMessagesAnalyzer {
 
   analyze(messageCallable, tabId) {
     this.#spyReports = [];
+    this.reportsToDelete = [];
     this.#tabId = tabId;
     this.#messageCallable = messageCallable;
-
-    window.addEventListener("ogi-spyTableReload", () => {
-      this.clean();
-      this.analyze(this.#messageCallable, tabId);
-    });
 
     this.#messageCallable().forEach((message) => {
       if (!this.#isReport(message)) return;
@@ -515,17 +514,9 @@ class SpyMessagesAnalyzer {
         optColDeleteButton.dataset.id = report.id;
         optColDeleteButton.addEventListener("click", () => {
           bodyRow.classList.add("hide");
-          this.#deleteClickTime = this.#deleteClickLoopTime * this.#countDeletion;
-          this.#countDeletion++;
-          new Promise((r) => setTimeout(r, this.#deleteClickTime)).then(() => {
-            if (!document.querySelector(`.msgDeleteBtn[data-message-id="${report.id}"]`)) return;
-            document.querySelector(`.msgDeleteBtn[data-message-id="${report.id}"]`).click();
-            this.#countDeletion--;
-          });
-          new Promise((r) => setTimeout(r, this.#deleteClickTime + 300)).then(() => {
-            if (this.#countDeletion > 0) return;
-            window.dispatchEvent(new CustomEvent("ogi-spyTableReload"));
-          });
+          this.reportsToDelete.push(report);
+
+          this.deleteReports();
         });
         optCol.appendChild(optColDeleteButton);
 
@@ -540,7 +531,8 @@ class SpyMessagesAnalyzer {
             ) <
             OGIData.options.rvalLimit
         ) {
-          optColDeleteButton.click();
+          bodyRow.classList.add("hide");
+          this.reportsToDelete.push(report);
         }
       } else if (document.querySelector('.messagesTrashcanBtns button.custom_btn[disabled="disabled"]')) {
         const optColRestoreButton = createDOM("button", { class: "icon icon_restore" });
@@ -673,6 +665,41 @@ class SpyMessagesAnalyzer {
             extraLine.appendChild(createDOM("td"));
           }
         });
+    });
+
+    this.deleteReports();
+  }
+
+  deleteReports() {
+    this.#logger.debug("Delete messages", this.reportsToDelete);
+
+    if (this.reportsToDelete.length === 0) return;
+
+    const report = this.reportsToDelete.shift();
+    this.#logger.debug("Messages to be deleted", report.id);
+    const obj = this;
+
+    if (!document.querySelector(`.msgDeleteBtn[data-message-id="${report.id}"]`)) return;
+    document.querySelector(`.msgDeleteBtn[data-message-id="${report.id}"]`).click();
+
+    const refresh = this.reportsToDelete.length === 0;
+
+    $(document).on("ajaxSuccess", function (e, xhr, settings) {
+      const urlParams = new URLSearchParams(settings.url);
+      const requestPayload = new URLSearchParams(settings.data);
+
+      if (xhr?.responseJSON?.status !== "success") return;
+      if (urlParams.get("action") !== "flagDeleted") return;
+
+      if (requestPayload.get("messageId") !== report.id) return;
+
+      if (!refresh) {
+        new Promise((r) => setTimeout(r, 100)).then(() => {
+          obj.deleteReports();
+        });
+      } else {
+        // window.dispatchEvent(new CustomEvent("ogi-spyTableReload"));
+      }
     });
   }
 }
