@@ -1396,6 +1396,24 @@ class OGInfinity {
     this.markedPlayers = [];
   }
 
+  #migrations() {
+    if (typeof OGIData.json.lifeformBonus.productionBonus === "undefined") {
+      console.log("test");
+      this.#updateData().then(() => console.log('done'));
+    }
+
+  }
+
+  async #updateData() {
+    this.loading();
+    this.updateServerSettings(true);
+    this.getAllianceClass();
+    this.initializeLFTypeName();
+    await this.updateEmpireData(true);
+    await this.updateLifeform();
+    document.querySelector(".ogl-dialog .close-tooltip").click();
+  }
+
   init() {
     this.json = OGIData.json;
     this.json.welcome = this.json.welcome === false ? false : true;
@@ -1536,6 +1554,7 @@ class OGInfinity {
     this.json.empire.forEach((planet, index) => {
       if (planet && this.current.id == planet.id) this.current.index = index;
     });
+    this.#migrations();
     this.saveData();
     document.querySelector("#pageContent").style.width = "1200px";
     this.listenKeyboard();
@@ -1656,7 +1675,7 @@ class OGInfinity {
   }
 
   async updateEmpireData(force = false) {
-    let timeSinceLastUpdate = new Date() - new Date(this.json.lastEmpireUpdate);
+    let timeSinceLastUpdate = new Date() - new Date(this.json?.lastEmpireUpdate);
     if (
       force ||
       isNaN(new Date(this.json.lastEmpireUpdate)) ||
@@ -3080,7 +3099,7 @@ class OGInfinity {
 
   async updateServerSettings(force = false) {
     const timeSinceServerTimeStamp =
-      document.querySelector("[name='ogame-timestamp']").content - this.json.serverSettingsTimeStamp;
+      document.querySelector("[name='ogame-timestamp']").content - this.json?.serverSettingsTimeStamp;
     if (timeSinceServerTimeStamp < 24 * 3600 && !force) return;
     let settingsUrl = `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/api/serverData.xml`;
     return fetch(settingsUrl)
@@ -16314,15 +16333,7 @@ class OGInfinity {
     );
     let srvDatasBtn = createDOM("button", { class: "btn_blue update" }, this.getTranslatedText(23));
     srvDatas.appendChild(srvDatasBtn);
-    srvDatasBtn.addEventListener("click", async () => {
-      this.loading();
-      this.updateServerSettings(true);
-      this.getAllianceClass();
-      this.initializeLFTypeName();
-      await this.updateEmpireData(true);
-      await this.updateLifeform();
-      document.querySelector(".ogl-dialog .close-tooltip").click();
-    });
+    srvDatasBtn.addEventListener("click", async () => await this.#updateData());
     dataDiv.appendChild(createDOM("hr"));
     let featureSettings = dataDiv.appendChild(createDOM("div", { style: "display: grid;" }));
     featureSettings.appendChild(createDOM("h1", {}, this.getTranslatedText(103)));
