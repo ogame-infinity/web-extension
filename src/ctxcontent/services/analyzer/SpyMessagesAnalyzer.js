@@ -118,6 +118,7 @@ class SpyMessagesAnalyzer {
     );
     if (options.spyTableEnable) enableTable.classList.add("ogl-active");
     enableTable.addEventListener("click", () => {
+      enableTable.classList.toggle("ogl-active");
       table.classList.toggle("ogl-hidden");
       options.spyTableEnable = !options.spyTableEnable;
       OGIData.options = options;
