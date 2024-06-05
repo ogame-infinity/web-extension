@@ -1,16 +1,13 @@
-let requestId = 0;
-
 function get(playerId) {
-  this.requestId++;
   return new Promise(function (resolve) {
     const listener = function (evt) {
-      if (evt.detail.requestId === requestId) {
+      if (evt.detail.player.name === playerId || evt.detail.player.id === playerId) {
         window.removeEventListener("ogi-players-rep", listener);
         resolve(evt.detail.player);
       }
     };
     window.addEventListener("ogi-players-rep", listener);
-    const payload = { requestId, id: playerId };
+    const payload = { id: playerId };
     window.dispatchEvent(new CustomEvent("ogi-players", { detail: payload }));
   });
 }
