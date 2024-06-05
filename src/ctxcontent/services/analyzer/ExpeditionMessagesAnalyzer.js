@@ -34,34 +34,6 @@ class ExpeditionMessagesAnalyzer {
   }
 
   #parseExpeditions() {
-    const expeditions = OGIData.expeditions;
-    const expeditionSums = OGIData.expeditionSums;
-    const options = OGIData.options;
-
-    if (!options.fixExpedition) {
-      for (let expeditionsKey in expeditions) {
-        if (new Date(expeditions[expeditionsKey].date) < new Date("2024-05-28")) continue;
-        if (new Date(expeditions[expeditionsKey].date) > new Date("2024-05-31")) continue;
-
-        delete expeditions[expeditionsKey];
-      }
-      OGIData.expeditions = expeditions;
-
-      for (let expeditionSumsKey in expeditionSums) {
-        const dateExploded = expeditionSumsKey.split(".");
-        const dateString = `20${dateExploded[2]}-${dateExploded[1]}-${dateExploded[0]}`;
-
-        if (new Date(dateString) < new Date("2024-05-28")) continue;
-        if (new Date(dateString) > new Date("2024-05-31")) continue;
-
-        delete expeditionSums[expeditionSumsKey];
-      }
-
-      options.fixExpedition = true;
-      OGIData.options = options;
-      OGIData.expeditionSums = expeditionSums;
-    }
-
     this.#getExpeditionsMessages().forEach((message) => {
       const expeditions = OGIData.expeditions;
       const expeditionSums = OGIData.expeditionSums;
