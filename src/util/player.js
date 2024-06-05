@@ -1,7 +1,4 @@
-let requestId = 0;
-
 function get(playerId) {
-  requestId++;
   return new Promise(function (resolve) {
     const listener = function (evt) {
       if (evt.detail.player.name === playerId || evt.detail.player.id === playerId) {
@@ -10,7 +7,7 @@ function get(playerId) {
       }
     };
     window.addEventListener("ogi-players-rep", listener);
-    const payload = { requestId, id: playerId };
+    const payload = { id: playerId };
     window.dispatchEvent(new CustomEvent("ogi-players", { detail: payload }));
   });
 }
