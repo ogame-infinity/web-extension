@@ -91,17 +91,25 @@ class SpyMessagesAnalyzer {
 
     if (!OGIData.options.spyTableEnable) table.classList.add("ogl-hidden");
 
+    const compare = (a, b) => {
+      if (isNaN(a)) a = -1;
+      if (isNaN(b)) b = -1;
+
+      return a - b;
+    };
+
     this.#spyReports.sort((a, b) => {
-      if (OGIData.options.spyFilter === "$") {
-        return b.renta - a.renta;
-      } else if (OGIData.options.spyFilter === "DATE") {
-        return a.deltaDate - b.deltaDate;
-      } else if (OGIData.options.spyFilter === "COORDS") {
-        return a.tmpCoords - b.tmpCoords;
-      } else if (OGIData.options.spyFilter === "FLEET") {
-        return b.fleet - a.fleet;
-      } else if (OGIData.options.spyFilter === "DEF") {
-        return b.defense - a.defense;
+      const spyFilter = OGIData.options.spyFilter;
+      if (spyFilter === "$") {
+        return compare(b.renta, a.renta);
+      } else if (spyFilter === "DATE") {
+        return compare(a.deltaDate, b.deltaDate);
+      } else if (spyFilter === "COORDS") {
+        return compare(a.tmpCoords, b.tmpCoords);
+      } else if (spyFilter === "FLEET") {
+        return compare(b.fleet, a.fleet);
+      } else if (spyFilter === "DEF") {
+        return compare(b.defense, a.defense);
       }
     });
 
