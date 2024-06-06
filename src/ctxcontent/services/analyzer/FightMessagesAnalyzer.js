@@ -107,7 +107,6 @@ class FightMessagesAnalyzer {
       OGIData.expeditionSums = expeditionSums;
     });
   }
-}
 
   #getFight() {
     const messages = [];
