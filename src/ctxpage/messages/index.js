@@ -2,6 +2,7 @@ import OGIObserver from "../../util/observer.js";
 import { getLogger } from "../../util/logger.js";
 import SpyMessagesAnalyzer from "../../ctxcontent/services/analyzer/SpyMessagesAnalyzer.js";
 import ExpeditionMessagesAnalyzer from "../../ctxcontent/services/analyzer/ExpeditionMessagesAnalyzer.js";
+import FlightMessagesAnalyzer from "../../ctxcontent/services/analyzer/FightMessagesAnalyzer.js";
 
 export const messagesTabs = Object.freeze({
   // Name: ID
@@ -26,7 +27,7 @@ class Messages {
     const obs = new OGIObserver();
     this.#logger = getLogger("messages");
 
-    this.#analyzers = [new SpyMessagesAnalyzer(), new ExpeditionMessagesAnalyzer()];
+    this.#analyzers = [new SpyMessagesAnalyzer(), new ExpeditionMessagesAnalyzer(), new FlightMessagesAnalyzer()];
 
     // Observe tab change
     obs(document.querySelector("#messagecontainercomponent"), (elements) => {
