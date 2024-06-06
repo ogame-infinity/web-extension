@@ -107,6 +107,7 @@ class FightMessagesAnalyzer {
       OGIData.expeditionSums = expeditionSums;
     });
   }
+}
 
   #getFight() {
     const messages = [];
@@ -155,7 +156,6 @@ class FightMessagesAnalyzer {
           draws: 0,
         };
       }
-
       combatsSums[datePoint].count += 1;
 
       const defendersSpaceObject = JSON.parse(

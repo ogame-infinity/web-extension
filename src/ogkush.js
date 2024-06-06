@@ -19,6 +19,7 @@ import * as popupUtil from "./util/popup.js";
 import markerui from "./util/markerui.js";
 import highlight, { setHighlightCoords } from "./util/highlightTarget.js";
 import OGIData from "./util/OGIData.js";
+import { tooltip } from "./util/tooltip.js";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 //const VERSION = "__VERSION__";
@@ -16930,13 +16931,17 @@ class OGInfinity {
                   const img = document.createElement("img");
                   img.src = movement.icon;
                   img.style = `position: initial !important; width: ${size}px; height: ${size}px; margin: 1px !important;`;
-                  img.title = "";
+                  const titleSum = createDOM("div");
                   movement.data.forEach((m, i) => {
                     const symbolDirection = m.direction === "go" ? "🡒" : "🡐";
                     const isLast = i == movement.data.length - 1;
-                    img.title += `${m.missionFleetTitle}: ${m.origin}[${m.originCoords}] ${symbolDirection} ${m.dest}[${
-                      m.destCoords
-                    }] @${m.arrivalTime}${!isLast ? "\n" : ""}`;
+                    const title = createDOM("div");
+                    title.textContent = `${m.missionFleetTitle}: ${m.origin}[${m.originCoords}] ${symbolDirection} 
+                    ${m.dest}[${m.destCoords}] @${m.arrivalTime}${!isLast ? "\n" : ""}`;
+                    titleSum.append(title);
+                  });
+                  img.addEventListener("ontouchstart" in document.documentElement ? "touchstart" : "mouseenter", () => {
+                    tooltip(img, titleSum);
                   });
                   div.appendChild(img);
                 }
