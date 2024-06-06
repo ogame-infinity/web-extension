@@ -6694,18 +6694,23 @@ table.fleetinfo tr:nth-child(odd) {
   box-shadow: inset 0 50px rgba(0, 0, 0, 0.4);
 }
 
+.loot-item > .metal + .loot-details,
 .ogl-metal,
 table.fleetinfo tr:nth-last-child(3),
 .hasLifeforms table.fleetinfo tr:nth-last-child(4) {
   color: #ffaacca1 !important;
 }
 
+
+.loot-item > .crystal + .loot-details,
 .ogl-crystal,
 table.fleetinfo tr:nth-last-child(2),
 .hasLifeforms table.fleetinfo tr:nth-last-child(3) {
   color: #73e5ffc7 !important;
 }
 
+
+.loot-item > .deuterium + .loot-details,
 .ogl-deut,
 table.fleetinfo tr:nth-last-child(1),
 .hasLifeforms table.fleetinfo tr:nth-last-child(2) {
