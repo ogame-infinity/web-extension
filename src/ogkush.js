@@ -11416,6 +11416,9 @@ class OGInfinity {
         ).planets;
         let hasMoon = false;
         for (let planet of planets) {
+          for (const key in Object.keys(planet)) {
+            if (planet[key] === "0") planet[key] = parseInt(planet[key]);
+          }
           for (const key in planet) {
             if (key.includes("html")) {
               delete planet[key];
@@ -11651,8 +11654,8 @@ class OGInfinity {
         */
 
         prodFactor =
-          (planet.production.hourly[idx] - baseProd) /
-          (totalProd + Math.min(crawlerProd * crawlerFactor, mineProd * this.json.resourceBuggyMaxProductionBoost));
+          Math.max(0, planet.production.hourly[idx] - baseProd) /
+          (totalProd + Math.min(crawlerProd * crawlerFactor, mineProd * this.json.resourceBuggyMaxProductionBoost)) || 0;
         prodFactor = Math.round(prodFactor * 100) / 100;
 
         crawlerProd = Math.min(
