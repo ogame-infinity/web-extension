@@ -16859,7 +16859,7 @@ class OGInfinity {
       flying.missionFleetIcon = cols[2].querySelector("img").src;
 
       // Get the mission title by removing the suffix "own fleet" and the "return" suffix (eg: "(R)")
-      flying.missionFleetTitle = cols[2].querySelector("img").title.trim();
+      flying.missionFleetTitle = cols[2].querySelector("img").getAttribute("data-tooltip-title").trim();
       if (flying.missionFleetTitle.includes("|"))
         flying.missionFleetTitle = flying.missionFleetTitle.split("|")[1].trim();
       if (flying.missionFleetTitle.includes("("))
