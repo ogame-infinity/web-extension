@@ -2114,7 +2114,7 @@ button.build-it_premium:hover {
 }
 
 div[data-raw-expeditionresult="shipwrecks"] + .messageDetails .loot-item .loot-details, 
-.messagesHolder .msg:has(div[data-raw-expeditionresult="shipwrecks"]) .loot-item .loot-details{
+.messagesHolder .msg div[data-raw-expeditionresult="shipwrecks"] ~ .content-box .loot-item .loot-details{
   justify-content: space-between;
 }
 
@@ -2122,6 +2122,23 @@ div[data-raw-expeditionresult="shipwrecks"] + .messageDetails .loot-item .loot-d
 .messageDetails .loot-item .loot-details .loot-name, 
 .messagesHolder .loot-item .loot-details .loot-name{
   margin-right: 1em;
+}
+
+
+div[data-raw-depletion="1"] + .msgHead a.txt_link{
+  color: #51af4e !important;
+}
+
+div[data-raw-depletion="2"] + .msgHead a.txt_link{
+  color: #d3c449 !important;
+}
+
+div[data-raw-depletion="3"] + .msgHead a.txt_link{
+  color: #d37649 !important;
+}
+
+div[data-raw-depletion="4"] + .msgHead a.txt_link{
+  color: #af4e96  !important;
 }
 
 
@@ -6753,8 +6770,11 @@ table.fleetinfo tr:nth-last-child(1),
   color: #a6e0b0 !important;
 }
 
-.msg group-title, .detail_msg group-title {
+.msg group-title{
   display: none;
+}
+.detail_msg group-title>group-title-label{
+  color: white;
 }
 
 .msg .content-box, .detail_msg .content-box {
