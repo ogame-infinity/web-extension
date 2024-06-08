@@ -17,6 +17,7 @@ const logger = getLogger("message-analyzer");
  * @this {OGInfinity}
  */
 function analyzer() {
+  return;
   if (this.page !== "messages") return;
 
   let normalized = ["Metal", "Crystal", "Deuterium", "AM"];
@@ -175,7 +176,7 @@ function analyzer() {
           msg.querySelector(".ogl-warning") ||
             msg.querySelector(".msg_actions").appendChild(
               createDOM("a", {
-                class: "ogl-warning tooltipRight ogl-tooltipReady ogl-tooltipInit",
+                class: "ogl-warning ogl-tooltipRight ogl-tooltipReady ogl-tooltipInit",
                 "data-title": this.getTranslatedText(114),
               })
             );

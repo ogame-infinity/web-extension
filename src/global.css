@@ -1740,6 +1740,10 @@ strong {
   font-weight: 800;
   color: #a6e0b0 !important;
 }
+#resourcesbarcomponent #resources_population.overmark,
+#resourcesbarcomponent #resources_food.overmark {
+  color: #99CC00 !important;
+}
 
 .ogk-time {
   color: #ffd700eb;
@@ -2361,7 +2365,7 @@ button.build-it_premium:hover {
   vertical-align: sub;
 }
 
-.ogl-spyTable tr:not(:first-child):hover {
+.ogl-spyTable tbody tr:hover {
   outline: 1px solid #ffc937;
 }
 
@@ -2451,8 +2455,8 @@ button.build-it_premium:hover {
   margin: 0 1px;
 }
 
-.ogl-spyTable .ogl-attacked td,
-.ogl-spyTable .ogl-attacked td:not(.ogl-spyOptions) a {
+.ogl-spyTable .ogi-attacked td,
+.ogl-spyTable .ogi-attacked td:not(.ogl-spyOptions) a {
   color: #f49cf5 !important;
 }
 
@@ -3604,7 +3608,7 @@ button.build-it_premium:hover {
 }
 
 #galaxyContent .cellPlanetName {
-  max-width: 162px;
+  max-width: 145px;
 }
 
 #galaxyContent .ctContentRow .cellMoon .moon,
@@ -6690,17 +6694,21 @@ table.fleetinfo tr:nth-child(odd) {
   box-shadow: inset 0 50px rgba(0, 0, 0, 0.4);
 }
 
+
 /* resources color default in tooltips */
+.loot-item > .metal + .loot-details,
 .ogl-metal,
 table.fleetinfo tr:nth-last-child(4) {
   color: #ffaacca1 !important;
 }
 
+.loot-item > .crystal + .loot-details,
 .ogl-crystal,
 table.fleetinfo tr:nth-last-child(3) {
   color: #73e5ffc7 !important;
 }
 
+.loot-item > .deuterium + .loot-details,
 .ogl-deut,
 table.fleetinfo tr:nth-last-child(2) {
   color: #a6e0b0 !important;
@@ -7269,7 +7277,7 @@ body:has(.food) table.fleetinfo tr:nth-last-child(1) {
 }
 
 .expeditionDebrisSlotBox div:first-of-type {
-  max-width: 221px;
+  max-width: 204px;
 }
 
 .expeditionDebrisSlotBox li {
@@ -8257,4 +8265,8 @@ table.flyingFleet td.friendly {
   left: 67px !important;
   top: 1px !important;
   z-index: auto;
+}
+
+div#eventboxFilled p.event_list {
+  position: relative;
 }
