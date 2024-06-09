@@ -2105,6 +2105,43 @@ button.build-it_premium:hover {
   background: linear-gradient(to bottom, #1c2934a3 30%, #000000a3 70%, transparent);
   padding: 70px 0;
 }
+
+
+
+.messageDetails .loot-item .loot-details, 
+.messagesHolder .loot-item .loot-details{
+  justify-content: left;
+}
+
+div[data-raw-expeditionresult="shipwrecks"] + .messageDetails .loot-item .loot-details, 
+.messagesHolder .msg div[data-raw-expeditionresult="shipwrecks"] ~ .content-box .loot-item .loot-details{
+  justify-content: space-between;
+}
+
+
+.messageDetails .loot-item .loot-details .loot-name, 
+.messagesHolder .loot-item .loot-details .loot-name{
+  margin-right: 1em;
+}
+
+
+div[data-raw-depletion="1"] + .msgHead a.txt_link{
+  color: #51af4e !important;
+}
+
+div[data-raw-depletion="2"] + .msgHead a.txt_link{
+  color: #d3c449 !important;
+}
+
+div[data-raw-depletion="3"] + .msgHead a.txt_link{
+  color: #d37649 !important;
+}
+
+div[data-raw-depletion="4"] + .msgHead a.txt_link{
+  color: #af4e96  !important;
+}
+
+
 .ogk-label{
   background-color: #111a21;
   color: #c7c96c;
@@ -2192,95 +2229,111 @@ button.build-it_premium:hover {
   background-color: transparent;
 }
 
-.msg.ogk-metal .msg_status,
-.msg_new.ogk-metal .msg_status {
-  background-color: #ffaacca1 !important;
+.msg.ogk-metal,
+.msg_new.ogk-metal {
+  border-left: 7px solid #ffaacca1 !important;
 }
 
-.msg.ogk-crystal .msg_status,
-.msg_new.ogk-crystal .msg_status {
-  background-color: #73e5ffc7 !important;
+.msg.ogk-crystal,
+.msg_new.ogk-crystal {
+  border-left: 7px solid #73e5ffc7 !important;
 }
 
-.msg.ogk-deuterium .msg_status,
-.msg_new.ogk-deuterium .msg_status {
-  background-color: #a6e0b0 !important;
+.msg.ogk-deuterium,
+.msg_new.ogk-deuterium {
+  border-left: 7px solid #a6e0b0 !important;
 }
 
-.msg.ogk-am .msg_status,
-.msg_new.ogk-am .msg_status {
-  background-color: #ddd !important;
+.msg.ogk-am,
+.msg_new.ogk-am {
+  border-left: 7px solid #ddd !important;
 }
 
-.msg.ogk-object .msg_status,
-.msg_new.ogk-object .msg_status {
-  background-color: #c08931 !important;
+.msg.ogk-object,
+.msg_new.ogk-object {
+  border-left: 7px solid #c08931 !important;
 }
 
-.msg.ogk-fleet .msg_status,
-.msg_new.ogk-fleet .msg_status {
-  background-color: #782c2f !important;
+.msg.ogk-fleet,
+.msg_new.ogk-fleet {
+  border-left: 7px solid #782c2f !important;
 }
 
-.msg.ogk-aliens .msg_status,
-.msg_new.ogk-aliens .msg_status {
-  background-color: #1e6900 !important;
+.msg.ogk-aliens,
+.msg_new.ogk-aliens {
+  border-left: 7px solid #1e6900 !important;
 }
 
-.msg.ogk-pirates .msg_status,
-.msg_new.ogk-pirates .msg_status {
-  background-color: #734a26 !important;
+.msg.ogk-pirates,
+.msg_new.ogk-pirates {
+  border-left: 7px solid #734a26 !important;
 }
 
-.msg.ogk-late .msg_status,
-.msg_new.ogk-late .msg_status {
-  background-color: #656565 !important;
+.msg.ogk-late,
+.msg_new.ogk-late {
+  border-left: 7px solid #656565 !important;
 }
 
-.msg.ogk-early .msg_status,
-.msg_new.ogk-early .msg_status {
-  background-color: #adadad !important;
+.msg.ogk-early,
+.msg_new.ogk-early {
+  border-left: 7px solid #adadad !important;
 }
 
-.msg.ogk-bhole .msg_status,
-.msg_new.ogk-bhole .msg_status {
-  background-color: #614bb1 !important;
+.msg.ogk-bhole,
+.msg_new.ogk-bhole {
+  border-left: 7px solid #614bb1 !important;
 }
 
-.msg.ogk-merchant .msg_status,
-.msg_new.ogk-merchant .msg_status {
-  background-color: #a0c02b !important;
+.msg.ogk-merchant,
+.msg_new.ogk-merchant {
+  border-left: 7px solid #a0c02b !important;
 }
 
-.msg.ogk-lifeform1 .msg_status,
-.msg_new.ogk-lifeform1 .msg_status {
-  background: linear-gradient(80deg, #ffffff 1%, #7fc200 60%) !important
+.msg.ogk-lifeform1,
+.msg_new.ogk-lifeform1 {
+  border-left: 7px solid linear-gradient(80deg, #ffffff 1%, #7fc200 60%) !important
 }
 
-.msg.ogk-lifeform2 .msg_status,
-.msg_new.ogk-lifeform2 .msg_status {
-  background: linear-gradient(80deg, #ffffff 1%, #ec752f 60%) !important;
+.msg.ogk-lifeform2,
+.msg_new.ogk-lifeform2 {
+  border-left: 7px solid linear-gradient(80deg, #ffffff 1%, #ec752f 60%) !important;
 }
 
-.msg.ogk-lifeform3 .msg_status,
-.msg_new.ogk-lifeform3 .msg_status {
-  background: linear-gradient(80deg, #ffffff 1%, #3c93f0 60%) !important;
+.msg.ogk-lifeform3,
+.msg_new.ogk-lifeform3 {
+  border-left: 7px solid linear-gradient(80deg, #ffffff 1%, #3c93f0 60%) !important;
 }
 
-.msg.ogk-lifeform4 .msg_status,
-.msg_new.ogk-lifeform4 .msg_status {
-  background: linear-gradient(80deg, #ffffff 1%, #9c64ed 60%) !important;
+.msg.ogk-lifeform4,
+.msg_new.ogk-lifeform4 {
+  border-left: 7px solid linear-gradient(80deg, #ffffff 1%, #9c64ed 60%) !important;
 }
 
-.msg.ogk-artefacts .msg_status,
-.msg_new.ogk-artefacts .msg_status {
-  background: linear-gradient(80deg, #ffffff 1%, #fdeca6 60%) !important;
+.msg.ogk-artefacts,
+.msg_new.ogk-artefacts {
+  border-left: 7px solid linear-gradient(80deg, #ffffff 1%, #fdeca6 60%) !important;
 }
 
-.msg.ogk-void .msg_status,
-.msg_new.ogk-void .msg_status {
-  background-color: #22303a !important;
+.msg.ogk-void,
+.msg_new.ogk-void {
+  border-left: 7px solid #22303a !important;
 }
+
+/*transport tab*/
+
+.msg:has(div[data-raw-messagetype="33"]) {
+  border-left: 7px solid #ee8856;
+}
+
+.msg:has(div[data-raw-messagetype="33"]):has(.player) {
+  border-left: 7px solid #dbee56;
+}
+
+.msg:has(div[data-raw-resourcesbefore]) {
+  border-left: none;
+}
+
+
 /* endregion: Expeditions Messages */
 
 .ogk-grid-discovery {
@@ -2310,29 +2363,29 @@ button.build-it_premium:hover {
   background-image: none !important;
 }
 
-.msg.ogk-expedition .msg_status,
-.msg_new.ogk-expedition .msg_status {
-  background-color: #3b5994 !important;
+.msg.ogk-expedition ,
+.msg_new.ogk-expedition  {
+  border-left: 7px solid #3b5994 !important;
 }
 
-.msg.ogk-harvest .msg_status,
-.msg_new.ogk-harvest .msg_status {
-  background-color: #0d6e2c !important;
+.msg.ogk-harvest ,
+.msg_new.ogk-harvest  {
+  border-left: 7px solid #0d6e2c !important;
 }
 
-.msg.ogk-combat .msg_status,
-.msg_new.ogk-combat .msg_status {
-  background-color: #d43635ba !important;
+.msg.ogk-combat ,
+.msg_new.ogk-combat  {
+  border-left: 7px solid #d43635ba !important;
 }
 
-.msg.ogk-combat-win .msg_status,
-.msg_new.ogk-combat-wib .msg_status {
-  background-color: #92b820bf !important;
+.msg.ogk-combat-win ,
+.msg_new.ogk-combat-wib  {
+  border-left: 7px solid #92b820bf !important;
 }
 
-.msg.ogk-combat-probes .msg_status,
-.msg_new.ogk-combat-probes .msg_status {
-  background-color: #bd9b2f !important;
+.msg.ogk-combat-probes ,
+.msg_new.ogk-combat-probes  {
+  border-left: 7px solid #bd9b2f !important;
 }
 
 .msg.ogk-combat-contact,
@@ -2340,9 +2393,9 @@ button.build-it_premium:hover {
   opacity: 0.75;
 }
 
-.msg.ogk-combat-draw .msg_status,
-.msg_new.ogk-combat-draw .msg_status {
-  background-color: #d29d00d9 !important;
+.msg.ogk-combat-draw ,
+.msg_new.ogk-combat-draw  {
+  border-left: 7px solid #d29d00d9 !important;
 }
 
 .msg_new .msg_status {
@@ -6712,6 +6765,19 @@ table.fleetinfo tr:nth-last-child(3) {
 .ogl-deut,
 table.fleetinfo tr:nth-last-child(2) {
   color: #a6e0b0 !important;
+}
+
+.msg group-title{
+  display: none;
+}
+.detail_msg group-title>group-title-label{
+  color: white;
+}
+
+.msg .content-box, .detail_msg .content-box {
+  min-height: 0px;
+  padding-top: 15px;
+  padding-bottom: 15px;
 }
 
 .ogl-food,
