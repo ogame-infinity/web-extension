@@ -18,6 +18,7 @@ import * as popupUtil from "./util/popup.js";
 import markerui from "./util/markerui.js";
 import highlight, { setHighlightCoords } from "./util/highlightTarget.js";
 import OGIData from "./util/OGIData.js";
+import languages from  "./languages/index.js";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 //const VERSION = "__VERSION__";
@@ -1398,10 +1399,8 @@ class OGInfinity {
 
   #migrations() {
     if (typeof OGIData.json.lifeformBonus.productionBonus === "undefined") {
-      console.log("test");
-      this.#updateData().then(() => console.log('done'));
+      this.#updateData().then(() => true);
     }
-
   }
 
   async #updateData() {
@@ -1493,6 +1492,9 @@ class OGInfinity {
     this.json.lifeformBonus = this.json.lifeformBonus || {};
     this.json.lifeformPlanetBonus = this.json.lifeformPlanetBonus || {};
     this.gameLang = document.querySelector('meta[name="ogame-language"]').getAttribute("content");
+
+    console.log(languages[this.gameLang] || languages["en"]);
+
     this.isLoading = false;
     this.autoQueue = new AutoQueue();
   }
@@ -13109,7 +13111,7 @@ class OGInfinity {
       `https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-full`,
       { priority: "high", method: "GET" }
     ).catch(() => {
-      return;
+
     });
     if (syncRequest?.ok) {
       try {
@@ -17887,7 +17889,7 @@ class OGInfinity {
           if (neededShips <= cargoShipsOnPlanet[cargoShip]) {
             selectedCargoShip = cargoShip;
             enoughCargo = true;
-            return;
+
           }
         }
       });
@@ -17904,7 +17906,7 @@ class OGInfinity {
             resources -= fleetDispatcher.fleetHelper.shipsData[ship].baseCargoCapacity * numShips;
             if (resources <= 0) {
               enoughCargo = true;
-              return;
+
             }
           }
         });
