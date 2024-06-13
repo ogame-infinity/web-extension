@@ -200,11 +200,17 @@ class SpyMessagesAnalyzer {
       });
     });
 
-    const cargoChoice = this.#cargoChoice();
     const cargoSpan = createDOM("span", {
       style: "display: flex;",
       class: `ogl-option ogl-fleet-ship choice ogl-fleet-${OGIData.options.spyFret}`,
     });
+
+    window.addEventListener("ogi-spyTable-defaultCargo", (e) => {
+      cargoSpan.classList.remove(`ogl-fleet-${e.detail.oldValue}`);
+      cargoSpan.classList.add(`ogl-fleet-${e.detail.newValue}`);
+    });
+
+    const cargoChoice = this.#cargoChoice();
 
     const cargo = createDOM("th", {
       style: " place-items: center; display: flex; height: 31px; place-content: center;",
@@ -251,10 +257,13 @@ class SpyMessagesAnalyzer {
 
     const saveDefaultCargo = (e) => {
       const options = OGIData.options;
+      const oldValue = options.spyFret;
       options.spyFret = parseInt(e.target.getAttribute("data-ship"));
       OGIData.options = options;
 
-      window.dispatchEvent(new CustomEvent("ogi-spyTableReload"));
+      window.dispatchEvent(
+        new CustomEvent("ogi-spyTable-defaultCargo", { detail: { oldValue, newValue: options.spyFret } })
+      );
     };
 
     smallCargo.addEventListener("click", saveDefaultCargo);
@@ -422,21 +431,30 @@ class SpyMessagesAnalyzer {
 
       const shipCol = createDOM("td");
       const splittedCoords = report.coords.split(":");
-      const shipId = OGIData.options.spyFret;
 
-      let shipCount = 0;
+      const shipColDisplay = () => {
+        shipCol.innerHTML = "";
 
-      if (parseInt(report.defense) === 0 && parseInt(report.fleet) === 0 && shipId === ship.EspionnageProbe) {
-        shipCount = report.pb;
-      }
+        const shipId = OGIData.options.spyFret;
 
-      if (shipId === ship.SmallCargo) shipCount = report.pt;
-      else if (shipId === ship.LargeCargo) shipCount = report.gt;
-      else if (shipId === ship.PathFinder) shipCount = report.pf;
+        let shipCount = 0;
 
-      const fleetLink = `?page=ingame&component=fleetdispatch&galaxy=${splittedCoords[0]}&system=${splittedCoords[1]}&position=${splittedCoords[2]}&type=${report.planetTargetType}&mission=1&am${shipId}=${shipCount}&oglMode=4`;
-      const shipLink = createDOM("a", { href: fleetLink }, toFormattedNumber(shipCount));
-      shipCol.appendChild(shipLink);
+        if (parseInt(report.defense) === 0 && parseInt(report.fleet) === 0 && shipId === ship.EspionnageProbe) {
+          shipCount = report.pb;
+        }
+
+        if (shipId === ship.SmallCargo) shipCount = report.pt;
+        else if (shipId === ship.LargeCargo) shipCount = report.gt;
+        else if (shipId === ship.PathFinder) shipCount = report.pf;
+
+        const fleetLink = `?page=ingame&component=fleetdispatch&galaxy=${splittedCoords[0]}&system=${splittedCoords[1]}&position=${splittedCoords[2]}&type=${report.planetTargetType}&mission=1&am${shipId}=${shipCount}&oglMode=4`;
+        const shipLink = createDOM("a", { href: fleetLink }, toFormattedNumber(shipCount));
+        shipCol.appendChild(shipLink);
+      };
+
+      window.addEventListener("ogi-spyTable-defaultCargo", () => shipColDisplay());
+
+      shipColDisplay();
       bodyRow.appendChild(shipCol);
 
       const colorsCol = createDOM("td");
@@ -601,28 +619,22 @@ class SpyMessagesAnalyzer {
       }
 
       bodyRow.appendChild(optCol);
+      const rentaDisplay = () => {
+        const renta = [];
+        for (let round = 0; round < 6; round++) {
+          renta[round] = Math.round((report.total * Math.pow(1 - report.loot / 100, round) * report.loot) / 100);
+        }
 
-      const renta = [];
-      const ships = [];
-      for (let round = 0; round < 6; round++) {
-        renta[round] = Math.round((report.total * Math.pow(1 - report.loot / 100, round) * report.loot) / 100);
-        ships[round] = calcNeededShips({
-          moreFret: true,
-          fret: OGIData.options.spyFret,
-          resources: Math.ceil((report.total * Math.pow(1 - report.loot / 100, round) * report.loot) / 100),
-        });
-      }
+        if (renta.length > 1) {
+          const line = gainCol.parentElement;
 
-      if (renta.length > 1)
-        gainCol.addEventListener("click", (e) => {
-          const line = e.target.parentElement;
           if (line.getAttribute("data") === "expanded") {
             line.setAttribute("data", "closed");
             document.querySelectorAll("tr.spyTable-extended").forEach((e) => e.remove());
 
             return;
           }
-          const expanded = document.querySelector("tr[data = 'expanded']");
+          const expanded = document.querySelector("tr[data='expanded']");
           if (expanded) {
             expanded.setAttribute("data", "closed");
             document.querySelectorAll("tr.spyTable-extended").forEach((e) => e.remove());
@@ -676,39 +688,58 @@ class SpyMessagesAnalyzer {
             extraLine.appendChild(createDOM("td"));
             extraLine.appendChild(createDOM("td"));
 
-            const extraFleetQueryParams = new URLSearchParams({
-              page: "ingame",
-              component: "fleetdispatch",
-              galaxy: splittedCoords[0],
-              system: splittedCoords[1],
-              position: splittedCoords[2],
-              type: report.planetTargetType,
-              mission: 1,
-              oglMode: 4,
-            });
-
-            // Use set to dynamic query key
-            extraFleetQueryParams.set(`am${shipId}`, ships[round]);
-
             const extraShip = extraLine.appendChild(createDOM("td"));
-            extraShip.appendChild(
-              createDOM(
-                "a",
-                {
-                  href:
-                    "https://" +
-                    window.location.host +
-                    window.location.pathname +
-                    "?" +
-                    extraFleetQueryParams.toString(),
-                },
-                toFormattedNumber(ships[round])
-              )
-            );
+
+            const displayExtraShip = () => {
+              extraShip.innerHTML = "";
+              const ships = [];
+
+              for (let round = 0; round < 6; round++) {
+                ships[round] = calcNeededShips({
+                  moreFret: true,
+                  fret: OGIData.options.spyFret,
+                  resources: Math.ceil((report.total * Math.pow(1 - report.loot / 100, round) * report.loot) / 100),
+                });
+              }
+
+              const extraFleetQueryParams = new URLSearchParams({
+                page: "ingame",
+                component: "fleetdispatch",
+                galaxy: splittedCoords[0],
+                system: splittedCoords[1],
+                position: splittedCoords[2],
+                type: report.planetTargetType,
+                mission: 1,
+                oglMode: 4,
+              });
+
+              // Use set to dynamic query key
+              extraFleetQueryParams.set(`am${OGIData.options.spyFret}`, ships[round]);
+
+              extraShip.appendChild(
+                createDOM(
+                  "a",
+                  {
+                    href: "?" + extraFleetQueryParams.toString(),
+                  },
+                  toFormattedNumber(ships[round])
+                )
+              );
+            };
+
+            displayExtraShip();
+
+            window.addEventListener("ogi-spyTable-defaultCargo", () => displayExtraShip());
+
             extraLine.appendChild(createDOM("td"));
             extraLine.appendChild(createDOM("td"));
           }
-        });
+        }
+      };
+
+      gainCol.addEventListener("click", () => {
+        rentaDisplay();
+      });
     });
 
     this.deleteReports();
