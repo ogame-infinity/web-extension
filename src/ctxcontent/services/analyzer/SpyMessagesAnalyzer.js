@@ -158,6 +158,7 @@ class SpyMessagesAnalyzer {
     autoDelete.addEventListener("click", () => {
       options.autoDeleteEnable = !options.autoDeleteEnable;
       OGIData.options = options;
+      this.clean(true);
       window.dispatchEvent(new CustomEvent("ogi-spyTableReload"));
     });
 
