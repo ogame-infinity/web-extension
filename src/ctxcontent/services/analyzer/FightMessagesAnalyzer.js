@@ -128,7 +128,7 @@ class FightMessagesAnalyzer {
   #parseFight() {
     this.#getFight().forEach((message) => {
       const combats = OGIData.combats;
-      const combatsSums = OGIData.comatsSum;
+      const combatsSums = OGIData.combatsSums;
       const msgId = message.getAttribute("data-msg-id");
 
       if (combats[msgId]) return;
@@ -156,6 +156,8 @@ class FightMessagesAnalyzer {
         };
       }
 
+      combatsSums[datePoint].count += 1;
+
       const defendersSpaceObject = JSON.parse(
         message.querySelector(".rawMessageData")?.getAttribute("data-raw-defenderspaceobject")
       );
@@ -176,11 +178,17 @@ class FightMessagesAnalyzer {
       if (isDraw) combatsSums[datePoint].draws += 1;
 
       const resources = result.loot.resources;
+
+      result.totalValueOfUnitsLost.forEach((side) => {
+        if (accountIsDefender && side.side === "attacker") ennemy.losses = side.value;
+        if (!accountIsDefender && side.side === "defender") ennemy.losses = side.value;
+      });
+
       const topCombat = {
         debris:
-          parseInt(result.debris?.[0].total || 0) +
-          parseInt(result.debris?.[1].total || 0) +
-          parseInt(result.debris?.[2].total || 0),
+          parseInt(result.debris.resources?.[0].total || 0) +
+          parseInt(result.debris.resources?.[1]?.total || 0) +
+          parseInt(result.debris.resources?.[2]?.total || 0),
         loot: (resources?.[0].amount + resources?.[1].amount + resources?.[2].amount) * (accountIsWinner ? 1 : -1),
         ennemi: ennemy?.name,
         losses: ennemy?.losses,
@@ -210,7 +218,33 @@ class FightMessagesAnalyzer {
         isProbes: false,
       };
 
-      console.log(combats[msgId], datePoint, combatsSums[datePoint]);
+      const rounds = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-combatrounds"));
+
+      const lastRound = rounds.pop();
+      let accountRoundFleets;
+
+      lastRound?.fleets.forEach((side) => {
+        if (side.side === "defender" && accountIsDefender) {
+          accountRoundFleets = side?.technologies;
+        }
+
+        if (side.side === "attacker" && !accountIsDefender) {
+          accountRoundFleets = side?.technologies;
+        }
+      });
+
+      accountRoundFleets.forEach((fleet) => {
+        if (fleet.destroyedTotal === 0) return;
+
+        if (!combatsSums[datePoint].losses[fleet.technologyId]) {
+          combatsSums[datePoint].losses[fleet.technologyId] = 0;
+        }
+
+        combatsSums[datePoint].losses[fleet.technologyId] += fleet.destroyedTotal;
+      });
+
+      OGIData.combats = combats;
+      OGIData.combatsSums = combatsSums;
     });
   }
 }

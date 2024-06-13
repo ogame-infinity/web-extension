@@ -113,7 +113,27 @@ class OGIData {
 
   set welcome(welcome) {
     this._json.welcome = welcome;
-  
+
+    this.#save();
+  }
+
+  get combats() {
+    return this._json.combats;
+  }
+
+  set combats(combats) {
+    this._json.combats = combats;
+
+    this.#save();
+  }
+
+  get combatsSums() {
+    return this._json.combatsSums;
+  }
+
+  set combatsSums(combatsSums) {
+    this._json.combatsSums = combatsSums;
+
     this.#save();
   }
 
