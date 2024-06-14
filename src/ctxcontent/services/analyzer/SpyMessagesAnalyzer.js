@@ -62,7 +62,7 @@ class SpyMessagesAnalyzer {
 
       const report = new SpyReport(message);
 
-      this.#spyReports.push(report);
+      this.#spyReports[report.id] = report;
     });
 
     if (this.#spyReports.length === 0) return;
@@ -90,28 +90,6 @@ class SpyMessagesAnalyzer {
     }
 
     if (!OGIData.options.spyTableEnable) table.classList.add("ogl-hidden");
-
-    const compare = (a, b) => {
-      if (isNaN(a)) a = -1;
-      if (isNaN(b)) b = -1;
-
-      return a - b;
-    };
-
-    this.#spyReports.sort((a, b) => {
-      const spyFilter = OGIData.options.spyFilter;
-      if (spyFilter === "$") {
-        return compare(b.renta, a.renta);
-      } else if (spyFilter === "DATE") {
-        return compare(a.deltaDate, b.deltaDate);
-      } else if (spyFilter === "COORDS") {
-        return compare(a.tmpCoords, b.tmpCoords);
-      } else if (spyFilter === "FLEET") {
-        return compare(b.fleet, a.fleet);
-      } else if (spyFilter === "DEF") {
-        return compare(b.defense, a.defense);
-      }
-    });
 
     this.#spyTableBody(table);
   }
@@ -298,7 +276,32 @@ class SpyMessagesAnalyzer {
     const row = body.querySelectorAll("tr").length;
     let index = 0;
 
-    this.#spyReports.forEach((report) => {
+
+    const compare = (a, b) => {
+      if (isNaN(a)) a = -1;
+      if (isNaN(b)) b = -1;
+
+      return a - b;
+    };
+
+    const reports = Object.values(this.#spyReports);
+
+    const spyFilter = OGIData.options.spyFilter;
+    reports.sort((a, b) => {
+      if (spyFilter === "$") {
+        return compare(b.renta, a.renta);
+      } else if (spyFilter === "DATE") {
+        return compare(a.deltaDate, b.deltaDate);
+      } else if (spyFilter === "COORDS") {
+        return compare(a.tmpCoords, b.tmpCoords);
+      } else if (spyFilter === "FLEET") {
+        return compare(b.fleet, a.fleet);
+      } else if (spyFilter === "DEF") {
+        return compare(b.defense, a.defense);
+      }
+    });
+
+    reports.forEach((report) => {
       let bodyRow = body.querySelector(`[data-report-id="${report.id}"]`);
 
       if (bodyRow) {
