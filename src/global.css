@@ -8336,3 +8336,15 @@ table.flyingFleet td.friendly {
 div#eventboxFilled p.event_list {
   position: relative;
 }
+
+div.ogi-movement > div,
+div.ogi-movement > div > div {
+  display: grid;
+  align-content: center;
+  justify-content: center;
+  min-height: 20px;
+}
+
+div.ogi-movement > div {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}

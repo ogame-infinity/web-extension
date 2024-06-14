@@ -16849,14 +16849,11 @@ class OGInfinity {
       const cols = row.querySelectorAll("td");
 
       const flying = {};
-      if (!row.classList.contains("partnerInfo")) {
-        flying.arrivalTime = cols[1].textContent;
-      } else {
-        const union = Array.from(row.classList)
-          .find((cl) => cl.includes("union"))
-          .split("union")[1];
-        flying.arrivalTime = unionArrivalTime[union];
-      }
+      const timestamp = row.getAttribute("data-arrival-time");
+      const date = new Date();
+      date.setTime(timestamp * 1000);
+
+      flying.arrivalTime = date.toLocaleTimeString();
       flying.missionFleetIcon = cols[2].querySelector("img").src;
 
       // Get the mission title by removing the suffix "own fleet" and the "return" suffix (eg: "(R)")
@@ -16920,31 +16917,53 @@ class OGInfinity {
                 direction: rtl;
               `;
               planetKoordsEl.parentNode.parentNode.appendChild(div);
+
+              const movementTooltip = DOM.createDOM("div", { class: "ogi-movement" });
+              const movementTooltipHeader = DOM.createDOM("div");
+
+              movementTooltipHeader.appendChild(DOM.createDOM("div", {}, "Type"));
+              movementTooltipHeader.appendChild(DOM.createDOM("div", {}, "Target"));
+              movementTooltipHeader.appendChild(DOM.createDOM("div", {}, "Time"));
+
+              movementTooltip.appendChild(movementTooltipHeader);
+
               Object.keys(movements).forEach((movementKey, i) => {
                 if (i < 8) {
+                  const movementTooltipRow = DOM.createDOM("div");
                   const nbrMovements = Object.keys(movements).length;
                   const movement = movements[movementKey];
                   let size = sizeDiv;
                   if (nbrMovements > 2) {
                     size = size / 2;
                   }
-                  const img = document.createElement("img");
+                  const img = DOM.createDOM("img");
                   img.src = movement.icon;
-                  img.style = `position: initial !important; width: ${size}px; height: ${size}px; margin: 1px !important;`;
-                  const titleSum = createDOM("div");
-                  movement.data.forEach((m, i) => {
+                  movement.data.forEach((m) => {
                     const symbolDirection = m.direction === "go" ? "🡒" : "🡐";
-                    const isLast = i == movement.data.length - 1;
-                    const title = createDOM("div");
-                    title.textContent = `${m.missionFleetTitle}: ${m.origin}[${m.originCoords}] ${symbolDirection} 
-                    ${m.dest}[${m.destCoords}] @${m.arrivalTime}${!isLast ? "\n" : ""}`;
-                    titleSum.append(title);
+
+                    const rowType = DOM.createDOM("div");
+                    rowType.appendChild(img.cloneNode(true));
+                    movementTooltipRow.appendChild(rowType);
+
+                    const rowTarget = DOM.createDOM("div");
+                    rowTarget.appendChild(DOM.createDOM("span", {}, `${symbolDirection} ${m.dest}[${m.destCoords}]`));
+                    movementTooltipRow.appendChild(rowTarget);
+
+                    const rowTime = DOM.createDOM("div");
+                    rowTime.appendChild(DOM.createDOM("span", {}, `${m.arrivalTime}`));
+                    movementTooltipRow.appendChild(rowTime);
                   });
-                  img.addEventListener("ontouchstart" in document.documentElement ? "touchstart" : "mouseenter", () => {
-                    tooltip(img, titleSum);
-                  });
+
+                  img.style = `position: initial !important; width: ${size}px; height: ${size}px; margin: 1px !important;`;
+                  movementTooltip.append(movementTooltipRow);
+
                   div.appendChild(img);
                 }
+              });
+
+
+              div.addEventListener("ontouchstart" in document.documentElement ? "touchstart" : "mouseenter", () => {
+                tooltip(div, movementTooltip, true, false, 50);
               });
             }
           });

@@ -153,8 +153,9 @@ export class SpyReport {
     }
 
     // Date
-    const rawDate = message.getAttribute("data-messages-filters-datetime").split(/\.| /g);
-    this._cleanDate = new Date(`${rawDate[2]}-${rawDate[1]}-${rawDate[0]} ${rawDate[3]}`);
+    const timestamp = message.querySelector(".rawMessageData").getAttribute("data-raw-datetime");
+    this._cleanDate = new Date();
+    this._cleanDate.setTime(timestamp * 1000);
     this._deltaDate = Date.now() - this._cleanDate;
 
     const minutes = this._deltaDate / 6e4;
