@@ -186,7 +186,7 @@ class FightMessagesAnalyzer {
 
       const topCombat = {
         debris:
-          parseInt(result.debris.resources?.[0].total || 0) +
+          parseInt(result.debris.resources?.[0]?.total || 0) +
           parseInt(result.debris.resources?.[1]?.total || 0) +
           parseInt(result.debris.resources?.[2]?.total || 0),
         loot: (resources?.[0].amount + resources?.[1].amount + resources?.[2].amount) * (accountIsWinner ? 1 : -1),
@@ -221,7 +221,7 @@ class FightMessagesAnalyzer {
       const rounds = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-combatrounds"));
 
       const lastRound = rounds.pop();
-      let accountRoundFleets;
+      let accountRoundFleets = [];
 
       lastRound?.fleets.forEach((side) => {
         if (side.side === "defender" && accountIsDefender) {
