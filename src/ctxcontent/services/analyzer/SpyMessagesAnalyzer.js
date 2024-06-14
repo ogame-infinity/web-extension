@@ -90,7 +90,7 @@ class SpyMessagesAnalyzer {
 
       const report = new SpyReport(message);
 
-      this.#spyReports[report.id] = report;
+      this.#spyReports.push(report);
     });
 
     if (this.#spyReports.length === 0) return;
