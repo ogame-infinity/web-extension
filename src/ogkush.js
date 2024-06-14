@@ -16853,6 +16853,8 @@ class OGInfinity {
       const date = new Date();
       date.setTime(timestamp * 1000);
 
+      flying.missionType = row.getAttribute("data-mission-type");
+      flying.date = timestamp;
       flying.arrivalTime = date.toLocaleTimeString();
       flying.missionFleetIcon = cols[2].querySelector("img").src;
 
@@ -16864,6 +16866,7 @@ class OGInfinity {
         flying.missionFleetTitle = flying.missionFleetTitle.split("(")[0].trim();
 
       flying.origin = cols[3].textContent.trim();
+      flying.originMoon = !!cols[3].querySelector('.moon');
       flying.originCoords = cols[4].textContent.replace("[", "").replace("]", "").trim();
       flying.originLink = cols[4].querySelector("a").href;
       flying.fleetCount = cols[5].textContent;
@@ -16879,6 +16882,8 @@ class OGInfinity {
       );
 
       flying.dest = cols[7].textContent.trim();
+      flying.destMoon = cols[7].querySelector('.moon');
+      flying.destDebris = cols[7].querySelector('.tf');
       flying.destCoords = cols[8].textContent.replace("[", "").replace("]", "").trim();
       flying.destLink = cols[8].querySelector("a").href;
       if (!FLYING_PER_PLANETS[flying.originCoords]) FLYING_PER_PLANETS[flying.originCoords] = {};
@@ -16921,15 +16926,13 @@ class OGInfinity {
               const movementTooltip = DOM.createDOM("div", { class: "ogi-movement" });
               const movementTooltipHeader = DOM.createDOM("div");
 
-              movementTooltipHeader.appendChild(DOM.createDOM("div", {}, "Type"));
-              movementTooltipHeader.appendChild(DOM.createDOM("div", {}, "Target"));
-              movementTooltipHeader.appendChild(DOM.createDOM("div", {}, "Time"));
+              movementTooltip.appendChild(DOM.createDOM("div", {}, "Type"));
+              movementTooltip.appendChild(DOM.createDOM("div", {}, "Target"));
+              movementTooltip.appendChild(DOM.createDOM("div", {}, "Time"));
 
-              movementTooltip.appendChild(movementTooltipHeader);
-
+              const movementsList = [];
               Object.keys(movements).forEach((movementKey, i) => {
                 if (i < 8) {
-                  const movementTooltipRow = DOM.createDOM("div");
                   const nbrMovements = Object.keys(movements).length;
                   const movement = movements[movementKey];
                   let size = sizeDiv;
@@ -16938,32 +16941,70 @@ class OGInfinity {
                   }
                   const img = DOM.createDOM("img");
                   img.src = movement.icon;
-                  movement.data.forEach((m) => {
-                    const symbolDirection = m.direction === "go" ? "🡒" : "🡐";
 
-                    const rowType = DOM.createDOM("div");
-                    rowType.appendChild(img.cloneNode(true));
-                    movementTooltipRow.appendChild(rowType);
-
-                    const rowTarget = DOM.createDOM("div");
-                    rowTarget.appendChild(DOM.createDOM("span", {}, `${symbolDirection} ${m.dest}[${m.destCoords}]`));
-                    movementTooltipRow.appendChild(rowTarget);
-
-                    const rowTime = DOM.createDOM("div");
-                    rowTime.appendChild(DOM.createDOM("span", {}, `${m.arrivalTime}`));
-                    movementTooltipRow.appendChild(rowTime);
-                  });
+                  movement.data.forEach((m) => { movementsList.push({ ...m, img: img.cloneNode(true), }); });
 
                   img.style = `position: initial !important; width: ${size}px; height: ${size}px; margin: 1px !important;`;
-                  movementTooltip.append(movementTooltipRow);
 
                   div.appendChild(img);
                 }
               });
 
+              movementsList.sort((a, b) => {
+                if (a.date < b.date) return -1;
+                if (a.date > b.date) return 1;
+                return 0;
+              });
+
+              movementsList.forEach((m) => {
+                const symbolDirection = m.direction === "go" ? "🡒" : "🡐";
+
+                const rowType = DOM.createDOM("div");
+                rowType.appendChild(m.img);
+                movementTooltip.appendChild(rowType);
+
+                const rowTarget = DOM.createDOM("div", { class: "ogi-movement-target" });
+                const fromMoon = DOM.createDOM("div");
+                const rowTargetDirection = DOM.createDOM("div", {} , symbolDirection);
+                const rowTargetCoords = DOM.createDOM("div", { class: "ogi-movement-target-coords" });
+
+                const coordsSpan = rowTargetCoords.appendChild(DOM.createDOM("span", {}, m.destCoords));
+
+                if (parseInt(m.missionType) === 8) {
+                  coordsSpan.classList.add("ogk-coords-debris");
+                } else if (parseInt(m.missionType) === 3) {
+                  coordsSpan.classList.add("ogk-coords-neutral");
+                } else if (parseInt(m.missionType) === 6 || parseInt(m.missionType) === 1) {
+                  coordsSpan.classList.add("ogk-coords-hostile");
+                } else if (parseInt(m.missionType) === 15) {
+                  coordsSpan.classList.add("ogk-coords-expedition");
+                }
+
+                if (m.originMoon) {
+                  fromMoon.appendChild(DOM.createDOM("figure", { class: "planetIcon moon"} ));
+                }
+
+                if (m.destMoon) {
+                  rowTargetCoords.appendChild(DOM.createDOM("figure", { class: "planetIcon moon"} ));
+                }
+
+                if (m.destDebris) {
+                  rowTargetCoords.appendChild(DOM.createDOM("figure", { class: "planetIcon tf"} ));
+                }
+                
+                rowTarget.appendChild(fromMoon);
+                rowTarget.appendChild(rowTargetDirection);
+                rowTarget.appendChild(rowTargetCoords);
+                
+                movementTooltip.appendChild(rowTarget);
+
+                const rowTime = DOM.createDOM("div");
+                rowTime.appendChild(DOM.createDOM("span", {}, `${m.arrivalTime}`));
+                movementTooltip.appendChild(rowTime);
+              });
 
               div.addEventListener("ontouchstart" in document.documentElement ? "touchstart" : "mouseenter", () => {
-                tooltip(div, movementTooltip, true, false, 50);
+                tooltip(div, movementTooltip, true, { bottom: true}, 50);
               });
             }
           });
