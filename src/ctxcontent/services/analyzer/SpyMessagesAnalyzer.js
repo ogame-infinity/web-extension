@@ -237,9 +237,14 @@ class SpyMessagesAnalyzer {
       cargoSpan.classList.remove(`ogl-fleet-${oldValue}`);
       cargoSpan.classList.add(`ogl-fleet-${options.spyFret}`);
 
-      window.dispatchEvent(
-        new CustomEvent("ogi-spyTable-defaultCargo", { detail: { oldValue, newValue: options.spyFret } })
-      );
+      document.querySelectorAll(".ogl-cargo-choice").forEach((el) => {
+        const coords = el.getAttribute("data-coords");
+        const planetTargetType = el.getAttribute("data-planet-target-type");
+        const value = el.getAttribute(`data-ship-${e.detail.newValue}`);
+        const fleetLink = this.#fleetDispatchLink(coords, planetTargetType, e.detail.newValue, value);
+        el.querySelector("a").href = `?${fleetLink.toString()}`;
+        el.querySelector("a").textContent = toFormattedNumber(parseInt(value));
+      });
     };
 
     smallCargo.addEventListener("click", saveDefaultCargo);
@@ -765,11 +770,9 @@ class SpyMessagesAnalyzer {
 
       gainCol.addEventListener("click", () => {
         rentaDisplay();
-        cargoChoiceListener();
       });
     });
 
-    cargoChoiceListener();
     this.deleteReports();
   }
 
