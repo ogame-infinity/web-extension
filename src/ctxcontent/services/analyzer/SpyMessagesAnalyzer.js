@@ -57,16 +57,6 @@ class SpyMessagesAnalyzer {
     this.#messageCallable = messageCallable;
     this.#onTrash = !!document.querySelector('.messagesTrashcanBtns button.custom_btn[disabled="disabled"]');
 
-    this.#messageCallable().forEach((message) => {
-      if (!this.#isReport(message)) return;
-
-      const report = new SpyReport(message);
-
-      this.#spyReports.push(report);
-    });
-
-    if (this.#spyReports.length === 0) return;
-
     this.#displaySpyTable();
   }
 
@@ -89,7 +79,21 @@ class SpyMessagesAnalyzer {
       this.#spyTableHeader(table);
     }
 
-    if (!OGIData.options.spyTableEnable) table.classList.add("ogl-hidden");
+    if (!OGIData.options.spyTableEnable) {
+      table.classList.add("ogl-hidden");
+
+      return;
+    }
+
+    this.#messageCallable().forEach((message) => {
+      if (!this.#isReport(message)) return;
+
+      const report = new SpyReport(message);
+
+      this.#spyReports[report.id] = report;
+    });
+
+    if (this.#spyReports.length === 0) return;
 
     const compare = (a, b) => {
       if (isNaN(a)) a = -1;
@@ -130,6 +134,8 @@ class SpyMessagesAnalyzer {
       table.classList.toggle("ogl-hidden");
       options.spyTableEnable = !options.spyTableEnable;
       OGIData.options = options;
+
+      window.dispatchEvent(new CustomEvent("ogi-spyTableReload"));
     });
 
     const appendOption = tableOptions.appendChild(
