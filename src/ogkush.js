@@ -3,6 +3,7 @@ import { initConfOptions, getOptions } from "./ctxpage/conf-options.js";
 import ctxMessageAnalyzer from "./ctxpage/messages-analyzer/index.js";
 import * as DOM from "./util/dom.js";
 import { getLogger } from "./util/logger.js";
+import itemImageID from "./util/enum/itemImageID.js";
 import * as Numbers from "./util/numbers.js";
 import { pageContextInit, pageContextRequest } from "./util/service.callbackEvent.js";
 import * as ptreService from "./util/service.ptre.js";
@@ -11419,7 +11420,7 @@ class OGInfinity {
             if (planet[key] === "0") planet[key] = parseInt(planet[key]);
           }
           for (const key in planet) {
-            if (key.includes("html")) {
+            if (key.includes("html") && key !== "equipment_html") {
               delete planet[key];
             }
           }
@@ -11577,6 +11578,17 @@ class OGInfinity {
         3: 0,
       };
 
+      // parse active production items
+      const activeItems = [0, 0, 0, 0];
+      const html = new window.DOMParser().parseFromString(planet.equipment_html, "text/html");
+      const itemDivs = html.querySelectorAll(".item_img");
+      itemDivs.forEach((div) => {
+        const style = div.getAttribute("style");
+        const id = style.substring(style.indexOf("images/") + 7, style.indexOf("-small"));
+        const item = itemImageID[id];
+        if (item) activeItems[item.resource] = item.bonus;
+      });
+
       //console.log("planet: " + planet.coordinates);
 
       // TODO: compute energy detailed production if used
@@ -11589,9 +11601,7 @@ class OGInfinity {
         const geoProd = mineProd * (this.geologist ? GEOLOGIST_RESOURCE_BONUS : 0);
         const officerProd = mineProd * (this.allOfficers ? OFFICER_RESOURCE_BONUS : 0);
         const allyClassProd = mineProd * (this.json.allianceClass == ALLY_CLASS_MINER ? TRADER_RESOURCE_BONUS : 0);
-
-        // TODO: compute items production
-        let itemProd = 0;
+        const itemProd = mineProd * activeItems[idx];
 
         const lifeformBonus = this.json.lifeformBonus;
         const playerClassProd =
