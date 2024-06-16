@@ -1399,9 +1399,8 @@ class OGInfinity {
   #migrations() {
     if (typeof OGIData.json.lifeformBonus.productionBonus === "undefined") {
       console.log("test");
-      this.#updateData().then(() => console.log('done'));
+      this.#updateData().then(() => console.log("done"));
     }
-
   }
 
   async #updateData() {
@@ -11655,7 +11654,8 @@ class OGInfinity {
 
         prodFactor =
           Math.max(0, planet.production.hourly[idx] - baseProd) /
-          (totalProd + Math.min(crawlerProd * crawlerFactor, mineProd * this.json.resourceBuggyMaxProductionBoost)) || 0;
+            (totalProd + Math.min(crawlerProd * crawlerFactor, mineProd * this.json.resourceBuggyMaxProductionBoost)) ||
+          0;
         prodFactor = Math.round(prodFactor * 100) / 100;
 
         crawlerProd = Math.min(
@@ -12865,8 +12865,8 @@ class OGInfinity {
       });
       const debris16 = document.querySelector(".expeditionDebrisSlotBox #expeditionDebris");
       if (debris16 && !debris16.classList.contains("ogl-done")) {
-        debris16.classList.add("ogl-done");   
-        const div = DOM.createDOM("div", { class: "cellDebris microdebris debris_1" });  
+        debris16.classList.add("ogl-done");
+        const div = DOM.createDOM("div", { class: "cellDebris microdebris debris_1" });
         let total = 0;
         let i = 0;
         let classResources = ["ogl-metal", "ogl-crystal", "ogl-deut"];
@@ -18130,7 +18130,6 @@ function versionInStatusBar() {
       const obs = new OGIObserver();
       // Observe tab change
       obs(document.querySelector(".tabs_wrap.js_tabs"), (elements) => {
-
         elements.forEach((element) => {
           // We want only if nodes has been added
           if (!element.addedNodes) return;
