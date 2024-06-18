@@ -4527,6 +4527,7 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link{
   border-top: 1px solid #333;
 }
 
+div.ogi-movement .ogi-movement-target .ogi-movement-target-coords .ogk-own-coords,
 #eventContent .ogk-own-coords {
   color: #6f9fc8 !important;
 }

@@ -20,6 +20,7 @@ import markerui from "./util/markerui.js";
 import highlight, { setHighlightCoords } from "./util/highlightTarget.js";
 import OGIData from "./util/OGIData.js";
 import { tooltip } from "./util/tooltip.js";
+import missionType from "./util/enum/missionType.js";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 //const VERSION = "__VERSION__";
@@ -16965,18 +16966,37 @@ class OGInfinity {
 
                 const rowTarget = DOM.createDOM("div", { class: "ogi-movement-target" });
                 const fromMoon = DOM.createDOM("div");
-                const rowTargetDirection = DOM.createDOM("div", {} , symbolDirection);
+                const rowTargetDirection = DOM.createDOM("div", {}, symbolDirection);
                 const rowTargetCoords = DOM.createDOM("div", { class: "ogi-movement-target-coords" });
 
                 const coordsSpan = rowTargetCoords.appendChild(DOM.createDOM("span", {}, m.destCoords));
 
-                if (parseInt(m.missionType) === 8) {
+                if (parseInt(m.missionType) === missionType.HARVEST) {
                   coordsSpan.classList.add("ogk-coords-debris");
-                } else if (parseInt(m.missionType) === 3) {
+                } else if (parseInt(m.missionType) === missionType.DEPLOYMENT) {
+                  coordsSpan.classList.add("ogk-own-coords");
+                } else if (
+                  [
+                    missionType.TRANSPORT,
+                    missionType.EXPLORATION,
+                    missionType.ACS_DEFEND,
+                    missionType.COLONISATION,
+                  ].includes(parseInt(m.missionType))
+                ) {
                   coordsSpan.classList.add("ogk-coords-neutral");
-                } else if (parseInt(m.missionType) === 6 || parseInt(m.missionType) === 1) {
+                } else if (
+                  [
+                    missionType.MOON_DESTRUCTION,
+                    missionType.ATTACK,
+                    missionType.MISSILE_ATTACK,
+                    missionType.ACS_ATTACK,
+                    missionType.SPY
+                  ].includes(
+                    parseInt(m.missionType)
+                  )
+                ) {
                   coordsSpan.classList.add("ogk-coords-hostile");
-                } else if (parseInt(m.missionType) === 15) {
+                } else if ([missionType.EXPEDITION].includes(parseInt(m.missionType))) {
                   coordsSpan.classList.add("ogk-coords-expedition");
                 }
 
@@ -16991,11 +17011,11 @@ class OGInfinity {
                 if (m.destDebris) {
                   rowTargetCoords.appendChild(DOM.createDOM("figure", { class: "planetIcon tf"} ));
                 }
-                
+
                 rowTarget.appendChild(fromMoon);
                 rowTarget.appendChild(rowTargetDirection);
                 rowTarget.appendChild(rowTargetCoords);
-                
+
                 movementTooltip.appendChild(rowTarget);
 
                 const rowTime = DOM.createDOM("div");
