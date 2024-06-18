@@ -13433,7 +13433,7 @@ class OGInfinity {
       cost.push(RESEARCH_INFO[id].baseCost[3] * Math.pow(RESEARCH_INFO[id].factorEnergy, lvl - 1));
     let time = ((cost[0] + cost[1]) / (this.json.speed * 1000 * (1 + labLvl)) / this.json.researchDivisor) * 3600;
     if (technocrat) time -= time * 0.25;
-    if (explorer) time -= time * 0.25;
+    if (explorer) time -= time * 0.25 * (1 + this.json.lifeformBonus.classBonus.explorer);
     if (acceleration) time -= time * 0.25;
     if (RESEARCH_INFO[id].factorTime)
       time = (RESEARCH_INFO[id].baseTime * Math.pow(RESEARCH_INFO[id].factorTime, lvl) * lvl) / this.json.speed;
