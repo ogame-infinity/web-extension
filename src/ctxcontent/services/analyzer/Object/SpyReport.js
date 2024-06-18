@@ -130,6 +130,7 @@ export class SpyReport {
 
     const fleet = message.getAttribute("data-messages-filters-fleet");
     const defense = message.getAttribute("data-messages-filters-defense");
+    const regExp = new RegExp(`[\\d${LocalizationStrings["thousandSeperator"]}]+`);
 
     if (fleet === "-") {
       this._fleet = "No data";
@@ -137,10 +138,7 @@ export class SpyReport {
       this._fleet = "0";
     } else {
       this._fleet = cleanValue(
-        message
-          .querySelector(".fleetInfo > .shipsTotal")
-          ?.getAttribute("data-tooltip-title")
-          .match(/[\d.]+/)[0]
+        regExp.exec(message.querySelector(".fleetInfo > .shipsTotal")?.getAttribute("data-tooltip-title"))?.[0]
       );
     }
 
@@ -150,10 +148,7 @@ export class SpyReport {
       this._defense = "0";
     } else {
       this._defense = cleanValue(
-        message
-          .querySelector(".defenseInfo > .defenseTotal")
-          ?.getAttribute("data-tooltip-title")
-          .match(/[\d.]+/)[0]
+        regExp.exec(message.querySelector(".defenseInfo > .defenseTotal")?.getAttribute("data-tooltip-title"))?.[0]
       );
     }
 
