@@ -85,7 +85,7 @@ class ExpeditionMessagesAnalyzer {
 
       let summary = expeditionSums[datePoint] || {
         found: [0, 0, 0, 0],
-        harvest: [0, 0],
+        harvest: [0, 0, 0],
         losses: {},
         fleet: {},
         type: {},

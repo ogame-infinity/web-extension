@@ -137,6 +137,16 @@ class OGIData {
     this.#save();
   }
 
+  get harvests() {
+    return this._json.harvests;
+  }
+
+  set harvests(harvests) {
+    this._json.harvests = harvests;
+
+    this.#save();
+  }
+
   get json() {
     return this._json;
   }
