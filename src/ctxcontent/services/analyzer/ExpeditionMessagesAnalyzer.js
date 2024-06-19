@@ -150,6 +150,13 @@ class ExpeditionMessagesAnalyzer {
         };
 
         summary.type["Void"] ? (summary.type["Void"] += 1) : (summary.type["Void"] = 1);
+      } else if (type === "trader") {
+        expeditions[msgId] = {
+          result: "Merchant",
+          date: newDate,
+        };
+
+        summary.type["Merchant"] ? (summary.type["Merchant"] += 1) : (summary.type["Merchant"] = 1);
       } else if (type === "fleetLost") {
         expeditions[msgId] = {
           result: "Bhole",
