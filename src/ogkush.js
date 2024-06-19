@@ -3,6 +3,7 @@ import { initConfOptions, getOptions } from "./ctxpage/conf-options.js";
 import ctxMessageAnalyzer from "./ctxpage/messages-analyzer/index.js";
 import * as DOM from "./util/dom.js";
 import { getLogger } from "./util/logger.js";
+import itemImageID from "./util/enum/itemImageID.js";
 import * as Numbers from "./util/numbers.js";
 import { pageContextInit, pageContextRequest } from "./util/service.callbackEvent.js";
 import * as ptreService from "./util/service.ptre.js";
@@ -1399,9 +1400,8 @@ class OGInfinity {
   #migrations() {
     if (typeof OGIData.json.lifeformBonus.productionBonus === "undefined") {
       console.log("test");
-      this.#updateData().then(() => console.log('done'));
+      this.#updateData().then(() => console.log("done"));
     }
-
   }
 
   async #updateData() {
@@ -11420,7 +11420,7 @@ class OGInfinity {
             if (planet[key] === "0") planet[key] = parseInt(planet[key]);
           }
           for (const key in planet) {
-            if (key.includes("html")) {
+            if (key.includes("html") && key !== "equipment_html") {
               delete planet[key];
             }
           }
@@ -11578,6 +11578,17 @@ class OGInfinity {
         3: 0,
       };
 
+      // parse active production items
+      const activeItems = [0, 0, 0, 0];
+      const html = new window.DOMParser().parseFromString(planet.equipment_html, "text/html");
+      const itemDivs = html.querySelectorAll(".item_img");
+      itemDivs.forEach((div) => {
+        const style = div.getAttribute("style");
+        const id = style.substring(style.indexOf("images/") + 7, style.indexOf("-small"));
+        const item = itemImageID[id];
+        if (item) activeItems[item.resource] = item.bonus;
+      });
+
       //console.log("planet: " + planet.coordinates);
 
       // TODO: compute energy detailed production if used
@@ -11590,9 +11601,7 @@ class OGInfinity {
         const geoProd = mineProd * (this.geologist ? GEOLOGIST_RESOURCE_BONUS : 0);
         const officerProd = mineProd * (this.allOfficers ? OFFICER_RESOURCE_BONUS : 0);
         const allyClassProd = mineProd * (this.json.allianceClass == ALLY_CLASS_MINER ? TRADER_RESOURCE_BONUS : 0);
-
-        // TODO: compute items production
-        let itemProd = 0;
+        const itemProd = mineProd * activeItems[idx];
 
         const lifeformBonus = this.json.lifeformBonus;
         const playerClassProd =
@@ -11655,7 +11664,8 @@ class OGInfinity {
 
         prodFactor =
           Math.max(0, planet.production.hourly[idx] - baseProd) /
-          (totalProd + Math.min(crawlerProd * crawlerFactor, mineProd * this.json.resourceBuggyMaxProductionBoost)) || 0;
+            (totalProd + Math.min(crawlerProd * crawlerFactor, mineProd * this.json.resourceBuggyMaxProductionBoost)) ||
+          0;
         prodFactor = Math.round(prodFactor * 100) / 100;
 
         crawlerProd = Math.min(
@@ -12865,8 +12875,8 @@ class OGInfinity {
       });
       const debris16 = document.querySelector(".expeditionDebrisSlotBox #expeditionDebris");
       if (debris16 && !debris16.classList.contains("ogl-done")) {
-        debris16.classList.add("ogl-done");   
-        const div = DOM.createDOM("div", { class: "cellDebris microdebris debris_1" });  
+        debris16.classList.add("ogl-done");
+        const div = DOM.createDOM("div", { class: "cellDebris microdebris debris_1" });
         let total = 0;
         let i = 0;
         let classResources = ["ogl-metal", "ogl-crystal", "ogl-deut"];
@@ -13423,7 +13433,7 @@ class OGInfinity {
       cost.push(RESEARCH_INFO[id].baseCost[3] * Math.pow(RESEARCH_INFO[id].factorEnergy, lvl - 1));
     let time = ((cost[0] + cost[1]) / (this.json.speed * 1000 * (1 + labLvl)) / this.json.researchDivisor) * 3600;
     if (technocrat) time -= time * 0.25;
-    if (explorer) time -= time * 0.25;
+    if (explorer) time -= time * 0.25 * (1 + this.json.lifeformBonus.classBonus.explorer);
     if (acceleration) time -= time * 0.25;
     if (RESEARCH_INFO[id].factorTime)
       time = (RESEARCH_INFO[id].baseTime * Math.pow(RESEARCH_INFO[id].factorTime, lvl) * lvl) / this.json.speed;
@@ -18130,7 +18140,6 @@ function versionInStatusBar() {
       const obs = new OGIObserver();
       // Observe tab change
       obs(document.querySelector(".tabs_wrap.js_tabs"), (elements) => {
-
         elements.forEach((element) => {
           // We want only if nodes has been added
           if (!element.addedNodes) return;
