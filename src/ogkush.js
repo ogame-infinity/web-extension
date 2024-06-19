@@ -1416,7 +1416,7 @@ class OGInfinity {
 
   init() {
     this.json = OGIData.json;
-    this.json.welcome = this.json.welcome === false ? false : true;
+    this.json.welcome = this.json.welcome !== false;
     this.json.needLifeformUpdate = this.json.needLifeformUpdate || {};
     this.json.pantrySync = this.json.pantrySync || "";
     this.json.empire = this.json.empire || [];
