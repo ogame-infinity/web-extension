@@ -19,7 +19,7 @@ export function popup(header, content) {
   if (!overlay) {
     overlay = document.body.appendChild(createDOM("div", { class: "ogl-dialogOverlay" }));
     overlay.addEventListener("click", (event) => {
-      if (event.target === overlay && !OGIData.options.welcome) {
+      if (event.target === overlay && !OGIData.welcome) {
         overlay.classList.remove("ogl-active");
       }
     });
