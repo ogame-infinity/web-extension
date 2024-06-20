@@ -206,7 +206,7 @@ class SpyMessagesAnalyzer {
   }
 
   #cargoChoice(cargoSpan) {
-    const gridCol = OGIData.ships[ship.EspionnageProbe].cargoCapacity ? 4 : 3;
+    const gridCol = OGIData.ships[ship.EspionageProbe].cargoCapacity ? 4 : 3;
 
     const cargoChoice = createDOM("div", {
       style: `display: grid; grid-template-columns: repeat(${gridCol}, minmax(0, 1fr))`,
@@ -258,13 +258,13 @@ class SpyMessagesAnalyzer {
     largeCargo.addEventListener("click", saveDefaultCargo);
     pathFinder.addEventListener("click", saveDefaultCargo);
 
-    if (OGIData.ships[ship.EspionnageProbe].cargoCapacity) {
+    if (OGIData.ships[ship.EspionageProbe].cargoCapacity) {
       cargoChoice.classList.add("spio");
 
       const probe = cargoChoice.appendChild(
         createDOM("div", {
-          class: `ogl-option ogl-fleet-ship choice ogl-fleet-${ship.EspionnageProbe}`,
-          "data-ship": ship.EspionnageProbe,
+          class: `ogl-option ogl-fleet-ship choice ogl-fleet-${ship.EspionageProbe}`,
+          "data-ship": ship.EspionageProbe,
         })
       );
 
@@ -477,9 +477,9 @@ class SpyMessagesAnalyzer {
         },
       };
 
-      if (OGIData.ships[ship.EspionnageProbe].cargoCapacity) {
+      if (OGIData.ships[ship.EspionageProbe].cargoCapacity) {
         ships.probe = {
-          id: ship.EspionnageProbe,
+          id: ship.EspionageProbe,
           count: report.pb,
         };
       }
@@ -495,7 +495,7 @@ class SpyMessagesAnalyzer {
 
       let shipCount = 0;
 
-      if (parseInt(report.defense) === 0 && parseInt(report.fleet) === 0 && shipId === ship.EspionnageProbe) {
+      if (parseInt(report.defense) === 0 && parseInt(report.fleet) === 0 && shipId === ship.EspionageProbe) {
         shipCount = report.pb;
       }
 

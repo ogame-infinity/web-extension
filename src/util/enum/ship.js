@@ -1,8 +1,8 @@
 export default Object.freeze({
   SmallCargo: 202,
   LargeCargo: 203,
-  Harvester: 209,
-  EspionnageProbe: 210,
+  Recycler: 209, // Harvester
+  EspionageProbe: 210,
   Reaper: 218,
   PathFinder: 219,
 });

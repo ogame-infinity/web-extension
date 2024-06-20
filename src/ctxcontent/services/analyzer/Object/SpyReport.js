@@ -175,7 +175,7 @@ export class SpyReport {
 
     this._pb = calcNeededShips({
       moreFret: true,
-      fret: ship.EspionnageProbe,
+      fret: ship.EspionageProbe,
       resources: Math.ceil((this._total * this._loot) / 100),
     });
     this._pt = calcNeededShips({
