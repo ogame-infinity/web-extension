@@ -19,6 +19,7 @@ import * as popupUtil from "./util/popup.js";
 import markerui from "./util/markerui.js";
 import highlight, { setHighlightCoords } from "./util/highlightTarget.js";
 import OGIData from "./util/OGIData.js";
+import { tooltip } from "./util/tooltip.js";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 //const VERSION = "__VERSION__";
@@ -12034,44 +12035,53 @@ class OGInfinity {
         }
       }
     });
-    let flyingRows = "";
+
+    const tooltipDiv = DOM.createDOM("div", {}, this.getTranslatedText(128));
+    tooltipDiv.appendChild(DOM.createDOM("div", { class: "splitLine" }));
+    const tableDiv = tooltipDiv.appendChild(DOM.createDOM("table", { class: "flyingFleet" }));
+    const rowHeader = tableDiv.appendChild(DOM.createDOM("tr"));
+    rowHeader.append(
+      DOM.createDOM("th", { colspan: 3 }, this.getTranslatedText(127)),
+      DOM.createDOM("th", { class: "ogl-metal" }, this.getTranslatedText(0, "res")),
+      DOM.createDOM("th", { class: "ogl-crystal" }, this.getTranslatedText(1, "res")),
+      DOM.createDOM("th", { class: "ogl-deut" }, this.getTranslatedText(2, "res"))
+    );
+
     for (const [coords, details] of Object.entries(flyingDetails)) {
-      let res = details.metal + details.crystal + details.deuterium;
+      const res = details.metal + details.crystal + details.deuterium;
       if (res > 0) {
-        let href = `https://s${this.universe}-${
-          this.gameLang
-        }.ogame.gameforge.com/game/index.php?page=ingame&amp;component=galaxy&galaxy=${coords.split(":")[0]}&system=${
-          coords.split(":")[1]
-        }&position=${coords.split(":")[2].slice(0, -1)}`;
-        flyingRows += `<tr>
-      <td class=${details.own ? "own" : "friendly"}>${details.name}</td>
-      <td class=${details.own ? "own" : "friendly"}><a href=${href}>[${coords.slice(0, -1)}]</a></td>
-      <td><figure class="${coords.slice(-1) == "M" ? "planetIcon moon" : "planetIcon planet"}"></figure></td>
-      <td class="value ogl-metal">${toFormatedNumber(details.metal)}</td>
-      <td class="value ogl-crystal">${toFormatedNumber(details.crystal)}</td>
-      <td class="value ogl-deut">${toFormatedNumber(details.deuterium)}</td>
-      </tr>`;
+        const coord = coords.slice(0, -1).split(":");
+        const moon = coords.includes("M");
+        const href =
+          "?" +
+          new URLSearchParams({
+            page: "ingame",
+            component: "galaxy",
+            galaxy: coord[0],
+            system: coord[1],
+            position: coord[2],
+          }).toString();
+
+        const row = DOM.createDOM("tr");
+        row.append(
+          DOM.createDOM("td", { class: details.own ? "own" : "friendly" }, details.name),
+          DOM.createDOM("td", { class: details.own ? "own" : "friendly" }).appendChild(
+            DOM.createDOM("a", { href: href }, `[${coord.join(":")}]`)
+          ).parentElement,
+          DOM.createDOM("td").appendChild(DOM.createDOM("figure", { class: `planetIcon ${moon ? "moon" : "planet"}` }))
+            .parentElement,
+          DOM.createDOM("td", { class: "value ogl-metal" }, toFormatedNumber(details.metal)),
+          DOM.createDOM("td", { class: "value ogl-crystal" }, toFormatedNumber(details.crystal)),
+          DOM.createDOM("td", { class: "value ogl-deut" }, toFormatedNumber(details.deuterium))
+        );
+        tableDiv.appendChild(row);
       }
     }
-    document.querySelector(".ogl-sum-symbol .icon_movement").setAttribute(
-      "data-title",
-      `<div class="htmlTooltip">
-        <h1>${this.getTranslatedText(128)}</h1>
-        <div class="splitLine"></div>
-        <tbody>
-          <table class="flyingFleet">
-            <tr>
-                <th colspan="3">${this.getTranslatedText(127)}</th>
-                <th class="ogl-metal">${this.getTranslatedText(0, "res")}</th>
-                <th class="ogl-crystal">${this.getTranslatedText(1, "res")}</th>
-                <th class="ogl-deut">${this.getTranslatedText(2, "res")}</th>
-            </tr>
-            ${flyingRows}
-          </table>
-        </tbody>
-      </div>
-  `
-    );
+
+    const fleetIcon = document.querySelector(".ogl-sum-symbol .icon_movement");
+    fleetIcon.addEventListener("ontouchstart" in document.documentElement ? "touchstart" : "mouseenter", () => {
+      tooltip(fleetIcon, tooltipDiv, false);
+    });
   }
 
   resourceDetail() {
