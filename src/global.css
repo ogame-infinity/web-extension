@@ -8384,7 +8384,7 @@ div.ogi-movement .ogi-movement-target > div:nth-child(1) {
 .ogi-movement-scroll {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
-  max-height: 25vh;
+  max-height: 50vh;
   overflow-y: auto;
   overflow-x: hidden;
 }
