@@ -4,5 +4,5 @@ export default Object.freeze({
   Recycler: 209, // Harvester
   EspionageProbe: 210,
   Reaper: 218,
-  PathFinder: 219,
+  PathFinder: 219, // p16 debris field collector
 });
