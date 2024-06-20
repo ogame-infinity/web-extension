@@ -2939,7 +2939,7 @@ class OGInfinity {
           if (!this.json.expeditionSums[dateStr]) {
             this.json.expeditionSums[dateStr] = {
               found: [0, 0, 0, 0],
-              harvest: [0, 0],
+              harvest: [0, 0, 0],
               fleet: {},
               losses: {},
               type: {},
@@ -2952,7 +2952,7 @@ class OGInfinity {
           if (!this.json.combatsSums[dateStr]) {
             this.json.combatsSums[dateStr] = {
               loot: [0, 0, 0],
-              harvest: [0, 0],
+              harvest: [0, 0, 0],
               losses: {},
               fuel: 0,
               adjust: [0, 0, 0],
@@ -5399,7 +5399,7 @@ class OGInfinity {
             title: this.getTranslatedText(69),
             metal: sums.harvest[0],
             crystal: sums.harvest[1],
-            deuterium: 0,
+            deuterium: sums?.harvest[2] || 0,
           },
           {
             title: this.getTranslatedText(68),
@@ -5418,7 +5418,7 @@ class OGInfinity {
             metal: sums.adjust[0],
             crystal: sums.adjust[1],
             deuterium: sums.adjust[2],
-            edit: onchange ? true : false,
+            edit: !!onchange,
           },
         ],
         true,
@@ -5438,12 +5438,13 @@ class OGInfinity {
       );
       details.appendChild(box);
       details.appendChild(this.shipsBox(sums.fleet));
-      let harvestSums = [0, 0];
+      let harvestSums = [0, 0, 0];
       Object.entries(this.json.harvests).forEach((harvest) => {
         harvest = harvest[1];
         if (harvest.coords.split(":")[2] == 16) {
           harvestSums[0] += harvest.metal;
           harvestSums[1] += harvest.crystal;
+          harvestSums[2] += harvest.deuterium;
         }
       });
       return content;
@@ -5451,7 +5452,7 @@ class OGInfinity {
     let computeRangeSums = (sums, start, stop) => {
       let weekSums = {
         found: [0, 0, 0, 0],
-        harvest: [0, 0],
+        harvest: [0, 0, 0],
         losses: {
           202: 0,
           203: 0,
@@ -5516,7 +5517,7 @@ class OGInfinity {
       let losses = this.getFleetCost(sums.losses);
       total += fleet[0] + fleet[1] + fleet[2];
       total -= losses[0] + losses[1] + losses[2];
-      total += sums.harvest[0] + sums.harvest[1];
+      total += sums.harvest[0] + sums.harvest[1] + sums.harvest[2];
       total += sums.found[0] + sums.found[1] + sums.found[2];
       total += sums.adjust[0] + sums.adjust[1] + sums.adjust[2];
       total += sums.fuel;
@@ -5533,7 +5534,7 @@ class OGInfinity {
       let date = new Date();
       let sum = {
         found: [0, 0, 0, 0],
-        harvest: [0, 0],
+        harvest: [0, 0, 0],
         losses: {
           202: 0,
           203: 0,
@@ -5755,7 +5756,7 @@ class OGInfinity {
             title: this.getTranslatedText(69),
             metal: sums.harvest[0],
             crystal: sums.harvest[1],
-            deuterium: 0,
+            deuterium: sums?.harvest[2] || 0,
           },
           {
             title: this.getTranslatedText(68),
@@ -5774,7 +5775,7 @@ class OGInfinity {
             metal: sums.adjust[0],
             crystal: sums.adjust[1],
             deuterium: sums.adjust[2],
-            edit: onchange ? true : false,
+            edit: !!onchange,
           },
         ],
         false,
@@ -5787,7 +5788,7 @@ class OGInfinity {
                 this.json.combatsSums[date] = {
                   loot: [0, 0, 0],
                   losses: {},
-                  harvest: [0, 0],
+                  harvest: [0, 0, 0],
                   adjust: [0, 0, 0],
                   fuel: 0,
                   topCombats: [],
@@ -5805,12 +5806,13 @@ class OGInfinity {
       );
       details.appendChild(box);
       details.appendChild(this.shipsBox(sums.losses, true));
-      let harvestSums = [0, 0];
+      let harvestSums = [0, 0, 0];
       Object.entries(this.json.harvests).forEach((harvest) => {
         harvest = harvest[1];
         if (harvest.coords.split(":")[2] == 16) {
           harvestSums[0] += harvest.metal;
           harvestSums[1] += harvest.crystal;
+          harvestSums[2] += harvest.deuterium;
         }
       });
       return content;
@@ -5818,7 +5820,7 @@ class OGInfinity {
     let computeRangeSums = (sums, start, stop) => {
       let weekSums = {
         loot: [0, 0, 0],
-        harvest: [0, 0],
+        harvest: [0, 0, 0],
         losses: {
           202: 0,
           203: 0,
@@ -5877,7 +5879,7 @@ class OGInfinity {
       let total = 0;
       let losses = this.getFleetCost(sums.losses);
       total -= losses[0] + losses[1] + losses[2];
-      total += sums.harvest[0] + sums.harvest[1];
+      total += sums.harvest[0] + sums.harvest[1] + sums.harvest[2];
       total += sums.loot[0] + sums.loot[1] + sums.loot[2];
       total += sums.adjust[0] + sums.adjust[1] + sums.adjust[2];
       total += sums.fuel;
@@ -5894,7 +5896,7 @@ class OGInfinity {
       let date = new Date();
       let sum = {
         loot: [0, 0, 0],
-        harvest: [0, 0],
+        harvest: [0, 0, 0],
         losses: {
           202: 0,
           203: 0,

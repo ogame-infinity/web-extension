@@ -80,7 +80,7 @@ class FightMessagesAnalyzer {
       if (!expeditionSums[datePoint]) {
         expeditionSums[datePoint] = {
           found: [0, 0, 0, 0],
-          harvest: [0, 0],
+          harvest: [0, 0, 0],
           fleet: {},
           losses: {},
           type: {},
@@ -145,7 +145,7 @@ class FightMessagesAnalyzer {
       if (!combatsSums[datePoint]) {
         combatsSums[datePoint] = {
           loot: [0, 0, 0],
-          harvest: [0, 0],
+          harvest: [0, 0, 0],
           losses: {},
           fuel: 0,
           adjust: [0, 0, 0],
