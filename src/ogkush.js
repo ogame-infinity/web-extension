@@ -16924,9 +16924,11 @@ class OGInfinity {
               `;
               planetKoordsEl.parentNode.parentNode.appendChild(div);
 
-              const movementTooltip = DOM.createDOM("div", { class: "ogi-movement" });
-              const movementTooltipHeader = DOM.createDOM("div");
+              const movementTooltipToScroll = DOM.createDOM("div", { class: "ogi-movement-scroll" });
 
+              const movementTooltip = DOM.createDOM("div", { class: "ogi-movement" });
+              movementTooltipToScroll.appendChild(movementTooltip);
+              
               movementTooltip.appendChild(DOM.createDOM("div", {}, "Type"));
               movementTooltip.appendChild(DOM.createDOM("div", {}, "Target"));
               movementTooltip.appendChild(DOM.createDOM("div", {}, "Time"));
@@ -17024,7 +17026,7 @@ class OGInfinity {
               });
 
               div.addEventListener("ontouchstart" in document.documentElement ? "touchstart" : "mouseenter", () => {
-                tooltip(div, movementTooltip, true, { bottom: true}, 50);
+                tooltip(div, movementTooltipToScroll, true, { auto: true }, 50, true);
               });
             }
           });

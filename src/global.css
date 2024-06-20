@@ -8369,7 +8369,7 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords {
   display: grid;
   align-content: center;
   justify-content: center;
-  grid-template-columns: 45px 16px;
+  grid-template-columns: 50px 16px;
   gap: 0.125rem;
 }
 
@@ -8378,4 +8378,17 @@ div.ogi-movement .ogi-movement-target > div:nth-child(1) {
   align-content: center;
   justify-content: center;
   height: 16px;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.ogi-movement-scroll {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+  max-height: 25vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.ogi-movement-scroll::-webkit-scrollbar {
+  display: none;
 }
