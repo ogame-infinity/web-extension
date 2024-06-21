@@ -13796,7 +13796,7 @@ class OGInfinity {
               }
             }
           }
-          if (document.activeElement.tagName != "INPUT") {
+          if (document.activeElement.tagName != "INPUT" && !!document.querySelector("#continueToFleet2")) {
             if (event.key.toUpperCase() == "E") {
               document.querySelector(".ogl-expedition").click();
               document.querySelector("#continueToFleet2").click();
