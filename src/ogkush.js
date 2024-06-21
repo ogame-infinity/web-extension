@@ -2281,7 +2281,7 @@ class OGInfinity {
             that.json.missing[coords] = [0, 0, 0];
           }
           [0, 1, 2].forEach((i) => {
-            if (missing[i]) {
+            if (missing[i] || that.json.missing[coords][i] > 0) {
               that.json.missing[coords][i] +=
                 that.json.missing[coords][i] == 0 ? -Math.ceil(missing[i]) : Math.ceil(resSum[i]);
             }
@@ -2470,7 +2470,7 @@ class OGInfinity {
                   that.json.missing[coords] = [0, 0, 0];
                 }
                 [0, 1, 2].forEach((i) => {
-                  if (missing[i]) {
+                  if (missing[i] || that.json.missing[coords][i] > 0) {
                     that.json.missing[coords][i] +=
                       that.json.missing[coords][i] == 0 ? -Math.ceil(missing[i]) : Math.ceil(resSum[i]);
                   }
