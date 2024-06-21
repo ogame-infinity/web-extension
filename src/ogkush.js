@@ -19,6 +19,7 @@ import * as popupUtil from "./util/popup.js";
 import markerui from "./util/markerui.js";
 import highlight, { setHighlightCoords } from "./util/highlightTarget.js";
 import OGIData from "./util/OGIData.js";
+import { tooltip } from "./util/tooltip.js";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 //const VERSION = "__VERSION__";
@@ -14191,20 +14192,28 @@ class OGInfinity {
         fleetDispatcher.speedPercent = slider.querySelector(".ogl-active").getAttribute("data-step");
         fleetDispatcher.refresh();
       });
-      let data = fleetDispatcher.fleetHelper.shipsData;
-      for (let id in data) {
-        let infos = `
-        <div class="ogl-fleetInfo">
-        ${data[id].name}
-        <hr>
-        <div><span>${this.getTranslatedText(47)} </span>${toFormatedNumber(data[id].baseCargoCapacity, 0)}</div>
-        <div><span>${this.getTranslatedText(48)} </span>${toFormatedNumber(data[id].speed, 0)}</div>
-        <div><span>${this.getTranslatedText(49)} </span>${toFormatedNumber(data[id].fuelConsumption, 0)}</div>
-        </div>`;
-        let ship = document.querySelector(`.technology[data-technology="${id}"]`);
+
+      const data = fleetDispatcher.fleetHelper.shipsData;
+      for (const id in data) {
+        const tooltipDiv = DOM.createDOM("div", { class: "ogl-fleetInfo" }, data[id].name);
+        tooltipDiv.append(
+          DOM.createDOM("hr"),
+          DOM.createDOM("div", {}, this.getTranslatedText(47)).appendChild(
+            DOM.createDOM("span", {}, toFormatedNumber(data[id].baseCargoCapacity, 0))
+          ).parentElement,
+          DOM.createDOM("div", {}, this.getTranslatedText(48)).appendChild(
+            DOM.createDOM("span", {}, toFormatedNumber(data[id].speed, 0))
+          ).parentElement,
+          DOM.createDOM("div", {}, this.getTranslatedText(49)).appendChild(
+            DOM.createDOM("span", {}, toFormatedNumber(data[id].fuelConsumption, 0))
+          ).parentElement
+        );
+        const ship = document.querySelector(`.technology[data-technology="${id}"]`);
         if (ship) {
-          ship.setAttribute("data-title", infos);
-          ship.removeAttribute("title");
+          ship.addEventListener("ontouchstart" in document.documentElement ? "touchstart" : "mouseenter", () => {
+            tooltip(ship, tooltipDiv, true);
+          });
+          ship._tippy.disable();
         }
       }
     }
