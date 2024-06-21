@@ -8389,6 +8389,10 @@ div.ogi-movement .ogi-movement-target > div:nth-child(1) {
   overflow-x: hidden;
 }
 
+.mCustomScrollbar .mCSB_container:not(.mCS_y_hidden) .ogi-movement {
+  margin-right: 5px;
+}
+
 .ogi-movement-scroll::-webkit-scrollbar {
   display: none;
 }
