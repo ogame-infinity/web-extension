@@ -136,9 +136,12 @@ export class SpyReport {
       this._fleet = "No data";
     } else if (fleet === "0") {
       this._fleet = "0";
+    } else if (message.querySelector(".rawMessageData").getAttribute("data-raw-fleetvalue")) {
+      this._fleet = cleanValue(message.querySelector(".rawMessageData").getAttribute("data-raw-fleetvalue"));
     } else {
+      // @deprecated
       this._fleet = cleanValue(
-        regExp.exec(message.querySelector(".fleetInfo > .shipsTotal")?.getAttribute("data-tooltip-title"))?.[0]
+        regExp.exec(message.querySelector(".fleetInfo > .shipsTotal")?.getAttribute("data-tooltip-title"))?.[0] || ''
       );
     }
 
@@ -146,9 +149,12 @@ export class SpyReport {
       this._defense = "No data";
     } else if (defense === "0") {
       this._defense = "0";
+    } else if (cleanValue(message.querySelector(".rawMessageData").getAttribute("data-raw-defensevalue"))) {
+      this._defense = cleanValue(message.querySelector(".rawMessageData").getAttribute("data-raw-defensevalue"));
     } else {
+      // @deprecated
       this._defense = cleanValue(
-        regExp.exec(message.querySelector(".defenseInfo > .defenseTotal")?.getAttribute("data-tooltip-title"))?.[0]
+        regExp.exec(message.querySelector(".defenseInfo > .defenseTotal")?.getAttribute("data-tooltip-title"))?.[0] || ''
       );
     }
 
