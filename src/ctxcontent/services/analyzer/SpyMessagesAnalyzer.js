@@ -344,7 +344,7 @@ class SpyMessagesAnalyzer {
 
       const indexCol = createDOM("td", {}, row + index);
 
-      if (report.new) {
+      if (report.isNew) {
         indexCol.classList.add("ogi-new");
       }
 

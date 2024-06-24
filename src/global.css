@@ -2032,6 +2032,11 @@ button.build-it_premium:hover {
   padding: 15px 0;
 }
 
+/* mecha shipyard */
+.shipyardSelection + .costs {
+  margin-left: 80px;
+}
+
 #technologydetails .information > ul li {
   width: 285px !important;
   margin-bottom: 2px !important;
@@ -3664,6 +3669,7 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link{
   max-width: 145px;
 }
 
+div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
 #galaxyContent .ctContentRow .cellMoon .moon,
 #galaxyContent .ctContentRow .cellMoon .moon_a,
 #galaxyContent .ctContentRow .cellMoon .moon_c,
@@ -4527,15 +4533,17 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link{
   border-top: 1px solid #333;
 }
 
+div.ogi-movement .ogi-movement-target .ogi-movement-target-coords .ogk-own-coords,
 #eventContent .ogk-own-coords {
   color: #6f9fc8 !important;
 }
 
+div.ogi-movement .ogi-movement-target .ogi-movement-target-coords .ogk-coords-hostile,
 #eventContent .ogk-coords-hostile {
-  color: rgb(210 27 56);
   color: #e23b3a;
 }
 
+div.ogi-movement .ogi-movement-target .ogi-movement-target-coords .ogk-coords-neutral,
 #eventContent .ogk-coords-neutral {
   color: #d29d00;
 }
@@ -4551,10 +4559,13 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link{
   font-style: italic;
 }
 
+div.ogi-movement .ogi-movement-target .ogi-movement-target-coords .ogk-coords-debris,
 #eventContent .ogk-coords-debris {
   color: green !important;
 }
 
+
+div.ogi-movement .ogi-movement-target .ogi-movement-target-coords .ogk-coords-expedition,
 #eventContent .ogk-coords-expedition {
   color: #4162a5 !important;
 }
@@ -8335,4 +8346,59 @@ table.flyingFleet td.friendly {
 
 div#eventboxFilled p.event_list {
   position: relative;
+}
+
+div.ogi-movement,
+div.ogi-movement > div {
+  display: grid;
+  align-content: center;
+  justify-content: center;
+  min-height: 20px;
+}
+
+div.ogi-movement {
+  grid-template-columns: repeat(3, auto);
+  column-gap: 0.5rem;
+  row-gap: 0.25rem;
+  line-height: 16px;
+}
+
+div.ogi-movement .ogi-movement-target {
+  display: grid;
+  align-content: center;
+  justify-content: center;
+  grid-template-columns: 16px repeat(2, auto);
+  gap: 0.25rem;
+}
+
+div.ogi-movement .ogi-movement-target .ogi-movement-target-coords {
+  display: grid;
+  align-content: center;
+  justify-content: center;
+  grid-template-columns: 50px 16px;
+  gap: 0.125rem;
+}
+
+div.ogi-movement .ogi-movement-target > div:nth-child(1) {
+  display: grid;
+  align-content: center;
+  justify-content: center;
+  height: 16px;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.ogi-movement-scroll {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+  max-height: 50vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.mCustomScrollbar .mCSB_container:not(.mCS_y_hidden) .ogi-movement {
+  margin-right: 5px;
+}
+
+.ogi-movement-scroll::-webkit-scrollbar {
+  display: none;
 }

@@ -155,7 +155,6 @@ class FightMessagesAnalyzer {
           draws: 0,
         };
       }
-
       combatsSums[datePoint].count += 1;
 
       const defendersSpaceObject = JSON.parse(

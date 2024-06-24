@@ -128,6 +128,7 @@ export class SpyReport {
 
     this._detailLink = message.querySelector(".msg_actions message-footer-details a.fright").href;
 
+    // TODO: after 11.16.0, modify fleet& defense to obtain values directly of data raw. no need of regex & cleanValue 
     const fleet = message.getAttribute("data-messages-filters-fleet");
     const defense = message.getAttribute("data-messages-filters-defense");
     const regExp = new RegExp(`[\\d${LocalizationStrings["thousandSeperator"]}]+`);
@@ -136,9 +137,12 @@ export class SpyReport {
       this._fleet = "No data";
     } else if (fleet === "0") {
       this._fleet = "0";
+    } else if (message.querySelector(".rawMessageData").getAttribute("data-raw-fleetvalue")) {
+      this._fleet = cleanValue(message.querySelector(".rawMessageData").getAttribute("data-raw-fleetvalue"));
     } else {
+      // @deprecated
       this._fleet = cleanValue(
-        regExp.exec(message.querySelector(".fleetInfo > .shipsTotal")?.getAttribute("data-tooltip-title"))?.[0]
+        regExp.exec(message.querySelector(".fleetInfo > .shipsTotal")?.getAttribute("data-tooltip-title"))?.[0] || ''
       );
     }
 
@@ -146,15 +150,19 @@ export class SpyReport {
       this._defense = "No data";
     } else if (defense === "0") {
       this._defense = "0";
+    } else if (message.querySelector(".rawMessageData").getAttribute("data-raw-defensevalue")) {
+      this._defense = cleanValue(message.querySelector(".rawMessageData").getAttribute("data-raw-defensevalue"));
     } else {
+      // @deprecated
       this._defense = cleanValue(
-        regExp.exec(message.querySelector(".defenseInfo > .defenseTotal")?.getAttribute("data-tooltip-title"))?.[0]
+        regExp.exec(message.querySelector(".defenseInfo > .defenseTotal")?.getAttribute("data-tooltip-title"))?.[0] || ''
       );
     }
 
     // Date
-    const rawDate = message.getAttribute("data-messages-filters-datetime").split(/\.| /g);
-    this._cleanDate = new Date(`${rawDate[2]}-${rawDate[1]}-${rawDate[0]} ${rawDate[3]}`);
+    const timestamp = message.querySelector(".rawMessageData").getAttribute("data-raw-datetime");
+    this._cleanDate = new Date();
+    this._cleanDate.setTime(timestamp * 1000);
     this._deltaDate = Date.now() - this._cleanDate;
 
     const minutes = this._deltaDate / 6e4;
