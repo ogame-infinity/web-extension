@@ -150,7 +150,7 @@ export class SpyReport {
       this._defense = "No data";
     } else if (defense === "0") {
       this._defense = "0";
-    } else if (cleanValue(message.querySelector(".rawMessageData").getAttribute("data-raw-defensevalue"))) {
+    } else if (message.querySelector(".rawMessageData").getAttribute("data-raw-defensevalue")) {
       this._defense = cleanValue(message.querySelector(".rawMessageData").getAttribute("data-raw-defensevalue"));
     } else {
       // @deprecated
