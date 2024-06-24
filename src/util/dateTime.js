@@ -1,6 +1,6 @@
 export default {
   timeSince: (date) => {
-    let seconds = Math.floor((new Date(serverTime) - date) / 1e3);
+    let seconds = Math.floor((new Date(localTime) - date) / 1e3);
     let interval = Math.floor(seconds / 86400);
     let since = "";
     if (interval >= 1) {
