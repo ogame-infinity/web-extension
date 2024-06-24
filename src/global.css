@@ -2032,6 +2032,11 @@ button.build-it_premium:hover {
   padding: 15px 0;
 }
 
+/* mecha shipyard */
+.shipyardSelection + .costs {
+  margin-left: 80px;
+}
+
 #technologydetails .information > ul li {
   width: 285px !important;
   margin-bottom: 2px !important;
