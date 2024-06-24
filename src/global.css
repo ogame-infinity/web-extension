@@ -2113,8 +2113,7 @@ button.build-it_premium:hover {
 
 
 
-.messageDetails .loot-item .loot-details, 
-.messagesHolder .loot-item .loot-details{
+.messageDetails .loot-row .loot-item .loot-details{
   justify-content: left;
 }
 
@@ -6760,6 +6759,7 @@ table.fleetinfo tr:nth-child(odd) {
 
 
 /* resources color default in tooltips */
+/* color for expedition resources */
 .loot-item > .metal + .loot-details,
 .ogl-metal,
 table.fleetinfo tr:nth-last-child(4) {
@@ -6778,14 +6778,27 @@ table.fleetinfo tr:nth-last-child(2) {
   color: #a6e0b0 !important;
 }
 
-.msg group-title{
+/* expedition custom */
+div[data-raw-messagetype="41"] ~ .msgContent,
+.msg group-title,
+div[data-raw-messagetype="41"] ~ .content-box .loot-name{
   display: none;
 }
+
+div[data-raw-messagetype="41"] ~ .content-box .loot-row{
+  justify-content: center;
+}
+
+div[data-raw-messagetype="41"] ~ .content-box .loot-item{
+  width: auto;
+}
+
 .detail_msg group-title>group-title-label{
   color: white;
 }
 
-.msg .content-box, .detail_msg .content-box {
+.msg .rawMessageData ~ .content-box,
+.detail_msg .content-box {
   min-height: 0px;
   padding-top: 15px;
   padding-bottom: 15px;
