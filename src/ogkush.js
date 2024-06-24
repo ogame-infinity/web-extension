@@ -5519,7 +5519,7 @@ class OGInfinity {
       let losses = this.getFleetCost(sums.losses);
       total += fleet[0] + fleet[1] + fleet[2];
       total -= losses[0] + losses[1] + losses[2];
-      total += sums.harvest[0] + sums.harvest[1] + sums.harvest[2];
+      total += sums.harvest[0] + sums.harvest[1] + (sums.harvest?.[2] || 0);
       total += sums.found[0] + sums.found[1] + sums.found[2];
       total += sums.adjust[0] + sums.adjust[1] + sums.adjust[2];
       total += sums.fuel;
@@ -5881,7 +5881,7 @@ class OGInfinity {
       let total = 0;
       let losses = this.getFleetCost(sums.losses);
       total -= losses[0] + losses[1] + losses[2];
-      total += sums.harvest[0] + sums.harvest[1] + sums.harvest[2];
+      total +=sums.harvest[0] + sums.harvest[1] + (sums.harvest?.[2] || 0);
       total += sums.loot[0] + sums.loot[1] + sums.loot[2];
       total += sums.adjust[0] + sums.adjust[1] + sums.adjust[2];
       total += sums.fuel;
