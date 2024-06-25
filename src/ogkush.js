@@ -16910,6 +16910,22 @@ class OGInfinity {
   updatePlanets_FleetActivity() {
     if (this.flyingFleetPerPlanets && this.json.options.fleetActivity) {
       const planetList = document.getElementById("planetList").children;
+      const isOwnPlanet = (coords) => {
+        let found = false;
+        Array.from(planetList).forEach((planet) => {
+          const planetKoordsEl = planet.querySelector(".planet-koords");
+          if (!planetKoordsEl) {
+            return;
+          }
+
+          const planetKoords = planetKoordsEl.textContent;
+
+          if (coords === planetKoords)
+            found = true;
+        });
+
+        return found;
+      }
       Array.from(planetList).forEach((planet) => {
         const planetKoordsEl = planet.querySelector(".planet-koords");
         if (planetKoordsEl) {
@@ -16936,7 +16952,7 @@ class OGInfinity {
 
               const movementTooltip = DOM.createDOM("div", { class: "ogi-movement" });
               movementTooltipToScroll.appendChild(movementTooltip);
-              
+
               movementTooltip.appendChild(DOM.createDOM("div", {}, "Type"));
               movementTooltip.appendChild(DOM.createDOM("div", {}, "Target"));
               movementTooltip.appendChild(DOM.createDOM("div", {}, "Time"));
@@ -16953,7 +16969,7 @@ class OGInfinity {
                   const img = DOM.createDOM("img");
                   img.src = movement.icon;
 
-                  movement.data.forEach((m) => { movementsList.push({ ...m, img: img.cloneNode(true), }); });
+                  movement.data.forEach((m) => movementsList.push({ ...m, img: img.cloneNode(true), }) );
 
                   img.style = `position: initial !important; width: ${size}px; height: ${size}px; margin: 1px !important;`;
 
@@ -16983,15 +16999,10 @@ class OGInfinity {
 
                 if (parseInt(m.missionType) === missionType.HARVEST) {
                   coordsSpan.classList.add("ogk-coords-debris");
-                } else if (parseInt(m.missionType) === missionType.DEPLOYMENT) {
+                } else if (parseInt(m.missionType) === missionType.DEPLOYMENT || isOwnPlanet(m.destCoords)) {
                   coordsSpan.classList.add("ogk-own-coords");
                 } else if (
-                  [
-                    missionType.TRANSPORT,
-                    missionType.EXPLORATION,
-                    missionType.ACS_DEFEND,
-                    missionType.COLONISATION,
-                  ].includes(parseInt(m.missionType))
+                  [missionType.TRANSPORT, missionType.ACS_DEFEND, missionType.COLONISATION,].includes(parseInt(m.missionType))
                 ) {
                   coordsSpan.classList.add("ogk-coords-neutral");
                 } else if (
@@ -17000,26 +17011,24 @@ class OGInfinity {
                     missionType.ATTACK,
                     missionType.MISSILE_ATTACK,
                     missionType.ACS_ATTACK,
-                    missionType.SPY
-                  ].includes(
-                    parseInt(m.missionType)
-                  )
+                    missionType.SPY,
+                  ].includes(parseInt(m.missionType))
                 ) {
                   coordsSpan.classList.add("ogk-coords-hostile");
-                } else if ([missionType.EXPEDITION].includes(parseInt(m.missionType))) {
+                } else if ([missionType.EXPEDITION, missionType.EXPLORATION,].includes(parseInt(m.missionType))) {
                   coordsSpan.classList.add("ogk-coords-expedition");
                 }
 
                 if (m.originMoon) {
-                  fromMoon.appendChild(DOM.createDOM("figure", { class: "planetIcon moon"} ));
+                  fromMoon.appendChild(DOM.createDOM("figure", { class: "planetIcon moon" } ));
                 }
 
                 if (m.destMoon) {
-                  rowTargetCoords.appendChild(DOM.createDOM("figure", { class: "planetIcon moon"} ));
+                  rowTargetCoords.appendChild(DOM.createDOM("figure", { class: "planetIcon moon" } ));
                 }
 
                 if (m.destDebris) {
-                  rowTargetCoords.appendChild(DOM.createDOM("figure", { class: "planetIcon tf"} ));
+                  rowTargetCoords.appendChild(DOM.createDOM("figure", { class: "planetIcon tf" } ));
                 }
 
                 rowTarget.appendChild(fromMoon);
