@@ -17034,7 +17034,7 @@ class OGInfinity {
               });
 
               div.addEventListener("ontouchstart" in document.documentElement ? "touchstart" : "mouseenter", () => {
-                $(".ogi-movement-scroll").mCustomScrollbar("destroy");
+                $(".ogi-movement-scroll").mCustomScrollbar("stop");
                 tooltip(div, movementTooltipToScroll, true, { auto: true }, 50, true);
                 $(".ogi-movement-scroll").mCustomScrollbar({ theme: "ogame" });
               });
