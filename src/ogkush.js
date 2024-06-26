@@ -21,6 +21,8 @@ import highlight, { setHighlightCoords } from "./util/highlightTarget.js";
 import OGIData from "./util/OGIData.js";
 import { tooltip } from "./util/tooltip.js";
 import missionType from "./util/enum/missionType.js";
+import * as needsUtil from "./util/needs.js";
+import flying from "./util/flying.js";
 import { translate } from "./util/translate.js";
 import { fleetCost } from "./util/fleetCost.js";
 
@@ -1335,6 +1337,23 @@ const METAL_POS_BONUS = [1, 1, 1, 1, 1, 1.17, 1.23, 1.35, 1.23, 1.17, 1, 1, 1, 1
 const CRYSTAL_POS_BONUS = [1.4, 1.3, 1.2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
 const MAX_CRAWLERS_PER_MINE = 8;
 
+const isOwnPlanet = (coords) => {
+  const planetList = document.getElementById("planetList").children;
+  let found = false;
+  Array.from(planetList).forEach((planet) => {
+    const planetKoordsEl = planet.querySelector(".planet-koords");
+    if (!planetKoordsEl) {
+      return;
+    }
+
+    const planetKoords = planetKoordsEl.textContent;
+
+    if (coords === planetKoords) found = true;
+  });
+
+  return found;
+};
+
 class OGInfinity {
   constructor() {
     this.commander = document.querySelector("#officers > a.commander.on") !== null;
@@ -2261,18 +2280,11 @@ class OGInfinity {
           document.querySelector(".ogk-titles").children[2].textContent = that.getTranslatedText(39);
         }
         lockListener = () => {
-          let coords = that.current.coords + (that.current.isMoon ? "M" : "P");
-          if (!that.json.missing[coords]) {
-            that.json.missing[coords] = [0, 0, 0];
-          }
-          [0, 1, 2].forEach((i) => {
-            if (missing[i]) {
-              that.json.missing[coords][i] +=
-                that.json.missing[coords][i] == 0 ? -Math.ceil(missing[i]) : Math.ceil(resSum[i]);
-            }
+          needsUtil.lock(that.current.coords, that.current.isMoon, {
+            metal: resSum[0],
+            crystal: resSum[1],
+            deuterium: resSum[2],
           });
-          that.saveData();
-          that.sideLock(true);
         };
       };
       technologyDetails.show = function (technologyId) {
@@ -2450,18 +2462,11 @@ class OGInfinity {
                 }
               }
               lockListener = () => {
-                let coords = that.current.coords + (that.current.isMoon ? "M" : "P");
-                if (!that.json.missing[coords]) {
-                  that.json.missing[coords] = [0, 0, 0];
-                }
-                [0, 1, 2].forEach((i) => {
-                  if (missing[i]) {
-                    that.json.missing[coords][i] +=
-                      that.json.missing[coords][i] == 0 ? -Math.ceil(missing[i]) : Math.ceil(resSum[i]);
-                  }
+                needsUtil.lock(that.current.coords, that.current.isMoon, {
+                  metal: resSum[0],
+                  crystal: resSum[1],
+                  deuterium: resSum[2],
                 });
-                that.saveData();
-                that.sideLock(true);
               };
             };
             let oldValue;
@@ -2830,16 +2835,11 @@ class OGInfinity {
     ) {
       this.onFleetSent(() => {
         let pos = document.querySelector("#position").value;
-        let coords =
+        const coords =
           document.querySelector("#galaxy").value + ":" + document.querySelector("#system").value + ":" + pos;
         let fuel = fleetDispatcher.getConsumption();
         let dateStr = getFormatedDate(new Date().getTime(), "[d].[m].[y]");
-        let fullCoords = coords;
-        if (fleetDispatcher.targetPlanet.type == fleetDispatcher.fleetHelper.PLANETTYPE_MOON) {
-          coords += "M";
-        } else if (fleetDispatcher.targetPlanet.type == fleetDispatcher.fleetHelper.PLANETTYPE_PLANET) {
-          coords += "P";
-        }
+        const isMoon = fleetDispatcher.targetPlanet.type == fleetDispatcher.fleetHelper.PLANETTYPE_MOON;
         let object = this.json.empire[this.current.index];
         object = this.current.isMoon ? object.moon : object;
         object.metal = fleetDispatcher.metalOnPlanet - fleetDispatcher.cargoMetal;
@@ -2915,11 +2915,6 @@ class OGInfinity {
         fleetDispatcher.shipsToSend.forEach((ship) => {
           object[ship.id] -= ship.number;
         });
-        if (this.json.missing[coords]) {
-          this.json.missing[coords][0] -= fleetDispatcher.cargoMetal;
-          this.json.missing[coords][1] -= fleetDispatcher.cargoCrystal;
-          this.json.missing[coords][2] -= fleetDispatcher.cargoDeuterium;
-        }
         if (pos == 16) {
           if (!this.json.expeditionSums[dateStr]) {
             this.json.expeditionSums[dateStr] = {
@@ -3280,12 +3275,12 @@ class OGInfinity {
     let interval = setInterval(() => {
       if (document.querySelector("#eventboxLoading").style.display == "none") {
         clearInterval(interval);
-        let flying = this.getFlyingRes();
-        if (JSON.stringify(this.json.flying.ids) != JSON.stringify(flying.ids)) {
+        const flying = this.getFlyingRes();
+        if (JSON.stringify(OGIData.json.flying.ids) != JSON.stringify(flying.ids)) {
           let gone = [];
-          this.json.flying.ids &&
-            this.json.flying.ids.forEach((mov) => {
-              let found = false;
+          OGIData.json.flying.ids &&
+            OGIData.json.flying.ids.forEach((mov) => {
+              let found = false;JSON
               flying.ids.forEach((oldMov) => {
                 if (mov.id == oldMov.id) {
                   found = true;
@@ -3296,10 +3291,10 @@ class OGInfinity {
               }
             });
           let added = [];
-          this.json.flying.ids &&
+          OGIData.json.flying.ids &&
             flying.ids.forEach((mov) => {
               let found = false;
-              this.json.flying.ids.forEach((oldMov) => {
+              OGIData.json.flying.ids.forEach((oldMov) => {
                 if (mov.id == oldMov.id) {
                   found = true;
                 }
@@ -4037,7 +4032,7 @@ class OGInfinity {
   async flyingFleet() {
     let total = 0;
     let flyingCount = 0;
-    let flying = this.getFlyingRes().fleet;
+    const flying = OGIData.json.flying.fleet;
     for (let id in flying) flyingCount += flying[id];
     let fleetCount = flyingCount;
     [202, 203, 208, 209, 210, 204, 205, 206, 219, 207, 215, 211, 213, 218, 214].forEach((id) => {
@@ -10550,18 +10545,18 @@ class OGInfinity {
           crystalFiller.value = toFormatedNumber(crystalAvailable, 0);
           deutFiller.value = toFormatedNumber(deutAvailable, 0);
         } else if (this.mode == 2) {
-          let coords =
+          const coords =
             fleetDispatcher.targetPlanet.galaxy +
             ":" +
             fleetDispatcher.targetPlanet.system +
             ":" +
             fleetDispatcher.targetPlanet.position;
-          coords += fleetDispatcher.targetPlanet.type == fleetDispatcher.fleetHelper.PLANETTYPE_MOON ? "M" : "P";
-          let missing = this.json.missing[coords];
-          if (missing) {
-            metalFiller.value = toFormatedNumber(Math.min(missing[0], fleetDispatcher.metalOnPlanet), 0);
-            crystalFiller.value = toFormatedNumber(Math.min(missing[1], fleetDispatcher.crystalOnPlanet), 0);
-            deutFiller.value = toFormatedNumber(Math.min(missing[2], fleetDispatcher.deuteriumOnPlanet), 0);
+          const isMoon = fleetDispatcher.targetPlanet.type === fleetDispatcher.fleetHelper.PLANETTYPE_MOON;
+          const needs = needsUtil.getNeedsByCoords(coords, isMoon);
+          if (needs) {
+            metalFiller.value = toFormatedNumber(Math.min(needs.metal, fleetDispatcher.metalOnPlanet), 0);
+            crystalFiller.value = toFormatedNumber(Math.min(needs.crystal, fleetDispatcher.crystalOnPlanet), 0);
+            deutFiller.value = toFormatedNumber(Math.min(needs.deuterium, fleetDispatcher.deuteriumOnPlanet), 0);
           }
         }
         onResChange(2);
@@ -11695,115 +11690,7 @@ class OGInfinity {
   }
 
   getFlyingRes() {
-    let met = 0,
-      cri = 0,
-      deut = 0;
-    let fleetCount = {};
-    let transports = {};
-    let ids = [];
-    let planets = {};
-    document.querySelectorAll("#eventContent .eventFleet").forEach((line) => {
-      let tooltip =
-        line.querySelector(".icon_movement .tooltip") || line.querySelector(".icon_movement_reserve .tooltip");
-      let id = Number(line.getAttribute("id").split("-")[1]);
-      let back = line.getAttribute("data-return-flight") == "false" ? false : true;
-      let type = line.getAttribute("data-mission-type");
-      let arrival = new Date(parseInt(line.getAttribute("data-arrival-time")) * 1e3);
-      let originCoords = line.querySelector(".coordsOrigin > a").textContent.trim().slice(1, -1);
-      let originName = line.querySelector(".originFleet").textContent.trim();
-      let destCoords = line.querySelector(".destCoords > a").textContent.trim().slice(1, -1);
-      let destName = line.querySelector(".destFleet").textContent.trim();
-      let destIsMoon = line.querySelector(".destFleet .moon");
-      let originIsMoon = line.querySelector(".originFleet .moon");
-      let origin = originCoords + (originIsMoon ? "M" : "P");
-      let dest = destCoords + (destIsMoon ? "M" : "P");
-      let own = false;
-      this.json.empire.forEach((planet) => {
-        if (planet.coordinates == line.children[4].textContent.trim()) own = true;
-      });
-      let movement = {
-        id: id,
-        type: type,
-        own: own,
-        origin: origin,
-        originName: originName,
-        dest: dest,
-        destName: destName,
-        back: back,
-        arrival: arrival,
-        resDest: false,
-        metal: undefined,
-        crystal: undefined,
-        deuterium: undefined,
-        fleet: {},
-      };
-      if (type == 16 || type == 18) return;
-      let expe = {};
-      let div = document.createElement("div");
-      tooltip && div.html(tooltip.getAttribute("title") || tooltip.getAttribute("data-tooltip-title"));
-      let addToTotal = false;
-      let noRes = false;
-      if (type == 4) {
-        addToTotal = true;
-        movement.resDest = true;
-      } else if (type == 3) {
-        if (!back) {
-          transports[id] = true;
-          addToTotal = true;
-          movement.resDest = true;
-        } else if (id - 1 in transports) {
-          noRes = true;
-        } else {
-          addToTotal = true;
-          movement.resDest = true;
-        }
-      } else if (back) {
-        addToTotal = true;
-        movement.resDest = true;
-      } else {
-        addToTotal = false;
-        movement.resDest = false;
-      }
-      div.querySelectorAll('td[colspan="2"]').forEach((tooltip) => {
-        let count = Number(fromFormatedNumber(tooltip.nextElementSibling.innerHTML.trim()));
-        let name = tooltip.textContent.trim().slice(0, -1);
-        let id = this.json.shipNames[name];
-        if (id) {
-          expe[id] ? (expe[id] += count) : (expe[id] = count);
-          movement.fleet[id] = count;
-          if (addToTotal) fleetCount[id] ? (fleetCount[id] += count) : (fleetCount[id] = count);
-        } else {
-          if (!planets[originCoords]) {
-            planets[originCoords] = { metal: 0, crystal: 0, deuterium: 0 };
-          }
-          if (name == this.json.resNames[0]) {
-            movement.metal = noRes ? 0 : count;
-            if (addToTotal) met += count;
-            planets[originCoords].metal += count;
-          }
-          if (name == this.json.resNames[1]) {
-            movement.crystal = noRes ? 0 : count;
-            if (addToTotal) cri += count;
-            planets[originCoords].crystal += count;
-          }
-          if (name == this.json.resNames[2]) {
-            movement.deuterium = noRes ? 0 : count;
-            if (addToTotal) deut += count;
-            planets[originCoords].deuterium += count;
-          }
-        }
-      });
-      ids.push(movement);
-    });
-    let t = {
-      metal: met,
-      crystal: cri,
-      deuterium: deut,
-      fleet: fleetCount,
-      planets: planets,
-      ids: ids,
-    };
-    return t;
+    return flying()
   }
 
   hasActivityChanged(oldAct, newAct) {
@@ -11922,63 +11809,129 @@ class OGInfinity {
       sumNodes[0].querySelectorAll(".ogl-deut")[1].setAttribute("class", "ogl-deut tooltip");
 
       sumNodes[1].querySelector(".ogl-metal").textContent = toFormatedNumber(
-        Math.floor(this.json.flying.metal),
+        Math.floor(OGIData.json.flying.metal),
         null,
         true
       );
       sumNodes[1]
         .querySelector(".ogl-metal")
-        .setAttribute("data-title", toFormatedNumber(Math.floor(this.json.flying.metal)));
+        .setAttribute("data-title", toFormatedNumber(Math.floor(OGIData.json.flying.metal)));
       sumNodes[1].querySelector(".ogl-metal").setAttribute("class", "ogl-metal tooltip");
 
       sumNodes[1].querySelector(".ogl-crystal").textContent = toFormatedNumber(
-        Math.floor(this.json.flying.crystal),
+        Math.floor(OGIData.json.flying.crystal),
         null,
         true
       );
       sumNodes[1]
         .querySelector(".ogl-crystal")
-        .setAttribute("data-title", toFormatedNumber(Math.floor(this.json.flying.crystal)));
+        .setAttribute("data-title", toFormatedNumber(Math.floor(OGIData.json.flying.crystal)));
       sumNodes[1].querySelector(".ogl-crystal").setAttribute("class", "ogl-crystal tooltip");
 
       sumNodes[1].querySelector(".ogl-deut").textContent = toFormatedNumber(
-        Math.floor(this.json.flying.deuterium),
+        Math.floor(OGIData.json.flying.deuterium),
         null,
         true
       );
       sumNodes[1]
         .querySelector(".ogl-deut")
-        .setAttribute("data-title", toFormatedNumber(Math.floor(this.json.flying.deuterium)));
+        .setAttribute("data-title", toFormatedNumber(Math.floor(OGIData.json.flying.deuterium)));
       sumNodes[1].querySelector(".ogl-deut").setAttribute("class", "ogl-deut tooltip");
 
       sumNodes[2].querySelector(".ogl-metal").textContent = toFormatedNumber(
-        Math.floor(mSumP + mSumM + this.json.flying.metal),
+        Math.floor(mSumP + mSumM + OGIData.json.flying.metal),
         null,
         true
       );
       sumNodes[2]
         .querySelector(".ogl-metal")
-        .setAttribute("data-title", toFormatedNumber(Math.floor(mSumP + mSumM + this.json.flying.metal)));
+        .setAttribute("data-title", toFormatedNumber(Math.floor(mSumP + mSumM + OGIData.json.flying.metal)));
       sumNodes[2].querySelector(".ogl-metal").setAttribute("class", "ogl-metal tooltip");
       sumNodes[2].querySelector(".ogl-crystal").textContent = toFormatedNumber(
-        Math.floor(cSumP + cSumM + this.json.flying.crystal),
+        Math.floor(cSumP + cSumM + OGIData.json.flying.crystal),
         null,
         true
       );
       sumNodes[2]
         .querySelector(".ogl-crystal")
-        .setAttribute("data-title", toFormatedNumber(Math.floor(cSumP + cSumM + this.json.flying.crystal)));
+        .setAttribute("data-title", toFormatedNumber(Math.floor(cSumP + cSumM + OGIData.json.flying.crystal)));
       sumNodes[2].querySelector(".ogl-crystal").setAttribute("class", "ogl-crystal tooltip");
       sumNodes[2].querySelector(".ogl-deut").textContent = toFormatedNumber(
-        Math.floor(dSumP + dSumM + this.json.flying.deuterium),
+        Math.floor(dSumP + dSumM + OGIData.json.flying.deuterium),
         null,
         true
       );
       sumNodes[2]
         .querySelector(".ogl-deut")
-        .setAttribute("data-title", toFormatedNumber(Math.floor(dSumP + dSumM + this.json.flying.deuterium)));
+        .setAttribute("data-title", toFormatedNumber(Math.floor(dSumP + dSumM + OGIData.json.flying.deuterium)));
       sumNodes[2].querySelector(".ogl-deut").setAttribute("class", "ogl-deut tooltip");
     });
+    let flyingDetails = {};
+    OGIData.json.flying.ids.forEach((mov) => {
+      if (mov.resDest) {
+        let coords = mov.back ? mov.origin : mov.dest;
+        flyingDetails[coords] = flyingDetails[coords] || {
+          metal: 0,
+          crystal: 0,
+          deuterium: 0,
+        };
+        flyingDetails[coords].metal += mov.metal || 0;
+        flyingDetails[coords].crystal += mov.crystal || 0;
+        flyingDetails[coords].deuterium += mov.deuterium || 0;
+        flyingDetails[coords].name = mov.back ? mov.originName : mov.destName;
+        flyingDetails[coords].own = false;
+      }
+    });
+    this.json.empire.forEach((planet) => {
+      let indexPlanet = planet.coordinates.slice(1, -1) + "P";
+      if (flyingDetails[indexPlanet]) {
+        flyingDetails[indexPlanet].own = true;
+      }
+      if (planet.moon) {
+        let indexMoon = planet.coordinates.slice(1, -1) + "M";
+        if (flyingDetails[indexMoon]) {
+          flyingDetails[indexMoon].own = true;
+        }
+      }
+    });
+    let flyingRows = "";
+    for (const [coords, details] of Object.entries(flyingDetails)) {
+      let res = details.metal + details.crystal + details.deuterium;
+      if (res > 0) {
+        let href = `https://s${this.universe}-${
+          this.gameLang
+        }.ogame.gameforge.com/game/index.php?page=ingame&amp;component=galaxy&galaxy=${coords.split(":")[0]}&system=${
+          coords.split(":")[1]
+        }&position=${coords.split(":")[2].slice(0, -1)}`;
+        flyingRows += `<tr>
+      <td class=${details.own ? "own" : "friendly"}>${details.name}</td>
+      <td class=${details.own ? "own" : "friendly"}><a href=${href}>[${coords.slice(0, -1)}]</a></td>
+      <td><figure class="${coords.slice(-1) == "M" ? "planetIcon moon" : "planetIcon planet"}"></figure></td>
+      <td class="value ogl-metal">${toFormatedNumber(details.metal)}</td>
+      <td class="value ogl-crystal">${toFormatedNumber(details.crystal)}</td>
+      <td class="value ogl-deut">${toFormatedNumber(details.deuterium)}</td>
+      </tr>`;
+      }
+    }
+    document.querySelector(".ogl-sum-symbol .icon_movement").setAttribute(
+      "data-title",
+      `<div class="htmlTooltip">
+        <h1>${this.getTranslatedText(128)}</h1>
+        <div class="splitLine"></div>
+        <tbody>
+          <table class="flyingFleet">
+            <tr>
+                <th colspan="3">${this.getTranslatedText(127)}</th>
+                <th class="ogl-metal">${this.getTranslatedText(0, "res")}</th>
+                <th class="ogl-crystal">${this.getTranslatedText(1, "res")}</th>
+                <th class="ogl-deut">${this.getTranslatedText(2, "res")}</th>
+            </tr>
+            ${flyingRows}
+          </table>
+        </tbody>
+      </div>
+  `
+    );
   }
 
   resourceDetail() {
@@ -12010,24 +11963,71 @@ class OGInfinity {
     flying.appendChild(
       createDOM(
         "span",
-        { class: "tooltip ogl-metal", "data-title": toFormatedNumber(this.json.flying.metal, 0) },
-        toFormatedNumber(this.json.flying.metal, null, true)
+        { class: "tooltip ogl-metal", "data-title": toFormatedNumber(OGIData.json.flying.metal, 0) },
+        toFormatedNumber(OGIData.json.flying.metal, null, true)
       )
     );
     flying.appendChild(
       createDOM(
         "span",
-        { class: "tooltip ogl-crystal", "data-title": toFormatedNumber(this.json.flying.crystal, 0) },
-        toFormatedNumber(this.json.flying.crystal, null, true)
+        { class: "tooltip ogl-crystal", "data-title": toFormatedNumber(OGIData.json.flying.crystal, 0) },
+        toFormatedNumber(OGIData.json.flying.crystal, null, true)
       )
     );
     flying.appendChild(
       createDOM(
         "span",
-        { class: "tooltip ogl-deut", "data-title": toFormatedNumber(this.json.flying.deuterium, 0) },
-        toFormatedNumber(this.json.flying.deuterium, null, true)
+        { class: "tooltip ogl-deut", "data-title": toFormatedNumber(OGIData.json.flying.deuterium, 0) },
+        toFormatedNumber(OGIData.json.flying.deuterium, null, true)
       )
     );
+    let flyingDetails = {};
+    OGIData.json.flying.ids.forEach((mov) => {
+      if (mov.resDest && (mov.type == "4" || mov.type == "3" || mov.type == "15")) {
+        let coords = mov.back ? mov.origin : mov.dest;
+        flyingDetails[coords] = flyingDetails[coords] || {
+          metal: 0,
+          crystal: 0,
+          deuterium: 0,
+        };
+        flyingDetails[coords].metal += mov.metal || 0;
+        flyingDetails[coords].crystal += mov.crystal || 0;
+        flyingDetails[coords].deuterium += mov.deuterium || 0;
+        flyingDetails[coords].name = mov.back ? mov.originName : mov.destName;
+        flyingDetails[coords].own = false;
+      }
+    });
+    this.json.empire.forEach((planet) => {
+      let indexPlanet = planet.coordinates.slice(1, -1) + "P";
+      if (flyingDetails[indexPlanet]) {
+        flyingDetails[indexPlanet].own = true;
+      }
+      if (planet.moon) {
+        let indexMoon = planet.coordinates.slice(1, -1) + "M";
+        if (flyingDetails[indexMoon]) {
+          flyingDetails[indexMoon].own = true;
+        }
+      }
+    });
+    let flyingRows = "";
+    for (const [coords, details] of Object.entries(flyingDetails)) {
+      let res = details.metal + details.crystal + details.deuterium;
+      if (res > 0) {
+        let href = `https://s${this.universe}-${
+          this.gameLang
+        }.ogame.gameforge.com/game/index.php?page=ingame&amp;component=galaxy&galaxy=${coords.split(":")[0]}&system=${
+          coords.split(":")[1]
+        }&position=${coords.split(":")[2].slice(0, -1)}`;
+        flyingRows += `<tr>
+      <td>${details.name}</td>
+      <td class=${details.own ? "own" : "friendly"}><a href=${href}>[${coords.slice(0, -1)}]</a></td>
+      <td><figure class="${coords.slice(-1) == "M" ? "planetIcon moon" : "planetIcon planet"}"></figure></td>
+      <td class="value ogl-metal">${toFormatedNumber(details.metal, 0)}</td>
+      <td class="value ogl-crystal">${toFormatedNumber(details.crystal, 0)}</td>
+      <td class="value ogl-deut">${toFormatedNumber(details.deuterium, 0)}</td>
+      </tr>`;
+      }
+    }
     let flyingSum = createDOM("div", { class: "smallplanet smaller ogl-summary" });
     flyingSum.appendChild(
       createDOM("div", { class: "ogl-sum-symbol" }).appendChild(createDOM("span", { class: "icon_movement" }))
@@ -12175,9 +12175,9 @@ class OGInfinity {
         "span",
         {
           class: "tooltip ogl-metal",
-          "data-title": toFormatedNumber(Math.floor(mSumP + mSumM + this.json.flying.metal)),
+          "data-title": toFormatedNumber(Math.floor(mSumP + mSumM + OGIData.json.flying.metal)),
         },
-        toFormatedNumber(Math.floor(mSumP + mSumM + this.json.flying.metal), null, true)
+        toFormatedNumber(Math.floor(mSumP + mSumM + OGIData.json.flying.metal), null, true)
       )
     );
     sumres.appendChild(
@@ -12185,9 +12185,9 @@ class OGInfinity {
         "span",
         {
           class: "tooltip ogl-crystal",
-          "data-title": toFormatedNumber(Math.floor(cSumP + cSumM + this.json.flying.crystal)),
+          "data-title": toFormatedNumber(Math.floor(cSumP + cSumM + OGIData.json.flying.crystal)),
         },
-        toFormatedNumber(Math.floor(cSumP + cSumM + this.json.flying.crystal), null, true)
+        toFormatedNumber(Math.floor(cSumP + cSumM + OGIData.json.flying.crystal), null, true)
       )
     );
     sumres.appendChild(
@@ -12195,9 +12195,9 @@ class OGInfinity {
         "span",
         {
           class: "tooltip ogl-deut",
-          "data-title": toFormatedNumber(Math.floor(dSumP + dSumM + this.json.flying.deuterium)),
+          "data-title": toFormatedNumber(Math.floor(dSumP + dSumM + OGIData.json.flying.deuterium)),
         },
-        toFormatedNumber(Math.floor(dSumP + dSumM + this.json.flying.deuterium), null, true)
+        toFormatedNumber(Math.floor(dSumP + dSumM + OGIData.json.flying.deuterium), null, true)
       )
     );
     sum.appendChild(createDOM("div", { class: "ogl-sum-symbol" }, "ΣΣ"));
@@ -12848,81 +12848,16 @@ class OGInfinity {
       });
   }
 
-  sideLock(add) {
-    document.querySelectorAll(".ogl-sideLock, .ogl-sideLockRemove").forEach((e) => e.remove());
-    const handleLock = (coords, planet) => {
-      const splittedCoords = coords.split(":");
-      const missing = this.json.missing[coords];
-      const moon = coords.includes("M") ? true : false;
-      if (missing) {
-        const btn = createDOM("button", { class: "ogl-sideLock tooltip tooltipClose tooltipLeft" });
-        if (moon) {
-          btn.classList.add("ogl-moonLock");
-        }
-        if (missing[0] + missing[1] + missing[2] == 0) {
-          btn.classList.add("ogl-sideLockFilled");
-        }
-        planet.appendChild(btn);
-        const div = createDOM("div");
-        div.append(
-          createDOM("div", { style: "width: 75px" }, this.getTranslatedText(39)),
-          createDOM("hr"),
-          createDOM("div", { class: "ogl-metal" }, `${toFormatedNumber(Math.max(0, missing[0]), null, true)}`),
-          createDOM("div", { class: "ogl-crystal" }, `${toFormatedNumber(Math.max(0, missing[1]), null, true)}`),
-          createDOM("div", { class: "ogl-deut" }, `${toFormatedNumber(Math.max(0, missing[2]), null, true)}`),
-          createDOM("hr")
-        );
-        const deleteBtn = div.appendChild(createDOM("div", { style: "width: 75px;", class: "icon icon_against" }));
-        deleteBtn.addEventListener("click", () => {
-          delete this.json.missing[coords];
-          this.json.needSync = true;
-          this.saveData();
-          this.sideLock();
-          document.querySelector(".ogl-tooltip .close-tooltip").click();
-        });
-        btn.addEventListener("mouseover", () => {
-          this.tooltip(btn, div, false, { left: true });
-        });
-        if (add && this.current.coords == coords) {
-          this.tooltip(btn, div, false, { left: true });
-        }
-        btn.addEventListener("click", () => {
-          const link =
-            `?page=ingame&component=fleetdispatch&galaxy=${splittedCoords[0]}&system=${splittedCoords[1]}` +
-            `&position=${splittedCoords[2].slice(0, -1)}&type=${moon ? 3 : 1}` +
-            `&mission=${this.json.options.harvestMission}&oglMode=2`;
-          window.location.href = "https://" + window.location.host + window.location.pathname + link;
-        });
-      }
-    };
+  sideLock() {
+    // To update data in fly
+    this.json.flying = this.getFlyingRes();
     this.planetList.forEach((planet) => {
       const coords = planet.querySelector(".planet-koords").textContent;
-      handleLock(coords + "P", planet);
-      handleLock(coords + "M", planet);
+
+      needsUtil.displayLocksByCoords(coords, false);
+
+      if (planet.querySelector(".moonlink")) needsUtil.displayLocksByCoords(coords, true);
     });
-    if (document.querySelector(".ogl-sideLock")) {
-      const deleteAllEmpty = createDOM("button", { class: "ogl-sideLockRemove tooltip" });
-      const deleteAllFilled = createDOM("button", { class: "ogl-sideLockRemove ogl-sideLockRemoveFilled tooltip" });
-      const sidePlanetDiv = document.querySelector("div#cutty") || document.querySelector("div#norm");
-      sidePlanetDiv.append(deleteAllEmpty, deleteAllFilled);
-      const deleteAll = (condition) => {
-        for (const coords in this.json.missing) {
-          const missing = this.json.missing[coords];
-          if (condition(this.json.missing[coords])) {
-            delete this.json.missing[coords];
-            this.json.needSync = true;
-          }
-        }
-        this.saveData();
-        this.sideLock();
-      };
-      deleteAllEmpty.addEventListener("click", () => {
-        deleteAll((missing) => missing[0] + missing[1] + missing[2] != 0);
-      });
-      deleteAllFilled.addEventListener("click", () => {
-        deleteAll((missing) => missing[0] + missing[1] + missing[2] == 0);
-      });
-    }
   }
 
   highlightTarget() {
@@ -14136,7 +14071,6 @@ class OGInfinity {
     if (this.page == "movement") {
       let lastFleetId = -1;
       let lastFleetBtn;
-      let date;
       document.querySelectorAll(".fleetDetails").forEach((fleet) => {
         let id = Number(fleet.getAttribute("id").replace("fleet", ""));
         if (id > lastFleetId && fleet.querySelector(".reversal a")) {
@@ -14157,35 +14091,14 @@ class OGInfinity {
         let values = fleetInfo ? fleetInfo.querySelectorAll("td.value") : [];
         let backed = [0, 0, 0];
         values.forEach((value, index) => {
-          if (index == values.length - this.hasLifeforms) return; // food
-          if (index == values.length - 1 - this.hasLifeforms) {   // deuterium
-            backed[2] = fromFormatedNumber(value.textContent);
-            return;
-          }
-          if (index == values.length - 2 - this.hasLifeforms) {   // crystal
-            backed[1] = fromFormatedNumber(value.textContent);
-            return;
-          }
-          if (index == values.length - 3 - this.hasLifeforms) {   // metal
-            backed[0] = fromFormatedNumber(value.textContent);
-            return;
-          }
           fleetCount += fromFormatedNumber(value.textContent);
         });
-        // to get 1 ship in discoveries, as it does not have ".fleetinfo"
-        fleetCount = Math.max(1, fleetCount);
-        let destCoords = fleet.querySelector(".destinationCoords a").textContent;
-        let destMoon = fleet.querySelector(".destinationData moon") ? true : false;
-        let coords = destCoords.slice(1, -1) + (destMoon ? "M" : "P");
-        let revesal = fleet.querySelector(".reversal a");
-        if (revesal) {
-          revesal.addEventListener("click", () => {
-            if (this.json.missing[coords]) {
-              this.json.missing[coords][0] += backed[0];
-              this.json.missing[coords][1] += backed[1];
-              this.json.missing[coords][2] += backed[2];
-            }
-            this.saveData();
+        const destCoords = fleet.querySelector(".destinationCoords a").textContent;
+        const destMoon = !!fleet.querySelector(".destinationData moon");
+        const reversal = fleet.querySelector(".reversal a");
+        if (reversal) {
+          reversal.addEventListener("click", () => {
+            needsUtil.displayLocksByCoords(destCoords.slice(1, -1), destMoon);
           });
         }
         let details = fleet.appendChild(createDOM("div", { class: "ogk-fleet-detail" }));
@@ -14895,21 +14808,6 @@ class OGInfinity {
   updatePlanets_FleetActivity() {
     if (this.flyingFleetPerPlanets && this.json.options.fleetActivity) {
       const planetList = document.getElementById("planetList").children;
-      const isOwnPlanet = (coords) => {
-        let found = false;
-        Array.from(planetList).forEach((planet) => {
-          const planetKoordsEl = planet.querySelector(".planet-koords");
-          if (!planetKoordsEl) {
-            return;
-          }
-
-          const planetKoords = planetKoordsEl.textContent;
-
-          if (coords === planetKoords) found = true;
-        });
-
-        return found;
-      };
       Array.from(planetList).forEach((planet) => {
         const planetKoordsEl = planet.querySelector(".planet-koords");
         if (planetKoordsEl) {
@@ -16295,7 +16193,7 @@ function versionInStatusBar() {
     ogKush.init();
     versionInStatusBar();
 
-    const messagesPage = new Messages();
+    new Messages();
 
     // workaround for "DOMPurify not defined" issue
     await wait.waitForDefinition(window, "DOMPurify");
