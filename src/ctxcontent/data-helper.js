@@ -228,7 +228,10 @@ export class DataHelper {
     const logger = getLogger("updateUniverse");
 
     if (this.loading) return;
-
+    if (!isNaN(this.lastUpdate) && new Date() - this.lastUpdate < 30 * 60 * 1e3) {
+      logger.debug("Last ogame's data update was: " + this.lastUpdate);
+      return;
+    }
 
     this.loading = true;
     let players = {};
