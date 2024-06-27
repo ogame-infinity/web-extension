@@ -24,8 +24,8 @@ export class DataHelper {
         }
         this.scannedPlanets = json.scannedPlanets || {};
         this.scannedPlayers = json.scannedPlayers || {};
-        this.lastPlayersUpdate = this.lastPlayersUpdate || new Date(0);
-        this.lastPlanetsUpdate = this.lastPlayersUpdate || new Date(0);
+        this.lastPlayersUpdate = json.lastPlayersUpdate || new Date(0);
+        this.lastPlanetsUpdate = json.lastPlayersUpdate || new Date(0);
         resolve();
       });
     });
