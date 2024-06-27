@@ -42,7 +42,7 @@ function toPlanetResponse(response) {
     player: parseInt(node.getAttribute("player"), 10),
     name: node.getAttribute("name"),
     coords: node.getAttribute("coords"),
-    moon: node.hasChildNodes(),
+    moon: parseInt(node?.firstChild?.getAttribute("id") || 0, 0),
   }));
 }
 
