@@ -58,6 +58,7 @@ class SpyMessagesAnalyzer {
     this.#onTrash = !!document.querySelector('.messagesTrashcanBtns button.custom_btn[disabled="disabled"]');
 
     this.#displaySpyTable();
+    this.#ptreSpy();
   }
 
   #isReport(message) {
@@ -812,6 +813,51 @@ class SpyMessagesAnalyzer {
         });
       }
     });
+  }
+
+  #ptreSpy() {
+    if (!OGIData.options.ptreTK) return;
+
+    const universe = window.location.host.replace(/\D/g, "");
+    const gameLang = document.querySelector('meta[name="ogame-language"]').getAttribute("content");
+    const ptreJSON = {};
+
+    this.#messageCallable().forEach((message) => {
+      const dataRaw = message.querySelector(".rawMessageData");
+
+      if (parseInt(dataRaw?.dataset?.rawTargetplayerid) !== playerId) return;
+
+      const id = message.dataset.msgId;
+      const tmpHTML = createDOM("div", {});
+      tmpHTML.insertAdjacentHTML("afterbegin", message.querySelector("span.player").dataset.tooltipTitle);
+      const playerID = tmpHTML.querySelector("[data-playerId]").dataset.playerid;
+      const coords = dataRaw.dataset.rawCoordinates.split(":");
+      const type = dataRaw.dataset.rawTargetplanettype;
+      const timestamp = dataRaw.dataset.rawDatetime;
+      ptreJSON[id] = {};
+      ptreJSON[id].player_id = playerID;
+      ptreJSON[id].teamkey = OGIData.options.ptreTK;
+      ptreJSON[id].galaxy = coords[0];
+      ptreJSON[id].system = coords[1];
+      ptreJSON[id].position = coords[2];
+      ptreJSON[id].spy_message_ts = timestamp * 1e3;
+      ptreJSON[id].moon = {};
+      ptreJSON[id].main = false;
+
+      if (type === planetType.planet) {
+        ptreJSON[id].activity = "*";
+        ptreJSON[id].moon.activity = "60";
+      } else {
+        ptreJSON[id].activity = "60";
+        ptreJSON[id].moon.activity = "*";
+      }
+
+      message.classList.add("ogl-reportReady");
+    });
+
+    if (Object.keys(ptreJSON).length > 0) {
+      ptreService.importPlayerActivity(gameLang, universe, ptreJSON).finally(() => "Do nothing");
+    }
   }
 }
 
