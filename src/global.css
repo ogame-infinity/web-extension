@@ -86,6 +86,18 @@
   --dm: #c688ec;
 }
 
+
+/* keep the planetList at a fixed distance from top */
+#cutty>#myPlanets>#countColonies{
+  margin: 0px;
+  margin-top: 35px;
+}
+
+#cutty>#myPlanets>.ogl-harvestOptions + #countColonies{
+  margin: 0px;
+}
+
+/* DF */
 #galaxyContent .ctContentRow .cellDebris .debris_1 {
   background: url("") !important;
 }
@@ -3742,13 +3754,13 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
   width: 275px;
 }
 
-#countColonies {
+#myPlanets>#countColonies {
   background: linear-gradient(to right, #1c2b38 45%, #090e13) !important;
   box-shadow: inset 0 1px rgba(255, 255, 255, 0.07), inset 0 11px rgba(255, 255, 255, 0.03);
   font-size: 10px;
   height: 22px !important;
   line-height: 22px !important;
-  margin: 0 !important;
+  margin: 0 ;
   outline: 1px solid #000;
   width: auto !important;
   display: flex;
