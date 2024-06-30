@@ -7952,12 +7952,16 @@ li.resource {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
 }
+.ogl-tooltip .ogk-collect-cargo .choice,
+.ogl-tooltip .ogk-collect-cargo .choice-mission-icon,
 .ogl-tooltip .ogk-expedition-options .choice {
   filter: brightness(0.75);
   background-blend-mode: luminosity;
 }
+.ogl-tooltip .ogk-collect-cargo .choice.highlight,
+.ogl-tooltip .ogk-collect-cargo .choice-mission-icon.highlight,
 .ogl-tooltip .ogk-expedition-options .choice.highlight{
-  filter: brightness(1.3);
+  filter: brightness(1.1);
   background-blend-mode: normal;
 }
 
