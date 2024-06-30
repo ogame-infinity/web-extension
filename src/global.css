@@ -6799,6 +6799,7 @@ div[data-raw-messagetype="41"] ~ .content-box .loot-name{
 
 div[data-raw-messagetype="41"] ~ .content-box .loot-row{
   justify-content: center;
+  column-gap: 15px;
 }
 
 div[data-raw-messagetype="41"] ~ .content-box .loot-item{
@@ -6809,11 +6810,11 @@ div[data-raw-messagetype="41"] ~ .content-box .loot-item{
   color: white;
 }
 
-.msg .rawMessageData ~ .content-box,
-.detail_msg .content-box {
+.msg .rawMessageData ~ .content-box{
   min-height: 0px;
-  padding-top: 15px;
-  padding-bottom: 15px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  margin-top: 5px;
 }
 
 .ogl-food,
