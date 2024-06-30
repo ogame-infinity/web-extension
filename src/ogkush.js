@@ -17845,11 +17845,21 @@ class OGInfinity {
           }`,
         })
       );
-      let sc = cargoChoice.appendChild(createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-202" }));
-      let lc = cargoChoice.appendChild(createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-203" }));
-      let pf = cargoChoice.appendChild(createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-219" }));
-      let tr = cargoChoice.appendChild(createDOM("div", { class: "ogl-option choice-mission-icon ogl-mission-3" }));
-      let dp = cargoChoice.appendChild(createDOM("div", { class: "ogl-option choice-mission-icon ogl-mission-4" }));
+      let sc = cargoChoice.appendChild(createDOM("div", { class: `ogl-option ogl-fleet-ship choice ogl-fleet-202 ${
+        this.json.options.collect.ship == 202? "highlight":""
+      }` }));
+      let lc = cargoChoice.appendChild(createDOM("div", { class: `ogl-option ogl-fleet-ship choice ogl-fleet-203 ${
+        this.json.options.collect.ship == 203? "highlight":""
+      }` }));
+      let pf = cargoChoice.appendChild(createDOM("div", { class: `ogl-option ogl-fleet-ship choice ogl-fleet-219 ${
+        this.json.options.collect.ship == 219? "highlight":""
+      }` }));
+      let tr = cargoChoice.appendChild(createDOM("div", { class: `ogl-option choice-mission-icon ogl-mission-3 ${
+        this.json.options.collect.mission == 3? "highlight":""
+      }` }));
+      let dp = cargoChoice.appendChild(createDOM("div", { class: `ogl-option choice-mission-icon ogl-mission-4 ${
+        this.json.options.collect.mission == 4? "highlight":""
+      }` }));
       let tgt = cargoChoice.appendChild(
         createDOM("div", {
           class: `ogl-option choice-target ${this.json.options.collect.target.type == 3 ? "moon" : "planet"}`,
@@ -17875,6 +17885,14 @@ class OGInfinity {
             ? "pathFinder"
             : "largeCargo"
         }`;
+        document.querySelector(".ogk-collect-cargo .ogl-fleet-ship.highlight").classList.remove("highlight") ;
+        document.querySelector(`.ogk-collect-cargo ${
+          this.json.options.collect.ship == 202
+            ? ".ogl-fleet-202"
+            : this.json.options.collect.ship == 219
+            ? ".ogl-fleet-219"
+            : ".ogl-fleet-203"
+          }`).classList.add("highlight") ;
       };
       let updateDefaultCollectMission = (mission) => {
         this.json.options.collect.mission = mission;
@@ -17888,6 +17906,8 @@ class OGInfinity {
             ? "pathFinder"
             : "largeCargo"
         }`;
+        document.querySelector(".ogk-collect-cargo .choice-mission-icon.highlight").classList.remove("highlight") ;
+        document.querySelector(`.ogk-collect-cargo ${".ogl-mission-"+this.json.options.collect.mission}`).classList.add("highlight") ;
       };
       sc.addEventListener("click", () => updateDefaultCollectShip(202));
       lc.addEventListener("click", () => updateDefaultCollectShip(203));
