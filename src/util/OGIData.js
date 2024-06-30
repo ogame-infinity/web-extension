@@ -147,6 +147,36 @@ class OGIData {
     this.#save();
   }
 
+  get empire() {
+    return this._json.empire;
+  }
+
+  set empire(empire) {
+    this._json.empire = empire;
+
+    this.#save();
+  }
+
+  get needSync() {
+    return this._json.needSync;
+  }
+
+  set needSync(needSync) {
+    this._json.needSync = needSync;
+
+    this.#save();
+  }
+
+  get needs() {
+    return this._json.needs;
+  }
+
+  set needs(needs) {
+    this._json.needs = needs;
+
+    this.#save();
+  }
+
   get json() {
     return this._json;
   }
