@@ -7948,7 +7948,7 @@ li.resource {
 .ogl-tooltip .ogk-collect-cargo .choice.highlight,
 .ogl-tooltip .ogk-collect-cargo .choice-mission-icon.highlight,
 .ogl-tooltip .ogk-expedition-options .choice.highlight{
-  filter: brightness(1.3);
+  filter: brightness(1.1);
   background-blend-mode: normal;
 }
 
