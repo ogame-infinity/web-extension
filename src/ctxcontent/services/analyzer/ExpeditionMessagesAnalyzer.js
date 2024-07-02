@@ -2,6 +2,7 @@ import { getLogger } from "../../../util/logger.js";
 import { messagesTabs } from "../../../ctxpage/messages/index.js";
 import OGIData from "../../../util/OGIData.js";
 import { createDOM } from "../../../util/dom.js";
+import { toFormattedNumber } from "../../../util/numbers.js";
 
 class ExpeditionMessagesAnalyzer {
   #logger;
@@ -64,6 +65,10 @@ class ExpeditionMessagesAnalyzer {
         msgTitle.appendChild(createDOM("span", { class: `ogk-label ${classStyle}` }, labels[classStyle]));
 
         message.classList.add(classStyle);
+
+
+        const classStyleSize = `ogk-size-${message.querySelector(".rawMessageData").getAttribute("data-raw-size")||"normal"}`;
+        msgTitle.appendChild(createDOM("span", { class: `ogk-label ${classStyleSize}` }, classStyleSize));
       };
 
       if (expeditions && expeditions[msgId]) {
@@ -209,9 +214,9 @@ class ExpeditionMessagesAnalyzer {
 
         const labels = {
           "ogk-lifeform1": "Humans",
-          "ogk-lifeform2": "Kaelesh",
+          "ogk-lifeform2": "Rock’tal",
           "ogk-lifeform3": "Mechas",
-          "ogk-lifeform4": "Rock’tal ",
+          "ogk-lifeform4": "Kaelesh",
           "ogk-artefacts": "Artefacts",
           "ogk-void": "Void",
         };
@@ -220,6 +225,11 @@ class ExpeditionMessagesAnalyzer {
 
         const msgTitle = message.querySelector(".msgHeadItem .msgTitle");
         msgTitle.appendChild(createDOM("span", { class: `ogk-label ${classStyle}` }, labels[classStyle]));
+        if (discoveries[msgId]?.result === "artefacts") {
+          const artifacts = parseInt(message.querySelector(".rawMessageData").getAttribute("data-raw-artifactsfound"));
+          const classStyleSize = `ogk-size-${message.querySelector(".rawMessageData").getAttribute("data-raw-artifactssize")||"normal"}`;
+          msgTitle.appendChild(createDOM("span", { class: `ogk-label ${classStyleSize}` }, toFormattedNumber(artifacts,null,true)));
+        }
 
         message.classList.add(classStyle);
       };
