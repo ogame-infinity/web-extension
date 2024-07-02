@@ -13392,6 +13392,8 @@ class OGInfinity {
     let labLvl = 1;
     let timeFactor = 1;
     let costFactor = 1;
+    let costLFBonus = 0;
+    let timeLFBonus = 0;
     if (object) {
       if (id < 11001) {
         let labs = [];
@@ -13408,12 +13410,14 @@ class OGInfinity {
           .slice(0, igfn)
           .map((x) => (labLvl += x));
       } else {
-        costFactor -= this.json.lifeformPlanetBonus[object.id]?.technologyCostReduction || 0;
-        timeFactor -= this.json.lifeformPlanetBonus[object.id]?.technologyTimeReduction || 0;
+        costLFBonus += this.json.lifeformPlanetBonus[object.id]?.technologyCostReduction || 0;
+        timeLFBonus += this.json.lifeformPlanetBonus[object.id]?.technologyTimeReduction || 0;
       }
       const key = id < 11201 ? id : "LfResearch";
-      costFactor -= this.json.lifeformBonus.technologyCostReduction?.[key] || 0;
-      timeFactor -= this.json.lifeformBonus.technologyTimeReduction?.[key] || 0;
+      costLFBonus += this.json.lifeformBonus.technologyCostReduction?.[key] || 0;
+      timeLFBonus = Math.min(0.99, timeLFBonus + (this.json.lifeformBonus.technologyTimeReduction?.[key] || 0));
+      costFactor -= costLFBonus;
+      timeFactor -= timeLFBonus;
     }
     let cost = [
       Math.floor(
