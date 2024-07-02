@@ -2169,75 +2169,91 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link{
 }
 .ogk-label.ogk-metal {
   color: #ffaacc;
-  border-color: #ffaacc80;
+  border-color: #ffaacc;
 }
 .ogk-label.ogk-crystal {
   color: #73e5ff;
-  border-color: #73e5ff80;
+  border-color: #73e5ff;
 }
 .ogk-label.ogk-deuterium {
   color: #a6e0b0;
-  border-color: #a6e0b080;
+  border-color: #a6e0b0;
 }
 .ogk-label.ogk-am {
   color: #dddddd;
-  border-color: #dddddd80;
+  border-color: #dddddd;
 }
 .ogk-label.ogk-fleet {
   color: #fc7e83;
-  border-color: #782c2f80;
+  border-color: #782c2f;
 }
 .ogk-label.ogk-object {
   color: #d69937;
-  border-color: #c0893180;
+  border-color: #c08931;
 }
 .ogk-label.ogk-aliens {
   color: #36bd00;
-  border-color: #1e690080;
+  border-color: #1e6900;
 }
 .ogk-label.ogk-pirates {
   color: #e3924b;
-  border-color: #734a2680;
+  border-color: #734a26;
 }
 .ogk-label.ogk-late {
   color: #a5a5a5;
-  border-color: #65656580;
+  border-color: #656565;
 }
 .ogk-label.ogk-early {
   color: #adadad;
-  border-color: #adadad80;
+  border-color: #adadad;
 }
 .ogk-label.ogk-bhole {
   color: #ac95ff;
-  border-color: #614bb180;
+  border-color: #614bb1;
 }
 .ogk-label.ogk-merchant {
   color: #a0c02b;
-  border-color: #a0c02b80;
+  border-color: #a0c02b;
 }
 .ogk-label.ogk-lifeform1{
   color: #7fc200;
-  border-color: #ffffff80;
+  border-color: #ffffff;
 }
 .ogk-label.ogk-lifeform2 {
   color: #ec752f;
-  border-color: #ffffff80;
+  border-color: #ffffff;
 }
 .ogk-label.ogk-lifeform3 {
   color: #3c93f0;
-  border-color: #ffffff80;
+  border-color: #ffffff;
 }
 .ogk-label.ogk-lifeform4 {
   color: #9c64ed;
-  border-color: #ffffff80;
+  border-color: #ffffff;
 }
 .ogk-label.ogk-void {
   color: #77aad0;
-  border-color: #22303a80;
+  border-color: #22303a;
 }
 .ogk-label.ogk-artefacts {
   color: #fdeca6;
-  border-color: #ffffff80;
+  border-color: #ffffff;
+}
+.ogk-label.ogk-size-normal {
+  color: #dddddd;
+  border-color: #dddddd;
+}
+.ogk-label.ogk-size-big {
+  color: #52aef1;
+  border-color: #52aef1;
+}
+.ogk-label.ogk-size-huge {
+  color: #ef57ac;
+  border-color: #ef57ac;
+}
+.ogk-label.ogk-size-full {
+  color: #f00;
+  border-color: #f00;
 }
 
 /* region: Expeditions Messages */
@@ -2306,28 +2322,52 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link{
 }
 
 .msg.ogk-lifeform1,
-.msg_new.ogk-lifeform1 {
-  border-left: 7px solid linear-gradient(80deg, #ffffff 1%, #7fc200 60%) !important
-}
-
 .msg.ogk-lifeform2,
-.msg_new.ogk-lifeform2 {
-  border-left: 7px solid linear-gradient(80deg, #ffffff 1%, #ec752f 60%) !important;
-}
-
 .msg.ogk-lifeform3,
-.msg_new.ogk-lifeform3 {
-  border-left: 7px solid linear-gradient(80deg, #ffffff 1%, #3c93f0 60%) !important;
-}
-
 .msg.ogk-lifeform4,
-.msg_new.ogk-lifeform4 {
-  border-left: 7px solid linear-gradient(80deg, #ffffff 1%, #9c64ed 60%) !important;
+.msg.ogk-artefacts {
+  position: relative;
+  padding-left: 7px;
+  z-index: 1;
+}
+.msg.ogk-lifeform1:before,
+.msg.ogk-lifeform2:before,
+.msg.ogk-lifeform3:before,
+.msg.ogk-lifeform4:before,
+.msg.ogk-artefacts:before {
+  content: '';
+  position: absolute;
+  min-height: 100%;
+  width: 7px;
+  left: 0px;
+  border-radius: 5px 0 0 5px;
+  opacity: 0.8;
+  z-index: -1;
 }
 
-.msg.ogk-artefacts,
-.msg_new.ogk-artefacts {
-  border-left: 7px solid linear-gradient(80deg, #ffffff 1%, #fdeca6 60%) !important;
+.msg.ogk-lifeform1:before,
+.msg_new.ogk-lifeform1:before {
+  background: linear-gradient(80deg, #fff 20%, #7fc200 60%);
+}
+
+.msg.ogk-lifeform2:before,
+.msg_new.ogk-lifeform2:before {
+  background: linear-gradient(80deg, #fff 20%, #ec752f 60%);
+}
+
+.msg.ogk-lifeform3:before,
+.msg_new.ogk-lifeform3:before {
+  background: linear-gradient(80deg, #fff 20%, #3c93f0 60%);
+}
+
+.msg.ogk-lifeform4:before,
+.msg_new.ogk-lifeform4:before {
+  background: linear-gradient(80deg, #fff 20%, #9c64ed 60%);
+}
+
+.msg.ogk-artefacts:before,
+.msg_new.ogk-artefacts:before {
+  background: linear-gradient(80deg, #fff 20%, #fdeca6 60%);
 }
 
 .msg.ogk-void,
@@ -6791,6 +6831,7 @@ table.fleetinfo tr:nth-last-child(2) {
 }
 
 /* expedition custom */
+div[data-raw-messagetype="61"] ~ .msgContent,
 div[data-raw-messagetype="41"] ~ .msgContent,
 .msg group-title,
 div[data-raw-messagetype="41"] ~ .content-box .loot-name{

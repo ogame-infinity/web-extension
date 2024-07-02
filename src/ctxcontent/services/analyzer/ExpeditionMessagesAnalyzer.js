@@ -2,6 +2,7 @@ import { getLogger } from "../../../util/logger.js";
 import { messagesTabs } from "../../../ctxpage/messages/index.js";
 import OGIData from "../../../util/OGIData.js";
 import { createDOM } from "../../../util/dom.js";
+import { toFormattedNumber } from "../../../util/numbers.js";
 
 class ExpeditionMessagesAnalyzer {
   #logger;
@@ -204,7 +205,36 @@ class ExpeditionMessagesAnalyzer {
 
       const msgId = message.getAttribute("data-msg-id");
 
-      if (discoveries && discoveries[msgId]) return;
+      const displayLabel = function (message) {
+        if (!discoveries[msgId]) return;
+
+        const labels = {
+          "ogk-lifeform1": "Humans",
+          "ogk-lifeform2": "Rock’tal",
+          "ogk-lifeform3": "Mechas",
+          "ogk-lifeform4": "Kaelesh",
+          "ogk-artefacts": "Artefacts",
+          "ogk-void": "Void",
+        };
+
+        const classStyle = `ogk-${discoveries[msgId]?.result?.toLowerCase()}`;
+
+        const msgTitle = message.querySelector(".msgHeadItem .msgTitle");
+        msgTitle.appendChild(createDOM("span", { class: `ogk-label ${classStyle}` }, labels[classStyle]));
+        if (discoveries[msgId]?.result === "artefacts") {
+          const artifacts = parseInt(message.querySelector(".rawMessageData").getAttribute("data-raw-artifactsfound"));
+          const classStyleSize = `ogk-size-${message.querySelector(".rawMessageData").getAttribute("data-raw-artifactssize")||"normal"}`;
+          msgTitle.appendChild(createDOM("span", { class: `ogk-label ${classStyleSize}` }, toFormattedNumber(artifacts,null,true)));
+        }
+
+        message.classList.add(classStyle);
+      };
+
+      if (discoveries && discoveries[msgId]) {
+        displayLabel(message);
+
+        return;
+      }
 
       const newDate = new Date(message.querySelector(".rawMessageData").getAttribute("data-raw-date"));
       const datePoint = `${newDate.getDate().toString().padStart(2, "0")}.${(newDate.getMonth() + 1)
@@ -217,10 +247,9 @@ class ExpeditionMessagesAnalyzer {
         type: {},
       };
 
-      const type = message.querySelector(".rawMessageData").getAttribute("data-raw-discoverytype");
-      let discoveryType = "void";
+      let discoveryType = message.querySelector(".rawMessageData").getAttribute("data-raw-discoverytype");
 
-      if (type === "lifeform-xp") {
+      if (discoveryType === "lifeform-xp") {
         const lifeForm = message.querySelector(".rawMessageData").getAttribute("data-raw-lifeform");
         const experience = parseInt(
           message.querySelector(".rawMessageData").getAttribute("data-raw-lifeformgainedexperience")
@@ -228,21 +257,24 @@ class ExpeditionMessagesAnalyzer {
         discoveryType = `lifeform${lifeForm}`;
 
         sums.found[lifeForm - 1] ? (sums.found[lifeForm - 1] += experience) : (sums.found[lifeForm - 1] = experience);
-      } else if (type === "artifacts") {
+      } else if (discoveryType === "artifacts") {
         const artifacts = parseInt(message.querySelector(".rawMessageData").getAttribute("data-raw-artifactsfound"));
         discoveryType = "artefacts";
         sums.artefacts += artifacts;
       }
+      else
+        discoveryType = "void";
 
       sums.type[discoveryType] ? (sums.type[discoveryType] += 1) : (sums.type[discoveryType] = 1);
 
       discoveriesSums[datePoint] = sums;
       discoveries[msgId] = {
-        result: type,
+        result: discoveryType,
         date: newDate,
         favorited: !!message.querySelector(".icon_favorited"),
       };
 
+      displayLabel(message);
       OGIData.discoveries = discoveries;
       OGIData.discoveriesSums = discoveriesSums;
     });
