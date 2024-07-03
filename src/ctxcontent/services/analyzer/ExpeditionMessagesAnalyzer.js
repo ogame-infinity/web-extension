@@ -224,7 +224,13 @@ class ExpeditionMessagesAnalyzer {
 
         if (discoveries[msgId]?.result != "void") {
           const classStyleSize = `ogk-size-${discoveries[msgId]?.size || "normal"}`;
-          msgTitle.appendChild(createDOM("span", { class: `ogk-label ${classStyleSize}` }, toFormattedNumber(discoveries[msgId]?.amount || 0,0,true)));
+          msgTitle.appendChild(
+            createDOM(
+              "span",
+              { class: `ogk-label ${classStyleSize}` },
+              toFormattedNumber(discoveries[msgId]?.amount || 0, 0, true)
+            )
+          );
         }
 
         message.classList.add(classStyle);
