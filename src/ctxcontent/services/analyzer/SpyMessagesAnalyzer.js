@@ -831,15 +831,19 @@ class SpyMessagesAnalyzer {
       const tmpHTML = createDOM("div", {});
       tmpHTML.insertAdjacentHTML("afterbegin", message.querySelector("span.player").dataset.tooltipTitle);
       const playerID = tmpHTML.querySelector("[data-playerId]").dataset.playerid;
-      const coords = dataRaw.dataset.rawCoordinates.split(":");
-      const type = dataRaw.dataset.rawTargetplanettype;
+
+      const spyFromUrl = new URLSearchParams(
+        message.querySelector(".custom_btn.msgAttackBtn").getAttribute("onclick").split(/=(.*)/)[1].slice(1, -1)
+      );
+
+      const type = parseInt(spyFromUrl.get("type"));
       const timestamp = dataRaw.dataset.rawDatetime;
       ptreJSON[id] = {};
       ptreJSON[id].player_id = playerID;
       ptreJSON[id].teamkey = OGIData.options.ptreTK;
-      ptreJSON[id].galaxy = coords[0];
-      ptreJSON[id].system = coords[1];
-      ptreJSON[id].position = coords[2];
+      ptreJSON[id].galaxy = spyFromUrl.get("galaxy");
+      ptreJSON[id].system = spyFromUrl.get("system");
+      ptreJSON[id].position = spyFromUrl.get("position");
       ptreJSON[id].spy_message_ts = timestamp * 1e3;
       ptreJSON[id].moon = {};
       ptreJSON[id].main = false;
