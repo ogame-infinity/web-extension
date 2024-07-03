@@ -831,10 +831,12 @@ class SpyMessagesAnalyzer {
       const tmpHTML = createDOM("div", {});
       tmpHTML.insertAdjacentHTML("afterbegin", message.querySelector("span.player").dataset.tooltipTitle);
       const playerID = tmpHTML.querySelector("[data-playerId]").dataset.playerid;
+
       const spyFromUrl = new URLSearchParams(
-        message.querySelector("div.messageContentWrapper > div.msgHead > div:nth-child(1) > div.msgTitle > a").href
+        message.querySelector(".custom_btn.msgAttackBtn").getAttribute("onclick").split(/=(.*)/)[1].slice(1, -1)
       );
-      const type = dataRaw.dataset.rawTargetplanettype;
+
+      const type = parseInt(spyFromUrl.get("type"));
       const timestamp = dataRaw.dataset.rawDatetime;
       ptreJSON[id] = {};
       ptreJSON[id].player_id = playerID;
