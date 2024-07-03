@@ -221,10 +221,10 @@ class ExpeditionMessagesAnalyzer {
 
         const msgTitle = message.querySelector(".msgHeadItem .msgTitle");
         msgTitle.appendChild(createDOM("span", { class: `ogk-label ${classStyle}` }, labels[classStyle]));
-        if (discoveries[msgId]?.result === "artefacts") {
-          const artifacts = parseInt(message.querySelector(".rawMessageData").getAttribute("data-raw-artifactsfound"));
-          const classStyleSize = `ogk-size-${message.querySelector(".rawMessageData").getAttribute("data-raw-artifactssize")||"normal"}`;
-          msgTitle.appendChild(createDOM("span", { class: `ogk-label ${classStyleSize}` }, toFormattedNumber(artifacts,null,true)));
+
+        if (discoveries[msgId]?.result != "void") {
+          const classStyleSize = `ogk-size-${discoveries[msgId]?.size || "normal"}`;
+          msgTitle.appendChild(createDOM("span", { class: `ogk-label ${classStyleSize}` }, toFormattedNumber(discoveries[msgId]?.amount || 0,0,true)));
         }
 
         message.classList.add(classStyle);
@@ -247,29 +247,33 @@ class ExpeditionMessagesAnalyzer {
         type: {},
       };
 
-      let discoveryType = message.querySelector(".rawMessageData").getAttribute("data-raw-discoverytype");
+      const discoveryType = message.querySelector(".rawMessageData").getAttribute("data-raw-discoverytype");
+      let ogiDiscoveryType = "void";
+      let amount = 0;
 
       if (discoveryType === "lifeform-xp") {
         const lifeForm = message.querySelector(".rawMessageData").getAttribute("data-raw-lifeform");
         const experience = parseInt(
           message.querySelector(".rawMessageData").getAttribute("data-raw-lifeformgainedexperience")
         );
-        discoveryType = `lifeform${lifeForm}`;
+        ogiDiscoveryType = `lifeform${lifeForm}`;
+        amount = experience;
 
         sums.found[lifeForm - 1] ? (sums.found[lifeForm - 1] += experience) : (sums.found[lifeForm - 1] = experience);
       } else if (discoveryType === "artifacts") {
         const artifacts = parseInt(message.querySelector(".rawMessageData").getAttribute("data-raw-artifactsfound"));
-        discoveryType = "artefacts";
+        ogiDiscoveryType = "artefacts";
+        amount = artifacts;
         sums.artefacts += artifacts;
       }
-      else
-        discoveryType = "void";
 
-      sums.type[discoveryType] ? (sums.type[discoveryType] += 1) : (sums.type[discoveryType] = 1);
+      sums.type[ogiDiscoveryType] ? (sums.type[ogiDiscoveryType] += 1) : (sums.type[ogiDiscoveryType] = 1);
 
       discoveriesSums[datePoint] = sums;
       discoveries[msgId] = {
-        result: discoveryType,
+        result: ogiDiscoveryType,
+        size: message.querySelector(".rawMessageData").getAttribute("data-raw-artifactssize") || "normal",
+        amount: amount,
         date: newDate,
         favorited: !!message.querySelector(".icon_favorited"),
       };
