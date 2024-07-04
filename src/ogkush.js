@@ -11869,6 +11869,82 @@ class OGInfinity {
     }
   }
 
+  resourceTransportTooltip() {
+    const flyingDetails = {};
+    this.json.flying.ids.forEach((mov) => {
+      if (mov.resDest) {
+        const coords = mov.back ? mov.origin : mov.dest;
+        flyingDetails[coords] = flyingDetails[coords] || {
+          metal: 0,
+          crystal: 0,
+          deuterium: 0,
+        };
+        flyingDetails[coords].metal += mov.metal || 0;
+        flyingDetails[coords].crystal += mov.crystal || 0;
+        flyingDetails[coords].deuterium += mov.deuterium || 0;
+        flyingDetails[coords].name = mov.back ? mov.originName : mov.destName;
+        flyingDetails[coords].own = false;
+      }
+    });
+    this.json.empire.forEach((planet) => {
+      const indexPlanet = planet.coordinates.slice(1, -1) + "P";
+      if (flyingDetails[indexPlanet]) {
+        flyingDetails[indexPlanet].own = true;
+      }
+      if (planet.moon) {
+        const indexMoon = planet.coordinates.slice(1, -1) + "M";
+        if (flyingDetails[indexMoon]) {
+          flyingDetails[indexMoon].own = true;
+        }
+      }
+    });
+
+    const tooltipDiv = DOM.createDOM("div", {}, this.getTranslatedText(128));
+    tooltipDiv.appendChild(DOM.createDOM("div", { class: "splitLine" }));
+    const tableDiv = tooltipDiv.appendChild(DOM.createDOM("table", { class: "flyingFleet" }));
+    const rowHeader = tableDiv.appendChild(DOM.createDOM("tr"));
+    rowHeader.append(
+      DOM.createDOM("th", { colspan: 3 }, this.getTranslatedText(127)),
+      DOM.createDOM("th", { class: "ogl-metal" }, this.getTranslatedText(0, "res")),
+      DOM.createDOM("th", { class: "ogl-crystal" }, this.getTranslatedText(1, "res")),
+      DOM.createDOM("th", { class: "ogl-deut" }, this.getTranslatedText(2, "res"))
+    );
+
+    for (const [coords, details] of Object.entries(flyingDetails)) {
+      const res = details.metal + details.crystal + details.deuterium;
+      if (res > 0) {
+        const coord = coords.slice(0, -1).split(":");
+        const moon = coords.includes("M");
+        const href = new URLSearchParams({
+          page: "ingame",
+          component: "galaxy",
+          galaxy: coord[0],
+          system: coord[1],
+          position: coord[2],
+        });
+
+        const row = DOM.createDOM("tr");
+        row.append(
+          DOM.createDOM("td", { class: details.own ? "own" : "friendly" }, details.name),
+          DOM.createDOM("td", { class: details.own ? "own" : "friendly" }).appendChild(
+            DOM.createDOM("a", { href: `?${href.toString()}` }, `[${coord.join(":")}]`)
+          ).parentElement,
+          DOM.createDOM("td").appendChild(DOM.createDOM("figure", { class: `planetIcon ${moon ? "moon" : "planet"}` }))
+            .parentElement,
+          DOM.createDOM("td", { class: "value ogl-metal" }, toFormatedNumber(details.metal)),
+          DOM.createDOM("td", { class: "value ogl-crystal" }, toFormatedNumber(details.crystal)),
+          DOM.createDOM("td", { class: "value ogl-deut" }, toFormatedNumber(details.deuterium))
+        );
+        tableDiv.appendChild(row);
+      }
+    }
+
+    const flyingSum = document.querySelector(".ogl-sum-symbol .icon_movement");
+    const listener = () => tooltip(flyingSum, tooltipDiv, false);
+    flyingSum.removeEventListener("ontouchstart" in document.documentElement ? "touchstart" : "mouseenter", listener);
+    flyingSum.addEventListener("ontouchstart" in document.documentElement ? "touchstart" : "mouseenter", listener);
+  }
+
   updateresourceDetail() {
     if (!this.json.options.empire) return;
     if (!document.querySelector(".ogl-metal")) return;
@@ -12007,81 +12083,7 @@ class OGInfinity {
         .setAttribute("data-title", toFormatedNumber(Math.floor(dSumP + dSumM + this.json.flying.deuterium)));
       sumNodes[2].querySelector(".ogl-deut").setAttribute("class", "ogl-deut tooltip");
     });
-    let flyingDetails = {};
-    this.json.flying.ids.forEach((mov) => {
-      if (mov.resDest) {
-        let coords = mov.back ? mov.origin : mov.dest;
-        flyingDetails[coords] = flyingDetails[coords] || {
-          metal: 0,
-          crystal: 0,
-          deuterium: 0,
-        };
-        flyingDetails[coords].metal += mov.metal || 0;
-        flyingDetails[coords].crystal += mov.crystal || 0;
-        flyingDetails[coords].deuterium += mov.deuterium || 0;
-        flyingDetails[coords].name = mov.back ? mov.originName : mov.destName;
-        flyingDetails[coords].own = false;
-      }
-    });
-    this.json.empire.forEach((planet) => {
-      let indexPlanet = planet.coordinates.slice(1, -1) + "P";
-      if (flyingDetails[indexPlanet]) {
-        flyingDetails[indexPlanet].own = true;
-      }
-      if (planet.moon) {
-        let indexMoon = planet.coordinates.slice(1, -1) + "M";
-        if (flyingDetails[indexMoon]) {
-          flyingDetails[indexMoon].own = true;
-        }
-      }
-    });
-
-    const tooltipDiv = DOM.createDOM("div", {}, this.getTranslatedText(128));
-    tooltipDiv.appendChild(DOM.createDOM("div", { class: "splitLine" }));
-    const tableDiv = tooltipDiv.appendChild(DOM.createDOM("table", { class: "flyingFleet" }));
-    const rowHeader = tableDiv.appendChild(DOM.createDOM("tr"));
-    rowHeader.append(
-      DOM.createDOM("th", { colspan: 3 }, this.getTranslatedText(127)),
-      DOM.createDOM("th", { class: "ogl-metal" }, this.getTranslatedText(0, "res")),
-      DOM.createDOM("th", { class: "ogl-crystal" }, this.getTranslatedText(1, "res")),
-      DOM.createDOM("th", { class: "ogl-deut" }, this.getTranslatedText(2, "res"))
-    );
-
-    for (const [coords, details] of Object.entries(flyingDetails)) {
-      const res = details.metal + details.crystal + details.deuterium;
-      if (res > 0) {
-        const coord = coords.slice(0, -1).split(":");
-        const moon = coords.includes("M");
-        const href =
-          "?" +
-          new URLSearchParams({
-            page: "ingame",
-            component: "galaxy",
-            galaxy: coord[0],
-            system: coord[1],
-            position: coord[2],
-          }).toString();
-
-        const row = DOM.createDOM("tr");
-        row.append(
-          DOM.createDOM("td", { class: details.own ? "own" : "friendly" }, details.name),
-          DOM.createDOM("td", { class: details.own ? "own" : "friendly" }).appendChild(
-            DOM.createDOM("a", { href: href }, `[${coord.join(":")}]`)
-          ).parentElement,
-          DOM.createDOM("td").appendChild(DOM.createDOM("figure", { class: `planetIcon ${moon ? "moon" : "planet"}` }))
-            .parentElement,
-          DOM.createDOM("td", { class: "value ogl-metal" }, toFormatedNumber(details.metal)),
-          DOM.createDOM("td", { class: "value ogl-crystal" }, toFormatedNumber(details.crystal)),
-          DOM.createDOM("td", { class: "value ogl-deut" }, toFormatedNumber(details.deuterium))
-        );
-        tableDiv.appendChild(row);
-      }
-    }
-
-    const fleetIcon = document.querySelector(".ogl-sum-symbol .icon_movement");
-    fleetIcon.addEventListener("ontouchstart" in document.documentElement ? "touchstart" : "mouseenter", () => {
-      tooltip(fleetIcon, tooltipDiv, false);
-    });
+    this.resourceTransportTooltip();
   }
 
   resourceDetail() {
@@ -12131,77 +12133,10 @@ class OGInfinity {
         toFormatedNumber(this.json.flying.deuterium, null, true)
       )
     );
-    let flyingDetails = {};
-    this.json.flying.ids.forEach((mov) => {
-      if (mov.resDest && (mov.type == "4" || mov.type == "3" || mov.type == "15")) {
-        let coords = mov.back ? mov.origin : mov.dest;
-        flyingDetails[coords] = flyingDetails[coords] || {
-          metal: 0,
-          crystal: 0,
-          deuterium: 0,
-        };
-        flyingDetails[coords].metal += mov.metal || 0;
-        flyingDetails[coords].crystal += mov.crystal || 0;
-        flyingDetails[coords].deuterium += mov.deuterium || 0;
-        flyingDetails[coords].name = mov.back ? mov.originName : mov.destName;
-        flyingDetails[coords].own = false;
-      }
-    });
-    this.json.empire.forEach((planet) => {
-      let indexPlanet = planet.coordinates.slice(1, -1) + "P";
-      if (flyingDetails[indexPlanet]) {
-        flyingDetails[indexPlanet].own = true;
-      }
-      if (planet.moon) {
-        let indexMoon = planet.coordinates.slice(1, -1) + "M";
-        if (flyingDetails[indexMoon]) {
-          flyingDetails[indexMoon].own = true;
-        }
-      }
-    });
-    let flyingRows = "";
-    for (const [coords, details] of Object.entries(flyingDetails)) {
-      let res = details.metal + details.crystal + details.deuterium;
-      if (res > 0) {
-        let href = `https://s${this.universe}-${
-          this.gameLang
-        }.ogame.gameforge.com/game/index.php?page=ingame&amp;component=galaxy&galaxy=${coords.split(":")[0]}&system=${
-          coords.split(":")[1]
-        }&position=${coords.split(":")[2].slice(0, -1)}`;
-        flyingRows += `<tr>
-      <td>${details.name}</td>
-      <td class=${details.own ? "own" : "friendly"}><a href=${href}>[${coords.slice(0, -1)}]</a></td>
-      <td><figure class="${coords.slice(-1) == "M" ? "planetIcon moon" : "planetIcon planet"}"></figure></td>
-      <td class="value ogl-metal">${toFormatedNumber(details.metal, 0)}</td>
-      <td class="value ogl-crystal">${toFormatedNumber(details.crystal, 0)}</td>
-      <td class="value ogl-deut">${toFormatedNumber(details.deuterium, 0)}</td>
-      </tr>`;
-      }
-    }
     let flyingSum = createDOM("div", { class: "smallplanet smaller ogl-summary" });
     flyingSum.appendChild(
       createDOM("div", { class: "ogl-sum-symbol" }).appendChild(createDOM("span", { class: "icon_movement" }))
         .parentElement
-    );
-    flyingSum.querySelector(".icon_movement").classList.add("tooltip", "tooltipTop", "tooltipClose");
-    flyingSum.querySelector(".icon_movement").setAttribute(
-      "data-title",
-      `<div class="htmlTooltip">
-        <h1>${this.getTranslatedText(128)}</h1>
-        <div class="splitLine"></div>
-        <tbody>
-          <table class="flyingFleet">
-            <tr>
-                <th colspan="3">${this.getTranslatedText(127)}</th>
-                <th class="ogl-metal">${this.getTranslatedText(0, "res")}</th>
-                <th class="ogl-crystal">${this.getTranslatedText(1, "res")}</th>
-                <th class="ogl-deut">${this.getTranslatedText(2, "res")}</th>
-            </tr>
-            ${flyingRows}
-          </table>
-        </tbody>
-      </div>
-  `
     );
     flyingSum.appendChild(flying);
     let mSumP = 0,
@@ -12377,6 +12312,7 @@ class OGInfinity {
       divMoonSum.style.display = "none";
       moonSumSymbol.style.display = "none";
     }
+    this.resourceTransportTooltip();
   }
 
   updateInfo() {
