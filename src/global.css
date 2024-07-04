@@ -86,6 +86,18 @@
   --dm: #c688ec;
 }
 
+
+/* keep the planetList at a fixed distance from top */
+#cutty>#myPlanets>#countColonies{
+  margin: 0px;
+  margin-top: 35px;
+}
+
+#cutty>#myPlanets>.ogl-harvestOptions + #countColonies{
+  margin: 0px;
+}
+
+/* DF */
 #galaxyContent .ctContentRow .cellDebris .debris_1 {
   background: url("") !important;
 }
@@ -2032,6 +2044,11 @@ button.build-it_premium:hover {
   padding: 15px 0;
 }
 
+/* mecha shipyard */
+.shipyardSelection + .costs {
+  margin-left: 80px;
+}
+
 #technologydetails .information > ul li {
   width: 285px !important;
   margin-bottom: 2px !important;
@@ -2108,8 +2125,7 @@ button.build-it_premium:hover {
 
 
 
-.messageDetails .loot-item .loot-details, 
-.messagesHolder .loot-item .loot-details{
+.messageDetails .loot-row .loot-item .loot-details{
   justify-content: left;
 }
 
@@ -2153,75 +2169,91 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link{
 }
 .ogk-label.ogk-metal {
   color: #ffaacc;
-  border-color: #ffaacc80;
+  border-color: #ffaacc;
 }
 .ogk-label.ogk-crystal {
   color: #73e5ff;
-  border-color: #73e5ff80;
+  border-color: #73e5ff;
 }
 .ogk-label.ogk-deuterium {
   color: #a6e0b0;
-  border-color: #a6e0b080;
+  border-color: #a6e0b0;
 }
 .ogk-label.ogk-am {
   color: #dddddd;
-  border-color: #dddddd80;
+  border-color: #dddddd;
 }
 .ogk-label.ogk-fleet {
   color: #fc7e83;
-  border-color: #782c2f80;
+  border-color: #782c2f;
 }
 .ogk-label.ogk-object {
   color: #d69937;
-  border-color: #c0893180;
+  border-color: #c08931;
 }
 .ogk-label.ogk-aliens {
   color: #36bd00;
-  border-color: #1e690080;
+  border-color: #1e6900;
 }
 .ogk-label.ogk-pirates {
   color: #e3924b;
-  border-color: #734a2680;
+  border-color: #734a26;
 }
 .ogk-label.ogk-late {
   color: #a5a5a5;
-  border-color: #65656580;
+  border-color: #656565;
 }
 .ogk-label.ogk-early {
   color: #adadad;
-  border-color: #adadad80;
+  border-color: #adadad;
 }
 .ogk-label.ogk-bhole {
   color: #ac95ff;
-  border-color: #614bb180;
+  border-color: #614bb1;
 }
 .ogk-label.ogk-merchant {
   color: #a0c02b;
-  border-color: #a0c02b80;
+  border-color: #a0c02b;
 }
 .ogk-label.ogk-lifeform1{
   color: #7fc200;
-  border-color: #ffffff80;
+  border-color: #ffffff;
 }
 .ogk-label.ogk-lifeform2 {
   color: #ec752f;
-  border-color: #ffffff80;
+  border-color: #ffffff;
 }
 .ogk-label.ogk-lifeform3 {
   color: #3c93f0;
-  border-color: #ffffff80;
+  border-color: #ffffff;
 }
 .ogk-label.ogk-lifeform4 {
   color: #9c64ed;
-  border-color: #ffffff80;
+  border-color: #ffffff;
 }
 .ogk-label.ogk-void {
   color: #77aad0;
-  border-color: #22303a80;
+  border-color: #22303a;
 }
 .ogk-label.ogk-artefacts {
   color: #fdeca6;
-  border-color: #ffffff80;
+  border-color: #ffffff;
+}
+.ogk-label.ogk-size-normal {
+  color: #dddddd;
+  border-color: #dddddd;
+}
+.ogk-label.ogk-size-big {
+  color: #52aef1;
+  border-color: #52aef1;
+}
+.ogk-label.ogk-size-huge {
+  color: #ef57ac;
+  border-color: #ef57ac;
+}
+.ogk-label.ogk-size-full {
+  color: #f00;
+  border-color: #f00;
 }
 
 /* region: Expeditions Messages */
@@ -2290,28 +2322,52 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link{
 }
 
 .msg.ogk-lifeform1,
-.msg_new.ogk-lifeform1 {
-  border-left: 7px solid linear-gradient(80deg, #ffffff 1%, #7fc200 60%) !important
-}
-
 .msg.ogk-lifeform2,
-.msg_new.ogk-lifeform2 {
-  border-left: 7px solid linear-gradient(80deg, #ffffff 1%, #ec752f 60%) !important;
-}
-
 .msg.ogk-lifeform3,
-.msg_new.ogk-lifeform3 {
-  border-left: 7px solid linear-gradient(80deg, #ffffff 1%, #3c93f0 60%) !important;
-}
-
 .msg.ogk-lifeform4,
-.msg_new.ogk-lifeform4 {
-  border-left: 7px solid linear-gradient(80deg, #ffffff 1%, #9c64ed 60%) !important;
+.msg.ogk-artefacts {
+  position: relative;
+  padding-left: 7px;
+  z-index: 1;
+}
+.msg.ogk-lifeform1:before,
+.msg.ogk-lifeform2:before,
+.msg.ogk-lifeform3:before,
+.msg.ogk-lifeform4:before,
+.msg.ogk-artefacts:before {
+  content: '';
+  position: absolute;
+  min-height: 100%;
+  width: 7px;
+  left: 0px;
+  border-radius: 5px 0 0 5px;
+  opacity: 0.8;
+  z-index: -1;
 }
 
-.msg.ogk-artefacts,
-.msg_new.ogk-artefacts {
-  border-left: 7px solid linear-gradient(80deg, #ffffff 1%, #fdeca6 60%) !important;
+.msg.ogk-lifeform1:before,
+.msg_new.ogk-lifeform1:before {
+  background: linear-gradient(80deg, #fff 20%, #7fc200 60%);
+}
+
+.msg.ogk-lifeform2:before,
+.msg_new.ogk-lifeform2:before {
+  background: linear-gradient(80deg, #fff 20%, #ec752f 60%);
+}
+
+.msg.ogk-lifeform3:before,
+.msg_new.ogk-lifeform3:before {
+  background: linear-gradient(80deg, #fff 20%, #3c93f0 60%);
+}
+
+.msg.ogk-lifeform4:before,
+.msg_new.ogk-lifeform4:before {
+  background: linear-gradient(80deg, #fff 20%, #9c64ed 60%);
+}
+
+.msg.ogk-artefacts:before,
+.msg_new.ogk-artefacts:before {
+  background: linear-gradient(80deg, #fff 20%, #fdeca6 60%);
 }
 
 .msg.ogk-void,
@@ -3664,6 +3720,7 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link{
   max-width: 145px;
 }
 
+div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
 #galaxyContent .ctContentRow .cellMoon .moon,
 #galaxyContent .ctContentRow .cellMoon .moon_a,
 #galaxyContent .ctContentRow .cellMoon .moon_c,
@@ -3737,13 +3794,13 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link{
   width: 275px;
 }
 
-#countColonies {
+#myPlanets>#countColonies {
   background: linear-gradient(to right, #1c2b38 45%, #090e13) !important;
   box-shadow: inset 0 1px rgba(255, 255, 255, 0.07), inset 0 11px rgba(255, 255, 255, 0.03);
   font-size: 10px;
   height: 22px !important;
   line-height: 22px !important;
-  margin: 0 !important;
+  margin: 0 ;
   outline: 1px solid #000;
   width: auto !important;
   display: flex;
@@ -4527,15 +4584,17 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link{
   border-top: 1px solid #333;
 }
 
+div.ogi-movement .ogi-movement-target .ogi-movement-target-coords .ogk-own-coords,
 #eventContent .ogk-own-coords {
   color: #6f9fc8 !important;
 }
 
+div.ogi-movement .ogi-movement-target .ogi-movement-target-coords .ogk-coords-hostile,
 #eventContent .ogk-coords-hostile {
-  color: rgb(210 27 56);
   color: #e23b3a;
 }
 
+div.ogi-movement .ogi-movement-target .ogi-movement-target-coords .ogk-coords-neutral,
 #eventContent .ogk-coords-neutral {
   color: #d29d00;
 }
@@ -4551,10 +4610,13 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link{
   font-style: italic;
 }
 
+div.ogi-movement .ogi-movement-target .ogi-movement-target-coords .ogk-coords-debris,
 #eventContent .ogk-coords-debris {
   color: green !important;
 }
 
+
+div.ogi-movement .ogi-movement-target .ogi-movement-target-coords .ogk-coords-expedition,
 #eventContent .ogk-coords-expedition {
   color: #4162a5 !important;
 }
@@ -6749,6 +6811,7 @@ table.fleetinfo tr:nth-child(odd) {
 
 
 /* resources color default in tooltips */
+/* color for expedition resources */
 .loot-item > .metal + .loot-details,
 .ogl-metal,
 table.fleetinfo tr:nth-last-child(4) {
@@ -6767,17 +6830,32 @@ table.fleetinfo tr:nth-last-child(2) {
   color: #a6e0b0 !important;
 }
 
-.msg group-title{
+/* expedition custom */
+div[data-raw-messagetype="61"] ~ .msgContent,
+div[data-raw-messagetype="41"] ~ .msgContent,
+.msg group-title,
+div[data-raw-messagetype="41"] ~ .content-box .loot-name{
   display: none;
 }
+
+div[data-raw-messagetype="41"] ~ .content-box .loot-row{
+  justify-content: center;
+  column-gap: 15px;
+}
+
+div[data-raw-messagetype="41"] ~ .content-box .loot-item{
+  width: auto;
+}
+
 .detail_msg group-title>group-title-label{
   color: white;
 }
 
-.msg .content-box, .detail_msg .content-box {
+.msg .rawMessageData ~ .content-box{
   min-height: 0px;
-  padding-top: 15px;
-  padding-bottom: 15px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  margin-top: 5px;
 }
 
 .ogl-food,
@@ -7915,12 +7993,16 @@ li.resource {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
 }
+.ogl-tooltip .ogk-collect-cargo .choice,
+.ogl-tooltip .ogk-collect-cargo .choice-mission-icon,
 .ogl-tooltip .ogk-expedition-options .choice {
   filter: brightness(0.75);
   background-blend-mode: luminosity;
 }
+.ogl-tooltip .ogk-collect-cargo .choice.highlight,
+.ogl-tooltip .ogk-collect-cargo .choice-mission-icon.highlight,
 .ogl-tooltip .ogk-expedition-options .choice.highlight{
-  filter: brightness(1.3);
+  filter: brightness(1.1);
   background-blend-mode: normal;
 }
 
@@ -8335,4 +8417,59 @@ table.flyingFleet td.friendly {
 
 div#eventboxFilled p.event_list {
   position: relative;
+}
+
+div.ogi-movement,
+div.ogi-movement > div {
+  display: grid;
+  align-content: center;
+  justify-content: center;
+  min-height: 20px;
+}
+
+div.ogi-movement {
+  grid-template-columns: repeat(3, auto);
+  column-gap: 0.5rem;
+  row-gap: 0.25rem;
+  line-height: 16px;
+}
+
+div.ogi-movement .ogi-movement-target {
+  display: grid;
+  align-content: center;
+  justify-content: center;
+  grid-template-columns: 16px repeat(2, auto);
+  gap: 0.25rem;
+}
+
+div.ogi-movement .ogi-movement-target .ogi-movement-target-coords {
+  display: grid;
+  align-content: center;
+  justify-content: center;
+  grid-template-columns: 50px 16px;
+  gap: 0.125rem;
+}
+
+div.ogi-movement .ogi-movement-target > div:nth-child(1) {
+  display: grid;
+  align-content: center;
+  justify-content: center;
+  height: 16px;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.ogi-movement-scroll {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+  max-height: 50vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.mCustomScrollbar .mCSB_container:not(.mCS_y_hidden) .ogi-movement {
+  margin-right: 5px;
+}
+
+.ogi-movement-scroll::-webkit-scrollbar {
+  display: none;
 }

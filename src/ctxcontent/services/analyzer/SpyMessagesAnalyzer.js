@@ -58,6 +58,7 @@ class SpyMessagesAnalyzer {
     this.#onTrash = !!document.querySelector('.messagesTrashcanBtns button.custom_btn[disabled="disabled"]');
 
     this.#displaySpyTable();
+    this.#ptreSpy();
   }
 
   #isReport(message) {
@@ -344,7 +345,7 @@ class SpyMessagesAnalyzer {
 
       const indexCol = createDOM("td", {}, row + index);
 
-      if (report.new) {
+      if (report.isNew) {
         indexCol.classList.add("ogi-new");
       }
 
@@ -812,6 +813,55 @@ class SpyMessagesAnalyzer {
         });
       }
     });
+  }
+
+  #ptreSpy() {
+    if (!OGIData.options.ptreTK) return;
+
+    const universe = window.location.host.replace(/\D/g, "");
+    const gameLang = document.querySelector('meta[name="ogame-language"]').getAttribute("content");
+    const ptreJSON = {};
+
+    this.#messageCallable().forEach((message) => {
+      const dataRaw = message.querySelector(".rawMessageData");
+
+      if (parseInt(dataRaw?.dataset?.rawTargetplayerid) !== playerId) return;
+
+      const id = message.dataset.msgId;
+      const tmpHTML = createDOM("div", {});
+      tmpHTML.insertAdjacentHTML("afterbegin", message.querySelector("span.player").dataset.tooltipTitle);
+      const playerID = tmpHTML.querySelector("[data-playerId]").dataset.playerid;
+
+      const spyFromUrl = new URLSearchParams(
+        message.querySelector(".custom_btn.msgAttackBtn").getAttribute("onclick").split(/=(.*)/)[1].slice(1, -1)
+      );
+
+      const type = parseInt(spyFromUrl.get("type"));
+      const timestamp = dataRaw.dataset.rawDatetime;
+      ptreJSON[id] = {};
+      ptreJSON[id].player_id = playerID;
+      ptreJSON[id].teamkey = OGIData.options.ptreTK;
+      ptreJSON[id].galaxy = spyFromUrl.get("galaxy");
+      ptreJSON[id].system = spyFromUrl.get("system");
+      ptreJSON[id].position = spyFromUrl.get("position");
+      ptreJSON[id].spy_message_ts = timestamp * 1e3;
+      ptreJSON[id].moon = {};
+      ptreJSON[id].main = false;
+
+      if (type === planetType.planet) {
+        ptreJSON[id].activity = "*";
+        ptreJSON[id].moon.activity = "60";
+      } else {
+        ptreJSON[id].activity = "60";
+        ptreJSON[id].moon.activity = "*";
+      }
+
+      message.classList.add("ogl-reportReady");
+    });
+
+    if (Object.keys(ptreJSON).length > 0) {
+      ptreService.importPlayerActivity(gameLang, universe, ptreJSON).finally(() => "Do nothing");
+    }
   }
 }
 

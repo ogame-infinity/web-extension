@@ -20,6 +20,7 @@ import markerui from "./util/markerui.js";
 import highlight, { setHighlightCoords } from "./util/highlightTarget.js";
 import OGIData from "./util/OGIData.js";
 import { tooltip } from "./util/tooltip.js";
+import missionType from "./util/enum/missionType.js";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 //const VERSION = "__VERSION__";
@@ -5518,7 +5519,7 @@ class OGInfinity {
       let losses = this.getFleetCost(sums.losses);
       total += fleet[0] + fleet[1] + fleet[2];
       total -= losses[0] + losses[1] + losses[2];
-      total += sums.harvest[0] + sums.harvest[1] + sums.harvest[2];
+      total += sums.harvest[0] + sums.harvest[1] + (sums.harvest?.[2] || 0);
       total += sums.found[0] + sums.found[1] + sums.found[2];
       total += sums.adjust[0] + sums.adjust[1] + sums.adjust[2];
       total += sums.fuel;
@@ -5880,7 +5881,7 @@ class OGInfinity {
       let total = 0;
       let losses = this.getFleetCost(sums.losses);
       total -= losses[0] + losses[1] + losses[2];
-      total += sums.harvest[0] + sums.harvest[1] + sums.harvest[2];
+      total +=sums.harvest[0] + sums.harvest[1] + (sums.harvest?.[2] || 0);
       total += sums.loot[0] + sums.loot[1] + sums.loot[2];
       total += sums.adjust[0] + sums.adjust[1] + sums.adjust[2];
       total += sums.fuel;
@@ -13336,6 +13337,8 @@ class OGInfinity {
     let labLvl = 1;
     let timeFactor = 1;
     let costFactor = 1;
+    let costLFBonus = 0;
+    let timeLFBonus = 0;
     if (object) {
       if (id < 11001) {
         let labs = [];
@@ -13352,12 +13355,14 @@ class OGInfinity {
           .slice(0, igfn)
           .map((x) => (labLvl += x));
       } else {
-        costFactor -= this.json.lifeformPlanetBonus[object.id]?.technologyCostReduction || 0;
-        timeFactor -= this.json.lifeformPlanetBonus[object.id]?.technologyTimeReduction || 0;
+        costLFBonus += this.json.lifeformPlanetBonus[object.id]?.technologyCostReduction || 0;
+        timeLFBonus += this.json.lifeformPlanetBonus[object.id]?.technologyTimeReduction || 0;
       }
       const key = id < 11201 ? id : "LfResearch";
-      costFactor -= this.json.lifeformBonus.technologyCostReduction?.[key] || 0;
-      timeFactor -= this.json.lifeformBonus.technologyTimeReduction?.[key] || 0;
+      costLFBonus += this.json.lifeformBonus.technologyCostReduction?.[key] || 0;
+      timeLFBonus = Math.min(0.99, timeLFBonus + (this.json.lifeformBonus.technologyTimeReduction?.[key] || 0));
+      costFactor -= costLFBonus;
+      timeFactor -= timeLFBonus;
     }
     let cost = [
       Math.floor(
@@ -13742,7 +13747,7 @@ class OGInfinity {
               }
             }
           }
-          if (document.activeElement.tagName != "INPUT") {
+          if (document.activeElement.tagName != "INPUT" && !!document.querySelector("#continueToFleet2")) {
             if (event.key.toUpperCase() == "E") {
               document.querySelector(".ogl-expedition").click();
               document.querySelector("#continueToFleet2").click();
@@ -14137,20 +14142,28 @@ class OGInfinity {
         fleetDispatcher.speedPercent = slider.querySelector(".ogl-active").getAttribute("data-step");
         fleetDispatcher.refresh();
       });
-      let data = fleetDispatcher.fleetHelper.shipsData;
-      for (let id in data) {
-        let infos = `
-        <div class="ogl-fleetInfo">
-        ${data[id].name}
-        <hr>
-        <div><span>${this.getTranslatedText(47)} </span>${toFormatedNumber(data[id].baseCargoCapacity, 0)}</div>
-        <div><span>${this.getTranslatedText(48)} </span>${toFormatedNumber(data[id].speed, 0)}</div>
-        <div><span>${this.getTranslatedText(49)} </span>${toFormatedNumber(data[id].fuelConsumption, 0)}</div>
-        </div>`;
-        let ship = document.querySelector(`.technology[data-technology="${id}"]`);
+
+      const data = fleetDispatcher.fleetHelper.shipsData;
+      for (const id in data) {
+        const tooltipDiv = DOM.createDOM("div", { class: "ogl-fleetInfo" }, data[id].name);
+        tooltipDiv.append(
+          DOM.createDOM("hr"),
+          DOM.createDOM("div", {}, this.getTranslatedText(47)).appendChild(
+            DOM.createDOM("span", {}, toFormatedNumber(data[id].baseCargoCapacity, 0))
+          ).parentElement,
+          DOM.createDOM("div", {}, this.getTranslatedText(48)).appendChild(
+            DOM.createDOM("span", {}, toFormatedNumber(data[id].speed, 0))
+          ).parentElement,
+          DOM.createDOM("div", {}, this.getTranslatedText(49)).appendChild(
+            DOM.createDOM("span", {}, toFormatedNumber(data[id].fuelConsumption, 0))
+          ).parentElement
+        );
+        const ship = document.querySelector(`.technology[data-technology="${id}"]`);
         if (ship) {
-          ship.setAttribute("data-title", infos);
-          ship.removeAttribute("title");
+          ship.addEventListener("ontouchstart" in document.documentElement ? "touchstart" : "mouseenter", () => {
+            tooltip(ship, tooltipDiv, true);
+          });
+          ship._tippy.disable();
         }
       }
     }
@@ -16794,24 +16807,24 @@ class OGInfinity {
       const cols = row.querySelectorAll("td");
 
       const flying = {};
-      if (!row.classList.contains("partnerInfo")) {
-        flying.arrivalTime = cols[1].textContent;
-      } else {
-        const union = Array.from(row.classList)
-          .find((cl) => cl.includes("union"))
-          .split("union")[1];
-        flying.arrivalTime = unionArrivalTime[union];
-      }
+      const timestamp = row.getAttribute("data-arrival-time");
+      const date = new Date();
+      date.setTime(timestamp * 1000);
+
+      flying.missionType = row.getAttribute("data-mission-type");
+      flying.date = timestamp;
+      flying.arrivalTime = date.toLocaleTimeString();
       flying.missionFleetIcon = cols[2].querySelector("img").src;
 
       // Get the mission title by removing the suffix "own fleet" and the "return" suffix (eg: "(R)")
-      flying.missionFleetTitle = cols[2].querySelector("img").title.trim();
+      flying.missionFleetTitle = cols[2].querySelector("img").getAttribute("data-tooltip-title").trim();
       if (flying.missionFleetTitle.includes("|"))
         flying.missionFleetTitle = flying.missionFleetTitle.split("|")[1].trim();
       if (flying.missionFleetTitle.includes("("))
         flying.missionFleetTitle = flying.missionFleetTitle.split("(")[0].trim();
 
       flying.origin = cols[3].textContent.trim();
+      flying.originMoon = !!cols[3].querySelector('.moon');
       flying.originCoords = cols[4].textContent.replace("[", "").replace("]", "").trim();
       flying.originLink = cols[4].querySelector("a").href;
       flying.fleetCount = cols[5].textContent;
@@ -16827,6 +16840,8 @@ class OGInfinity {
       );
 
       flying.dest = cols[7].textContent.trim();
+      flying.destMoon = cols[7].querySelector('.moon');
+      flying.destDebris = cols[7].querySelector('.tf');
       flying.destCoords = cols[8].textContent.replace("[", "").replace("]", "").trim();
       flying.destLink = cols[8].querySelector("a").href;
       if (!FLYING_PER_PLANETS[flying.originCoords]) FLYING_PER_PLANETS[flying.originCoords] = {};
@@ -16844,6 +16859,22 @@ class OGInfinity {
   updatePlanets_FleetActivity() {
     if (this.flyingFleetPerPlanets && this.json.options.fleetActivity) {
       const planetList = document.getElementById("planetList").children;
+      const isOwnPlanet = (coords) => {
+        let found = false;
+        Array.from(planetList).forEach((planet) => {
+          const planetKoordsEl = planet.querySelector(".planet-koords");
+          if (!planetKoordsEl) {
+            return;
+          }
+
+          const planetKoords = planetKoordsEl.textContent;
+
+          if (coords === planetKoords)
+            found = true;
+        });
+
+        return found;
+      }
       Array.from(planetList).forEach((planet) => {
         const planetKoordsEl = planet.querySelector(".planet-koords");
         if (planetKoordsEl) {
@@ -16865,6 +16896,17 @@ class OGInfinity {
                 direction: rtl;
               `;
               planetKoordsEl.parentNode.parentNode.appendChild(div);
+
+              const movementTooltipToScroll = DOM.createDOM("div", { class: "ogi-movement-scroll" });
+
+              const movementTooltip = DOM.createDOM("div", { class: "ogi-movement" });
+              movementTooltipToScroll.appendChild(movementTooltip);
+
+              movementTooltip.appendChild(DOM.createDOM("div", {}, "Type"));
+              movementTooltip.appendChild(DOM.createDOM("div", {}, "Target"));
+              movementTooltip.appendChild(DOM.createDOM("div", {}, "Time"));
+
+              const movementsList = [];
               Object.keys(movements).forEach((movementKey, i) => {
                 if (i < 8) {
                   const nbrMovements = Object.keys(movements).length;
@@ -16873,19 +16915,86 @@ class OGInfinity {
                   if (nbrMovements > 2) {
                     size = size / 2;
                   }
-                  const img = document.createElement("img");
+                  const img = DOM.createDOM("img");
                   img.src = movement.icon;
+
+                  movement.data.forEach((m) => movementsList.push({ ...m, img: img.cloneNode(true), }) );
+
                   img.style = `position: initial !important; width: ${size}px; height: ${size}px; margin: 1px !important;`;
-                  img.title = "";
-                  movement.data.forEach((m, i) => {
-                    const symbolDirection = m.direction === "go" ? "🡒" : "🡐";
-                    const isLast = i == movement.data.length - 1;
-                    img.title += `${m.missionFleetTitle}: ${m.origin}[${m.originCoords}] ${symbolDirection} ${m.dest}[${
-                      m.destCoords
-                    }] @${m.arrivalTime}${!isLast ? "\n" : ""}`;
-                  });
+
                   div.appendChild(img);
                 }
+              });
+
+              movementsList.sort((a, b) => {
+                if (a.date < b.date) return -1;
+                if (a.date > b.date) return 1;
+                return 0;
+              });
+
+              movementsList.forEach((m) => {
+                const symbolDirection = m.direction === "go" ? "🡒" : "🡐";
+
+                const rowType = DOM.createDOM("div");
+                rowType.appendChild(m.img);
+                movementTooltip.appendChild(rowType);
+
+                const rowTarget = DOM.createDOM("div", { class: "ogi-movement-target" });
+                const fromMoon = DOM.createDOM("div");
+                const rowTargetDirection = DOM.createDOM("div", {}, symbolDirection);
+                const rowTargetCoords = DOM.createDOM("div", { class: "ogi-movement-target-coords" });
+
+                const coordsSpan = rowTargetCoords.appendChild(DOM.createDOM("span", {}, m.destCoords));
+
+                if (parseInt(m.missionType) === missionType.HARVEST) {
+                  coordsSpan.classList.add("ogk-coords-debris");
+                } else if (parseInt(m.missionType) === missionType.DEPLOYMENT || isOwnPlanet(m.destCoords)) {
+                  coordsSpan.classList.add("ogk-own-coords");
+                } else if (
+                  [missionType.TRANSPORT, missionType.ACS_DEFEND, missionType.COLONISATION,].includes(parseInt(m.missionType))
+                ) {
+                  coordsSpan.classList.add("ogk-coords-neutral");
+                } else if (
+                  [
+                    missionType.MOON_DESTRUCTION,
+                    missionType.ATTACK,
+                    missionType.MISSILE_ATTACK,
+                    missionType.ACS_ATTACK,
+                    missionType.SPY,
+                  ].includes(parseInt(m.missionType))
+                ) {
+                  coordsSpan.classList.add("ogk-coords-hostile");
+                } else if ([missionType.EXPEDITION, missionType.EXPLORATION,].includes(parseInt(m.missionType))) {
+                  coordsSpan.classList.add("ogk-coords-expedition");
+                }
+
+                if (m.originMoon) {
+                  fromMoon.appendChild(DOM.createDOM("figure", { class: "planetIcon moon" } ));
+                }
+
+                if (m.destMoon) {
+                  rowTargetCoords.appendChild(DOM.createDOM("figure", { class: "planetIcon moon" } ));
+                }
+
+                if (m.destDebris) {
+                  rowTargetCoords.appendChild(DOM.createDOM("figure", { class: "planetIcon tf" } ));
+                }
+
+                rowTarget.appendChild(fromMoon);
+                rowTarget.appendChild(rowTargetDirection);
+                rowTarget.appendChild(rowTargetCoords);
+
+                movementTooltip.appendChild(rowTarget);
+
+                const rowTime = DOM.createDOM("div");
+                rowTime.appendChild(DOM.createDOM("span", {}, `${m.arrivalTime}`));
+                movementTooltip.appendChild(rowTime);
+              });
+
+              div.addEventListener("ontouchstart" in document.documentElement ? "touchstart" : "mouseenter", () => {
+                $(".ogi-movement-scroll").mCustomScrollbar("destroy");
+                tooltip(div, movementTooltipToScroll, true, { auto: true }, 50, true);
+                $(".ogi-movement-scroll, .mCS_destroyed").mCustomScrollbar({ theme: "ogame" });
               });
             }
           });
@@ -17685,11 +17794,21 @@ class OGInfinity {
           }`,
         })
       );
-      let sc = cargoChoice.appendChild(createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-202" }));
-      let lc = cargoChoice.appendChild(createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-203" }));
-      let pf = cargoChoice.appendChild(createDOM("div", { class: "ogl-option ogl-fleet-ship choice ogl-fleet-219" }));
-      let tr = cargoChoice.appendChild(createDOM("div", { class: "ogl-option choice-mission-icon ogl-mission-3" }));
-      let dp = cargoChoice.appendChild(createDOM("div", { class: "ogl-option choice-mission-icon ogl-mission-4" }));
+      let sc = cargoChoice.appendChild(createDOM("div", { class: `ogl-option ogl-fleet-ship choice ogl-fleet-202 ${
+        this.json.options.collect.ship == 202? "highlight":""
+      }` }));
+      let lc = cargoChoice.appendChild(createDOM("div", { class: `ogl-option ogl-fleet-ship choice ogl-fleet-203 ${
+        this.json.options.collect.ship == 203? "highlight":""
+      }` }));
+      let pf = cargoChoice.appendChild(createDOM("div", { class: `ogl-option ogl-fleet-ship choice ogl-fleet-219 ${
+        this.json.options.collect.ship == 219? "highlight":""
+      }` }));
+      let tr = cargoChoice.appendChild(createDOM("div", { class: `ogl-option choice-mission-icon ogl-mission-3 ${
+        this.json.options.collect.mission == 3? "highlight":""
+      }` }));
+      let dp = cargoChoice.appendChild(createDOM("div", { class: `ogl-option choice-mission-icon ogl-mission-4 ${
+        this.json.options.collect.mission == 4? "highlight":""
+      }` }));
       let tgt = cargoChoice.appendChild(
         createDOM("div", {
           class: `ogl-option choice-target ${this.json.options.collect.target.type == 3 ? "moon" : "planet"}`,
@@ -17715,6 +17834,14 @@ class OGInfinity {
             ? "pathFinder"
             : "largeCargo"
         }`;
+        document.querySelector(".ogk-collect-cargo .ogl-fleet-ship.highlight").classList.remove("highlight") ;
+        document.querySelector(`.ogk-collect-cargo ${
+          this.json.options.collect.ship == 202
+            ? ".ogl-fleet-202"
+            : this.json.options.collect.ship == 219
+            ? ".ogl-fleet-219"
+            : ".ogl-fleet-203"
+          }`).classList.add("highlight") ;
       };
       let updateDefaultCollectMission = (mission) => {
         this.json.options.collect.mission = mission;
@@ -17728,6 +17855,8 @@ class OGInfinity {
             ? "pathFinder"
             : "largeCargo"
         }`;
+        document.querySelector(".ogk-collect-cargo .choice-mission-icon.highlight").classList.remove("highlight") ;
+        document.querySelector(`.ogk-collect-cargo ${".ogl-mission-"+this.json.options.collect.mission}`).classList.add("highlight") ;
       };
       sc.addEventListener("click", () => updateDefaultCollectShip(202));
       lc.addEventListener("click", () => updateDefaultCollectShip(203));

@@ -1,0 +1,14 @@
+export default Object.freeze({
+  ATTACK: 1,
+  ACS_ATTACK: 2,
+  TRANSPORT: 3,
+  DEPLOYMENT: 4,
+  ACS_DEFEND: 5,
+  SPY: 6,
+  COLONISATION: 7,
+  HARVEST: 8,
+  MOON_DESTRUCTION: 9,
+  MISSILE_ATTACK: 10,
+  EXPEDITION: 15,
+  EXPLORATION: 18,
+});
