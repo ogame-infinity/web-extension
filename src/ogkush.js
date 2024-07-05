@@ -12256,6 +12256,7 @@ class OGInfinity {
           flyingDetails[coords].own = false;
         }
       });
+      if (!Object.keys(flyingDetails).length) return;
       this.json.empire.forEach((planet) => {
         const indexPlanet = planet.coordinates.slice(1, -1) + "P";
         if (flyingDetails[indexPlanet]) {
@@ -12268,7 +12269,6 @@ class OGInfinity {
           }
         }
       });
-      if (!Object.keys(flyingDetails).length) return;
 
       const tooltipDiv = DOM.createDOM("div", {}, this.getTranslatedText(128));
       tooltipDiv.appendChild(DOM.createDOM("div", { class: "splitLine" }));
