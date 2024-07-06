@@ -12242,7 +12242,7 @@ class OGInfinity {
     const RTlistener = () => {
       const flyingDetails = {};
       this.json.flying.ids.forEach((mov) => {
-        if (mov.resDest) {
+        if (mov.resDest && mov.metal + mov.crystal + mov.deuterium > 0) {
           const coords = mov.back ? mov.origin : mov.dest;
           flyingDetails[coords] = flyingDetails[coords] || {
             metal: 0,
@@ -12282,33 +12282,29 @@ class OGInfinity {
       );
 
       for (const [coords, details] of Object.entries(flyingDetails)) {
-        const res = details.metal + details.crystal + details.deuterium;
-        if (res > 0) {
-          const coord = coords.slice(0, -1).split(":");
-          const moon = coords.includes("M");
-          const href = new URLSearchParams({
-            page: "ingame",
-            component: "galaxy",
-            galaxy: coord[0],
-            system: coord[1],
-            position: coord[2],
-          });
+        const coord = coords.slice(0, -1).split(":");
+        const moon = coords.includes("M");
+        const href = new URLSearchParams({
+          page: "ingame",
+          component: "galaxy",
+          galaxy: coord[0],
+          system: coord[1],
+          position: coord[2],
+        });
 
-          const row = DOM.createDOM("tr");
-          row.append(
-            DOM.createDOM("td", { class: details.own ? "own" : "friendly" }, details.name),
-            DOM.createDOM("td", { class: details.own ? "own" : "friendly" }).appendChild(
-              DOM.createDOM("a", { href: `?${href.toString()}` }, `[${coord.join(":")}]`)
-            ).parentElement,
-            DOM.createDOM("td").appendChild(
-              DOM.createDOM("figure", { class: `planetIcon ${moon ? "moon" : "planet"}` })
-            ).parentElement,
-            DOM.createDOM("td", { class: "value ogl-metal" }, toFormatedNumber(details.metal)),
-            DOM.createDOM("td", { class: "value ogl-crystal" }, toFormatedNumber(details.crystal)),
-            DOM.createDOM("td", { class: "value ogl-deut" }, toFormatedNumber(details.deuterium))
-          );
-          tableDiv.appendChild(row);
-        }
+        const row = DOM.createDOM("tr");
+        row.append(
+          DOM.createDOM("td", { class: details.own ? "own" : "friendly" }, details.name),
+          DOM.createDOM("td", { class: details.own ? "own" : "friendly" }).appendChild(
+            DOM.createDOM("a", { href: `?${href.toString()}` }, `[${coord.join(":")}]`)
+          ).parentElement,
+          DOM.createDOM("td").appendChild(DOM.createDOM("figure", { class: `planetIcon ${moon ? "moon" : "planet"}` }))
+            .parentElement,
+          DOM.createDOM("td", { class: "value ogl-metal" }, toFormatedNumber(details.metal)),
+          DOM.createDOM("td", { class: "value ogl-crystal" }, toFormatedNumber(details.crystal)),
+          DOM.createDOM("td", { class: "value ogl-deut" }, toFormatedNumber(details.deuterium))
+        );
+        tableDiv.appendChild(row);
       }
       tooltip(flyingIcon, tooltipDiv, false);
     };
