@@ -14243,7 +14243,7 @@ class OGInfinity {
         fleet.appendChild(createDOM("a", { class: `ogl-mission-icon ogl-mission-${type}` }));
         let fleetInfo = fleet.querySelector(".fleetinfo");
         let fleetCount = 0;
-        let values = (fleetInfo)? fleetInfo.querySelectorAll("td.value") : [];
+        let values = fleetInfo ? fleetInfo.querySelectorAll("td.value") : [];
         let backed = [0, 0, 0];
         values.forEach((value, index) => {
           if (index == values.length - 1 - this.hasLifeforms) {
@@ -14260,6 +14260,8 @@ class OGInfinity {
           }
           fleetCount += fromFormatedNumber(value.textContent);
         });
+        // to get 1 ship in discoveries, as it does not have ".fleetinfo"
+        fleetCount = Math.max(1, fleetCount);
         let destCoords = fleet.querySelector(".destinationCoords a").textContent;
         let destMoon = fleet.querySelector(".destinationData moon") ? true : false;
         let coords = destCoords.slice(1, -1) + (destMoon ? "M" : "P");
