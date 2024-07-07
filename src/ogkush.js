@@ -14317,16 +14317,15 @@ class OGInfinity {
       });
       if (lastFleetBtn) {
         lastFleetBtn.style.filter = "hue-rotate(180deg) saturate(150%)";
-        let backlast = document
-          .querySelector(".fleetStatus")
-          .appendChild(
-            this.createDOM(
-              "span",
-              { class: "reload ogl-backLast" },
-              '\n          <a class="dark_highlight_tablet"">\n            <span class="icon icon_link"></span>\n            <span>Back latest</span>\n          </a>\n            '
-            )
-          );
-        backlast.addEventListener("click", () => {
+        const backLast = DOM.createDOM("span", { class: "reload ogl-backLast" });
+        const backLastIcon = DOM.createDOM("a", { class: "dark_highlight_tablet" });
+        backLastIcon.append(
+          DOM.createDOM("span", { class: "icon icon_link" }),
+          DOM.createDOM("span", {}, " " + this.getTranslatedText(172))
+        );
+        backLast.appendChild(backLastIcon);
+        document.querySelector(".fleetStatus").appendChild(backLast);
+        backLast.addEventListener("click", () => {
           lastFleetBtn.click();
         });
       }
@@ -16269,6 +16268,14 @@ class OGInfinity {
           br: "Selecione uma opção...",
         },
         /*172*/ {
+          de: "Letzte zurückrufen",
+          en: "Recall latest",
+          es: "Retirar último",
+          fr: "Rappel dernier",
+          tr: "Geri çağrı son",
+          br: "Voltar último",
+        },
+        /*173*/ {
           de: "",
           en: "",
           es: "",
