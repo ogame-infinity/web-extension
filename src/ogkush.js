@@ -14246,15 +14246,16 @@ class OGInfinity {
         let values = fleetInfo ? fleetInfo.querySelectorAll("td.value") : [];
         let backed = [0, 0, 0];
         values.forEach((value, index) => {
-          if (index == values.length - 1 - this.hasLifeforms) {
+          if (index == values.length - this.hasLifeforms) return; // food
+          if (index == values.length - 1 - this.hasLifeforms) {   // deuterium
             backed[2] = fromFormatedNumber(value.textContent);
             return;
           }
-          if (index == values.length - 2 - this.hasLifeforms) {
+          if (index == values.length - 2 - this.hasLifeforms) {   // crystal
             backed[1] = fromFormatedNumber(value.textContent);
             return;
           }
-          if (index == values.length - 3 - this.hasLifeforms) {
+          if (index == values.length - 3 - this.hasLifeforms) {   // metal
             backed[0] = fromFormatedNumber(value.textContent);
             return;
           }
