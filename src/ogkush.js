@@ -12129,8 +12129,8 @@ class OGInfinity {
     const RTlistener = () => {
       const flyingDetails = {};
       OGIData.json.flying.ids.forEach((mov) => {
-        if (mov.resDest) {
-          let coords = mov.back ? mov.origin : mov.dest;
+        if (mov.resDest && mov.metal + mov.crystal + mov.deuterium > 0) {
+          const coords = mov.back ? mov.origin : mov.dest;
           flyingDetails[coords] = flyingDetails[coords] || {
             metal: 0,
             crystal: 0,
