@@ -24,31 +24,31 @@ export default function () {
   let met = 0,
     cri = 0,
     deut = 0;
-  let fleetCount = {};
-  let transports = {};
-  let ids = [];
-  let planets = {};
+  const fleetCount = {};
+  const transports = {};
+  const ids = [];
+  const planets = {};
   document.querySelectorAll("#eventContent .eventFleet").forEach((line) => {
-    let tooltip =
+    const tooltip =
       line.querySelector(".icon_movement .tooltip") || line.querySelector(".icon_movement_reserve .tooltip");
-    let id = Number(line.getAttribute("id").split("-")[1]);
-    let back = line.getAttribute("data-return-flight") !== "false";
-    let type = line.getAttribute("data-mission-type");
-    let arrival = new Date(parseInt(line.getAttribute("data-arrival-time")) * 1e3);
-    let originCoords = line.querySelector(".coordsOrigin > a").textContent.trim().slice(1, -1);
-    let originName = line.querySelector(".originFleet").textContent.trim();
-    let destCoords = line.querySelector(".destCoords > a").textContent.trim().slice(1, -1);
-    let destName = line.querySelector(".destFleet").textContent.trim();
-    let destIsMoon = !!line.querySelector(".destFleet .moon");
-    let originIsMoon = !!line.querySelector(".originFleet .moon");
-    let origin = originCoords + (originIsMoon ? "M" : "P");
-    let dest = destCoords + (destIsMoon ? "M" : "P");
+    const id = Number(line.getAttribute("id").split("-")[1]);
+    const back = line.getAttribute("data-return-flight") !== "false";
+    const type = line.getAttribute("data-mission-type");
+    const arrival = new Date(parseInt(line.getAttribute("data-arrival-time")) * 1e3);
+    const originCoords = line.querySelector(".coordsOrigin > a").textContent.trim().slice(1, -1);
+    const originName = line.querySelector(".originFleet").textContent.trim();
+    const destCoords = line.querySelector(".destCoords > a").textContent.trim().slice(1, -1);
+    const destName = line.querySelector(".destFleet").textContent.trim();
+    const destIsMoon = !!line.querySelector(".destFleet .moon");
+    const originIsMoon = !!line.querySelector(".originFleet .moon");
+    const origin = originCoords + (originIsMoon ? "M" : "P");
+    const dest = destCoords + (destIsMoon ? "M" : "P");
     let own = false;
     OGIData.empire.forEach((planet) => {
-      if (planet.coordinates == line.children[4].textContent.trim()) own = true;
+      if (planet.coordinates === line.children[4].textContent.trim()) own = true;
     });
 
-    let movement = {
+    const movement = {
       id: id,
       type: type,
       own: own,
@@ -65,8 +65,8 @@ export default function () {
       fleet: {},
     };
     if (type == 16 || type == missionType.EXPLORATION) return;
-    let expe = {};
-    let div = document.createElement("div");
+    const expe = {};
+    const div = document.createElement("div");
     tooltip && div.html(tooltip.getAttribute("title") || tooltip.getAttribute("data-tooltip-title"));
     let addToTotal = false;
     let noRes = false;
@@ -109,10 +109,10 @@ export default function () {
     }
 
     div.querySelectorAll('td[colspan="2"]').forEach((tooltip) => {
-      let count = Number(fromFormattedNumber(tooltip.nextElementSibling.innerHTML.trim()));
-      let name = tooltip.textContent.trim().slice(0, -1);
+      const count = Number(fromFormattedNumber(tooltip.nextElementSibling.innerHTML.trim()));
+      const name = tooltip.textContent.trim().slice(0, -1);
       const defaultRss = { metal: 0, crystal: 0, deuterium: 0 };
-      let id = OGIData.json.shipNames[name];
+      const id = OGIData.json.shipNames[name];
       if (id) {
         expe[id] ? (expe[id] += count) : (expe[id] = count);
         movement.fleet[id] = count;
