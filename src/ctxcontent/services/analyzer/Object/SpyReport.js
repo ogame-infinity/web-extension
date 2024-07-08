@@ -128,7 +128,7 @@ export class SpyReport {
 
     this._detailLink = message.querySelector(".msg_actions message-footer-details a.fright").href;
 
-    // TODO: after 11.16.0, modify fleet& defense to obtain values directly of data raw. no need of regex & cleanValue 
+    // TODO: after 11.16.0, modify fleet& defense to obtain values directly of data raw. no need of regex & cleanValue
     const fleet = message.getAttribute("data-messages-filters-fleet");
     const defense = message.getAttribute("data-messages-filters-defense");
     const regExp = new RegExp(`[\\d${LocalizationStrings["thousandSeperator"]}]+`);
@@ -142,7 +142,7 @@ export class SpyReport {
     } else {
       // @deprecated
       this._fleet = cleanValue(
-        regExp.exec(message.querySelector(".fleetInfo > .shipsTotal")?.getAttribute("data-tooltip-title"))?.[0] || ''
+        regExp.exec(message.querySelector(".fleetInfo > .shipsTotal")?.getAttribute("data-tooltip-title"))?.[0] || ""
       );
     }
 
@@ -155,7 +155,8 @@ export class SpyReport {
     } else {
       // @deprecated
       this._defense = cleanValue(
-        regExp.exec(message.querySelector(".defenseInfo > .defenseTotal")?.getAttribute("data-tooltip-title"))?.[0] || ''
+        regExp.exec(message.querySelector(".defenseInfo > .defenseTotal")?.getAttribute("data-tooltip-title"))?.[0] ||
+          ""
       );
     }
 

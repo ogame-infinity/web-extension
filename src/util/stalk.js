@@ -377,7 +377,11 @@ export function update(planets) {
     }); */
 
     a.addEventListener("click", (event) => {
-      if (document.getElementById("galaxyLoading") && window.getComputedStyle(document.getElementById("galaxyLoading")).display !== "none") return;
+      if (
+        document.getElementById("galaxyLoading") &&
+        window.getComputedStyle(document.getElementById("galaxyLoading")).display !== "none"
+      )
+        return;
       const link = generateGalaxyLink(coords);
       if (event.ctrlKey || event.metaKey) {
         event.preventDefault();
