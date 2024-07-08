@@ -1918,6 +1918,14 @@ const translation = Object.freeze({
       br: "Selecione uma opção...",
     },
     /*172*/ {
+      de: "Letzte zurückrufen",
+      en: "Recall latest",
+      es: "Retirar último",
+      fr: "Rappel dernier",
+      tr: "Geri çağrı son",
+      br: "Voltar último",
+    },
+    /*173*/ {
       de: "",
       en: "",
       es: "",
