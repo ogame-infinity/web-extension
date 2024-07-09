@@ -28,7 +28,12 @@ class Messages {
     const obs = new OGIObserver();
     this.#logger = getLogger("messages");
 
-    this.#analyzers = [new SpyMessagesAnalyzer(), new ExpeditionMessagesAnalyzer(), new FightMessagesAnalyzer(), new HarvestMessagesAnalyzer()];
+    this.#analyzers = [
+      new SpyMessagesAnalyzer(),
+      new ExpeditionMessagesAnalyzer(),
+      new FightMessagesAnalyzer(),
+      new HarvestMessagesAnalyzer(),
+    ];
 
     // Observe tab change
     obs(document.querySelector("#messagecontainercomponent"), (elements) => {
