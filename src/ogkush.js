@@ -3800,7 +3800,7 @@ class OGInfinity {
     let baseCords = galaxy + ":" + system;
     let secureCoords =
       document.getElementById("galaxy_input").value + ":" + document.getElementById("system_input").value;
-    let doubleCheckCoords = document.querySelector(".ogl-colors")?.dataset?.coords;
+    let doubleCheckCoords = document.querySelector(".ogl-colors")?.getAttribute("data-coords");
     if (secureCoords !== baseCords || (doubleCheckCoords && doubleCheckCoords !== baseCords + ":1")) {
       return;
     }
