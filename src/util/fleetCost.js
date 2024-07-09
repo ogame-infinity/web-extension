@@ -5,7 +5,7 @@ import shipCosts from "./enum/shipCosts.js";
  * @param {Array<number>} ships - Array of ship quantity per IDs to sum costs for.
  * @return {Array<number>} sum of cost per resource [M / C / D]
  */
-export function fleetCost(ships) {
+function fleetCost(ships) {
   const fleetRes = [0, 0, 0];
 
   Object.keys(shipCosts).forEach((id) => {
@@ -18,6 +18,4 @@ export function fleetCost(ships) {
   return fleetRes;
 }
 
-export default {
-  fleetCost,
-};
+export { fleetCost };

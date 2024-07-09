@@ -9,7 +9,7 @@ import { translate } from "./translate.js";
  * @param {bool} units - display units
  * @return {String} sum of cost per resource [M / C / D]
  */
-export function standardUnit(amount, precision = null, units = false) {
+function standardUnit(amount, precision = null, units = false) {
   if (!Array.isArray(amount)) return;
 
   const tradeRate = OGIData.options.tradeRate;
@@ -28,6 +28,4 @@ export function standardUnit(amount, precision = null, units = false) {
   return `${toFormattedNumber(standardUnitValue, precision, units)} ${translate(173 + standardUnitBase)}`;
 }
 
-export default {
-  standardUnit,
-};
+export { standardUnit };

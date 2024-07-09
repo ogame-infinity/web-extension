@@ -131,7 +131,7 @@ class ExpeditionMessagesAnalyzer {
         adjust: [0, 0, 0],
         fuel: 0,
       };
-      let amount = [0, 0, 0, 0];
+      const amount = [0, 0, 0, 0];
 
       if (type === "darkmatter") {
         amount[3] = parseInt(Object.values(resourcesGained)[0]);

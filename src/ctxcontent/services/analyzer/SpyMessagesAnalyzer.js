@@ -215,20 +215,20 @@ class SpyMessagesAnalyzer {
 
     const smallCargo = cargoChoice.appendChild(
       createDOM("div", {
-        class: `ogl-option ogl-fleet-ship choice ogl-fleet-${ship.SmallCargo}`,
-        "data-ship": ship.SmallCargo,
+        class: `ogl-option ogl-fleet-ship choice ogl-fleet-${ship.SmallCargoShip}`,
+        "data-ship": ship.SmallCargoShip,
       })
     );
     const largeCargo = cargoChoice.appendChild(
       createDOM("div", {
-        class: `ogl-option ogl-fleet-ship choice ogl-fleet-${ship.LargeCargo}`,
-        "data-ship": ship.LargeCargo,
+        class: `ogl-option ogl-fleet-ship choice ogl-fleet-${ship.LargeCargoShip}`,
+        "data-ship": ship.LargeCargoShip,
       })
     );
     const pathFinder = cargoChoice.appendChild(
       createDOM("div", {
-        class: `ogl-option ogl-fleet-ship choice ogl-fleet-${ship.PathFinder}`,
-        "data-ship": ship.PathFinder,
+        class: `ogl-option ogl-fleet-ship choice ogl-fleet-${ship.Pathfinder}`,
+        "data-ship": ship.Pathfinder,
       })
     );
 
@@ -465,15 +465,15 @@ class SpyMessagesAnalyzer {
 
       const ships = {
         smallCargo: {
-          id: ship.SmallCargo,
+          id: ship.SmallCargoShip,
           count: report.pt,
         },
         largeCargo: {
-          id: ship.LargeCargo,
+          id: ship.LargeCargoShip,
           count: report.gt,
         },
         pathFinder: {
-          id: ship.PathFinder,
+          id: ship.Pathfinder,
           count: report.pf,
         },
       };
@@ -500,9 +500,9 @@ class SpyMessagesAnalyzer {
         shipCount = report.pb;
       }
 
-      if (shipId === ship.SmallCargo) shipCount = report.pt;
-      else if (shipId === ship.LargeCargo) shipCount = report.gt;
-      else if (shipId === ship.PathFinder) shipCount = report.pf;
+      if (shipId === ship.SmallCargoShip) shipCount = report.pt;
+      else if (shipId === ship.LargeCargoShip) shipCount = report.gt;
+      else if (shipId === ship.Pathfinder) shipCount = report.pf;
 
       const fleetLink = this.#fleetDispatchLink(report.coords, report.planetTargetType, shipId, shipCount);
 
