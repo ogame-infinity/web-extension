@@ -5852,7 +5852,7 @@ class OGInfinity {
       let total = 0;
       let losses = fleetCost(sums.losses);
       total -= losses[0] + losses[1] + losses[2];
-      total +=sums.harvest[0] + sums.harvest[1] + (sums.harvest?.[2] || 0);
+      total += sums.harvest[0] + sums.harvest[1] + (sums.harvest?.[2] || 0);
       total += sums.loot[0] + sums.loot[1] + sums.loot[2];
       total += sums.adjust[0] + sums.adjust[1] + sums.adjust[2];
       total += sums.fuel;
@@ -14154,23 +14154,26 @@ class OGInfinity {
         fleet.appendChild(createDOM("a", { class: `ogl-mission-icon ogl-mission-${type}` }));
         let fleetInfo = fleet.querySelector(".fleetinfo");
         let fleetCount = 0;
-        let values = fleetInfo.querySelectorAll("td.value");
+        let values = fleetInfo ? fleetInfo.querySelectorAll("td.value") : [];
         let backed = [0, 0, 0];
         values.forEach((value, index) => {
-          if (index == values.length - 1 - this.hasLifeforms) {
+          if (index == values.length - this.hasLifeforms) return; // food
+          if (index == values.length - 1 - this.hasLifeforms) {   // deuterium
             backed[2] = fromFormatedNumber(value.textContent);
             return;
           }
-          if (index == values.length - 2 - this.hasLifeforms) {
+          if (index == values.length - 2 - this.hasLifeforms) {   // crystal
             backed[1] = fromFormatedNumber(value.textContent);
             return;
           }
-          if (index == values.length - 3 - this.hasLifeforms) {
+          if (index == values.length - 3 - this.hasLifeforms) {   // metal
             backed[0] = fromFormatedNumber(value.textContent);
             return;
           }
           fleetCount += fromFormatedNumber(value.textContent);
         });
+        // to get 1 ship in discoveries, as it does not have ".fleetinfo"
+        fleetCount = Math.max(1, fleetCount);
         let destCoords = fleet.querySelector(".destinationCoords a").textContent;
         let destMoon = fleet.querySelector(".destinationData moon") ? true : false;
         let coords = destCoords.slice(1, -1) + (destMoon ? "M" : "P");
@@ -14226,16 +14229,15 @@ class OGInfinity {
       });
       if (lastFleetBtn) {
         lastFleetBtn.style.filter = "hue-rotate(180deg) saturate(150%)";
-        let backlast = document
-          .querySelector(".fleetStatus")
-          .appendChild(
-            this.createDOM(
-              "span",
-              { class: "reload ogl-backLast" },
-              '\n          <a class="dark_highlight_tablet"">\n            <span class="icon icon_link"></span>\n            <span>Back latest</span>\n          </a>\n            '
-            )
-          );
-        backlast.addEventListener("click", () => {
+        const backLast = DOM.createDOM("span", { class: "reload ogl-backLast" });
+        const backLastIcon = DOM.createDOM("a", { class: "dark_highlight_tablet" });
+        backLastIcon.append(
+          DOM.createDOM("span", { class: "icon icon_link" }),
+          DOM.createDOM("span", {}, " " + this.getTranslatedText(172))
+        );
+        backLast.appendChild(backLastIcon);
+        document.querySelector(".fleetStatus").appendChild(backLast);
+        backLast.addEventListener("click", () => {
           lastFleetBtn.click();
         });
       }
@@ -14858,7 +14860,7 @@ class OGInfinity {
         flying.missionFleetTitle = flying.missionFleetTitle.split("(")[0].trim();
 
       flying.origin = cols[3].textContent.trim();
-      flying.originMoon = !!cols[3].querySelector('.moon');
+      flying.originMoon = !!cols[3].querySelector(".moon");
       flying.originCoords = cols[4].textContent.replace("[", "").replace("]", "").trim();
       flying.originLink = cols[4].querySelector("a").href;
       flying.fleetCount = cols[5].textContent;
@@ -14874,8 +14876,8 @@ class OGInfinity {
       );
 
       flying.dest = cols[7].textContent.trim();
-      flying.destMoon = cols[7].querySelector('.moon');
-      flying.destDebris = cols[7].querySelector('.tf');
+      flying.destMoon = cols[7].querySelector(".moon");
+      flying.destDebris = cols[7].querySelector(".tf");
       flying.destCoords = cols[8].textContent.replace("[", "").replace("]", "").trim();
       flying.destLink = cols[8].querySelector("a").href;
       if (!FLYING_PER_PLANETS[flying.originCoords]) FLYING_PER_PLANETS[flying.originCoords] = {};
@@ -14903,12 +14905,11 @@ class OGInfinity {
 
           const planetKoords = planetKoordsEl.textContent;
 
-          if (coords === planetKoords)
-            found = true;
+          if (coords === planetKoords) found = true;
         });
 
         return found;
-      }
+      };
       Array.from(planetList).forEach((planet) => {
         const planetKoordsEl = planet.querySelector(".planet-koords");
         if (planetKoordsEl) {
@@ -14952,7 +14953,7 @@ class OGInfinity {
                   const img = DOM.createDOM("img");
                   img.src = movement.icon;
 
-                  movement.data.forEach((m) => movementsList.push({ ...m, img: img.cloneNode(true), }) );
+                  movement.data.forEach((m) => movementsList.push({ ...m, img: img.cloneNode(true) }));
 
                   img.style = `position: initial !important; width: ${size}px; height: ${size}px; margin: 1px !important;`;
 
@@ -14985,7 +14986,9 @@ class OGInfinity {
                 } else if (parseInt(m.missionType) === missionType.DEPLOYMENT || isOwnPlanet(m.destCoords)) {
                   coordsSpan.classList.add("ogk-own-coords");
                 } else if (
-                  [missionType.TRANSPORT, missionType.ACS_DEFEND, missionType.COLONISATION,].includes(parseInt(m.missionType))
+                  [missionType.TRANSPORT, missionType.ACS_DEFEND, missionType.COLONISATION].includes(
+                    parseInt(m.missionType)
+                  )
                 ) {
                   coordsSpan.classList.add("ogk-coords-neutral");
                 } else if (
@@ -14998,20 +15001,20 @@ class OGInfinity {
                   ].includes(parseInt(m.missionType))
                 ) {
                   coordsSpan.classList.add("ogk-coords-hostile");
-                } else if ([missionType.EXPEDITION, missionType.EXPLORATION,].includes(parseInt(m.missionType))) {
+                } else if ([missionType.EXPEDITION, missionType.EXPLORATION].includes(parseInt(m.missionType))) {
                   coordsSpan.classList.add("ogk-coords-expedition");
                 }
 
                 if (m.originMoon) {
-                  fromMoon.appendChild(DOM.createDOM("figure", { class: "planetIcon moon" } ));
+                  fromMoon.appendChild(DOM.createDOM("figure", { class: "planetIcon moon" }));
                 }
 
                 if (m.destMoon) {
-                  rowTargetCoords.appendChild(DOM.createDOM("figure", { class: "planetIcon moon" } ));
+                  rowTargetCoords.appendChild(DOM.createDOM("figure", { class: "planetIcon moon" }));
                 }
 
                 if (m.destDebris) {
-                  rowTargetCoords.appendChild(DOM.createDOM("figure", { class: "planetIcon tf" } ));
+                  rowTargetCoords.appendChild(DOM.createDOM("figure", { class: "planetIcon tf" }));
                 }
 
                 rowTarget.appendChild(fromMoon);
@@ -15828,21 +15831,41 @@ class OGInfinity {
           }`,
         })
       );
-      let sc = cargoChoice.appendChild(createDOM("div", { class: `ogl-option ogl-fleet-ship choice ogl-fleet-202 ${
-        this.json.options.collect.ship == 202? "highlight":""
-      }` }));
-      let lc = cargoChoice.appendChild(createDOM("div", { class: `ogl-option ogl-fleet-ship choice ogl-fleet-203 ${
-        this.json.options.collect.ship == 203? "highlight":""
-      }` }));
-      let pf = cargoChoice.appendChild(createDOM("div", { class: `ogl-option ogl-fleet-ship choice ogl-fleet-219 ${
-        this.json.options.collect.ship == 219? "highlight":""
-      }` }));
-      let tr = cargoChoice.appendChild(createDOM("div", { class: `ogl-option choice-mission-icon ogl-mission-3 ${
-        this.json.options.collect.mission == 3? "highlight":""
-      }` }));
-      let dp = cargoChoice.appendChild(createDOM("div", { class: `ogl-option choice-mission-icon ogl-mission-4 ${
-        this.json.options.collect.mission == 4? "highlight":""
-      }` }));
+      let sc = cargoChoice.appendChild(
+        createDOM("div", {
+          class: `ogl-option ogl-fleet-ship choice ogl-fleet-202 ${
+            this.json.options.collect.ship == 202 ? "highlight" : ""
+          }`,
+        })
+      );
+      let lc = cargoChoice.appendChild(
+        createDOM("div", {
+          class: `ogl-option ogl-fleet-ship choice ogl-fleet-203 ${
+            this.json.options.collect.ship == 203 ? "highlight" : ""
+          }`,
+        })
+      );
+      let pf = cargoChoice.appendChild(
+        createDOM("div", {
+          class: `ogl-option ogl-fleet-ship choice ogl-fleet-219 ${
+            this.json.options.collect.ship == 219 ? "highlight" : ""
+          }`,
+        })
+      );
+      let tr = cargoChoice.appendChild(
+        createDOM("div", {
+          class: `ogl-option choice-mission-icon ogl-mission-3 ${
+            this.json.options.collect.mission == 3 ? "highlight" : ""
+          }`,
+        })
+      );
+      let dp = cargoChoice.appendChild(
+        createDOM("div", {
+          class: `ogl-option choice-mission-icon ogl-mission-4 ${
+            this.json.options.collect.mission == 4 ? "highlight" : ""
+          }`,
+        })
+      );
       let tgt = cargoChoice.appendChild(
         createDOM("div", {
           class: `ogl-option choice-target ${this.json.options.collect.target.type == 3 ? "moon" : "planet"}`,
@@ -15868,14 +15891,18 @@ class OGInfinity {
             ? "pathFinder"
             : "largeCargo"
         }`;
-        document.querySelector(".ogk-collect-cargo .ogl-fleet-ship.highlight").classList.remove("highlight") ;
-        document.querySelector(`.ogk-collect-cargo ${
-          this.json.options.collect.ship == 202
-            ? ".ogl-fleet-202"
-            : this.json.options.collect.ship == 219
-            ? ".ogl-fleet-219"
-            : ".ogl-fleet-203"
-          }`).classList.add("highlight") ;
+        document.querySelector(".ogk-collect-cargo .ogl-fleet-ship.highlight").classList.remove("highlight");
+        document
+          .querySelector(
+            `.ogk-collect-cargo ${
+              this.json.options.collect.ship == 202
+                ? ".ogl-fleet-202"
+                : this.json.options.collect.ship == 219
+                  ? ".ogl-fleet-219"
+                  : ".ogl-fleet-203"
+            }`
+          )
+          .classList.add("highlight");
       };
       let updateDefaultCollectMission = (mission) => {
         this.json.options.collect.mission = mission;
@@ -15889,8 +15916,10 @@ class OGInfinity {
             ? "pathFinder"
             : "largeCargo"
         }`;
-        document.querySelector(".ogk-collect-cargo .choice-mission-icon.highlight").classList.remove("highlight") ;
-        document.querySelector(`.ogk-collect-cargo ${".ogl-mission-"+this.json.options.collect.mission}`).classList.add("highlight") ;
+        document.querySelector(".ogk-collect-cargo .choice-mission-icon.highlight").classList.remove("highlight");
+        document
+          .querySelector(`.ogk-collect-cargo ${".ogl-mission-" + this.json.options.collect.mission}`)
+          .classList.add("highlight");
       };
       sc.addEventListener("click", () => updateDefaultCollectShip(202));
       lc.addEventListener("click", () => updateDefaultCollectShip(203));

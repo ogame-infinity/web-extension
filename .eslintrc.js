@@ -5,7 +5,12 @@ module.exports = {
   },
   extends: ["eslint:recommended", "prettier"],
   plugins: ["prettier"],
-  overrides: [],
+  overrides: [
+    {
+      files: ["src/**/*.js"],
+      excludedFiles: "src/libs/**",
+    },
+  ],
   parserOptions: {
     ecmaVersion: "latest",
     sourceType: "module",
