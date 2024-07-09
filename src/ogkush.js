@@ -14184,23 +14184,26 @@ class OGInfinity {
         fleet.appendChild(createDOM("a", { class: `ogl-mission-icon ogl-mission-${type}` }));
         let fleetInfo = fleet.querySelector(".fleetinfo");
         let fleetCount = 0;
-        let values = fleetInfo.querySelectorAll("td.value");
+        let values = fleetInfo ? fleetInfo.querySelectorAll("td.value") : [];
         let backed = [0, 0, 0];
         values.forEach((value, index) => {
-          if (index == values.length - 1 - this.hasLifeforms) {
+          if (index == values.length - this.hasLifeforms) return; // food
+          if (index == values.length - 1 - this.hasLifeforms) {   // deuterium
             backed[2] = fromFormatedNumber(value.textContent);
             return;
           }
-          if (index == values.length - 2 - this.hasLifeforms) {
+          if (index == values.length - 2 - this.hasLifeforms) {   // crystal
             backed[1] = fromFormatedNumber(value.textContent);
             return;
           }
-          if (index == values.length - 3 - this.hasLifeforms) {
+          if (index == values.length - 3 - this.hasLifeforms) {   // metal
             backed[0] = fromFormatedNumber(value.textContent);
             return;
           }
           fleetCount += fromFormatedNumber(value.textContent);
         });
+        // to get 1 ship in discoveries, as it does not have ".fleetinfo"
+        fleetCount = Math.max(1, fleetCount);
         let destCoords = fleet.querySelector(".destinationCoords a").textContent;
         let destMoon = fleet.querySelector(".destinationData moon") ? true : false;
         let coords = destCoords.slice(1, -1) + (destMoon ? "M" : "P");
@@ -14256,16 +14259,15 @@ class OGInfinity {
       });
       if (lastFleetBtn) {
         lastFleetBtn.style.filter = "hue-rotate(180deg) saturate(150%)";
-        let backlast = document
-          .querySelector(".fleetStatus")
-          .appendChild(
-            this.createDOM(
-              "span",
-              { class: "reload ogl-backLast" },
-              '\n          <a class="dark_highlight_tablet"">\n            <span class="icon icon_link"></span>\n            <span>Back latest</span>\n          </a>\n            '
-            )
-          );
-        backlast.addEventListener("click", () => {
+        const backLast = DOM.createDOM("span", { class: "reload ogl-backLast" });
+        const backLastIcon = DOM.createDOM("a", { class: "dark_highlight_tablet" });
+        backLastIcon.append(
+          DOM.createDOM("span", { class: "icon icon_link" }),
+          DOM.createDOM("span", {}, " " + this.getTranslatedText(172))
+        );
+        backLast.appendChild(backLastIcon);
+        document.querySelector(".fleetStatus").appendChild(backLast);
+        backLast.addEventListener("click", () => {
           lastFleetBtn.click();
         });
       }
@@ -14285,7 +14287,7 @@ class OGInfinity {
   }
 
   getTranslatedText(id, type = "text") {
-    translate(id, type);
+    return translate(id, type);
   }
 
   getLocalStorageSize() {
