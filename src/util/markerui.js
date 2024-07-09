@@ -25,7 +25,7 @@ function add(coords, parent, id) {
         div.setAttribute("data-coords", coords);
         if (markers[coords] && markers[coords].color === color) {
           delete markers[coords];
-          if (parent.getAttribute("data-context") === "galaxy") {
+          if (parent.dataset.context === "galaxy") {
             parent.closest(".galaxyRow").removeAttribute("data-marked");
           }
         } else {
@@ -38,14 +38,14 @@ function add(coords, parent, id) {
             }
           });
           circle.classList.add("ogl-active");
-          if (parent.getAttribute("data-context") === "galaxy") {
+          if (parent.dataset.context === "galaxy") {
             parent.closest(".galaxyRow").setAttribute("data-marked", color);
           }
         }
         document.querySelector(".ogl-tooltip").classList.remove("ogl-active");
         document.querySelector(".ogl-targetIcon").classList.remove("ogl-targetsReady");
 
-        if (parent.getAttribute("data-context") !== "galaxy") {
+        if (parent.dataset.context !== "galaxy") {
           window.dispatchEvent(new CustomEvent("ogi-spyTableReload"));
         }
 

@@ -26,7 +26,7 @@ class FightMessagesAnalyzer {
     const messages = [];
 
     this.#messages.forEach((e) => {
-      const coords = e.querySelector(".rawMessageData")?.getAttribute("data-raw-coords");
+      const coords = e.querySelector(".rawMessageData")?.dataset.rawCoords;
 
       if (parseInt(coords?.split(":")[2]) !== 16) return;
 
@@ -40,18 +40,18 @@ class FightMessagesAnalyzer {
     this.#getExpeditionFight().forEach((message) => {
       const combats = OGIData.combats;
       const expeditionSums = OGIData.expeditionSums;
-      const msgId = message.getAttribute("data-msg-id");
+      const msgId = message.dataset.msgId;
 
       if (combats[msgId]) return;
 
       const defendersSpaceObject = JSON.parse(
-        message.querySelector(".rawMessageData")?.getAttribute("data-raw-defenderspaceobject")
+        message.querySelector(".rawMessageData")?.dataset.rawDefenderspaceobject
       );
 
-      const result = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-result"));
+      const result = JSON.parse(message.querySelector(".rawMessageData").dataset.rawResult);
 
       combats[msgId] = {
-        timestamp: message.querySelector(".rawMessageData")?.getAttribute("data-raw-timestamp"),
+        timestamp: message.querySelector(".rawMessageData")?.dataset.rawTimestamp,
         favorited: !!message.querySelector(".icon_favorited"),
         coordinates: {
           ...defendersSpaceObject.coordinates,
@@ -68,7 +68,7 @@ class FightMessagesAnalyzer {
         return;
       }
 
-      const newDate = new Date(message.querySelector(".rawMessageData").getAttribute("data-raw-date"));
+      const newDate = new Date(message.querySelector(".rawMessageData").dataset.rawDate);
       const dates = [
         newDate.getDate().toString().padStart(2, "0"),
         (newDate.getMonth() + 1).toString().padStart(2, "0"),
@@ -89,7 +89,7 @@ class FightMessagesAnalyzer {
         };
       }
 
-      const rounds = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-combatrounds"));
+      const rounds = JSON.parse(message.querySelector(".rawMessageData").dataset.rawCombatrounds);
 
       const lastRound = rounds.pop();
       const fleets = lastRound?.fleets[0]?.technologies;
@@ -113,8 +113,8 @@ class FightMessagesAnalyzer {
 
     this.#messages.forEach((e) => {
       const element = e.querySelector(".rawMessageData");
-      const coords = element?.getAttribute("data-raw-coords");
-      const hashcode = element?.getAttribute("data-raw-hashcode");
+      const coords = element?.dataset.rawCoords;
+      const hashcode = element?.dataset.rawHashcode;
 
       if (parseInt(coords?.split(":")[2]) === 16) return; // Expedition fight
       if (hashcode === "") return; // If hashcode is empty, spy not come back
@@ -129,11 +129,11 @@ class FightMessagesAnalyzer {
     this.#getFight().forEach((message) => {
       const combats = OGIData.combats;
       const combatsSums = OGIData.combatsSums;
-      const msgId = message.getAttribute("data-msg-id");
+      const msgId = message.dataset.msgId;
 
       if (combats[msgId]) return;
 
-      const newDate = new Date(message.querySelector(".rawMessageData").getAttribute("data-raw-date"));
+      const newDate = new Date(message.querySelector(".rawMessageData").dataset.rawDate);
       const dates = [
         newDate.getDate().toString().padStart(2, "0"),
         (newDate.getMonth() + 1).toString().padStart(2, "0"),
@@ -158,11 +158,11 @@ class FightMessagesAnalyzer {
       combatsSums[datePoint].count += 1;
 
       const defendersSpaceObject = JSON.parse(
-        message.querySelector(".rawMessageData")?.getAttribute("data-raw-defenderspaceobject")
+        message.querySelector(".rawMessageData")?.dataset.rawDefenderspaceobject
       );
 
-      const result = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-result"));
-      const fleets = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-fleets"));
+      const result = JSON.parse(message.querySelector(".rawMessageData").dataset.rawResult);
+      const fleets = JSON.parse(message.querySelector(".rawMessageData").dataset.rawFleets);
       let ennemy = null;
 
       fleets.forEach((side) => {
@@ -206,7 +206,7 @@ class FightMessagesAnalyzer {
       combatsSums[datePoint].loot[2] += resources?.[2].amount * (accountIsWinner ? 1 : -1);
 
       combats[msgId] = {
-        timestamp: message.querySelector(".rawMessageData")?.getAttribute("data-raw-timestamp"),
+        timestamp: message.querySelector(".rawMessageData")?.dataset.rawTimestamp,
         favorited: !!message.querySelector(".icon_favorited"),
         coordinates: {
           ...defendersSpaceObject.coordinates,
@@ -217,7 +217,7 @@ class FightMessagesAnalyzer {
         isProbes: false,
       };
 
-      const rounds = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-combatrounds"));
+      const rounds = JSON.parse(message.querySelector(".rawMessageData").dataset.rawCombatrounds);
 
       const lastRound = rounds.pop();
       let accountRoundFleets = [];

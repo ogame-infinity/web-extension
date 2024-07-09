@@ -49,7 +49,7 @@ class Messages {
   }
 
   #checkTab(tabElement) {
-    const tabId = parseInt(tabElement?.getAttribute("data-subtab-id") || 0);
+    const tabId = parseInt(tabElement?.dataset.subtabId || 0);
 
     if (!tabId) return;
 
@@ -107,8 +107,8 @@ class Messages {
 
     this.#analyzers.forEach((analyzer) => {
       const tabId =
-        parseInt(tab.getAttribute("data-subtab-id")) ||
-        parseInt(this.#currentTab().getAttribute("data-subtab-id")) ||
+        parseInt(tab.dataset.subtabId) ||
+        parseInt(this.#currentTab().dataset.subtabId) ||
         0;
       if (typeof analyzer.clean === "function") analyzer.clean(tabId !== this.#current_tab);
       if (!analyzer.support(tabId)) return;

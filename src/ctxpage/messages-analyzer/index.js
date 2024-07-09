@@ -155,7 +155,7 @@ function analyzer() {
     /** @type {MessageSubTabTrigger} */
     const subFleet22_Expeditions = (() => {
       const view = (msg, isNew = false) => {
-        const id = msg.getAttribute("data-msg-id");
+        const id = msg.dataset.msgId;
         if (!(this.json.expeditions && this.json.expeditions[id])) return;
 
         const expeditionData = this.json.expeditions[id];
@@ -209,7 +209,7 @@ function analyzer() {
       const callback = () => {
         const id = document.querySelector("li[id=subtabs-nfFleet22].ui-state-active").getAttribute("aria-controls");
         document.querySelectorAll(`div[id=${id}] li.msg`).forEach((msg) => {
-          const id = msg.getAttribute("data-msg-id");
+          const id = msg.dataset.msgId;
           const content = msg.querySelector("span.msg_content");
           const msgTexts = Array.from(content.childNodes, ({ textContent }) =>
             textContent ? textContent.trim() : "\n"
@@ -356,7 +356,7 @@ function analyzer() {
         let id = document.querySelector("li[id=subtabs-nfFleet21].ui-state-active").getAttribute("aria-controls");
         document.querySelectorAll(`div[id=${id}] li.msg`).forEach((msg, ix) => {
           setTimeout(() => {
-            let id = msg.getAttribute("data-msg-id");
+            let id = msg.dataset.msgId;
             let isCR = msg.querySelector(".msg_actions .icon_nf_link");
             if (!isCR) {
               msg.classList.add("ogk-combat-contact");
@@ -489,7 +489,7 @@ function analyzer() {
       const callback = () => {
         let id = document.querySelector("li[id=subtabs-nfFleet24].ui-state-active").getAttribute("aria-controls");
         document.querySelectorAll(`div[id=${id}] li.msg`).forEach((msg) => {
-          let id = msg.getAttribute("data-msg-id");
+          let id = msg.dataset.msgId;
           if (id in this.json.harvests) {
             if (this.json.harvests[id].coords.split(":")[2] == 16) {
               msg.classList.add("ogk-expedition");

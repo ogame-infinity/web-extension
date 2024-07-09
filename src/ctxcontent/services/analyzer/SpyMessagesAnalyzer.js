@@ -64,7 +64,7 @@ class SpyMessagesAnalyzer {
   #isReport(message) {
     return (
       message.querySelector(".msgContent .espionageInfo") !== null &&
-      message.querySelector(".rawMessageData[data-raw-playername]").getAttribute("data-raw-playername").length
+      message.querySelector(".rawMessageData[data-raw-playername]").dataset.rawPlayername.length
     );
   }
 
@@ -168,7 +168,7 @@ class SpyMessagesAnalyzer {
     header.appendChild(createDOM("th", { "data-filter": "DEF" }, "Def"));
 
     header.querySelectorAll("th").forEach((th) => {
-      const filter = th.getAttribute("data-filter");
+      const filter = th.dataset.filter;
       const options = OGIData.options;
       if (options.spyFilter === filter) th.classList.add("ogl-active");
 
@@ -239,15 +239,15 @@ class SpyMessagesAnalyzer {
     const saveDefaultCargo = (e) => {
       const options = OGIData.options;
       const oldValue = options.spyFret;
-      options.spyFret = parseInt(e.target.getAttribute("data-ship"));
+      options.spyFret = parseInt(e.target.dataset.ship);
       OGIData.options = options;
 
       cargoSpan.classList.remove(`ogl-fleet-${oldValue}`);
       cargoSpan.classList.add(`ogl-fleet-${options.spyFret}`);
 
       document.querySelectorAll(".ogl-cargo-choice").forEach((el) => {
-        const coords = el.getAttribute("data-coords");
-        const planetTargetType = el.getAttribute("data-planet-target-type");
+        const coords = el.dataset.coords;
+        const planetTargetType = el.dataset.planetTargetType;
         const value = el.getAttribute(`data-ship-${options.spyFret}`);
         const fleetLink = this.#fleetDispatchLink(coords, planetTargetType, options.spyFret, value);
         el.querySelector("a").href = `?${fleetLink.toString()}`;

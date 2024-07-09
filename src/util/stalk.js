@@ -159,7 +159,7 @@ export function stalk(sender, player, delay = undefined) {
       if (page !== "galaxy") {
         let coords = document
           .querySelector(".ogl-tooltip .ogl-stalkPlanets a.ogl-main")
-          .getAttribute("data-coords")
+          .dataset.coords
           .split(":");
 
         location.href = generateGalaxyLink(coords, player.id);
@@ -170,14 +170,14 @@ export function stalk(sender, player, delay = undefined) {
 
       let active = document.querySelectorAll(".ogl-tooltip .ogl-stalkPlanets a.ogl-active");
       active = active[active.length - 1];
-      if (first && first.getAttribute("data-coords") === active.getAttribute("data-coords")) {
+      if (first && first.dataset.coords === active.dataset.coords) {
         return;
       }
       let next = active.nextElementSibling;
       if (!next) {
         next = document.querySelector(".ogl-tooltip .ogl-stalkPlanets a");
       }
-      let splits = next.getAttribute("data-coords").split(":");
+      let splits = next.dataset.coords.split(":");
       document.getElementById("galaxy_input").value = splits[0];
       galaxy = document.getElementById("galaxy_input");
 
@@ -485,17 +485,17 @@ export function side(playerId) {
             if (page !== "galaxy") {
               let coords = document
                 .querySelector(".ogl-stalkPlanets a.ogl-main")
-                .getAttribute("data-coords")
+                .dataset.coords
                 .split(":");
               location.href = `?page=ingame&component=galaxy&galaxy=${coords[0]}&system=${coords[1]}&position=${coords[2]}`;
             }
             if ($("#galaxyLoading").is(":visible")) return;
             let active = sideStalk.querySelectorAll("a.ogl-active");
             let next = active.length > 0 ? active[active.length - 1].nextElementSibling : null;
-            if (!next || !next.getAttribute("data-coords")) {
+            if (!next || !next.dataset.coords) {
               next = sideStalk.querySelectorAll(".ogl-stalkPlanets a")[0];
             }
-            let splits = next.getAttribute("data-coords").split(":");
+            let splits = next.dataset.coords.split(":");
             galaxy = document.getElementById("#galaxy_input").value = splits[0];
             system = document.getElementById("#system_input").value = splits[1];
             submitForm();

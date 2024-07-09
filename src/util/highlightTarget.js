@@ -23,7 +23,7 @@ export default function () {
     if (target) target.classList.add("ogl-highlighted");
   }
   document.querySelectorAll("a[data-coords]").forEach((a) => {
-    const hCoords = a.getAttribute("data-coords").split(":");
+    const hCoords = a.dataset.coords.split(":");
     if (
       document.querySelector("#galaxy_input").value === hCoords[0] &&
       document.querySelector("#system_input").value === hCoords[1]

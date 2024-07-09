@@ -98,18 +98,15 @@ export class SpyReport {
     return this._id;
   }
   constructor(message) {
-    this._id = message.getAttribute("data-msg-id");
+    this._id = message.dataset.msgId;
     this._isNew = message.classList.contains("msg_new");
     this._isFavorited = message.querySelector(".icon_favorited");
     this._attacked = message.querySelector(".fleetAction.fleetHostile");
     this._planetTargetType = parseInt(
-      message.querySelector(".rawMessageData").getAttribute("data-raw-targetplanettype") || planetType.planet
+      message.querySelector(".rawMessageData").dataset.rawTargetplanettype || planetType.planet
     );
 
-    this._name = message
-      .getAttribute("data-messages-filters-playername")
-      .replace(/&nbsp;/g, "")
-      .trim();
+    this._name = message.dataset.messagesFiltersPlayername.replace(/&nbsp;/g, "").trim();
 
     this._status = "";
 
@@ -121,28 +118,28 @@ export class SpyReport {
     }
 
     this._spyLink = message.querySelector('.msg_actions [onclick*="sendShipsWithPopup"]').getAttribute("onclick");
-    const textContent = message.getAttribute("data-messages-filters-activity");
+    const textContent = message.dataset.messagesFiltersActivity;
     this._activity = parseInt(textContent.match(/\d+/) ? textContent.match(/\d+/)[0] : 60);
-    this._coords = /\[.*\]/g.exec(message.getAttribute("data-messages-filters-coordinates"))[0]?.slice(1, -1);
+    this._coords = /\[.*\]/g.exec(message.dataset.messagesFiltersCoordinates)[0]?.slice(1, -1);
     this._coordsLink = message.querySelector(".msgTitle a")?.href || "#";
 
     this._detailLink = message.querySelector(".msg_actions message-footer-details a.fright").href;
 
-    // TODO: after 11.16.0, modify fleet& defense to obtain values directly of data raw. no need of regex & cleanValue 
-    const fleet = message.getAttribute("data-messages-filters-fleet");
-    const defense = message.getAttribute("data-messages-filters-defense");
+    // TODO: after 11.16.0, modify fleet& defense to obtain values directly of data raw. no need of regex & cleanValue
+    const fleet = message.dataset.messagesFiltersFleet;
+    const defense = message.dataset.messagesFiltersDefense;
     const regExp = new RegExp(`[\\d${LocalizationStrings["thousandSeperator"]}]+`);
 
     if (fleet === "-") {
       this._fleet = "No data";
     } else if (fleet === "0") {
       this._fleet = "0";
-    } else if (message.querySelector(".rawMessageData").getAttribute("data-raw-fleetvalue")) {
-      this._fleet = cleanValue(message.querySelector(".rawMessageData").getAttribute("data-raw-fleetvalue"));
+    } else if (message.querySelector(".rawMessageData").dataset.rawFleetvalue) {
+      this._fleet = cleanValue(message.querySelector(".rawMessageData").dataset.rawFleetvalue);
     } else {
       // @deprecated
       this._fleet = cleanValue(
-        regExp.exec(message.querySelector(".fleetInfo > .shipsTotal")?.getAttribute("data-tooltip-title"))?.[0] || ''
+        regExp.exec(message.querySelector(".fleetInfo > .shipsTotal")?.dataset.tooltipTitle)?.[0] || ""
       );
     }
 
@@ -150,17 +147,17 @@ export class SpyReport {
       this._defense = "No data";
     } else if (defense === "0") {
       this._defense = "0";
-    } else if (message.querySelector(".rawMessageData").getAttribute("data-raw-defensevalue")) {
-      this._defense = cleanValue(message.querySelector(".rawMessageData").getAttribute("data-raw-defensevalue"));
+    } else if (message.querySelector(".rawMessageData").dataset.rawDefensevalue) {
+      this._defense = cleanValue(message.querySelector(".rawMessageData").dataset.rawDefensevalue);
     } else {
       // @deprecated
       this._defense = cleanValue(
-        regExp.exec(message.querySelector(".defenseInfo > .defenseTotal")?.getAttribute("data-tooltip-title"))?.[0] || ''
+        regExp.exec(message.querySelector(".defenseInfo > .defenseTotal")?.dataset.tooltipTitle)?.[0] || ""
       );
     }
 
     // Date
-    const timestamp = message.querySelector(".rawMessageData").getAttribute("data-raw-datetime");
+    const timestamp = message.querySelector(".rawMessageData").dataset.rawDatetime;
     this._cleanDate = new Date();
     this._cleanDate.setTime(timestamp * 1000);
     this._deltaDate = Date.now() - this._cleanDate;
@@ -170,14 +167,14 @@ export class SpyReport {
 
     this._date = hours < 1 ? Math.floor(minutes) + " min" : Math.floor(hours) + "h";
 
-    this._loot = message.getAttribute("data-messages-filters-loot").replace(/(\D*)/, "").replace(/%/, "");
-    this._metal = cleanValue(message.getAttribute("data-messages-filters-metal").replace(/(\D*)/, ""));
-    this._crystal = cleanValue(message.getAttribute("data-messages-filters-crystal").replace(/(\D*)/, ""));
-    this._deut = cleanValue(message.getAttribute("data-messages-filters-deuterium").replace(/(\D*)/, ""));
+    this._loot = message.dataset.messagesFiltersLoot.replace(/(\D*)/, "").replace(/%/, "");
+    this._metal = cleanValue(message.dataset.messagesFiltersMetal.replace(/(\D*)/, ""));
+    this._crystal = cleanValue(message.dataset.messagesFiltersCrystal.replace(/(\D*)/, ""));
+    this._deut = cleanValue(message.dataset.messagesFiltersDeuterium.replace(/(\D*)/, ""));
     this._total = this._metal + this._crystal + this._deut;
     this._renta = Math.round((this._total * this._loot) / 100);
 
-    this._apiKey = message.querySelector(".rawMessageData").getAttribute("data-raw-hashcode");
+    this._apiKey = message.querySelector(".rawMessageData").dataset.rawHashcode;
 
     //////////////////////////////////////////////////////
 

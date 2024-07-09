@@ -38,7 +38,7 @@ class ExpeditionMessagesAnalyzer {
     this.#getExpeditionsMessages().forEach((message) => {
       const expeditions = OGIData.expeditions;
       const expeditionSums = OGIData.expeditionSums;
-      const msgId = message.getAttribute("data-msg-id");
+      const msgId = message.dataset.msgId;
 
       const displayLabel = function (message) {
         if (!expeditions[msgId]) return;
@@ -74,12 +74,12 @@ class ExpeditionMessagesAnalyzer {
       }
 
       const resourcesGained = JSON.parse(
-        message.querySelector(".rawMessageData")?.getAttribute("data-raw-resourcesgained")
+        message.querySelector(".rawMessageData")?.dataset.rawResourcesgained
       );
-      const type = message.querySelector(".rawMessageData").getAttribute("data-raw-expeditionresult");
+      const type = message.querySelector(".rawMessageData").dataset.rawExpeditionresult;
       const resourceType = resourcesGained ? Object.keys(resourcesGained)[0] : undefined;
 
-      const newDate = new Date(message.querySelector(".rawMessageData").getAttribute("data-raw-date"));
+      const newDate = new Date(message.querySelector(".rawMessageData").dataset.rawDate);
       const datePoint = `${newDate.getDate().toString().padStart(2, "0")}.${(newDate.getMonth() + 1)
         .toString()
         .padStart(2, "0")}.${newDate.getFullYear().toString().slice(2)}`;
@@ -123,7 +123,7 @@ class ExpeditionMessagesAnalyzer {
         };
 
         const technologiesGained = JSON.parse(
-          message.querySelector(".rawMessageData")?.getAttribute("data-raw-technologiesgained")
+          message.querySelector(".rawMessageData")?.dataset.rawTechnologiesgained
         );
 
         for (const key in technologiesGained) {
@@ -135,7 +135,7 @@ class ExpeditionMessagesAnalyzer {
 
         summary.type["Fleet"] ? (summary.type["Fleet"] += 1) : (summary.type["Fleet"] = 1);
       } else if (type === "navigation") {
-        const navigation = JSON.parse(message.querySelector(".rawMessageData")?.getAttribute("data-raw-navigation"));
+        const navigation = JSON.parse(message.querySelector(".rawMessageData")?.dataset.rawNavigation);
 
         const type = parseInt(navigation.returnTimeMultiplier) >= 1 ? "Late" : "Early";
         summary.type[type] ? (summary.type[type] += 1) : (summary.type[type] = 1);
@@ -188,7 +188,7 @@ class ExpeditionMessagesAnalyzer {
   #getDiscoveryMessages() {
     const messages = [];
     this.#messages.forEach((e) => {
-      if (e.querySelector(".rawMessageData")?.getAttribute("data-raw-messagetype") !== "61") return;
+      if (e.querySelector(".rawMessageData")?.dataset.rawMessagetype !== "61") return;
 
       messages.push(e);
     });
@@ -203,7 +203,7 @@ class ExpeditionMessagesAnalyzer {
       const discoveries = OGIData.discoveries;
       const discoveriesSums = OGIData.discoveriesSums;
 
-      const msgId = message.getAttribute("data-msg-id");
+      const msgId = message.dataset.msgId;
 
       const displayLabel = function (message) {
         if (!discoveries[msgId]) return;
@@ -242,7 +242,7 @@ class ExpeditionMessagesAnalyzer {
         return;
       }
 
-      const newDate = new Date(message.querySelector(".rawMessageData").getAttribute("data-raw-date"));
+      const newDate = new Date(message.querySelector(".rawMessageData").dataset.rawDate);
       const datePoint = `${newDate.getDate().toString().padStart(2, "0")}.${(newDate.getMonth() + 1)
         .toString()
         .padStart(2, "0")}.${newDate.getFullYear().toString().slice(2)}`;
@@ -253,21 +253,21 @@ class ExpeditionMessagesAnalyzer {
         type: {},
       };
 
-      const discoveryType = message.querySelector(".rawMessageData").getAttribute("data-raw-discoverytype");
+      const discoveryType = message.querySelector(".rawMessageData").dataset.rawDiscoverytype;
       let ogiDiscoveryType = "void";
       let amount = 0;
 
       if (discoveryType === "lifeform-xp") {
-        const lifeForm = message.querySelector(".rawMessageData").getAttribute("data-raw-lifeform");
+        const lifeForm = message.querySelector(".rawMessageData").dataset.rawLifeform;
         const experience = parseInt(
-          message.querySelector(".rawMessageData").getAttribute("data-raw-lifeformgainedexperience")
+          message.querySelector(".rawMessageData").dataset.rawLifeformgainedexperience
         );
         ogiDiscoveryType = `lifeform${lifeForm}`;
         amount = experience;
 
         sums.found[lifeForm - 1] ? (sums.found[lifeForm - 1] += experience) : (sums.found[lifeForm - 1] = experience);
       } else if (discoveryType === "artifacts") {
-        const artifacts = parseInt(message.querySelector(".rawMessageData").getAttribute("data-raw-artifactsfound"));
+        const artifacts = parseInt(message.querySelector(".rawMessageData").dataset.rawArtifactsfound);
         ogiDiscoveryType = "artefacts";
         amount = artifacts;
         sums.artefacts += artifacts;
@@ -278,7 +278,7 @@ class ExpeditionMessagesAnalyzer {
       discoveriesSums[datePoint] = sums;
       discoveries[msgId] = {
         result: ogiDiscoveryType,
-        size: message.querySelector(".rawMessageData").getAttribute("data-raw-artifactssize") || "normal",
+        size: message.querySelector(".rawMessageData").dataset.rawArtifactssize || "normal",
         amount: amount,
         date: newDate,
         favorited: !!message.querySelector(".icon_favorited"),

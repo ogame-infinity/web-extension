@@ -26,7 +26,7 @@ class HarvestMessagesAnalyzer {
     const messages = [];
     this.#messages.forEach((message) => {
       if (
-        parseInt(message.querySelector(".rawMessageData")?.getAttribute("data-raw-messagetype")) !== MessageType.harvest
+        parseInt(message.querySelector(".rawMessageData")?.dataset.rawMessagetype) !== MessageType.harvest
       )
         return;
 
@@ -40,15 +40,15 @@ class HarvestMessagesAnalyzer {
     const reaperTechnology = OGIData.ships?.[ship.Reaper] || {};
 
     const isExpedition = (message) => {
-      const coordsAttr = message.querySelector(".rawMessageData")?.getAttribute("data-raw-targetcoordinates");
+      const coordsAttr = message.querySelector(".rawMessageData")?.dataset.rawTargetcoordinates;
       const coords = coordsAttr.split(":");
 
       return parseInt(coords[2]) === 16;
     };
 
     const isReaper = (message) => {
-      const fleetAmount = parseInt(message.querySelector(".rawMessageData")?.getAttribute("data-raw-recycleramount"));
-      const capacity = parseInt(message.querySelector(".rawMessageData")?.getAttribute("data-raw-totalcapacity"));
+      const fleetAmount = parseInt(message.querySelector(".rawMessageData")?.dataset.rawRecycleramount);
+      const capacity = parseInt(message.querySelector(".rawMessageData")?.dataset.rawTotalcapacity);
       const harvesterNeeded = Math.ceil(capacity / reaperTechnology?.cargoCapacity);
 
       return harvesterNeeded === fleetAmount;
@@ -66,17 +66,17 @@ class HarvestMessagesAnalyzer {
 
     this.#getHarvestsMessages().forEach((message) => {
       const harvests = OGIData.harvests;
-      const msgId = message.getAttribute("data-msg-id");
+      const msgId = message.dataset.msgId;
 
       addClass(message);
 
       if (harvests[msgId]) return;
 
-      const coordsAttr = message.querySelector(".rawMessageData")?.getAttribute("data-raw-targetcoordinates");
+      const coordsAttr = message.querySelector(".rawMessageData")?.dataset.rawTargetcoordinates;
       const harvestedResources = JSON.parse(
-        message.querySelector(".rawMessageData").getAttribute("data-raw-recycledresources")
+        message.querySelector(".rawMessageData").dataset.rawRecycledresources
       );
-      const newDate = new Date(message.querySelector(".rawMessageData").getAttribute("data-raw-date"));
+      const newDate = new Date(message.querySelector(".rawMessageData").dataset.rawDate);
       const datePoint = `${newDate.getDate().toString().padStart(2, "0")}.${(newDate.getMonth() + 1)
         .toString()
         .padStart(2, "0")}.${newDate.getFullYear().toString().slice(2)}`;
