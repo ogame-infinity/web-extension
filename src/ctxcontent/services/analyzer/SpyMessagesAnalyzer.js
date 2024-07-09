@@ -825,7 +825,7 @@ class SpyMessagesAnalyzer {
     this.#messageCallable().forEach((message) => {
       const dataRaw = message.querySelector(".rawMessageData");
 
-      if (parseInt(dataRaw?.dataset?.rawTargetplayerid) !== playerId) return;
+      if (parseInt(dataRaw?.getAttribute("data-raw-targetplayerid")) !== playerId) return;
 
       const id = message.getAttribute("data-msg-id");
       const tmpHTML = createDOM("div", {});
