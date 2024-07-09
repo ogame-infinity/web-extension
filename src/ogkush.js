@@ -14287,7 +14287,7 @@ class OGInfinity {
   }
 
   getTranslatedText(id, type = "text") {
-    translate(id, type);
+    return translate(id, type);
   }
 
   getLocalStorageSize() {
