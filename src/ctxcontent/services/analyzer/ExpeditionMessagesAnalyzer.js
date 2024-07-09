@@ -137,8 +137,8 @@ class ExpeditionMessagesAnalyzer {
         amount[3] = parseInt(Object.values(resourcesGained)[0]);
         expeditions[msgId] = {
           result: "AM",
-          amount: amount,
-          size: size,
+          amount,
+          size,
           date: newDate,
         };
 
@@ -155,8 +155,8 @@ class ExpeditionMessagesAnalyzer {
         amount[key] = parseInt(Object.values(resourcesGained)[0]);
         expeditions[msgId] = {
           result: typeFormatted,
-          amount: amount,
-          size: size,
+          amount,
+          size,
           date: newDate,
         };
 
@@ -166,7 +166,7 @@ class ExpeditionMessagesAnalyzer {
           message.querySelector(".rawMessageData")?.getAttribute("data-raw-technologiesgained")
         );
 
-        let shipsFound = [];
+        const shipsFound = [];
         for (const key in technologiesGained) {
           const technology = technologiesGained[key];
           if (!summary.fleet[key]) summary.fleet[key] = 0;
@@ -178,7 +178,7 @@ class ExpeditionMessagesAnalyzer {
         expeditions[msgId] = {
           result: "Fleet",
           amount: fleetCost(shipsFound),
-          size: size,
+          size,
           date: newDate,
         };
 
@@ -191,7 +191,7 @@ class ExpeditionMessagesAnalyzer {
 
         expeditions[msgId] = {
           result: type,
-          size: size,
+          size,
           date: newDate,
         };
       } else if (type === "nothing") {
@@ -218,7 +218,7 @@ class ExpeditionMessagesAnalyzer {
       } else if (type === "items") {
         expeditions[msgId] = {
           result: "Object",
-          size: size,
+          size,
           date: newDate,
         };
 
@@ -330,7 +330,7 @@ class ExpeditionMessagesAnalyzer {
       discoveries[msgId] = {
         result: ogiDiscoveryType,
         size: message.querySelector(".rawMessageData").getAttribute("data-raw-artifactssize") || "normal",
-        amount: amount,
+        amount,
         date: newDate,
         favorited: !!message.querySelector(".icon_favorited"),
       };

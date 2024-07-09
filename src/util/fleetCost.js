@@ -1,4 +1,5 @@
 import shipCosts from "./enum/shipCosts.js";
+import resource from "./enum/resource.js";
 
 /**
  *
@@ -6,16 +7,20 @@ import shipCosts from "./enum/shipCosts.js";
  * @return {Array<number>} sum of cost per resource [M / C / D]
  */
 function fleetCost(ships) {
-  const fleetRes = [0, 0, 0];
+  const fleetRes = {
+    [resource.Metal]: 0,
+    [resource.Crystal]: 0,
+    [resource.Deuterium]: 0,
+  };
 
   Object.keys(shipCosts).forEach((id) => {
     if (ships[id]) {
-      fleetRes[0] += shipCosts[id][0] * ships[id];
-      fleetRes[1] += shipCosts[id][1] * ships[id];
-      fleetRes[2] += shipCosts[id][2] * ships[id];
+      fleetRes[resource.Metal] += shipCosts[id][resource.Metal] * ships[id];
+      fleetRes[resource.Crystal] += shipCosts[id][resource.Crystal] * ships[id];
+      fleetRes[resource.Deuterium] += shipCosts[id][resource.Deuterium] * ships[id];
     }
   });
-  return fleetRes;
+  return Object.values(fleetRes);
 }
 
 export { fleetCost };

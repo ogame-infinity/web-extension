@@ -13,7 +13,7 @@ export default Object.freeze({
   [ship.Bomber]: [50e3, 25e3, 15e3],
   [ship.SolarSatellite]: [0e3, 2e3, 0.5e3],
   [ship.Destroyer]: [60e3, 50e3, 15e3],
-  [ship.DeathStar]: [5e6, 4e6, 1e6], /* RIP */
+  [ship.DeathStar]: [5e6, 4e6, 1e6],
   [ship.Battlecruiser]: [30e3, 40e3, 15e3],
   [ship.Crawler]: [2e3, 2e3, 1e3],
   [ship.Reaper]: [85e3, 55e3, 20e3],
