@@ -619,7 +619,7 @@ class SpyMessagesAnalyzer {
         !document.querySelector('.messagesTrashcanBtns button.custom_btn[disabled="disabled"]')
       ) {
         const optColDeleteButton = createDOM("button", { class: "icon icon_trash" });
-        optColDeleteButton.dataset.id = report.id;
+        optColDeleteButton.getAttribute("data-id") = report.id;
         optColDeleteButton.addEventListener("click", () => {
           bodyRow.classList.add("hide");
           this.reportsToDelete.push(report);
@@ -644,7 +644,7 @@ class SpyMessagesAnalyzer {
         }
       } else if (document.querySelector('.messagesTrashcanBtns button.custom_btn[disabled="disabled"]')) {
         const optColRestoreButton = createDOM("button", { class: "icon icon_restore" });
-        optColRestoreButton.dataset.id = report.id;
+        optColRestoreButton.getAttribute("data-id") = report.id;
 
         optColRestoreButton.addEventListener("click", () => {
           bodyRow.classList.add("hide");
@@ -825,19 +825,19 @@ class SpyMessagesAnalyzer {
     this.#messageCallable().forEach((message) => {
       const dataRaw = message.querySelector(".rawMessageData");
 
-      if (parseInt(dataRaw?.dataset?.rawTargetplayerid) !== playerId) return;
+      if (parseInt(dataRaw?.getAttribute("data-raw-targetplayerid")) !== playerId) return;
 
-      const id = message.dataset.msgId;
+      const id = message.getAttribute("data-msg-id");
       const tmpHTML = createDOM("div", {});
-      tmpHTML.insertAdjacentHTML("afterbegin", message.querySelector("span.player").dataset.tooltipTitle);
-      const playerID = tmpHTML.querySelector("[data-playerId]").dataset.playerid;
+      tmpHTML.insertAdjacentHTML("afterbegin", message.querySelector("span.player").getAttribute("data-tooltip-title"));
+      const playerID = tmpHTML.querySelector("[data-playerId]").getAttribute("data-playerId");
 
       const spyFromUrl = new URLSearchParams(
         message.querySelector(".custom_btn.msgAttackBtn").getAttribute("onclick").split(/=(.*)/)[1].slice(1, -1)
       );
 
       const type = parseInt(spyFromUrl.get("type"));
-      const timestamp = dataRaw.dataset.rawDatetime;
+      const timestamp = dataRaw.getAttribute("data-raw-datetime");
       ptreJSON[id] = {};
       ptreJSON[id].player_id = playerID;
       ptreJSON[id].teamkey = OGIData.options.ptreTK;

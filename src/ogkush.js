@@ -3800,7 +3800,7 @@ class OGInfinity {
     let baseCords = galaxy + ":" + system;
     let secureCoords =
       document.getElementById("galaxy_input").value + ":" + document.getElementById("system_input").value;
-    let doubleCheckCoords = document.querySelector(".ogl-colors")?.dataset?.coords;
+    let doubleCheckCoords = document.querySelector(".ogl-colors")?.getAttribute("data-coords");
     if (secureCoords !== baseCords || (doubleCheckCoords && doubleCheckCoords !== baseCords + ":1")) {
       return;
     }
@@ -3818,8 +3818,8 @@ class OGInfinity {
         let planetDiv = row.querySelector(".cellPlanet div");
         let moonDiv = row.querySelector(".cellMoon div");
         let playerId = playerDiv.getAttribute("id").replace("player", "");
-        let planetId = planetDiv ? planetDiv.dataset.planetId : -1;
-        let moonId = moonDiv ? moonDiv.dataset.moonId : -1;
+        let planetId = planetDiv ? planetDiv.getAttribute("data-planet-id") : -1;
+        let moonId = moonDiv ? moonDiv.getAttribute("data-moon-id") : -1;
         let name = playerDiv.querySelector("span:first-of-type").textContent;
 
         changes.push({
