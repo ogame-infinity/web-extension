@@ -189,17 +189,17 @@ export class SpyReport {
     });
     this._pt = calcNeededShips({
       moreFret: true,
-      fret: ship.SmallCargo,
+      fret: ship.SmallCargoShip,
       resources: Math.ceil((this._total * this._loot) / 100),
     });
     this._gt = calcNeededShips({
       moreFret: true,
-      fret: ship.LargeCargo,
+      fret: ship.LargeCargoShip,
       resources: Math.ceil((this._total * this._loot) / 100),
     });
     this._pf = calcNeededShips({
       moreFret: true,
-      fret: ship.PathFinder,
+      fret: ship.Pathfinder,
       resources: Math.ceil((this._total * this._loot) / 100),
     });
 

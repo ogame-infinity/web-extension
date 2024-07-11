@@ -22,6 +22,7 @@ import OGIData from "./util/OGIData.js";
 import { tooltip } from "./util/tooltip.js";
 import missionType from "./util/enum/missionType.js";
 import { translate } from "./util/translate.js";
+import { fleetCost } from "./util/fleetCost.js";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 //const VERSION = "__VERSION__";
@@ -128,25 +129,6 @@ const toFormatedNumber = Numbers.toFormattedNumber;
  * @type {Numbers.fromFormattedNumber}
  */
 const fromFormatedNumber = Numbers.fromFormattedNumber;
-
-const SHIP_COSTS = {
-  202: [2, 2, 0],
-  203: [6, 6, 0],
-  204: [3, 1, 0],
-  205: [6, 4, 0],
-  206: [20, 7, 2],
-  207: [45, 15, 0],
-  208: [10, 20, 10],
-  209: [10, 6, 2],
-  210: [0, 1, 0],
-  211: [50, 25, 15],
-  212: [0, 2, 0.5],
-  213: [60, 50, 15],
-  214: [5e3, 4e3, 1e3],
-  215: [30, 40, 15],
-  218: [85, 55, 20],
-  219: [8, 15, 8],
-};
 
 const SHIP_EXPEDITION_POINTS = {
   202: 20,
@@ -5358,18 +5340,6 @@ class OGInfinity {
       });
   }
 
-  getFleetCost(ships) {
-    let fleetRes = [0, 0, 0];
-    [202, 203, 210, 208, 209, 204, 205, 206, 219, 207, 215, 211, 213, 218, 214].forEach((id) => {
-      if (ships[id]) {
-        fleetRes[0] += SHIP_COSTS[id][0] * ships[id] * 1e3;
-        fleetRes[1] += SHIP_COSTS[id][1] * ships[id] * 1e3;
-        fleetRes[2] += SHIP_COSTS[id][2] * ships[id] * 1e3;
-      }
-    });
-    return fleetRes;
-  }
-
   expeditionStats() {
     let ressources = ["Metal", "Crystal", "Deuterium", "AM"];
     let content = createDOM("div", { class: "ogk-stats-content" });
@@ -5381,8 +5351,8 @@ class OGInfinity {
       globalDiv.appendChild(createDOM("span", { class: "ogk-center" }, numExpe));
       globalDiv.appendChild(this.expeditionGraph(sums.type));
       let details = content.appendChild(createDOM("div", { class: "ogk-details" }));
-      let losses = this.getFleetCost(sums.losses);
-      let fleetRes = this.getFleetCost(sums.fleet);
+      let losses = fleetCost(sums.losses);
+      let fleetRes = fleetCost(sums.fleet);
       let box = this.resourceBox(
         [
           {
@@ -5516,8 +5486,8 @@ class OGInfinity {
     };
     let getTotal = (sums) => {
       let total = 0;
-      let fleet = this.getFleetCost(sums.fleet);
-      let losses = this.getFleetCost(sums.losses);
+      let fleet = fleetCost(sums.fleet);
+      let losses = fleetCost(sums.losses);
       total += fleet[0] + fleet[1] + fleet[2];
       total -= losses[0] + losses[1] + losses[2];
       total += sums.harvest[0] + sums.harvest[1] + (sums.harvest?.[2] || 0);
@@ -5746,7 +5716,7 @@ class OGInfinity {
         );
       });
       let details = content.appendChild(createDOM("div", { class: "ogk-details" }));
-      let losses = this.getFleetCost(sums.losses);
+      let losses = fleetCost(sums.losses);
       let box = this.resourceBox(
         [
           {
@@ -5880,7 +5850,7 @@ class OGInfinity {
     };
     let getTotal = (sums) => {
       let total = 0;
-      let losses = this.getFleetCost(sums.losses);
+      let losses = fleetCost(sums.losses);
       total -= losses[0] + losses[1] + losses[2];
       total += sums.harvest[0] + sums.harvest[1] + (sums.harvest?.[2] || 0);
       total += sums.loot[0] + sums.loot[1] + sums.loot[2];
@@ -6066,7 +6036,7 @@ class OGInfinity {
           let id = Number(input.getAttribute("data"));
           fleet[id] = fromFormatedNumber(input.value, true);
         });
-        let cost = this.getFleetCost(fleet);
+        let cost = fleetCost(fleet);
         onValidate(cost);
       });
     }

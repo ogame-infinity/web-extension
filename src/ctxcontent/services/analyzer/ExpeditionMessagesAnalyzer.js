@@ -3,6 +3,9 @@ import { messagesTabs } from "../../../ctxpage/messages/index.js";
 import OGIData from "../../../util/OGIData.js";
 import { createDOM } from "../../../util/dom.js";
 import { toFormattedNumber } from "../../../util/numbers.js";
+import { fleetCost } from "../../../util/fleetCost.js";
+import { standardUnit } from "../../../util/standardUnit.js";
+import { translate } from "../../../util/translate.js";
 
 class ExpeditionMessagesAnalyzer {
   #logger;
@@ -38,26 +41,29 @@ class ExpeditionMessagesAnalyzer {
     this.#getExpeditionsMessages().forEach((message) => {
       const expeditions = OGIData.expeditions;
       const expeditionSums = OGIData.expeditionSums;
+      const tradeRate = OGIData.options.tradeRate;
       const msgId = message.getAttribute("data-msg-id");
+
+      const sizeBlacklist = ["bhole", "merchant", "void", "nothing", "trader", "fleetLost"];
 
       const displayLabel = function (message) {
         if (!expeditions[msgId]) return;
 
         const labels = {
-          "ogk-metal": "Metal",
-          "ogk-crystal": "Crystal",
-          "ogk-deuterium": "Deuterium",
-          "ogk-am": "Dark mater",
-          "ogk-fleet": "Fleet",
-          "ogk-object": "Object",
-          "ogk-aliens": "Aliens",
-          "ogk-pirates": "Pirates",
-          "ogk-late": "Late",
-          "ogk-early": "Early",
-          "ogk-bhole": "Black hole",
-          "ogk-merchant": "Merchant",
-          "ogk-void": "Void",
-          "ogk-nothing": "Void",
+          "ogk-metal": translate(0, "res"),
+          "ogk-crystal": translate(1, "res"),
+          "ogk-deuterium": translate(2, "res"),
+          "ogk-am": translate(3, "res"),
+          "ogk-fleet": translate(63, "text"),
+          "ogk-object": translate(78, "text"),
+          "ogk-aliens": translate(79, "text"),
+          "ogk-pirates": translate(80, "text"),
+          "ogk-late": translate(81, "text"),
+          "ogk-early": translate(82, "text"),
+          "ogk-bhole": translate(71, "text"),
+          "ogk-merchant": translate(84, "text"),
+          "ogk-void": translate(83, "text"),
+          "ogk-nothing": translate(83, "text"),
         };
         const classStyle = `ogk-${expeditions[msgId]?.result.toLowerCase()}`;
 
@@ -65,6 +71,30 @@ class ExpeditionMessagesAnalyzer {
         msgTitle.appendChild(createDOM("span", { class: `ogk-label ${classStyle}` }, labels[classStyle]));
 
         message.classList.add(classStyle);
+
+        if (
+          !sizeBlacklist.includes(expeditions[msgId].result?.toLowerCase()) &&
+          expeditions[msgId].hasOwnProperty("size") &&
+          expeditions[msgId].size
+        ) {
+          let amountDisplay = "";
+          if (expeditions[msgId].hasOwnProperty("amount") && !!expeditions[msgId].amount) {
+            if (!expeditions[msgId].amount[3]) {
+              amountDisplay = standardUnit(expeditions[msgId].amount, [0, 1], true);
+            } else amountDisplay = toFormattedNumber(expeditions[msgId].amount[3], [0, 1], true);
+          } else {
+            const sizeToAmountDisplay = {
+              normal: "+",
+              big: "++",
+              huge: "+++",
+            };
+            amountDisplay = sizeToAmountDisplay[expeditions[msgId].size] || "";
+          }
+
+          msgTitle.appendChild(
+            createDOM("span", { class: `ogk-label ogk-size-${expeditions[msgId].size}` }, amountDisplay)
+          );
+        }
       };
 
       if (expeditions && expeditions[msgId]) {
@@ -78,6 +108,14 @@ class ExpeditionMessagesAnalyzer {
       );
       const type = message.querySelector(".rawMessageData").getAttribute("data-raw-expeditionresult");
       const resourceType = resourcesGained ? Object.keys(resourcesGained)[0] : undefined;
+      const rawSize2Class = {
+        2: "normal",
+        1: "big",
+        0: "huge",
+      };
+      const size = !sizeBlacklist.includes(type)
+        ? rawSize2Class[parseInt(message.querySelector(".rawMessageData").getAttribute("data-raw-size"), 10)]
+        : null;
 
       const newDate = new Date(message.querySelector(".rawMessageData").getAttribute("data-raw-date"));
       const datePoint = `${newDate.getDate().toString().padStart(2, "0")}.${(newDate.getMonth() + 1)
@@ -93,10 +131,14 @@ class ExpeditionMessagesAnalyzer {
         adjust: [0, 0, 0],
         fuel: 0,
       };
+      const amount = [0, 0, 0, 0];
 
       if (type === "darkmatter") {
+        amount[3] = parseInt(Object.values(resourcesGained)[0]);
         expeditions[msgId] = {
           result: "AM",
+          amount,
+          size,
           date: newDate,
         };
 
@@ -106,32 +148,39 @@ class ExpeditionMessagesAnalyzer {
         const typeFormatted = resourceType.charAt(0).toUpperCase() + resourceType.slice(1);
         summary.type[typeFormatted] ? (summary.type[typeFormatted] += 1) : (summary.type[typeFormatted] = 1);
 
-        expeditions[msgId] = {
-          result: typeFormatted,
-          date: newDate,
-        };
-
         let key = 0;
         if (resourceType === "crystal") key = 1;
         else if (resourceType === "deuterium") key = 2;
 
-        summary.found[key] += parseInt(Object.values(resourcesGained)[0]);
-      } else if (type === "shipwrecks") {
+        amount[key] = parseInt(Object.values(resourcesGained)[0]);
         expeditions[msgId] = {
-          result: "Fleet",
+          result: typeFormatted,
+          amount,
+          size,
           date: newDate,
         };
 
+        summary.found[key] += parseInt(Object.values(resourcesGained)[0]);
+      } else if (type === "shipwrecks") {
         const technologiesGained = JSON.parse(
           message.querySelector(".rawMessageData")?.getAttribute("data-raw-technologiesgained")
         );
 
+        const shipsFound = [];
         for (const key in technologiesGained) {
           const technology = technologiesGained[key];
           if (!summary.fleet[key]) summary.fleet[key] = 0;
 
+          shipsFound[key] = technology.amount;
           summary.fleet[key] += technology.amount;
         }
+
+        expeditions[msgId] = {
+          result: "Fleet",
+          amount: fleetCost(shipsFound),
+          size,
+          date: newDate,
+        };
 
         summary.type["Fleet"] ? (summary.type["Fleet"] += 1) : (summary.type["Fleet"] = 1);
       } else if (type === "navigation") {
@@ -142,6 +191,7 @@ class ExpeditionMessagesAnalyzer {
 
         expeditions[msgId] = {
           result: type,
+          size,
           date: newDate,
         };
       } else if (type === "nothing") {
@@ -168,6 +218,7 @@ class ExpeditionMessagesAnalyzer {
       } else if (type === "items") {
         expeditions[msgId] = {
           result: "Object",
+          size,
           date: newDate,
         };
 
@@ -209,12 +260,12 @@ class ExpeditionMessagesAnalyzer {
         if (!discoveries[msgId]) return;
 
         const labels = {
-          "ogk-lifeform1": "Humans",
-          "ogk-lifeform2": "Rock’tal",
-          "ogk-lifeform3": "Mechas",
-          "ogk-lifeform4": "Kaelesh",
-          "ogk-artefacts": "Artefacts",
-          "ogk-void": "Void",
+          "ogk-lifeform1": translate(140, "text"),
+          "ogk-lifeform2": translate(141, "text"),
+          "ogk-lifeform3": translate(142, "text"),
+          "ogk-lifeform4": translate(143, "text"),
+          "ogk-artefacts": translate(145, "text"),
+          "ogk-void": translate(83, "text"),
         };
 
         const classStyle = `ogk-${discoveries[msgId]?.result?.toLowerCase()}`;
@@ -228,7 +279,7 @@ class ExpeditionMessagesAnalyzer {
             createDOM(
               "span",
               { class: `ogk-label ${classStyleSize}` },
-              toFormattedNumber(discoveries[msgId]?.amount || 0, 0, true)
+              toFormattedNumber(discoveries[msgId]?.amount || 0, [0, 1], true)
             )
           );
         }
@@ -279,7 +330,7 @@ class ExpeditionMessagesAnalyzer {
       discoveries[msgId] = {
         result: ogiDiscoveryType,
         size: message.querySelector(".rawMessageData").getAttribute("data-raw-artifactssize") || "normal",
-        amount: amount,
+        amount,
         date: newDate,
         favorited: !!message.querySelector(".icon_favorited"),
       };
