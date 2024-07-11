@@ -619,7 +619,7 @@ class SpyMessagesAnalyzer {
         !document.querySelector('.messagesTrashcanBtns button.custom_btn[disabled="disabled"]')
       ) {
         const optColDeleteButton = createDOM("button", { class: "icon icon_trash" });
-        optColDeleteButton.getAttribute("data-id") = report.id;
+        optColDeleteButton.setAttribute("data-id", report.id);
         optColDeleteButton.addEventListener("click", () => {
           bodyRow.classList.add("hide");
           this.reportsToDelete.push(report);
@@ -644,7 +644,7 @@ class SpyMessagesAnalyzer {
         }
       } else if (document.querySelector('.messagesTrashcanBtns button.custom_btn[disabled="disabled"]')) {
         const optColRestoreButton = createDOM("button", { class: "icon icon_restore" });
-        optColRestoreButton.getAttribute("data-id") = report.id;
+        optColRestoreButton.getAttribute("data-id", report.id);
 
         optColRestoreButton.addEventListener("click", () => {
           bodyRow.classList.add("hide");
