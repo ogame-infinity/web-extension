@@ -36,7 +36,7 @@ export function getNeedsByCoords(coords, isMoon) {
 
   const needsTarget = isMoon ? needs?.[planetFound.id]?.moon : needs?.[planetFound.id]?.planet;
 
-  if (!needsTarget?.metal) return;
+  if (Object.values(needsTarget).reduce((total, resource) => total + resource, 0) === 0) return;
 
   const flying = { ...OGIData.json.flying };
   const flyingTarget = isMoon ? flying.planets?.[coords]?.moon : flying.planets?.[coords]?.planet;
