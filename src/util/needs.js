@@ -46,6 +46,9 @@ export function getNeedsByCoords(coords, isMoon) {
 
   const planet = isMoon ? planetFound.moon : planetFound;
   const needsTarget = getNeedsResourceByCoords(coords, isMoon);
+
+  if (needsTarget === undefined) return;
+
   const flying = { ...OGIData.json.flying };
   const flyingTarget = isMoon ? flying.planets?.[coords]?.moon : flying.planets?.[coords]?.planet;
 
@@ -141,7 +144,7 @@ function displayLocks(planet, isMoon) {
   ) {
     return;
   }
-  
+
   const icon = createLockIcon(planet, isMoon);
   if (icon) element.appendChild(icon);
 
@@ -156,12 +159,15 @@ function displayLocks(planet, isMoon) {
     const deleteAll = (condition) => {
       for (const key in needs) {
         const need = needs[key];
-        if (condition(need.moon)) {
+        const needPlanet = getNeedsByCoords(needs[key].coords, false);
+        const needMoon = getNeedsByCoords(needs[key].coords, true);
+
+        if (needMoon && condition(needMoon)) {
           needs[key].moon = {};
           displayLocks(getPlanetByCoords(need.coords).moon, true);
         }
 
-        if (condition(need.planet)) {
+        if (needPlanet && condition(needPlanet)) {
           needs[key].planet = {};
           displayLocks(getPlanetByCoords(need.coords), false);
         }
@@ -180,10 +186,10 @@ function displayLocks(planet, isMoon) {
     };
 
     deleteAllEmpty.addEventListener("click", () => {
-      deleteAll((missing) => (missing?.metal || 0) + (missing?.crystal || 0) + (missing?.deuterium || 0) !== 0);
+      deleteAll((missing) => Object.values(missing).reduce((total, resource) => total + resource, 0) !== 0);
     });
     deleteAllFilled.addEventListener("click", () => {
-      deleteAll((missing) => (missing?.metal || 0) + (missing?.crystal || 0) + (missing?.deuterium || 0) === 0);
+      deleteAll((missing) => Object.values(missing).reduce((total, resource) => total + resource, 0) === 0);
     });
   }
 }
@@ -199,7 +205,7 @@ function createLockIcon(planet, isMoon) {
   const coords = planet.coordinates.replace(/(\[|\])/g, "");
   const needsTarget = getNeedsByCoords(coords, isMoon);
 
-  if (Object.values(needsTarget).reduce((total, resource) => total + resource, 0) === 0) return;
+  if (typeof needsTarget?.metal === "undefined") return;
 
   const filled = needsTarget.metal === 0 && needsTarget.crystal === 0 && needsTarget.deuterium === 0;
 
