@@ -11690,7 +11690,7 @@ class OGInfinity {
   }
 
   getFlyingRes() {
-    return flying()
+    return flying();
   }
 
   hasActivityChanged(oldAct, newAct) {
@@ -13154,19 +13154,22 @@ class OGInfinity {
     }
     let cost = [
       Math.floor(
-        Math.floor(
-          RESEARCH_INFO[id].baseCost[0] * Math.pow(RESEARCH_INFO[id].factorCost, lvl - 1) * (id >= 11101 ? lvl : 1)
-        ) * (id >= 11101 && labLvl > 1 ? 1.0 - 0.0025 * labLvl : 1)
+        RESEARCH_INFO[id].baseCost[0] *
+          Math.pow(RESEARCH_INFO[id].factorCost, lvl - 1) *
+          (id >= 11101 ? lvl : 1) *
+          (id >= 11101 && labLvl > 1 ? 1.0 - 0.0025 * labLvl : 1)
       ),
       Math.floor(
-        Math.floor(
-          RESEARCH_INFO[id].baseCost[1] * Math.pow(RESEARCH_INFO[id].factorCost, lvl - 1) * (id >= 11101 ? lvl : 1)
-        ) * (id >= 11101 && labLvl > 1 ? 1.0 - 0.0025 * labLvl : 1)
+        RESEARCH_INFO[id].baseCost[1] *
+          Math.pow(RESEARCH_INFO[id].factorCost, lvl - 1) *
+          (id >= 11101 ? lvl : 1) *
+          (id >= 11101 && labLvl > 1 ? 1.0 - 0.0025 * labLvl : 1)
       ),
       Math.floor(
-        Math.floor(
-          RESEARCH_INFO[id].baseCost[2] * Math.pow(RESEARCH_INFO[id].factorCost, lvl - 1) * (id >= 11101 ? lvl : 1)
-        ) * (id >= 11101 && labLvl > 1 ? 1.0 - 0.0025 * labLvl : 1)
+        RESEARCH_INFO[id].baseCost[2] *
+          Math.pow(RESEARCH_INFO[id].factorCost, lvl - 1) *
+          (id >= 11101 ? lvl : 1) *
+          (id >= 11101 && labLvl > 1 ? 1.0 - 0.0025 * labLvl : 1)
       ),
     ];
     if (RESEARCH_INFO[id].baseCost[3])
@@ -13267,29 +13270,31 @@ class OGInfinity {
 
     let cost = [
       Math.floor(
-        Math.floor(
-          BUIDLING_INFO[id].baseCost[0] * Math.pow(BUIDLING_INFO[id].factorCost, lvl - 1) * (id >= 11101 ? lvl : 1)
-        ) * costFactor
+        BUIDLING_INFO[id].baseCost[0] *
+          Math.pow(BUIDLING_INFO[id].factorCost, lvl - 1) *
+          (id >= 11101 ? lvl : 1) *
+          costFactor
       ),
       Math.floor(
-        Math.floor(
-          BUIDLING_INFO[id].baseCost[1] * Math.pow(BUIDLING_INFO[id].factorCost, lvl - 1) * (id >= 11101 ? lvl : 1)
-        ) * costFactor
+        BUIDLING_INFO[id].baseCost[1] *
+          Math.pow(BUIDLING_INFO[id].factorCost, lvl - 1) *
+          (id >= 11101 ? lvl : 1) *
+          costFactor
       ),
       Math.floor(
-        Math.floor(
-          BUIDLING_INFO[id].baseCost[2] * Math.pow(BUIDLING_INFO[id].factorCost, lvl - 1) * (id >= 11101 ? lvl : 1)
-        ) * costFactor
+        BUIDLING_INFO[id].baseCost[2] *
+          Math.pow(BUIDLING_INFO[id].factorCost, lvl - 1) *
+          (id >= 11101 ? lvl : 1) *
+          costFactor
       ),
     ];
     if (BUIDLING_INFO[id].baseCost[3])
       cost.push(
         Math.floor(
-          Math.floor(
-            BUIDLING_INFO[id].baseCost[3] *
-              Math.pow(BUIDLING_INFO[id].factorEnergy, lvl - (id >= 11101 ? (lvl == 1 ? 1 : 0) : 1)) *
-              (id >= 11101 ? lvl : 1)
-          ) * costFactor
+          BUIDLING_INFO[id].baseCost[3] *
+            Math.pow(BUIDLING_INFO[id].factorEnergy, lvl - (id >= 11101 ? (lvl == 1 ? 1 : 0) : 1)) *
+            (id >= 11101 ? lvl : 1) *
+            costFactor
         )
       );
     let time = Math.max(
@@ -13326,7 +13331,7 @@ class OGInfinity {
     if (BUIDLING_INFO[id].basePop)
       // TODO: check if own population factor is needed
       returnValue.pop = Math.floor(
-        Math.floor(BUIDLING_INFO[id].basePop * Math.pow(BUIDLING_INFO[id].factorPop, lvl - 1)) * costFactor
+        BUIDLING_INFO[id].basePop * Math.pow(BUIDLING_INFO[id].factorPop, lvl - 1) * costFactor
       );
     return returnValue;
   }
