@@ -15,7 +15,7 @@
     }
   ],
 
-  "web_accessible_resources": ["ogkush.js", "libs/*", "assets/*", "util/translations/*", "util/*", "ctxpage/*", "ctxcontent/*"],
+  "web_accessible_resources": ["ogkush.js", "libs/*", "assets/*", "util/*", "ctxpage/*", "ctxcontent/*"],
 
   "browser_action": {
     "default_title": "Ogame Infinity",
