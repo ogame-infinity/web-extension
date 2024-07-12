@@ -67,7 +67,9 @@ export default function () {
     if (type == 16 || type == missionType.EXPLORATION) return;
     const expe = {};
     const div = document.createElement("div");
-    tooltip && div.html(tooltip.getAttribute("title") || tooltip.getAttribute("data-tooltip-title"));
+    if (tooltip) {
+      div.insertAdjacentHTML("afterbegin", tooltip.getAttribute("title") || tooltip.getAttribute("data-tooltip-title"));
+    }
     let addToTotal = false;
     let noRes = false;
     if (type == missionType.DEPLOYMENT) {
