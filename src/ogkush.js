@@ -13975,7 +13975,11 @@ class OGInfinity {
         fleet.appendChild(createDOM("a", { class: `ogl-mission-icon ogl-mission-${type}` }));
         let fleetInfo = fleet.querySelector(".fleetinfo");
         let values = fleetInfo ? fleetInfo.querySelectorAll("td.value") : [];
-        const fleetCount = Array.from(values).slice(0, this.hasLifeforms ? -4 : -3).reduce((total, element) => total + Numbers.fromFormattedNumber(element.textContent), 0);
+        let fleetCount = Array.from(values)
+          .slice(0, this.hasLifeforms ? -4 : -3)
+          .reduce((total, element) => total + Numbers.fromFormattedNumber(element.textContent), 0);
+        // to get 1 ship in discoveries, as it does not have ".fleetinfo"
+        fleetCount = Math.max(1, fleetCount);
         const destCoords = fleet.querySelector(".destinationCoords a").textContent;
         const destMoon = !!fleet.querySelector(".destinationData moon");
         const reversal = fleet.querySelector(".reversal a");
