@@ -27,17 +27,25 @@ const init = () => {
 
 obs(document.getElementById("eventboxContent"), init, { subtree: false });
 
+function getNeedsResourceByCoords(coords, isMoon) {
+  const planetFound = getPlanetByCoords(coords);
+
+  if (planetFound === null) return;
+
+  const needsTarget = isMoon ? needs?.[planetFound.id]?.moon : needs?.[planetFound.id]?.planet;
+
+  if (Object.values(needsTarget).reduce((total, resource) => total + resource, 0) === 0) return;
+
+  return needsTarget;
+}
+
 export function getNeedsByCoords(coords, isMoon) {
   const planetFound = getPlanetByCoords(coords);
 
   if (planetFound === null) return;
 
   const planet = isMoon ? planetFound.moon : planetFound;
-
-  const needsTarget = isMoon ? needs?.[planetFound.id]?.moon : needs?.[planetFound.id]?.planet;
-
-  if (Object.values(needsTarget).reduce((total, resource) => total + resource, 0) === 0) return;
-
+  const needsTarget = getNeedsResourceByCoords(coords, isMoon);
   const flying = { ...OGIData.json.flying };
   const flyingTarget = isMoon ? flying.planets?.[coords]?.moon : flying.planets?.[coords]?.planet;
 
@@ -53,15 +61,15 @@ export function getNeedsByCoords(coords, isMoon) {
 }
 
 export function append(coords, isMoon, resources) {
-  const needsTarget = getNeedsByCoords(coords, isMoon);
+  const planetFound = getPlanetByCoords(coords);
+
+  if (planetFound === null) return;
+
+  const needsTarget = getNeedsResourceByCoords(coords, isMoon);
 
   const metal = Math.max((needsTarget?.metal || 0) + (resources?.metal || 0), 0);
   const crystal = Math.max((needsTarget?.crystal || 0) + (resources?.crystal || 0), 0);
   const deuterium = Math.max((needsTarget?.deuterium || 0) + (resources?.deuterium || 0), 0);
-
-  const planetFound = getPlanetByCoords(coords);
-
-  if (planetFound === null) return;
 
   if (isMoon) {
     needs[planetFound.id].moon = {
@@ -123,12 +131,17 @@ function displayLocks(planet, isMoon) {
 
   const planetNeeds = needs[planetId];
 
-  if (!planetNeeds) return;
-
   const selector = isMoon ? ".ogl-moonLock" : ":not(ogl-moonLock)";
 
   element.querySelectorAll(`.ogl-sideLock${selector}`).forEach((e) => e.remove());
 
+  if (
+    !planetNeeds ||
+    (typeof planetNeeds?.moon?.metal === "undefined" && typeof planetNeeds?.planet?.metal === "undefined")
+  ) {
+    return;
+  }
+  
   const icon = createLockIcon(planet, isMoon);
   if (icon) element.appendChild(icon);
 
@@ -152,12 +165,18 @@ function displayLocks(planet, isMoon) {
           needs[key].planet = {};
           displayLocks(getPlanetByCoords(need.coords), false);
         }
+
+        if (typeof needs[key]?.moon?.metal === "undefined" && typeof needs[key]?.planet?.metal === "undefined") {
+          delete needs[key];
+        }
       }
 
       if (!document.querySelector("#myPlanets .ogl-sideLock")) {
         deleteAllEmpty.remove();
         deleteAllFilled.remove();
       }
+
+      OGIData.needs = needs;
     };
 
     deleteAllEmpty.addEventListener("click", () => {
@@ -180,7 +199,7 @@ function createLockIcon(planet, isMoon) {
   const coords = planet.coordinates.replace(/(\[|\])/g, "");
   const needsTarget = getNeedsByCoords(coords, isMoon);
 
-  if (typeof needsTarget?.metal === "undefined") return;
+  if (Object.values(needsTarget).reduce((total, resource) => total + resource, 0) === 0) return;
 
   const filled = needsTarget.metal === 0 && needsTarget.crystal === 0 && needsTarget.deuterium === 0;
 
