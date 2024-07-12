@@ -14,3 +14,12 @@ export function createSVG(element, attributes) {
   }
   return e;
 }
+
+export function createDOMFromString(text) {
+  if (text.length <= 1e3) {
+    const div = document.createElement("div");
+    return div.insertAdjacentHTML("afterbegin", text);
+  } else {
+    return new window.DOMParser().parseFromString(string, "text/html");
+  }
+}
