@@ -1984,7 +1984,7 @@ const translation = Object.freeze({
   },
 });
 
-const language = document.querySelector('meta[name="ogame-language"]').getAttribute("content");
+const language = document.cookie.match(/oglocale=([a-z]+)/)?.[1] || "en";
 let currentLanguage = ["ar", "mx"].includes(language) ? "es" : language;
 currentLanguage = ["de", "en", "es", "fr", "tr", "br"].includes(currentLanguage) ? currentLanguage : "en";
 
