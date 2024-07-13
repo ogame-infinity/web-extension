@@ -135,7 +135,7 @@ function displayLocks(planet, isMoon) {
 
   const planetNeeds = needs[planetId];
 
-  const selector = isMoon ? ".ogl-moonLock" : ":not(ogl-moonLock)";
+  const selector = isMoon ? ".ogl-moonLock" : ":not(.ogl-moonLock)";
 
   element.querySelectorAll(`.ogl-sideLock${selector}`).forEach((e) => e.remove());
 
@@ -179,8 +179,7 @@ function displayLocks(planet, isMoon) {
       }
 
       if (!document.querySelector("#myPlanets .ogl-sideLock")) {
-        deleteAllEmpty.remove();
-        deleteAllFilled.remove();
+        sidePlanetDiv.querySelectorAll("button.ogl-sideLockRemove").forEach((button) => button.remove());
       }
 
       OGIData.needs = needs;
