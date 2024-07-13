@@ -70,6 +70,13 @@ export default function () {
     if (tooltip) {
       div.insertAdjacentHTML("afterbegin", tooltip.getAttribute("title") || tooltip.getAttribute("data-tooltip-title"));
     }
+
+    let resourcesOrigin = true;
+
+    if ([missionType.DEPLOYMENT, missionType.TRANSPORT].includes(parseInt(type)) && !back) {
+      resourcesOrigin = false;
+    }
+
     let addToTotal = false;
     let noRes = false;
     if (type == missionType.DEPLOYMENT) {
@@ -128,68 +135,42 @@ export default function () {
           planets[destCoords] = { ...defaultRss, planet: { ...defaultRss }, moon: { ...defaultRss } };
         }
 
+        const addResource = (resourceKey) => {
+          movement[resourceKey] = noRes ? 0 : count;
+          if (resourcesOrigin) {
+            planets[originCoords][resourceKey] += movement[resourceKey];
+
+            if (originIsMoon) {
+              planets[originCoords].moon[resourceKey] += movement[resourceKey];
+            } else {
+              planets[originCoords].planet[resourceKey] += movement[resourceKey];
+            }
+          }
+
+          if (destIsOwnPlanet) {
+            planets[destCoords][resourceKey] += movement[resourceKey];
+
+            if (destIsMoon) {
+              planets[destCoords].moon[resourceKey] += movement[resourceKey];
+            } else {
+              planets[destCoords].planet[resourceKey] += movement[resourceKey];
+            }
+          }
+        };
+
         if (name == OGIData.json.resNames[0]) {
-          movement.metal = noRes ? 0 : count;
+          addResource("metal");
           if (addToTotal) met += count;
-          planets[originCoords].metal += movement.metal;
-
-          if (originIsMoon) {
-            planets[originCoords].moon.metal += movement.metal;
-          } else {
-            planets[originCoords].planet.metal += movement.metal;
-          }
-
-          if (destIsOwnPlanet) {
-            planets[destCoords].metal += movement.metal;
-
-            if (destIsMoon) {
-              planets[destCoords].moon.metal += movement.metal;
-            } else {
-              planets[destCoords].planet.metal += movement.metal;
-            }
-          }
         }
+
         if (name == OGIData.json.resNames[1]) {
-          movement.crystal = noRes ? 0 : count;
+          addResource("crystal");
           if (addToTotal) cri += count;
-          planets[originCoords].crystal += movement.crystal;
-
-          if (originIsMoon) {
-            planets[originCoords].moon.crystal += movement.crystal;
-          } else {
-            planets[originCoords].planet.crystal += movement.crystal;
-          }
-
-          if (destIsOwnPlanet) {
-            planets[destCoords].crystal += movement.crystal;
-
-            if (destIsMoon) {
-              planets[destCoords].moon.crystal += movement.crystal;
-            } else {
-              planets[destCoords].planet.crystal += movement.crystal;
-            }
-          }
         }
+
         if (name == OGIData.json.resNames[2]) {
-          movement.deuterium = noRes ? 0 : count;
+          addResource("deuterium");
           if (addToTotal) deut += count;
-          planets[originCoords].deuterium += movement.deuterium;
-
-          if (originIsMoon) {
-            planets[originCoords].moon.deuterium += movement.deuterium;
-          } else {
-            planets[originCoords].planet.deuterium += movement.deuterium;
-          }
-
-          if (destIsOwnPlanet) {
-            planets[destCoords].deuterium += movement.deuterium;
-
-            if (destIsMoon) {
-              planets[destCoords].moon.deuterium += movement.deuterium;
-            } else {
-              planets[destCoords].planet.deuterium += movement.deuterium;
-            }
-          }
         }
       }
     });
