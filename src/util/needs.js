@@ -55,7 +55,10 @@ export function getNeedsByCoords(coords, isMoon) {
 
   const metal = Math.max((needsTarget?.metal || 0) - (planet?.metal || 0) - (flyingTarget?.metal || 0), 0);
   const crystal = Math.max((needsTarget?.crystal || 0) - (planet?.crystal || 0) - (flyingTarget?.crystal || 0), 0);
-  const deuterium = Math.max((needsTarget?.deuterium || 0) - (planet?.deuterium || 0) - (flyingTarget?.metal || 0), 0);
+  const deuterium = Math.max(
+    (needsTarget?.deuterium || 0) - (planet?.deuterium || 0) - (flyingTarget?.deuterium || 0),
+    0
+  );
 
   return {
     metal,
