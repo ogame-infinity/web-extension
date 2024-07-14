@@ -238,6 +238,11 @@ function createLockIcon(planet, isMoon) {
     OGIData.needSync = true;
     document.querySelector(".ogl-tooltip .close-tooltip").click();
     displayLocks(planet, isMoon);
+    
+    const sidePlanetDiv = document.querySelector("div#cutty") || document.querySelector("div#norm");
+    if (!document.querySelector("#myPlanets .ogl-sideLock")) {
+      sidePlanetDiv.querySelectorAll("button.ogl-sideLockRemove").forEach((button) => button.remove());
+    }
   });
 
   btn.addEventListener("mouseover", () => {
