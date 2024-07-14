@@ -223,7 +223,7 @@ function createLockIcon(planet, isMoon) {
     createDOM("div", { class: "ogl-crystal" }, toFormattedNumber(Math.max(0, needsTarget.crystal), null, true))
   );
   tooltipContent.appendChild(
-    createDOM("div", { class: "ogl-deuterium" }, toFormattedNumber(Math.max(0, needsTarget.deuterium), null, true))
+    createDOM("div", { class: "ogl-deut" }, toFormattedNumber(Math.max(0, needsTarget.deuterium), null, true))
   );
   tooltipContent.appendChild(createDOM("hr"));
 
