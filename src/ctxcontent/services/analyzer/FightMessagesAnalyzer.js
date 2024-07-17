@@ -2,6 +2,7 @@ import { getLogger } from "../../../util/logger.js";
 import { messagesTabs } from "../../../ctxpage/messages/index.js";
 import OGIData from "../../../util/OGIData.js";
 import PlanetType from "../../../util/enum/planetType.js";
+import ship from "../../../util/enum/ship.js";
 
 class FightMessagesAnalyzer {
   #logger;
@@ -42,7 +43,11 @@ class FightMessagesAnalyzer {
       const expeditionSums = OGIData.expeditionSums;
       const msgId = message.getAttribute("data-msg-id");
 
-      if (combats[msgId]) return;
+      if (combats[msgId]) {
+        message.classList.add("ogk-expedition");
+
+        return;
+      }
 
       const defendersSpaceObject = JSON.parse(
         message.querySelector(".rawMessageData")?.getAttribute("data-raw-defenderspaceobject")
@@ -61,6 +66,8 @@ class FightMessagesAnalyzer {
         draw: result.winner === "none",
         isProbes: false,
       };
+
+      message.classList.add("ogk-expedition");
 
       OGIData.combats = combats;
 
@@ -131,7 +138,18 @@ class FightMessagesAnalyzer {
       const combatsSums = OGIData.combatsSums;
       const msgId = message.getAttribute("data-msg-id");
 
-      if (combats[msgId]) return;
+      if (combats[msgId]) {
+        if (combats[msgId].isProbes) {
+          message.classList.add("ogk-combat-probes");
+        } else if (combats[msgId].draw) {
+          message.classList.add("ogk-combat-draw");
+        } else if (combats[msgId].win) {
+          message.classList.add("ogk-combat-win");
+        } else {
+          message.classList.add("ogk-combat");
+        }
+        return;
+      }
 
       const newDate = new Date(message.querySelector(".rawMessageData").getAttribute("data-raw-date"));
       const dates = [
@@ -164,14 +182,24 @@ class FightMessagesAnalyzer {
       const result = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-result"));
       const fleets = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-fleets"));
       let ennemy = null;
+      const probesAccount = { defender: 0, attacker: 0 };
 
-      fleets.forEach((side) => {
-        if (side.player.id !== playerId) ennemy = side.player;
+      fleets.forEach((fleet) => {
+        if (fleet.player.id !== playerId) ennemy = fleet.player;
+
+        fleet.combatTechnologies.forEach((shipInFleet) => {
+          if (shipInFleet.technologyId == ship.EspionageProbe && probesAccount[fleet.side] >= 0)
+            probesAccount[fleet.side] += shipInFleet.amount;
+          else probesAccount[fleet.side] = -1;
+        });
       });
 
       const accountIsDefender = defendersSpaceObject.owner.id === playerId;
       const accountIsWinner = result.winner === (accountIsDefender ? "defender" : "attacker");
       const isDraw = result.winner === "none";
+      const isProbes =
+        (2e3 > probesAccount.defender && probesAccount.defender > 0) ||
+        (2e3 > probesAccount.attacker && probesAccount.attacker > 0);
 
       if (accountIsWinner) combatsSums[datePoint].wins += 1;
       if (isDraw) combatsSums[datePoint].draws += 1;
@@ -214,8 +242,18 @@ class FightMessagesAnalyzer {
         },
         win: accountIsWinner,
         draw: isDraw,
-        isProbes: false,
+        isProbes: isProbes,
       };
+
+      if (combats[msgId].isProbes) {
+        message.classList.add("ogk-combat-probes");
+      } else if (combats[msgId].draw) {
+        message.classList.add("ogk-combat-draw");
+      } else if (combats[msgId].win) {
+        message.classList.add("ogk-combat-win");
+      } else {
+        message.classList.add("ogk-combat");
+      }
 
       const rounds = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-combatrounds"));
 
