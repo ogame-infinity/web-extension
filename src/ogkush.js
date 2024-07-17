@@ -25,7 +25,7 @@ import * as needsUtil from "./util/needs.js";
 import flying from "./util/flying.js";
 import { translate } from "./util/translate.js";
 import { fleetCost } from "./util/fleetCost.js";
-import { loadingUtil } from "./util/loading.js";
+import * as loadingUtil from "./util/loading.js";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 //const VERSION = "__VERSION__";
@@ -5170,7 +5170,7 @@ class OGInfinity {
   }
 
   loading() {
-    loadingUtil();
+    loadingUtil.loading();
   }
 
   overview() {
