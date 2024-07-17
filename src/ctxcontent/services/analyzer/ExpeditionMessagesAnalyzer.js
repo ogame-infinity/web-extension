@@ -4,7 +4,7 @@ import OGIData from "../../../util/OGIData.js";
 import { createDOM } from "../../../util/dom.js";
 import { toFormattedNumber } from "../../../util/numbers.js";
 import { fleetCost } from "../../../util/fleetCost.js";
-import { standardUnit } from "../../../util/standardUnit.js";
+import * as standardUnit from "../../../util/standardUnit.js";
 import { translate } from "../../../util/translate.js";
 
 class ExpeditionMessagesAnalyzer {
@@ -80,7 +80,8 @@ class ExpeditionMessagesAnalyzer {
           let amountDisplay = "";
           if (expeditions[msgId].hasOwnProperty("amount") && !!expeditions[msgId].amount) {
             if (!expeditions[msgId].amount[3]) {
-              amountDisplay = standardUnit(expeditions[msgId].amount, [0, 1], true);
+              amountDisplay = toFormattedNumber(standardUnit.standardUnit(expeditions[msgId].amount), [0, 1], true);
+              amountDisplay = `${amountDisplay} ${standardUnit.unitType()}`;
             } else amountDisplay = toFormattedNumber(expeditions[msgId].amount[3], [0, 1], true);
           } else {
             const sizeToAmountDisplay = {

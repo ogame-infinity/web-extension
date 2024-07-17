@@ -26,6 +26,7 @@ import flying from "./util/flying.js";
 import { translate } from "./util/translate.js";
 import { fleetCost } from "./util/fleetCost.js";
 import * as loadingUtil from "./util/loading.js";
+import * as standardUnit from "./util/standardUnit.js";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 //const VERSION = "__VERSION__";
@@ -4423,7 +4424,7 @@ class OGInfinity {
     });
   }
 
-  profitGraph(profits, max, callback) {
+  profitGraph(profits, max, useStandardUnit, callback) {
     let content = createDOM("div", { class: "ogk-profit" });
     let title = content.appendChild(createDOM("div", { class: "ogk-date" }));
     let div = content.appendChild(createDOM("div", { class: "ogk-scroll-wrapper" }));
@@ -4446,19 +4447,40 @@ class OGInfinity {
         span.addEventListener("click", () => {
           spans.forEach((elem) => elem.classList.remove("ogk-active"));
           span.classList.add("ogk-active");
-          title.replaceChildren(
-            createDOM("strong", {}, `${getFormatedDate(elem.date.getTime(), "[d].[m].[y]")}`),
-            createDOM(
-              "span",
-              {
-                class: `tooltip ${elem.profit >= 0 ? "undermark" : "overmark"}`,
-                "data-title": `${toFormatedNumber(Math.abs(elem.profit), 0)}`,
-              },
-              `${elem.profit >= 0 ? " + " : " - "}${toFormatedNumber(Math.abs(elem.profit), 2, true)}`
-            )
-          );
-          if (elem.start) {
-            title.appendChild(createDOM("strong", {}, `${getFormatedDate(elem.start.getTime(), "[d].[m].[y]")}`));
+          if (useStandardUnit) {
+            title.replaceChildren(
+              createDOM("strong", {}, `${getFormatedDate(elem.date.getTime(), "[d].[m].[y]")}`),
+              createDOM(
+                "span",
+                {
+                  class: `tooltip ${elem.profit >= 0 ? "undermark" : "overmark"}`,
+                  title: `${standardUnit.unitType(true)} : ${toFormatedNumber(Math.abs(elem.profit), 0)}`,
+                },
+                `${elem.profit >= 0 ? " + " : " - "}${toFormatedNumber(
+                  Math.abs(elem.profit),
+                  2,
+                  true
+                )} ${standardUnit.unitType()}`
+              )
+            );
+            if (elem.start) {
+              title.appendChild(createDOM("strong", {}, `${getFormatedDate(elem.start.getTime(), "[d].[m].[y]")}`));
+            }
+          } else {
+            title.replaceChildren(
+              createDOM("strong", {}, `${getFormatedDate(elem.date.getTime(), "[d].[m].[y]")}`),
+              createDOM(
+                "span",
+                {
+                  class: `tooltip ${elem.profit >= 0 ? "undermark" : "overmark"}`,
+                  title: `${toFormatedNumber(Math.abs(elem.profit), 0)}`,
+                },
+                `${elem.profit >= 0 ? " + " : " - "}${toFormatedNumber(Math.abs(elem.profit), 2, true)}`
+              )
+            );
+            if (elem.start) {
+              title.appendChild(createDOM("strong", {}, `${getFormatedDate(elem.start.getTime(), "[d].[m].[y]")}`));
+            }
           }
           callback(elem.range, index);
         });
@@ -5448,12 +5470,12 @@ class OGInfinity {
       let total = 0;
       let fleet = fleetCost(sums.fleet);
       let losses = fleetCost(sums.losses);
-      total += fleet[0] + fleet[1] + fleet[2];
-      total -= losses[0] + losses[1] + losses[2];
-      total += sums.harvest[0] + sums.harvest[1] + (sums.harvest?.[2] || 0);
-      total += sums.found[0] + sums.found[1] + sums.found[2];
-      total += sums.adjust[0] + sums.adjust[1] + sums.adjust[2];
-      total += sums.fuel;
+      total += standardUnit.standardUnit(fleet);
+      total -= standardUnit.standardUnit(losses);
+      total += standardUnit.standardUnit([sums.harvest[0], sums.harvest[1], sums.harvest[2]]);
+      total += standardUnit.standardUnit(sums.found);
+      total += standardUnit.standardUnit(sums.adjust);
+      total += standardUnit.standardUnit([0, 0, sums.fuel]);
       return total;
     };
     let refresh = (index) => {
@@ -5517,7 +5539,7 @@ class OGInfinity {
       let div = createDOM("div");
       let details = renderDetails(computeRangeSums(this.json.expeditionSums, new Date(), new Date()), () => refresh());
       div.appendChild(
-        this.profitGraph(profits, max, (range, index) => {
+        this.profitGraph(profits, max, true, (range, index) => {
           details.remove();
           details = renderDetails(range, () => {
             refresh(index);
@@ -5555,7 +5577,7 @@ class OGInfinity {
       let div = createDOM("div");
       let details = renderDetails(weeks[0]);
       div.appendChild(
-        this.profitGraph(totals, max, (range, index) => {
+        this.profitGraph(totals, max, true, (range, index) => {
           details.remove();
           details = renderDetails(range);
           div.appendChild(details);
@@ -5587,7 +5609,7 @@ class OGInfinity {
       let div = createDOM("div");
       let details = renderDetails(months[0]);
       div.appendChild(
-        this.profitGraph(totals, max, (range, index) => {
+        this.profitGraph(totals, max, true, (range, index) => {
           details.remove();
           details = renderDetails(range);
           div.appendChild(details);
@@ -5611,9 +5633,9 @@ class OGInfinity {
           "span",
           {
             class: `tooltip ${total >= 0 ? "undermark" : "overmark"}`,
-            "data-title": `${toFormatedNumber(Math.abs(total), 0)}`,
+            title: `${standardUnit.unitType(true)} : ${toFormatedNumber(Math.abs(total), 0)}`,
           },
-          `${total >= 0 ? " + " : " - "}${toFormatedNumber(Math.abs(total), 2, true)}`
+          `${total >= 0 ? " + " : " - "}${toFormatedNumber(Math.abs(total), 2, true)} ${standardUnit.unitType()}`
         ),
         createDOM("strong", {}, `${getFormatedDate(this.dateStrToDate(maxDate).getTime(), "[d].[m].[y]")}`)
       );
@@ -5811,11 +5833,11 @@ class OGInfinity {
     let getTotal = (sums) => {
       let total = 0;
       let losses = fleetCost(sums.losses);
-      total -= losses[0] + losses[1] + losses[2];
-      total += sums.harvest[0] + sums.harvest[1] + (sums.harvest?.[2] || 0);
-      total += sums.loot[0] + sums.loot[1] + sums.loot[2];
-      total += sums.adjust[0] + sums.adjust[1] + sums.adjust[2];
-      total += sums.fuel;
+      total -= standardUnit.standardUnit(losses);
+      total += standardUnit.standardUnit(sums.harvest);
+      total += standardUnit.standardUnit(sums.loot);
+      total += standardUnit.standardUnit(sums.adjust);
+      total += standardUnit.standardUnit([0, 0, sums.fuel]);
       return total;
     };
     let refresh = (index) => {
@@ -5870,7 +5892,7 @@ class OGInfinity {
         refresh();
       });
       div.appendChild(
-        this.profitGraph(profits, max, (range, index) => {
+        this.profitGraph(profits, max, true, (range, index) => {
           details.remove();
           details = renderDetails(range, () => {
             refresh(index);
@@ -5908,7 +5930,7 @@ class OGInfinity {
       let div = createDOM("div");
       let details = renderDetails(weeks[0]);
       div.appendChild(
-        this.profitGraph(totals, max, (range, index) => {
+        this.profitGraph(totals, max, true, (range, index) => {
           details.remove();
           details = renderDetails(range);
           div.appendChild(details);
@@ -5940,7 +5962,7 @@ class OGInfinity {
       let div = createDOM("div");
       let details = renderDetails(months[0]);
       div.appendChild(
-        this.profitGraph(totals, max, (range, index) => {
+        this.profitGraph(totals, max, true, (range, index) => {
           details.remove();
           details = renderDetails(range);
           div.appendChild(details);
@@ -5964,9 +5986,9 @@ class OGInfinity {
           "span",
           {
             class: `tooltip ${total >= 0 ? "undermark" : "overmark"}`,
-            "data-title": `${toFormatedNumber(Math.abs(total), 0)}`,
+            title: `${standardUnit.unitType(true)} : ${toFormatedNumber(Math.abs(total), 0)}`,
           },
-          `${total >= 0 ? " + " : " - "}${toFormatedNumber(Math.abs(total), 2, true)}`
+          `${total >= 0 ? " + " : " - "}${toFormatedNumber(Math.abs(total), 2, true)} ${standardUnit.unitType()}`
         ),
         createDOM("strong", {}, `${getFormatedDate(this.dateStrToDate(maxDate).getTime(), "[d].[m].[y]")}`)
       );
@@ -8785,7 +8807,7 @@ class OGInfinity {
       let div = createDOM("div");
       let details = renderDetails(computeRangeSums(this.json.discoveriesSums, new Date(), new Date()), () => refresh());
       div.appendChild(
-        this.profitGraph(profits, max, (range, index) => {
+        this.profitGraph(profits, max, false, (range, index) => {
           details.remove();
           details = renderDetails(range, () => {
             refresh(index);
@@ -8823,7 +8845,7 @@ class OGInfinity {
       let div = createDOM("div");
       let details = renderDetails(weeks[0]);
       div.appendChild(
-        this.profitGraph(totals, max, (range, index) => {
+        this.profitGraph(totals, max, false, (range, index) => {
           details.remove();
           details = renderDetails(range);
           div.appendChild(details);
@@ -8855,7 +8877,7 @@ class OGInfinity {
       let div = createDOM("div");
       let details = renderDetails(months[0]);
       div.appendChild(
-        this.profitGraph(totals, max, (range, index) => {
+        this.profitGraph(totals, max, false, (range, index) => {
           details.remove();
           details = renderDetails(range);
           div.appendChild(details);
