@@ -5,8 +5,8 @@
   "main": "src/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "format": "npx prettier --write *.js",
-    "check": "npx eslint *.js"
+    "format": "npx prettier --write **.js",
+    "check": "npx eslint **.js"
   },
   "repository": {
     "type": "git",

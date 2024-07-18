@@ -53,8 +53,8 @@ export function toFormattedNumber(value, precision = null, units = false) {
     return (
       (neg ? "-" : "") +
       (value / Math.pow(10, order * 3)).toLocaleString(locale, {
-        minimumFractionDigits: (Array.isArray(precision) &&  precision[0] != null) ? precision[0] : precision,
-        maximumFractionDigits: (Array.isArray(precision) &&  precision[1] != null) ? precision[1] : precision,
+        minimumFractionDigits: Array.isArray(precision) && precision[0] != null ? precision[0] : precision,
+        maximumFractionDigits: Array.isArray(precision) && precision[1] != null ? precision[1] : precision,
       }) +
       suffix
     );
