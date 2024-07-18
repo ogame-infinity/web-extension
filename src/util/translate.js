@@ -496,7 +496,7 @@ const translation = Object.freeze({
       tr: "Gezegenler Arası Roketler",
       br: "Míssel interplanetário",
     },
-    label: { de: "", en: "", es: "", fr: "", tr: "", br: "" },
+    label: { de: undefined, en: undefined, es: undefined, fr: undefined, tr: undefined, br: undefined },
   },
   res: {
     0: {
@@ -1870,12 +1870,12 @@ const translation = Object.freeze({
       br: "Usar para expedições",
     },
     166: {
-      de: "",
-      en: "",
-      es: "",
-      fr: "",
-      tr: "",
-      br: "",
+      de: undefined,
+      en: undefined,
+      es: undefined,
+      fr: undefined,
+      tr: undefined,
+      br: undefined,
     },
     167: {
       de: "Entdeckungsdaten",
@@ -1958,28 +1958,28 @@ const translation = Object.freeze({
       br: "Soma Equivalente em metal",
     },
     177: {
-      de: "",
+      de: undefined,
       en: "Sum as Crystal standard unit",
-      es: "",
-      fr: "",
-      tr: "",
-      br: "",
+      es: undefined,
+      fr: undefined,
+      tr: undefined,
+      br: undefined,
     },
     178: {
-      de: "",
+      de: undefined,
       en: "Sum as Deuterium standard unit",
-      es: "",
-      fr: "",
-      tr: "",
-      br: "",
+      es: undefined,
+      fr: undefined,
+      tr: undefined,
+      br: undefined,
     },
     179: {
-      de: "",
-      en: "",
-      es: "",
-      fr: "",
-      tr: "",
-      br: "",
+      de: undefined,
+      en: undefined,
+      es: undefined,
+      fr: undefined,
+      tr: undefined,
+      br: undefined,
     },
   },
 });
@@ -1989,5 +1989,5 @@ let currentLanguage = ["ar", "mx"].includes(language) ? "es" : language;
 currentLanguage = ["de", "en", "es", "fr", "tr", "br"].includes(currentLanguage) ? currentLanguage : "en";
 
 export function translate(id, type = "text") {
-  return translation?.[type]?.[id]?.[currentLanguage] || "";
+  return translation?.[type]?.[id]?.[currentLanguage] || translation?.[type]?.[id]?.en || "";
 }
