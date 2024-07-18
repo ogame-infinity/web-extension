@@ -224,7 +224,34 @@ class ExpeditionMessagesAnalyzer {
 
         summary.type["Object"] ? (summary.type["Object"] += 1) : (summary.type["Object"] = 1);
       } else if (type === "combat") {
-        this.#logger.log("Combat", message);
+        const pirateKeywords = [
+          "pirat",
+          "pirát",
+          "piraci",
+          "kalóz",
+          "海盜",
+          "пират",
+          "buc",
+          "buk",
+          "korsanlari",
+          "freibeuter",
+          "ruimterebellen",
+          "πειρατ",
+          "primit",
+          "prymit",
+          "примитивные",
+          "ilkel",
+        ];
+        const messageText = message.querySelector(".msgContent").textContent;
+        const string = messageText.toLowerCase();
+        const combatType = pirateKeywords.find((keyword) => string.includes(keyword)) ? "Pirates" : "Aliens";
+
+        expeditions[msgId] = {
+          result: combatType,
+          size,
+          date: newDate,
+        };
+        summary.type[combatType] ? (summary.type[combatType] += 1) : (summary.type[combatType] = 1);
       }
 
       displayLabel(message);
