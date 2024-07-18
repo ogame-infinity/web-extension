@@ -1813,10 +1813,10 @@ class OGInfinity {
                     roi === Infinity
                       ? that.getTranslatedText(118)
                       : `${that.getTranslatedText(119)}: ${toFormatedNumber(
-                        that.json.options.tradeRate[0]
-                      )}:${toFormatedNumber(that.json.options.tradeRate[1])}:${toFormatedNumber(
-                        that.json.options.tradeRate[2]
-                      )}`,
+                          that.json.options.tradeRate[0]
+                        )}:${toFormatedNumber(that.json.options.tradeRate[1])}:${toFormatedNumber(
+                          that.json.options.tradeRate[2]
+                        )}`,
                 })
               );
             roiTimeDiv.textContent = roi === Infinity ? "∞" : formatTimeWrapper(roi, 2, true, " ", false, "");
@@ -1994,8 +1994,8 @@ class OGInfinity {
               technoId == 22
                 ? resourcesBar.resources.metal.production
                 : technoId == 23
-                  ? resourcesBar.resources.crystal.production
-                  : resourcesBar.resources.deuterium.production;
+                ? resourcesBar.resources.crystal.production
+                : resourcesBar.resources.deuterium.production;
             let storageDiv =
               durationDiv.parentNode.querySelector(".narrow .storage_size") ||
               durationDiv.parentNode.insertBefore(
@@ -2596,9 +2596,9 @@ class OGInfinity {
               lvlSpan.textContent = toFormatedNumber(tolvl);
               tolvl != 0
                 ? lvl.replaceChildren(
-                  document.createTextNode("Lvl "),
-                  createDOM("strong", {}, `${toFormatedNumber(tolvl)}`)
-                )
+                    document.createTextNode("Lvl "),
+                    createDOM("strong", {}, `${toFormatedNumber(tolvl)}`)
+                  )
                 : lvl.replaceChildren();
               lvlFromTo.replaceChildren(
                 createDOM("strong", {}, `${toFormatedNumber(baseLvl)}`),
@@ -4493,18 +4493,18 @@ class OGInfinity {
       : ["#656565", "#83ba33", "#b73536", "#3d4800"];
     let labels = lf
       ? [
-        this.getTranslatedText(51, "text"),
-        this.getTranslatedText(52, "text"),
-        this.getTranslatedText(53, "text"),
-        this.getTranslatedText(54, "text"),
-        this.getTranslatedText(89, "text"),
-      ]
+          this.getTranslatedText(51, "text"),
+          this.getTranslatedText(52, "text"),
+          this.getTranslatedText(53, "text"),
+          this.getTranslatedText(54, "text"),
+          this.getTranslatedText(89, "text"),
+        ]
       : [
-        this.getTranslatedText(51, "text"),
-        this.getTranslatedText(52, "text"),
-        this.getTranslatedText(53, "text"),
-        this.getTranslatedText(54, "text"),
-      ];
+          this.getTranslatedText(51, "text"),
+          this.getTranslatedText(52, "text"),
+          this.getTranslatedText(53, "text"),
+          this.getTranslatedText(54, "text"),
+        ];
     let config = {
       type: "doughnut",
       data: {
@@ -4639,31 +4639,31 @@ class OGInfinity {
     );
     let playerClassName;
     switch (this.playerClass) {
-    case PLAYER_CLASS_MINER:
-      playerClassName = "miner";
-      break;
-    case PLAYER_CLASS_WARRIOR:
-      playerClassName = "warrior";
-      break;
-    case PLAYER_CLASS_EXPLORER:
-      playerClassName = "explorer";
-      break;
-    default:
-      playerClassName = "";
+      case PLAYER_CLASS_MINER:
+        playerClassName = "miner";
+        break;
+      case PLAYER_CLASS_WARRIOR:
+        playerClassName = "warrior";
+        break;
+      case PLAYER_CLASS_EXPLORER:
+        playerClassName = "explorer";
+        break;
+      default:
+        playerClassName = "";
     }
     let allianceClassName;
     switch (this.json.allianceClass) {
-    case ALLY_CLASS_MINER:
-      allianceClassName = "trader";
-      break;
-    case ALLY_CLASS_WARRIOR:
-      allianceClassName = "warrior";
-      break;
-    case ALLY_CLASS_EXPLORER:
-      allianceClassName = "explorer";
-      break;
-    default:
-      allianceClassName = "";
+      case ALLY_CLASS_MINER:
+        allianceClassName = "trader";
+        break;
+      case ALLY_CLASS_WARRIOR:
+        allianceClassName = "warrior";
+        break;
+      case ALLY_CLASS_EXPLORER:
+        allianceClassName = "explorer";
+        break;
+      default:
+        allianceClassName = "";
     }
     playerDiv.appendChild(
       createDOM("div", {
@@ -9916,22 +9916,22 @@ class OGInfinity {
       if (!this.isMobile) {
         (this.hasLifeforms
           ? [
-            metalFiller,
-            document.querySelector("input#metal"),
-            crystalFiller,
-            document.querySelector("input#crystal"),
-            deutFiller,
-            document.querySelector("input#deuterium"),
-            document.querySelector("input#food"),
-          ]
+              metalFiller,
+              document.querySelector("input#metal"),
+              crystalFiller,
+              document.querySelector("input#crystal"),
+              deutFiller,
+              document.querySelector("input#deuterium"),
+              document.querySelector("input#food"),
+            ]
           : [
-            metalFiller,
-            document.querySelector("input#metal"),
-            crystalFiller,
-            document.querySelector("input#crystal"),
-            deutFiller,
-            document.querySelector("input#deuterium"),
-          ]
+              metalFiller,
+              document.querySelector("input#metal"),
+              crystalFiller,
+              document.querySelector("input#crystal"),
+              deutFiller,
+              document.querySelector("input#deuterium"),
+            ]
         ).forEach((elem) => {
           elem.addEventListener("keyup", (event) => {
             let factor;
@@ -9951,22 +9951,22 @@ class OGInfinity {
       } else {
         (this.hasLifeforms
           ? [
-            metalFiller,
-            document.querySelector("input#metal"),
-            crystalFiller,
-            document.querySelector("input#crystal"),
-            deutFiller,
-            document.querySelector("input#deuterium"),
-            document.querySelector("input#food"),
-          ]
+              metalFiller,
+              document.querySelector("input#metal"),
+              crystalFiller,
+              document.querySelector("input#crystal"),
+              deutFiller,
+              document.querySelector("input#deuterium"),
+              document.querySelector("input#food"),
+            ]
           : [
-            metalFiller,
-            document.querySelector("input#metal"),
-            crystalFiller,
-            document.querySelector("input#crystal"),
-            deutFiller,
-            document.querySelector("input#deuterium"),
-          ]
+              metalFiller,
+              document.querySelector("input#metal"),
+              crystalFiller,
+              document.querySelector("input#crystal"),
+              deutFiller,
+              document.querySelector("input#deuterium"),
+            ]
         ).forEach((elem) => {
           elem.addEventListener("input", (event) => {
             if (event.data == "K" || event.data == "k" || event.data == "0k") {
@@ -11314,18 +11314,18 @@ class OGInfinity {
       // production bonus
       const productionBonus = [0, 0, 0, 0];
       switch (lifeform) {
-      case "lifeform1":
-        productionBonus[0] = 0.015 * planet[11106];
-        productionBonus[1] = 0.015 * planet[11108];
-        productionBonus[2] = 0.01 * planet[11108];
-        break;
-      case "lifeform2":
-        productionBonus[0] = 0.02 * planet[12106];
-        productionBonus[1] = 0.02 * planet[12109];
-        productionBonus[2] = 0.02 * planet[12110];
-        break;
-      case "lifeform3":
-        productionBonus[2] = 0.02 * planet[13110];
+        case "lifeform1":
+          productionBonus[0] = 0.015 * planet[11106];
+          productionBonus[1] = 0.015 * planet[11108];
+          productionBonus[2] = 0.01 * planet[11108];
+          break;
+        case "lifeform2":
+          productionBonus[0] = 0.02 * planet[12106];
+          productionBonus[1] = 0.02 * planet[12109];
+          productionBonus[2] = 0.02 * planet[12110];
+          break;
+        case "lifeform3":
+          productionBonus[2] = 0.02 * planet[13110];
       }
 
       lifeformPlanetBonus[planet.id] = {
@@ -15587,8 +15587,8 @@ class OGInfinity {
             this.json.options.collect.ship == 202
               ? "smallCargo"
               : this.json.options.collect.ship == 219
-                ? "pathFinder"
-                : "largeCargo"
+              ? "pathFinder"
+              : "largeCargo"
           }`,
         })
       );
@@ -15649,8 +15649,8 @@ class OGInfinity {
           this.json.options.collect.ship == 202
             ? "smallCargo"
             : this.json.options.collect.ship == 219
-              ? "pathFinder"
-              : "largeCargo"
+            ? "pathFinder"
+            : "largeCargo"
         }`;
         document.querySelector(".ogk-collect-cargo .ogl-fleet-ship.highlight").classList.remove("highlight");
         document
@@ -15674,8 +15674,8 @@ class OGInfinity {
           this.json.options.collect.ship == 202
             ? "smallCargo"
             : this.json.options.collect.ship == 219
-              ? "pathFinder"
-              : "largeCargo"
+            ? "pathFinder"
+            : "largeCargo"
         }`;
         document.querySelector(".ogk-collect-cargo .choice-mission-icon.highlight").classList.remove("highlight");
         document
