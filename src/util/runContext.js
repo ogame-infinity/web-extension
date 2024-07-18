@@ -34,6 +34,8 @@ export function injectScript(path, onLoadCallback, module = false) {
   const script = document.createElement("script");
   script.type = "text/javascript";
   script.src = chrome.runtime.getURL(path);
+  script.id = "ogi-script";
+  script.setAttribute("data-base-uri", chrome.runtime.getURL("/"));
 
   if (module) {
     script.type = "module";
