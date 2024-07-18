@@ -5456,7 +5456,7 @@ class OGInfinity {
       let losses = fleetCost(sums.losses);
       total += standardUnit.standardUnit(fleet);
       total -= standardUnit.standardUnit(losses);
-      total += standardUnit.standardUnit([sums.harvest);
+      total += standardUnit.standardUnit(sums.harvest);
       total += standardUnit.standardUnit(sums.found);
       total += standardUnit.standardUnit(sums.adjust);
       total += standardUnit.standardUnit([0, 0, sums.fuel]);
