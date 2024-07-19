@@ -13,7 +13,9 @@ const needs = {
 
 const obs = new OGIObserver();
 
-const init = () => {
+export function display() {
+  if (document.getElementById("eventboxLoading").style.display === "block") return;
+
   OGIData.json.flying = flying();
   document.querySelectorAll(".smallplanet").forEach((planet) => {
     const coords = planet.querySelector(".planet-koords")?.textContent;
@@ -24,9 +26,9 @@ const init = () => {
 
     if (planet.querySelector(".moonlink")) displayLocksByCoords(coords, true);
   });
-};
+}
 
-obs(document.getElementById("eventboxContent"), init, { subtree: false });
+obs(document.getElementById("eventboxContent"), display, { subtree: false });
 
 function getNeedsResourceByCoords(coords, isMoon) {
   const planetFound = getPlanetByCoords(coords);

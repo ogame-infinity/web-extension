@@ -20,6 +20,8 @@ const isOwnPlanet = (coords) => {
   return found;
 };
 
+const hasLifeforms = document.querySelector(".lifeform") != null;
+
 export default function () {
   let met = 0,
     cri = 0,
@@ -117,63 +119,74 @@ export default function () {
       reversal.addEventListener("click", reversalClick);
     }
 
-    div.querySelectorAll('td[colspan="2"]').forEach((tooltip) => {
-      const count = Number(fromFormattedNumber(tooltip.nextElementSibling.innerHTML.trim()));
-      const name = tooltip.textContent.trim().slice(0, -1);
-      const defaultRss = { metal: 0, crystal: 0, deuterium: 0 };
-      const id = OGIData.json.shipNames[name];
-      if (id) {
-        expe[id] ? (expe[id] += count) : (expe[id] = count);
-        movement.fleet[id] = count;
-        if (addToTotal) fleetCount[id] ? (fleetCount[id] += count) : (fleetCount[id] = count);
-      } else {
-        if (!planets[originCoords]) {
-          planets[originCoords] = { ...defaultRss, planet: { ...defaultRss }, moon: { ...defaultRss } };
-        }
+    const metalRow = hasLifeforms ? -4 : -3;
+    const crystalRow = hasLifeforms ? -3 : -2;
+    const deuteriumRow = hasLifeforms ? -2 : -1;
 
-        if (destIsOwnPlanet && !planets[destCoords]) {
-          planets[destCoords] = { ...defaultRss, planet: { ...defaultRss }, moon: { ...defaultRss } };
-        }
+    // Ships
+    const fleetDataRow = Array.from(div.querySelectorAll("tr"));
 
-        const addResource = (resourceKey) => {
-          movement[resourceKey] = noRes ? 0 : count;
-          if (resourcesOrigin) {
-            planets[originCoords][resourceKey] += movement[resourceKey];
+    fleetDataRow.slice(1, metalRow - 1).forEach((shipRow) => {
+      if (!shipRow.querySelector("td:nth-child(2)")) return;
 
-            if (originIsMoon) {
-              planets[originCoords].moon[resourceKey] += movement[resourceKey];
-            } else {
-              planets[originCoords].planet[resourceKey] += movement[resourceKey];
-            }
-          }
+      const shipName = shipRow.querySelector("td:nth-child(1)")?.textContent.trim().slice(0, -1);
+      const shipCounter = fromFormattedNumber(shipRow.querySelector("td:nth-child(2)")?.textContent.trim());
+      const id = OGIData.json.shipNames[shipName];
 
-          if (destIsOwnPlanet) {
-            planets[destCoords][resourceKey] += movement[resourceKey];
+      if (!id) {
+        return;
+      }
 
-            if (destIsMoon) {
-              planets[destCoords].moon[resourceKey] += movement[resourceKey];
-            } else {
-              planets[destCoords].planet[resourceKey] += movement[resourceKey];
-            }
-          }
-        };
+      expe[id] ? (expe[id] += shipCounter) : (expe[id] = shipCounter);
+      movement.fleet[id] = shipCounter;
+      if (addToTotal) fleetCount[id] ? (fleetCount[id] += shipCounter) : (fleetCount[id] = shipCounter);
+    });
 
-        if (name == OGIData.json.resNames[0]) {
-          addResource("metal");
-          if (addToTotal) met += count;
-        }
+    const defaultRss = { metal: 0, crystal: 0, deuterium: 0 };
+    if (!planets[originCoords]) {
+      planets[originCoords] = { ...defaultRss, planet: { ...defaultRss }, moon: { ...defaultRss } };
+    }
 
-        if (name == OGIData.json.resNames[1]) {
-          addResource("crystal");
-          if (addToTotal) cri += count;
-        }
+    if (destIsOwnPlanet && !planets[destCoords]) {
+      planets[destCoords] = { ...defaultRss, planet: { ...defaultRss }, moon: { ...defaultRss } };
+    }
 
-        if (name == OGIData.json.resNames[2]) {
-          addResource("deuterium");
-          if (addToTotal) deut += count;
+    const addResource = (resourceKey, count) => {
+      movement[resourceKey] = noRes ? 0 : count;
+      if (resourcesOrigin) {
+        planets[originCoords][resourceKey] += movement[resourceKey];
+
+        if (originIsMoon) {
+          planets[originCoords].moon[resourceKey] += movement[resourceKey];
+        } else {
+          planets[originCoords].planet[resourceKey] += movement[resourceKey];
         }
       }
-    });
+
+      if (destIsOwnPlanet) {
+        planets[destCoords][resourceKey] += movement[resourceKey];
+
+        if (destIsMoon) {
+          planets[destCoords].moon[resourceKey] += movement[resourceKey];
+        } else {
+          planets[destCoords].planet[resourceKey] += movement[resourceKey];
+        }
+      }
+    };
+
+    // Resources
+    const metal = fromFormattedNumber(fleetDataRow.slice(metalRow, metalRow + 1)?.[0]?.querySelector("td:nth-child(2)")?.textContent);
+    addResource("metal", metal);
+    if (addToTotal) met += metal;
+
+    const crystal = fromFormattedNumber(fleetDataRow.slice(crystalRow, crystalRow + 1)?.[0]?.querySelector("td:nth-child(2)")?.textContent);
+    addResource("crystal", crystal);
+    if (addToTotal) cri += crystal;
+
+    const deuterium = fromFormattedNumber(fleetDataRow.slice(deuteriumRow, deuteriumRow + 1)?.[0]?.querySelector("td:nth-child(2)")?.textContent);
+    addResource("deuterium", deuterium);
+    if (addToTotal) deut += deuterium;
+
     ids.push(movement);
   });
 
