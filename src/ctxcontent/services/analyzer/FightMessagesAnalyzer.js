@@ -28,7 +28,8 @@ class FightMessagesAnalyzer {
   }
 
   #addStandardUnit = (combat, message) => {
-    if (combat.isProbes || !combat.loot) return;
+    /* @todo remove the cargoCapacity check when GF provide the good number for data-raw-fleets>combatTechnologies.amount */
+    if ((combat.isProbes && !OGIData.ships[ship.EspionageProbe].cargoCapacity) || !combat.loot) return;
 
     const msgTitle = message.querySelector(".msgHeadItem .msgTitle");
     const standardUnitSum =
