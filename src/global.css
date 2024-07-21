@@ -2171,12 +2171,15 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link{
 
 .ogk-label{
   background-color: #111a21;
-  color: #c7c96c;
+  color: #dbee56;
   border: 1px solid #709090;
 
   padding: 0px 1em;
   border-radius: 1em;
   margin: 0 0.5em;
+}
+.ogk-label.ogk-negative {
+  color: #ee8856;
 }
 .ogk-label.ogk-metal {
   color: #ffaacc;

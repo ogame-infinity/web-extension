@@ -3,6 +3,10 @@ import { messagesTabs } from "../../../ctxpage/messages/index.js";
 import OGIData from "../../../util/OGIData.js";
 import PlanetType from "../../../util/enum/planetType.js";
 import ship from "../../../util/enum/ship.js";
+import * as standardUnit from "../../../util/standardUnit.js";
+import { createDOM } from "../../../util/dom.js";
+import { fleetCost } from "../../../util/fleetCost.js";
+import { toFormattedNumber } from "../../../util/numbers.js";
 
 class FightMessagesAnalyzer {
   #logger;
@@ -22,6 +26,19 @@ class FightMessagesAnalyzer {
     this.#parseExpeditionFight();
     this.#parseFight();
   }
+
+  #addStandardUnit = (combat, message) => {
+    if (combat.isProbes || !combat.loot) return;
+
+    const msgTitle = message.querySelector(".msgHeadItem .msgTitle");
+    const standardUnitSum =
+      standardUnit.standardUnit(combat.loot || [0, 0, 0]) - standardUnit.standardUnit(fleetCost(combat.losses || []));
+    const amountDisplay = `${toFormattedNumber(standardUnitSum, [0, 1], true)} ${standardUnit.unitType()}`;
+
+    msgTitle.appendChild(
+      createDOM("span", { class: `ogk-label ${standardUnitSum < 0 ? "ogk-negative" : ""}` }, amountDisplay)
+    );
+  };
 
   #getExpeditionFight() {
     const messages = [];
@@ -45,7 +62,7 @@ class FightMessagesAnalyzer {
 
       if (combats[msgId]) {
         message.classList.add("ogk-expedition");
-
+        this.#addStandardUnit(combats[msgId], message);
         return;
       }
 
@@ -55,25 +72,9 @@ class FightMessagesAnalyzer {
 
       const result = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-result"));
 
-      combats[msgId] = {
-        timestamp: message.querySelector(".rawMessageData")?.getAttribute("data-raw-timestamp"),
-        favorited: !!message.querySelector(".icon_favorited"),
-        coordinates: {
-          ...defendersSpaceObject.coordinates,
-          planetType: defendersSpaceObject.type === "moon" ? PlanetType.moon : PlanetType.planet,
-        },
-        win: result.winner === "defender",
-        draw: result.winner === "none",
-        isProbes: false,
-      };
-
-      message.classList.add("ogk-expedition");
-
-      OGIData.combats = combats;
-
-      if (result?.totalValueOfUnitsLost[0]?.value === 0) {
+      /*if (result?.totalValueOfUnitsLost[0]?.value === 0) {
         return;
-      }
+      }*/
 
       const newDate = new Date(message.querySelector(".rawMessageData").getAttribute("data-raw-date"));
       const dates = [
@@ -100,6 +101,7 @@ class FightMessagesAnalyzer {
 
       const lastRound = rounds.pop();
       const fleets = lastRound?.fleets[0]?.technologies;
+      const losses = {};
 
       fleets.forEach((fleet) => {
         if (fleet.destroyedTotal === 0) return;
@@ -109,9 +111,29 @@ class FightMessagesAnalyzer {
         }
 
         expeditionSums[datePoint].losses[fleet.technologyId] += fleet.destroyedTotal;
+        losses[fleet.technologyId] = fleet.destroyedTotal;
       });
 
+      combats[msgId] = {
+        timestamp: message.querySelector(".rawMessageData")?.getAttribute("data-raw-timestamp"),
+        favorited: !!message.querySelector(".icon_favorited"),
+        coordinates: {
+          ...defendersSpaceObject.coordinates,
+          planetType: defendersSpaceObject.type === "moon" ? PlanetType.moon : PlanetType.planet,
+        },
+        win: result.winner === "defender",
+        draw: result.winner === "none",
+        isProbes: false,
+        loot: [0, 0, 0],
+        losses,
+      };
+
+      message.classList.add("ogk-expedition");
+
+      OGIData.combats = combats;
       OGIData.expeditionSums = expeditionSums;
+
+      this.#addStandardUnit(combats[msgId], message);
     });
   }
 
@@ -148,6 +170,8 @@ class FightMessagesAnalyzer {
         } else {
           message.classList.add("ogk-combat");
         }
+
+        this.#addStandardUnit(combats[msgId], message);
         return;
       }
 
@@ -181,11 +205,21 @@ class FightMessagesAnalyzer {
 
       const result = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-result"));
       const fleets = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-fleets"));
-      let ennemy = null;
       const probesAccount = { defender: 0, attacker: 0 };
+      const fleetPerSide = { defender: [], attacker: [] };
+      let accountIsDefender = false;
+      let ennemy = null;
 
       fleets.forEach((fleet) => {
-        if (fleet.player.id !== playerId) ennemy = fleet.player;
+        if (!fleetPerSide[fleet.side][fleet.player.id]) fleetPerSide[fleet.side][fleet.player.id] = [];
+
+        fleetPerSide[fleet.side][fleet.player.id].push({
+          fleetId: fleet.fleetId,
+          playerId: fleet.player.id,
+          player: fleet.player,
+        });
+
+        if (fleet.player.id === playerId && fleet.side === "defender") accountIsDefender = true;
 
         fleet.combatTechnologies.forEach((shipInFleet) => {
           if (shipInFleet.technologyId == ship.EspionageProbe && probesAccount[fleet.side] >= 0)
@@ -194,7 +228,21 @@ class FightMessagesAnalyzer {
         });
       });
 
-      const accountIsDefender = defendersSpaceObject.owner.id === playerId;
+      /* @todo this is wrong if multiple attacker / defender */
+      if (accountIsDefender) {
+        Object.values(fleetPerSide.attacker).forEach((players) => {
+          players.forEach((fleet) => {
+            ennemy = fleet.player;
+          });
+        });
+      } else {
+        Object.values(fleetPerSide.defender).forEach((players) => {
+          players.forEach((fleet) => {
+            ennemy = fleet.player;
+          });
+        });
+      }
+
       const accountIsWinner = result.winner === (accountIsDefender ? "defender" : "attacker");
       const isDraw = result.winner === "none";
       const isProbes =
@@ -233,6 +281,26 @@ class FightMessagesAnalyzer {
       combatsSums[datePoint].loot[1] += resources?.[1].amount * (accountIsWinner ? 1 : -1);
       combatsSums[datePoint].loot[2] += resources?.[2].amount * (accountIsWinner ? 1 : -1);
 
+      const rounds = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-combatrounds"));
+      const lastRound = rounds.pop();
+      const losses = [];
+
+      lastRound?.fleets.forEach((side) => {
+        if (
+          fleetPerSide.attacker[playerId]?.some((fleet) => fleet.fleetId === side.fleetId) ||
+          fleetPerSide.defender[playerId]?.some((fleet) => fleet.fleetId === side.fleetId)
+        )
+          side.technologies.forEach((ship) => {
+            if (ship.destroyedTotal === 0) return;
+
+            if (!combatsSums[datePoint].losses[ship.technologyId]) combatsSums[datePoint].losses[ship.technologyId] = 0;
+
+            combatsSums[datePoint].losses[ship.technologyId] += ship.destroyedTotal;
+
+            losses[ship.technologyId] = (losses[ship.technologyId] || 0) + ship.destroyedTotal;
+          });
+      });
+
       combats[msgId] = {
         timestamp: message.querySelector(".rawMessageData")?.getAttribute("data-raw-timestamp"),
         favorited: !!message.querySelector(".icon_favorited"),
@@ -243,6 +311,12 @@ class FightMessagesAnalyzer {
         win: accountIsWinner,
         draw: isDraw,
         isProbes: isProbes,
+        loot: [
+          resources?.[0].amount * (accountIsWinner ? 1 : -1),
+          resources?.[1].amount * (accountIsWinner ? 1 : -1),
+          resources?.[2].amount * (accountIsWinner ? 1 : -1),
+        ],
+        losses,
       };
 
       if (combats[msgId].isProbes) {
@@ -255,30 +329,7 @@ class FightMessagesAnalyzer {
         message.classList.add("ogk-combat");
       }
 
-      const rounds = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-combatrounds"));
-
-      const lastRound = rounds.pop();
-      let accountRoundFleets = [];
-
-      lastRound?.fleets.forEach((side) => {
-        if (side.side === "defender" && accountIsDefender) {
-          accountRoundFleets = side?.technologies;
-        }
-
-        if (side.side === "attacker" && !accountIsDefender) {
-          accountRoundFleets = side?.technologies;
-        }
-      });
-
-      accountRoundFleets.forEach((fleet) => {
-        if (fleet.destroyedTotal === 0) return;
-
-        if (!combatsSums[datePoint].losses[fleet.technologyId]) {
-          combatsSums[datePoint].losses[fleet.technologyId] = 0;
-        }
-
-        combatsSums[datePoint].losses[fleet.technologyId] += fleet.destroyedTotal;
-      });
+      this.#addStandardUnit(combats[msgId], message);
 
       OGIData.combats = combats;
       OGIData.combatsSums = combatsSums;
