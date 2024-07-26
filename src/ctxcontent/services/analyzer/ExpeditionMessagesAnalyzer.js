@@ -93,7 +93,7 @@ class ExpeditionMessagesAnalyzer {
           }
 
           msgTitle.appendChild(
-            createDOM("span", { class: `ogk-label ogk-size-${expeditions[msgId].size}` }, amountDisplay)
+            createDOM("span", { class: `ogk-label ogi-size-${expeditions[msgId].size}` }, amountDisplay)
           );
         }
       };
@@ -302,7 +302,7 @@ class ExpeditionMessagesAnalyzer {
         msgTitle.appendChild(createDOM("span", { class: `ogk-label ${classStyle}` }, labels[classStyle]));
 
         if (discoveries[msgId]?.result != "void") {
-          const classStyleSize = `ogk-size-${discoveries[msgId]?.size || "normal"}`;
+          const classStyleSize = `ogi-size-${discoveries[msgId]?.size || "normal"}`;
           msgTitle.appendChild(
             createDOM(
               "span",

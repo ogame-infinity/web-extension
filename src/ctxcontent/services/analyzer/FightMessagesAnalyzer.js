@@ -37,7 +37,7 @@ class FightMessagesAnalyzer {
     const amountDisplay = `${toFormattedNumber(standardUnitSum, [0, 1], true)} ${standardUnit.unitType()}`;
 
     msgTitle.appendChild(
-      createDOM("span", { class: `ogk-label ${standardUnitSum < 0 ? "ogk-negative" : ""}` }, amountDisplay)
+      createDOM("span", { class: `ogk-label ${standardUnitSum < 0 ? "ogi-negative" : ""}` }, amountDisplay)
     );
   };
 
@@ -154,7 +154,7 @@ class FightMessagesAnalyzer {
   #parseFight() {
     this.#getFight().forEach((message) => {
       const combats = OGIData.combats;
-      const combatsSums = OGIData.combatsSums;
+      const combatsSums = { ...OGIData.combatsSums };
       const msgId = message.getAttribute("data-msg-id");
 
       if (combats[msgId]) {
@@ -204,7 +204,7 @@ class FightMessagesAnalyzer {
       const fleets = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-fleets"));
       const probesAccount = { defender: 0, attacker: 0 };
       const fleetPerSide = { defender: [], attacker: [] };
-      let accountIsDefender = (defendersSpaceObject.owner.id === playerId);
+      let accountIsDefender = defendersSpaceObject.owner.id === playerId;
       let ennemy = null;
 
       fleets.forEach((fleet) => {
@@ -280,26 +280,27 @@ class FightMessagesAnalyzer {
 
       const rounds = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-combatrounds"));
       const lastRound = rounds.pop();
-      const losses = [];
+      const losses = {};
 
       lastRound?.fleets.forEach((side) => {
         if (
           fleetPerSide.attacker[playerId]?.some((fleet) => fleet.fleetId === side.fleetId) ||
           fleetPerSide.defender[playerId]?.some((fleet) => fleet.fleetId === side.fleetId)
-        )
+        ) {
           side.technologies.forEach((ship) => {
-            if (ship.destroyedTotal === 0) return;
+            if (!ship.hasOwnProperty("destroyedTotal") || ship.destroyedTotal === 0) return;
 
             if (!combatsSums[datePoint].losses[ship.technologyId]) combatsSums[datePoint].losses[ship.technologyId] = 0;
-
             combatsSums[datePoint].losses[ship.technologyId] += ship.destroyedTotal;
 
-            losses[ship.technologyId] = (losses[ship.technologyId] || 0) + ship.destroyedTotal;
+            if (!losses[ship.technologyId]) losses[ship.technologyId] = 0;
+            losses[ship.technologyId] += ship.destroyedTotal;
           });
+        }
       });
 
       const hashcode = message.querySelector(".rawMessageData")?.getAttribute("data-raw-hashcode");
-      const isKnowCombat = (combats[msgId]?.some((combat) => combat.hashcode === hashcode)) ;
+      const isKnownCombat = Object.values(combats).some((combat) => combat.hashcode === hashcode);
 
       combats[msgId] = {
         timestamp: message.querySelector(".rawMessageData")?.getAttribute("data-raw-timestamp"),
@@ -333,8 +334,9 @@ class FightMessagesAnalyzer {
       this.#addStandardUnit(combats[msgId], message);
 
       OGIData.combats = combats;
-      if (isKnowCombat) return; // don't account twice a know fight
-      OGIData.combatsSums = combatsSums;
+      if (isKnownCombat)
+        // don't account twice a know fight
+        OGIData.combatsSums = combatsSums;
     });
   }
 }

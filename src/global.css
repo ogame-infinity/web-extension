@@ -2180,7 +2180,7 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link{
 }
 
 /* negative value for MSU */
-.ogk-label.ogk-negative {
+.ogk-label.ogi-negative {
   color: #ee8856;
 }
 
@@ -2261,19 +2261,19 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link{
 }
 
 /* size of disco/explo */
-.ogk-label.ogk-size-normal {
+.ogk-label.ogi-size-normal {
   color: #dddddd;
   border-color: #dddddd;
 }
-.ogk-label.ogk-size-big {
+.ogk-label.ogi-size-big {
   color: #52aef1;
   border-color: #52aef1;
 }
-.ogk-label.ogk-size-huge {
+.ogk-label.ogi-size-huge {
   color: #ef57ac;
   border-color: #ef57ac;
 }
-.ogk-label.ogk-size-full {
+.ogk-label.ogi-size-full {
   color: #f00;
   border-color: #f00;
 }
