@@ -73,10 +73,6 @@ class FightMessagesAnalyzer {
 
       const result = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-result"));
 
-      /*if (result?.totalValueOfUnitsLost[0]?.value === 0) {
-        return;
-      }*/
-
       const newDate = new Date(message.querySelector(".rawMessageData").getAttribute("data-raw-date"));
       const dates = [
         newDate.getDate().toString().padStart(2, "0"),
@@ -208,7 +204,7 @@ class FightMessagesAnalyzer {
       const fleets = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-fleets"));
       const probesAccount = { defender: 0, attacker: 0 };
       const fleetPerSide = { defender: [], attacker: [] };
-      let accountIsDefender = false;
+      let accountIsDefender = (defendersSpaceObject.owner.id === playerId);
       let ennemy = null;
 
       fleets.forEach((fleet) => {
@@ -302,9 +298,13 @@ class FightMessagesAnalyzer {
           });
       });
 
+      const hashcode = message.querySelector(".rawMessageData")?.getAttribute("data-raw-hashcode");
+      const isKnowCombat = (combats[msgId]?.some((combat) => combat.hashcode === hashcode)) ;
+
       combats[msgId] = {
         timestamp: message.querySelector(".rawMessageData")?.getAttribute("data-raw-timestamp"),
         favorited: !!message.querySelector(".icon_favorited"),
+        hashcode: message.querySelector(".rawMessageData")?.getAttribute("data-raw-hashcode"),
         coordinates: {
           ...defendersSpaceObject.coordinates,
           planetType: defendersSpaceObject.type === "moon" ? PlanetType.moon : PlanetType.planet,
@@ -333,6 +333,7 @@ class FightMessagesAnalyzer {
       this.#addStandardUnit(combats[msgId], message);
 
       OGIData.combats = combats;
+      if (isKnowCombat) return; // don't account twice a know fight
       OGIData.combatsSums = combatsSums;
     });
   }

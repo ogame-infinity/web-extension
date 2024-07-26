@@ -2178,9 +2178,13 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link{
   border-radius: 1em;
   margin: 0 0.5em;
 }
+
+/* negative value for MSU */
 .ogk-label.ogk-negative {
   color: #ee8856;
 }
+
+/* expedition label */
 .ogk-label.ogk-metal {
   color: #ffaacc;
   border-color: #ffaacc;
@@ -2229,6 +2233,8 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link{
   color: #a0c02b;
   border-color: #a0c02b;
 }
+
+/* discovery label */
 .ogk-label.ogk-lifeform1{
   color: #7fc200;
   border-color: #ffffff;
@@ -2253,6 +2259,8 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link{
   color: #fdeca6;
   border-color: #ffffff;
 }
+
+/* size of disco/explo */
 .ogk-label.ogk-size-normal {
   color: #dddddd;
   border-color: #dddddd;
