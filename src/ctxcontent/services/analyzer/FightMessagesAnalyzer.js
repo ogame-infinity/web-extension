@@ -27,7 +27,7 @@ class FightMessagesAnalyzer {
     this.#parseFight();
   }
 
-  #addStandardUnit = (combat, message) => {
+  #addStandardUnit(combat, message) {
     /* @todo remove the cargoCapacity check when GF provide the good number for data-raw-fleets>combatTechnologies.amount */
     if ((combat.isProbes && !OGIData.ships[ship.EspionageProbe].cargoCapacity) || !combat.loot) return;
 
@@ -39,7 +39,7 @@ class FightMessagesAnalyzer {
     msgTitle.appendChild(
       createDOM("span", { class: `ogk-label ${standardUnitSum < 0 ? "ogi-negative" : ""}` }, amountDisplay)
     );
-  };
+  }
 
   #getExpeditionFight() {
     const messages = [];
@@ -284,19 +284,20 @@ class FightMessagesAnalyzer {
 
       lastRound?.fleets.forEach((side) => {
         if (
-          fleetPerSide.attacker[playerId]?.some((fleet) => fleet.fleetId === side.fleetId) ||
-          fleetPerSide.defender[playerId]?.some((fleet) => fleet.fleetId === side.fleetId)
-        ) {
-          side.technologies.forEach((ship) => {
-            if (!ship.hasOwnProperty("destroyedTotal") || ship.destroyedTotal === 0) return;
+          !fleetPerSide.attacker[playerId]?.some((fleet) => fleet.fleetId === side.fleetId) &&
+          !fleetPerSide.defender[playerId]?.some((fleet) => fleet.fleetId === side.fleetId)
+        )
+          return;
 
-            if (!combatsSums[datePoint].losses[ship.technologyId]) combatsSums[datePoint].losses[ship.technologyId] = 0;
-            combatsSums[datePoint].losses[ship.technologyId] += ship.destroyedTotal;
+        side.technologies.forEach((ship) => {
+          if (!ship.hasOwnProperty("destroyedTotal") || ship.destroyedTotal === 0) return;
 
-            if (!losses[ship.technologyId]) losses[ship.technologyId] = 0;
-            losses[ship.technologyId] += ship.destroyedTotal;
-          });
-        }
+          if (!combatsSums[datePoint].losses[ship.technologyId]) combatsSums[datePoint].losses[ship.technologyId] = 0;
+          combatsSums[datePoint].losses[ship.technologyId] += ship.destroyedTotal;
+
+          if (!losses[ship.technologyId]) losses[ship.technologyId] = 0;
+          losses[ship.technologyId] += ship.destroyedTotal;
+        });
       });
 
       const hashcode = message.querySelector(".rawMessageData")?.getAttribute("data-raw-hashcode");
@@ -313,11 +314,7 @@ class FightMessagesAnalyzer {
         win: accountIsWinner,
         draw: isDraw,
         isProbes: isProbes,
-        loot: [
-          resources?.[0].amount * (accountIsWinner ? 1 : -1),
-          resources?.[1].amount * (accountIsWinner ? 1 : -1),
-          resources?.[2].amount * (accountIsWinner ? 1 : -1),
-        ],
+        loot: resources.map((obj) => obj.amount * (accountIsWinner ? 1 : -1)),
         losses,
       };
 
