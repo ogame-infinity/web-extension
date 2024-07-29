@@ -1587,7 +1587,7 @@ class OGInfinity {
     wait.waitForQuerySelector("#eventContent").then(() => this.flyingFleet());
     this.betterHighscore();
     this.overviewDates();
-    this.sideLock();
+    needsUtil.display();
     this.jumpGate();
     this.topBarUtilities();
     this.fleetDispatcher();
@@ -12704,18 +12704,6 @@ class OGInfinity {
         console.error("Unable to delete message:", e.message);
         return tokenNow;
       });
-  }
-
-  sideLock() {
-    // To update data in fly
-    this.json.flying = this.getFlyingRes();
-    this.planetList.forEach((planet) => {
-      const coords = planet.querySelector(".planet-koords").textContent;
-
-      needsUtil.displayLocksByCoords(coords, false);
-
-      if (planet.querySelector(".moonlink")) needsUtil.displayLocksByCoords(coords, true);
-    });
   }
 
   highlightTarget() {
