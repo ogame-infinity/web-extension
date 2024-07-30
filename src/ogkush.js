@@ -1431,10 +1431,12 @@ class OGInfinity {
     this.json.expeditions = this.json.expeditions || {};
     this.json.combats = this.json.combats || {};
     this.json.harvests = this.json.harvests || {};
+    this.json.trades = this.json.trades || {};
     this.json.evolution = this.json.evolution || {};
     this.json.playerSearch = this.json.playerSearch || "";
     this.json.currentExpes = this.json.currentExpes || [];
     this.json.combatsSums = this.json.combatsSums || {};
+    this.json.tradesSums = this.json.tradesSums || {};
     this.json.expeditionSums = this.json.expeditionSums || {};
     this.json.discoveriesSums = this.json.discoveriesSums || {};
     this.json.discoveries = this.json.discoveries || {};

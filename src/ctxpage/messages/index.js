@@ -4,6 +4,7 @@ import SpyMessagesAnalyzer from "../../ctxcontent/services/analyzer/SpyMessagesA
 import ExpeditionMessagesAnalyzer from "../../ctxcontent/services/analyzer/ExpeditionMessagesAnalyzer.js";
 import FightMessagesAnalyzer from "../../ctxcontent/services/analyzer/FightMessagesAnalyzer.js";
 import HarvestMessagesAnalyzer from "../../ctxcontent/services/analyzer/HarvestMessagesAnalyzer.js";
+import TradeMessagesAnalyzer from "../../ctxcontent/services/analyzer/TradeMessagesAnalyzer.js";
 
 export const messagesTabs = Object.freeze({
   // Name: ID
@@ -33,6 +34,7 @@ class Messages {
       new ExpeditionMessagesAnalyzer(),
       new FightMessagesAnalyzer(),
       new HarvestMessagesAnalyzer(),
+      new TradeMessagesAnalyzer(),
     ];
 
     // Observe tab change
