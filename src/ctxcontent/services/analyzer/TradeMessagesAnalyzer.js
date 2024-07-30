@@ -27,11 +27,11 @@ class TradeMessagesAnalyzer {
   #getTradesMessages() {
     const messages = [];
     this.#messages.forEach((message) => {
+      const rawMessageData = message.querySelector(".rawMessageData");
       if (
-        parseInt(message.querySelector(".rawMessageData")?.getAttribute("data-raw-messagetype")) !==
-          MessageType.transport ||
-        (parseInt(message.querySelector(".rawMessageData")?.getAttribute("data-raw-sourceplayerid")) === playerId &&
-          parseInt(message.querySelector(".rawMessageData")?.getAttribute("data-raw-targetplayerid")) === playerId)
+        parseInt(rawMessageData?.getAttribute("data-raw-messagetype")) !== MessageType.transport ||
+        (parseInt(rawMessageData?.getAttribute("data-raw-sourceplayerid")) === playerId &&
+          parseInt(rawMessageData?.getAttribute("data-raw-targetplayerid")) === playerId)
       )
         return;
 
