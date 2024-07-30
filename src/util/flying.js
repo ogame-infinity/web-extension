@@ -67,7 +67,6 @@ export default function () {
       fleet: {},
     };
     if (type == 16 || type == missionType.EXPLORATION) return;
-    const expe = {};
     const div = document.createElement("div");
     if (tooltip) {
       div.insertAdjacentHTML("afterbegin", tooltip.getAttribute("title") || tooltip.getAttribute("data-tooltip-title"));
@@ -119,14 +118,21 @@ export default function () {
       reversal.addEventListener("click", reversalClick);
     }
 
-    const metalRow = hasLifeforms ? -4 : -3;
-    const crystalRow = hasLifeforms ? -3 : -2;
-    const deuteriumRow = hasLifeforms ? -2 : -1;
+    let metalRow, crystalRow, deuteriumRow;
+
+    const isAttackAgainst =
+      [missionType.ATTACK, missionType.ACS_ATTACK].includes(parseInt(type)) && !back && isOwnPlanet(destCoords);
+
+    if (!isAttackAgainst) {
+      metalRow = hasLifeforms ? -4 : -3;
+      crystalRow = hasLifeforms ? -3 : -2;
+      deuteriumRow = hasLifeforms ? -2 : -1;
+    }
 
     // Ships
     const fleetDataRow = Array.from(div.querySelectorAll("tr"));
 
-    fleetDataRow.slice(1, metalRow - 1).forEach((shipRow) => {
+    fleetDataRow.slice(1, isAttackAgainst ? fleetDataRow.length : metalRow - 1).forEach((shipRow) => {
       if (!shipRow.querySelector("td:nth-child(2)")) return;
 
       const shipName = shipRow.querySelector("td:nth-child(1)")?.textContent.trim().slice(0, -1);
@@ -137,10 +143,13 @@ export default function () {
         return;
       }
 
-      expe[id] ? (expe[id] += shipCounter) : (expe[id] = shipCounter);
       movement.fleet[id] = shipCounter;
       if (addToTotal) fleetCount[id] ? (fleetCount[id] += shipCounter) : (fleetCount[id] = shipCounter);
     });
+
+    ids.push(movement);
+
+    if (isAttackAgainst) return;
 
     const defaultRss = { metal: 0, crystal: 0, deuterium: 0 };
     if (!planets[originCoords]) {
@@ -175,19 +184,23 @@ export default function () {
     };
 
     // Resources
-    const metal = fromFormattedNumber(fleetDataRow.slice(metalRow, metalRow + 1)?.[0]?.querySelector("td:nth-child(2)")?.textContent);
+    const metal = fromFormattedNumber(
+      fleetDataRow.slice(metalRow, metalRow + 1)?.[0]?.querySelector("td:nth-child(2)")?.textContent || "0"
+    );
     addResource("metal", metal);
     if (addToTotal) met += metal;
 
-    const crystal = fromFormattedNumber(fleetDataRow.slice(crystalRow, crystalRow + 1)?.[0]?.querySelector("td:nth-child(2)")?.textContent);
+    const crystal = fromFormattedNumber(
+      fleetDataRow.slice(crystalRow, crystalRow + 1)?.[0]?.querySelector("td:nth-child(2)")?.textContent || "0"
+    );
     addResource("crystal", crystal);
     if (addToTotal) cri += crystal;
 
-    const deuterium = fromFormattedNumber(fleetDataRow.slice(deuteriumRow, deuteriumRow + 1)?.[0]?.querySelector("td:nth-child(2)")?.textContent);
+    const deuterium = fromFormattedNumber(
+      fleetDataRow.slice(deuteriumRow, deuteriumRow + 1)?.[0]?.querySelector("td:nth-child(2)")?.textContent || "0"
+    );
     addResource("deuterium", deuterium);
     if (addToTotal) deut += deuterium;
-
-    ids.push(movement);
   });
 
   return {
