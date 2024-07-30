@@ -69,14 +69,12 @@ class HarvestMessagesAnalyzer {
 
     const addStandardUnit = (harvest, message) => {
       const msgTitle = message.querySelector(".msgHeadItem .msgTitle");
-      let amountDisplay = "";
-
-      amountDisplay = toFormattedNumber(
+      let amountDisplay = toFormattedNumber(
         standardUnit.standardUnit([harvest.metal, harvest.crystal, harvest.deuterium]),
         [0, 1],
         true
       );
-      amountDisplay = `${amountDisplay} ${standardUnit.unitType()}`;
+      amountDisplay += ` ${standardUnit.unitType()}`;
       msgTitle.appendChild(createDOM("span", { class: "ogk-label" }, amountDisplay));
     };
 
