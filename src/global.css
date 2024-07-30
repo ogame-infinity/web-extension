@@ -2171,13 +2171,20 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link{
 
 .ogk-label{
   background-color: #111a21;
-  color: #c7c96c;
+  color: #dbee56;
   border: 1px solid #709090;
 
   padding: 0px 1em;
   border-radius: 1em;
   margin: 0 0.5em;
 }
+
+/* negative value for MSU */
+.ogk-label.ogi-negative {
+  color: #EA6868;
+}
+
+/* expedition label */
 .ogk-label.ogk-metal {
   color: #ffaacc;
   border-color: #ffaacc;
@@ -2226,6 +2233,8 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link{
   color: #a0c02b;
   border-color: #a0c02b;
 }
+
+/* discovery label */
 .ogk-label.ogk-lifeform1{
   color: #7fc200;
   border-color: #ffffff;
@@ -2250,19 +2259,21 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link{
   color: #fdeca6;
   border-color: #ffffff;
 }
-.ogk-label.ogk-size-normal {
+
+/* size of disco/explo */
+.ogk-label.ogi-size-normal {
   color: #dddddd;
   border-color: #dddddd;
 }
-.ogk-label.ogk-size-big {
+.ogk-label.ogi-size-big {
   color: #52aef1;
   border-color: #52aef1;
 }
-.ogk-label.ogk-size-huge {
+.ogk-label.ogi-size-huge {
   color: #ef57ac;
   border-color: #ef57ac;
 }
-.ogk-label.ogk-size-full {
+.ogk-label.ogi-size-full {
   color: #f00;
   border-color: #f00;
 }
@@ -2389,7 +2400,7 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link{
 /*transport tab*/
 
 .msg:has(div[data-raw-messagetype="33"]) {
-  border-left: 7px solid #ee8856;
+  border-left: 7px solid #EA6868;
 }
 
 .msg:has(div[data-raw-messagetype="33"]):has(.player) {

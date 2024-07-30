@@ -3,6 +3,9 @@ import { messagesTabs } from "../../../ctxpage/messages/index.js";
 import OGIData from "../../../util/OGIData.js";
 import MessageType from "../../../util/enum/messageType.js";
 import ship from "../../../util/enum/ship.js";
+import { toFormattedNumber } from "../../../util/numbers.js";
+import { createDOM } from "../../../util/dom.js";
+import * as standardUnit from "../../../util/standardUnit.js";
 
 class HarvestMessagesAnalyzer {
   #logger;
@@ -64,13 +67,27 @@ class HarvestMessagesAnalyzer {
       }
     };
 
+    const addStandardUnit = (harvest, message) => {
+      const msgTitle = message.querySelector(".msgHeadItem .msgTitle");
+      let amountDisplay = toFormattedNumber(
+        standardUnit.standardUnit([harvest.metal, harvest.crystal, harvest.deuterium]),
+        [0, 1],
+        true
+      );
+      amountDisplay += ` ${standardUnit.unitType()}`;
+      msgTitle.appendChild(createDOM("span", { class: "ogk-label" }, amountDisplay));
+    };
+
     this.#getHarvestsMessages().forEach((message) => {
       const harvests = OGIData.harvests;
       const msgId = message.getAttribute("data-msg-id");
 
       addClass(message);
 
-      if (harvests[msgId]) return;
+      if (harvests[msgId]) {
+        addStandardUnit(harvests[msgId], message);
+        return;
+      }
 
       const coordsAttr = message.querySelector(".rawMessageData")?.getAttribute("data-raw-targetcoordinates");
       const harvestedResources = JSON.parse(
@@ -138,6 +155,8 @@ class HarvestMessagesAnalyzer {
         coords: coordsAttr,
         combat: isReaper(message),
       };
+
+      addStandardUnit(harvests[msgId], message);
 
       OGIData.harvests = harvests;
     });
