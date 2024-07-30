@@ -6853,19 +6853,28 @@ table.fleetinfo tr:nth-last-child(2) {
 }
 
 /* expedition custom */
+.msg group-title,
+.espionageInfo .content-box .loot-name,
 div[data-raw-messagetype="61"] ~ .msgContent,
 div[data-raw-messagetype="41"] ~ .msgContent,
-.msg group-title,
-div[data-raw-messagetype="41"] ~ .content-box .loot-name{
+div[data-raw-messagetype="41"] ~ .content-box .loot-name,
+div[data-raw-messagetype="33"] ~ .content-box .loot-name,
+div[data-raw-messagetype="34"] ~ .content-box .loot-name{
   display: none;
 }
 
-div[data-raw-messagetype="41"] ~ .content-box .loot-row{
+.espionageInfo .content-box .loot-row,
+div[data-raw-messagetype="41"] ~ .content-box .loot-row,
+div[data-raw-messagetype="33"] ~ .content-box .loot-row,
+div[data-raw-messagetype="34"] ~ .content-box .loot-row{
   justify-content: center;
-  column-gap: 15px;
+  column-gap: 20px;
 }
 
-div[data-raw-messagetype="41"] ~ .content-box .loot-item{
+.espionageInfo .content-box .loot-item,
+div[data-raw-messagetype="41"] ~ .content-box .loot-item,
+div[data-raw-messagetype="33"] ~ .content-box .loot-item,
+div[data-raw-messagetype="34"] ~ .content-box .loot-item{
   width: auto;
 }
 
