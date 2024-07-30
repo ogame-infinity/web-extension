@@ -61,10 +61,10 @@ class TradeMessagesAnalyzer {
         return;
       }
 
-      const isIncomingRessources =
-        parseInt(message.querySelector(".rawMessageData")?.getAttribute("data-raw-sourceplayerid")) !== playerId;
-      const cargo = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-cargo"));
-      const newDate = new Date(message.querySelector(".rawMessageData").getAttribute("data-raw-date"));
+      const rawMessageData = message.querySelector(".rawMessageData");
+      const isIncomingRessources = parseInt(rawMessageData.getAttribute("data-raw-sourceplayerid")) !== playerId;
+      const cargo = JSON.parse(rawMessageData.getAttribute("data-raw-cargo"));
+      const newDate = new Date(rawMessageData.getAttribute("data-raw-date"));
       const datePoint = `${newDate.getDate().toString().padStart(2, "0")}.${(newDate.getMonth() + 1)
         .toString()
         .padStart(2, "0")}.${newDate.getFullYear().toString().slice(2)}`;
@@ -94,8 +94,8 @@ class TradeMessagesAnalyzer {
           cargo.crystal * (isIncomingRessources ? 1 : -1),
           cargo.deuterium * (isIncomingRessources ? 1 : -1),
         ],
-        sourceplayerid: parseInt(message.querySelector(".rawMessageData")?.getAttribute("data-raw-sourceplayerid")),
-        targetplayerid: parseInt(message.querySelector(".rawMessageData")?.getAttribute("data-raw-targetplayerid")),
+        sourceplayerid: parseInt(rawMessageData.getAttribute("data-raw-sourceplayerid")),
+        targetplayerid: parseInt(rawMessageData.getAttribute("data-raw-targetplayerid")),
       };
 
       addStandardUnit(trades[msgId], message);
