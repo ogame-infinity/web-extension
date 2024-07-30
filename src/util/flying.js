@@ -175,15 +175,21 @@ export default function () {
     };
 
     // Resources
-    const metal = fromFormattedNumber(fleetDataRow.slice(metalRow, metalRow + 1)?.[0]?.querySelector("td:nth-child(2)")?.textContent);
+    const metal = fromFormattedNumber(
+      fleetDataRow.slice(metalRow, metalRow + 1)?.[0]?.querySelector("td:nth-child(2)")?.textContent || "0"
+    );
     addResource("metal", metal);
     if (addToTotal) met += metal;
 
-    const crystal = fromFormattedNumber(fleetDataRow.slice(crystalRow, crystalRow + 1)?.[0]?.querySelector("td:nth-child(2)")?.textContent);
+    const crystal = fromFormattedNumber(
+      fleetDataRow.slice(crystalRow, crystalRow + 1)?.[0]?.querySelector("td:nth-child(2)")?.textContent || "0"
+    );
     addResource("crystal", crystal);
     if (addToTotal) cri += crystal;
 
-    const deuterium = fromFormattedNumber(fleetDataRow.slice(deuteriumRow, deuteriumRow + 1)?.[0]?.querySelector("td:nth-child(2)")?.textContent);
+    const deuterium = fromFormattedNumber(
+      fleetDataRow.slice(deuteriumRow, deuteriumRow + 1)?.[0]?.querySelector("td:nth-child(2)")?.textContent || "0"
+    );
     addResource("deuterium", deuterium);
     if (addToTotal) deut += deuterium;
 
