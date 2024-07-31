@@ -3805,11 +3805,11 @@ class OGInfinity {
 
         changes.push({
           id: playerId,
-          name: name,
-          planetId: planetId,
-          moon: row.querySelector(".cellMoon .tooltipRel") ? true : false,
-          moonId: moonId,
-          coords: coords,
+          name,
+          planetId,
+          moon: moonId > -1 ? parseInt(moonId) : false,
+          moonId,
+          coords,
         });
 
         let sided = document.querySelectorAll(".ogl-stalkPlanets");
@@ -3842,7 +3842,7 @@ class OGInfinity {
           ptreJSON[coords].id = planetId;
           ptreJSON[coords].player_id = playerId;
           ptreJSON[coords].teamkey = this.json.options.ptreTK;
-          ptreJSON[coords].mv = row.querySelector('span[class*="vacation"]') ? true : false;
+          ptreJSON[coords].mv = !!row.querySelector('span[class*="vacation"]');
           ptreJSON[coords].activity = planetActivity;
           ptreJSON[coords].galaxy = galaxy;
           ptreJSON[coords].system = system;
@@ -3864,8 +3864,9 @@ class OGInfinity {
           this.activities[coords] = this.getActivity(row);
           changes.push({
             id: sided[0].parentElement.getAttribute("player-id"),
-            moon: row.querySelector(".cellMoon .tooltipRel") ? true : false,
-            coords: coords,
+            moon: moonId > -1 ? parseInt(moonId) : false,
+            moonId,
+            coords,
             deleted: true,
           });
         }
