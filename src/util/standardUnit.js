@@ -22,7 +22,7 @@ function standardUnit(amount, customTradeRate = null) {
   let standardUnitValue = 0;
 
   [0, 1, 2].forEach((id) => {
-    standardUnitValue += (amount[id] / tradeRate[id]) * tradeRate[standardUnitBase];
+    standardUnitValue += ((amount[id] || 0) / tradeRate[id]) * tradeRate[standardUnitBase];
   });
 
   /*return `${toFormattedNumber(standardUnitValue, precision, units)} ${translate(173 + standardUnitBase)}`;*/
