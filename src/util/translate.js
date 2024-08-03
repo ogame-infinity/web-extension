@@ -1926,6 +1926,14 @@ const translation = Object.freeze({
       br: "Voltar último",
     },
     173: {
+      de: "Ein",
+      en: "Uts",
+      es: "Uds",
+      fr: "Uts",
+      tr: "Brl",
+      br: "Unts",
+    },
+    174: {
       de: "MSE",
       en: "MSU",
       es: "UME",
@@ -1933,7 +1941,7 @@ const translation = Object.freeze({
       tr: "MSB",
       br: "SEM",
     },
-    174: {
+    175: {
       de: "CSE",
       en: "CSU",
       es: "UCE",
@@ -1941,7 +1949,7 @@ const translation = Object.freeze({
       tr: "CSB",
       br: "SEC",
     },
-    175: {
+    176: {
       de: "DSE",
       en: "DSU",
       es: "UDE",
@@ -1949,7 +1957,15 @@ const translation = Object.freeze({
       tr: "DSB",
       br: "SED",
     },
-    176: {
+    177: {
+      de: "Summe in Einheiten von Ressourcen",
+      en: "Sum in units of resources",
+      es: "Suma en unidades de recursos",
+      fr: "Somme en unités de ressources",
+      tr: "Kaynak birimlerinde toplam",
+      br: "Soma em unidades de recursos",
+    },
+    178: {
       de: "Summe als Standardmetalleinheit",
       en: "Sum as Metal standard unit",
       es: "Suma en unidades de metal equivalente",
@@ -1957,23 +1973,23 @@ const translation = Object.freeze({
       tr: "Metal standart birimi olarak toplam",
       br: "Soma Equivalente em metal",
     },
-    177: {
-      de: undefined,
-      en: "Sum as Crystal standard unit",
-      es: undefined,
-      fr: undefined,
-      tr: undefined,
-      br: undefined,
-    },
-    178: {
-      de: undefined,
-      en: "Sum as Deuterium standard unit",
-      es: undefined,
-      fr: undefined,
-      tr: undefined,
-      br: undefined,
-    },
     179: {
+      de: "Summe als Kristallstandardeinheit",
+      en: "Sum as Crystal standard unit",
+      es: "Suma como unidad estándar de cristal",
+      fr: "Somme en unité standard de cristal",
+      tr: "Kristal standart birimi olarak toplam",
+      br: "Soma como unidade padrão de cristal",
+    },
+    180: {
+      de: "Summe als Deuteriumstandardeinheit",
+      en: "Sum as Deuterium standard unit",
+      es: "Suma como unidad estándar de deuterio",
+      fr: "Somme en unité standard de deutérium",
+      tr: "Döteryum standart birimi olarak toplam",
+      br: "Soma como unidade padrão de deutério",
+    },
+    181: {
       de: undefined,
       en: undefined,
       es: undefined,
