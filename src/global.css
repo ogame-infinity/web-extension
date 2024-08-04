@@ -447,7 +447,7 @@ input[type="password"]::selection {
   line-height: 14px;
   padding: 0 4px;
   text-align: center;
-  width: 100px !important;
+  width: 70px !important;
 }
 
 .ogl-settings .ogl-pantryKey,
