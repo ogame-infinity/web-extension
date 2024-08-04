@@ -1,13 +1,6 @@
-import OGIData from "./OGIData.js";
+import { getOption } from "../ctxpage/conf-options.js";
 import { toFormattedNumber } from "./numbers.js";
 import { translate } from "./translate.js";
-
-/*
-  @todo : add a global param to provide choice for the base
-  const standardUnitBase = OGIData.options.standardUnitBase;
-  if -1 : base = self for each AKA rate of 1/1/1
-  */
-const standardUnitBase = 0;
 
 /**
  *
@@ -19,7 +12,8 @@ const standardUnitBase = 0;
 function standardUnit(amount, customTradeRate = null, disableUnitMode = false) {
   if (!Array.isArray(amount)) return;
 
-  const tradeRate = !Array.isArray(customTradeRate) ? OGIData.options.tradeRate : customTradeRate;
+  const standardUnitBase = getOption("standardUnitBase");
+  const tradeRate = !Array.isArray(customTradeRate) ? getOption("tradeRate") : customTradeRate;
   const tradeBase = disableUnitMode ? 0 : standardUnitBase; /* Force as MSU */
 
   let standardUnitValue = 0;
@@ -36,6 +30,7 @@ function standardUnit(amount, customTradeRate = null, disableUnitMode = false) {
  * @return {String} Unit type used for the standardUnit
  */
 function unitType(full = false) {
+  const standardUnitBase = Number(getOption("standardUnitBase"));
   if (full) return translate(178 + standardUnitBase);
   else return translate(174 + standardUnitBase);
 }
