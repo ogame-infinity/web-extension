@@ -1,5 +1,5 @@
 /// Page Context Imports
-import { initConfOptions, getOptions } from "./ctxpage/conf-options.js";
+import { initConfOptions, getOptions, getOption, setOption } from "./ctxpage/conf-options.js";
 import ctxMessageAnalyzer from "./ctxpage/messages-analyzer/index.js";
 import * as DOM from "./util/dom.js";
 import { getLogger } from "./util/logger.js";
@@ -14239,6 +14239,16 @@ class OGInfinity {
         value: this.json.options.expedition.rotationAfter,
       })
     );
+    optiondiv = featureSettings.appendChild(DOM.createDOM("span", {}, translate(181)));
+    const standardUnitInput = DOM.createDOM("select", { class: "ogl-selectInput tooltip" });
+    standardUnitInput.append(
+      DOM.createDOM("option", { value: "-1" }, this.getTranslatedText(173)),
+      DOM.createDOM("option", { value: "0" }, this.getTranslatedText(174)),
+      DOM.createDOM("option", { value: "1" }, this.getTranslatedText(175)),
+      DOM.createDOM("option", { value: "2" }, this.getTranslatedText(176))
+    );
+    standardUnitInput.value = getOption("standardUnitBase");
+    optiondiv.appendChild(standardUnitInput);
     dataDiv.appendChild(createDOM("hr"));
     let dataManagement = dataDiv.appendChild(createDOM("div", { style: "display: grid;" }));
     dataManagement.appendChild(
@@ -14497,7 +14507,7 @@ class OGInfinity {
       })
     );
     let simulator = keys.appendChild(createDOM("span", {}, this.getTranslatedText(170)));
-    let simulatorInput = createDOM("select", { class: "ogl-simulator tooltip" });
+    let simulatorInput = createDOM("select", { class: "ogl-selectInput ogl-simulator tooltip" });
     simulatorInput.append(
       createDOM("option", { value: "", disabled: "true" }, this.getTranslatedText(171)),
       createDOM("option", { value: "https://battlesim.logserver.net/" }, "Logserver - Battlesim"),
@@ -14521,6 +14531,7 @@ class OGInfinity {
       this.json.options.expedition.defaultTime = Math.max(1, Math.min(~~expeditionDefaultTime.value, 16));
       this.json.options.expedition.limitCargo = Math.max(1, Math.min(~~expeditionLimitCargo.value, 500)) / 100;
       this.json.options.expedition.rotationAfter = Math.max(1, Math.min(~~expeditionRotationAfter.value, 16));
+      setOption("standardUnitBase", standardUnitInput.value);
       this.json.needSync = true;
       this.saveData();
       document.querySelector(".ogl-dialog .close-tooltip").click();

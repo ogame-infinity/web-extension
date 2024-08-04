@@ -1990,6 +1990,14 @@ const translation = Object.freeze({
       br: "Soma como unidade padrão de deutério",
     },
     181: {
+      de: "Standard-Ressourceneinheit",
+      en: "Resource standard unit",
+      es: "Unidad estándar de recursos",
+      fr: "Unité standard de ressources",
+      tr: "Standart kaynak birimi",
+      br: "Unidade padrão de recursos",
+    },
+    182: {
       de: undefined,
       en: undefined,
       es: undefined,
