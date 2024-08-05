@@ -154,7 +154,6 @@ class FightMessagesAnalyzer {
   #parseFight() {
     this.#getFight().forEach((message) => {
       const combats = OGIData.combats;
-      const combatsSums = { ...OGIData.combatsSums };
       const msgId = message.getAttribute("data-msg-id");
 
       if (combats[msgId]) {
@@ -171,30 +170,6 @@ class FightMessagesAnalyzer {
         this.#addStandardUnit(combats[msgId], message);
         return;
       }
-
-      const newDate = new Date(message.querySelector(".rawMessageData").getAttribute("data-raw-date"));
-      const dates = [
-        newDate.getDate().toString().padStart(2, "0"),
-        (newDate.getMonth() + 1).toString().padStart(2, "0"),
-        newDate.getFullYear().toString().slice(2),
-      ];
-
-      const datePoint = dates.join(".");
-
-      if (!combatsSums[datePoint]) {
-        combatsSums[datePoint] = {
-          loot: [0, 0, 0],
-          harvest: [0, 0, 0],
-          losses: {},
-          fuel: 0,
-          adjust: [0, 0, 0],
-          topCombats: [],
-          count: 0,
-          wins: 0,
-          draws: 0,
-        };
-      }
-      combatsSums[datePoint].count += 1;
 
       const defendersSpaceObject = JSON.parse(
         message.querySelector(".rawMessageData")?.getAttribute("data-raw-defenderspaceobject")
@@ -246,37 +221,12 @@ class FightMessagesAnalyzer {
         (2e3 > probesAccount.defender && probesAccount.defender > 0) ||
         (2e3 > probesAccount.attacker && probesAccount.attacker > 0);
 
-      if (accountIsWinner) combatsSums[datePoint].wins += 1;
-      if (isDraw) combatsSums[datePoint].draws += 1;
-
       const resources = result.loot.resources;
 
       result.totalValueOfUnitsLost.forEach((side) => {
         if (accountIsDefender && side.side === "attacker") ennemy.losses = side.value;
         if (!accountIsDefender && side.side === "defender") ennemy.losses = side.value;
       });
-
-      const topCombat = {
-        debris:
-          parseInt(result.debris.resources?.[0]?.total || 0) +
-          parseInt(result.debris.resources?.[1]?.total || 0) +
-          parseInt(result.debris.resources?.[2]?.total || 0),
-        loot: (resources?.[0].amount + resources?.[1].amount + resources?.[2].amount) * (accountIsWinner ? 1 : -1),
-        ennemi: ennemy?.name,
-        losses: ennemy?.losses,
-      };
-
-      combatsSums[datePoint].topCombats.push(topCombat);
-
-      combatsSums[datePoint].topCombats.sort((a, b) => b.debris + Math.abs(b.loot) - (a.debris + Math.abs(a.loot)));
-
-      if (combatsSums[datePoint].topCombats.length > 3) {
-        combatsSums[datePoint].topCombats.pop();
-      }
-
-      combatsSums[datePoint].loot[0] += resources?.[0].amount * (accountIsWinner ? 1 : -1);
-      combatsSums[datePoint].loot[1] += resources?.[1].amount * (accountIsWinner ? 1 : -1);
-      combatsSums[datePoint].loot[2] += resources?.[2].amount * (accountIsWinner ? 1 : -1);
 
       const rounds = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-combatrounds"));
       const lastRound = rounds.pop();
@@ -291,9 +241,6 @@ class FightMessagesAnalyzer {
 
         side.technologies.forEach((ship) => {
           if (!ship.hasOwnProperty("destroyedTotal") || ship.destroyedTotal === 0) return;
-
-          if (!combatsSums[datePoint].losses[ship.technologyId]) combatsSums[datePoint].losses[ship.technologyId] = 0;
-          combatsSums[datePoint].losses[ship.technologyId] += ship.destroyedTotal;
 
           if (!losses[ship.technologyId]) losses[ship.technologyId] = 0;
           losses[ship.technologyId] += ship.destroyedTotal;
@@ -331,9 +278,65 @@ class FightMessagesAnalyzer {
       this.#addStandardUnit(combats[msgId], message);
 
       OGIData.combats = combats;
-      if (isKnownCombat)
-        // don't account twice a know fight
-        OGIData.combatsSums = combatsSums;
+
+      // don't account twice a know fight in combatsSums
+      if (isKnownCombat) return;
+
+      const combatsSums = JSON.parse(JSON.stringify(OGIData.combatsSums)); // deep copy
+      const newDate = new Date(message.querySelector(".rawMessageData").getAttribute("data-raw-date"));
+      const dates = [
+        newDate.getDate().toString().padStart(2, "0"),
+        (newDate.getMonth() + 1).toString().padStart(2, "0"),
+        newDate.getFullYear().toString().slice(2),
+      ];
+
+      const datePoint = dates.join(".");
+
+      if (!combatsSums[datePoint]) {
+        combatsSums[datePoint] = {
+          loot: [0, 0, 0],
+          harvest: [0, 0, 0],
+          losses: {},
+          fuel: 0,
+          adjust: [0, 0, 0],
+          topCombats: [],
+          count: 0,
+          wins: 0,
+          draws: 0,
+        };
+      }
+      combatsSums[datePoint].count += 1;
+      if (accountIsWinner) combatsSums[datePoint].wins += 1;
+      if (isDraw) combatsSums[datePoint].draws += 1;
+
+      const topCombat = {
+        debris:
+          parseInt(result.debris.resources?.[0]?.total || 0) +
+          parseInt(result.debris.resources?.[1]?.total || 0) +
+          parseInt(result.debris.resources?.[2]?.total || 0),
+        loot: (resources?.[0].amount + resources?.[1].amount + resources?.[2].amount) * (accountIsWinner ? 1 : -1),
+        ennemi: ennemy?.name,
+        losses: ennemy?.losses,
+      };
+
+      combatsSums[datePoint].topCombats.push(topCombat);
+
+      combatsSums[datePoint].topCombats.sort((a, b) => b.debris + Math.abs(b.loot) - (a.debris + Math.abs(a.loot)));
+
+      if (combatsSums[datePoint].topCombats.length > 3) {
+        combatsSums[datePoint].topCombats.pop();
+      }
+
+      combatsSums[datePoint].loot[0] += resources?.[0].amount * (accountIsWinner ? 1 : -1);
+      combatsSums[datePoint].loot[1] += resources?.[1].amount * (accountIsWinner ? 1 : -1);
+      combatsSums[datePoint].loot[2] += resources?.[2].amount * (accountIsWinner ? 1 : -1);
+
+      Object.keys(losses).forEach((technologyId) => {
+        if (!combatsSums[datePoint].losses[technologyId]) combatsSums[datePoint].losses[technologyId] = 0;
+        combatsSums[datePoint].losses[technologyId] += losses[technologyId];
+      });
+
+      OGIData.combatsSums = combatsSums;
     });
   }
 }
