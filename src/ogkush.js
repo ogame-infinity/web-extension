@@ -1549,6 +1549,12 @@ class OGInfinity {
     OGIData.empire.forEach((planet, index) => {
       if (planet && this.current.id == planet.id) this.current.index = index;
     });
+    // update current place resources in empire data for methods that need more updated data
+    const resources = this.current.isMoon
+      ? OGIData.empire[this.current.index].moon
+      : OGIData.empire[this.current.index];
+    ["metal", "crystal", "deuterium"].forEach((res) => (resources[res] = resourcesBar.resources[res].amount));
+
     this.#migrations();
     this.saveData();
     document.querySelector("#pageContent").style.width = "1200px";
