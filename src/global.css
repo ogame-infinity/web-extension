@@ -447,7 +447,7 @@ input[type="password"]::selection {
   line-height: 14px;
   padding: 0 4px;
   text-align: center;
-  width: 100px !important;
+  width: 70px !important;
 }
 
 .ogl-settings .ogl-pantryKey,
@@ -462,7 +462,7 @@ input[type="password"]::selection {
   width: 180px !important;
 }
 
-.ogl-settings .ogl-simulator {
+.ogl-settings .ogl-selectInput {
   color: #bbb !important;
   border: solid 1px rgb(58 72 86) !important;
   box-shadow: none !important;
@@ -474,6 +474,10 @@ input[type="password"]::selection {
   border-width: 1px;
   text-align: center;
   vertical-align: middle;
+  width: 80px !important;
+}
+
+.ogl-settings .ogl-simulator {
   width: 190px !important;
 }
 
