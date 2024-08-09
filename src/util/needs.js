@@ -134,7 +134,7 @@ function displayLocks(planet, isMoon) {
 
   if (!planetId) return;
 
-  const element = document.querySelector(`#myPlanets #planet-${planetId}`);
+  const element = document.querySelector(`#planetList #planet-${planetId}`);
 
   if (!element) return;
 
@@ -183,7 +183,7 @@ function displayLocks(planet, isMoon) {
         }
       }
 
-      if (!document.querySelector("#myPlanets .ogl-sideLock")) {
+      if (!document.querySelector("#planetList .ogl-sideLock")) {
         sidePlanetDiv.querySelectorAll("button.ogl-sideLockRemove").forEach((button) => button.remove());
       }
 
@@ -245,7 +245,7 @@ function createLockIcon(planet, isMoon) {
     displayLocks(planet, isMoon);
 
     const sidePlanetDiv = document.querySelector("div#cutty") || document.querySelector("div#norm");
-    if (!document.querySelector("#myPlanets .ogl-sideLock")) {
+    if (!document.querySelector("#planetList .ogl-sideLock")) {
       sidePlanetDiv.querySelectorAll("button.ogl-sideLockRemove").forEach((button) => button.remove());
     }
   });
