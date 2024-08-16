@@ -59,7 +59,7 @@ export function getNeedsByCoords(coords, isMoon) {
   const crystal = Math.max((needsTarget?.crystal || 0) - (planet?.crystal || 0) - (flyingTarget?.crystal || 0), 0);
   const deuterium = Math.max(
     (needsTarget?.deuterium || 0) - (planet?.deuterium || 0) - (flyingTarget?.deuterium || 0),
-    0
+    0,
   );
 
   return {
@@ -97,7 +97,7 @@ export function append(coords, isMoon, resources) {
   OGIData.needs = needs;
 }
 
-export function lock(coords, isMoon, needed) {
+export function lock(coords, isMoon, needed, technology) {
   const planetFound = getPlanetByCoords(coords);
 
   if (planetFound === null) return;
@@ -113,6 +113,8 @@ export function lock(coords, isMoon, needed) {
       planet: {},
     };
   }
+
+  console.log("Add technology to need", { technology });
 
   append(coords, isMoon, needed);
 
@@ -222,13 +224,13 @@ function createLockIcon(planet, isMoon) {
   tooltipContent.appendChild(createDOM("div", { style: "width: 75px" }, translate(39)));
   tooltipContent.appendChild(createDOM("hr"));
   tooltipContent.appendChild(
-    createDOM("div", { class: "ogl-metal" }, toFormattedNumber(Math.max(0, needsTarget.metal), null, true))
+    createDOM("div", { class: "ogl-metal" }, toFormattedNumber(Math.max(0, needsTarget.metal), null, true)),
   );
   tooltipContent.appendChild(
-    createDOM("div", { class: "ogl-crystal" }, toFormattedNumber(Math.max(0, needsTarget.crystal), null, true))
+    createDOM("div", { class: "ogl-crystal" }, toFormattedNumber(Math.max(0, needsTarget.crystal), null, true)),
   );
   tooltipContent.appendChild(
-    createDOM("div", { class: "ogl-deut" }, toFormattedNumber(Math.max(0, needsTarget.deuterium), null, true))
+    createDOM("div", { class: "ogl-deut" }, toFormattedNumber(Math.max(0, needsTarget.deuterium), null, true)),
   );
   tooltipContent.appendChild(createDOM("hr"));
 

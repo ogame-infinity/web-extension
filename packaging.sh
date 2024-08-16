@@ -25,7 +25,7 @@ function sed_version {
 
 function minified() {
   for v in "$@"; do
-    npx terser "$v" -o "$v"
+    # npx terser "$v" -o "$v"
     echo "Minified: $v"
   done
 }

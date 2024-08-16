@@ -27,6 +27,7 @@ import { translate } from "./util/translate.js";
 import { fleetCost } from "./util/fleetCost.js";
 import * as loadingUtil from "./util/loading.js";
 import * as standardUnit from "./util/standardUnit.js";
+import Technologies from "./ctxpage/technologies/index.js";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 //const VERSION = "__VERSION__";
@@ -1386,11 +1387,11 @@ class OGInfinity {
     this.isMobile = "ontouchstart" in document.documentElement;
     this.eventAction = this.isMobile ? "touchstart" : "mouseenter";
     this.universe = window.location.host.replace(/\D/g, "");
-    this.geologist = document.querySelector(".geologist.on") ? true : false;
-    this.technocrat = document.querySelector(".technocrat.on") ? true : false;
-    this.admiral = document.querySelector(".admiral.on") ? true : false;
-    this.engineer = document.querySelector(".engineer.on") ? true : false;
-    this.allOfficers = document.querySelector("#officers.all") ? true : false;
+    this.geologist = !!document.querySelector(".geologist.on");
+    this.technocrat = !!document.querySelector(".technocrat.on");
+    this.admiral = !!document.querySelector(".admiral.on");
+    this.engineer = !!document.querySelector(".engineer.on");
+    this.allOfficers = !!document.querySelector("#officers.all");
     this.current = {};
     this.current.planet = (
       document.querySelector("#planetList .active") ?? document.querySelector("#planetList .planetlink")
@@ -1398,8 +1399,8 @@ class OGInfinity {
     document.querySelectorAll(".planet-koords").forEach((elem) => (elem.textContent = elem.textContent.slice(1, -1)));
     this.current.id = parseInt(this.current.planet.id.split("-")[1]);
     this.current.coords = this.current.planet.querySelector(".planet-koords").textContent;
-    this.current.hasMoon = this.current.planet.querySelector(".moonlink") ? true : false;
-    this.current.isMoon = this.current.hasMoon && this.current.planet.querySelector(".moonlink.active") ? true : false;
+    this.current.hasMoon = !!this.current.planet.querySelector(".moonlink");
+    this.current.isMoon = !!(this.current.hasMoon && this.current.planet.querySelector(".moonlink.active"));
     this.markedPlayers = [];
   }
 
@@ -2289,7 +2290,7 @@ class OGInfinity {
           });
         };
       };
-      technologyDetails.show = function (technologyId) {
+      technologyDetails.showe = function (technologyId) {
         if (xhrAbortSignal) {
           xhrAbortSignal.abort();
         }
@@ -2516,12 +2517,18 @@ class OGInfinity {
                 .parentElement.appendChild(createDOM("strong", {}, `${toFormatedNumber(baseLvl)}`)).parentElement
             );
             let lvlFromTo = titleDiv.appendChild(createDOM("div"));
-            titleDiv.appendChild(createDOM("div", {}, that.getTranslatedText(39)));
-            let helpNode = document.querySelector(".txt_box .details").cloneNode(true);
+            titleDiv.appendChild(createDOM("div", {}, that.getTranslatedText(39)));let helpNode = document.querySelector(".txt_box .details").cloneNode(true);
             lock = infoDiv.appendChild(createDOM("a", { class: "icon icon_lock" }));
             lock.addEventListener("click", () => {
               lockListener();
             });
+
+
+
+
+
+
+
             let timeDiv = document.querySelector(".build_duration time");
             let initTime = time.getTimeFromISOString(timeDiv.getAttribute("datetime"));
             let metalCost = document.querySelector(".costs .metal")
@@ -16045,6 +16052,9 @@ function versionInStatusBar() {
     versionInStatusBar();
 
     new Messages();
+    
+    const techno = new Technologies();
+    techno.apply();
 
     // workaround for "DOMPurify not defined" issue
     await wait.waitForDefinition(window, "DOMPurify");
