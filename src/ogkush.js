@@ -11340,7 +11340,7 @@ class OGInfinity {
     const abortController = new AbortController();
     window.onbeforeunload = () => abortController.abort();
 
-    const empireRequest = (href) => {
+    const empireRequest = (href) =>
       fetch(`?${href.toString()}`, { signal: abortController.signal })
         .then((response) => response.text())
         .then(
@@ -11354,7 +11354,6 @@ class OGInfinity {
               }
             ).planets
         );
-    };
 
     const planets = empireRequest(new URLSearchParams({ page: "standalone", component: "empire" }));
     const moons = !document.querySelector(".moonlink")
