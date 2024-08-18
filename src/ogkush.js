@@ -11337,63 +11337,44 @@ class OGInfinity {
   }
 
   async getEmpireInfo() {
-    let abortController = new AbortController();
-    this.abordSignal = abortController.signal;
-    window.onbeforeunload = function (e) {
-      abortController.abort();
+    const abortController = new AbortController();
+    window.onbeforeunload = () => abortController.abort();
+
+    const empireRequest = (href) => {
+      fetch(`?${href.toString()}`, { signal: abortController.signal })
+        .then((response) => response.text())
+        .then(
+          (string) =>
+            JSON.parse(
+              string.substring(string.indexOf("createImperiumHtml") + 47, string.indexOf("initEmpire") - 16),
+              (key, value) => {
+                if (key.includes("html") && key !== "equipment_html") return;
+                if (value === "0") return 0;
+                return value;
+              }
+            ).planets
+        );
     };
-    return fetch(
-      `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=standalone&component=empire`,
-      { signal: abortController.signal }
-    )
-      .then((rep) => rep.text())
-      .then((str) => {
-        let planets = JSON.parse(
-          str.substring(str.indexOf("createImperiumHtml") + 47, str.indexOf("initEmpire") - 16)
-        ).planets;
-        let hasMoon = false;
-        for (let planet of planets) {
-          for (const key in Object.keys(planet)) {
-            if (planet[key] === "0") planet[key] = parseInt(planet[key]);
-          }
-          for (const key in planet) {
-            if (key.includes("html") && key !== "equipment_html") {
-              delete planet[key];
+
+    const planets = empireRequest(new URLSearchParams({ page: "standalone", component: "empire" }));
+    const moons = !document.querySelector(".moonlink")
+      ? false
+      : empireRequest(new URLSearchParams({ page: "standalone", component: "empire", planetType: "1" }));
+
+    return Promise.all([planets, moons]).then((object) => {
+      object[0].forEach((planet) => {
+        planet.invalidate = false;
+        if (object[1]) {
+          object[1].forEach((moon) => {
+            if (planet.moonID === moon.id) {
+              planet.moon = moon;
+              planet.moon.invalidate = false;
             }
-          }
-          if (planet.moonID) {
-            hasMoon = true;
-          }
-          planet.invalidate = false;
+          });
         }
-        if (hasMoon) {
-          return fetch(
-            `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=standalone&component=empire&planetType=1`,
-            { signal: abortController.signal }
-          )
-            .then((rep) => rep.text())
-            .then((str) => {
-              let moons = JSON.parse(
-                str.substring(str.indexOf("createImperiumHtml") + 47, str.indexOf("initEmpire") - 16)
-              ).planets;
-              planets.forEach((planet) => {
-                moons.forEach((moon, j) => {
-                  if (planet.moonID == moon.id) {
-                    for (const key in moon) {
-                      if (key.includes("html")) {
-                        delete moon[key];
-                      }
-                    }
-                    planet.moon = moon;
-                    planet.moon.invalidate = false;
-                  }
-                });
-              });
-              return planets;
-            });
-        }
-        return planets;
       });
+      return object[0];
+    });
   }
 
   updateEmpireProduction() {
@@ -12146,7 +12127,7 @@ class OGInfinity {
       viewBox: "0 0 187.3 93.7",
       preserveAspectRatio: "xMidYMid meet",
     });
-    svg.replaceChildren(
+    svg.append(
       createSVG("path", {
         stroke: "#3c536c",
         id: "outline",
@@ -12176,22 +12157,18 @@ class OGInfinity {
     document
       .querySelector("#countColonies")
       .appendChild(createDOM("div", { class: "spinner" }).appendChild(svg).parentElement);
-    return this.getEmpireInfo().then((json) => {
-      OGIData.empire = json;
+    return this.getEmpireInfo().then((empire) => {
+      for (const techId in this.json.technology) {
+        this.json.technology[techId] = empire[0][techId];
+      }
+      OGIData.empire = empire;
       this.json.lastEmpireUpdate = new Date();
-      OGIData.empire.forEach((planet) => {
-        planet.invalidate = false;
-        if (planet.moon) planet.moon.invalidate = false;
-      });
       this.updateLifeformPlanetBonus();
       this.updateEmpireProduction();
       this.updateresourceDetail();
       this.flyingFleet();
       this.isLoading = false;
       this.json.needsUpdate = false;
-      for (let techId in this.json.technology) {
-        this.json.technology[techId] = OGIData.empire[0][techId];
-      }
       this.saveData();
       document.querySelector(".spinner").remove();
     });
