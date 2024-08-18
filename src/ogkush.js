@@ -1454,7 +1454,6 @@ class OGInfinity {
     this.json.universeSettingsTooltip = this.json.universeSettingsTooltip || {};
     this.json.topScore = this.json.topScore || 0;
     this.json.shipNames = this.json.shipNames || false;
-    this.json.resNames = this.json.resNames || false;
     this.json.autoHarvest = this.json.autoHarvest || ["0:0:0", 3];
     this.json.myActivities = this.json.myActivities || {};
     this.json.sideStalk = this.json.sideStalk || [];
@@ -1524,17 +1523,6 @@ class OGInfinity {
       }
     } catch (e) {}
 
-    if (!this.json.resNames || (this.hasLifeforms && !this.json.resNames[5])) {
-      this.json.resNames = [];
-      this.json.resNames[0] = resourcesBar.resources.metal.tooltip.split("|")[0];
-      this.json.resNames[1] = resourcesBar.resources.crystal.tooltip.split("|")[0];
-      this.json.resNames[2] = resourcesBar.resources.deuterium.tooltip.split("|")[0];
-      this.json.resNames[3] = resourcesBar.resources.darkmatter.tooltip.split("|")[0];
-      if (this.hasLifeforms) {
-        this.json.resNames[4] = resourcesBar.resources.food.tooltip.split("|")[0];
-        this.json.resNames[5] = resourcesBar.resources.population.tooltip.split("|")[0];
-      }
-    }
     if (this.page == "fleetdispatch") {
       this.json.shipNames = {};
       for (let id in fleetDispatcher.fleetHelper.shipsData) {
@@ -1561,6 +1549,12 @@ class OGInfinity {
     OGIData.empire.forEach((planet, index) => {
       if (planet && this.current.id == planet.id) this.current.index = index;
     });
+    // update current place resources in empire data for methods that need more updated data
+    const resources = this.current.isMoon
+      ? OGIData.empire[this.current.index].moon
+      : OGIData.empire[this.current.index];
+    ["metal", "crystal", "deuterium"].forEach((res) => (resources[res] = resourcesBar.resources[res].amount));
+
     this.#migrations();
     this.saveData();
     document.querySelector("#pageContent").style.width = "1200px";
