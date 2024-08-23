@@ -999,7 +999,7 @@ const translation = Object.freeze({
     },
     57: {
       de: "Unentschieden",
-      en: "Draw",
+      en: "Match nul",
       es: "Empate",
       fr: "Dessiner",
       tr: "Berabere",
