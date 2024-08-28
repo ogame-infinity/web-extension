@@ -14,6 +14,7 @@ import Player from "../../../util/player.js";
 import * as stalk from "../../../util/stalk.js";
 import PlayerClass from "../../../util/enum/playerClass.js";
 import OGIData from "../../../util/OGIData.js";
+import { translate } from "../../../util/translate.js";
 
 class SpyMessagesAnalyzer {
   #logger;
@@ -105,7 +106,7 @@ class SpyMessagesAnalyzer {
 
     const tableOptions = createDOM("div", { class: "ogl-tableOptions" });
     const enableTable = tableOptions.appendChild(
-      createDOM("button", { class: "icon icon_eye tooltip", title: "Toggle spy table" })
+      createDOM("button", { class: "icon icon_eye tooltip", title: translate(106, "text") })
     );
     if (options.spyTableEnable) enableTable.classList.add("ogl-active");
     enableTable.addEventListener("click", () => {
@@ -120,7 +121,7 @@ class SpyMessagesAnalyzer {
     const appendOption = tableOptions.appendChild(
       createDOM("button", {
         class: "icon icon_plus tooltip",
-        title: "Minimal target rentability to be considered as interesting",
+        title: translate(182, "text"),
       })
     );
 
@@ -136,7 +137,7 @@ class SpyMessagesAnalyzer {
       createDOM("button", {
         class: "icon icon_trash tooltip",
         title:
-          "Enable/Disable automatic deletion of unprofitable reports taking into account: looting, fleet and defense debris field (deuterium to debris field and 70% defense repair are assumed).",
+          translate(104, "text"),
       })
     );
     if (options.autoDeleteEnable) autoDelete.classList.add("ogl-active");
