@@ -1169,7 +1169,7 @@ const RESEARCH_INFO = {
   13215: {
     name: "General Overhaul (Bomber)",
     baseCost: [320000, 240000, 100000],
-    factorCost: 1.2,
+    factorCost: 1.5,
     baseTime: 9500,
     factorTime: 1.4,
   },
