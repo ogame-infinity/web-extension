@@ -1551,7 +1551,9 @@ class OGInfinity {
     });
     // update current place resources in empire data for methods that need more updated data
     const place = this.current.isMoon ? OGIData.empire[this.current.index].moon : OGIData.empire[this.current.index];
-    if (place) ["metal", "crystal", "deuterium"].forEach((res) => (place[res] = resourcesBar.resources[res].amount));
+    if (place) {
+      ["metal", "crystal", "deuterium"].forEach((res) => (place[res] = Math.floor(resourcesBar.resources[res].amount)));
+    }
 
     this.#migrations();
     this.saveData();
