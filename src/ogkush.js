@@ -12005,6 +12005,8 @@ class OGInfinity {
     list.appendChild(flyingSum);
     let sum = createDOM("div", { class: "smallplanet smaller ogl-summary" });
     let sumres = createDOM("div", { class: "ogl-res" });
+    let sumresStandardUnit = createDOM("div", { class: "ogl-res ogl-sum-symbol" });
+
     sumres.appendChild(
       createDOM(
         "span",
@@ -12035,12 +12037,54 @@ class OGInfinity {
         toFormatedNumber(Math.floor(dSumP + dSumM + OGIData.json.flying.deuterium), null, true)
       )
     );
+
+    const valueSumStandardUnit = standardUnit.standardUnit(
+    [
+        (mSumP + mSumM + this.json.flying.metal),
+        (cSumP + cSumM + this.json.flying.crystal),
+        (dSumP + dSumM + this.json.flying.deuterium),
+      ]
+    );
+
+    sumresStandardUnit.appendChild(
+      createDOM(
+        "span",
+        {
+          class: "tooltip ",
+          "title": `${toFormatedNumber(Math.floor(valueSumStandardUnit))} ${standardUnit.unitType()}`,
+        },
+        toFormatedNumber(Math.floor(valueSumStandardUnit), null, true)
+      )
+    );
+
     sum.appendChild(createDOM("div", { class: "ogl-sum-symbol" }, "ΣΣ"));
     sum.appendChild(sumres);
+
+    let sumMsuSideDiv = sum.appendChild(createDOM("div", { class: "ogl-sum-symbol tooltip", "title": standardUnit.unitType(true)}, standardUnit.unitType()));
+    sum.appendChild(sumresStandardUnit);
+
     list.appendChild(sum);
+
+
+    let sumMSU = createDOM("div", { class: "smallplanet smaller ogl-summary" });
+    sumMSU.appendChild(createDOM("div", { class: "ogl-sum-symbol tooltip", "title": standardUnit.unitType(true)}, "ΣΣ "+standardUnit.unitType()));
+    sumMSU.appendChild(sumresStandardUnit.cloneNode(true));
+    list.appendChild(sumMSU);
+
     if (document.querySelectorAll(".moonlink").length == 0) {
       divMoonSum.style.display = "none";
       moonSumSymbol.style.display = "none";
+
+
+        sumMSU.style.display = "";
+        sumMsuSideDiv.style.display = "none";
+        sumresStandardUnit.style.display = "none";
+      }
+      else {
+        sumMSU.style.display = "none";
+        sumMsuSideDiv.style.display = "";
+        sumresStandardUnit.style.display = "";
+
     }
 
     // Resource Transport tooltip
