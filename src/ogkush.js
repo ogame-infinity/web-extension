@@ -6458,7 +6458,7 @@ class OGInfinity {
           )
         );
         let alliance = "";
-        if (player.alliance) alliance = player.alliance.split(" ")[0];
+        if (player.alliance) alliance = player.alliance.match(/^\[[^\]]*\]/)[0];
         playerNode.appendChild(name);
         let alliNode = playerNode.appendChild(createDOM("span", { class: "ogl-alliance" }, alliance));
         alliNode.addEventListener("click", (e) => {
