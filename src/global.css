@@ -4695,14 +4695,6 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords .ogk-coords-ex
   padding-top: 2px;
 }
 
-#bar {
-  width: 1045px !important;
-}
-
-#bar li:nth-of-type(5) {
-  display: none;
-}
-
 .ogk-ping {
   color: #848484;
   font-weight: 700;
