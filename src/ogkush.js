@@ -12054,7 +12054,7 @@ class OGInfinity {
       cSumP + cSumM + OGIData.json.flying.crystal,
       dSumP + dSumM + OGIData.json.flying.deuterium,
     ]);
-    const sumresStandardUnit = createDOM("div", { class: "ogl-res ogl-sum-symbol" });
+    const sumresStandardUnit = createDOM("div", { class: "ogl-res ogl-sum-symbol tooltip" });
     sumresStandardUnit.appendChild(
       createDOM(
         "span",
