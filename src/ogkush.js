@@ -11814,6 +11814,15 @@ class OGInfinity {
         .setAttribute("data-title", toFormatedNumber(Math.floor(dSumP + dSumM + OGIData.json.flying.deuterium)));
       sumNodes[2].querySelector(".ogl-deut").setAttribute("class", "ogl-deut tooltip");
     });
+
+    const valueSumStandardUnit = standardUnit.standardUnit([
+      mSumP + mSumM + OGIData.json.flying.metal,
+      cSumP + cSumM + OGIData.json.flying.crystal,
+      dSumP + dSumM + OGIData.json.flying.deuterium,
+    ]);
+    const sumMSU = document.querySelector(".ogl-sum-symbol.tooltip").nextElementSibling;
+    sumMSU.title = `${toFormatedNumber(Math.floor(valueSumStandardUnit))} ${standardUnit.unitType()}`;
+    sumMSU.textContent = toFormatedNumber(Math.floor(valueSumStandardUnit), null, true);
   }
 
   resourceDetail() {
