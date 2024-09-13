@@ -4183,6 +4183,10 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
   padding: 5px;
 }
 
+.planetBarSpaceObjectHighlightContainer {
+  display:none;
+}
+
 .ogl-summary > .ogl-sum-symbol:first-child {
   width: 105px;
 }
