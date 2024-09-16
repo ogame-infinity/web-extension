@@ -124,8 +124,8 @@ const createDOM = DOM.createDOM;
 const createSVG = DOM.createSVG;
 
 /**
- * @deprecated Use {@link Numbers.toFormattedNumbe}
- * @type {Numbers.toFormattedNumbe}
+ * @deprecated Use {@link Numbers.toFormattedNumber}
+ * @type {Numbers.toFormattedNumber}
  */
 const toFormatedNumber = Numbers.toFormattedNumber;
 /**
@@ -1499,6 +1499,7 @@ class OGInfinity {
     this.json.lifeformBonus = this.json.lifeformBonus || {};
     this.json.lifeformPlanetBonus = this.json.lifeformPlanetBonus || {};
     this.gameLang = document.querySelector('meta[name="ogame-language"]').getAttribute("content");
+    this.playerLang = document.cookie.match(/oglocale=([a-z]+)/)?.[1] || this.gameLang;
     this.isLoading = false;
     this.autoQueue = new AutoQueue();
   }
@@ -3225,47 +3226,89 @@ class OGInfinity {
   }
 
   topBarUtilities() {
-    const bar = document.querySelector("#bar ul");
-    bar.appendChild(
-      createDOM("li").appendChild(
-        createDOM("a", { href: `https://board.${this.gameLang}.ogame.gameforge.com/`, target: "_blank" }, "Board")
-      ).parentElement
-    );
-    bar.appendChild(
-      createDOM("li").appendChild(
-        createDOM(
+    // BEGIN: temporary until +12 ogame came into production **** @TODO: remove later ****
+    const tempbar = document.querySelector("#bar ul");
+    if (tempbar) {
+      tempbar.appendChild(
+        createDOM("li").appendChild(
+          createDOM("a", { href: `https://board.${this.gameLang}.ogame.gameforge.com/`, target: "_blank" }, "Board")
+        ).parentElement
+      );
+      tempbar.appendChild(
+        createDOM("li").appendChild(
+          createDOM(
+            "a",
+            { href: `https://proxyforgame.com/${this.gameLang}/ogame/calc/flight.php`, target: "_blank" },
+            "Flight"
+          )
+        ).parentElement
+      );
+      tempbar.appendChild(
+        createDOM("li").appendChild(
+          createDOM("a", { href: `${this.json.options.simulator}${this.univerviewLang}`, target: "_blank" }, "Sim")
+        ).parentElement
+      );
+      tempbar.appendChild(
+        createDOM("li").appendChild(
+          createDOM(
+            "a",
+            { href: `https://www.mmorpg-stat.eu/base.php?se=1&univers=_${this.universe}`, target: "_blank" },
+            "Mmorpg"
+          )
+        ).parentElement
+      );
+      tempbar.appendChild(
+        createDOM("li").appendChild(createDOM("a", { href: "https://ptre.chez.gg/", target: "_blank" }, "PTRE"))
+          .parentElement
+      );
+      const ping = window.performance.timing.domLoading - window.performance.timing.fetchStart;
+      let colorClass = "friendly";
+      if (ping > 400 && ping < 800) colorClass = "neutral";
+      if (ping > 800) colorClass = "hostile";
+      tempbar.prepend(
+        createDOM("span", { class: "ogk-ping" })
+          .appendChild(createDOM("span", { class: `${colorClass}` }, `${toFormatedNumber(ping / 1e3, 1)}s`))
+          .parentElement.appendChild(document.createTextNode(" ping")).parentElement
+      );
+      return;
+    }
+    // END: temporary until +12 ogame came into production **** @TODO: remove later ****
+
+    const bar = document.querySelector("#headerBarLinks");
+    bar.append(
+      DOM.createDOM("span").appendChild(
+        DOM.createDOM("a", { href: `https://board.${this.gameLang}.ogame.gameforge.com/`, target: "_blank" }, "Board")
+      ).parentElement,
+      DOM.createDOM("span").appendChild(
+        DOM.createDOM(
           "a",
-          { href: `https://proxyforgame.com/${this.gameLang}/ogame/calc/flight.php`, target: "_blank" },
+          { href: `https://proxyforgame.com/${this.playerLang}/ogame/calc/flight.php`, target: "_blank" },
           "Flight"
         )
-      ).parentElement
-    );
-    bar.appendChild(
-      createDOM("li").appendChild(
-        createDOM("a", { href: `${this.json.options.simulator}${this.univerviewLang}`, target: "_blank" }, "Sim")
-      ).parentElement
-    );
-    bar.appendChild(
-      createDOM("li").appendChild(
-        createDOM(
+      ).parentElement,
+      DOM.createDOM("span").appendChild(
+        DOM.createDOM("a", { href: `${getOption("simulator")}${this.playerLang}`, target: "_blank" }, "Sim")
+      ).parentElement,
+      DOM.createDOM("span").appendChild(
+        DOM.createDOM(
           "a",
           { href: `https://www.mmorpg-stat.eu/base.php?se=1&univers=_${this.universe}`, target: "_blank" },
           "Mmorpg"
         )
-      ).parentElement
-    );
-    bar.appendChild(
-      createDOM("li").appendChild(createDOM("a", { href: "https://ptre.chez.gg/", target: "_blank" }, "PTRE"))
+      ).parentElement,
+      DOM.createDOM("span").appendChild(DOM.createDOM("a", { href: `https://ptre.chez.gg/`, target: "_blank" }, "PTRE"))
         .parentElement
     );
-    const ping = window.performance.timing.domLoading - window.performance.timing.fetchStart;
+
+    const [timing] = performance.getEntriesByType("navigation");
+    const ping = timing.responseEnd - timing.requestStart;
     let colorClass = "friendly";
     if (ping > 400 && ping < 800) colorClass = "neutral";
     if (ping > 800) colorClass = "hostile";
-    bar.prepend(
-      createDOM("span", { class: "ogk-ping" })
-        .appendChild(createDOM("span", { class: `${colorClass}` }, `${toFormatedNumber(ping / 1e3, 1)}s`))
-        .parentElement.appendChild(document.createTextNode(" ping")).parentElement
+    bar.parentElement.appendChild(
+      DOM.createDOM("span", { class: "ogk-ping" }, "ping").appendChild(
+        DOM.createDOM("span", { class: `${colorClass}` }, ` ${Numbers.toFormattedNumber(ping / 1e3, 1)}s`)
+      ).parentElement
     );
   }
 
