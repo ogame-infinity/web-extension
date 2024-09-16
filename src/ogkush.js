@@ -11857,6 +11857,15 @@ class OGInfinity {
         .setAttribute("data-title", toFormatedNumber(Math.floor(dSumP + dSumM + OGIData.json.flying.deuterium)));
       sumNodes[2].querySelector(".ogl-deut").setAttribute("class", "ogl-deut tooltip");
     });
+
+    const valueSumStandardUnit = standardUnit.standardUnit([
+      mSumP + mSumM + OGIData.json.flying.metal,
+      cSumP + cSumM + OGIData.json.flying.crystal,
+      dSumP + dSumM + OGIData.json.flying.deuterium,
+    ]);
+    const sumMSU = document.querySelector(".ogl-sum-symbol.tooltip").nextElementSibling;
+    sumMSU.title = `${toFormatedNumber(Math.floor(valueSumStandardUnit))} ${standardUnit.unitType()}`;
+    sumMSU.textContent = toFormatedNumber(Math.floor(valueSumStandardUnit), null, true);
   }
 
   resourceDetail() {
@@ -12048,6 +12057,7 @@ class OGInfinity {
     list.appendChild(flyingSum);
     let sum = createDOM("div", { class: "smallplanet smaller ogl-summary" });
     let sumres = createDOM("div", { class: "ogl-res" });
+
     sumres.appendChild(
       createDOM(
         "span",
@@ -12078,12 +12088,46 @@ class OGInfinity {
         toFormatedNumber(Math.floor(dSumP + dSumM + OGIData.json.flying.deuterium), null, true)
       )
     );
+
     sum.appendChild(createDOM("div", { class: "ogl-sum-symbol" }, "ΣΣ"));
     sum.appendChild(sumres);
-    list.appendChild(sum);
-    if (document.querySelectorAll(".moonlink").length == 0) {
+
+    const valueSumStandardUnit = standardUnit.standardUnit([
+      mSumP + mSumM + OGIData.json.flying.metal,
+      cSumP + cSumM + OGIData.json.flying.crystal,
+      dSumP + dSumM + OGIData.json.flying.deuterium,
+    ]);
+    const sumresStandardUnit = createDOM("div", { class: "ogl-res ogl-sum-symbol tooltip" });
+    sumresStandardUnit.appendChild(
+      createDOM(
+        "span",
+        {
+          class: "tooltip",
+          title: `${toFormatedNumber(Math.floor(valueSumStandardUnit))} ${standardUnit.unitType()}`,
+        },
+        toFormatedNumber(Math.floor(valueSumStandardUnit), null, true)
+      )
+    );
+
+    const noMoons = document.querySelectorAll(".moonlink").length === 0;
+    const sumMsuSideDiv = createDOM(
+      "div",
+      { class: "ogl-sum-symbol tooltip", title: standardUnit.unitType(true) },
+      `${noMoons ? "ΣΣ " : ""}${standardUnit.unitType()}`
+    );
+
+    if (noMoons) {
       divMoonSum.style.display = "none";
       moonSumSymbol.style.display = "none";
+      list.appendChild(sum);
+      const sumMSU = createDOM("div", { class: "smallplanet smaller ogl-summary" });
+      sumMSU.appendChild(sumMsuSideDiv);
+      sumMSU.appendChild(sumresStandardUnit);
+      list.appendChild(sumMSU);
+    } else {
+      sum.appendChild(sumMsuSideDiv);
+      sum.appendChild(sumresStandardUnit);
+      list.appendChild(sum);
     }
 
     // Resource Transport tooltip
