@@ -14788,7 +14788,7 @@ class OGInfinity {
               });
 
               movementsList.forEach((m) => {
-                const symbolDirection = m.direction === "go" ? "🡒" : "🡐";
+                const symbolDirection = m.direction === "go" ? ">" : "<";
 
                 const rowType = DOM.createDOM("div");
                 rowType.appendChild(m.img);
