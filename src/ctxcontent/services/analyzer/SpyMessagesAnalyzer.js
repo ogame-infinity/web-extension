@@ -13,6 +13,7 @@ import Markerui from "../../../util/markerui.js";
 import Player from "../../../util/player.js";
 import * as stalk from "../../../util/stalk.js";
 import PlayerClass from "../../../util/enum/playerClass.js";
+import OgamePageData from "../../util/OgamePageData.js";
 import OGIData from "../../../util/OGIData.js";
 import { translate } from "../../../util/translate.js";
 
@@ -136,8 +137,7 @@ class SpyMessagesAnalyzer {
     const autoDelete = tableOptions.appendChild(
       createDOM("button", {
         class: "icon icon_trash tooltip",
-        title:
-          translate(104, "text"),
+        title: translate(104, "text"),
       })
     );
     if (options.autoDeleteEnable) autoDelete.classList.add("ogl-active");
@@ -820,7 +820,6 @@ class SpyMessagesAnalyzer {
     if (!OGIData.options.ptreTK) return;
 
     const universe = window.location.host.replace(/\D/g, "");
-    const gameLang = document.querySelector('meta[name="ogame-language"]').getAttribute("content");
     const ptreJSON = {};
 
     this.#messageCallable().forEach((message) => {
@@ -861,7 +860,7 @@ class SpyMessagesAnalyzer {
     });
 
     if (Object.keys(ptreJSON).length > 0) {
-      ptreService.importPlayerActivity(gameLang, universe, ptreJSON).finally(() => "Do nothing");
+      ptreService.importPlayerActivity(OgamePageData.gameLang, universe, ptreJSON).finally(() => "Do nothing");
     }
   }
 }
