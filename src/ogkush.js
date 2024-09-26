@@ -4355,18 +4355,6 @@ class OGInfinity {
     }, 100);
   }
 
-  warningCommander() {
-    let content = this.createDOM(
-      "div",
-      {
-        class: "ogl-warning-dialog overmark",
-        style: "padding: 25px",
-      },
-      `<div class="premium">\n      <div class="officers100  commander">\n            <a href="https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=premium&openDetail=2" class="detail_button">\n              <span class="ecke">\n                  <span class="level">\n                      <img src="https://gf3.geo.gfsrv.net/cdnbc/aa2ad16d1e00956f7dc8af8be3ca52.gif" width="12" height="11">\n                  </span>\n              </span>\n          </a>\n      </div>\n    </div>\n    The commander officier is required for these features...`
-    );
-    this.popup(null, content);
-  }
-
   sideOptions() {
     let harvestOptions = createDOM("div", { class: "ogl-harvestOptions" });
     let container = document.querySelector("#myPlanets") || document.querySelector("#myWorlds");
@@ -12741,29 +12729,6 @@ class OGInfinity {
         }
       });
     }
-  }
-
-  deleteMSg(msgId) {
-    let requestData = new FormData();
-    let tokenNow = token ?? document.querySelector("#fleetsgenericpage > ul > input[type=hidden]")?.value;
-    requestData.append("messageId", msgId);
-    requestData.append("action", 103);
-    requestData.append("token", tokenNow);
-    requestData.append("ajax", 1);
-    return fetch(`https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=messages`, {
-      method: "POST",
-      body: requestData,
-    })
-      .then((response) => response.json())
-      .then((responseData) => {
-        //console.log(responseData);
-        token ? (token = responseData.newAjaxToken) : null;
-        return responseData.newAjaxToken;
-      })
-      .catch((e) => {
-        console.error("Unable to delete message:", e.message);
-        return tokenNow;
-      });
   }
 
   highlightTarget() {
