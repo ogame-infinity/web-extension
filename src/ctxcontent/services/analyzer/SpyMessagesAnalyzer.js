@@ -13,7 +13,7 @@ import Markerui from "../../../util/markerui.js";
 import Player from "../../../util/player.js";
 import * as stalk from "../../../util/stalk.js";
 import PlayerClass from "../../../util/enum/playerClass.js";
-import OgamePageData from "../../util/OgamePageData.js";
+import OgamePageData from "../../../util/OgamePageData.js";
 import OGIData from "../../../util/OGIData.js";
 import { translate } from "../../../util/translate.js";
 
