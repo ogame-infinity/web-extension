@@ -18,6 +18,7 @@ import * as utilTooltip from "./util/tooltip.js";
 import * as popupUtil from "./util/popup.js";
 import markerui from "./util/markerui.js";
 import highlight, { setHighlightCoords } from "./util/highlightTarget.js";
+import OgamePageData from "./util/OgamePageData.js";
 import OGIData from "./util/OGIData.js";
 import { tooltip } from "./util/tooltip.js";
 import missionType from "./util/enum/missionType.js";
@@ -1499,7 +1500,6 @@ class OGInfinity {
     this.json.lifeformBonus = this.json.lifeformBonus || {};
     this.json.lifeformPlanetBonus = this.json.lifeformPlanetBonus || {};
     this.gameLang = document.querySelector('meta[name="ogame-language"]').getAttribute("content");
-    this.playerLang = document.cookie.match(/oglocale=([a-z]+)/)?.[1] || this.gameLang;
     this.isLoading = false;
     this.autoQueue = new AutoQueue();
   }
@@ -3282,12 +3282,12 @@ class OGInfinity {
       DOM.createDOM("span").appendChild(
         DOM.createDOM(
           "a",
-          { href: `https://proxyforgame.com/${this.playerLang}/ogame/calc/flight.php`, target: "_blank" },
+          { href: `https://proxyforgame.com/${OgamePageData.playerLang}/ogame/calc/flight.php`, target: "_blank" },
           "Flight"
         )
       ).parentElement,
       DOM.createDOM("span").appendChild(
-        DOM.createDOM("a", { href: `${getOption("simulator")}${this.playerLang}`, target: "_blank" }, "Sim")
+        DOM.createDOM("a", { href: `${getOption("simulator")}${OgamePageData.playerLang}`, target: "_blank" }, "Sim")
       ).parentElement,
       DOM.createDOM("span").appendChild(
         DOM.createDOM(
