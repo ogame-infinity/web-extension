@@ -1621,7 +1621,7 @@ class OGInfinity {
             this.welcome();
           });
       } else {
-        window.location.href = `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=ingame&component=fleetdispatch`;
+        window.location.href = "?page=ingame&component=fleetdispatch";
       }
     }
     this.markedPlayers = this.getMarkedPlayers(this.json.markers);
