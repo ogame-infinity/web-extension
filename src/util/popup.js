@@ -2,8 +2,6 @@ import { createDOM } from "./dom.js";
 import OGIData from "./OGIData.js";
 import PlayerClass from "./enum/playerClass.js";
 
-const universe = window.location.host.replace(/\D/g, "");
-const gameLang = document.querySelector('meta[name="ogame-language"]').getAttribute("content");
 let playerClass = PlayerClass.NONE;
 
 if (document.querySelector("#characterclass .explorer")) {
@@ -34,9 +32,9 @@ export function popup(header, content) {
         welcome = false;
         OGIData.welcome = welcome;
         if (playerClass === PlayerClass.NONE) {
-          window.location.href = `https://s${universe}-${gameLang}.ogame.gameforge.com/game/index.php?page=ingame&component=characterclassselection`;
+          window.location.href = "?page=ingame&component=characterclassselection";
         } else {
-          window.location.href = `https://s${universe}-${gameLang}.ogame.gameforge.com/game/index.php?page=ingame&component=overview`;
+          window.location.href = "?page=ingame&component=overview";
         }
       }
       overlay.classList.remove("ogl-active");

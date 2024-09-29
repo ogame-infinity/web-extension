@@ -1,13 +1,11 @@
 /** @typedef {Object} LocalizationStrings */
 
+import OgamePageData from "./OgamePageData.js";
+
 export function toFormattedNumber(value, precision = null, units = false) {
-  const commaSeparator = ["en-US", "en-GB", "ro-RO", "zh-TW"];
-  let locale = document.querySelector("#cookiebanner").getAttribute("data-locale");
-  if (commaSeparator.includes(locale)) {
-    locale = "en-US";
-  } else {
-    locale = "de-DE";
-  }
+  const commaSeparator = ["en", "ro", "zh"];
+  const locale = commaSeparator.includes(OgamePageData.playerLang) ? "en-US" : "de-DE";
+
   if (isNaN(value) || value === undefined || value == null) return undefined;
 
   if (units) {
@@ -21,9 +19,7 @@ export function toFormattedNumber(value, precision = null, units = false) {
       "",
       LocalizationStrings["unitKilo"],
       LocalizationStrings["unitMega"],
-      document.querySelector("#cookiebanner").getAttribute("data-locale").substring(0, 2) === "fr"
-        ? "G"
-        : LocalizationStrings["unitMilliard"],
+      OgamePageData.playerLang === "fr" ? "G" : LocalizationStrings["unitMilliard"],
       "T",
     ];
     const unrangifiedOrder = Math.floor(Math.log10(Math.abs(value)) / 3);

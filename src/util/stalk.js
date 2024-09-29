@@ -5,13 +5,13 @@ import { toFormattedNumber } from "./numbers.js";
 import dateTime from "./dateTime.js";
 import highlightTarget, { setHighlightCoords } from "./highlightTarget.js";
 import player from "./player.js";
+import OgamePageData from "./OgamePageData.js";
 import OGIData from "./OGIData.js";
 import { loading } from "./loading.js";
 
 const rawUrl = new URL(window.location.href);
 const page = rawUrl.searchParams.get("component") || rawUrl.searchParams.get("page");
 const universe = window.location.host.replace(/\D/g, "");
-const gameLang = document.querySelector('meta[name="ogame-language"]').getAttribute("content");
 let keepTooltip = OGIData.keepTooltip || true;
 
 function sendMessage(id) {
@@ -88,13 +88,13 @@ function generateMMORPGLink(playerid) {
     "hu",
     "jp",
     "ba",
-  ].indexOf(gameLang);
+  ].indexOf(OgamePageData.gameLang);
 
   return `https://www.mmorpg-stat.eu/0_fiche_joueur.php?pays=${lang}&ftr=${playerid}.dat&univers=_${universe}`;
 }
 
 function generatePTRELink(playerId) {
-  return `https://ptre.chez.gg/?country=${gameLang}&univers=${universe}&player_id=${playerId}`;
+  return `https://ptre.chez.gg/?country=${OgamePageData.gameLang}&univers=${universe}&player_id=${playerId}`;
 }
 
 function generateGalaxyLink(coords, playerId = undefined) {
