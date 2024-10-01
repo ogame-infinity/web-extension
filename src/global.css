@@ -5571,7 +5571,6 @@ div[data-marker]:hover {
 }
 
 .ogl-stalkPlanets [data-marked="yellow"] {
-  background: #f3de4c !important;
   background: #d4be27 !important;
 }
 
@@ -5585,6 +5584,10 @@ div[data-marker]:hover {
 
 .ogl-stalkPlanets [data-marked="violet"] {
   background: #a833da !important;
+}
+
+.ogl-stalkPlanets [data-marked="gray"] {
+  background: #8a8a8a !important;
 }
 
 .ogl-stalkPlanets [data-marked="orange"] {
@@ -5619,6 +5622,10 @@ div[data-marker]:hover {
   background: #5d3d77 !important;
 }
 
+.ogl-spyTable tr[data-marked="gray"] {
+  background: #474747 !important;
+}
+
 .ogl-spyTable tr[data-marked="orange"] {
   background: #be613c !important;
 }
@@ -5647,6 +5654,10 @@ div[data-marker]:hover {
   background: linear-gradient(to left, #a833da, #1a202b) !important;
 }
 
+#galaxyContent .galaxyRow[data-marked="gray"] div[class*="PlayerName"] {
+  background: linear-gradient(to left, #8a8a8a, #1a202b) !important;
+}
+
 #galaxyContent .galaxyRow[data-marked="orange"] div[class*="PlayerName"] {
   background: linear-gradient(to left, #ff956b, #1a202b) !important;
 }
@@ -5673,6 +5684,10 @@ div[data-marker]:hover {
 
 #galaxyContent .galaxyRow[data-marked="violet"] div[class*="Alliance"] {
   background: linear-gradient(to right, #5d2b94, #1a202b) !important;
+}
+
+#galaxyContent .galaxyRow[data-marked="gray"] div[class*="Alliance"] {
+  background: linear-gradient(to right, #474747, #1a202b) !important;
 }
 
 #galaxyContent .galaxyRow[data-marked="orange"] div[class*="Alliance"] {
