@@ -76,9 +76,9 @@ export function append(coords, isMoon, resources) {
 
   const needsTarget = getNeedsResourceByCoords(coords, isMoon);
 
-  const metal = Math.max((needsTarget?.metal || 0) + (resources?.metal || 0), 0);
-  const crystal = Math.max((needsTarget?.crystal || 0) + (resources?.crystal || 0), 0);
-  const deuterium = Math.max((needsTarget?.deuterium || 0) + (resources?.deuterium || 0), 0);
+  const metal = Math.ceil(Math.max((needsTarget?.metal || 0) + (resources?.metal || 0), 0));
+  const crystal = Math.ceil(Math.max((needsTarget?.crystal || 0) + (resources?.crystal || 0), 0));
+  const deuterium = Math.ceil(Math.max((needsTarget?.deuterium || 0) + (resources?.deuterium || 0), 0));
 
   if (isMoon) {
     needs[planetFound.id].moon = {
