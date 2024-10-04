@@ -185,7 +185,7 @@ export class DataHelper {
           ptrePosition[row.coords].old_player_id = sameOld ? ptrePosition[row.coords].player_id : -1;
           ptrePosition[row.coords].timestamp_api = sameOld && this.lastUpdate ? this.lastUpdate : -1;
           ptrePosition[row.coords].old_name = sameOld ? ptrePosition[row.coords].name : false;
-          ptrePosition[row.coords].old_rank = sameOld ? ptrePosition[row.coords].score : -1;
+          ptrePosition[row.coords].old_rank = sameOld ? ptrePosition[row.coords].rank : -1;
           ptrePosition[row.coords].old_score = sameOld ? ptrePosition[row.coords].score : -1;
           ptrePosition[row.coords].old_fleet = sameOld ? ptrePosition[row.coords].fleet : -1;
         }
