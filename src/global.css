@@ -5421,12 +5421,6 @@ div.activity.showMinutes {
   background: 0 0;
 }
 
-.ogl-stalkPlanets [data-marked="gray"],
-.galaxyRow[class*="filtered_filter"] td,
-tr[data-marked="gray"] .galaxyCell {
-  opacity: 0.2 !important;
-}
-
 #galaxyContent .cellDebris.ogl-active,
 #galaxyContent #expeditionDebris.ogl-active {
   border: #73d2af solid 1px !important;
@@ -5444,7 +5438,7 @@ tr[data-marked="gray"] .galaxyCell {
   text-decoration: none;
 }
 
-#galaxyContent .galaxyRow[data-marked]:not([data-marked="gray"]) .galaxyCell {
+#galaxyContent .galaxyRow[data-marked] .galaxyCell {
   opacity: 1 !important;
 }
 
@@ -5526,7 +5520,6 @@ div[data-marker]:hover {
 [data-marked="yellow"] .ogl-colors,
 [data-marker="yellow"],
 [data-toggle="yellow"] {
-  color: #f3de4c !important;
   color: #d4be27 !important;
 }
 
@@ -5956,7 +5949,7 @@ div[data-marker]:hover {
   display: none;
 }
 
-.ogl-stalkPlanets [data-marked]:not([data-marked="gray"]) {
+.ogl-stalkPlanets [data-marked] {
   border: 2px solid rgba(0, 0, 0, 0.45);
   box-shadow: inset 0 50px 0 rgba(0, 0, 0, 0.6);
 }
@@ -5965,21 +5958,12 @@ div[data-marker]:hover {
   border: 2px solid #3c536d;
 }
 
-.ogl-stalkPlanets [data-marked]:not([data-marked="gray"]).ogl-active:not(.ptre_updated) {
-  border: 2px solid #3c536d !important;
-}
-
-.ogl-stalkPlanets [data-marked]:not([data-marked="gray"]).ogl-active.ptre_updated {
-  border-right: 2px solid #3c536d !important;
-  border-top: 2px solid #3c536d !important;
-  border-bottom: 2px solid #3c536d !important;
-}
-
+.ogl-stalkPlanets [data-marked].ogl-active:not(.ptre_updated),
 .ogl-stalkPlanets > a:hover:not(.ptre_updated) {
-  border: 2px solid #ff5722 !important;
   border: 2px solid #3c536d !important;
 }
 
+.ogl-stalkPlanets [data-marked].ogl-active.ptre_updated,
 .ogl-stalkPlanets > a:hover.ptre_updated {
   border-top: 2px solid #3c536d !important;
   border-bottom: 2px solid #3c536d !important;
