@@ -526,11 +526,7 @@ class SpyMessagesAnalyzer {
         }
 
         Markerui.add(report.coords, colorsColContent, p.id, false);
-
-        if (OGIData.markers[report.coords]) {
-          bodyRow.classList.add("ogl-marked");
-          bodyRow.setAttribute("data-marked", OGIData.markers[report.coords].color);
-        }
+        Markerui.display(colorsColContent, report.coords);
       });
 
       bodyRow.appendChild(colorsCol);
