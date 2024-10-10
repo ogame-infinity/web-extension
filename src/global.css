@@ -5680,7 +5680,7 @@ div[data-marker]:hover {
 }
 
 #galaxyContent .galaxyRow[data-marked="gray"] div[class*="Alliance"] {
-  background: linear-gradient(to right, #474747, #1a202b) !important;
+  background: linear-gradient(to right, #8a8a8a, #1a202b) !important;
 }
 
 #galaxyContent .galaxyRow[data-marked="orange"] div[class*="Alliance"] {
