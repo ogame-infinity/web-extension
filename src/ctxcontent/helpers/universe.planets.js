@@ -42,7 +42,7 @@ function toPlanetResponse(response) {
     player: parseInt(node.getAttribute("player"), 10),
     name: node.getAttribute("name"),
     coords: node.getAttribute("coords"),
-    moon: node.hasChildNodes(),
+    moon: parseInt(node?.firstChild?.getAttribute("id") || 0, 0),
   }));
 }
 
@@ -56,5 +56,5 @@ function toPlanetResponse(response) {
  * @property {number} player - player ID
  * @property {string} name
  * @property {string} coords
- * @property {boolean} moon
+ * @property {number} moon - moon ID
  */
