@@ -7,8 +7,6 @@ import * as stalk from "./stalk.js";
 const colors = ["red", "orange", "yellow", "green", "blue", "violet", "gray", "brown"];
 
 function add(coords, parent, id) {
-  const res = JSON.parse(localStorage.getItem("ogk-data"));
-  const json = res || {};
   const div = createDOM("div", { class: "ogl-colorChoice" });
   const markers = OGIData.markers;
 
@@ -46,12 +44,7 @@ function add(coords, parent, id) {
         document.querySelector(".ogl-targetIcon").classList.remove("ogl-targetsReady");
 
         if (parent.getAttribute("data-context") !== "galaxy") {
-          window.dispatchEvent(new CustomEvent("ogi-spyTableReload"));
-        }
-
-        if (OGIData.options.targetList) {
-          // this.targetList(false);
-          // this.targetList(true);
+          display(parent, coords);
         }
 
         OGIData.markers = markers;
@@ -64,10 +57,20 @@ function add(coords, parent, id) {
   parent.addEventListener("ontouchstart" in document.documentElement ? "touchstart" : "mouseenter", () => {
     tooltip(parent, div);
   });
+}
 
-  // this.markedPlayers = this.getMarkedPlayers(json.markers);
+function display(parent, coords) {
+  const element = parent.closest("tr");
+  if (OGIData.markers[coords]) {
+    element.classList.add("ogl-marked");
+    element.setAttribute("data-marked", OGIData.markers[coords].color);
+  } else {
+    element.classList.remove("ogl-marked");
+    element.removeAttribute("data-marked");
+  }
 }
 
 export default {
   add,
+  display,
 };
