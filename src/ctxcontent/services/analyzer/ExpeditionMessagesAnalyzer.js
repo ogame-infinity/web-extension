@@ -224,7 +224,21 @@ class ExpeditionMessagesAnalyzer {
         };
 
         summary.type["Object"] ? (summary.type["Object"] += 1) : (summary.type["Object"] = 1);
-      } else if (type === "combat") {
+      } else if (type === "combatPirates") {
+        expeditions[msgId] = {
+          result: "Pirates",
+          size,
+          date: newDate,
+        };
+        summary.type["Pirates"] ? (summary.type["Pirates"] += 1) : (summary.type["Pirates"] = 1);
+      } else if (type === "combatAliens") {
+        expeditions[msgId] = {
+          result: "Aliens",
+          size,
+          date: newDate,
+        };
+        summary.type["Aliens"] ? (summary.type["Aliens"] += 1) : (summary.type["Aliens"] = 1);
+      } else if (type === "combat") { // @TODO remove after v12
         const pirateKeywords = [
           "pirat",
           "pirát",
