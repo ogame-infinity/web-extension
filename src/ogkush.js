@@ -18,6 +18,7 @@ import * as utilTooltip from "./util/tooltip.js";
 import * as popupUtil from "./util/popup.js";
 import markerui from "./util/markerui.js";
 import highlight, { setHighlightCoords } from "./util/highlightTarget.js";
+import OgamePageData from "./util/OgamePageData.js";
 import OGIData from "./util/OGIData.js";
 import { tooltip } from "./util/tooltip.js";
 import missionType from "./util/enum/missionType.js";
@@ -1498,8 +1499,6 @@ class OGInfinity {
     this.json.selectedLifeforms = this.json.selectedLifeforms || {};
     this.json.lifeformBonus = this.json.lifeformBonus || {};
     this.json.lifeformPlanetBonus = this.json.lifeformPlanetBonus || {};
-    this.gameLang = document.querySelector('meta[name="ogame-language"]').getAttribute("content");
-    this.playerLang = document.cookie.match(/oglocale=([a-z]+)/)?.[1] || this.gameLang;
     this.isLoading = false;
     this.autoQueue = new AutoQueue();
   }
@@ -1511,8 +1510,8 @@ class OGInfinity {
     this.updateEmpireData(forceEmpire);
     if (this.json.needLifeformUpdate[this.current.id] && !this.current.isMoon) this.updateLifeform();
 
-    if (UNIVERSVIEW_LANGS.includes(this.gameLang)) {
-      this.univerviewLang = this.gameLang;
+    if (UNIVERSVIEW_LANGS.includes(OgamePageData.gameLang)) {
+      this.univerviewLang = OgamePageData.gameLang;
     } else {
       this.univerviewLang = "en";
     }
@@ -1621,7 +1620,7 @@ class OGInfinity {
             this.welcome();
           });
       } else {
-        window.location.href = `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=ingame&component=fleetdispatch`;
+        window.location.href = "?page=ingame&component=fleetdispatch";
       }
     }
     this.markedPlayers = this.getMarkedPlayers(this.json.markers);
@@ -3079,7 +3078,7 @@ class OGInfinity {
     const timeSinceServerTimeStamp =
       document.querySelector("[name='ogame-timestamp']").content - this.json?.serverSettingsTimeStamp;
     if (timeSinceServerTimeStamp < 24 * 3600 && !force) return;
-    let settingsUrl = `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/api/serverData.xml`;
+    let settingsUrl = `https://s${this.universe}-${OgamePageData.gameLang}.ogame.gameforge.com/api/serverData.xml`;
     return fetch(settingsUrl)
       .then((rep) => rep.text())
       .then((str) => new window.DOMParser().parseFromString(str, "text/xml"))
@@ -3231,14 +3230,18 @@ class OGInfinity {
     if (tempbar) {
       tempbar.appendChild(
         createDOM("li").appendChild(
-          createDOM("a", { href: `https://board.${this.gameLang}.ogame.gameforge.com/`, target: "_blank" }, "Board")
+          createDOM(
+            "a",
+            { href: `https://board.${OgamePageData.gameLang}.ogame.gameforge.com/`, target: "_blank" },
+            "Board"
+          )
         ).parentElement
       );
       tempbar.appendChild(
         createDOM("li").appendChild(
           createDOM(
             "a",
-            { href: `https://proxyforgame.com/${this.gameLang}/ogame/calc/flight.php`, target: "_blank" },
+            { href: `https://proxyforgame.com/${OgamePageData.gameLang}/ogame/calc/flight.php`, target: "_blank" },
             "Flight"
           )
         ).parentElement
@@ -3277,17 +3280,21 @@ class OGInfinity {
     const bar = document.querySelector("#headerBarLinks");
     bar.append(
       DOM.createDOM("span").appendChild(
-        DOM.createDOM("a", { href: `https://board.${this.gameLang}.ogame.gameforge.com/`, target: "_blank" }, "Board")
+        DOM.createDOM(
+          "a",
+          { href: `https://board.${OgamePageData.gameLang}.ogame.gameforge.com/`, target: "_blank" },
+          "Board"
+        )
       ).parentElement,
       DOM.createDOM("span").appendChild(
         DOM.createDOM(
           "a",
-          { href: `https://proxyforgame.com/${this.playerLang}/ogame/calc/flight.php`, target: "_blank" },
+          { href: `https://proxyforgame.com/${OgamePageData.playerLang}/ogame/calc/flight.php`, target: "_blank" },
           "Flight"
         )
       ).parentElement,
       DOM.createDOM("span").appendChild(
-        DOM.createDOM("a", { href: `${getOption("simulator")}${this.playerLang}`, target: "_blank" }, "Sim")
+        DOM.createDOM("a", { href: `${getOption("simulator")}${OgamePageData.playerLang}`, target: "_blank" }, "Sim")
       ).parentElement,
       DOM.createDOM("span").appendChild(
         DOM.createDOM(
@@ -3923,7 +3930,7 @@ class OGInfinity {
     pageContextRequest("ptre", "galaxy", data.changes, data.ptreKey, data.serverTime)
       .then((value) => {
         if (Object.keys(value.response).length > 0) {
-          ptreService.updateGalaxy(this.gameLang, this.universe, value.response);
+          ptreService.updateGalaxy(OgamePageData.gameLang, this.universe, value.response);
         }
       })
       .finally(() => "nothing");
@@ -3947,7 +3954,7 @@ class OGInfinity {
       }
     }
 
-    ptreService.importPlayerActivity(this.gameLang, this.universe, ptreJSON).then((result) => {
+    ptreService.importPlayerActivity(OgamePageData.gameLang, this.universe, ptreJSON).then((result) => {
       if (result.code == 1) {
         document
           .querySelectorAll(`.ogl-stalkPlanets [data-coords^="${systemCoords[0]}:${systemCoords[1]}:"]`)
@@ -4162,11 +4169,11 @@ class OGInfinity {
         "Shortcuts with"
       )
     );
-    if (!this.commander && "fr".indexOf(this.gameLang) == -1) {
+    if (!this.commander && "fr".indexOf(OgamePageData.gameLang) == -1) {
       ctrl.style.top = "272px";
     } else if (!this.commander) {
       ctrl.style.top = "240px";
-    } else if ("fr".indexOf(this.gameLang) == -1) {
+    } else if ("fr".indexOf(OgamePageData.gameLang) == -1) {
       ctrl.style.top = "244px";
     }
     let keyHelp = container.appendChild(createDOM("div", { class: "ogk-keyhelp" }));
@@ -4354,18 +4361,6 @@ class OGInfinity {
     setTimeout(() => {
       this.uvlinks();
     }, 100);
-  }
-
-  warningCommander() {
-    let content = this.createDOM(
-      "div",
-      {
-        class: "ogl-warning-dialog overmark",
-        style: "padding: 25px",
-      },
-      `<div class="premium">\n      <div class="officers100  commander">\n            <a href="https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=premium&openDetail=2" class="detail_button">\n              <span class="ecke">\n                  <span class="level">\n                      <img src="https://gf3.geo.gfsrv.net/cdnbc/aa2ad16d1e00956f7dc8af8be3ca52.gif" width="12" height="11">\n                  </span>\n              </span>\n          </a>\n      </div>\n    </div>\n    The commander officier is required for these features...`
-    );
-    this.popup(null, content);
   }
 
   sideOptions() {
@@ -5075,7 +5070,14 @@ class OGInfinity {
 
     let cleanPlayerName = encodeURIComponent(player.name);
     ptreService
-      .getPlayerInfos(this.gameLang, this.universe, this.json.options.ptreTK, cleanPlayerName, player.id, frame)
+      .getPlayerInfos(
+        OgamePageData.gameLang,
+        this.universe,
+        this.json.options.ptreTK,
+        cleanPlayerName,
+        player.id,
+        frame
+      )
       .then((result) => {
         if (result.code == 1) {
           let arrData = result.activity_array.succes == 1 ? JSON.parse(result.activity_array.activity_array) : null;
@@ -5109,8 +5111,8 @@ class OGInfinity {
               "a",
               {
                 class: "ogl_button",
-                target: `https://ptre.chez.gg/?country=${this.gameLang}&univers=${this.universe}&player_id=${player.id}`,
-                href: `https://ptre.chez.gg/?country=${this.gameLang}&univers=${this.universe}&player_id=${player.id}`,
+                target: `https://ptre.chez.gg/?country=${OgamePageData.gameLang}&univers=${this.universe}&player_id=${player.id}`,
+                href: `https://ptre.chez.gg/?country=${OgamePageData.gameLang}&univers=${this.universe}&player_id=${player.id}`,
               },
               this.getTranslatedText(154)
             )
@@ -5251,7 +5253,7 @@ class OGInfinity {
   }
 
   fetchAndConvertRC(messageId) {
-    const url = `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=messages&messageId=${messageId}&tabid=21&ajax=1`;
+    const url = `https://s${this.universe}-${OgamePageData.gameLang}.ogame.gameforge.com/game/index.php?page=messages&messageId=${messageId}&tabid=21&ajax=1`;
     return fetch(url)
       .then((rep) => rep.text())
       .then((str) => {
@@ -6320,7 +6322,7 @@ class OGInfinity {
   }
 
   generatePTRELink(playerid) {
-    return `https://ptre.chez.gg/?country=${this.gameLang}&univers=${this.universe}&player_id=${playerid}`;
+    return `https://ptre.chez.gg/?country=${OgamePageData.gameLang}&univers=${this.universe}&player_id=${playerid}`;
   }
 
   generateMMORPGLink(playerid) {
@@ -6353,12 +6355,12 @@ class OGInfinity {
       "hu",
       "jp",
       "ba",
-    ].indexOf(this.gameLang);
+    ].indexOf(OgamePageData.gameLang);
     return `https://www.mmorpg-stat.eu/0_fiche_joueur.php?pays=${lang}&ftr=${playerid}.dat&univers=_${this.universe}`;
   }
 
   generateHiscoreLink(playerid) {
-    return `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=highscore&searchRelId=${playerid}`;
+    return `https://s${this.universe}-${OgamePageData.gameLang}.ogame.gameforge.com/game/index.php?page=highscore&searchRelId=${playerid}`;
   }
 
   getPlayerStatus(status, noob) {
@@ -6382,7 +6384,7 @@ class OGInfinity {
       let name = `<span>${player.name}</span> <span class="${this.getPlayerStatus(
         player.status
       )}"></span>\n                  <a target="_self"\n                    href="https://s${this.universe}-${
-        this.gameLang
+        OgamePageData.gameLang
       }.ogame.gameforge.com/game/index.php?page=highscore&searchRelId=${
         player.id
       }"\n                    class="ogl-ranking">#${player.points.position || "b"}\n                  </a>`;
@@ -9149,7 +9151,7 @@ class OGInfinity {
       const recycler = this.calcNeededShips({ fret: 209, resources: totalResources });
       const planetId = this.current.isMoon ? OGIData.empire[this.current.index].moonID : this.current.id;
       const shipyardURL =
-        `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=ingame` +
+        `https://s${this.universe}-${OgamePageData.gameLang}.ogame.gameforge.com/game/index.php?page=ingame` +
         `&component=shipyard&cp=${planetId}`;
       const neededShipsDiv = DOM.createDOM("div", { class: "noShips" });
       neededShipsDiv.appendChild(DOM.createDOM("div", { class: "ogl-res-transport" })).append(
@@ -11230,7 +11232,7 @@ class OGInfinity {
       abortController.abort();
     };
     return fetch(
-      `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=ingame&component=lfbonuses`,
+      `https://s${this.universe}-${OgamePageData.gameLang}.ogame.gameforge.com/game/index.php?page=ingame&component=lfbonuses`,
       { signal: abortController.signal }
     )
       .then((rep) => rep.text())
@@ -12464,7 +12466,7 @@ class OGInfinity {
     if (this.tchat) {
       ogame.chat.loadChatLogWithPlayer(Number(id));
     } else {
-      document.location = `https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=chat&playerId=${id}`;
+      document.location = `https://s${this.universe}-${OgamePageData.gameLang}.ogame.gameforge.com/game/index.php?page=chat&playerId=${id}`;
     }
   }
 
@@ -12744,29 +12746,6 @@ class OGInfinity {
     }
   }
 
-  deleteMSg(msgId) {
-    let requestData = new FormData();
-    let tokenNow = token ?? document.querySelector("#fleetsgenericpage > ul > input[type=hidden]")?.value;
-    requestData.append("messageId", msgId);
-    requestData.append("action", 103);
-    requestData.append("token", tokenNow);
-    requestData.append("ajax", 1);
-    return fetch(`https://s${this.universe}-${this.gameLang}.ogame.gameforge.com/game/index.php?page=messages`, {
-      method: "POST",
-      body: requestData,
-    })
-      .then((response) => response.json())
-      .then((responseData) => {
-        //console.log(responseData);
-        token ? (token = responseData.newAjaxToken) : null;
-        return responseData.newAjaxToken;
-      })
-      .catch((e) => {
-        console.error("Unable to delete message:", e.message);
-        return tokenNow;
-      });
-  }
-
   highlightTarget() {
     if (this.page != "galaxy") return;
     let coords;
@@ -12872,7 +12851,7 @@ class OGInfinity {
       return;
     }
     let syncRequest = await fetch(
-      `https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-full`,
+      `https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${OgamePageData.gameLang}-full`,
       { priority: "high", method: "GET" }
     ).catch(() => {
       return;
@@ -12945,12 +12924,15 @@ class OGInfinity {
         data: LZString.compressToUTF16(JSON.stringify(mainSyncJsonObj)),
       };
 
-      fetch(`https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${this.gameLang}-full`, {
-        priority: "low",
-        method: "POST",
-        headers: pantryHeaders,
-        body: JSON.stringify(finalJson),
-      })
+      fetch(
+        `https://getpantry.cloud/apiv1/pantry/${pantryKey}/basket/${this.universe}-${OgamePageData.gameLang}-full`,
+        {
+          priority: "low",
+          method: "POST",
+          headers: pantryHeaders,
+          body: JSON.stringify(finalJson),
+        }
+      )
         .then(async (response) => {
           document.getElementById("ogi-pantry-sync").remove();
 
@@ -14407,7 +14389,7 @@ class OGInfinity {
     });
     exportBtn.addEventListener("click", () => {
       const data = Object.assign({}, this.json);
-      download(data, `oginfinity-${this.gameLang}-${this.universe}.data`);
+      download(data, `oginfinity-${OgamePageData.gameLang}-${this.universe}.data`);
     });
     let resetBtn = dataBtns.appendChild(
       createDOM("button", { class: "btn_blue ogl-btn_red" }, this.getTranslatedText(26))

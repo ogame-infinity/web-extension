@@ -1,3 +1,5 @@
+import OgamePageData from "./OgamePageData.js";
+
 const translation = Object.freeze({
   tech: {
     1: {
@@ -2016,7 +2018,7 @@ const translation = Object.freeze({
   },
 });
 
-const language = document.cookie.match(/oglocale=([a-z]+)/)?.[1] || "en";
+const language = OgamePageData.playerLang;
 let currentLanguage = ["ar", "mx"].includes(language) ? "es" : language;
 currentLanguage = ["de", "en", "es", "fr", "tr", "br"].includes(currentLanguage) ? currentLanguage : "en";
 
