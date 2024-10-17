@@ -161,7 +161,7 @@ export class SpyReport {
     }
 
     // Date
-    const timestamp = message.querySelector(".rawMessageData").getAttribute("data-raw-datetime");
+    const timestamp = message.querySelector(".rawMessageData").getAttribute("data-raw-timestamp");
     this._cleanDate = new Date();
     this._cleanDate.setTime(timestamp * 1000);
     this._deltaDate = Date.now() - this._cleanDate;
