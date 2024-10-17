@@ -4180,6 +4180,10 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
   padding: 5px;
 }
 
+#planetbarcomponent #rechts .smaller a.moonlink .planetBarSpaceObjectContainer {
+  height: auto !important;
+}
+
 .planetBarSpaceObjectHighlightContainer {
   display:none;
 }
