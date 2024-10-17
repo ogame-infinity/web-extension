@@ -833,7 +833,7 @@ class SpyMessagesAnalyzer {
       );
 
       const type = parseInt(spyFromUrl.get("type"));
-      const timestamp = dataRaw.getAttribute("data-raw-datetime");
+      const timestamp = dataRaw.getAttribute("data-raw-timestamp");
       ptreJSON[id] = {};
       ptreJSON[id].player_id = playerID;
       ptreJSON[id].teamkey = OGIData.options.ptreTK;
