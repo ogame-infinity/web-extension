@@ -3,7 +3,7 @@
 import OgamePageData from "./OgamePageData.js";
 
 export function toFormattedNumber(value, precision = null, units = false) {
-  const commaSeparator = ["en", "ro", "zh"];
+  const commaSeparator = ["us", "en", "ro", "zh"];
   const locale = commaSeparator.includes(OgamePageData.playerLang) ? "en-US" : "de-DE";
 
   if (isNaN(value) || value === undefined || value == null) return undefined;
