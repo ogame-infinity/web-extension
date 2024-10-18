@@ -2493,6 +2493,10 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link{
   left: 0 !important;
 }
 
+#pageContent #info {
+  left: -75px !important;
+}
+
 .ogl-spyTable {
   border-spacing: 0 1px;
   font-size: 11px;
