@@ -13698,9 +13698,9 @@ class OGInfinity {
                 document.createTextNode(` ${countDiv.textContent.trim()}`)
               );
             }
-            let mail = position.querySelector(".sendMail");
+            const mail = position.querySelector(".sendmsg_content > a");
             if (mail) {
-              let id = mail.getAttribute("data-playerid");
+              const id = mail.getAttribute('rel').match(/[0-9]+$/)[0]
               dataHelper.getPlayer(id).then((p) => {
                 let statusClass = this.getPlayerStatus(p.status);
                 if (playerDiv.getAttribute("class").includes("status_abbr_honorableTarget")) {
