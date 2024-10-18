@@ -156,6 +156,9 @@ export function stalk(sender, player, delay = undefined) {
 
       OGIData.searchHistory = searchHistory;
 
+      keepTooltip = true;
+      OGIData.keepTooltip = keepTooltip;
+
       if (page !== "galaxy") {
         let coords = document
           .querySelector(".ogl-tooltip .ogl-stalkPlanets a.ogl-main")
@@ -163,10 +166,8 @@ export function stalk(sender, player, delay = undefined) {
           .split(":");
 
         location.href = generateGalaxyLink(coords, player.id);
+        return;
       }
-
-      keepTooltip = true;
-      OGIData.keepTooltip = keepTooltip;
 
       let active = document.querySelectorAll(".ogl-tooltip .ogl-stalkPlanets a.ogl-active");
       active = active[active.length - 1];
