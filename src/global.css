@@ -331,12 +331,13 @@ input[type="password"]::selection {
 
 #logoLink {
   width: 200px;
-  height: 75px;
-  background: #00000060;
+  height: 70px;
+  background: rgba(0, 0, 0, 0.44);
   z-index: 123;
-  position: relative;
-  border-radius: 49px;
-  left: -7px;
+  position: absolute;
+  border-radius: 50px;
+  left: 68px;
+  top: 44px;
 }
 
 .ogk-logo {
@@ -1398,7 +1399,7 @@ input[type="file"] {
 #pageReloader {
   background: rgba(0, 0, 0, 0.44);
   border-radius: 50px;
-  left: -10px;
+  left: -7px;
   top: 45px;
   width: 200px;
 }
@@ -2494,7 +2495,8 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link{
 }
 
 #pageContent #info {
-  left: -75px !important;
+  left: -75px;
+  top: 1px;
 }
 
 .ogl-spyTable {
