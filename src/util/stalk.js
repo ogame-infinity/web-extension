@@ -499,8 +499,8 @@ export function side(playerId) {
             next = sideStalk.querySelectorAll(".ogl-stalkPlanets a")[0];
           }
           let splits = next.getAttribute("data-coords").split(":");
-          galaxy = document.getElementById("#galaxy_input").value = splits[0];
-          system = document.getElementById("#system_input").value = splits[1];
+          galaxy = document.getElementById("galaxy_input").value = splits[0];
+          system = document.getElementById("system_input").value = splits[1];
           submitForm();
         });
       watchlistBtn &&
