@@ -112,18 +112,18 @@ function generateGalaxyLink(coords, playerId = undefined) {
 
 export function stalk(sender, player, delay = undefined) {
   let finalPlayer;
-  const render = (player) => {
-    finalPlayer = player;
+  const render = (p) => {
+    finalPlayer = p;
     const content = createDOM("div");
     content.replaceChildren(
-      createDOM("h1", { class: `${Player.status(player.status)}` }, `${player.name}`).appendChild(
+      createDOM("h1", { class: `${Player.status(p.status)}` }, `${p.name}`).appendChild(
         createDOM(
           "a",
           {
-            href: `${generateHighScoreLink(player.id) || ""}`,
+            href: `${generateHighScoreLink(p.id) || ""}`,
             class: "ogl-ranking",
           },
-          ` #${player.points.position || "b"}`
+          ` #${p.points.position || "b"}`
         )
       ).parentElement,
       createDOM("hr", { style: "margin-bottom: 8px" })
@@ -512,12 +512,12 @@ export function side(playerId) {
             .slice()
             .reverse()
             .forEach((id) => {
-              player.get(id).then((player) => {
+              player.get(id).then((p) => {
                 let playerDiv = sideStalk.appendChild(createDOM("div", { class: "ogl-player" }));
-                playerDiv.appendChild(createDOM("span", { class: player.status(player.status) }, player.name));
-                playerDiv.appendChild(createDOM("span", {}, "#" + player.points.position));
+                playerDiv.appendChild(createDOM("span", { class: player.status(p.status) }, p.name));
+                playerDiv.appendChild(createDOM("span", {}, "#" + p.points.position));
                 playerDiv.addEventListener("click", () => {
-                  side(player.id);
+                  side(p.id);
                 });
               });
             });
