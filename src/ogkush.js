@@ -3870,7 +3870,7 @@ class OGInfinity {
         if (
           this.json.options.ptreTK &&
           playerId > -1 &&
-          (this.json.sideStalk.indexOf(playerId) > -1 ||
+          (this.json.sideStalk.indexOf(parseInt(playerId)) > -1 ||
             this.markedPlayers.indexOf(playerId) > -1 ||
             (this.json.searchHistory.length > 0 &&
               playerId == this.json.searchHistory[this.json.searchHistory.length - 1].id))
@@ -12554,129 +12554,7 @@ class OGInfinity {
   }
 
   sideStalk(playerid) {
-    if (playerid) {
-      this.json.sideStalk.forEach((e, i, o) => {
-        if (e == playerid) o.splice(i, 1);
-      });
-      this.json.sideStalk.push(playerid);
-      if (this.json.sideStalk.length > 20) {
-        this.json.sideStalk.shift();
-      }
-      this.saveData();
-    }
-    let last = this.json.sideStalk[this.json.sideStalk.length - 1];
-    if (last) {
-      playerid = last;
-      let sideStalk = document.querySelector(".ogl-sideStalk");
-      if (sideStalk) {
-        sideStalk.remove();
-      }
-      sideStalk = document.querySelector("#links").appendChild(createDOM("div", { class: "ogl-sideStalk" }));
-      let actBtn, watchlistBtn, ptreBtn;
-      if (!this.json.options.sideStalkVisible) {
-        sideStalk.classList.add("ogi-hidden");
-        sideStalk.addEventListener("click", () => {
-          this.json.options.sideStalkVisible = true;
-          this.saveData();
-          this.sideStalk();
-        });
-      } else {
-        watchlistBtn = sideStalk.appendChild(
-          createDOM("a", { class: "ogl-text-btn material-icons", title: "History" }, "history")
-        );
-        actBtn = sideStalk.appendChild(createDOM("a", { class: "ogl-text-btn material-icons", title: "" }, "warning"));
-        if (this.json.options.ptreTK) {
-          ptreBtn = sideStalk.appendChild(
-            createDOM("a", { class: "ogl-text-btn ogl-ptre-acti tooltip", title: "Display PTRE data" }, "PTRE")
-          );
-        }
-        let closeBtn = sideStalk.appendChild(
-          createDOM(
-            "span",
-            { class: "ogl-text-btn material-icons ogi-sideStalk-minBtn", title: "Minimize" },
-            "close_fullscreen"
-          )
-        );
-        closeBtn.addEventListener("click", () => {
-          this.json.options.sideStalkVisible = false;
-          this.saveData();
-          this.sideStalk();
-        });
-      }
-      dataHelper.getPlayer(playerid).then((player) => {
-        sideStalk.appendChild(
-          createDOM(
-            "div",
-            { style: "cursor: pointer", class: "ogi-title " + this.getPlayerStatus(player.status) },
-            player.name
-          )
-        );
-        sideStalk.appendChild(createDOM("hr"));
-        let container = sideStalk.appendChild(createDOM("div", { class: "ogl-stalkPlanets", "player-id": player.id }));
-        let planets = this.updateStalk(player.planets);
-        planets.forEach((dom) => container.appendChild(dom));
-
-        this.highlightTarget();
-        let index = 0;
-        let first = true;
-        actBtn &&
-          actBtn.addEventListener("click", () => {
-            if (this.page != "galaxy") {
-              let coords = document
-                .querySelector(".ogl-stalkPlanets a.ogl-main")
-                .getAttribute("data-coords")
-                .split(":");
-              location.href = `?page=ingame&component=galaxy&galaxy=${coords[0]}&system=${coords[1]}&position=${coords[2]}`;
-            }
-            if ($("#galaxyLoading").is(":visible")) return;
-            let active = sideStalk.querySelectorAll("a.ogl-active");
-            let next = active.length > 0 ? active[active.length - 1].nextElementSibling : null;
-            if (!next || !next.getAttribute("data-coords")) {
-              next = sideStalk.querySelectorAll(".ogl-stalkPlanets a")[0];
-            }
-            let splits = next.getAttribute("data-coords").split(":");
-            galaxy = $("#galaxy_input").val(splits[0]);
-            system = $("#system_input").val(splits[1]);
-            submitForm();
-          });
-        watchlistBtn &&
-          watchlistBtn.addEventListener("click", () => {
-            sideStalk.replaceChildren();
-            sideStalk.appendChild(
-              createDOM("div", { class: "title" }, "Historic " + this.json.sideStalk.length + "/20")
-            );
-            sideStalk.appendChild(createDOM("hr"));
-            this.json.sideStalk
-              .slice()
-              .reverse()
-              .forEach((id) => {
-                dataHelper.getPlayer(id).then((player) => {
-                  let playerDiv = sideStalk.appendChild(createDOM("div", { class: "ogl-player" }));
-                  playerDiv.appendChild(createDOM("span", { class: this.getPlayerStatus(player.status) }, player.name));
-                  playerDiv.appendChild(createDOM("span", {}, "#" + player.points.position));
-                  playerDiv.addEventListener("click", () => {
-                    this.sideStalk(player.id);
-                  });
-                });
-              });
-          });
-
-        if (ptreBtn) {
-          ptreBtn.addEventListener("click", () => {
-            this.loading();
-            let inter = setInterval(() => {
-              if (!this.isLoading) {
-                clearInterval(inter);
-                this.ptreAction(null, player);
-              }
-            }, 20);
-          });
-        }
-        container.appendChild(
-          createDOM("div", { class: "ogl-right ogl-date" }, this.timeSince(new Date(player.lastUpdate)))
-        );
-      });
-    }
+    return stalkUtil.side(playerid);
   }
 
   checkDebris() {
