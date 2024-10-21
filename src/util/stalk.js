@@ -528,10 +528,8 @@ export function side(playerId) {
         ptreBtn.addEventListener("click", () => {
           loading();
           let inter = setInterval(() => {
-            if (!this.isLoading) {
-              clearInterval(inter);
-              action(null, p);
-            }
+            clearInterval(inter);
+            action(null, p);
           }, 20);
         });
       }
