@@ -3908,8 +3908,8 @@ class OGInfinity {
           this.activities[coords] = this.getActivity(row);
           changes.push({
             id: sided[0].parentElement.getAttribute("player-id"),
-            moon: moonId > -1 ? parseInt(moonId) : false,
-            moonId,
+            moon: false,
+            moonId: undefined,
             coords,
             deleted: true,
           });
