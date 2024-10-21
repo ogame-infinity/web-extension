@@ -3871,6 +3871,7 @@ class OGInfinity {
           this.json.options.ptreTK &&
           playerId > -1 &&
           (this.json.sideStalk.indexOf(parseInt(playerId)) > -1 ||
+          this.json.sideStalk.indexOf(playerId) > -1 ||
             this.markedPlayers.indexOf(playerId) > -1 ||
             (this.json.searchHistory.length > 0 &&
               playerId == this.json.searchHistory[this.json.searchHistory.length - 1].id))
@@ -12672,8 +12673,9 @@ class OGInfinity {
 
     if (markerList) {
       Object.keys(markerList).forEach(function (key, index) {
-        if (playerList.indexOf(markerList[key].id) == -1) {
-          playerList.push(markerList[key].id);
+        const id = parseInt(markerList[key].id);
+        if (playerList.indexOf(id) == -1) {
+          playerList.push(id);
         }
       });
       return playerList;

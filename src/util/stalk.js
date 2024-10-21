@@ -421,6 +421,8 @@ export function update(planets) {
 export function side(playerId) {
   const sideStalk = OGIData.sideStalk;
   if (playerId) {
+    playerId = parseInt(playerId);
+
     sideStalk.forEach((e, i, o) => {
       if (e === playerId) o.splice(i, 1);
     });

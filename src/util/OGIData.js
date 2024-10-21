@@ -102,6 +102,8 @@ class OGIData {
     return this._json.sideStalk;
   }
   set sideStalk(sideStalk) {
+    sideStalk = sideStalk.map((id) => parseInt(id));
+
     this._json.sideStalk = sideStalk;
 
     this.#save();
