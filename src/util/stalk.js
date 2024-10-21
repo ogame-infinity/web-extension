@@ -131,13 +131,13 @@ export function stalk(sender, player, delay = undefined) {
     );
     const actions = content.appendChild(createDOM("div", { class: "ogi-actions" }));
     actions.replaceChildren(
-      createDOM("a", { href: `${generateIgnoreLink(player.id)}`, class: "icon icon_against" }),
-      createDOM("a", { href: `${generateBuddyLink(player.id)}`, class: "icon icon_user overlay buddyrequest" })
+      createDOM("a", { href: `${generateIgnoreLink(p.id)}`, class: "icon icon_against" }),
+      createDOM("a", { href: `${generateBuddyLink(p.id)}`, class: "icon icon_user overlay buddyrequest" })
     );
     initBuddyRequestForm();
     const msgBtn = actions.appendChild(createDOM("a", { class: "icon icon_chat" }));
     msgBtn.addEventListener("click", () => {
-      sendMessage(player.id);
+      sendMessage(p.id);
     });
     const actBtn = actions.appendChild(createDOM("a", { style: "margin-left: 10px", class: "ogl-text-btn" }, "⚠"));
     let first = false;
@@ -146,11 +146,11 @@ export function stalk(sender, player, delay = undefined) {
 
       // Add player to History in order to send his activities
       searchHistory.forEach((elem, i) => {
-        if (elem.id === player.id) {
+        if (elem.id === p.id) {
           searchHistory.splice(i, 1);
         }
       });
-      searchHistory.push(player);
+      searchHistory.push(p);
       if (searchHistory.length > 5) {
         searchHistory.shift();
       }
@@ -166,7 +166,7 @@ export function stalk(sender, player, delay = undefined) {
           .getAttribute("data-coords")
           .split(":");
 
-        location.href = generateGalaxyLink(coords, player.id);
+        location.href = generateGalaxyLink(coords, p.id);
         return;
       }
 
@@ -195,20 +195,20 @@ export function stalk(sender, player, delay = undefined) {
     content.appendChild(createDOM("hr"));
     const detailRank = content.appendChild(createDOM("div", { class: "ogl-detailRank" }));
     content.appendChild(createDOM("hr"));
-    const list = content.appendChild(createDOM("div", { class: "ogl-stalkPlanets", "player-id": player.id }));
+    const list = content.appendChild(createDOM("div", { class: "ogl-stalkPlanets", "player-id": p.id }));
     const count = content.appendChild(createDOM("div", { class: "ogl-fullGrid ogl-right" }));
     const sideStalk = content.appendChild(createDOM("a", { class: "ogl-pin" }));
-    if (OGIData.sideStalk.includes(player.id)) {
+    if (OGIData.sideStalk.includes(p.id)) {
       sideStalk.classList.add("ogl-active");
     }
-    sideStalk.addEventListener("click", () => side(player.id));
+    sideStalk.addEventListener("click", () => side(p.id));
     content.appendChild(
       createDOM(
         "a",
         {
           class: "ogl-mmorpgstats",
-          href: generateMMORPGLink(player.id),
-          target: generateMMORPGLink(player.id),
+          href: generateMMORPGLink(p.id),
+          target: generateMMORPGLink(p.id),
         },
         "P"
       )
@@ -218,7 +218,7 @@ export function stalk(sender, player, delay = undefined) {
       content.appendChild(
         createDOM(
           "a",
-          { class: "ogl-ptre", href: generatePTRELink(player.id), target: generatePTRELink(player.id) },
+          { class: "ogl-ptre", href: generatePTRELink(p.id), target: generatePTRELink(p.id) },
           "P"
         )
       );
@@ -231,49 +231,49 @@ export function stalk(sender, player, delay = undefined) {
     }
     page === "galaxy" ? (pos = { bottom: pos < 4, top: pos > 4 }) : (pos = {});
     tooltip(sender, content, false, pos, delay);
-    const planets = update(player.planets, player.id);
+    const planets = update(p.planets, p.id);
     planets.forEach((e) => {
       return list.appendChild(e);
     });
 
     highlightTarget();
 
-    date.textContent = dateTime.timeSince(new Date(player.lastUpdate));
-    count.textContent = `${player.planets.length} planets`;
+    date.textContent = dateTime.timeSince(new Date(p.lastUpdate));
+    count.textContent = `${p.planets.length} planets`;
     const detailRankDiv1 = createDOM("div");
     detailRankDiv1.replaceChildren(
       createDOM("div", { class: "ogl-totalIcon" }),
-      document.createTextNode(` ${toFormattedNumber(Number(player.points.score), null, true)} `),
+      document.createTextNode(` ${toFormattedNumber(Number(p.points.score), null, true)} `),
       createDOM("small", {}, "pts")
     );
     const detailRankDiv2 = createDOM("div");
     detailRankDiv2.replaceChildren(
       createDOM("div", { class: "ogl-ecoIcon" }),
-      document.createTextNode(` ${toFormattedNumber(Number(player.economy.score), null, true)} `),
+      document.createTextNode(` ${toFormattedNumber(Number(p.economy.score), null, true)} `),
       createDOM("small", {}, "pts")
     );
     const detailRankDiv3 = createDOM("div");
     detailRankDiv3.replaceChildren(
       createDOM("div", { class: "ogl-techIcon" }),
-      document.createTextNode(` ${toFormattedNumber(Number(player.research.score), null, true)} `),
+      document.createTextNode(` ${toFormattedNumber(Number(p.research.score), null, true)} `),
       createDOM("small", {}, "pts")
     );
     const detailRankDiv4 = createDOM("div");
     detailRankDiv4.replaceChildren(
       createDOM("div", { class: "ogl-fleetIcon" }),
-      document.createTextNode(` ${toFormattedNumber(Number(player.military.score), null, true)} `),
+      document.createTextNode(` ${toFormattedNumber(Number(p.military.score), null, true)} `),
       createDOM("small", {}, "pts")
     );
     const detailRankDiv5 = createDOM("div");
     detailRankDiv5.replaceChildren(
       createDOM("div", { class: "ogl-fleetIcon grey" }),
-      document.createTextNode(` ${toFormattedNumber(Number(player.def), null, true)} `),
+      document.createTextNode(` ${toFormattedNumber(Number(p.def), null, true)} `),
       createDOM("small", {}, "pts")
     );
     const detailRankDiv6 = createDOM("div");
     detailRankDiv6.replaceChildren(
       createDOM("div", { class: "ogl-fleetIcon orange" }),
-      document.createTextNode(` ${toFormattedNumber(Number(player.military.ships), null, true)} `),
+      document.createTextNode(` ${toFormattedNumber(Number(p.military.ships), null, true)} `),
       createDOM("small", {}, "ships")
     );
     detailRank.replaceChildren(
