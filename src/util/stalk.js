@@ -198,7 +198,7 @@ export function stalk(sender, player, delay = undefined) {
     const list = content.appendChild(createDOM("div", { class: "ogl-stalkPlanets", "player-id": p.id }));
     const count = content.appendChild(createDOM("div", { class: "ogl-fullGrid ogl-right" }));
     const sideStalk = content.appendChild(createDOM("a", { class: "ogl-pin" }));
-    if (OGIData.sideStalk.includes(p.id)) {
+    if (OGIData.sideStalk.includes(parseInt(p.id))) {
       sideStalk.classList.add("ogl-active");
     }
     sideStalk.addEventListener("click", () => side(p.id));
