@@ -12908,28 +12908,7 @@ class OGInfinity {
   }
 
   formatToUnits(value) {
-    let precision;
-    let neg = false;
-    if (value < 0) {
-      neg = true;
-      value *= -1;
-    }
-    if (value == 0) precision = 0;
-    else if (value < 1e3) precision = 0;
-    else if (value < 1e6) precision = 1;
-    else precision = 2;
-    if (isNaN(value)) return value;
-    const abbrev = [
-      "",
-      LocalizationStrings["unitKilo"],
-      LocalizationStrings["unitMega"],
-      LocalizationStrings["unitMilliard"],
-      "T",
-    ];
-    const unrangifiedOrder = Math.floor(Math.log10(Math.abs(value)) / 3);
-    const order = Math.max(0, Math.min(unrangifiedOrder, abbrev.length - 1));
-    const suffix = abbrev[order];
-    return (neg ? "-" : "") + (value / Math.pow(10, order * 3)).toFixed(precision) + suffix;
+    return Numbers.formatToUnits(value);
   }
 
   cleanValue(value) {

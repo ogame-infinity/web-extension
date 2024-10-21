@@ -8,6 +8,7 @@ import player from "./player.js";
 import OgamePageData from "./OgamePageData.js";
 import OGIData from "./OGIData.js";
 import { loading } from "./loading.js";
+import { action } from "./ptre.js";
 
 const rawUrl = new URL(window.location.href);
 const page = rawUrl.searchParams.get("component") || rawUrl.searchParams.get("page");
@@ -529,7 +530,7 @@ export function side(playerId) {
           let inter = setInterval(() => {
             if (!this.isLoading) {
               clearInterval(inter);
-              // this.ptreAction(null, p);
+              action(null, p);
             }
           }, 20);
         });
