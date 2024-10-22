@@ -2831,6 +2831,14 @@ class OGInfinity {
       document.querySelector("#civilships") &&
       fleetDispatcher.shipsOnPlanet.length != 0
     ) {
+      FleetDispatcher.prototype.updateEmptySystems = function (newData) {
+        this.emptySystems = newData || 0;
+      };
+
+      FleetDispatcher.prototype.updateInactiveSystems = function (newData) {
+        this.inactiveSystems = newData || 0;
+      };
+
       this.onFleetSent(() => {
         let pos = document.querySelector("#position").value;
         const coords =
