@@ -8,6 +8,7 @@ import player from "./player.js";
 import OgamePageData from "./OgamePageData.js";
 import OGIData from "./OGIData.js";
 import { loading } from "./loading.js";
+import { action } from "./ptre.js";
 
 const rawUrl = new URL(window.location.href);
 const page = rawUrl.searchParams.get("component") || rawUrl.searchParams.get("page");
@@ -112,31 +113,31 @@ function generateGalaxyLink(coords, playerId = undefined) {
 
 export function stalk(sender, player, delay = undefined) {
   let finalPlayer;
-  const render = (player) => {
-    finalPlayer = player;
+  const render = (p) => {
+    finalPlayer = p;
     const content = createDOM("div");
     content.replaceChildren(
-      createDOM("h1", { class: `${Player.status(player.status)}` }, `${player.name}`).appendChild(
+      createDOM("h1", { class: `${Player.status(p.status)}` }, `${p.name}`).appendChild(
         createDOM(
           "a",
           {
-            href: `${generateHighScoreLink(player.id) || ""}`,
+            href: `${generateHighScoreLink(p.id) || ""}`,
             class: "ogl-ranking",
           },
-          ` #${player.points.position || "b"}`
+          ` #${p.points.position || "b"}`
         )
       ).parentElement,
       createDOM("hr", { style: "margin-bottom: 8px" })
     );
     const actions = content.appendChild(createDOM("div", { class: "ogi-actions" }));
     actions.replaceChildren(
-      createDOM("a", { href: `${generateIgnoreLink(player.id)}`, class: "icon icon_against" }),
-      createDOM("a", { href: `${generateBuddyLink(player.id)}`, class: "icon icon_user overlay buddyrequest" })
+      createDOM("a", { href: `${generateIgnoreLink(p.id)}`, class: "icon icon_against" }),
+      createDOM("a", { href: `${generateBuddyLink(p.id)}`, class: "icon icon_user overlay buddyrequest" })
     );
     initBuddyRequestForm();
     const msgBtn = actions.appendChild(createDOM("a", { class: "icon icon_chat" }));
     msgBtn.addEventListener("click", () => {
-      sendMessage(player.id);
+      sendMessage(p.id);
     });
     const actBtn = actions.appendChild(createDOM("a", { style: "margin-left: 10px", class: "ogl-text-btn" }, "⚠"));
     let first = false;
@@ -145,11 +146,11 @@ export function stalk(sender, player, delay = undefined) {
 
       // Add player to History in order to send his activities
       searchHistory.forEach((elem, i) => {
-        if (elem.id === player.id) {
+        if (elem.id === p.id) {
           searchHistory.splice(i, 1);
         }
       });
-      searchHistory.push(player);
+      searchHistory.push(p);
       if (searchHistory.length > 5) {
         searchHistory.shift();
       }
@@ -165,7 +166,7 @@ export function stalk(sender, player, delay = undefined) {
           .getAttribute("data-coords")
           .split(":");
 
-        location.href = generateGalaxyLink(coords, player.id);
+        location.href = generateGalaxyLink(coords, p.id);
         return;
       }
 
@@ -194,20 +195,20 @@ export function stalk(sender, player, delay = undefined) {
     content.appendChild(createDOM("hr"));
     const detailRank = content.appendChild(createDOM("div", { class: "ogl-detailRank" }));
     content.appendChild(createDOM("hr"));
-    const list = content.appendChild(createDOM("div", { class: "ogl-stalkPlanets", "player-id": player.id }));
+    const list = content.appendChild(createDOM("div", { class: "ogl-stalkPlanets", "player-id": p.id }));
     const count = content.appendChild(createDOM("div", { class: "ogl-fullGrid ogl-right" }));
     const sideStalk = content.appendChild(createDOM("a", { class: "ogl-pin" }));
-    if (OGIData.sideStalk.includes(player.id)) {
+    if (OGIData.sideStalk.includes(parseInt(p.id))) {
       sideStalk.classList.add("ogl-active");
     }
-    sideStalk.addEventListener("click", () => side(player.id));
+    sideStalk.addEventListener("click", () => side(p.id));
     content.appendChild(
       createDOM(
         "a",
         {
           class: "ogl-mmorpgstats",
-          href: generateMMORPGLink(player.id),
-          target: generateMMORPGLink(player.id),
+          href: generateMMORPGLink(p.id),
+          target: generateMMORPGLink(p.id),
         },
         "P"
       )
@@ -217,7 +218,7 @@ export function stalk(sender, player, delay = undefined) {
       content.appendChild(
         createDOM(
           "a",
-          { class: "ogl-ptre", href: generatePTRELink(player.id), target: generatePTRELink(player.id) },
+          { class: "ogl-ptre", href: generatePTRELink(p.id), target: generatePTRELink(p.id) },
           "P"
         )
       );
@@ -230,49 +231,49 @@ export function stalk(sender, player, delay = undefined) {
     }
     page === "galaxy" ? (pos = { bottom: pos < 4, top: pos > 4 }) : (pos = {});
     tooltip(sender, content, false, pos, delay);
-    const planets = update(player.planets, player.id);
+    const planets = update(p.planets, p.id);
     planets.forEach((e) => {
       return list.appendChild(e);
     });
 
     highlightTarget();
 
-    date.textContent = dateTime.timeSince(new Date(player.lastUpdate));
-    count.textContent = `${player.planets.length} planets`;
+    date.textContent = dateTime.timeSince(new Date(p.lastUpdate));
+    count.textContent = `${p.planets.length} planets`;
     const detailRankDiv1 = createDOM("div");
     detailRankDiv1.replaceChildren(
       createDOM("div", { class: "ogl-totalIcon" }),
-      document.createTextNode(` ${toFormattedNumber(Number(player.points.score), null, true)} `),
+      document.createTextNode(` ${toFormattedNumber(Number(p.points.score), null, true)} `),
       createDOM("small", {}, "pts")
     );
     const detailRankDiv2 = createDOM("div");
     detailRankDiv2.replaceChildren(
       createDOM("div", { class: "ogl-ecoIcon" }),
-      document.createTextNode(` ${toFormattedNumber(Number(player.economy.score), null, true)} `),
+      document.createTextNode(` ${toFormattedNumber(Number(p.economy.score), null, true)} `),
       createDOM("small", {}, "pts")
     );
     const detailRankDiv3 = createDOM("div");
     detailRankDiv3.replaceChildren(
       createDOM("div", { class: "ogl-techIcon" }),
-      document.createTextNode(` ${toFormattedNumber(Number(player.research.score), null, true)} `),
+      document.createTextNode(` ${toFormattedNumber(Number(p.research.score), null, true)} `),
       createDOM("small", {}, "pts")
     );
     const detailRankDiv4 = createDOM("div");
     detailRankDiv4.replaceChildren(
       createDOM("div", { class: "ogl-fleetIcon" }),
-      document.createTextNode(` ${toFormattedNumber(Number(player.military.score), null, true)} `),
+      document.createTextNode(` ${toFormattedNumber(Number(p.military.score), null, true)} `),
       createDOM("small", {}, "pts")
     );
     const detailRankDiv5 = createDOM("div");
     detailRankDiv5.replaceChildren(
       createDOM("div", { class: "ogl-fleetIcon grey" }),
-      document.createTextNode(` ${toFormattedNumber(Number(player.def), null, true)} `),
+      document.createTextNode(` ${toFormattedNumber(Number(p.def), null, true)} `),
       createDOM("small", {}, "pts")
     );
     const detailRankDiv6 = createDOM("div");
     detailRankDiv6.replaceChildren(
       createDOM("div", { class: "ogl-fleetIcon orange" }),
-      document.createTextNode(` ${toFormattedNumber(Number(player.military.ships), null, true)} `),
+      document.createTextNode(` ${toFormattedNumber(Number(p.military.ships), null, true)} `),
       createDOM("small", {}, "ships")
     );
     detailRank.replaceChildren(
@@ -418,8 +419,10 @@ export function update(planets) {
 }
 
 export function side(playerId) {
+  const sideStalk = OGIData.sideStalk;
   if (playerId) {
-    const sideStalk = OGIData.sideStalk;
+    playerId = parseInt(playerId);
+
     sideStalk.forEach((e, i, o) => {
       if (e === playerId) o.splice(i, 1);
     });
@@ -431,115 +434,110 @@ export function side(playerId) {
     }
 
     OGIData.sideStalk = sideStalk;
+  }
 
-    const last = sideStalk[sideStalk.length - 1];
-    if (last) {
-      playerId = last;
-      let sideStalk = document.querySelector(".ogl-sideStalk");
-      if (sideStalk) {
-        sideStalk.remove();
+  const last = sideStalk[sideStalk.length - 1];
+  if (last) {
+    playerId = last;
+    let sideStalk = document.querySelector(".ogl-sideStalk");
+    if (sideStalk) {
+      sideStalk.remove();
+    }
+    sideStalk = document.querySelector("#links").appendChild(createDOM("div", { class: "ogl-sideStalk" }));
+    let actBtn, watchlistBtn, ptreBtn;
+    const options = OGIData.options;
+    if (!options.sideStalkVisible) {
+      sideStalk.classList.add("ogi-hidden");
+      sideStalk.addEventListener("click", () => {
+        options.sideStalkVisible = true;
+        OGIData.options = options;
+        side();
+      });
+    } else {
+      watchlistBtn = sideStalk.appendChild(
+        createDOM("a", { class: "ogl-text-btn material-icons", title: "History" }, "history")
+      );
+      actBtn = sideStalk.appendChild(createDOM("a", { class: "ogl-text-btn material-icons", title: "" }, "warning"));
+      if (OGIData.options.ptreTK) {
+        ptreBtn = sideStalk.appendChild(
+          createDOM("a", { class: "ogl-text-btn ogl-ptre-acti tooltip", title: "Display PTRE data" }, "PTRE")
+        );
       }
-      sideStalk = document.querySelector("#links").appendChild(createDOM("div", { class: "ogl-sideStalk" }));
-      let actBtn, watchlistBtn, ptreBtn;
-      const options = OGIData.options;
-      if (!options.sideStalkVisible) {
-        sideStalk.classList.add("ogi-hidden");
-        sideStalk.addEventListener("click", () => {
-          options.sideStalkVisible = true;
-          OGIData.options = options;
-          side();
-        });
-      } else {
-        watchlistBtn = sideStalk.appendChild(
-          createDOM("a", { class: "ogl-text-btn material-icons", title: "History" }, "history")
-        );
-        actBtn = sideStalk.appendChild(createDOM("a", { class: "ogl-text-btn material-icons", title: "" }, "warning"));
-        if (OGIData.options.ptreTK) {
-          ptreBtn = sideStalk.appendChild(
-            createDOM("a", { class: "ogl-text-btn ogl-ptre-acti tooltip", title: "Display PTRE data" }, "PTRE")
-          );
-        }
-        const closeBtn = sideStalk.appendChild(
-          createDOM(
-            "span",
-            { class: "ogl-text-btn material-icons ogi-sideStalk-minBtn", title: "Minimize" },
-            "close_fullscreen"
-          )
-        );
-        closeBtn.addEventListener("click", () => {
-          const options = OGIData.options;
-          options.sideStalkVisible = false;
-          OGIData.options = options;
+      const closeBtn = sideStalk.appendChild(
+        createDOM(
+          "span",
+          { class: "ogl-text-btn material-icons ogi-sideStalk-minBtn", title: "Minimize" },
+          "close_fullscreen"
+        )
+      );
+      closeBtn.addEventListener("click", () => {
+        const options = OGIData.options;
+        options.sideStalkVisible = false;
+        OGIData.options = options;
 
-          side();
-        });
-      }
-      player.get(playerId).then((p) => {
-        sideStalk.appendChild(
-          createDOM("div", { style: "cursor: pointer", class: "ogi-title " + player.status(p.status) }, p.name)
-        );
-        sideStalk.appendChild(createDOM("hr"));
-        let container = sideStalk.appendChild(createDOM("div", { class: "ogl-stalkPlanets", "player-id": p.id }));
-        let planets = update(p.planets);
-        planets.forEach((dom) => container.appendChild(dom));
-
-        highlightTarget();
-
-        actBtn &&
-          actBtn.addEventListener("click", () => {
-            if (page !== "galaxy") {
-              let coords = document
-                .querySelector(".ogl-stalkPlanets a.ogl-main")
-                .getAttribute("data-coords")
-                .split(":");
-              location.href = `?page=ingame&component=galaxy&galaxy=${coords[0]}&system=${coords[1]}&position=${coords[2]}`;
-            }
-            if ($("#galaxyLoading").is(":visible")) return;
-            let active = sideStalk.querySelectorAll("a.ogl-active");
-            let next = active.length > 0 ? active[active.length - 1].nextElementSibling : null;
-            if (!next || !next.getAttribute("data-coords")) {
-              next = sideStalk.querySelectorAll(".ogl-stalkPlanets a")[0];
-            }
-            let splits = next.getAttribute("data-coords").split(":");
-            galaxy = document.getElementById("#galaxy_input").value = splits[0];
-            system = document.getElementById("#system_input").value = splits[1];
-            submitForm();
-          });
-        watchlistBtn &&
-          watchlistBtn.addEventListener("click", () => {
-            sideStalk.replaceChildren();
-            sideStalk.appendChild(createDOM("div", { class: "title" }, "Historic " + OGIData.sideStalk.length + "/20"));
-            sideStalk.appendChild(createDOM("hr"));
-            OGIData.sideStalk
-              .slice()
-              .reverse()
-              .forEach((id) => {
-                player.get(id).then((player) => {
-                  let playerDiv = sideStalk.appendChild(createDOM("div", { class: "ogl-player" }));
-                  playerDiv.appendChild(createDOM("span", { class: player.status(player.status) }, player.name));
-                  playerDiv.appendChild(createDOM("span", {}, "#" + player.points.position));
-                  playerDiv.addEventListener("click", () => {
-                    side(player.id);
-                  });
-                });
-              });
-          });
-
-        if (ptreBtn) {
-          ptreBtn.addEventListener("click", () => {
-            loading();
-            let inter = setInterval(() => {
-              if (!this.isLoading) {
-                clearInterval(inter);
-                // this.ptreAction(null, p);
-              }
-            }, 20);
-          });
-        }
-        container.appendChild(
-          createDOM("div", { class: "ogl-right ogl-date" }, dateTime.timeSince(new Date(p.lastUpdate)))
-        );
+        side();
       });
     }
+    player.get(playerId).then((p) => {
+      sideStalk.appendChild(
+        createDOM("div", { style: "cursor: pointer", class: "ogi-title " + player.status(p.status) }, p.name)
+      );
+      sideStalk.appendChild(createDOM("hr"));
+      let container = sideStalk.appendChild(createDOM("div", { class: "ogl-stalkPlanets", "player-id": p.id }));
+      let planets = update(p.planets);
+      planets.forEach((dom) => container.appendChild(dom));
+
+      highlightTarget();
+
+      actBtn &&
+        actBtn.addEventListener("click", () => {
+          if (page !== "galaxy") {
+            let coords = document.querySelector(".ogl-stalkPlanets a.ogl-main").getAttribute("data-coords").split(":");
+            location.href = `?page=ingame&component=galaxy&galaxy=${coords[0]}&system=${coords[1]}&position=${coords[2]}`;
+          }
+          if ($("#galaxyLoading").is(":visible")) return;
+          let active = sideStalk.querySelectorAll("a.ogl-active");
+          let next = active.length > 0 ? active[active.length - 1].nextElementSibling : null;
+          if (!next || !next.getAttribute("data-coords")) {
+            next = sideStalk.querySelectorAll(".ogl-stalkPlanets a")[0];
+          }
+          let splits = next.getAttribute("data-coords").split(":");
+          galaxy = document.getElementById("galaxy_input").value = splits[0];
+          system = document.getElementById("system_input").value = splits[1];
+          submitForm();
+        });
+      watchlistBtn &&
+        watchlistBtn.addEventListener("click", () => {
+          sideStalk.replaceChildren();
+          sideStalk.appendChild(createDOM("div", { class: "title" }, "Historic " + OGIData.sideStalk.length + "/20"));
+          sideStalk.appendChild(createDOM("hr"));
+          OGIData.sideStalk
+            .slice()
+            .reverse()
+            .forEach((id) => {
+              player.get(id).then((p) => {
+                let playerDiv = sideStalk.appendChild(createDOM("div", { class: "ogl-player" }));
+                playerDiv.appendChild(createDOM("span", { class: player.status(p.status) }, p.name));
+                playerDiv.appendChild(createDOM("span", {}, "#" + p.points.position));
+                playerDiv.addEventListener("click", () => {
+                  side(p.id);
+                });
+              });
+            });
+        });
+
+      if (ptreBtn) {
+        ptreBtn.addEventListener("click", () => {
+          loading();
+          let inter = setInterval(() => {
+            clearInterval(inter);
+            action(null, p);
+          }, 20);
+        });
+      }
+      container.appendChild(
+        createDOM("div", { class: "ogl-right ogl-date" }, dateTime.timeSince(new Date(p.lastUpdate)))
+      );
+    });
   }
 }
