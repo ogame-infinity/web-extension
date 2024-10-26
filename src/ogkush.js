@@ -1384,6 +1384,12 @@ class OGInfinity {
      6: autoexpedition (click expedition button/keyE or expedition button in galaxy)
      */
     this.planetList = document.querySelectorAll(".smallplanet");
+    const homePLanetCoords = this.planetList[0].querySelector(".planet-koords").textContent.slice(1, -1).split(':').map((e) => parseInt(e))
+    this.homePlanetCoords = {
+      galaxy: homePLanetCoords[0],
+      system: homePLanetCoords[1],
+      position: homePLanetCoords[2],
+    };
     this.isMobile = "ontouchstart" in document.documentElement;
     this.eventAction = this.isMobile ? "touchstart" : "mouseenter";
     this.universe = window.location.host.replace(/\D/g, "");
@@ -15755,10 +15761,10 @@ class OGInfinity {
         fleetDispatcher.resetShips();
         this.selectBestCargoShip(this.json.options.collect.ship);
         let inputs = document.querySelectorAll(".ogl-coords input");
-        inputs[0].value = this.json.options.collect.target.galaxy;
-        inputs[1].value = this.json.options.collect.target.system;
-        inputs[2].value = this.json.options.collect.target.position;
-        fleetDispatcher.targetPlanet = this.json.options.collect.target;
+        inputs[0].value = this.json.options.collect.target.galaxy || this.homePlanetCoords.galaxy;
+        inputs[1].value = this.json.options.collect.target.system || this.homePlanetCoords.system;
+        inputs[2].value = this.json.options.collect.target.position || this.homePlanetCoords.position;
+        fleetDispatcher.targetPlanet = this.json.options.collect.target || this.homePlanetCoords;
         this.planetList.forEach((planet) => {
           let targetCoords = planet.querySelector(".planet-koords").textContent.split(":");
           planet.querySelector(".planetlink").classList.remove("ogl-target");
