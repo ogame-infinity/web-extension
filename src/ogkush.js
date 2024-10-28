@@ -28,7 +28,7 @@ import { translate } from "./util/translate.js";
 import { fleetCost } from "./util/fleetCost.js";
 import * as loadingUtil from "./util/loading.js";
 import * as standardUnit from "./util/standardUnit.js";
-import planetType from "./util/enum/planetType";
+import planetType from "./util/enum/planetType.js";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 //const VERSION = "__VERSION__";
@@ -1387,17 +1387,20 @@ class OGInfinity {
     this.planetList = document.querySelectorAll(".smallplanet");
     document.querySelectorAll(".planet-koords").forEach((elem) => (elem.textContent = elem.textContent.slice(1, -1)));
 
-    const planetIds = [...this.planetList].map((planet) => parseInt(planet.id.split('-')[1]));
+    const planetIds = [...this.planetList].map((planet) => parseInt(planet.id.split("-")[1]));
     const mainPlanet = this.planetList[planetIds.indexOf(Math.min(...planetIds))];
 
-    const mainPlanetCoords = mainPlanet.querySelector(".planet-koords").textContent.split(':').map((e) => parseInt(e))
+    const mainPlanetCoords = mainPlanet
+      .querySelector(".planet-koords")
+      .textContent.split(":")
+      .map((e) => parseInt(e));
     this.homePlanetCoords = {
       galaxy: mainPlanetCoords[0],
       system: mainPlanetCoords[1],
       position: mainPlanetCoords[2],
-      type: planetType.planet
+      type: planetType.planet,
     };
-    
+
     this.isMobile = "ontouchstart" in document.documentElement;
     this.eventAction = this.isMobile ? "touchstart" : "mouseenter";
     this.universe = window.location.host.replace(/\D/g, "");
@@ -13721,7 +13724,7 @@ class OGInfinity {
             }
             const mail = position.querySelector(".sendmsg_content > a");
             if (mail) {
-              const id = mail.getAttribute('rel').match(/[0-9]+$/)[0]
+              const id = mail.getAttribute("rel").match(/[0-9]+$/)[0];
               dataHelper.getPlayer(id).then((p) => {
                 let statusClass = this.getPlayerStatus(p.status);
                 if (playerDiv.getAttribute("class").includes("status_abbr_honorableTarget")) {
