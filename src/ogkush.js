@@ -28,6 +28,7 @@ import { translate } from "./util/translate.js";
 import { fleetCost } from "./util/fleetCost.js";
 import * as loadingUtil from "./util/loading.js";
 import * as standardUnit from "./util/standardUnit.js";
+import planetType from "./util/enum/planetType.js";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 //const VERSION = "__VERSION__";
@@ -1384,23 +1385,38 @@ class OGInfinity {
      6: autoexpedition (click expedition button/keyE or expedition button in galaxy)
      */
     this.planetList = document.querySelectorAll(".smallplanet");
+    document.querySelectorAll(".planet-koords").forEach((elem) => (elem.textContent = elem.textContent.slice(1, -1)));
+
+    const planetIds = [...this.planetList].map((planet) => parseInt(planet.id.split("-")[1]));
+    const mainPlanet = this.planetList[planetIds.indexOf(Math.min(...planetIds))];
+
+    const mainPlanetCoords = mainPlanet
+      .querySelector(".planet-koords")
+      .textContent.split(":")
+      .map((e) => parseInt(e));
+    this.homePlanetCoords = {
+      galaxy: mainPlanetCoords[0],
+      system: mainPlanetCoords[1],
+      position: mainPlanetCoords[2],
+      type: planetType.planet,
+    };
+
     this.isMobile = "ontouchstart" in document.documentElement;
     this.eventAction = this.isMobile ? "touchstart" : "mouseenter";
     this.universe = window.location.host.replace(/\D/g, "");
-    this.geologist = document.querySelector(".geologist.on") ? true : false;
-    this.technocrat = document.querySelector(".technocrat.on") ? true : false;
-    this.admiral = document.querySelector(".admiral.on") ? true : false;
-    this.engineer = document.querySelector(".engineer.on") ? true : false;
-    this.allOfficers = document.querySelector("#officers.all") ? true : false;
+    this.geologist = !!document.querySelector(".geologist.on");
+    this.technocrat = !!document.querySelector(".technocrat.on");
+    this.admiral = !!document.querySelector(".admiral.on");
+    this.engineer = !!document.querySelector(".engineer.on");
+    this.allOfficers = !!document.querySelector("#officers.all");
     this.current = {};
     this.current.planet = (
       document.querySelector("#planetList .active") ?? document.querySelector("#planetList .planetlink")
     ).parentNode;
-    document.querySelectorAll(".planet-koords").forEach((elem) => (elem.textContent = elem.textContent.slice(1, -1)));
     this.current.id = parseInt(this.current.planet.id.split("-")[1]);
     this.current.coords = this.current.planet.querySelector(".planet-koords").textContent;
-    this.current.hasMoon = this.current.planet.querySelector(".moonlink") ? true : false;
-    this.current.isMoon = this.current.hasMoon && this.current.planet.querySelector(".moonlink.active") ? true : false;
+    this.current.hasMoon = !!this.current.planet.querySelector(".moonlink");
+    this.current.isMoon = !!(this.current.hasMoon && this.current.planet.querySelector(".moonlink.active"));
     this.markedPlayers = [];
   }
 
@@ -13708,7 +13724,7 @@ class OGInfinity {
             }
             const mail = position.querySelector(".sendmsg_content > a");
             if (mail) {
-              const id = mail.getAttribute('rel').match(/[0-9]+$/)[0]
+              const id = mail.getAttribute("rel").match(/[0-9]+$/)[0];
               dataHelper.getPlayer(id).then((p) => {
                 let statusClass = this.getPlayerStatus(p.status);
                 if (playerDiv.getAttribute("class").includes("status_abbr_honorableTarget")) {
@@ -15763,10 +15779,15 @@ class OGInfinity {
         fleetDispatcher.resetShips();
         this.selectBestCargoShip(this.json.options.collect.ship);
         let inputs = document.querySelectorAll(".ogl-coords input");
-        inputs[0].value = this.json.options.collect.target.galaxy;
-        inputs[1].value = this.json.options.collect.target.system;
-        inputs[2].value = this.json.options.collect.target.position;
-        fleetDispatcher.targetPlanet = this.json.options.collect.target;
+        inputs[0].value = this.json.options.collect.target.galaxy || this.homePlanetCoords.galaxy;
+        inputs[1].value = this.json.options.collect.target.system || this.homePlanetCoords.system;
+        inputs[2].value = this.json.options.collect.target.position || this.homePlanetCoords.position;
+        fleetDispatcher.targetPlanet = {
+          galaxy: inputs[0].value,
+          system: inputs[1].value,
+          position: inputs[2].value,
+          type: this.json.options.collect.target.type || this.homePlanetCoords.type,
+        };
         this.planetList.forEach((planet) => {
           let targetCoords = planet.querySelector(".planet-koords").textContent.split(":");
           planet.querySelector(".planetlink").classList.remove("ogl-target");
