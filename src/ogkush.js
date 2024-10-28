@@ -1395,6 +1395,7 @@ class OGInfinity {
       galaxy: mainPlanetCoords[0],
       system: mainPlanetCoords[1],
       position: mainPlanetCoords[2],
+      type: planetType.planet
     };
     
     this.isMobile = "ontouchstart" in document.documentElement;
@@ -15782,7 +15783,7 @@ class OGInfinity {
           galaxy: inputs[0].value,
           system: inputs[1].value,
           position: inputs[2].value,
-          type: planetType.planet,
+          type: this.json.options.collect.target.type || this.homePlanetCoords.type
         };
         this.planetList.forEach((planet) => {
           let targetCoords = planet.querySelector(".planet-koords").textContent.split(":");
