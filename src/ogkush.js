@@ -15783,7 +15783,7 @@ class OGInfinity {
           galaxy: inputs[0].value,
           system: inputs[1].value,
           position: inputs[2].value,
-          type: this.json.options.collect.target.type || this.homePlanetCoords.type
+          type: this.json.options.collect.target.type || this.homePlanetCoords.type,
         };
         this.planetList.forEach((planet) => {
           let targetCoords = planet.querySelector(".planet-koords").textContent.split(":");
