@@ -15777,7 +15777,11 @@ class OGInfinity {
         inputs[0].value = this.json.options.collect.target.galaxy || this.homePlanetCoords.galaxy;
         inputs[1].value = this.json.options.collect.target.system || this.homePlanetCoords.system;
         inputs[2].value = this.json.options.collect.target.position || this.homePlanetCoords.position;
-        fleetDispatcher.targetPlanet = this.json.options.collect.target || this.homePlanetCoords;
+        fleetDispatcher.targetPlanet = {
+          galaxy: inputs[0].value,
+          system: inputs[1].value,
+          position: inputs[2].value,
+        };
         this.planetList.forEach((planet) => {
           let targetCoords = planet.querySelector(".planet-koords").textContent.split(":");
           planet.querySelector(".planetlink").classList.remove("ogl-target");
