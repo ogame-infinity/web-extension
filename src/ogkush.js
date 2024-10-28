@@ -15782,7 +15782,7 @@ class OGInfinity {
           galaxy: inputs[0].value,
           system: inputs[1].value,
           position: inputs[2].value,
-          type: planetType.planet
+          type: planetType.planet,
         };
         this.planetList.forEach((planet) => {
           let targetCoords = planet.querySelector(".planet-koords").textContent.split(":");
