@@ -28,6 +28,7 @@ import { translate } from "./util/translate.js";
 import { fleetCost } from "./util/fleetCost.js";
 import * as loadingUtil from "./util/loading.js";
 import * as standardUnit from "./util/standardUnit.js";
+import planetType from "./util/enum/planetType";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 //const VERSION = "__VERSION__";
@@ -15781,6 +15782,7 @@ class OGInfinity {
           galaxy: inputs[0].value,
           system: inputs[1].value,
           position: inputs[2].value,
+          type: planetType.planet
         };
         this.planetList.forEach((planet) => {
           let targetCoords = planet.querySelector(".planet-koords").textContent.split(":");
