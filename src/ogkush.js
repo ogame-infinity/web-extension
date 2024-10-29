@@ -11571,7 +11571,7 @@ class OGInfinity {
       const itemDivs = html.querySelectorAll(".item_img");
       itemDivs.forEach((div) => {
         const style = div.getAttribute("style");
-        const id = style.substring(style.indexOf("images/") + 7, style.indexOf("-small"));
+        const id = style.substring(style.indexOf("images/") + 7, style.indexOf(".png"));
         const item = itemImageID[id];
         if (item) activeItems[item.resource] = item.bonus;
       });
