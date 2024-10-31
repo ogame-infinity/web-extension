@@ -802,11 +802,7 @@ class SpyMessagesAnalyzer {
       if (xhr?.responseJSON?.status !== "success") return;
       if (urlParams.get("action") !== "flagDeleted") return;
 
-      if (
-        !requestPayload
-          .getAll("messageIds[]")
-          .includes(report.id)
-      ) {
+      if (!requestPayload.getAll("messageIds[]").includes(report.id)) {
         return;
       }
 
