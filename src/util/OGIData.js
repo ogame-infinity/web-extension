@@ -102,7 +102,14 @@ class OGIData {
     return this._json.sideStalk;
   }
   set sideStalk(sideStalk) {
-    this._json.sideStalk = sideStalk;
+    const list = [];
+
+    sideStalk.forEach((id) => {
+      id = parseInt(id);
+      if (list.indexOf(id) === -1) list.push(parseInt(id));
+    });
+
+    this._json.sideStalk = list;
 
     this.#save();
   }
