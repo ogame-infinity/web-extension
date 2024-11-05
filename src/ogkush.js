@@ -4252,9 +4252,8 @@ class OGInfinity {
   }
 
   chat() {
-    this.tchat = true;
-    if (!document.querySelector("#chatBar")) {
-      this.tchat = false;
+    this.json.tchat = !!document.querySelector("#chatBar");
+    if (!this.json.tchat) {
       return;
     }
     let toggleChat = () => {
@@ -12488,7 +12487,7 @@ class OGInfinity {
   }
 
   sendMessage(id) {
-    if (this.tchat) {
+    if (this.json.tchat) {
       ogame.chat.loadChatLogWithPlayer(Number(id));
     } else {
       document.location = `https://s${this.universe}-${OgamePageData.gameLang}.ogame.gameforge.com/game/index.php?page=chat&playerId=${id}`;
