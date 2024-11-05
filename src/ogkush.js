@@ -4976,24 +4976,26 @@ class OGInfinity {
     let cyclos = 0;
     let totalSum = 0;
     let transport = 0;
-    Object.values(shipEnum).filter((id) => id !== shipEnum.SolarSatellite).forEach((id) => {
-      let flyingCount = flying.fleet[id];
-      let sum = 0;
-      if (flyingCount) sum = flyingCount;
-      OGIData.empire.forEach((planet) => {
-        if (planet) sum += Number(planet[id]);
-        if (planet.moon) sum += Number(planet.moon[id]);
+    Object.values(shipEnum)
+      .filter((id) => id !== shipEnum.SolarSatellite)
+      .forEach((id) => {
+        let flyingCount = flying.fleet[id];
+        let sum = 0;
+        if (flyingCount) sum = flyingCount;
+        OGIData.empire.forEach((planet) => {
+          if (planet) sum += Number(planet[id]);
+          if (planet.moon) sum += Number(planet.moon[id]);
+        });
+        transport += sum * this.json.ships[id].cargoCapacity;
+        totalSum += sum;
+        let shipDiv = fleet.appendChild(createDOM("div"));
+        shipDiv.appendChild(createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-fleet-" + id }));
+        if (id == shipEnum.Recycler) {
+          cyclos = sum;
+        }
+        shipDiv.appendChild(createDOM("span", {}, toFormatedNumber(sum)));
+        totalFleet[id] = sum;
       });
-      transport += sum * this.json.ships[id].cargoCapacity;
-      totalSum += sum;
-      let shipDiv = fleet.appendChild(createDOM("div"));
-      shipDiv.appendChild(createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-fleet-" + id }));
-      if (id == 209) {
-        cyclos = sum;
-      }
-      shipDiv.appendChild(createDOM("span", {}, toFormatedNumber(sum)));
-      totalFleet[id] = sum;
-    });
     let fleetInfo = fleetDetail.appendChild(createDOM("div", { class: "ogk-fleet-info" }));
     let apiBtn = fleetInfo.appendChild(createDOM("span", { class: "show_fleet_apikey" }));
     apiBtn.addEventListener("click", () => {
