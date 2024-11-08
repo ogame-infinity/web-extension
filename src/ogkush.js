@@ -29,6 +29,7 @@ import { fleetCost } from "./util/fleetCost.js";
 import * as loadingUtil from "./util/loading.js";
 import * as standardUnit from "./util/standardUnit.js";
 import planetType from "./util/enum/planetType.js";
+import shipEnum from "./util/enum/ship.js";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 //const VERSION = "__VERSION__";
@@ -2341,19 +2342,14 @@ class OGInfinity {
           document.querySelector(".description").appendChild(clone);
           let timeDiv = document.querySelector(".build_duration time");
           let baseTime = time.getTimeFromISOString(timeDiv.getAttribute("datetime"));
-          if (
-            [
-              202, 203, 208, 209, 210, 204, 205, 206, 219, 207, 215, 211, 212, 217, 213, 218, 214, 401, 402, 403, 404,
-              405, 406, 407, 408, 502, 503,
-            ].includes(technologyId)
-          ) {
+          if ([...Object.values(shipEnum), 401, 402, 403, 404, 405, 406, 407, 408, 502, 503].includes(technologyId)) {
             let energyDiv;
             let base;
-            if (technologyId == 217) {
+            if (technologyId == shipEnum.Crawler) {
               energyDiv = document.querySelector(".additional_energy_consumption span");
               base =
                 energyDiv.getAttribute("data-value") * (1 - that.json.lifeformBonus.crawlerBonus?.consumption || 1);
-            } else if (technologyId == 212) {
+            } else if (technologyId == shipEnum.SolarSatellite) {
               energyDiv = document.querySelector(".energy_production span");
               base = energyDiv.querySelector("span").getAttribute("data-value");
             }
@@ -2416,7 +2412,7 @@ class OGInfinity {
               let finishDate = new Date(currentDate.getTime() + (baseTime * value - timeZoneChange) * 1e3);
               const dateTxt = getFormatedDate(finishDate.getTime(), "[d].[m] - [G]:[i]:[s]");
               timeDiv.appendChild(createDOM("div", { class: "ogl-date" }, dateTxt));
-              if (technologyId == 212) {
+              if (technologyId == shipEnum.SolarSatellite) {
                 let energyBonus =
                   (that.engineer ? ENGINEER_ENERGY_BONUS : 0) +
                   (that.playerClass == PLAYER_CLASS_MINER ? that.json.minerBonusEnergy : 0) +
@@ -2444,7 +2440,7 @@ class OGInfinity {
                     satsInput.dispatchEvent(new KeyboardEvent("keyup", { key: "ArrowDown" }));
                   });
                 }
-              } else if (technologyId == 217) {
+              } else if (technologyId == shipEnum.Crawler) {
                 let diff = Number(currentEnergy) - value * base;
                 energyDiv.replaceChildren(
                   document.createTextNode(`${toFormatedNumber(value * base)}`),
@@ -4979,24 +4975,26 @@ class OGInfinity {
     let cyclos = 0;
     let totalSum = 0;
     let transport = 0;
-    [202, 203, 208, 209, 210, 204, 205, 206, 219, 207, 215, 211, 213, 218, 214].forEach((id) => {
-      let flyingCount = flying.fleet[id];
-      let sum = 0;
-      if (flyingCount) sum = flyingCount;
-      OGIData.empire.forEach((planet) => {
-        if (planet) sum += Number(planet[id]);
-        if (planet.moon) sum += Number(planet.moon[id]);
+    Object.values(shipEnum)
+      .filter((id) => id !== shipEnum.SolarSatellite)
+      .forEach((id) => {
+        let flyingCount = flying.fleet[id];
+        let sum = 0;
+        if (flyingCount) sum = flyingCount;
+        OGIData.empire.forEach((planet) => {
+          if (planet) sum += Number(planet[id]);
+          if (planet.moon) sum += Number(planet.moon[id]);
+        });
+        transport += sum * this.json.ships[id].cargoCapacity;
+        totalSum += sum;
+        let shipDiv = fleet.appendChild(createDOM("div"));
+        shipDiv.appendChild(createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-fleet-" + id }));
+        if (id == shipEnum.Recycler) {
+          cyclos = sum;
+        }
+        shipDiv.appendChild(createDOM("span", {}, toFormatedNumber(sum)));
+        totalFleet[id] = sum;
       });
-      transport += sum * this.json.ships[id].cargoCapacity;
-      totalSum += sum;
-      let shipDiv = fleet.appendChild(createDOM("div"));
-      shipDiv.appendChild(createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-fleet-" + id }));
-      if (id == 209) {
-        cyclos = sum;
-      }
-      shipDiv.appendChild(createDOM("span", {}, toFormatedNumber(sum)));
-      totalFleet[id] = sum;
-    });
     let fleetInfo = fleetDetail.appendChild(createDOM("div", { class: "ogk-fleet-info" }));
     let apiBtn = fleetInfo.appendChild(createDOM("span", { class: "show_fleet_apikey" }));
     apiBtn.addEventListener("click", () => {
@@ -5020,7 +5018,7 @@ class OGInfinity {
         `${this.getTranslatedText(47)}: <strong>${toFormatedNumber(transport, null, transport >= 1e6)}</strong>`
       )
     );
-    let rcpower = (((this.json.technology[114] * 5) / 100) * 20000 + 20000) * cyclos;
+    const rcpower = this.json.ships[shipEnum.Recycler].cargoCapacity * cyclos;
     fleetInfo.appendChild(
       this.createDOM(
         "span",
