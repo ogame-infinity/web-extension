@@ -2479,32 +2479,36 @@ class OGInfinity {
                 });
               };
             };
-            let oldValue;
-            input.onkeydown = () => {
-              oldValue = input.value;
-            };
-            if (!that.isMobile) {
-              input.onkeyup = (event) => {
-                if (event.key.toUpperCase() == "K") input.value = Math.max(oldValue, 1) * 1e3;
-                let value = 1;
-                if (input.value <= 0 || isNaN(Number(input.value))) {
-                  input.value = "";
-                } else {
-                  value = input.value;
-                }
-                updateShipDetails(value);
+            if (input) {
+              let oldValue;
+
+              input.onkeydown = () => {
+                oldValue = input.value;
               };
-            } else {
-              input.oninput = (event) => {
-                if (event.data.includes("k")) input.value = Math.max(oldValue, 1) * 1e3;
-                let value = 1;
-                if (input.value <= 0 || isNaN(Number(input.value))) {
-                  input.value = "";
-                } else {
-                  value = input.value;
-                }
-                updateShipDetails(value);
-              };
+
+              if (!that.isMobile) {
+                input.onkeyup = (event) => {
+                  if (event.key.toUpperCase() == "K") input.value = Math.max(oldValue, 1) * 1e3;
+                  let value = 1;
+                  if (input.value <= 0 || isNaN(Number(input.value))) {
+                    input.value = "";
+                  } else {
+                    value = input.value;
+                  }
+                  updateShipDetails(value);
+                };
+              } else {
+                input.oninput = (event) => {
+                  if (event.data.includes("k")) input.value = Math.max(oldValue, 1) * 1e3;
+                  let value = 1;
+                  if (input.value <= 0 || isNaN(Number(input.value))) {
+                    input.value = "";
+                  } else {
+                    value = input.value;
+                  }
+                  updateShipDetails(value);
+                };
+              }
             }
             updateShipDetails(1);
             document.querySelector(".maximum") &&
