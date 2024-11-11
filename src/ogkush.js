@@ -1579,6 +1579,21 @@ class OGInfinity {
     this.sideOptions();
     this.minesLevel();
     this.resourceDetail();
+
+    const rightObserver = new OGIObserver();
+    const ogkush = this;
+
+    rightObserver(document.getElementById('right'), (mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.target.id === 'right') {
+          ogkush.sideOptions();
+          ogkush.minesLevel();
+          ogkush.resourceDetail();
+        }
+      });
+    }, { subtree: true, childList: true });
+
+
     wait.waitForQuerySelector("#eventContent").then(() => this.eventBox());
     this.neededCargo();
     this.preselectShips();
