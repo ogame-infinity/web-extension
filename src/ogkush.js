@@ -1621,7 +1621,12 @@ class OGInfinity {
       { subtree: true, childList: true }
     );
 
-    wait.waitForQuerySelector("#eventContent").then(() => this.eventBox());
+    wait.waitForQuerySelector("#eventContent").then(() => {
+      this.eventBox();
+      this.flyingFleet();
+      this.updateFlyings();
+      this.updatePlanets_FleetActivity();
+    });
     this.neededCargo();
     this.preselectShips();
     this.harvest();
@@ -1639,7 +1644,6 @@ class OGInfinity {
     this.utilities();
     this.chat();
     this.uvlinks();
-    wait.waitForQuerySelector("#eventContent").then(() => this.flyingFleet());
     this.betterHighscore();
     this.overviewDates();
     needsUtil.display();
@@ -1650,10 +1654,6 @@ class OGInfinity {
     this.technoDetail();
     this.onGalaxyUpdate();
     this.timeZone();
-    wait.waitForQuerySelector("#eventContent").then(() => {
-      this.updateFlyings();
-      this.updatePlanets_FleetActivity();
-    });
     this.checkRedirect();
     this.updateProductionProgress();
     this.showStorageTimers();
@@ -4145,7 +4145,7 @@ class OGInfinity {
     return since;
   }
 
-  async flyingFleet() {
+  flyingFleet() {
     let total = 0;
     let flyingCount = 0;
     const flying = OGIData.json.flying.fleet;
@@ -15856,7 +15856,7 @@ class OGInfinity {
       });
   }
 
-  async markLifeforms() {
+  markLifeforms() {
     if (!this.hasLifeforms) return;
     document.querySelectorAll(".smallplanet a.planetlink").forEach((elem) => {
       const lifeform = this.json.selectedLifeforms[elem.href.split("cp=")[1]];
