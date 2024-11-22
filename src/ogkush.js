@@ -5510,7 +5510,7 @@ class OGInfinity {
             weekSums.harvest[index] += sums[dateStr].harvest[index];
           });
           Object.values(shipEnum).forEach((id) => {
-            weekSums.bhole[id] += sums[dateStr].bhole[id] || 0;
+            weekSums.bhole[id] += sums[dateStr].bhole?.[id] || 0;
           });
           for (let [type, num] of Object.entries(sums[dateStr].type)) {
             weekSums.type[type] ? (weekSums.type[type] += num) : (weekSums.type[type] = num);
@@ -5523,7 +5523,7 @@ class OGInfinity {
       let total = 0;
       const fleet = fleetCost(sums.fleet);
       const losses = fleetCost(sums.losses);
-      const bhole = fleetCost(sums.bhole);
+      const bhole = fleetCost(sums.bhole || {});
       total += standardUnit.standardUnit(fleet);
       total -= standardUnit.standardUnit(losses);
       total += standardUnit.standardUnit(sums.harvest);
