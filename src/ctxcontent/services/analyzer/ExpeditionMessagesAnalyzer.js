@@ -41,7 +41,6 @@ class ExpeditionMessagesAnalyzer {
     this.#getExpeditionsMessages().forEach((message) => {
       const expeditions = OGIData.expeditions;
       const expeditionSums = OGIData.expeditionSums;
-      const tradeRate = OGIData.options.tradeRate;
       const msgId = message.getAttribute("data-msg-id");
 
       const sizeBlacklist = ["bhole", "merchant", "void", "nothing", "trader", "fleetLost"];
@@ -128,6 +127,7 @@ class ExpeditionMessagesAnalyzer {
         harvest: [0, 0, 0],
         losses: {},
         fleet: {},
+        bhole: {},
         type: {},
         adjust: [0, 0, 0],
         fuel: 0,
@@ -214,6 +214,18 @@ class ExpeditionMessagesAnalyzer {
           result: "Bhole",
           date: newDate,
         };
+
+        const losses = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-shipslost"));
+
+        for (const technologyId in losses) {
+          const fleet = losses[technologyId];
+
+          if (!summary.bhole[technologyId]) {
+            summary.bhole[technologyId] = 0;
+          }
+
+          summary.bhole[technologyId] += fleet;
+        }
 
         summary.type["Bhole"] ? (summary.type["Bhole"] += 1) : (summary.type["Bhole"] = 1);
       } else if (type === "items") {
