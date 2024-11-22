@@ -1580,19 +1580,46 @@ class OGInfinity {
     this.minesLevel();
     this.resourceDetail();
 
+    // refresh right planet list, after ogame resets it when something ends and there is no page reload
     const rightObserver = new OGIObserver();
     const ogkush = this;
 
-    rightObserver(document.getElementById('right'), (mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.target.id === 'right') {
-          ogkush.sideOptions();
-          ogkush.minesLevel();
-          ogkush.resourceDetail();
-        }
-      });
-    }, { subtree: true, childList: true });
-
+    rightObserver(
+      document.getElementById("right"),
+      (mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.target.id === "right") {
+            ogkush.planetList = document.querySelectorAll(".smallplanet");
+            ogkush.current.planet = (
+              document.querySelector("#planetList .active") ?? document.querySelector("#planetList .planetlink")
+            ).parentNode;
+            document
+              .querySelectorAll(".planet-koords")
+              .forEach((elem) => (elem.textContent = elem.textContent.slice(1, -1)));
+            document.querySelectorAll(".moonlink").forEach((elem) => {
+              elem.classList.add("tooltipRight");
+              elem.classList.remove("tooltipLeft");
+            });
+            document.querySelectorAll(".planetlink").forEach((elem) => {
+              elem.classList.add("tooltipLeft");
+              elem.classList.remove("tooltipRight");
+            });
+            ogkush.sideOptions();
+            ogkush.minesLevel();
+            ogkush.resourceDetail();
+            ogkush.harvest();
+            ogkush.activitytimers();
+            needsUtil.display();
+            ogkush.jumpGate();
+            ogkush.updateFlyings();
+            ogkush.updatePlanets_FleetActivity();
+            ogkush.updateProductionProgress();
+            ogkush.markLifeforms();
+          }
+        });
+      },
+      { subtree: true, childList: true }
+    );
 
     wait.waitForQuerySelector("#eventContent").then(() => this.eventBox());
     this.neededCargo();
@@ -3910,7 +3937,7 @@ class OGInfinity {
           this.json.options.ptreTK &&
           playerId > -1 &&
           (this.json.sideStalk.indexOf(parseInt(playerId)) > -1 ||
-          this.json.sideStalk.indexOf(playerId) > -1 ||
+            this.json.sideStalk.indexOf(playerId) > -1 ||
             this.markedPlayers.indexOf(playerId) > -1 ||
             (this.json.searchHistory.length > 0 &&
               playerId == this.json.searchHistory[this.json.searchHistory.length - 1].id))
