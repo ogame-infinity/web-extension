@@ -220,6 +220,10 @@ class ExpeditionMessagesAnalyzer {
         for (const technologyId in losses) {
           const fleet = losses[technologyId];
 
+          if (!summary.bhole) {
+            summary.bhole = {};
+          }
+
           if (!summary.bhole[technologyId]) {
             summary.bhole[technologyId] = 0;
           }
@@ -250,7 +254,8 @@ class ExpeditionMessagesAnalyzer {
           date: newDate,
         };
         summary.type["Aliens"] ? (summary.type["Aliens"] += 1) : (summary.type["Aliens"] = 1);
-      } else if (type === "combat") { // @TODO remove after v12
+      } else if (type === "combat") {
+        // @TODO remove after v12
         const pirateKeywords = [
           "pirat",
           "pirát",
