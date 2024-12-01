@@ -5376,9 +5376,8 @@ class OGInfinity {
   }
 
   expeditionStats() {
-    let ressources = ["Metal", "Crystal", "Deuterium", "AM"];
     let content = createDOM("div", { class: "ogk-stats-content" });
-    let renderDetails = (sums, onchange) => {
+    let renderDetails = (sums) => {
       let content = createDOM("div", { class: "ogk-stats" });
       let globalDiv = content.appendChild(createDOM("div", { class: "ogk-global" }));
       let numExpe = 0;
@@ -5388,6 +5387,7 @@ class OGInfinity {
       let details = content.appendChild(createDOM("div", { class: "ogk-details" }));
       let losses = fleetCost(sums.losses);
       let fleetRes = fleetCost(sums.fleet);
+      let fleetBhole = fleetCost(sums.bhole || {});
       let box = this.resourceBox(
         [
           {
@@ -5423,26 +5423,12 @@ class OGInfinity {
           },
           {
             title: this.getTranslatedText(71),
-            metal: sums.adjust[0],
-            crystal: sums.adjust[1],
-            deuterium: sums.adjust[2],
-            edit: !!onchange,
+            metal: -fleetBhole[0],
+            crystal: -fleetBhole[1],
+            deuterium: -fleetBhole[2],
           },
         ],
-        true,
-        () => {
-          globalDiv.replaceChildren();
-          globalDiv.appendChild(
-            this.blackHoleBox((costs) => {
-              let date = document.querySelector(".ogk-date strong").textContent;
-              this.json.expeditionSums[date].adjust[0] -= costs[0];
-              this.json.expeditionSums[date].adjust[1] -= costs[1];
-              this.json.expeditionSums[date].adjust[2] -= costs[2];
-              this.saveData();
-              onchange();
-            })
-          );
-        }
+        true
       );
       details.appendChild(box);
       details.appendChild(this.shipsBox(sums.fleet));
@@ -5489,6 +5475,20 @@ class OGInfinity {
           213: 0,
           218: 0,
         },
+        bhole: {
+          202: 0,
+          203: 0,
+          210: 0,
+          204: 0,
+          205: 0,
+          206: 0,
+          219: 0,
+          207: 0,
+          215: 0,
+          211: 0,
+          213: 0,
+          218: 0,
+        },
         type: {},
         fuel: 0,
         adjust: [0, 0, 0, 0],
@@ -5497,10 +5497,10 @@ class OGInfinity {
         let dateStr = getFormatedDate(new Date(d).getTime(), "[d].[m].[y]");
         if (sums[dateStr]) {
           weekSums.fuel += sums[dateStr].fuel;
-          [202, 203, 210, 208, 209, 204, 205, 206, 219, 207, 215, 211, 213, 218, 214].forEach((id) => {
+          Object.values(shipEnum).forEach((id) => {
             weekSums.fleet[id] += sums[dateStr].fleet[id] || 0;
           });
-          [202, 203, 210, 208, 209, 204, 205, 206, 219, 207, 215, 211, 213, 218, 214].forEach((id) => {
+          Object.values(shipEnum).forEach((id) => {
             weekSums.losses[id] += sums[dateStr].losses[id] || 0;
           });
           sums[dateStr].found.forEach((value, index) => {
@@ -5509,8 +5509,8 @@ class OGInfinity {
           sums[dateStr].harvest.forEach((value, index) => {
             weekSums.harvest[index] += sums[dateStr].harvest[index];
           });
-          sums[dateStr].adjust.forEach((value, index) => {
-            weekSums.adjust[index] += sums[dateStr].adjust[index];
+          Object.values(shipEnum).forEach((id) => {
+            weekSums.bhole[id] += sums[dateStr].bhole?.[id] || 0;
           });
           for (let [type, num] of Object.entries(sums[dateStr].type)) {
             weekSums.type[type] ? (weekSums.type[type] += num) : (weekSums.type[type] = num);
@@ -5521,13 +5521,14 @@ class OGInfinity {
     };
     let getTotal = (sums) => {
       let total = 0;
-      let fleet = fleetCost(sums.fleet);
-      let losses = fleetCost(sums.losses);
+      const fleet = fleetCost(sums.fleet);
+      const losses = fleetCost(sums.losses);
+      const bhole = fleetCost(sums.bhole || {});
       total += standardUnit.standardUnit(fleet);
       total -= standardUnit.standardUnit(losses);
       total += standardUnit.standardUnit(sums.harvest);
       total += standardUnit.standardUnit(sums.found);
-      total += standardUnit.standardUnit(sums.adjust);
+      total -= standardUnit.standardUnit(bhole);
       total += standardUnit.standardUnit([0, 0, sums.fuel]);
       return total;
     };
@@ -5571,6 +5572,20 @@ class OGInfinity {
           213: 0,
           218: 0,
         },
+        bhole: {
+          202: 0,
+          203: 0,
+          210: 0,
+          204: 0,
+          205: 0,
+          206: 0,
+          219: 0,
+          207: 0,
+          215: 0,
+          211: 0,
+          213: 0,
+          218: 0,
+        },
         type: {},
         fuel: 0,
         adjust: [0, 0, 0],
@@ -5594,9 +5609,7 @@ class OGInfinity {
       div.appendChild(
         this.profitGraph(profits, max, true, (range, index) => {
           details.remove();
-          details = renderDetails(range, () => {
-            refresh(index);
-          });
+          details = renderDetails(range);
           div.appendChild(details);
         })
       );
@@ -6055,27 +6068,6 @@ class OGInfinity {
   }
 
   blackHoleBox(onValidate) {
-    let box = createDOM("div", { class: "ogk-box ogk-small" });
-    let fleet = box.appendChild(createDOM("div", { class: "ogk-bhole-grid" }));
-    let inputs = [];
-    [202, 203, 210, 204, 205, 206, 219, 207, 215, 211, 213, 218, 214].forEach((id) => {
-      fleet.appendChild(createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-fleet-" + id }));
-      let input = fleet.appendChild(createDOM("input", { class: "ogl-formatInput", type: "text", data: id, value: 0 }));
-      inputs.push(input);
-    });
-    if (onValidate) {
-      let btn = box.appendChild(createDOM("button", { class: "btn_blue" }, "OK"));
-      btn.addEventListener("click", () => {
-        let fleet = {};
-        inputs.forEach((input) => {
-          let id = Number(input.getAttribute("data"));
-          fleet[id] = fromFormatedNumber(input.value, true);
-        });
-        let cost = fleetCost(fleet);
-        onValidate(cost);
-      });
-    }
-    return box;
   }
 
   shipsBox(ships, minus) {
