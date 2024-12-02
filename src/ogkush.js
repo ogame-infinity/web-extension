@@ -5465,9 +5465,9 @@ class OGInfinity {
           },
           {
             title: this.getTranslatedText(71),
-            metal: -fleetBhole[0],
-            crystal: -fleetBhole[1],
-            deuterium: -fleetBhole[2],
+            metal: -(fleetBhole[0] + sums.adjust[0]),
+            crystal: -(fleetBhole[1] + sums.adjust[1]),
+            deuterium: -(fleetBhole[2] + sums.adjust[2]),
           },
         ],
         true
