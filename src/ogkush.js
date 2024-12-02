@@ -5554,6 +5554,9 @@ class OGInfinity {
           Object.values(shipEnum).forEach((id) => {
             weekSums.bhole[id] += sums[dateStr].bhole?.[id] || 0;
           });
+          sums[dateStr].adjust.forEach((value, index) => {
+            weekSums.adjust[index] += sums[dateStr].adjust[index];
+          });
           for (let [type, num] of Object.entries(sums[dateStr].type)) {
             weekSums.type[type] ? (weekSums.type[type] += num) : (weekSums.type[type] = num);
           }
@@ -5571,6 +5574,7 @@ class OGInfinity {
       total += standardUnit.standardUnit(sums.harvest);
       total += standardUnit.standardUnit(sums.found);
       total -= standardUnit.standardUnit(bhole);
+      total += standardUnit.standardUnit(sums.adjust);
       total += standardUnit.standardUnit([0, 0, sums.fuel]);
       return total;
     };
@@ -6107,9 +6111,6 @@ class OGInfinity {
     };
     content.appendChild(this.tabs(tabNames));
     return content;
-  }
-
-  blackHoleBox(onValidate) {
   }
 
   shipsBox(ships, minus) {
