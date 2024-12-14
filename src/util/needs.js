@@ -6,6 +6,7 @@ import { tooltip } from "./tooltip.js";
 import OGIObserver from "./observer.js";
 import flying from "./flying.js";
 import { translate } from "./translate.js";
+import BuildList from "./Object/buildList.js";
 
 const needs = {
   ...OGIData.needs,
@@ -69,7 +70,7 @@ export function getNeedsByCoords(coords, isMoon) {
   };
 }
 
-export function append(coords, isMoon, resources) {
+function append(coords, isMoon, resources) {
   const planetFound = getPlanetByCoords(coords);
 
   if (planetFound === null) return;
@@ -97,10 +98,14 @@ export function append(coords, isMoon, resources) {
   OGIData.needs = needs;
 }
 
-export function lock(coords, isMoon, needed) {
+export function lock(coords, isMoon, needed, technologyId, target) {
   const planetFound = getPlanetByCoords(coords);
 
   if (planetFound === null) return;
+
+  if (technologyId) {
+    BuildList.add(technologyId, target);
+  }
 
   const planet = isMoon ? planetFound.moon : planetFound;
   const planetId = planet?.planetID || planet.id;

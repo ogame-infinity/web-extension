@@ -204,6 +204,16 @@ class OGIData {
     this.#save();
   }
 
+  get buildList() {
+    return this._json.buildList;
+  }
+
+  set buildList(buildList) {
+    this._json.buildList = buildList;
+
+    this.#save();
+  }
+
   get json() {
     return this._json;
   }

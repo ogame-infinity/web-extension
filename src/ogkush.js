@@ -30,6 +30,7 @@ import * as loadingUtil from "./util/loading.js";
 import * as standardUnit from "./util/standardUnit.js";
 import planetType from "./util/enum/planetType.js";
 import shipEnum from "./util/enum/ship.js";
+import BuildList from "./util/Object/buildList.js";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 //const VERSION = "__VERSION__";
@@ -2337,13 +2338,20 @@ class OGInfinity {
           document.querySelector(".ogk-titles").children[2].textContent = that.getTranslatedText(39);
         }
         lockListener = () => {
-          needsUtil.lock(that.current.coords, that.current.isMoon, {
-            metal: resSum[0],
-            crystal: resSum[1],
-            deuterium: resSum[2],
-          });
+          needsUtil.lock(
+            that.current.coords,
+            that.current.isMoon,
+            {
+              metal: resSum[0],
+              crystal: resSum[1],
+              deuterium: resSum[2],
+            },
+            technoId,
+            tolvl
+          );
         };
       };
+
       technologyDetails.show = function (technologyId) {
         if (xhrAbortSignal) {
           xhrAbortSignal.abort();
@@ -2384,6 +2392,7 @@ class OGInfinity {
           document.querySelector(".description").appendChild(clone);
           let timeDiv = document.querySelector(".build_duration time");
           let baseTime = time.getTimeFromISOString(timeDiv.getAttribute("datetime"));
+          BuildList.listen();
           if ([...Object.values(shipEnum), 401, 402, 403, 404, 405, 406, 407, 408, 502, 503].includes(technologyId)) {
             let energyDiv;
             let base;
@@ -2514,11 +2523,17 @@ class OGInfinity {
                 }
               }
               lockListener = () => {
-                needsUtil.lock(that.current.coords, that.current.isMoon, {
-                  metal: resSum[0],
-                  crystal: resSum[1],
-                  deuterium: resSum[2],
-                });
+                needsUtil.lock(
+                  that.current.coords,
+                  that.current.isMoon,
+                  {
+                    metal: resSum[0],
+                    crystal: resSum[1],
+                    deuterium: resSum[2],
+                  },
+                  technologyId,
+                  parseInt(input?.value || 1)
+                );
               };
             };
             if (input) {
@@ -3994,6 +4009,7 @@ class OGInfinity {
 
     data.serverTime = serverTime && typeof serverTime.getTime !== "undefined" ? serverTime.getTime() : null;
     data.ptreKey = this.json.options.ptreTK ?? null;
+    console.log(data.changes);
     pageContextRequest("ptre", "galaxy", data.changes, data.ptreKey, data.serverTime)
       .then((value) => {
         if (Object.keys(value.response).length > 0) {
@@ -11194,6 +11210,8 @@ class OGInfinity {
       }
     }
   }
+
+
 
   quickPlanetList() {
     if (this.page == "fleetdispatch" && fleetDispatcher) {
