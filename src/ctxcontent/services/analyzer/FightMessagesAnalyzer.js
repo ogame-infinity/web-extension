@@ -279,8 +279,8 @@ class FightMessagesAnalyzer {
 
       OGIData.combats = combats;
 
-      // don't account twice a know fight in combatsSums
-      if (isKnownCombat) return;
+      // don't account twice a know or probe fight in combatsSums
+      if (isKnownCombat || combats[msgId].isProbes) return;
 
       const combatsSums = JSON.parse(JSON.stringify(OGIData.combatsSums)); // deep copy
       const newDate = new Date(message.querySelector(".rawMessageData").getAttribute("data-raw-date"));
