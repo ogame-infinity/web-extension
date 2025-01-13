@@ -3984,6 +3984,19 @@ class OGInfinity {
       }
     });
 
+    // do final check before send changes data to ensure that game variables or DOM have not been modified
+    const baseCordsFinal = galaxy + ":" + system;
+    const secureCoordsFinal =
+      document.getElementById("galaxy_input").value + ":" + document.getElementById("system_input").value;
+    const doubleCheckCoordsFinal = document.querySelector(".ogl-colors")?.getAttribute("data-coords");
+    if (
+      baseCordsFinal !== baseCords ||
+      secureCoordsFinal !== baseCords ||
+      doubleCheckCoordsFinal !== baseCords + ":1"
+    ) {
+      return;
+    }
+
     if (Object.keys(ptreJSON).length > 0) {
       let systemCoords = [galaxy, system];
       this.ptreActivityUpdate(ptreJSON, systemCoords);
