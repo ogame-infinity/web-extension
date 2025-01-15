@@ -4999,6 +4999,9 @@ body.ogame select {
 #siteFooter > * {
   opacity: 0.5;
 }
+#siteFooter .content {
+  width: 995px;
+}
 
 .ogl-fleet-table .ogl-sum-symbol {
   font-weight: 800;
