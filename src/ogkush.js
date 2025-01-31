@@ -3722,11 +3722,11 @@ class OGInfinity {
       callback(galaxy, system);
     };
 
-    setTimeout(function () {
+    wait.waitForQuerySelector("#galaxyLoading[style='display: none;']").then(() => {
       if (!document.querySelector(".ogl-colors")) {
         callback(galaxy, system);
       }
-    }, 500);
+    });
   }
 
   addGalaxyMarkers() {
