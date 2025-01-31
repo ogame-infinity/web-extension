@@ -3692,14 +3692,6 @@ class OGInfinity {
       this.scan();
     };
 
-    // let inter = setInterval(() => {
-    //   if (document.readyState == "complete" && !document.querySelector(".ogl-colors")) {
-    //     clearInterval(inter);
-    //     console.log("clear");
-    //     callback(galaxy, system);
-    //   }
-    // }, 20);
-
     let dc = displayContentGalaxy;
     displayContentGalaxy = (b) => {
       dc(b);
@@ -3730,11 +3722,11 @@ class OGInfinity {
       callback(galaxy, system);
     };
 
-    setTimeout(function () {
+    wait.waitForQuerySelector("#galaxyLoading[style='display: none;']").then(() => {
       if (!document.querySelector(".ogl-colors")) {
         callback(galaxy, system);
       }
-    }, 500);
+    });
   }
 
   addGalaxyMarkers() {
