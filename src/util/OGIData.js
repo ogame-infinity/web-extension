@@ -26,6 +26,16 @@ class OGIData {
 
     this.#save();
   }
+
+  get playerMarkers() {
+    return this._json.playerMarkers;
+  }
+  set playerMarkers(playerMarkers) {
+    this._json.playerMarkers = playerMarkers;
+
+    this.#save();
+  }
+  
   get markers() {
     return this._json.markers;
   }

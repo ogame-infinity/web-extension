@@ -3750,10 +3750,10 @@ class OGInfinity {
 
       let coords = galaxy + ":" + system + ":" + Number(index + 1);
       let playerDiv = element.querySelector(".cellPlayerName > span.tooltipRel");
-      let id = playerDiv && playerDiv.getAttribute("rel") ? playerDiv.getAttribute("rel").replace("player", "") : null;
+      let playerId = playerDiv && playerDiv.getAttribute("rel") ? playerDiv.getAttribute("rel").replace("player", "") : null;
       if (this.json.markers[coords]) {
-        //console.log('JSONID:' + this.json.markers[coords].id + ' Id:' + id);
-        if (!id || this.json.markers[coords].id != id) {
+        //console.log('JSONID:' + this.json.markers[coords].id + ' Id:' + playerId);
+        if (!playerId || this.json.markers[coords].id != playerId) {
           delete this.json.markers[coords];
           this.markedPlayers = this.getMarkedPlayers(this.json.markers);
           if (this.json.options.targetList) {
@@ -3768,6 +3768,22 @@ class OGInfinity {
           this.json.markers[coords].moon = element.querySelector(".cellMoon .tooltipRel") ? true : false;
         }
         this.saveData();
+      }
+      else if(this.json.playerMarkers  && this.json.playerMarkers[playerId]){
+        //there is no marker fore these coord but there is a marker for this player
+
+        //Auto add marker
+        this.json.markers[coords] = {
+          color: this.json.playerMarkers[playerId].color,
+          id: playerId
+        };
+        
+        //Save data
+        this.saveData();
+
+        //Update UI
+        element.classList.add("ogl-marked");
+        element.setAttribute("data-marked", this.json.playerMarkers[playerId].color);
       }
     });
   }
@@ -12524,6 +12540,10 @@ class OGInfinity {
     }
   }
 
+  addPlayerMarkerUI(parent, id) {
+    markerui.addPlayer(parent, id);
+  }
+
   addMarkerUI(coords, parent, id) {
     markerui.add(coords, parent, id);
   }
@@ -13622,17 +13642,38 @@ class OGInfinity {
                 document.createTextNode(` ${countDiv.textContent.trim()}`)
               );
             }
-            const mail = position.querySelector(".sendmsg_content > a");
-            if (mail) {
-              const id = mail.getAttribute("rel").match(/[0-9]+$/)[0];
-              dataHelper.getPlayer(id).then((p) => {
-                let statusClass = this.getPlayerStatus(p.status);
-                if (playerDiv.getAttribute("class").includes("status_abbr_honorableTarget")) {
-                  statusClass = "status_abbr_honorableTarget";
-                }
-                playerDiv.replaceChildren(createDOM("span", { class: `${statusClass}` }, `${p.name}`));
-                this.stalk(playerDiv, p);
-              });
+
+            if(playerDiv) {
+              //Reset player marker
+              position.classList.remove("ogl-marked");
+              position.removeAttribute("data-marked");
+            
+              const playerId = position.getAttribute("id").match(/[0-9]+$/)[0];
+
+              /*get score cell and add marker ui*/
+              const tdScore = position.querySelector(".score");
+              let colors = createDOM("div", { class: "ogi-highscore-flag ogl-colors", "data-context": "players-highscore" });
+              const spanScore = createDOM("span", { class:"ogi-highscore-score" }, tdScore.innerText);
+              tdScore.replaceChildren(colors, spanScore);
+              this.addPlayerMarkerUI(colors, playerId);
+
+              // Update UI with player marker
+              if (this.json.playerMarkers[playerId]) {
+                  position.classList.add("ogl-marked");
+                  position.setAttribute("data-marked", this.json.playerMarkers[playerId].color);
+              }            
+
+              const mail = position.querySelector(".sendmsg_content > a");
+              if (mail) {
+                dataHelper.getPlayer(playerId).then((p) => {
+                  let statusClass = this.getPlayerStatus(p.status);
+                  if (playerDiv.getAttribute("class").includes("status_abbr_honorableTarget")) {
+                    statusClass = "status_abbr_honorableTarget";
+                  }
+                  playerDiv.replaceChildren(createDOM("span", { class: `${statusClass}` }, `${p.name}`));
+                  this.stalk(playerDiv, p);
+                });
+              }
             }
           }
         });
