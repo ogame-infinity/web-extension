@@ -9,9 +9,6 @@ const colors = ["red", "orange", "yellow", "green", "blue", "violet", "gray", "b
 function addPlayer(parent, playerId) {
   const div = createDOM("div", { class: "ogl-colorChoice" });
   let playerMarkers = OGIData.playerMarkers;
-  if(playerMarkers === null || playerMarkers === undefined) {
-    playerMarkers = {};
-  }
 
   colors.forEach((color) => {
     const circle = div.appendChild(createDOM("div", { "data-marker": color }));
@@ -89,10 +86,6 @@ function displayPlayer(parent, id) {
   const element = parent.closest("tr");
 
   let playerMarkers = OGIData.playerMarkers;
-  if(playerMarkers === null || playerMarkers === undefined) {
-    playerMarkers = {};
-  }
-
   if (playerMarkers[id]) {
     element.classList.add("ogl-marked");
     element.setAttribute("data-marked", playerMarkers[id].color);

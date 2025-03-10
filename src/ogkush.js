@@ -1475,6 +1475,7 @@ class OGInfinity {
     this.json.autoHarvest = this.json.autoHarvest || ["0:0:0", 3];
     this.json.myActivities = this.json.myActivities || {};
     this.json.sideStalk = this.json.sideStalk || [];
+    this.json.playerMarkers = this.json.playerMarkers || {};
     this.json.markers = this.json.markers || {};
     this.json.locked = this.json.locked || {};
     this.json.missing = this.json.missing || {};
@@ -12872,6 +12873,7 @@ class OGInfinity {
       mainSyncJsonObj.search = this?.json?.search;
       mainSyncJsonObj.sideStalk = this?.json?.sideStalk;
       mainSyncJsonObj.locked = this?.json?.locked;
+      mainSyncJsonObj.playerMarkers = this?.json?.playerMarkers;
       mainSyncJsonObj.markers = this?.json?.markers;
       mainSyncJsonObj.sideStargetTabstalk = this?.json?.targetTabs;
       mainSyncJsonObj.missing = this?.json?.missing;
