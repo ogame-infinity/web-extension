@@ -30,6 +30,7 @@ import * as loadingUtil from "./util/loading.js";
 import * as standardUnit from "./util/standardUnit.js";
 import planetType from "./util/enum/planetType.js";
 import shipEnum from "./util/enum/ship.js";
+import OverviewPage from "./ctxpage/overview/OverviewPage.js";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 //const VERSION = "__VERSION__";
@@ -1360,6 +1361,8 @@ const isOwnPlanet = (coords) => {
 };
 
 class OGInfinity {
+  OverviewPage = new OverviewPage();
+
   constructor() {
     this.commander = document.querySelector("#officers > a.commander.on") !== null;
     this.rawURL = new URL(window.location.href);
@@ -1578,7 +1581,7 @@ class OGInfinity {
     this.listenKeyboard();
     this.sideOptions();
     this.minesLevel();
-    this.resourceDetail();    
+    this.resourceDetail();
 
     // refresh right planet list, after ogame resets it when something ends and there is no page reload
     const rightObserver = new OGIObserver();
@@ -1644,7 +1647,7 @@ class OGInfinity {
     this.utilities();
     this.chat();
     this.uvlinks();
-    this.prettierOverview();
+    this.OverviewPage.MakePrettierOverview(this.page);
     this.betterHighscore();    
     this.overviewDates();
     needsUtil.display();
@@ -13604,73 +13607,6 @@ class OGInfinity {
         window.open(`${this.json.options.simulator}${this.univerviewLang}?#prefill=${base64}`, "_blank");
       }
     });
-  }
-
-  prettierOverview() {
-    if (this.page == "overview") {
-      try {
-        // we will need the current oject in the UpdatePlanetOverviewDisplay function
-        const self = this;
-
-        function UpdatePlanetOverviewDisplay(toggle, partName) {
-          const optionName = `overview_display_planet_${partName}`;
-          const attributeName = `${partName}-active`;
-
-          // get the current display status
-          let display = getOption(optionName);
-
-          // if the display is not set, set it to true
-          display = display === undefined || display === null || display === true;
-
-          if(toggle)
-          {
-            //toggle the display
-            planet.setAttribute(attributeName, !display);
-
-            //in this context, 'this' is a dom element, so we need to use self instead
-            //save the display preference
-            setOption(optionName, !display);
-            self.saveData();
-          }
-          else
-          {          
-            planet.setAttribute(attributeName, display);
-          }
-        }
-
-        const planet = document.querySelector('#overviewcomponent #planet');
-        const detailWrapper = planet.querySelector('#detailWrapper');
-
-        // create the toggle planet details button
-        const togglePlanetDataButton = createDOM('div', { class: 'togglePlanetDetails' });
-        togglePlanetDataButton.addEventListener("click", () => {
-          UpdatePlanetOverviewDisplay(true, "details");        
-        });
-
-        // add the toggle planet details button to the header
-        detailWrapper.querySelector('#header_text').appendChild(togglePlanetDataButton);
-
-
-        // create the toggle buff bar button, and add it instead of the spaceObjectHeaderActionIcons
-        const toggleBuffBarButton = createDOM('div', { id: "toggleBuffBar" });
-        toggleBuffBarButton.addEventListener("click", () => {
-          UpdatePlanetOverviewDisplay(true, "buffBar");   
-        });
-        planet.insertBefore(toggleBuffBarButton, detailWrapper);
-
-        const spaceObjectHeaderActionIcons = planet.querySelector('#spaceObjectHeaderActionIcon');
-        planet.removeChild(spaceObjectHeaderActionIcons);
-        
-
-        // init the display of the planet details and buff bar
-        UpdatePlanetOverviewDisplay(false, "details");
-        UpdatePlanetOverviewDisplay(false, "buffBar");
-
-      } catch (error) {
-        // it would be a shame if a UI error would break the game...        
-        console.error("Error in prettierOverview", error);
-      }
-    }
   }
 
   betterHighscore() {
