@@ -3719,7 +3719,7 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link{
   background-position: center;
   background-repeat: no-repeat;
   background-size: 25px 25px;
-  filter: brightness(0.3);
+  filter: brightness(0) saturate(100%) invert(17%) sepia(7%) saturate(497%) hue-rotate(161deg) brightness(94%) contrast(84%);
   display: block;
 }
 #overviewcomponent #planet #toggleBuffBar {
@@ -3733,12 +3733,12 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link{
   background-position: center;
   background-repeat: no-repeat;
   background-size: 25px 25px;
-  filter: brightness(0.3);
+  filter: brightness(0) saturate(100%) invert(17%) sepia(7%) saturate(497%) hue-rotate(161deg) brightness(94%) contrast(84%);
   display: block;
 }
 
 #overviewcomponent #planet[buffBar-active="true"] #toggleBuffBar {
-  filter: brightness(0.5);
+  filter: brightness(0) saturate(100%) invert(63%) sepia(11%) saturate(483%) hue-rotate(160deg) brightness(91%) contrast(91%);
 }
 
 #overviewcomponent #planet[buffBar-active="true"] #toggleBuffBar:hover,
