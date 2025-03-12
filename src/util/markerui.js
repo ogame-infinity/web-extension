@@ -13,6 +13,7 @@ function addPlayer(parent, playerId) {
   colors.forEach((color) => {
     const circle = div.appendChild(createDOM("div", { "data-marker": color }));
     div.appendChild(circle);
+
     if (playerMarkers[playerId] && playerMarkers[playerId].color === color) {
       circle.classList.add("ogl-active");
     }
