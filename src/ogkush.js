@@ -3770,7 +3770,7 @@ class OGInfinity {
         }
         this.saveData();
       }
-      else if(this.json.playerMarkers  && this.json.playerMarkers[playerId]){
+      else if(this.json.playerMarkers && this.json.playerMarkers[playerId]){
         //there is no marker fore these coord but there is a marker for this player
 
         //Auto add marker
