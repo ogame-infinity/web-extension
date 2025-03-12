@@ -19,16 +19,12 @@ class OverviewPage {
         // get the current display status
         let display = getOption(optionName);
 
-        // if the display is not set, set it to true
-        display = display === undefined || display === null || display === true;
-
         if (toggle) {
             const options = OGIData.options;
 
             //toggle the display
             planet.setAttribute(attributeName, !display);
 
-            //in this context, 'this' is a dom element, so we need to use self instead
             //save the display preference
             setOption(optionName, !display);
             options[optionName] = !display;
@@ -40,9 +36,7 @@ class OverviewPage {
     }
 
     MakePrettierOverview(currentPage) {
-        if (currentPage !== "overview") {
-            return;
-        }
+        if (currentPage !== "overview") return;
 
         try {
 
