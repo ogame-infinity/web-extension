@@ -3724,12 +3724,9 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link{
 }
 #overviewcomponent #planet #toggleBuffBar {
   cursor: pointer;
-  background-image: none;
   position: absolute;
   left: 4px;
   bottom: 4px;
-}
-#overviewcomponent #planet #toggleBuffBar {
   width: 36px;
   height: 28px;
   background-image: url("https://gf1.geo.gfsrv.net/cdnce/54d37c899703757907c1160db0b1b9.png");
@@ -3741,12 +3738,12 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link{
 }
 
 #overviewcomponent #planet[buffBar-active="true"] #toggleBuffBar {
-  filter: brightness(0.7);
+  filter: brightness(0.5);
 }
 
 #overviewcomponent #planet[buffBar-active="true"] #toggleBuffBar:hover,
 #overviewcomponent #planet[buffBar-active="false"] #toggleBuffBar:hover {
-  filter: brightness(1) !important;
+  filter: brightness(0) saturate(100%) invert(77%) sepia(23%) saturate(1188%) hue-rotate(338deg) brightness(86%) contrast(92%);
 }
 
 

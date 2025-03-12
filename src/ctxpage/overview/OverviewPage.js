@@ -17,7 +17,7 @@ class OverviewPage {
         const attributeName = `${partName}-active`;
 
         // get the current display status
-        let display = getOption(optionName);
+        const display = getOption(optionName);
 
         if (toggle) {
             const options = OGIData.options;
