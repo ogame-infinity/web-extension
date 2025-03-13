@@ -3739,7 +3739,7 @@ class OGInfinity {
         let id =
           (playerDiv && playerDiv.getAttribute("rel") && playerDiv.getAttribute("rel").replace("player", "")) || 99999;
         let coords = galaxy + ":" + system + ":" + Number(index + 1);
-        let colors = createDOM("div", { class: "ogl-colors", "data-coords": coords, "data-context": "galaxy" });
+        const colors = DOM.createDOM("div", { class: "ogl-colors", "data-coords": coords, "data-context": "galaxy" });
         //console.log('Coord: ' + coords + ' parent:' + colors + ' Id:' + id + ' Moon:' + moon);
         element.insertBefore(colors, element.firstChild);
         this.addMarkerUI(coords, colors, id, moon);
@@ -3751,7 +3751,7 @@ class OGInfinity {
 
       let coords = galaxy + ":" + system + ":" + Number(index + 1);
       let playerDiv = element.querySelector(".cellPlayerName > span.tooltipRel");
-      let playerId = playerDiv && playerDiv.getAttribute("rel") ? playerDiv.getAttribute("rel").replace("player", "") : null;
+      const playerId = playerDiv?.getAttribute("rel")?.replace("player", "");
       if (this.json.markers[coords]) {
         //console.log('JSONID:' + this.json.markers[coords].id + ' Id:' + playerId);
         if (!playerId || this.json.markers[coords].id != playerId) {
@@ -3769,16 +3769,15 @@ class OGInfinity {
           this.json.markers[coords].moon = element.querySelector(".cellMoon .tooltipRel") ? true : false;
         }
         this.saveData();
-      }
-      else if(this.json.playerMarkers && this.json.playerMarkers[playerId]){
-        //there is no marker fore these coord but there is a marker for this player
+      } else if (this.json.playerMarkers && this.json.playerMarkers[playerId]) {
+        //there is no marker for these coord but there is a marker for this player
 
         //Auto add marker
         this.json.markers[coords] = {
           color: this.json.playerMarkers[playerId].color,
-          id: playerId
+          id: playerId,
         };
-        
+
         //Save data
         this.saveData();
 
@@ -13645,25 +13644,28 @@ class OGInfinity {
               );
             }
 
-            if(playerDiv) {
+            if (playerDiv) {
               //Reset player marker
               position.classList.remove("ogl-marked");
               position.removeAttribute("data-marked");
-            
+
               const playerId = position.getAttribute("id").match(/[0-9]+$/)[0];
 
               /*get score cell and add marker ui*/
               const tdScore = position.querySelector(".score");
-              let colors = createDOM("div", { class: "ogi-highscore-flag ogl-colors", "data-context": "players-highscore" });
-              const spanScore = createDOM("span", { class:"ogi-highscore-score" }, tdScore.innerText);
+              const colors = createDOM("div", {
+                class: "ogi-highscore-flag ogl-colors",
+                "data-context": "players-highscore",
+              });
+              const spanScore = createDOM("span", { class: "ogi-highscore-score" }, tdScore.innerText);
               tdScore.replaceChildren(colors, spanScore);
               this.addPlayerMarkerUI(colors, playerId);
 
               // Update UI with player marker
               if (this.json.playerMarkers[playerId]) {
-                  position.classList.add("ogl-marked");
-                  position.setAttribute("data-marked", this.json.playerMarkers[playerId].color);
-              }            
+                position.classList.add("ogl-marked");
+                position.setAttribute("data-marked", this.json.playerMarkers[playerId].color);
+              }
 
               const mail = position.querySelector(".sendmsg_content > a");
               if (mail) {

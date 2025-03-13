@@ -21,9 +21,7 @@ function addPlayer(parent, playerId) {
     circle.addEventListener("click", () => {
       div.querySelectorAll("div[data-marker]").forEach((e) => e.classList.remove("ogl-active"));
       Player.get(playerId).then((player) => {
-        
         if (playerMarkers[playerId] && playerMarkers[playerId].color === color) {
-
           // Remove marker for player
           delete playerMarkers[playerId];
 
@@ -33,7 +31,7 @@ function addPlayer(parent, playerId) {
             coordsMarkers[planet.coords] = coordsMarkers[planet.coords] || {};
 
             // if marker is set at these coords and is the same color and player
-            if(coordsMarkers[planet.coords].color === color && coordsMarkers[planet.coords].id === playerId) {
+            if (coordsMarkers[planet.coords].color === color && coordsMarkers[planet.coords].id === playerId) {
               delete coordsMarkers[planet.coords];
             }
           });
@@ -47,7 +45,7 @@ function addPlayer(parent, playerId) {
           // Add marker for player
           playerMarkers[playerId] = playerMarkers[playerId] || {};
           playerMarkers[playerId].color = color;
-                  
+
           /// Set markers for each planet
           const coordsMarkers = OGIData.markers;
           player.planets.forEach((planet) => {
@@ -95,7 +93,6 @@ function displayPlayer(parent, id) {
     element.removeAttribute("data-marked");
   }
 }
-
 
 function add(coords, parent, id) {
   const div = createDOM("div", { class: "ogl-colorChoice" });
@@ -162,7 +159,7 @@ function display(parent, coords) {
 }
 
 export default {
-  add, 
+  add,
   addPlayer,
   display,
 };
