@@ -4187,6 +4187,18 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
   left: 52px;
   width: 33px;
   text-align: right;
+  visibility: hidden;
+  animation: appearing-planetConstructionIcons 0.2s forwards;
+}
+@keyframes appearing-planetConstructionIcons {
+  from {
+    visibility: visible;
+    opacity: 0;
+  }
+  to {
+    visibility: visible;
+    opacity: 1;
+  }
 }
 
 .smallplanet .icon_wrench_lf {
