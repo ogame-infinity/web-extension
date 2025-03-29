@@ -15222,6 +15222,7 @@ class OGInfinity {
     const updateProgressIndicators = () => {
       document.querySelectorAll(".planet-koords").forEach((planet) => {
         const smallplanet = planet.parentElement.parentElement;
+        const planetId = planet.parentElement.href.match(/=(\d+)/)[1];
 
         // remove old construction icon
         var constructionIconLink = smallplanet.querySelector(".constructionIcon:not(.moon)");
@@ -15229,10 +15230,10 @@ class OGInfinity {
 
         const constructionIconsDiv = DOM.createDOM("div", { class: "constructionIcons" });
 
-        const createConstructionIcon = (elem, techName, endDate, iconClass) => {
+        const createConstructionIcon = (elem, planetId, techName, endDate, iconClass, component) => {
           const constructionIcon = DOM.createDOM("a", {
             class: "constructionIcon planet tooltip js_hideTipOnMobile",
-            /*  href: "/game/index.php?page=ingame&component=overview&cp=" + planet.parentElement.href.match(/=(\d+)/)[1],*/
+            href: `/game/index.php?page=ingame&component=${component}&cp=${planetId}`,
           });
 
           const tooltipDiv = DOM.createDOM("div", { class: "constructionIconTooltip" });
@@ -15247,6 +15248,8 @@ class OGInfinity {
           return constructionIcon;
         };
 
+        //console.log("planet", planet.textContent.trim());
+
         // check if the planet is in lifeform research
         let elem = this.json.lfResearchProgress[planet.textContent.trim()];
         if (elem) {
@@ -15257,7 +15260,9 @@ class OGInfinity {
           } else if (endDate > now) {
             // lifeform research work is in progress, so show the icon
             const techName = translate(elem.technoId, "lifeformTech");
-            constructionIconsDiv.appendChild(createConstructionIcon(elem, techName, endDate, "icon_research_lf"));
+            constructionIconsDiv.appendChild(
+              createConstructionIcon(elem, planetId, techName, endDate, "icon_research_lf", "lfresearch")
+            );
           }
         }
 
@@ -15280,7 +15285,9 @@ class OGInfinity {
 
             if (endDate > now) {
               // lifeform construction work is still in progress, so show the icon
-              constructionIconsDiv.appendChild(createConstructionIcon(elem, techName, endDate, "icon_wrench_lf"));
+              constructionIconsDiv.appendChild(
+                createConstructionIcon(elem, planetId, techName, endDate, "icon_wrench_lf", "lfbuildings")
+              );
             }
           }
         }
@@ -15299,7 +15306,10 @@ class OGInfinity {
 
             if (endDate > now) {
               // lifeform construction work is still in progress, so show the icon
-              constructionIconsDiv.appendChild(createConstructionIcon(elem, techName, endDate, "icon_wrench"));
+              constructionIconsDiv.appendChild(
+                //TODO: find a way to get the correct component (facilities or supplies) instead of overview
+                createConstructionIcon(elem, planetId, techName, endDate, "icon_wrench", "overview")
+              );
             }
           }
         }
@@ -15914,7 +15924,6 @@ class OGInfinity {
   }
 
   initializeLFTypeName() {
-    debugger;
     if (!this.hasLifeforms) return;
     fetch(`/game/index.php?page=ingame&component=lfsettings&cp=${this.current.id}`)
       .then((rep) => rep.text())
