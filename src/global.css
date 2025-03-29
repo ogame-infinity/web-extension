@@ -4154,11 +4154,12 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
 }
 
 .smallplanet .constructionIcon {
-  bottom: 2px !important;
+  bottom: 0px !important;
   left: 72px !important;
   right: unset !important;
   top: auto !important;
   z-index: 10;
+  cursor: pointer;
 }
 
 .smallplanet .constructionIcon.moon {
@@ -4171,8 +4172,8 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
   right: unset !important;
 }
 
-/* hide old regular constructionIcon */
-.smallplanet .constructionIcon:not(.constructionIcons .constructionIcon):not(.constructionIcon.moon) {
+/* hide old regular constructionIcons */
+.smallplanet .constructionIcon:not(.constructionIcons .constructionIcon)/*:not(.constructionIcon.moon)*/ {
   visibility: hidden;
 }
 
@@ -4182,13 +4183,22 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
 }
 
 .smallplanet .constructionIcons {
+  transform: translateX(-100%);/*to set position from right border*/
   position: absolute;
-  bottom: 1px;
-  left: 52px;
-  width: 36px;
-  text-align: right;
+  bottom: -1px;
+  left: 82px;
+  width: fit-content;  
   visibility: hidden;
   animation: appearing-planetConstructionIcons 0.2s forwards;
+}
+
+.moon-construction-sum .smallplanet .constructionIcons.moonConstructionIcons {
+  left: unset;
+  right: 65px;
+}
+.smallplanet .constructionIcons.moonConstructionIcons:not(.moon-construction-sum .constructionIcons.moonConstructionIcons) {
+  left: unset;
+  right: 5px;
 }
 @keyframes appearing-planetConstructionIcons {
   from {
