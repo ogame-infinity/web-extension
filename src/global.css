@@ -4187,7 +4187,7 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
   position: absolute;
   bottom: -1px;
   left: 82px;
-  width: fit-content;  
+  width: fit-content;
   visibility: hidden;
   animation: appearing-planetConstructionIcons 0.2s forwards;
 }
@@ -4212,12 +4212,12 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
 }
 
 .constructionIconTooltip .techName{
-	display: block;
+  display: block;
 }
 
 .constructionIconTooltip .techEndDate{
-	display: block;
-	margin-top:10px;
+  display: block;
+  margin-top:10px;
 }
 
 .smallplanet .icon_wrench_lf {
@@ -4228,11 +4228,17 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
   width: 12px;
 }
 .smallplanet .icon_research_lf {
-  background: url("chrome-extension://__MSG_@@extension_id__/assets/images/icon_research_lf.png");
+  background: url("chrome-extension://__MSG_@@extension_id__/assets/images/icon_research_lf.svg");
+  background-size: 10px 10px;
+  
+  filter: brightness(0) saturate(100%) invert(45%) sepia(86%) saturate(5140%) hue-rotate(267deg) brightness(105%) contrast(101%);
   background-repeat: no-repeat;
+  transform: rotate(45deg);
   display: inline-block;
-  height: 12px;
-  width: 12px;
+  height: 12px !important;
+  width: 12px !important;
+  background-position: center;
+  background-origin: content-box;
 }
 
 .smallplanet .alert {
