@@ -15229,12 +15229,43 @@ class OGInfinity {
 
         const constructionIconsDiv = DOM.createDOM("div", { class: "constructionIcons" });
 
+        const createConstructionIcon = (elem, techName, endDate, iconClass) => {
+          const constructionIcon = DOM.createDOM("a", {
+            class: "constructionIcon planet tooltip js_hideTipOnMobile",
+            /*  href: "/game/index.php?page=ingame&component=overview&cp=" + planet.parentElement.href.match(/=(\d+)/)[1],*/
+          });
+
+          const tooltipDiv = DOM.createDOM("div", { class: "constructionIconTooltip" });
+          tooltipDiv.appendChild(DOM.createDOM("span", { class: "techName" }, `${techName} (${elem.tolvl})`));
+          tooltipDiv.appendChild(DOM.createDOM("span", { class: "techEndDate" }, endDate.toLocaleString()));
+
+          constructionIcon.appendChild(DOM.createDOM("span", { class: `icon12px ${iconClass}` }));
+          constructionIcon.addEventListener("mouseover", () =>
+            tooltip(constructionIcon, tooltipDiv, true, { auto: true }, 50, true)
+          );
+
+          return constructionIcon;
+        };
+
+        // check if the planet is in lifeform research
+        let elem = this.json.lfResearchProgress[planet.textContent.trim()];
+        if (elem) {
+          const endDate = new Date(elem.endDate);
+          if (endDate < now) {
+            // lifeform research work is finished, so we need to update the lifeform
+            needLifeformUpdateForResearch = true;
+          } else if (endDate > now) {
+            // lifeform research work is in progress, so show the icon
+            const techName = translate(elem.technoId, "lifeformTech");
+            constructionIconsDiv.appendChild(createConstructionIcon(elem, techName, endDate, "icon_research_lf"));
+          }
+        }
+
         // check if the planet is in lifeform construction
-        let elem = this.json.lfProductionProgress[planet.textContent.trim()];
+        elem = this.json.lfProductionProgress[planet.textContent.trim()];
         if (elem) {
           const endDate = new Date(elem.endDate);
           const techName = translate(elem.technoId, "lifeformTech");
-          debugger;
 
           if (endDate < now) {
             // lifeform construction work is finished
@@ -15243,19 +15274,14 @@ class OGInfinity {
               // regular construction work is finished, so show border color
               planet.parentElement.classList.add("finishedLf");
             }
-          } else if (endDate > now) {
-            // lifeform construction work is still in progress, so show the icon
-            const constructionIconLf = DOM.createDOM("a", {
-              class: "constructionIcon planet tooltip js_hideTipOnMobile",
-              href: "/game/index.php?page=ingame&component=overview&cp=" + planet.parentElement.href.match(/=(\d+)/)[1],
-            });
-            constructionIconLf.appendChild(DOM.createDOM("span", { class: "icon12px icon_wrench_lf" }));
-            constructionIconLf.addEventListener("mouseover", () =>
-              tooltip(constructionIconLf, DOM.createDOM("span", {}, techName), true, { auto: true }, 50, true)
-            );
-            constructionIconsDiv.appendChild(constructionIconLf);
           } else {
+            // if some lifeform construction work is finished, remove the border color
             if (this.json.options.showProgressIndicators) planet.parentElement.classList.remove("finishedLf");
+
+            if (endDate > now) {
+              // lifeform construction work is still in progress, so show the icon
+              constructionIconsDiv.appendChild(createConstructionIcon(elem, techName, endDate, "icon_wrench_lf"));
+            }
           }
         }
 
@@ -15263,30 +15289,21 @@ class OGInfinity {
         elem = this.json.productionProgress[planet.textContent.trim()];
         if (elem) {
           const endDate = new Date(elem.endDate);
+          const techName = translate(elem.technoId, "tech");
           if (endDate < now) {
             // regular construction work is finished, so show border color
             if (this.json.options.showProgressIndicators) planet.parentElement.classList.add("finished");
-          } else if (endDate > now) {
-            const techName = translate(elem.technoId, "tech");
-            // regular construction work is in progress, so show the icon
-            const constructionIcon = DOM.createDOM("a", {
-              class: "constructionIcon planet tooltip js_hideTipOnMobile",
-              href: "/game/index.php?page=ingame&component=overview&cp=" + planet.parentElement.href.match(/=(\d+)/)[1],
-            });
-
-            constructionIcon.appendChild(DOM.createDOM("span", { class: "icon12px icon_wrench" }));
-            constructionIcon.addEventListener("mouseover", () =>
-              tooltip(constructionIcon, DOM.createDOM("span", {}, techName), true, { auto: true }, 50, true)
-            );
-            constructionIconsDiv.appendChild(constructionIcon);
           } else {
+            // if some regular construction work is finished, remove the border color
             if (this.json.options.showProgressIndicators) planet.parentElement.classList.remove("finished");
+
+            if (endDate > now) {
+              // lifeform construction work is still in progress, so show the icon
+              constructionIconsDiv.appendChild(createConstructionIcon(elem, techName, endDate, "icon_wrench"));
+            }
           }
         }
-        elem = this.json.lfResearchProgress[planet.textContent.trim()];
-        if (elem && new Date(elem.endDate) < now) {
-          needLifeformUpdateForResearch = true;
-        }
+
         //add the construction icons to the planet
         smallplanet.appendChild(constructionIconsDiv);
       });
@@ -15897,6 +15914,7 @@ class OGInfinity {
   }
 
   initializeLFTypeName() {
+    debugger;
     if (!this.hasLifeforms) return;
     fetch(`/game/index.php?page=ingame&component=lfsettings&cp=${this.current.id}`)
       .then((rep) => rep.text())
