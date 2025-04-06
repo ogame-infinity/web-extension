@@ -13657,7 +13657,7 @@ class OGInfinity {
                 class: "ogi-highscore-flag ogl-colors",
                 "data-context": "players-highscore",
               });
-              const spanScore = createDOM("span", { class: "ogi-highscore-score" }, tdScore.innerText);
+              const spanScore = createDOM("span", { class: "ogi-highscore-score" }, tdScore.textContent);
               tdScore.replaceChildren(colors, spanScore);
               this.addPlayerMarkerUI(colors, playerId);
 
