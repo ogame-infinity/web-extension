@@ -203,8 +203,12 @@ class ExpeditionMessagesAnalyzer {
 
         summary.type["Void"] ? (summary.type["Void"] += 1) : (summary.type["Void"] = 1);
       } else if (type === "trader") {
+        const rawAmount = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-resources"));
+        const amount = [rawAmount['1'], rawAmount['2'], rawAmount['3'], 0];
+
         expeditions[msgId] = {
           result: "Merchant",
+          amount,
           date: newDate,
         };
 
