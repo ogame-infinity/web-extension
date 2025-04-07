@@ -13649,7 +13649,10 @@ class OGInfinity {
               position.classList.remove("ogl-marked");
               position.removeAttribute("data-marked");
 
-              const playerId = position.getAttribute("id").match(/[0-9]+$/)[0];
+              const highscorePlayerId = position.getAttribute("id").match(/[0-9]+$/)[0];
+
+              // exclude own player
+              if (highscorePlayerId == playerId) return;
 
               /*get score cell and add marker ui*/
               const tdScore = position.querySelector(".score");
@@ -13659,17 +13662,17 @@ class OGInfinity {
               });
               const spanScore = createDOM("span", { class: "ogi-highscore-score" }, tdScore.textContent);
               tdScore.replaceChildren(colors, spanScore);
-              this.addPlayerMarkerUI(colors, playerId);
+              this.addPlayerMarkerUI(colors, highscorePlayerId);
 
               // Update UI with player marker
-              if (this.json.playerMarkers[playerId]) {
+              if (this.json.playerMarkers[highscorePlayerId]) {
                 position.classList.add("ogl-marked");
-                position.setAttribute("data-marked", this.json.playerMarkers[playerId].color);
+                position.setAttribute("data-marked", this.json.playerMarkers[highscorePlayerId].color);
               }
 
               const mail = position.querySelector(".sendmsg_content > a");
               if (mail) {
-                dataHelper.getPlayer(playerId).then((p) => {
+                dataHelper.getPlayer(highscorePlayerId).then((p) => {
                   let statusClass = this.getPlayerStatus(p.status);
                   if (playerDiv.getAttribute("class").includes("status_abbr_honorableTarget")) {
                     statusClass = "status_abbr_honorableTarget";
