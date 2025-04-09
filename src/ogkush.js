@@ -13670,17 +13670,14 @@ class OGInfinity {
                 position.setAttribute("data-marked", this.json.playerMarkers[highscorePlayerId].color);
               }
 
-              const mail = position.querySelector(".sendmsg_content > a");
-              if (mail) {
-                dataHelper.getPlayer(highscorePlayerId).then((p) => {
-                  let statusClass = this.getPlayerStatus(p.status);
-                  if (playerDiv.getAttribute("class").includes("status_abbr_honorableTarget")) {
-                    statusClass = "status_abbr_honorableTarget";
-                  }
-                  playerDiv.replaceChildren(createDOM("span", { class: `${statusClass}` }, `${p.name}`));
-                  this.stalk(playerDiv, p);
-                });
-              }
+              dataHelper.getPlayer(highscorePlayerId).then((p) => {
+                let statusClass = this.getPlayerStatus(p.status);
+                if (playerDiv.getAttribute("class").includes("status_abbr_honorableTarget")) {
+                  statusClass = "status_abbr_honorableTarget";
+                }
+                playerDiv.replaceChildren(createDOM("span", { class: `${statusClass}` }, `${p.name}`));
+                this.stalk(playerDiv, p);
+              });
             }
           }
         });
