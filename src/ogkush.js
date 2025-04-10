@@ -3753,7 +3753,6 @@ class OGInfinity {
       let playerDiv = element.querySelector(".cellPlayerName > span.tooltipRel");
       const playerId = playerDiv?.getAttribute("rel")?.replace("player", "");
       if (this.json.markers[coords]) {
-        //console.log('JSONID:' + this.json.markers[coords].id + ' Id:' + playerId);
         if (!playerId || this.json.markers[coords].id != playerId) {
           delete this.json.markers[coords];
           this.markedPlayers = this.getMarkedPlayers(this.json.markers);
@@ -13639,7 +13638,7 @@ class OGInfinity {
               let count = countDiv.getAttribute("title") || countDiv.getAttribute("data-tooltip-title");
               count = count.split(":")[1].trim();
               countDiv.replaceChildren(
-                createDOM("span", { class: "ogi-highscore-ships" }, `(${count})`),
+                DOM.createDOM("span", { class: "ogi-highscore-ships" }, `(${count})`),
                 document.createTextNode(` ${countDiv.textContent.trim()}`)
               );
             }
@@ -13656,11 +13655,11 @@ class OGInfinity {
 
               /*get score cell and add marker ui*/
               const tdScore = position.querySelector(".score");
-              const colors = createDOM("div", {
+              const colors = DOM.createDOM("div", {
                 class: "ogi-highscore-flag ogl-colors",
                 "data-context": "players-highscore",
               });
-              const spanScore = createDOM("span", { class: "ogi-highscore-score" }, tdScore.textContent);
+              const spanScore = DOM.createDOM("span", { class: "ogi-highscore-score" }, tdScore.textContent);
               tdScore.replaceChildren(colors, spanScore);
               this.addPlayerMarkerUI(colors, highscorePlayerId);
 
@@ -13675,7 +13674,7 @@ class OGInfinity {
                 if (playerDiv.getAttribute("class").includes("status_abbr_honorableTarget")) {
                   statusClass = "status_abbr_honorableTarget";
                 }
-                playerDiv.replaceChildren(createDOM("span", { class: `${statusClass}` }, `${p.name}`));
+                playerDiv.replaceChildren(DOM.createDOM("span", { class: `${statusClass}` }, `${p.name}`));
                 this.stalk(playerDiv, p);
               });
             }
