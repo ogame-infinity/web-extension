@@ -30,6 +30,7 @@ import * as loadingUtil from "./util/loading.js";
 import * as standardUnit from "./util/standardUnit.js";
 import planetType from "./util/enum/planetType.js";
 import shipEnum from "./util/enum/ship.js";
+import OverviewPage from "./ctxpage/overview/OverviewPage.js";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 //const VERSION = "__VERSION__";
@@ -1360,6 +1361,8 @@ const isOwnPlanet = (coords) => {
 };
 
 class OGInfinity {
+  OverviewPage = new OverviewPage();
+
   constructor() {
     this.commander = document.querySelector("#officers > a.commander.on") !== null;
     this.rawURL = new URL(window.location.href);
@@ -1644,7 +1647,8 @@ class OGInfinity {
     this.utilities();
     this.chat();
     this.uvlinks();
-    this.betterHighscore();
+    this.OverviewPage.MakePrettierOverview(this.page);
+    this.betterHighscore();    
     this.overviewDates();
     needsUtil.display();
     this.jumpGate();

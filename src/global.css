@@ -3633,6 +3633,120 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link{
   background-position-y: 0px;
 }
 
+#overviewcomponent #planet #detailWrapper #header_text h2 {
+  width: auto !important;
+  float: left;
+}
+
+#overviewcomponent #planet #detailWrapper #header_text h2 a {
+  float: unset !important;
+}
+
+#overviewcomponent #planet #detailWrapper .togglePlanetDetails {
+  cursor: pointer;
+  float: right;
+  width: 23px;
+  height: 23px;
+  margin-right: 15px;
+  margin-top: 6.5px;
+}
+
+#overviewcomponent #planet[details-active="true"] #detailWrapper #planetdata {
+  position: relative;
+  visibility: hidden;
+  animation: appearing-planetdata 0.8s forwards;
+}
+@keyframes appearing-planetdata {
+  from {
+    visibility: visible;
+    right: -407px;
+    opacity: 0;
+    }
+  to {  
+    visibility: visible;
+    right: 0px;
+    opacity: 1;     
+  }
+}
+
+#overviewcomponent #planet #detailWrapper #planetdata {
+  visibility: hidden;
+}
+#overviewcomponent #planet[details-active="true"] #detailWrapper .togglePlanetDetails:hover,
+#overviewcomponent #planet[details-active="false"] #detailWrapper .togglePlanetDetails:hover {
+  background: url("chrome-extension://__MSG_@@extension_id__/assets/images/menuicons.png") calc(-23px * 9) -46px;
+  background-size: calc(23px * 14) !important;
+}
+#overviewcomponent #planet[details-active="true"] #detailWrapper .togglePlanetDetails {
+  background: url("chrome-extension://__MSG_@@extension_id__/assets/images/menuicons.png") calc(-23px * 9) -23px;
+  background-size: calc(23px * 14) !important;
+}
+#overviewcomponent #planet[details-active="false"] #detailWrapper .togglePlanetDetails {
+  background: url("chrome-extension://__MSG_@@extension_id__/assets/images/menuicons.png") calc(-23px * 9) 0;
+  background-size: calc(23px * 14) !important;
+}
+
+#overviewcomponent #planet #detailWrapper #planetdata {
+  clear: right;
+}
+
+#overviewcomponent #planet[buffBar-active="true"] #buffBar {
+  position: absolute;
+  visibility: hidden;
+  animation: appearing-buffBar 0.8s forwards;
+}
+@keyframes appearing-buffBar {
+  from {
+    visibility: visible;
+    bottom: -36px;
+    opacity: 0;
+    }
+  to {  
+    visibility: visible;
+    bottom: 4px;
+    opacity: 1;     
+  }
+}
+
+#overviewcomponent #planet #buffBar {
+  visibility: hidden;
+}
+
+#overviewcomponent #planet #spaceObjectHeaderActionIcon {
+  width: 36px;
+  height: 28px;
+  background-image: url("https://gf1.geo.gfsrv.net/cdnce/54d37c899703757907c1160db0b1b9.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 25px 25px;
+  filter: brightness(0) saturate(100%) invert(17%) sepia(7%) saturate(497%) hue-rotate(161deg) brightness(94%) contrast(84%);
+  display: block;
+}
+#overviewcomponent #planet #toggleBuffBar {
+  cursor: pointer;
+  position: absolute;
+  left: 4px;
+  bottom: 4px;
+  width: 36px;
+  height: 28px;
+  background-image: url("https://gf1.geo.gfsrv.net/cdnce/54d37c899703757907c1160db0b1b9.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 25px 25px;
+  filter: brightness(0) saturate(100%) invert(17%) sepia(7%) saturate(497%) hue-rotate(161deg) brightness(94%) contrast(84%);
+  display: block;
+}
+
+#overviewcomponent #planet[buffBar-active="true"] #toggleBuffBar {
+  filter: brightness(0) saturate(100%) invert(63%) sepia(11%) saturate(483%) hue-rotate(160deg) brightness(91%) contrast(91%);
+}
+
+#overviewcomponent #planet[buffBar-active="true"] #toggleBuffBar:hover,
+#overviewcomponent #planet[buffBar-active="false"] #toggleBuffBar:hover {
+  filter: brightness(0) saturate(100%) invert(77%) sepia(23%) saturate(1188%) hue-rotate(338deg) brightness(86%) contrast(92%);
+}
+
+
 .ogl-option {
   background-color: #1b1b1b !important;
   border: 1px solid #000;
