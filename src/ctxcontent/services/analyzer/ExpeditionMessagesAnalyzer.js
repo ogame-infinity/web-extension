@@ -43,7 +43,7 @@ class ExpeditionMessagesAnalyzer {
       const expeditionSums = OGIData.expeditionSums;
       const msgId = message.getAttribute("data-msg-id");
 
-      const sizeBlacklist = ["bhole", "merchant", "void", "nothing", "trader", "fleetLost"];
+      const sizeBlacklist = ["bhole", "void", "nothing", "fleetLost"];
 
       const displayLabel = function (message) {
         if (!expeditions[msgId]) return;
@@ -78,7 +78,9 @@ class ExpeditionMessagesAnalyzer {
         ) {
           let amountDisplay = "";
           if (expeditions[msgId].hasOwnProperty("amount") && !!expeditions[msgId].amount) {
-            if (!expeditions[msgId].amount[3]) {
+             if (expeditions[msgId].result.toLowerCase() === "merchant") {
+              amountDisplay = `${expeditions[msgId].amount[0]} / ${expeditions[msgId].amount[1]} / ${expeditions[msgId].amount[2]}`;
+            } else if (!expeditions[msgId].amount[3]) {
               amountDisplay = toFormattedNumber(standardUnit.standardUnit(expeditions[msgId].amount), [0, 1], true);
               amountDisplay = `${amountDisplay} ${standardUnit.unitType()}`;
             } else amountDisplay = toFormattedNumber(expeditions[msgId].amount[3], [0, 1], true);
@@ -203,8 +205,13 @@ class ExpeditionMessagesAnalyzer {
 
         summary.type["Void"] ? (summary.type["Void"] += 1) : (summary.type["Void"] = 1);
       } else if (type === "trader") {
+        const rawAmount = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-resources"));
+        const amount = [rawAmount["1"], rawAmount["2"], rawAmount["3"]];
+
         expeditions[msgId] = {
           result: "Merchant",
+          amount,
+          size,
           date: newDate,
         };
 
