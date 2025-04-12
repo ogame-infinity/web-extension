@@ -1478,6 +1478,7 @@ class OGInfinity {
     this.json.autoHarvest = this.json.autoHarvest || ["0:0:0", 3];
     this.json.myActivities = this.json.myActivities || {};
     this.json.sideStalk = this.json.sideStalk || [];
+    this.json.playerMarkers = this.json.playerMarkers || {};
     this.json.markers = this.json.markers || {};
     this.json.locked = this.json.locked || {};
     this.json.missing = this.json.missing || {};
@@ -3742,7 +3743,7 @@ class OGInfinity {
         let id =
           (playerDiv && playerDiv.getAttribute("rel") && playerDiv.getAttribute("rel").replace("player", "")) || 99999;
         let coords = galaxy + ":" + system + ":" + Number(index + 1);
-        let colors = createDOM("div", { class: "ogl-colors", "data-coords": coords, "data-context": "galaxy" });
+        const colors = DOM.createDOM("div", { class: "ogl-colors", "data-coords": coords, "data-context": "galaxy" });
         //console.log('Coord: ' + coords + ' parent:' + colors + ' Id:' + id + ' Moon:' + moon);
         element.insertBefore(colors, element.firstChild);
         this.addMarkerUI(coords, colors, id, moon);
@@ -3754,10 +3755,9 @@ class OGInfinity {
 
       let coords = galaxy + ":" + system + ":" + Number(index + 1);
       let playerDiv = element.querySelector(".cellPlayerName > span.tooltipRel");
-      let id = playerDiv && playerDiv.getAttribute("rel") ? playerDiv.getAttribute("rel").replace("player", "") : null;
+      const playerId = playerDiv?.getAttribute("rel")?.replace("player", "");
       if (this.json.markers[coords]) {
-        //console.log('JSONID:' + this.json.markers[coords].id + ' Id:' + id);
-        if (!id || this.json.markers[coords].id != id) {
+        if (!playerId || this.json.markers[coords].id != playerId) {
           delete this.json.markers[coords];
           this.markedPlayers = this.getMarkedPlayers(this.json.markers);
           if (this.json.options.targetList) {
@@ -3772,6 +3772,21 @@ class OGInfinity {
           this.json.markers[coords].moon = element.querySelector(".cellMoon .tooltipRel") ? true : false;
         }
         this.saveData();
+      } else if (this.json.playerMarkers && this.json.playerMarkers[playerId]) {
+        //there is no marker for these coord but there is a marker for this player
+
+        //Auto add marker
+        this.json.markers[coords] = {
+          color: this.json.playerMarkers[playerId].color,
+          id: playerId,
+        };
+
+        //Save data
+        this.saveData();
+
+        //Update UI
+        element.classList.add("ogl-marked");
+        element.setAttribute("data-marked", this.json.playerMarkers[playerId].color);
       }
     });
   }
@@ -12528,6 +12543,10 @@ class OGInfinity {
     }
   }
 
+  addPlayerMarkerUI(parent, id) {
+    markerui.addPlayer(parent, id);
+  }
+
   addMarkerUI(coords, parent, id) {
     markerui.add(coords, parent, id);
   }
@@ -12856,6 +12875,7 @@ class OGInfinity {
       mainSyncJsonObj.search = this?.json?.search;
       mainSyncJsonObj.sideStalk = this?.json?.sideStalk;
       mainSyncJsonObj.locked = this?.json?.locked;
+      mainSyncJsonObj.playerMarkers = this?.json?.playerMarkers;
       mainSyncJsonObj.markers = this?.json?.markers;
       mainSyncJsonObj.sideStargetTabstalk = this?.json?.targetTabs;
       mainSyncJsonObj.missing = this?.json?.missing;
@@ -13622,19 +13642,43 @@ class OGInfinity {
               let count = countDiv.getAttribute("title") || countDiv.getAttribute("data-tooltip-title");
               count = count.split(":")[1].trim();
               countDiv.replaceChildren(
-                createDOM("span", { class: "ogi-highscore-ships" }, `(${count})`),
+                DOM.createDOM("span", { class: "ogi-highscore-ships" }, `(${count})`),
                 document.createTextNode(` ${countDiv.textContent.trim()}`)
               );
             }
-            const mail = position.querySelector(".sendmsg_content > a");
-            if (mail) {
-              const id = mail.getAttribute("rel").match(/[0-9]+$/)[0];
-              dataHelper.getPlayer(id).then((p) => {
+
+            if (playerDiv) {
+              //Reset player marker
+              position.classList.remove("ogl-marked");
+              position.removeAttribute("data-marked");
+
+              const highscorePlayerId = position.getAttribute("id").match(/[0-9]+$/)[0];
+
+              // exclude own player
+              if (highscorePlayerId == playerId) return;
+
+              /*get score cell and add marker ui*/
+              const tdScore = position.querySelector(".score");
+              const colors = DOM.createDOM("div", {
+                class: "ogi-highscore-flag ogl-colors",
+                "data-context": "players-highscore",
+              });
+              const spanScore = DOM.createDOM("span", { class: "ogi-highscore-score" }, tdScore.textContent);
+              tdScore.replaceChildren(colors, spanScore);
+              this.addPlayerMarkerUI(colors, highscorePlayerId);
+
+              // Update UI with player marker
+              if (this.json.playerMarkers[highscorePlayerId]) {
+                position.classList.add("ogl-marked");
+                position.setAttribute("data-marked", this.json.playerMarkers[highscorePlayerId].color);
+              }
+
+              dataHelper.getPlayer(highscorePlayerId).then((p) => {
                 let statusClass = this.getPlayerStatus(p.status);
                 if (playerDiv.getAttribute("class").includes("status_abbr_honorableTarget")) {
                   statusClass = "status_abbr_honorableTarget";
                 }
-                playerDiv.replaceChildren(createDOM("span", { class: `${statusClass}` }, `${p.name}`));
+                playerDiv.replaceChildren(DOM.createDOM("span", { class: `${statusClass}` }, `${p.name}`));
                 this.stalk(playerDiv, p);
               });
             }

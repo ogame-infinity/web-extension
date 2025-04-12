@@ -216,11 +216,7 @@ export function stalk(sender, player, delay = undefined) {
 
     if (OGIData.options.ptreTK) {
       content.appendChild(
-        createDOM(
-          "a",
-          { class: "ogl-ptre", href: generatePTRELink(p.id), target: generatePTRELink(p.id) },
-          "P"
-        )
+        createDOM("a", { class: "ogl-ptre", href: generatePTRELink(p.id), target: generatePTRELink(p.id) }, "P")
       );
     }
 
@@ -231,6 +227,38 @@ export function stalk(sender, player, delay = undefined) {
     }
     page === "galaxy" ? (pos = { bottom: pos < 4, top: pos > 4 }) : (pos = {});
     tooltip(sender, content, false, pos, delay);
+
+    //at tooltip creation, we need to check if the player has a color assigned
+    //and if so, we need to assign the same color to all planets of this player
+    const playerMarkers = OGIData.playerMarkers;
+    if (playerMarkers[p.id] && playerMarkers[p.id].color) {
+      let hadCoordsMarkerHanged = false;
+      const coordsMarkers = OGIData.markers;
+      p.planets.forEach((planet) => {
+        //check if the planet is deleted, if so, we don't need to assign a color
+        //we need to remove the marker from the coordsMarkers
+        if (planet.deleted) {
+          if (coordsMarkers[planet.coords]) {
+            delete coordsMarkers[planet.coords];
+            hadCoordsMarkerHanged = true;
+          } else return;
+        }
+        //check if the planet has a color assigned, or if ther planet is not assigned to the right player
+        //if not, we need to assign the same color as the player
+        else if (!coordsMarkers[planet.coords] || coordsMarkers[planet.coords].id !== p.id) {
+          coordsMarkers[planet.coords] = coordsMarkers[planet.coords] || {};
+          coordsMarkers[planet.coords].id = p.id;
+          coordsMarkers[planet.coords].color = playerMarkers[p.id].color;
+          coordsMarkers[planet.coords].moon = planet.moon !== null && planet.moon !== undefined;
+          hadCoordsMarkerHanged = true;
+        }
+      });
+      //if we had to change the color of the planets, we need to update the markers
+      if (hadCoordsMarkerHanged) {
+        OGIData.markers = coordsMarkers;
+      }
+    }
+
     const planets = update(p.planets, p.id);
     planets.forEach((e) => {
       return list.appendChild(e);

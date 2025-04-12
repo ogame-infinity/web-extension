@@ -2831,6 +2831,121 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link{
   color: rgb(208, 129, 62) !important;
 }
 
+#highscoreContent .ogi-highscore-flag {
+  float: left;
+}
+
+#highscoreContent .ogi-ready[data-marked] td[class*="movement"], 
+#highscoreContent .ogi-ready[data-marked] td[class*="sendmsg"], 
+#highscoreContent .ogi-ready[data-marked] td[class*="name"],
+#highscoreContent .ogi-ready[data-marked] td[class*="score"] {
+  box-shadow: rgba(0, 0, 0, 0.5) 0px 63.8px 0px inset;
+}
+
+#highscoreContent .ogi-ready[data-marked="red"] td[class*="movement"] {
+  background: linear-gradient(to left, #b13434, transparent) !important;
+}
+
+#highscoreContent .ogi-ready[data-marked="yellow"] td[class*="movement"] {
+  background: linear-gradient(to left, #907923, #1a202b) !important;
+}
+
+#highscoreContent .ogi-ready[data-marked="green"] td[class*="movement"] {
+  background: linear-gradient(to left, #24777b, #1a202b) !important;
+}
+
+#highscoreContent .ogi-ready[data-marked="blue"] td[class*="movement"] {
+  background: linear-gradient(to left, #355084, #1a202b) !important;
+}
+
+#highscoreContent .ogi-ready[data-marked="violet"] td[class*="movement"] {
+  background: linear-gradient(to left, #a833da, #1a202b) !important;
+}
+
+#highscoreContent .ogi-ready[data-marked="gray"] td[class*="movement"] {
+  background: linear-gradient(to left, #8a8a8a, #1a202b) !important;
+}
+
+#highscoreContent .ogi-ready[data-marked="orange"] td[class*="movement"] {
+  background: linear-gradient(to left, #ff956b, #1a202b) !important;
+}
+
+#highscoreContent .ogi-ready[data-marked="brown"] td[class*="movement"] {
+  background: linear-gradient(to left, #c6622d, #1a202b) !important;
+}
+
+#highscoreContent .ogi-ready[data-marked="red"] td[class*="sendmsg"],
+#highscoreContent .ogi-ready[data-marked="red"] td[class*="name"] {
+  background-color: #b13434 !important;
+}
+
+#highscoreContent .ogi-ready[data-marked="yellow"] td[class*="sendmsg"],
+#highscoreContent .ogi-ready[data-marked="yellow"] td[class*="name"] {
+  background-color:#907923 !important;
+}
+
+#highscoreContent .ogi-ready[data-marked="green"] td[class*="sendmsg"],
+#highscoreContent .ogi-ready[data-marked="green"] td[class*="name"] {
+  background-color:#24777b !important;
+}
+
+#highscoreContent .ogi-ready[data-marked="blue"] td[class*="sendmsg"],
+#highscoreContent .ogi-ready[data-marked="blue"] td[class*="name"] {
+  background-color:#355084 !important;
+}
+
+#highscoreContent .ogi-ready[data-marked="violet"] td[class*="sendmsg"],
+#highscoreContent .ogi-ready[data-marked="violet"] td[class*="name"] {
+  background-color:#a833da !important;
+}
+
+#highscoreContent .ogi-ready[data-marked="gray"] td[class*="sendmsg"],
+#highscoreContent .ogi-ready[data-marked="gray"] td[class*="name"] {
+  background-color:#8a8a8a !important;
+}
+
+#highscoreContent .ogi-ready[data-marked="orange"] td[class*="sendmsg"],
+#highscoreContent .ogi-ready[data-marked="orange"] td[class*="name"] {
+  background-color:#ff956b !important;
+}
+
+#highscoreContent .ogi-ready[data-marked="brown"] td[class*="sendmsg"],
+#highscoreContent .ogi-ready[data-marked="brown"] td[class*="name"] {
+  background-color:#c6622d !important;
+}
+
+#highscoreContent .ogi-ready[data-marked="red"] td[class*="score"] {
+  background: linear-gradient(to right, #b13434, transparent) !important;
+}
+
+#highscoreContent .ogi-ready[data-marked="yellow"] td[class*="score"] {
+  background: linear-gradient(to right, #907923, #1a202b) !important;
+}
+
+#highscoreContent .ogi-ready[data-marked="green"] td[class*="score"] {
+  background: linear-gradient(to right, #24777b, #1a202b) !important;
+}
+
+#highscoreContent .ogi-ready[data-marked="blue"] td[class*="score"] {
+  background: linear-gradient(to right, #355084, #1a202b) !important;
+}
+
+#highscoreContent .ogi-ready[data-marked="violet"] td[class*="score"] {
+  background: linear-gradient(to right, #a833da, #1a202b) !important;
+}
+
+#highscoreContent .ogi-ready[data-marked="gray"] td[class*="score"] {
+  background: linear-gradient(to right, #8a8a8a, #1a202b) !important;
+}
+
+#highscoreContent .ogi-ready[data-marked="orange"] td[class*="score"] {
+  background: linear-gradient(to right, #ff956b, #1a202b) !important;
+}
+
+#highscoreContent .ogi-ready[data-marked="brown"] td[class*="score"] {
+  background: linear-gradient(to right, #c6622d, #1a202b) !important;
+}
+
 .ogk-stats h1 {
   display: flex;
   font-size: 18px;
