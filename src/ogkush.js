@@ -11470,8 +11470,8 @@ class OGInfinity {
     var empireObjectMoons = await empireRequest(
       new URLSearchParams({ page: "standalone", component: "empire", planetType: "1" })
     );
-    Translator.UpdateAllTechNamesFromEmpire(empireObjectPlanets);
-    Translator.UpdateAllTechNamesFromEmpire(empireObjectMoons);
+
+    Translator.UpdateAllTechNamesFromEmpire(empireObjectPlanets, empireObjectMoons);
 
     const planets = empireObjectPlanets.planets;
     const moons = empireObjectMoons.planets;
