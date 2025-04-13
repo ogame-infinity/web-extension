@@ -4220,12 +4220,28 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
   margin-top:10px;
 }
 
-.smallplanet .icon_wrench_lf {
-  background: url("chrome-extension://__MSG_@@extension_id__/assets/images/icon_wrench_lf.png");
+.smallplanet .icon_wrench {
+  background: url("chrome-extension://__MSG_@@extension_id__/assets/images/icon_wrench.svg");
+  background-size: 13px 13px;
+
   background-repeat: no-repeat;
   display: inline-block;
-  height: 12px;
-  width: 12px;
+  height: 13px !important;
+  width: 13px !important;
+  background-position: center !important;
+  background-origin: content-box !important;
+}
+
+.smallplanet .icon_wrench_lf {
+  background: url("chrome-extension://__MSG_@@extension_id__/assets/images/icon_wrench_lf.svg");
+  background-size: 13px 13px;
+
+  background-repeat: no-repeat;
+  display: inline-block;
+  height: 13px !important;
+  width: 13px !important;
+  background-position: center;
+  background-origin: content-box;
 }
 
 .smallplanet .icon_research_lf {
@@ -4235,8 +4251,8 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
   background-repeat: no-repeat;
   transform: rotate(45deg);
   display: inline-block;
-  height: 12px !important;
-  width: 12px !important;
+  height: 13px !important;
+  width: 13px !important;
   background-position: center;
   background-origin: content-box;
 }
