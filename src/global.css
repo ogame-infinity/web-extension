@@ -4174,7 +4174,7 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
 
 /* hide old regular constructionIcons */
 .smallplanet .constructionIcon:not(.constructionIcons .constructionIcon)/*:not(.constructionIcon.moon)*/ {
-  visibility: hidden;
+  display: none !important;
 }
 
 .smallplanet .constructionIcon:not(.moon) {
@@ -4227,11 +4227,11 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
   height: 12px;
   width: 12px;
 }
+
 .smallplanet .icon_research_lf {
   background: url("chrome-extension://__MSG_@@extension_id__/assets/images/icon_research_lf.svg");
-  background-size: 10px 10px;
-  
-  filter: brightness(0) saturate(100%) invert(45%) sepia(86%) saturate(5140%) hue-rotate(267deg) brightness(105%) contrast(101%);
+  background-size: 13px 13px;
+
   background-repeat: no-repeat;
   transform: rotate(45deg);
   display: inline-block;

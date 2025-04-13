@@ -15225,7 +15225,6 @@ class OGInfinity {
         const smallplanet = planet.parentElement.parentElement;
         const planetId = planet.parentElement.href.match(/=(\d+)/)[1];
         const planetCoords = planet.textContent.trim();
-
         // remove old constructions icons
         var constructionIconLink = smallplanet.querySelector(".constructionIcon:not(.moon)");
         if (constructionIconLink) smallplanet.removeChild(constructionIconLink);
@@ -15339,6 +15338,8 @@ class OGInfinity {
 
         //add the construction icons to the planet
         smallplanet.appendChild(constructionIconsDiv);
+
+        debugger;
       });
     };
 
@@ -15419,6 +15420,7 @@ class OGInfinity {
         delete this.json.lfProductionProgress[coords];
       }
     }
+
     if (document.querySelector("#productionboxresearchcomponent")) {
       let research = document.querySelector("#productionboxresearchcomponent .queuePic");
       if (research) {
