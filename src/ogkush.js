@@ -1431,7 +1431,7 @@ class OGInfinity {
     this.loading();
     this.updateServerSettings(true);
     this.getAllianceClass();
-    this.initializeLFTypeName();
+    this.initializeLFNames();
     await this.updateEmpireData(true);
     await this.updateLifeform();
     document.querySelector(".ogl-dialogOverlay").classList.remove("ogl-active");
@@ -1458,6 +1458,7 @@ class OGInfinity {
     this.json.expeditionSums = this.json.expeditionSums || {};
     this.json.discoveriesSums = this.json.discoveriesSums || {};
     this.json.discoveries = this.json.discoveries || {};
+    this.json.lfTechNames = this.json.lfTechNames || {};
     this.json.lfTypeNames = this.json.lfTypeNames || {};
     this.json.flying = this.json.flying || {
       metal: 0,
@@ -1675,7 +1676,7 @@ class OGInfinity {
             this.loading();
             this.updateServerSettings(true);
             this.getAllianceClass();
-            this.initializeLFTypeName();
+            this.initializeLFNames();
             await this.updateLifeform();
             this.welcome();
           });
@@ -15959,7 +15960,7 @@ class OGInfinity {
     }
   }
 
-  initializeLFTypeName() {
+  initializeLFNames() {
     if (!this.hasLifeforms) return;
     fetch(`/game/index.php?page=ingame&component=lfsettings&cp=${this.current.id}`)
       .then((rep) => rep.text())
@@ -15969,6 +15970,12 @@ class OGInfinity {
         listName.forEach((lfName) => {
           const lifeformIcon = lfName.parentElement.querySelector(".lifeform1, .lifeform2, .lifeform3, .lifeform4");
           this.json.lfTypeNames[lfName.textContent.trim()] = lifeformIcon.classList[1];
+        });
+        const techIconList = htmlDocument.querySelectorAll("div.technologyInfo .icon");
+        techIconList.forEach((techIcon) => {
+          const techId = techIcon.classList[4].match(/[0-9]+$/)[0];
+          const techName = techIcon.nextElementSibling.textContent.trim();
+          this.json.lfTechNames[techId] = techName;
         });
         // last fetch has to be from current planet/moon else Ogame switches on next refresh
         if (this.current.isMoon) fetch(this.current.planet.querySelector(".moonlink").href);
