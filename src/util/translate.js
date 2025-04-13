@@ -1,4 +1,5 @@
 import OgamePageData from "./OgamePageData.js";
+import OGIData from "./OGIData.js";
 
 const translation = Object.freeze({
   tech: {
@@ -2984,6 +2985,68 @@ const language = OgamePageData.playerLang;
 let currentLanguage = ["ar", "mx"].includes(language) ? "es" : language;
 currentLanguage = ["de", "en", "es", "fr", "tr", "br"].includes(currentLanguage) ? currentLanguage : "en";
 
-export function translate(id, type = "text") {
-  return translation?.[type]?.[id]?.[currentLanguage] || translation?.[type]?.[id]?.en || "";
+class Translator {
+  #getTranslations() {
+    return (
+      OGIData.json.translations ?? {
+        lfTypeNames: {},
+        tech: {},
+        text: {},
+      }
+    );
+  }
+  #translate(id, type = "text") {
+    return translation?.[type]?.[id]?.[currentLanguage] || translation?.[type]?.[id]?.en || "";
+  }
+  translate(id, type = "text") {
+    if (OGIData.json.translations && (type === "tech" || type === "lifeformTech")) {
+      // Translate from the empire translations or the fallback translation
+      // OGIData.json.translations is the empire translations
+      return OGIData.json.translations.tech[id] ?? this.#translate(id, type);
+    }
+    return this.#translate(id, type);
+  }
+
+  GetClassFromLifeformName(name) {
+    const translations = this.#getTranslations();
+    return translations.lfTypeNames[name];
+  }
+
+  UpdateAllTechNamesFromEmpire(empire) {
+    var translations = this.#getTranslations();
+    const regex = /^\d+$/;
+    Object.keys(empire.translations.planets).forEach((key) => {
+      if (!key.endsWith("_full")) {
+        if (regex.test(key)) {
+          translations.tech[key] = empire.translations.planets[`${key}_full`].trim();
+        } else {
+          translations.text[key] = empire.translations.planets[key].trim();
+        }
+      }
+    });
+    OGIData.json.translations = translations;
+  }
+
+  InitializeLFNames(hasLifeforms) {
+    if (!hasLifeforms) return;
+    var translations = this.#getTranslations();
+    fetch(`/game/index.php?page=ingame&component=lfsettings`)
+      .then((rep) => rep.text())
+      .then((str) => {
+        const htmlDocument = new window.DOMParser().parseFromString(str, "text/html");
+        const listName = htmlDocument.querySelectorAll("div.lfsettingsContent > h3");
+        listName.forEach((lfName) => {
+          const lifeformIcon = lfName.parentElement.querySelector(".lifeform1, .lifeform2, .lifeform3, .lifeform4");
+          translations.lfTypeNames[lfName.textContent.trim()] = lifeformIcon.classList[1];
+        });
+        OGIData.json.translations = translations;
+        /*
+        //i don't understand: switch on what ?
+        // last fetch has to be from current planet/moon else Ogame switches on next refresh
+        if (this.current.isMoon) fetch(this.current.planet.querySelector(".moonlink").href);
+        */
+      });
+  }
 }
+
+export default new Translator();

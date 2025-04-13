@@ -24,7 +24,7 @@ import { tooltip } from "./util/tooltip.js";
 import missionType from "./util/enum/missionType.js";
 import * as needsUtil from "./util/needs.js";
 import flying from "./util/flying.js";
-import { translate } from "./util/translate.js";
+import Translator from "./util/translate.js";
 import { fleetCost } from "./util/fleetCost.js";
 import * as loadingUtil from "./util/loading.js";
 import * as standardUnit from "./util/standardUnit.js";
@@ -1431,7 +1431,7 @@ class OGInfinity {
     this.loading();
     this.updateServerSettings(true);
     this.getAllianceClass();
-    this.initializeLFNames();
+    Translator.InitializeLFNames(this.hasLifeforms);
     await this.updateEmpireData(true);
     await this.updateLifeform();
     document.querySelector(".ogl-dialogOverlay").classList.remove("ogl-active");
@@ -1458,8 +1458,6 @@ class OGInfinity {
     this.json.expeditionSums = this.json.expeditionSums || {};
     this.json.discoveriesSums = this.json.discoveriesSums || {};
     this.json.discoveries = this.json.discoveries || {};
-    this.json.lfTechNames = this.json.lfTechNames || {};
-    this.json.lfTypeNames = this.json.lfTypeNames || {};
     this.json.flying = this.json.flying || {
       metal: 0,
       crystal: 0,
@@ -1676,7 +1674,7 @@ class OGInfinity {
             this.loading();
             this.updateServerSettings(true);
             this.getAllianceClass();
-            this.initializeLFNames();
+            Translator.InitializeLFNames(this.hasLifeforms);
             await this.updateLifeform();
             this.welcome();
           });
@@ -11310,7 +11308,7 @@ class OGInfinity {
         // update selectedLifeforms & their levels
         htmlDocument.querySelectorAll(".smallplanet a.planetlink").forEach((elem) => {
           const name = elem.getAttribute("title").split("<br/>")[1].split(":")[1].trim();
-          this.json.selectedLifeforms[elem.href.split("cp=")[1]] = this.json.lfTypeNames[name];
+          this.json.selectedLifeforms[elem.href.split("cp=")[1]] = Translator.GetClassFromLifeformName(name);
         });
         const lifeformLevel = {};
         htmlDocument.querySelectorAll("lifeform-level-bonuses div.lifeform-item-icon").forEach((iconDiv) => {
@@ -11319,7 +11317,7 @@ class OGInfinity {
           lifeformLevel[lifeform] = level;
         });
 
-        const parseBonus = (text) => fromFormatedNumber(text.split("%")[0], false, true) / 100 || 0;
+        const parseBonus = (text) => (text ? fromFormatedNumber(text.split("%")[0], false, true) / 100 || 0 : 0);
 
         // production bonus
         const metalDiv = htmlDocument.querySelector(
@@ -11457,37 +11455,39 @@ class OGInfinity {
     const empireRequest = (href) =>
       fetch(`?${href.toString()}`, { signal: abortController.signal })
         .then((response) => response.text())
-        .then(
-          (string) =>
-            JSON.parse(
-              string.substring(string.indexOf("createImperiumHtml") + 47, string.indexOf("initEmpire") - 16),
-              (key, value) => {
-                if (key.includes("html") && key !== "equipment_html") return;
-                if (value === "0") return 0;
-                return value;
-              }
-            ).planets
+        .then((string) =>
+          JSON.parse(
+            string.substring(string.indexOf("createImperiumHtml") + 47, string.indexOf("initEmpire") - 16),
+            (key, value) => {
+              if (key.includes("html") && key !== "equipment_html") return;
+              if (value === "0") return 0;
+              return value;
+            }
+          )
         );
 
-    const planets = empireRequest(new URLSearchParams({ page: "standalone", component: "empire" }));
-    const moons = !document.querySelector(".moonlink")
-      ? false
-      : empireRequest(new URLSearchParams({ page: "standalone", component: "empire", planetType: "1" }));
+    var empireObjectPlanets = await empireRequest(new URLSearchParams({ page: "standalone", component: "empire" }));
+    var empireObjectMoons = await empireRequest(
+      new URLSearchParams({ page: "standalone", component: "empire", planetType: "1" })
+    );
+    Translator.UpdateAllTechNamesFromEmpire(empireObjectPlanets);
+    Translator.UpdateAllTechNamesFromEmpire(empireObjectMoons);
 
-    return Promise.all([planets, moons]).then((object) => {
-      object[0].forEach((planet) => {
-        planet.invalidate = false;
-        if (object[1]) {
-          object[1].forEach((moon) => {
-            if (planet.moonID === moon.id) {
-              planet.moon = moon;
-              planet.moon.invalidate = false;
-            }
-          });
-        }
-      });
-      return object[0];
+    const planets = empireObjectPlanets.planets;
+    const moons = empireObjectMoons.planets;
+
+    empireObjectPlanets.planets.forEach((planet) => {
+      planet.invalidate = false;
+      if (moons) {
+        moons.forEach((moon) => {
+          if (planet.moonID === moon.id) {
+            planet.moon = moon;
+            planet.moon.invalidate = false;
+          }
+        });
+      }
     });
+    return empireObjectPlanets.planets;
   }
 
   updateEmpireProduction() {
@@ -13990,7 +13990,7 @@ class OGInfinity {
   }
 
   getTranslatedText(id, type = "text") {
-    return translate(id, type);
+    return Translator.translate(id, type);
   }
 
   getLocalStorageSize() {
@@ -14205,7 +14205,7 @@ class OGInfinity {
         value: this.json.options.expedition.rotationAfter,
       })
     );
-    optiondiv = featureSettings.appendChild(DOM.createDOM("span", {}, translate(181)));
+    optiondiv = featureSettings.appendChild(DOM.createDOM("span", {}, Translator.translate(181)));
     const standardUnitInput = DOM.createDOM("select", { class: "ogl-selectInput tooltip" });
     standardUnitInput.append(
       DOM.createDOM("option", { value: "-1" }, this.getTranslatedText(173)),
@@ -15256,10 +15256,9 @@ class OGInfinity {
         const moon = smallplanet.querySelector(".moonlink");
         if (elem && moon) {
           const moonId = moon.href.match(/=(\d+)/)[1];
-          console.log(moonId);
           if (elem) {
             const endDate = new Date(elem.endDate);
-            const techName = translate(elem.technoId, "tech");
+            const techName = Translator.translate(elem.technoId, "tech");
 
             const moonConstructionIconsDiv = DOM.createDOM("div", { class: "constructionIcons moonConstructionIcons" });
             if (endDate > now) {
@@ -15282,7 +15281,7 @@ class OGInfinity {
             needLifeformUpdateForResearch = true;
           } else if (endDate > now) {
             // lifeform research work is in progress, so show the icon
-            const techName = translate(elem.technoId, "lifeformTech");
+            const techName = Translator.translate(elem.technoId, "lifeformTech");
             constructionIconsDiv.appendChild(
               createConstructionIcon(elem, planetId, techName, "icon_research_lf", "lfresearch")
             );
@@ -15293,7 +15292,7 @@ class OGInfinity {
         elem = this.json.lfProductionProgress[planetCoords];
         if (elem) {
           const endDate = new Date(elem.endDate);
-          const techName = translate(elem.technoId, "lifeformTech");
+          const techName = Translator.translate(elem.technoId, "lifeformTech");
 
           if (endDate < now) {
             // lifeform construction work is finished
@@ -15319,7 +15318,7 @@ class OGInfinity {
         elem = this.json.productionProgress[planetCoords];
         if (elem) {
           const endDate = new Date(elem.endDate);
-          const techName = translate(elem.technoId, "tech");
+          const techName = Translator.translate(elem.technoId, "tech");
           if (endDate < now) {
             // regular construction work is finished, so show border color
             if (this.json.options.showProgressIndicators) planet.parentElement.classList.add("finished");
@@ -15339,8 +15338,6 @@ class OGInfinity {
 
         //add the construction icons to the planet
         smallplanet.appendChild(constructionIconsDiv);
-
-        debugger;
       });
     };
 
@@ -15958,28 +15955,6 @@ class OGInfinity {
         document.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", ctrlKey: "true" }))
       );
     }
-  }
-
-  initializeLFNames() {
-    if (!this.hasLifeforms) return;
-    fetch(`/game/index.php?page=ingame&component=lfsettings&cp=${this.current.id}`)
-      .then((rep) => rep.text())
-      .then((str) => {
-        const htmlDocument = new window.DOMParser().parseFromString(str, "text/html");
-        const listName = htmlDocument.querySelectorAll("div.lfsettingsContent > h3");
-        listName.forEach((lfName) => {
-          const lifeformIcon = lfName.parentElement.querySelector(".lifeform1, .lifeform2, .lifeform3, .lifeform4");
-          this.json.lfTypeNames[lfName.textContent.trim()] = lifeformIcon.classList[1];
-        });
-        const techIconList = htmlDocument.querySelectorAll("div.technologyInfo .icon");
-        techIconList.forEach((techIcon) => {
-          const techId = techIcon.classList[4].match(/[0-9]+$/)[0];
-          const techName = techIcon.nextElementSibling.textContent.trim();
-          this.json.lfTechNames[techId] = techName;
-        });
-        // last fetch has to be from current planet/moon else Ogame switches on next refresh
-        if (this.current.isMoon) fetch(this.current.planet.querySelector(".moonlink").href);
-      });
   }
 
   markLifeforms() {
