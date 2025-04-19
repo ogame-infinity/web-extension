@@ -3858,7 +3858,7 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
   height: auto !important;
   margin-bottom: 5px !important;
   position: relative !important;
-  height: 45px !important;
+  height: 40px !important;
   width: 100% !important;
 }
 
@@ -3869,7 +3869,6 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
 .moonlink,
 .planetlink {
   position: relative !important;
-  background: linear-gradient(to right, #1c2b38 45%, #090e13);
   background-position: 0 !important;
   box-shadow:
     inset 0 1px rgba(255, 255, 255, 0.07),
@@ -3900,14 +3899,39 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
   left: 0 !important;
 }
 
-.moonlink:hover,
-.planetlink:hover {
-  background: linear-gradient(to right, #633311, #090e13);
+.smallplanet:not(:has(.alert)) .planetlink,
+.smallplanet:not(:has(.alert)) .moonlink {
+  background: linear-gradient(to right, #1c2b38 45%, #090e13);
 }
 
-.moonlink.active,
-.planetlink.active {
+.smallplanet:not(:has(.alert)) .planetlink:hover,
+.smallplanet:not(:has(.alert)) .moonlink:hover {
+  background: linear-gradient(to right, #633311, #090e13);
+}
+.smallplanet:not(:has(.alert)) .planetlink.active,
+.smallplanet:not(:has(.alert)) .moonlink.active {
   background: linear-gradient(to right, #886c1a, #090e13);
+}
+
+.smallplanet:has(.alert) .planetlink:not(.active),
+.smallplanet:has(.alert) .moonlink:not(.active) {
+  animation: smallplanetAlertAnimation 5s infinite;
+}
+
+.smallplanet:has(.alert) .planetlink.active,
+.smallplanet:has(.alert) .moonlink.active {
+  background-color: rgba(255, 0, 0, 0.5);
+}
+@keyframes smallplanetAlertAnimation {
+  0% {
+    background-color: Transparent;
+  }
+  50% {
+    background-color: rgba(255, 0, 0, 0.5);
+  }
+  100% {
+    background-color: Transparent;
+  }
 }
 
 .moonlink.ogl-target.mission-3,
@@ -4015,7 +4039,6 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
 
 .planetlink .planet-name {
   color: #fff !important;
-  font-size: 18px !important;
   font-weight: 400 !important;
   position: absolute;
   top: 0px !important;
@@ -4026,8 +4049,18 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
 }
 
 #planetbarcomponent #rechts .planet-koords,
+#planetbarcomponent #rechts .planet-name,
+#planetbarcomponent #rechts .ogl-mines {
+  margin-top: 2px !important;
+  left: 5px !important;
+}
+
 #planetbarcomponent #rechts .planet-name {
-  margin-top: 3px !important;
+  font-size: 12px !important;
+}
+#planetbarcomponent #rechts .planet-koords,
+#planetbarcomponent #rechts .ogl-mines {
+  font-size: 11px !important;
 }
 
 .planetlink:hover .planet-koords {
@@ -4036,7 +4069,7 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
 
 .planetlink .planet-koords {
   color: #99c6f5 !important;
-  font-size: 10px !important;
+  font-size: smaller !important;
   font-weight: 400 !important;
   opacity: 0.7;
   position: absolute !important;
@@ -4049,21 +4082,6 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
 
 .planetlink.active .planet-koords {
   color: #ffbfc9 !important;
-}
-
-.planetlink .ogl-mines,
-.planetlink .planet-koords,
-.planetlink .planet-name {
-  font-size: 12px !important;
-  left: 5px !important;
-}
-
-.planetlink .ogl-mines {
-  margin-top: 5px !important;
-}
-
-.planetlink .planet-koords {
-  margin-top: 5px;
 }
 
 .ogl-moon,
@@ -4190,7 +4208,7 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
 .smallplanet .constructionIcons {
   transform: translateX(-100%); /*to set position from right border*/
   position: absolute;
-  bottom: -1px;
+  top: 28px !important;
   left: 55px;
   width: fit-content;
   visibility: hidden;
@@ -4228,52 +4246,43 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
 
 .smallplanet .icon_wrench {
   background: url("chrome-extension://__MSG_@@extension_id__/assets/images/icon_wrench.svg");
-  background-size: 13px 13px;
+  background-size: 12px 12px;
 
   background-repeat: no-repeat;
   display: inline-block;
-  height: 13px !important;
-  width: 13px !important;
+  height: 12px !important;
+  width: 12px !important;
   background-position: center !important;
   background-origin: content-box !important;
 }
 
 .smallplanet .icon_wrench_lf {
   background: url("chrome-extension://__MSG_@@extension_id__/assets/images/icon_wrench_lf.svg");
-  background-size: 13px 13px;
+  background-size: 12px 12px;
 
   background-repeat: no-repeat;
   display: inline-block;
-  height: 13px !important;
-  width: 13px !important;
+  height: 12px !important;
+  width: 12px !important;
   background-position: center;
   background-origin: content-box;
 }
 
 .smallplanet .icon_research_lf {
   background: url("chrome-extension://__MSG_@@extension_id__/assets/images/icon_research_lf.svg");
-  background-size: 13px 13px;
+  background-size: 12px 12px;
 
   background-repeat: no-repeat;
   transform: rotate(45deg);
   display: inline-block;
-  height: 13px !important;
-  width: 13px !important;
+  height: 12px !important;
+  width: 12px !important;
   background-position: center;
   background-origin: content-box;
 }
+
 .smallplanet .alert {
-  left: auto !important;
-  top: 14px !important;
-  z-index: 10;
-}
-
-.moon-construction-sum .smallplanet .alert {
-  right: 122px !important;
-}
-
-.smallplanet .alert:not(.moon-construction-sum .smallplanet .alert) {
-  right: 61px !important;
+  display: none;
 }
 
 .smallplanet .alert.moon {
@@ -4308,7 +4317,7 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
 }
 
 #rechts .smallplanet a.moonlink {
-  margin-left: 15px !important;
+  margin-left: 5px !important;
 }
 
 #myWorlds,
@@ -6198,7 +6207,7 @@ div[data-marker]:hover {
   height: 16px;
   position: absolute;
   top: 0;
-  left: 100%;
+  left: calc(100% + 7px);
   width: 16px;
   z-index: 1;
   top: 2px;
@@ -8577,14 +8586,14 @@ table.flyingFleet td.friendly {
 .smallplanet .lifeform-item-icon.small {
   opacity: 40%;
   position: relative;
-  left: 63px !important;
+  left: 67px !important;
   top: 1px !important;
   z-index: auto;
   width: 42px !important;
   height: 42px !important;
 
   opacity: 40%;
-  background-size: 42px 42px !important;
+  background-size: 40px 40px !important;
   background-position: 0px 0px !important;
   position: relative;
 }

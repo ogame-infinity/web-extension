@@ -15335,6 +15335,17 @@ class OGInfinity {
             }
           }
         }
+        /*
+        constructionIconsDiv.appendChild(
+          createConstructionIcon({ tolvl: 10 }, planetId, "?", "icon_research_lf", "lfresearch")
+        );
+        constructionIconsDiv.appendChild(
+          createConstructionIcon({ tolvl: 10 }, planetId, "?", "icon_wrench", "lfresearch")
+        );
+        constructionIconsDiv.appendChild(
+          createConstructionIcon({ tolvl: 10 }, planetId, "?", "icon_wrench_lf", "lfresearch")
+        );
+        */
 
         //add the construction icons to the planet
         smallplanet.appendChild(constructionIconsDiv);
