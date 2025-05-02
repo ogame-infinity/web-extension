@@ -112,6 +112,7 @@
   height: min-content;
   line-height: initial;
   right: 0;
+  top: 0px;
   position: absolute;
   border-color: rgb(255 168 0 / 65%) !important;
 }
@@ -484,6 +485,9 @@ input[type="password"]::selection {
 
 .ogl-settings .ogl-simulator {
   width: 190px !important;
+}
+.ogl-settings .ogl-w-125 {
+  width: 125px !important;
 }
 
 .ogl-settings .ogl-right {
@@ -3899,38 +3903,81 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
   left: 0 !important;
 }
 
-.smallplanet:not(:has(.alert)) .planetlink,
-.smallplanet:not(:has(.alert)) .moonlink {
+.smallplanet .planetlink,
+.smallplanet .moonlink {
   background: linear-gradient(to right, #1c2b38 45%, #090e13);
 }
 
-.smallplanet:not(:has(.alert)) .planetlink:hover,
-.smallplanet:not(:has(.alert)) .moonlink:hover {
+.smallplanet .planetlink:hover,
+.smallplanet .moonlink:hover {
   background: linear-gradient(to right, #633311, #090e13);
 }
-.smallplanet:not(:has(.alert)) .planetlink.active,
-.smallplanet:not(:has(.alert)) .moonlink.active {
+
+.smallplanet .planetlink.active,
+.smallplanet .moonlink.active {
   background: linear-gradient(to right, #886c1a, #090e13);
 }
 
-.smallplanet:has(.alert) .planetlink:not(.active),
-.smallplanet:has(.alert) .moonlink:not(.active) {
-  animation: smallplanetAlertAnimation 5s infinite;
+.smallplanet .ogi-planet_alert,
+.smallplanet .ogi-moon_alert {
+  width: 15px;
+  height: 15px;
+  position: absolute;
+  top: 15px;
+  background: url("chrome-extension://__MSG_@@extension_id__/assets/images/warning.svg");
+  background-size: 15px 15px;
+  background-repeat: no-repeat;
+  z-index: 1;
 }
 
-.smallplanet:has(.alert) .planetlink.active,
-.smallplanet:has(.alert) .moonlink.active {
-  background-color: rgba(255, 0, 0, 0.5);
+.smallplanet .ogi-planet_alert {
+  left: 65px;
 }
-@keyframes smallplanetAlertAnimation {
+.smallplanet .ogi-moon_alert {
+  right: 43px;
+}
+
+.moon-construction-sum .smallplanet .ogi-moon_alert {
+  right: 102px !important;
+}
+
+#planetList[data-alert-hostile-incoming-mode="1"] .smallplanet .ogi-moon_alert,
+#planetList[data-alert-hostile-incoming-mode="1"] .ogi-planet_alert {
+  animation: smallPlanetAlertIconAnimation infinite 3s;
+}
+
+@keyframes smallPlanetAlertIconAnimation {
   0% {
-    background-color: Transparent;
+    opacity: 0;
   }
   50% {
-    background-color: rgba(255, 0, 0, 0.5);
+    opacity: 1;
   }
   100% {
-    background-color: Transparent;
+    opacity: 0;
+  }
+}
+
+#planetList[data-alert-hostile-incoming-mode="2"]
+  .smallplanet.ogi-planet_under_hostile_activity
+  .planetlink:not(.active),
+#planetList[data-alert-hostile-incoming-mode="2"] .smallplanet.ogi-moon_under_hostile_activity .moonlink:not(.active) {
+  animation: smallPlanetAlertBackgroundAnimation 3s infinite;
+}
+
+#planetList[data-alert-hostile-incoming-mode="2"] .smallplanet.ogi-planet_under_hostile_activity .planetlink.active,
+#planetList[data-alert-hostile-incoming-mode="2"] .smallplanet.ogi-moon_under_hostile_activity .moonlink.active {
+  background: rgba(255, 0, 0, 0.5) !important;
+}
+@keyframes smallPlanetAlertBackgroundAnimation {
+  0% {
+    background: Transparent;
+  }
+  50% {
+    background: rgba(255, 0, 0, 0.5);
+  }
+  100% {
+    background: Transparent;
   }
 }
 

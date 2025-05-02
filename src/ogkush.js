@@ -1612,6 +1612,7 @@ class OGInfinity {
             needsUtil.display();
             ogkush.jumpGate();
             ogkush.updateFlyings();
+            ogkush.updatePlanets_IncomingHostileFleet();
             ogkush.updatePlanets_FleetActivity();
             ogkush.updateProductionProgress();
             ogkush.markLifeforms();
@@ -1625,6 +1626,7 @@ class OGInfinity {
       this.eventBox();
       this.flyingFleet();
       this.updateFlyings();
+      this.updatePlanets_IncomingHostileFleet();
       this.updatePlanets_FleetActivity();
     });
     this.neededCargo();
@@ -14100,6 +14102,23 @@ class OGInfinity {
       createDOM(
         "span",
         { style: "display: flex;justify-content: space-between; align-items: center;" },
+        this.getTranslatedText(187)
+      )
+    );
+
+    const alertHostileIncomingMode = DOM.createDOM("select", { class: "ogl-selectInput ogl-w-125 tooltip" });
+    alertHostileIncomingMode.append(
+      DOM.createDOM("option", { value: "0" }, this.getTranslatedText(184)),
+      DOM.createDOM("option", { value: "1" }, this.getTranslatedText(185)),
+      DOM.createDOM("option", { value: "2" }, this.getTranslatedText(186))
+    );
+    alertHostileIncomingMode.value = getOption("alertHostileIncomingMode");
+    optiondiv.appendChild(alertHostileIncomingMode);
+
+    optiondiv = featureSettings.appendChild(
+      createDOM(
+        "span",
+        { style: "display: flex;justify-content: space-between; align-items: center;" },
         this.getTranslatedText(33)
       )
     );
@@ -14111,6 +14130,7 @@ class OGInfinity {
     if (this.json.options.activitytimers) {
       timerCheck.checked = true;
     }
+
     optiondiv = featureSettings.appendChild(
       createDOM(
         "span",
@@ -14498,6 +14518,7 @@ class OGInfinity {
       this.json.options.expedition.limitCargo = Math.max(1, Math.min(~~expeditionLimitCargo.value, 500)) / 100;
       this.json.options.expedition.rotationAfter = Math.max(1, Math.min(~~expeditionRotationAfter.value, 16));
       setOption("standardUnitBase", standardUnitInput.value);
+      setOption("alertHostileIncomingMode", alertHostileIncomingMode.value);
       this.json.needSync = true;
       this.saveData();
       document.querySelector(".ogl-dialog .close-tooltip").click();
@@ -14572,7 +14593,64 @@ class OGInfinity {
 
   updateFlyings() {
     const FLYING_PER_PLANETS = {};
+    const INCOMING_HOSTILE_FLEETS_PER_PLANETS = {};
     const eventTable = document.getElementById("eventContent");
+
+    /*
+    // Simulate hostile fleets method
+
+    const simulateHostileFleet = (coords, type) => {
+      const testElementAttack = DOM.createDOM("tr", {
+        class: "allianceAttack unionunion2034 detailsClosed",
+        "data-mission-type": "1",
+        "data-return-flight": "false",
+        "data-arrival-time": "1845844183",
+      });
+      testElementAttack.appendChild(DOM.createDOM("td", { class: "countDown" }));
+      testElementAttack.appendChild(DOM.createDOM("td", { class: "arrivalTime" }, "14:43:03"));
+      testElementAttack.appendChild(DOM.createDOM("td", { class: "missionFleet" }));
+      testElementAttack.appendChild(DOM.createDOM("td", { class: "originFleet" }, "Participants"));
+      testElementAttack.appendChild(DOM.createDOM("td", { class: "coordsOrigin textBeefy" }, "1 / 5"));
+      testElementAttack.appendChild(DOM.createDOM("td", { class: "detailsFleet" }, "1"));
+      testElementAttack.appendChild(DOM.createDOM("td", { class: "icon_movement" }));
+      const testDestFleet = DOM.createDOM("td", { class: "destFleet" });
+
+      //testDestFleet.appendChild(DOM.createDOM("span", {}, `TEST ${type}`));
+      testDestFleet.appendChild(DOM.createDOM("figure", { class: `planetIcon ${type} tooltip js_hideTipOnMobile` }));
+      testDestFleet.append(`TEST ${type}`);
+      testElementAttack.appendChild(testDestFleet);
+
+      const testDestCoords = DOM.createDOM("td", { class: "destCoords" });
+      testDestCoords.appendChild(DOM.createDOM("a", { href: "#" }, coords));
+      testElementAttack.appendChild(testDestCoords);
+      testElementAttack.appendChild(DOM.createDOM("td", { colspan: "2" }));
+      return testElementAttack;
+    };
+
+    // Simulate hostile fleets
+    document
+      .getElementById("eventContent")
+      .querySelector("tbody")
+      .appendChild(simulateHostileFleet("[3:326:8]", "planet"));
+    document
+      .getElementById("eventContent")
+      .querySelector("tbody")
+      .appendChild(simulateHostileFleet("[4:136:8]", "moon"));
+    document
+      .getElementById("eventContent")
+      .querySelector("tbody")
+      .appendChild(simulateHostileFleet("[4:136:8]", "moon"));
+
+    document
+      .getElementById("eventContent")
+      .querySelector("tbody")
+      .appendChild(simulateHostileFleet("[4:385:8]", "moon"));
+    document
+      .getElementById("eventContent")
+      .querySelector("tbody")
+      .appendChild(simulateHostileFleet("[4:385:8]", "planet"));
+      */
+
     const ACSrows = eventTable.querySelectorAll("tr.allianceAttack");
     const unionTable = [];
     ACSrows.forEach((acsRow) => {
@@ -14582,58 +14660,137 @@ class OGInfinity {
       unionTable.push([union, acsRow.querySelectorAll("td")[1].textContent]);
     });
     const unionArrivalTime = Object.fromEntries(unionTable);
-    const rows = eventTable.querySelectorAll("#eventContent tr.eventFleet");
+    const rows = eventTable.querySelectorAll("#eventContent tr");
     rows.forEach((row) => {
+      const fleetMissionType = row.getAttribute("data-mission-type");
       const cols = row.querySelectorAll("td");
+      const destCoordCell = row.querySelector(".destCoords");
+      const destFleetCell = row.querySelector(".destFleet");
 
-      const flying = {};
-      const timestamp = row.getAttribute("data-arrival-time");
+      const destCoords = destCoordCell.textContent.replace("[", "").replace("]", "").trim();
+      const isReturnFlight = row.getAttribute("data-return-flight")?.toLowerCase() === "true";
       const date = new Date();
-      date.setTime(timestamp * 1000);
+      const timestamp = row.getAttribute("data-arrival-time");
 
-      flying.missionType = row.getAttribute("data-mission-type");
-      flying.date = timestamp;
-      flying.arrivalTime = date.toLocaleTimeString();
-      flying.missionFleetIcon = cols[2].querySelector("img").src;
+      const flying = {
+        missionType: fleetMissionType,
+        date: timestamp,
+        arrivalTime: date.toLocaleTimeString(),
+        isDestMoon: !!destFleetCell.querySelector(".moon"),
+      };
 
-      // Get the mission title by removing the suffix "own fleet" and the "return" suffix (eg: "(R)")
-      flying.missionFleetTitle = cols[2].querySelector("img").getAttribute("data-tooltip-title").trim();
-      if (flying.missionFleetTitle.includes("|"))
-        flying.missionFleetTitle = flying.missionFleetTitle.split("|")[1].trim();
-      if (flying.missionFleetTitle.includes("("))
-        flying.missionFleetTitle = flying.missionFleetTitle.split("(")[0].trim();
+      if (row.classList.contains("eventFleet")) {
+        flying.missionFleetIcon = cols[2].querySelector("img").src;
 
-      flying.origin = cols[3].textContent.trim();
-      flying.originMoon = !!cols[3].querySelector(".moon");
-      flying.originCoords = cols[4].textContent.replace("[", "").replace("]", "").trim();
-      flying.originLink = cols[4].querySelector("a").href;
-      flying.fleetCount = cols[5].textContent;
+        // Get the mission title by removing the suffix "own fleet" and the "return" suffix (eg: "(R)")
+        flying.missionFleetTitle = cols[2].querySelector("img").getAttribute("data-tooltip-title").trim();
+        if (flying.missionFleetTitle.includes("|"))
+          flying.missionFleetTitle = flying.missionFleetTitle.split("|")[1].trim();
+        if (flying.missionFleetTitle.includes("("))
+          flying.missionFleetTitle = flying.missionFleetTitle.split("(")[0].trim();
 
-      // Get the direction
-      flying.direction = Array.from(cols[6].classList).includes("icon_movement") ? "go" : "back";
+        flying.origin = cols[3].textContent.trim();
+        flying.originMoon = !!cols[3].querySelector(".moon");
+        flying.originCoords = cols[4].textContent.replace("[", "").replace("]", "").trim();
+        flying.originLink = cols[4].querySelector("a").href;
+        flying.fleetCount = cols[5].textContent;
 
-      // Get the direction image (no used as of today, but we never know)
-      const styleDirection = window.getComputedStyle(cols[6]).getPropertyValue("background");
-      flying.directionIcon = styleDirection.substring(
-        styleDirection.indexOf('url("') + 5,
-        styleDirection.indexOf('")')
-      );
+        // Get the direction
+        flying.direction = Array.from(cols[6].classList).includes("icon_movement") ? "go" : "back";
 
-      flying.dest = cols[7].textContent.trim();
-      flying.destMoon = cols[7].querySelector(".moon");
-      flying.destDebris = cols[7].querySelector(".tf");
-      flying.destCoords = cols[8].textContent.replace("[", "").replace("]", "").trim();
-      flying.destLink = cols[8].querySelector("a").href;
-      if (!FLYING_PER_PLANETS[flying.originCoords]) FLYING_PER_PLANETS[flying.originCoords] = {};
-      if (!FLYING_PER_PLANETS[flying.originCoords][flying.missionFleetTitle]) {
-        FLYING_PER_PLANETS[flying.originCoords][flying.missionFleetTitle] = {
-          icon: flying.missionFleetIcon,
-          data: [],
-        };
+        // Get the direction image (no used as of today, but we never know)
+        const styleDirection = window.getComputedStyle(cols[6]).getPropertyValue("background");
+        flying.directionIcon = styleDirection.substring(
+          styleDirection.indexOf('url("') + 5,
+          styleDirection.indexOf('")')
+        );
+
+        flying.dest = cols[7].textContent.trim();
+        flying.destMoon = cols[7].querySelector(".moon");
+        flying.destDebris = cols[7].querySelector(".tf");
+        flying.destCoords = destCoords;
+        flying.destLink = destCoordCell.querySelector("a").href;
+        if (!FLYING_PER_PLANETS[flying.originCoords]) FLYING_PER_PLANETS[flying.originCoords] = {};
+        if (!FLYING_PER_PLANETS[flying.originCoords][flying.missionFleetTitle]) {
+          FLYING_PER_PLANETS[flying.originCoords][flying.missionFleetTitle] = {
+            icon: flying.missionFleetIcon,
+            data: [],
+          };
+        }
+        FLYING_PER_PLANETS[flying.originCoords][flying.missionFleetTitle].data.push(flying);
+      } else if (
+        [
+          missionType.MOON_DESTRUCTION,
+          missionType.ATTACK,
+          missionType.MISSILE_ATTACK,
+          missionType.ACS_ATTACK,
+          missionType.SPY,
+        ].includes(parseInt(fleetMissionType)) &&
+        !isReturnFlight
+      ) {
+        //Hostile fleet
+        if (!INCOMING_HOSTILE_FLEETS_PER_PLANETS[destCoords]) INCOMING_HOSTILE_FLEETS_PER_PLANETS[destCoords] = [];
+        INCOMING_HOSTILE_FLEETS_PER_PLANETS[destCoords].push(flying);
       }
-      FLYING_PER_PLANETS[flying.originCoords][flying.missionFleetTitle].data.push(flying);
     });
+
     this.flyingFleetPerPlanets = FLYING_PER_PLANETS;
+    this.incomingHostileFleetPerPlanets = INCOMING_HOSTILE_FLEETS_PER_PLANETS;
+  }
+
+  updatePlanets_IncomingHostileFleet() {
+    if (this.incomingHostileFleetPerPlanets) {
+      const planetList = document.getElementById("planetList");
+
+      // replace the alert icon with a background animation
+
+      const alertMode = getOption("alertHostileIncomingMode");
+      planetList.setAttribute("data-alert-hostile-incoming-mode", alertMode);
+
+      const createAlertIcon = (type, planetOrMoonId, fleetCount) => {
+        //create the tooltip
+        const tooltipDiv = DOM.createDOM("div");
+        tooltipDiv.appendChild(DOM.createDOM("span", {}, `${fleetCount} ${this.getTranslatedText(183)}`));
+
+        const alert = DOM.createDOM("a", {
+          href: `/game/index.php?page=ingame&component=fleetdispatch&cp=${planetOrMoonId}`,
+          class: `ogi-${type}_alert`,
+        });
+
+        alert.addEventListener("mouseover", () => tooltip(alert, tooltipDiv, true, { auto: true }, 50, true));
+        return alert;
+      };
+
+      Array.from(planetList.children).forEach((planet) => {
+        const planetId = planet.getAttribute("id")?.replace("planet-", "");
+        const planetKoordsEl = planet.querySelector(".planet-koords");
+        if (planetKoordsEl) {
+          const planetKoords = planetKoordsEl.textContent;
+          if (this.incomingHostileFleetPerPlanets[planetKoords]) {
+            const movements = this.incomingHostileFleetPerPlanets[planetKoords];
+
+            const countToMoon = movements.filter((movement) => movement.isDestMoon).length;
+            const countToPlanet = movements.filter((movement) => !movement.isDestMoon).length;
+            if (countToMoon > 0) {
+              const moon = planet.querySelector(".moonlink");
+              if (moon) {
+                planet.classList.add("ogi-moon_under_hostile_activity");
+
+                const moonId = moon.href.match(/=(\d+)/)[1];
+                const alert = createAlertIcon("moon", moonId, countToMoon);
+
+                moon.insertAdjacentElement("afterend", alert);
+              }
+            }
+            if (countToPlanet > 0) {
+              planet.classList.add("ogi-planet_under_hostile_activity");
+              const alert = createAlertIcon("planet", planetId, countToPlanet);
+              planetKoordsEl.insertAdjacentElement("afterend", alert);
+            }
+          }
+        }
+      });
+    }
   }
 
   updatePlanets_FleetActivity() {
@@ -15336,6 +15493,7 @@ class OGInfinity {
           }
         }
         /*
+        // for tests only
         constructionIconsDiv.appendChild(
           createConstructionIcon({ tolvl: 10 }, planetId, "?", "icon_research_lf", "lfresearch")
         );
@@ -15345,7 +15503,7 @@ class OGInfinity {
         constructionIconsDiv.appendChild(
           createConstructionIcon({ tolvl: 10 }, planetId, "?", "icon_wrench_lf", "lfresearch")
         );
-        */
+*/
 
         //add the construction icons to the planet
         smallplanet.appendChild(constructionIconsDiv);

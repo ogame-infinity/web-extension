@@ -46,6 +46,7 @@ const _options = {
   expeditionMission: 15,
   foreignMission: 3,
   harvestMission: 4,
+  alertHostileIncomingMode: 0,
   activitytimers: false,
   lessAggressiveEmpireAutomaticUpdate: false,
   navigationArrows: true,
