@@ -3033,6 +3033,7 @@ class Translator {
     const translations = OGIData.json.translations ?? {};
     if (!translations.lfTypeNames) translations.lfTypeNames = {};
     if (!translations.tech) translations.tech = {};
+    if (!translations.text) translations.text = {};
     if (!translations.language) translations.language = {};
     if (!translations.lastUpdate) translations.lastUpdate = new Date(0);
 
