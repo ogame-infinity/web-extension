@@ -3957,17 +3957,6 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
     opacity: 0;
   }
 }
-@-moz-keyframes smallPlanetAlertIconAnimation {
-  0% {
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
 
 #planetList[data-alert-hostile-incoming-mode="2"]
   .smallplanet.ogi-planet_under_hostile_activity
@@ -3980,18 +3969,8 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
 #planetList[data-alert-hostile-incoming-mode="2"] .smallplanet.ogi-moon_under_hostile_activity .moonlink.active {
   background: rgba(255, 0, 0, 0.5) !important;
 }
+
 @keyframes smallPlanetAlertBackgroundAnimation {
-  0% {
-    background: Transparent;
-  }
-  50% {
-    background: rgba(255, 0, 0, 0.5);
-  }
-  100% {
-    background: Transparent;
-  }
-}
-@-moz-keyframes smallPlanetAlertBackgroundAnimation {
   0% {
     background: Transparent;
   }

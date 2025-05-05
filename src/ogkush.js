@@ -14606,7 +14606,9 @@ class OGInfinity {
         "data-return-flight": "false",
         "data-arrival-time": "1845844183",
       });
-      testElementAttack.appendChild(DOM.createDOM("td", { class: "countDown" }));
+      const countDown = DOM.createDOM("td", { class: "countDown" });
+      countDown.appendChild(DOM.createDOM("span", { class: "hostile textBeefy" }, "1h 12m 13s"));
+      testElementAttack.appendChild(countDown);
       testElementAttack.appendChild(DOM.createDOM("td", { class: "arrivalTime" }, "14:43:03"));
       testElementAttack.appendChild(DOM.createDOM("td", { class: "missionFleet" }));
       testElementAttack.appendChild(DOM.createDOM("td", { class: "originFleet" }, "Participants"));
@@ -14668,7 +14670,6 @@ class OGInfinity {
       const destFleetCell = row.querySelector(".destFleet");
 
       const destCoords = destCoordCell.textContent.replace("[", "").replace("]", "").trim();
-      const isReturnFlight = row.getAttribute("data-return-flight")?.toLowerCase() === "true";
       const date = new Date();
       const timestamp = row.getAttribute("data-arrival-time");
 
@@ -14679,7 +14680,12 @@ class OGInfinity {
         isDestMoon: !!destFleetCell.querySelector(".moon"),
       };
 
-      if (row.classList.contains("eventFleet")) {
+      const hostileCountDown = row.querySelector(".countDown .hostile");
+      if (hostileCountDown && hostileCountDown.textContent.trim() !== "---") {
+        //Hostile fleet
+        if (!INCOMING_HOSTILE_FLEETS_PER_PLANETS[destCoords]) INCOMING_HOSTILE_FLEETS_PER_PLANETS[destCoords] = [];
+        INCOMING_HOSTILE_FLEETS_PER_PLANETS[destCoords].push(flying);
+      } else if (row.classList.contains("eventFleet")) {
         flying.missionFleetIcon = cols[2].querySelector("img").src;
 
         // Get the mission title by removing the suffix "own fleet" and the "return" suffix (eg: "(R)")
@@ -14718,19 +14724,6 @@ class OGInfinity {
           };
         }
         FLYING_PER_PLANETS[flying.originCoords][flying.missionFleetTitle].data.push(flying);
-      } else if (
-        [
-          missionType.MOON_DESTRUCTION,
-          missionType.ATTACK,
-          missionType.MISSILE_ATTACK,
-          missionType.ACS_ATTACK,
-          missionType.SPY,
-        ].includes(parseInt(fleetMissionType)) &&
-        !isReturnFlight
-      ) {
-        //Hostile fleet
-        if (!INCOMING_HOSTILE_FLEETS_PER_PLANETS[destCoords]) INCOMING_HOSTILE_FLEETS_PER_PLANETS[destCoords] = [];
-        INCOMING_HOSTILE_FLEETS_PER_PLANETS[destCoords].push(flying);
       }
     });
 
