@@ -10661,7 +10661,7 @@ class OGInfinity {
         onResChange(2);
         onResChange(1);
         onResChange(0);
-        this.selectBestCargoShip();
+        this.selectBestCargoShip(this.json.options.collect.ship);
       }
       update(false);
     }
@@ -15777,7 +15777,7 @@ class OGInfinity {
     }
   }
 
-  selectBestCargoShip(preveredShipId = null) {
+  selectBestCargoShip(preferredShipId = null) {
     if (fleetDispatcher.currentPage == "fleet1" && fleetDispatcher.shipsOnPlanet.length != 0) {
       let metalAvailable = Math.max(0, fleetDispatcher.metalOnPlanet);
       let crystalAvailable = Math.max(0, fleetDispatcher.crystalOnPlanet);
@@ -15796,8 +15796,8 @@ class OGInfinity {
         Math.min(metal, metalAvailable) + Math.min(crystal, crystalAvailable) + Math.min(deut, deutAvailable);
       let cargoShipsOnPlanet = {};
       let cargoIds = [];
-      if (preveredShipId) cargoIds.push(preveredShipId);
-      [202, 203, 219, 209].forEach((id) => {
+      if (preferredShipId) cargoIds.push(preferredShipId);
+      [202, 203, 219].forEach((id) => {
         if (!cargoIds.includes(id)) cargoIds.push(id);
       });
       if (this.json.ships[210].cargoCapacity != 0 && !cargoIds.includes(210)) cargoIds.push(210);
