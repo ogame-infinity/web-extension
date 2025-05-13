@@ -14743,7 +14743,7 @@ class OGInfinity {
       const createAlertIcon = (type, planetOrMoonId, fleetCount) => {
         //create the tooltip
         const tooltipDiv = DOM.createDOM("div");
-        tooltipDiv.appendChild(DOM.createDOM("span", {}, `${fleetCount} ${this.getTranslatedText(183)}`));
+        tooltipDiv.appendChild(DOM.createDOM("span", {}, `${this.getTranslatedText(183)}: ${fleetCount}`));
 
         const alert = DOM.createDOM("a", {
           href: `/game/index.php?page=ingame&component=fleetdispatch&cp=${planetOrMoonId}`,
@@ -15431,7 +15431,7 @@ class OGInfinity {
             needLifeformUpdateForResearch = true;
           } else if (endDate > now) {
             // lifeform research work is in progress, so show the icon
-            const techName = Translator.translate(elem.technoId, "lifeformTech");
+            const techName = Translator.translate(elem.technoId, "tech");
             constructionIconsDiv.appendChild(
               createConstructionIcon(elem, planetId, techName, "icon_research_lf", "lfresearch")
             );
@@ -15442,7 +15442,7 @@ class OGInfinity {
         elem = this.json.lfProductionProgress[planetCoords];
         if (elem) {
           const endDate = new Date(elem.endDate);
-          const techName = Translator.translate(elem.technoId, "lifeformTech");
+          const techName = Translator.translate(elem.technoId, "tech");
 
           if (endDate < now) {
             // lifeform construction work is finished
