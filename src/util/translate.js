@@ -2132,7 +2132,7 @@ class Translator {
     }
   }
 
-  InitializeLFNames(hasLifeforms) {
+  InitializeLFNames(currentPosition, hasLifeforms) {
     if (!hasLifeforms) return;
     var translations = this.#getTranslations();
 
@@ -2147,7 +2147,7 @@ class Translator {
         });
         OGIData.json.translations = translations;
         // last fetch has to be from current planet/moon else Ogame switches on next refresh
-        if (this.current.isMoon) fetch(this.current.planet.querySelector(".moonlink").href);
+        if (currentPosition.isMoon) fetch(currentPosition.planet.querySelector(".moonlink").href);
       });
   }
 }

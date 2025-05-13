@@ -1431,7 +1431,7 @@ class OGInfinity {
     this.loading();
     this.updateServerSettings(true);
     this.getAllianceClass();
-    Translator.InitializeLFNames(this.hasLifeforms);
+    Translator.InitializeLFNames(this.current, this.hasLifeforms);
     await this.updateEmpireData(true);
     await this.updateLifeform();
     document.querySelector(".ogl-dialogOverlay").classList.remove("ogl-active");
@@ -1670,13 +1670,14 @@ class OGInfinity {
     }
     if (this.json.welcome) {
       if (this.page == "fleetdispatch") {
+        debugger;
         wait
           .waitFor(() => OGIData.empire.length)
           .then(async () => {
             this.loading();
             this.updateServerSettings(true);
             this.getAllianceClass();
-            Translator.InitializeLFNames(this.hasLifeforms);
+            Translator.InitializeLFNames(this.current, this.hasLifeforms);
             await this.updateLifeform();
             this.welcome();
           });
@@ -11319,7 +11320,7 @@ class OGInfinity {
           lifeformLevel[lifeform] = level;
         });
 
-        const parseBonus = (text) => (text ? fromFormatedNumber(text.split("%")[0], false, true) / 100 || 0 : 0);
+        const parseBonus = (text) => fromFormatedNumber(text.split("%")[0], false, true) / 100 || 0;
 
         // production bonus
         const metalDiv = htmlDocument.querySelector(
