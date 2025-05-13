@@ -8637,25 +8637,6 @@ table.flyingFleet td.friendly {
   left: 67px !important;
   top: 1px !important;
   z-index: auto;
-  width: 42px !important;
-  height: 42px !important;
-
-  opacity: 40%;
-  background-size: 40px 40px !important;
-  background-position: 0px 0px !important;
-  position: relative;
-}
-.smallplanet .lifeform-item-icon.small.lifeform1 {
-  background-image: url("chrome-extension://__MSG_@@extension_id__/assets/images/lifeform1.jpg") !important;
-}
-.smallplanet .lifeform-item-icon.small.lifeform2 {
-  background-image: url("chrome-extension://__MSG_@@extension_id__/assets/images/lifeform2.jpg") !important;
-}
-.smallplanet .lifeform-item-icon.small.lifeform3 {
-  background-image: url("chrome-extension://__MSG_@@extension_id__/assets/images/lifeform3.jpg") !important;
-}
-.smallplanet .lifeform-item-icon.small.lifeform4 {
-  background-image: url("chrome-extension://__MSG_@@extension_id__/assets/images/lifeform4.jpg") !important;
 }
 
 div#eventboxFilled p.event_list {
