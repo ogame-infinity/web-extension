@@ -1670,7 +1670,6 @@ class OGInfinity {
     }
     if (this.json.welcome) {
       if (this.page == "fleetdispatch") {
-        debugger;
         wait
           .waitFor(() => OGIData.empire.length)
           .then(async () => {
