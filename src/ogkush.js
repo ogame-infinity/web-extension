@@ -14597,63 +14597,6 @@ class OGInfinity {
     const INCOMING_HOSTILE_FLEETS_PER_PLANETS = {};
     const eventTable = document.getElementById("eventContent");
 
-    /*
-    // Simulate hostile fleets method
-
-    const simulateHostileFleet = (coords, type) => {
-      const testElementAttack = DOM.createDOM("tr", {
-        class: "allianceAttack unionunion2034 detailsClosed",
-        "data-mission-type": "1",
-        "data-return-flight": "false",
-        "data-arrival-time": "1845844183",
-      });
-      const countDown = DOM.createDOM("td", { class: "countDown" });
-      countDown.appendChild(DOM.createDOM("span", { class: "hostile textBeefy" }, "1h 12m 13s"));
-      testElementAttack.appendChild(countDown);
-      testElementAttack.appendChild(DOM.createDOM("td", { class: "arrivalTime" }, "14:43:03"));
-      testElementAttack.appendChild(DOM.createDOM("td", { class: "missionFleet" }));
-      testElementAttack.appendChild(DOM.createDOM("td", { class: "originFleet" }, "Participants"));
-      testElementAttack.appendChild(DOM.createDOM("td", { class: "coordsOrigin textBeefy" }, "1 / 5"));
-      testElementAttack.appendChild(DOM.createDOM("td", { class: "detailsFleet" }, "1"));
-      testElementAttack.appendChild(DOM.createDOM("td", { class: "icon_movement" }));
-      const testDestFleet = DOM.createDOM("td", { class: "destFleet" });
-
-      //testDestFleet.appendChild(DOM.createDOM("span", {}, `TEST ${type}`));
-      testDestFleet.appendChild(DOM.createDOM("figure", { class: `planetIcon ${type} tooltip js_hideTipOnMobile` }));
-      testDestFleet.append(`TEST ${type}`);
-      testElementAttack.appendChild(testDestFleet);
-
-      const testDestCoords = DOM.createDOM("td", { class: "destCoords" });
-      testDestCoords.appendChild(DOM.createDOM("a", { href: "#" }, coords));
-      testElementAttack.appendChild(testDestCoords);
-      testElementAttack.appendChild(DOM.createDOM("td", { colspan: "2" }));
-      return testElementAttack;
-    };
-
-    // Simulate hostile fleets
-    document
-      .getElementById("eventContent")
-      .querySelector("tbody")
-      .appendChild(simulateHostileFleet("[3:326:8]", "planet"));
-    document
-      .getElementById("eventContent")
-      .querySelector("tbody")
-      .appendChild(simulateHostileFleet("[4:136:8]", "moon"));
-    document
-      .getElementById("eventContent")
-      .querySelector("tbody")
-      .appendChild(simulateHostileFleet("[4:136:8]", "moon"));
-
-    document
-      .getElementById("eventContent")
-      .querySelector("tbody")
-      .appendChild(simulateHostileFleet("[4:385:8]", "moon"));
-    document
-      .getElementById("eventContent")
-      .querySelector("tbody")
-      .appendChild(simulateHostileFleet("[4:385:8]", "planet"));
-      */
-
     const ACSrows = eventTable.querySelectorAll("tr.allianceAttack");
     const unionTable = [];
     ACSrows.forEach((acsRow) => {
@@ -15486,18 +15429,6 @@ class OGInfinity {
             }
           }
         }
-        /*
-        // for tests only
-        constructionIconsDiv.appendChild(
-          createConstructionIcon({ tolvl: 10 }, planetId, "?", "icon_research_lf", "lfresearch")
-        );
-        constructionIconsDiv.appendChild(
-          createConstructionIcon({ tolvl: 10 }, planetId, "?", "icon_wrench", "lfresearch")
-        );
-        constructionIconsDiv.appendChild(
-          createConstructionIcon({ tolvl: 10 }, planetId, "?", "icon_wrench_lf", "lfresearch")
-        );
-*/
 
         //add the construction icons to the planet
         smallplanet.appendChild(constructionIconsDiv);

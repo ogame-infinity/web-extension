@@ -2082,8 +2082,6 @@ class Translator {
   }
   translate(id, type = "text") {
     if (OGIData.json.translations && type === "tech") {
-      // Translate from the empire translations or the fallback translation
-      // OGIData.json.translations is the empire translations
       return OGIData.json.translations.tech[id];
     }
     return this.#translate(id, type);
@@ -2108,7 +2106,7 @@ class Translator {
   }
 
   UpdateAllTechNamesFromEmpire(empireFromPlanets, empireFromMoons) {
-    var translations = this.#getTranslations();
+    const translations = this.#getTranslations();
     const diffInMinutes = Math.floor((new Date() - new Date(translations.lastUpdate)) / (1000 * 60));
 
     //if langage is different from currentLanguage or if date is older than 60 minutes update
@@ -2134,9 +2132,8 @@ class Translator {
 
   InitializeLFNames(currentPosition, hasLifeforms) {
     if (!hasLifeforms) return;
-    var translations = this.#getTranslations();
-
-    fetch(`/game/index.php?page=ingame&component=lfsettings`)
+    const translations = this.#getTranslations();
+    fetch(`/game/index.php?page=ingame&component=lfsettings&cp=${currentPosition.id}`)
       .then((rep) => rep.text())
       .then((str) => {
         const htmlDocument = new window.DOMParser().parseFromString(str, "text/html");
