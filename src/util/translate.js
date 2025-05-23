@@ -1,4 +1,6 @@
 import OgamePageData from "./OgamePageData.js";
+import OGIData from "./OGIData.js";
+import { getLogger } from "./logger.js";
 
 const translation = Object.freeze({
   tech: {
@@ -2008,6 +2010,46 @@ const translation = Object.freeze({
       br: "Anexar relatórios de espionagem ao mudar de página",
     },
     183: {
+      de: "Feindliche Flotten",
+      en: "Hostile fleets",
+      es: "Flotas hostiles",
+      fr: "Flottes hostiles",
+      tr: "Düşman filoları",
+      br: "Frotas hostis",
+    },
+    184: {
+      de: "Standardmäßig",
+      en: "Default",
+      es: "Por defecto",
+      fr: "Par défaut",
+      tr: "Varsayılan olarak",
+      br: "Por padrão",
+    },
+    185: {
+      de: "Gepulstes Symbol",
+      en: "Pulsed icon",
+      es: "Icono pulsante",
+      fr: "Icone animé",
+      tr: "Darbeli simge",
+      br: "Ícone pulsado",
+    },
+    186: {
+      de: "Gepulster Hintergrund",
+      en: "Pulsed background",
+      es: "Fondo pulsante",
+      fr: "Arrière plan animé",
+      tr: "Darbeli arka plan",
+      br: "Fundo pulsado",
+    },
+    187: {
+      de: "Alarmmodus für feindliche Flotten",
+      en: "Hostile Fleet Alert Mode",
+      es: "Modo de alerta de flota hostil",
+      fr: "Mode d'alerte de flotte hostile",
+      tr: "Düşman Filosu Uyarı Modu",
+      br: "Modo de alerta de frota hostil",
+    },
+    188: {
       de: undefined,
       en: undefined,
       es: undefined,
@@ -2022,6 +2064,89 @@ const language = OgamePageData.playerLang;
 let currentLanguage = ["ar", "mx"].includes(language) ? "es" : language;
 currentLanguage = ["de", "en", "es", "fr", "tr", "br"].includes(currentLanguage) ? currentLanguage : "en";
 
-export function translate(id, type = "text") {
-  return translation?.[type]?.[id]?.[currentLanguage] || translation?.[type]?.[id]?.en || "";
+class Translator {
+  logger = getLogger("Translator");
+
+  #getTranslations() {
+    const translations = OGIData.json.translations ?? {};
+    if (!translations.lfTypeNames) translations.lfTypeNames = {};
+    if (!translations.tech) translations.tech = {};
+    if (!translations.text) translations.text = {};
+    if (!translations.language) translations.language = {};
+    if (!translations.lastUpdate) translations.lastUpdate = new Date(0);
+
+    return translations;
+  }
+  #translate(id, type = "text") {
+    return translation?.[type]?.[id]?.[currentLanguage] || translation?.[type]?.[id]?.en || "";
+  }
+  translate(id, type = "text") {
+    if (OGIData.json.translations && type === "tech") {
+      return OGIData.json.translations.tech[id];
+    }
+    return this.#translate(id, type);
+  }
+
+  GetClassFromLifeformName(name) {
+    const translations = this.#getTranslations();
+    return translations.lfTypeNames[name];
+  }
+
+  #ForceUpdateAllTechNamesFromEmpire(translations, empire) {
+    const regex = /^\d+$/;
+    Object.keys(empire.translations.planets).forEach((key) => {
+      if (!key.endsWith("_full")) {
+        if (regex.test(key)) {
+          translations.tech[key] = empire.translations.planets[`${key}_full`].trim();
+        } else {
+          translations.text[key] = empire.translations.planets[key].trim();
+        }
+      }
+    });
+  }
+
+  UpdateAllTechNamesFromEmpire(empireFromPlanets, empireFromMoons) {
+    const translations = this.#getTranslations();
+    const diffInMinutes = Math.floor((new Date() - new Date(translations.lastUpdate)) / (1000 * 60));
+
+    //if langage is different from currentLanguage or if date is older than 60 minutes update
+    if (translations.language !== currentLanguage || diffInMinutes > 60) {
+      this.logger.debug(`Translations (${currentLanguage}) will be updated`);
+
+      this.#ForceUpdateAllTechNamesFromEmpire(translations, empireFromPlanets);
+      this.#ForceUpdateAllTechNamesFromEmpire(translations, empireFromMoons);
+
+      //set date to now and language to currentLanguage
+      translations.lastUpdate = new Date().toISOString();
+      translations.language = currentLanguage;
+
+      OGIData.json.translations = translations;
+
+      this.logger.debug(`Translations (${currentLanguage}) updated`);
+    } else {
+      this.logger.debug(
+        `No need to update translations (${currentLanguage}), last update was ${diffInMinutes} minutes ago`
+      );
+    }
+  }
+
+  InitializeLFNames(currentPosition, hasLifeforms) {
+    if (!hasLifeforms) return;
+    const translations = this.#getTranslations();
+    fetch(`/game/index.php?page=ingame&component=lfsettings&cp=${currentPosition.id}`)
+      .then((rep) => rep.text())
+      .then((str) => {
+        const htmlDocument = new window.DOMParser().parseFromString(str, "text/html");
+        const listName = htmlDocument.querySelectorAll("div.lfsettingsContent > h3");
+        listName.forEach((lfName) => {
+          const lifeformIcon = lfName.parentElement.querySelector(".lifeform1, .lifeform2, .lifeform3, .lifeform4");
+          translations.lfTypeNames[lfName.textContent.trim()] = lifeformIcon.classList[1];
+        });
+        OGIData.json.translations = translations;
+        // last fetch has to be from current planet/moon else Ogame switches on next refresh
+        if (currentPosition.isMoon) fetch(currentPosition.planet.querySelector(".moonlink").href);
+      });
+  }
 }
+
+export default new Translator();

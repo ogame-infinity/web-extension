@@ -5,7 +5,7 @@ import { createDOM } from "../../../util/dom.js";
 import { toFormattedNumber } from "../../../util/numbers.js";
 import { fleetCost } from "../../../util/fleetCost.js";
 import * as standardUnit from "../../../util/standardUnit.js";
-import { translate } from "../../../util/translate.js";
+import Translator from "../../../util/translate.js";
 
 class ExpeditionMessagesAnalyzer {
   #logger;
@@ -49,20 +49,20 @@ class ExpeditionMessagesAnalyzer {
         if (!expeditions[msgId]) return;
 
         const labels = {
-          "ogk-metal": translate(0, "res"),
-          "ogk-crystal": translate(1, "res"),
-          "ogk-deuterium": translate(2, "res"),
-          "ogk-am": translate(3, "res"),
-          "ogk-fleet": translate(63, "text"),
-          "ogk-object": translate(78, "text"),
-          "ogk-aliens": translate(79, "text"),
-          "ogk-pirates": translate(80, "text"),
-          "ogk-late": translate(81, "text"),
-          "ogk-early": translate(82, "text"),
-          "ogk-bhole": translate(71, "text"),
-          "ogk-merchant": translate(84, "text"),
-          "ogk-void": translate(83, "text"),
-          "ogk-nothing": translate(83, "text"),
+          "ogk-metal": Translator.translate(0, "res"),
+          "ogk-crystal": Translator.translate(1, "res"),
+          "ogk-deuterium": Translator.translate(2, "res"),
+          "ogk-am": Translator.translate(3, "res"),
+          "ogk-fleet": Translator.translate(63, "text"),
+          "ogk-object": Translator.translate(78, "text"),
+          "ogk-aliens": Translator.translate(79, "text"),
+          "ogk-pirates": Translator.translate(80, "text"),
+          "ogk-late": Translator.translate(81, "text"),
+          "ogk-early": Translator.translate(82, "text"),
+          "ogk-bhole": Translator.translate(71, "text"),
+          "ogk-merchant": Translator.translate(84, "text"),
+          "ogk-void": Translator.translate(83, "text"),
+          "ogk-nothing": Translator.translate(83, "text"),
         };
         const classStyle = `ogk-${expeditions[msgId]?.result.toLowerCase()}`;
 
@@ -326,12 +326,12 @@ class ExpeditionMessagesAnalyzer {
         if (!discoveries[msgId]) return;
 
         const labels = {
-          "ogk-lifeform1": translate(140, "text"),
-          "ogk-lifeform2": translate(141, "text"),
-          "ogk-lifeform3": translate(142, "text"),
-          "ogk-lifeform4": translate(143, "text"),
-          "ogk-artefacts": translate(145, "text"),
-          "ogk-void": translate(83, "text"),
+          "ogk-lifeform1": Translator.translate(140, "text"),
+          "ogk-lifeform2": Translator.translate(141, "text"),
+          "ogk-lifeform3": Translator.translate(142, "text"),
+          "ogk-lifeform4": Translator.translate(143, "text"),
+          "ogk-artefacts": Translator.translate(145, "text"),
+          "ogk-void": Translator.translate(83, "text"),
         };
 
         const classStyle = `ogk-${discoveries[msgId]?.result?.toLowerCase()}`;

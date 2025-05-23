@@ -1,6 +1,6 @@
 import { getOption } from "../ctxpage/conf-options.js";
 import { toFormattedNumber } from "./numbers.js";
-import { translate } from "./translate.js";
+import Translator from "./translate.js";
 
 /**
  *
@@ -31,8 +31,8 @@ function standardUnit(amount, customTradeRate = null, disableUnitMode = false) {
  */
 function unitType(full = false) {
   const standardUnitBase = Number(getOption("standardUnitBase"));
-  if (full) return translate(178 + standardUnitBase);
-  else return translate(174 + standardUnitBase);
+  if (full) return Translator.translate(178 + standardUnitBase);
+  else return Translator.translate(174 + standardUnitBase);
 }
 
 export { standardUnit, unitType };

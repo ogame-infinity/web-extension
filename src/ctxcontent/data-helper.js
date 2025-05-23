@@ -205,7 +205,6 @@ export class DataHelper {
           ptrePosition[row.coords].old_rank = player?.points?.position || -1;
           ptrePosition[row.coords].old_score = player?.points?.score || -1;
           ptrePosition[row.coords].old_fleet = player?.military?.ships || -1;
-          //debugger;
         }
       }
     });
