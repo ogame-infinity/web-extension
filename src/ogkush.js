@@ -1651,7 +1651,7 @@ class OGInfinity {
     this.chat();
     this.uvlinks();
     this.OverviewPage.MakePrettierOverview(this.page);
-    this.betterHighscore();    
+    this.betterHighscore();
     this.overviewDates();
     needsUtil.display();
     this.jumpGate();
@@ -14741,7 +14741,7 @@ class OGInfinity {
           class: `ogi-${type}_alert`,
         });
 
-        alert.addEventListener("mouseover", () => tooltip(alert, tooltipDiv, true, { auto: true }, 50, true));
+        alert.addEventListener("mouseover", () => tooltip(alert, tooltipDiv, true, { auto: true }, 50, false));
         return alert;
       };
 
@@ -14900,7 +14900,7 @@ class OGInfinity {
 
               div.addEventListener("ontouchstart" in document.documentElement ? "touchstart" : "mouseenter", () => {
                 $(".ogi-movement-scroll").mCustomScrollbar("destroy");
-                tooltip(div, movementTooltipToScroll, true, { auto: true }, 50, true);
+                tooltip(div, movementTooltipToScroll, true, { auto: true }, 50, false);
                 $(".ogi-movement-scroll, .mCS_destroyed").mCustomScrollbar({ theme: "ogame" });
               });
             }
@@ -15386,7 +15386,7 @@ class OGInfinity {
 
           constructionIcon.appendChild(DOM.createDOM("span", { class: `icon12px ${iconClass}` }));
           constructionIcon.addEventListener("mouseover", () =>
-            tooltip(constructionIcon, tooltipDiv, true, { auto: true }, 50, true)
+            tooltip(constructionIcon, tooltipDiv, true, { auto: true }, 50, false)
           );
 
           return constructionIcon;
