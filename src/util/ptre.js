@@ -1,6 +1,6 @@
 import * as ptreService from "./service.ptre.js";
 import OgamePageData from "./OgamePageData.js";
-import { translate } from "./translate.js";
+import Translator from "./translate.js";
 import { createDOM } from "./dom.js";
 import { formatToUnits } from "./numbers.js";
 import { popup } from "./popup.js";
@@ -14,7 +14,7 @@ export function action(frame, player) {
   let container = createDOM("div", { class: "ptreContent" });
 
   if (!OGIData.options.ptreTK) {
-    container.textContent = translate(151);
+    container.textContent = Translator.translate(151);
     popup(null, container);
     return;
   }
@@ -27,7 +27,7 @@ export function action(frame, player) {
         let arrData = result.activity_array.succes == 1 ? JSON.parse(result.activity_array.activity_array) : null;
         let checkData = result.activity_array.succes == 1 ? JSON.parse(result.activity_array.check_array) : null;
 
-        container.appendChild(createDOM("h3", {}, translate(152)));
+        container.appendChild(createDOM("h3", {}, Translator.translate(152)));
 
         const ptreBestReport = createDOM("div", { class: "ptreBestReport" });
         const fleetPointsDiv = createDOM("div");
@@ -49,7 +49,7 @@ export function action(frame, player) {
           createDOM(
             "a",
             { class: "ogl_button", target: "result.top_sr_link", href: result.top_sr_link },
-            translate(153)
+            Translator.translate(153)
           ),
           createDOM(
             "a",
@@ -58,7 +58,7 @@ export function action(frame, player) {
               target: `https://ptre.chez.gg/?country=${OgamePageData.gameLang}&univers=${universe}&player_id=${player.id}`,
               href: `https://ptre.chez.gg/?country=${OgamePageData.gameLang}&univers=${universe}&player_id=${player.id}`,
             },
-            translate(154)
+            Translator.translate(154)
           )
         );
         ptreBestReport.append(fleetPointsDiv, buttonsDiv);
@@ -98,16 +98,16 @@ export function action(frame, player) {
               let title;
               let checkValue = Math.max(0, 100 - dotValue);
 
-              if (checkValue === 100) title = translate(155);
-              else if (checkValue >= 60) title = translate(156);
-              else if (checkValue >= 40) title = translate(157);
-              else title = translate(158);
+              if (checkValue === 100) title = Translator.translate(155);
+              else if (checkValue >= 60) title = Translator.translate(156);
+              else if (checkValue >= 40) title = Translator.translate(157);
+              else title = Translator.translate(158);
 
-              if (checkData[index][1] == 100) title += translate(159);
-              else if (checkData[index][1] >= 75) title += translate(160);
-              else if (checkData[index][1] >= 50) title += translate(161);
-              else if (checkData[index][1] > 0) title = translate(162);
-              else title = translate(163);
+              if (checkData[index][1] == 100) title += Translator.translate(159);
+              else if (checkData[index][1] >= 75) title += Translator.translate(160);
+              else if (checkData[index][1] >= 50) title += Translator.translate(161);
+              else if (checkData[index][1] > 0) title = Translator.translate(162);
+              else title = Translator.translate(163);
 
               div.setAttribute("title", title);
 

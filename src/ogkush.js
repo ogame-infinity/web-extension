@@ -24,7 +24,7 @@ import { tooltip } from "./util/tooltip.js";
 import missionType from "./util/enum/missionType.js";
 import * as needsUtil from "./util/needs.js";
 import flying from "./util/flying.js";
-import { translate } from "./util/translate.js";
+import Translator from "./util/translate.js";
 import { fleetCost } from "./util/fleetCost.js";
 import * as loadingUtil from "./util/loading.js";
 import * as standardUnit from "./util/standardUnit.js";
@@ -1434,7 +1434,7 @@ class OGInfinity {
     this.loading();
     this.updateServerSettings(true);
     this.getAllianceClass();
-    this.initializeLFTypeName();
+    Translator.InitializeLFNames(this.current, this.hasLifeforms);
     await this.updateEmpireData(true);
     await this.updateLifeform();
     document.querySelector(".ogl-dialogOverlay").classList.remove("ogl-active");
@@ -1461,7 +1461,6 @@ class OGInfinity {
     this.json.expeditionSums = this.json.expeditionSums || {};
     this.json.discoveriesSums = this.json.discoveriesSums || {};
     this.json.discoveries = this.json.discoveries || {};
-    this.json.lfTypeNames = this.json.lfTypeNames || {};
     this.json.flying = this.json.flying || {
       metal: 0,
       crystal: 0,
@@ -1506,6 +1505,7 @@ class OGInfinity {
     this.json.ships = this.json.ships || {};
     this.json.allianceClass = this.json.allianceClass || ALLY_CLASS_NONE;
     this.json.productionProgress = this.json.productionProgress || {};
+    this.json.moonProductionProgress = this.json.moonProductionProgress || {};
     this.json.lfProductionProgress = this.json.lfProductionProgress || {};
     this.json.researchProgress = this.json.researchProgress || {};
     this.json.lfResearchProgress = this.json.lfResearchProgress || {};
@@ -1616,6 +1616,7 @@ class OGInfinity {
             needsUtil.display();
             ogkush.jumpGate();
             ogkush.updateFlyings();
+            ogkush.updatePlanets_IncomingHostileFleet();
             ogkush.updatePlanets_FleetActivity();
             ogkush.updateProductionProgress();
             ogkush.markLifeforms();
@@ -1629,6 +1630,7 @@ class OGInfinity {
       this.eventBox();
       this.flyingFleet();
       this.updateFlyings();
+      this.updatePlanets_IncomingHostileFleet();
       this.updatePlanets_FleetActivity();
     });
     this.neededCargo();
@@ -1679,7 +1681,7 @@ class OGInfinity {
             this.loading();
             this.updateServerSettings(true);
             this.getAllianceClass();
-            this.initializeLFTypeName();
+            Translator.InitializeLFNames(this.current, this.hasLifeforms);
             await this.updateLifeform();
             this.welcome();
           });
@@ -11327,7 +11329,7 @@ class OGInfinity {
         // update selectedLifeforms & their levels
         htmlDocument.querySelectorAll(".smallplanet a.planetlink").forEach((elem) => {
           const name = elem.getAttribute("title").split("<br/>")[1].split(":")[1].trim();
-          this.json.selectedLifeforms[elem.href.split("cp=")[1]] = this.json.lfTypeNames[name];
+          this.json.selectedLifeforms[elem.href.split("cp=")[1]] = Translator.GetClassFromLifeformName(name);
         });
         const lifeformLevel = {};
         htmlDocument.querySelectorAll("lifeform-level-bonuses div.lifeform-item-icon").forEach((iconDiv) => {
@@ -11474,37 +11476,39 @@ class OGInfinity {
     const empireRequest = (href) =>
       fetch(`?${href.toString()}`, { signal: abortController.signal })
         .then((response) => response.text())
-        .then(
-          (string) =>
-            JSON.parse(
-              string.substring(string.indexOf("createImperiumHtml") + 47, string.indexOf("initEmpire") - 16),
-              (key, value) => {
-                if (key.includes("html") && key !== "equipment_html") return;
-                if (value === "0") return 0;
-                return value;
-              }
-            ).planets
+        .then((string) =>
+          JSON.parse(
+            string.substring(string.indexOf("createImperiumHtml") + 47, string.indexOf("initEmpire") - 16),
+            (key, value) => {
+              if (key.includes("html") && key !== "equipment_html") return;
+              if (value === "0") return 0;
+              return value;
+            }
+          )
         );
 
-    const planets = empireRequest(new URLSearchParams({ page: "standalone", component: "empire" }));
-    const moons = !document.querySelector(".moonlink")
-      ? false
-      : empireRequest(new URLSearchParams({ page: "standalone", component: "empire", planetType: "1" }));
+    const empireObjectPlanets = await empireRequest(new URLSearchParams({ page: "standalone", component: "empire" }));
+    const empireObjectMoons = await empireRequest(
+      new URLSearchParams({ page: "standalone", component: "empire", planetType: "1" })
+    );
 
-    return Promise.all([planets, moons]).then((object) => {
-      object[0].forEach((planet) => {
-        planet.invalidate = false;
-        if (object[1]) {
-          object[1].forEach((moon) => {
-            if (planet.moonID === moon.id) {
-              planet.moon = moon;
-              planet.moon.invalidate = false;
-            }
-          });
-        }
-      });
-      return object[0];
+    Translator.UpdateAllTechNamesFromEmpire(empireObjectPlanets, empireObjectMoons);
+
+    const planets = empireObjectPlanets.planets;
+    const moons = empireObjectMoons.planets;
+
+    empireObjectPlanets.planets.forEach((planet) => {
+      planet.invalidate = false;
+      if (moons) {
+        moons.forEach((moon) => {
+          if (planet.moonID === moon.id) {
+            planet.moon = moon;
+            planet.moon.invalidate = false;
+          }
+        });
+      }
     });
+    return empireObjectPlanets.planets;
   }
 
   updateEmpireProduction() {
@@ -14036,7 +14040,7 @@ class OGInfinity {
   }
 
   getTranslatedText(id, type = "text") {
-    return translate(id, type);
+    return Translator.translate(id, type);
   }
 
   getLocalStorageSize() {
@@ -14146,6 +14150,23 @@ class OGInfinity {
       createDOM(
         "span",
         { style: "display: flex;justify-content: space-between; align-items: center;" },
+        this.getTranslatedText(187)
+      )
+    );
+
+    const alertHostileIncomingMode = DOM.createDOM("select", { class: "ogl-selectInput ogl-w-125 tooltip" });
+    alertHostileIncomingMode.append(
+      DOM.createDOM("option", { value: "0" }, this.getTranslatedText(184)),
+      DOM.createDOM("option", { value: "1" }, this.getTranslatedText(185)),
+      DOM.createDOM("option", { value: "2" }, this.getTranslatedText(186))
+    );
+    alertHostileIncomingMode.value = getOption("alertHostileIncomingMode");
+    optiondiv.appendChild(alertHostileIncomingMode);
+
+    optiondiv = featureSettings.appendChild(
+      createDOM(
+        "span",
+        { style: "display: flex;justify-content: space-between; align-items: center;" },
         this.getTranslatedText(33)
       )
     );
@@ -14157,6 +14178,7 @@ class OGInfinity {
     if (this.json.options.activitytimers) {
       timerCheck.checked = true;
     }
+
     optiondiv = featureSettings.appendChild(
       createDOM(
         "span",
@@ -14251,7 +14273,7 @@ class OGInfinity {
         value: this.json.options.expedition.rotationAfter,
       })
     );
-    optiondiv = featureSettings.appendChild(DOM.createDOM("span", {}, translate(181)));
+    optiondiv = featureSettings.appendChild(DOM.createDOM("span", {}, Translator.translate(181)));
     const standardUnitInput = DOM.createDOM("select", { class: "ogl-selectInput tooltip" });
     standardUnitInput.append(
       DOM.createDOM("option", { value: "-1" }, this.getTranslatedText(173)),
@@ -14544,6 +14566,7 @@ class OGInfinity {
       this.json.options.expedition.limitCargo = Math.max(1, Math.min(~~expeditionLimitCargo.value, 500)) / 100;
       this.json.options.expedition.rotationAfter = Math.max(1, Math.min(~~expeditionRotationAfter.value, 16));
       setOption("standardUnitBase", standardUnitInput.value);
+      setOption("alertHostileIncomingMode", alertHostileIncomingMode.value);
       this.json.needSync = true;
       this.saveData();
       document.querySelector(".ogl-dialog .close-tooltip").click();
@@ -14618,7 +14641,9 @@ class OGInfinity {
 
   updateFlyings() {
     const FLYING_PER_PLANETS = {};
+    const INCOMING_HOSTILE_FLEETS_PER_PLANETS = {};
     const eventTable = document.getElementById("eventContent");
+
     const ACSrows = eventTable.querySelectorAll("tr.allianceAttack");
     const unionTable = [];
     ACSrows.forEach((acsRow) => {
@@ -14628,58 +14653,128 @@ class OGInfinity {
       unionTable.push([union, acsRow.querySelectorAll("td")[1].textContent]);
     });
     const unionArrivalTime = Object.fromEntries(unionTable);
-    const rows = eventTable.querySelectorAll("#eventContent tr.eventFleet");
+    const rows = eventTable.querySelectorAll("#eventContent tr");
     rows.forEach((row) => {
+      const fleetMissionType = row.getAttribute("data-mission-type");
       const cols = row.querySelectorAll("td");
+      const destCoordCell = row.querySelector(".destCoords");
+      const destFleetCell = row.querySelector(".destFleet");
 
-      const flying = {};
-      const timestamp = row.getAttribute("data-arrival-time");
+      const destCoords = destCoordCell.textContent.replace("[", "").replace("]", "").trim();
       const date = new Date();
-      date.setTime(timestamp * 1000);
+      const timestamp = row.getAttribute("data-arrival-time");
 
-      flying.missionType = row.getAttribute("data-mission-type");
-      flying.date = timestamp;
-      flying.arrivalTime = date.toLocaleTimeString();
-      flying.missionFleetIcon = cols[2].querySelector("img").src;
+      const flying = {
+        missionType: fleetMissionType,
+        date: timestamp,
+        arrivalTime: date.toLocaleTimeString(),
+        isDestMoon: !!destFleetCell.querySelector(".moon"),
+      };
 
-      // Get the mission title by removing the suffix "own fleet" and the "return" suffix (eg: "(R)")
-      flying.missionFleetTitle = cols[2].querySelector("img").getAttribute("data-tooltip-title").trim();
-      if (flying.missionFleetTitle.includes("|"))
-        flying.missionFleetTitle = flying.missionFleetTitle.split("|")[1].trim();
-      if (flying.missionFleetTitle.includes("("))
-        flying.missionFleetTitle = flying.missionFleetTitle.split("(")[0].trim();
+      const hostileCountDown = row.querySelector(".countDown .hostile");
+      if (hostileCountDown && hostileCountDown.textContent.trim() !== "---") {
+        //Hostile fleet
+        if (!INCOMING_HOSTILE_FLEETS_PER_PLANETS[destCoords]) INCOMING_HOSTILE_FLEETS_PER_PLANETS[destCoords] = [];
+        INCOMING_HOSTILE_FLEETS_PER_PLANETS[destCoords].push(flying);
+      } else if (row.classList.contains("eventFleet")) {
+        flying.missionFleetIcon = cols[2].querySelector("img").src;
 
-      flying.origin = cols[3].textContent.trim();
-      flying.originMoon = !!cols[3].querySelector(".moon");
-      flying.originCoords = cols[4].textContent.replace("[", "").replace("]", "").trim();
-      flying.originLink = cols[4].querySelector("a").href;
-      flying.fleetCount = cols[5].textContent;
+        // Get the mission title by removing the suffix "own fleet" and the "return" suffix (eg: "(R)")
+        flying.missionFleetTitle = cols[2].querySelector("img").getAttribute("data-tooltip-title").trim();
+        if (flying.missionFleetTitle.includes("|"))
+          flying.missionFleetTitle = flying.missionFleetTitle.split("|")[1].trim();
+        if (flying.missionFleetTitle.includes("("))
+          flying.missionFleetTitle = flying.missionFleetTitle.split("(")[0].trim();
 
-      // Get the direction
-      flying.direction = Array.from(cols[6].classList).includes("icon_movement") ? "go" : "back";
+        flying.origin = cols[3].textContent.trim();
+        flying.originMoon = !!cols[3].querySelector(".moon");
+        flying.originCoords = cols[4].textContent.replace("[", "").replace("]", "").trim();
+        flying.originLink = cols[4].querySelector("a").href;
+        flying.fleetCount = cols[5].textContent;
 
-      // Get the direction image (no used as of today, but we never know)
-      const styleDirection = window.getComputedStyle(cols[6]).getPropertyValue("background");
-      flying.directionIcon = styleDirection.substring(
-        styleDirection.indexOf('url("') + 5,
-        styleDirection.indexOf('")')
-      );
+        // Get the direction
+        flying.direction = Array.from(cols[6].classList).includes("icon_movement") ? "go" : "back";
 
-      flying.dest = cols[7].textContent.trim();
-      flying.destMoon = cols[7].querySelector(".moon");
-      flying.destDebris = cols[7].querySelector(".tf");
-      flying.destCoords = cols[8].textContent.replace("[", "").replace("]", "").trim();
-      flying.destLink = cols[8].querySelector("a").href;
-      if (!FLYING_PER_PLANETS[flying.originCoords]) FLYING_PER_PLANETS[flying.originCoords] = {};
-      if (!FLYING_PER_PLANETS[flying.originCoords][flying.missionFleetTitle]) {
-        FLYING_PER_PLANETS[flying.originCoords][flying.missionFleetTitle] = {
-          icon: flying.missionFleetIcon,
-          data: [],
-        };
+        // Get the direction image (no used as of today, but we never know)
+        const styleDirection = window.getComputedStyle(cols[6]).getPropertyValue("background");
+        flying.directionIcon = styleDirection.substring(
+          styleDirection.indexOf('url("') + 5,
+          styleDirection.indexOf('")')
+        );
+
+        flying.dest = cols[7].textContent.trim();
+        flying.destMoon = cols[7].querySelector(".moon");
+        flying.destDebris = cols[7].querySelector(".tf");
+        flying.destCoords = destCoords;
+        flying.destLink = destCoordCell.querySelector("a").href;
+        if (!FLYING_PER_PLANETS[flying.originCoords]) FLYING_PER_PLANETS[flying.originCoords] = {};
+        if (!FLYING_PER_PLANETS[flying.originCoords][flying.missionFleetTitle]) {
+          FLYING_PER_PLANETS[flying.originCoords][flying.missionFleetTitle] = {
+            icon: flying.missionFleetIcon,
+            data: [],
+          };
+        }
+        FLYING_PER_PLANETS[flying.originCoords][flying.missionFleetTitle].data.push(flying);
       }
-      FLYING_PER_PLANETS[flying.originCoords][flying.missionFleetTitle].data.push(flying);
     });
+
     this.flyingFleetPerPlanets = FLYING_PER_PLANETS;
+    this.incomingHostileFleetPerPlanets = INCOMING_HOSTILE_FLEETS_PER_PLANETS;
+  }
+
+  updatePlanets_IncomingHostileFleet() {
+    if (this.incomingHostileFleetPerPlanets) {
+      const planetList = document.getElementById("planetList");
+
+      // replace the alert icon with a background animation
+
+      const alertMode = getOption("alertHostileIncomingMode");
+      planetList.setAttribute("data-alert-hostile-incoming-mode", alertMode);
+
+      const createAlertIcon = (type, planetOrMoonId, fleetCount) => {
+        //create the tooltip
+        const tooltipDiv = DOM.createDOM("div");
+        tooltipDiv.appendChild(DOM.createDOM("span", {}, `${this.getTranslatedText(183)}: ${fleetCount}`));
+
+        const alert = DOM.createDOM("a", {
+          href: `/game/index.php?page=ingame&component=fleetdispatch&cp=${planetOrMoonId}`,
+          class: `ogi-${type}_alert`,
+        });
+
+        alert.addEventListener("mouseover", () => tooltip(alert, tooltipDiv, true, { auto: true }, 50, true));
+        return alert;
+      };
+
+      Array.from(planetList.children).forEach((planet) => {
+        const planetId = planet.getAttribute("id")?.replace("planet-", "");
+        const planetKoordsEl = planet.querySelector(".planet-koords");
+        if (planetKoordsEl) {
+          const planetKoords = planetKoordsEl.textContent;
+          if (this.incomingHostileFleetPerPlanets[planetKoords]) {
+            const movements = this.incomingHostileFleetPerPlanets[planetKoords];
+
+            const countToMoon = movements.filter((movement) => movement.isDestMoon).length;
+            const countToPlanet = movements.filter((movement) => !movement.isDestMoon).length;
+            if (countToMoon > 0) {
+              const moon = planet.querySelector(".moonlink");
+              if (moon) {
+                planet.classList.add("ogi-moon_under_hostile_activity");
+
+                const moonId = moon.href.match(/=(\d+)/)[1];
+                const alert = createAlertIcon("moon", moonId, countToMoon);
+
+                moon.insertAdjacentElement("afterend", alert);
+              }
+            }
+            if (countToPlanet > 0) {
+              planet.classList.add("ogi-planet_under_hostile_activity");
+              const alert = createAlertIcon("planet", planetId, countToPlanet);
+              planetKoordsEl.insertAdjacentElement("afterend", alert);
+            }
+          }
+        }
+      });
+    }
   }
 
   updatePlanets_FleetActivity() {
@@ -15266,32 +15361,134 @@ class OGInfinity {
   updateProductionProgress() {
     let now = new Date();
     let needLifeformUpdateForResearch = false;
-    document.querySelectorAll(".planet-koords").forEach((planet) => {
-      let elem = this.json.productionProgress[planet.textContent.trim()];
-      if (elem && new Date(elem.endDate) < now) {
-        if (this.json.options.showProgressIndicators) planet.parentElement.classList.add("finished");
-      } else {
-        if (this.json.options.showProgressIndicators) planet.parentElement.classList.remove("finished");
-      }
-      elem = this.json.lfProductionProgress[planet.textContent.trim()];
-      if (elem && new Date(elem.endDate) < now) {
-        this.json.needLifeformUpdate[planet.parentElement.href.match(/=(\d+)/)[1]] = true;
-        if (this.json.options.showProgressIndicators) planet.parentElement.classList.add("finishedLf");
-      } else {
-        if (this.json.options.showProgressIndicators) planet.parentElement.classList.remove("finishedLf");
-      }
-      elem = this.json.lfResearchProgress[planet.textContent.trim()];
-      if (elem && new Date(elem.endDate) < now) {
-        needLifeformUpdateForResearch = true;
-      }
-    });
+
+    const updateProgressIndicators = () => {
+      document.querySelectorAll(".planet-koords").forEach((planet) => {
+        const smallplanet = planet.parentElement.parentElement;
+        const planetId = planet.parentElement.href.match(/=(\d+)/)[1];
+        const planetCoords = planet.textContent.trim();
+        // remove old constructions icons
+        const constructionIconLink = smallplanet.querySelector(".constructionIcon:not(.moon)");
+        if (constructionIconLink) smallplanet.removeChild(constructionIconLink);
+        const moonConstructionIconLink = smallplanet.querySelector(".constructionIcon.moon");
+        if (moonConstructionIconLink) smallplanet.removeChild(moonConstructionIconLink);
+
+        const constructionIconsDiv = DOM.createDOM("div", { class: "constructionIcons" });
+
+        const createConstructionIcon = (elem, planetOrMoonId, techName, iconClass, component) => {
+          const constructionIcon = DOM.createDOM("a", {
+            class: "constructionIcon planet tooltip js_hideTipOnMobile",
+            href: `/game/index.php?page=ingame&component=${component}&cp=${planetOrMoonId}`,
+          });
+
+          const tooltipDiv = DOM.createDOM("div", { class: "constructionIconTooltip" });
+          tooltipDiv.appendChild(DOM.createDOM("span", { class: "techName" }, `${techName} (${elem.tolvl})`));
+
+          constructionIcon.appendChild(DOM.createDOM("span", { class: `icon12px ${iconClass}` }));
+          constructionIcon.addEventListener("mouseover", () =>
+            tooltip(constructionIcon, tooltipDiv, true, { auto: true }, 50, true)
+          );
+
+          return constructionIcon;
+        };
+
+        // check if the moon is in regular construction
+        let elem = this.json.moonProductionProgress[planetCoords];
+        const moon = smallplanet.querySelector(".moonlink");
+        if (elem && moon) {
+          const moonId = moon.href.match(/=(\d+)/)[1];
+          if (elem) {
+            const endDate = new Date(elem.endDate);
+            const techName = Translator.translate(elem.technoId, "tech");
+
+            const moonConstructionIconsDiv = DOM.createDOM("div", { class: "constructionIcons moonConstructionIcons" });
+            if (endDate > now) {
+              // regular construction work is still in progress, so show the icon
+              moonConstructionIconsDiv.appendChild(
+                createConstructionIcon(elem, moonId, techName, "icon_wrench", "facilities")
+              );
+
+              smallplanet.appendChild(moonConstructionIconsDiv);
+            }
+          }
+        }
+
+        // check if the planet is in lifeform research
+        elem = this.json.lfResearchProgress[planetCoords];
+        if (elem) {
+          const endDate = new Date(elem.endDate);
+          if (endDate < now) {
+            // lifeform research work is finished, so we need to update the lifeform
+            needLifeformUpdateForResearch = true;
+          } else if (endDate > now) {
+            // lifeform research work is in progress, so show the icon
+            const techName = Translator.translate(elem.technoId, "tech");
+            constructionIconsDiv.appendChild(
+              createConstructionIcon(elem, planetId, techName, "icon_research_lf", "lfresearch")
+            );
+          }
+        }
+
+        // check if the planet is in lifeform construction
+        elem = this.json.lfProductionProgress[planetCoords];
+        if (elem) {
+          const endDate = new Date(elem.endDate);
+          const techName = Translator.translate(elem.technoId, "tech");
+
+          if (endDate < now) {
+            // lifeform construction work is finished
+            this.json.needLifeformUpdate[planet.parentElement.href.match(/=(\d+)/)[1]] = true;
+            if (this.json.options.showProgressIndicators) {
+              // regular construction work is finished, so show border color
+              planet.parentElement.classList.add("finishedLf");
+            }
+          } else {
+            // if some lifeform construction work is finished, remove the border color
+            if (this.json.options.showProgressIndicators) planet.parentElement.classList.remove("finishedLf");
+
+            if (endDate > now) {
+              // lifeform construction work is still in progress, so show the icon
+              constructionIconsDiv.appendChild(
+                createConstructionIcon(elem, planetId, techName, "icon_wrench_lf", "lfbuildings")
+              );
+            }
+          }
+        }
+
+        // check if the planet is in regular construction
+        elem = this.json.productionProgress[planetCoords];
+        if (elem) {
+          const endDate = new Date(elem.endDate);
+          const techName = Translator.translate(elem.technoId, "tech");
+          if (endDate < now) {
+            // regular construction work is finished, so show border color
+            if (this.json.options.showProgressIndicators) planet.parentElement.classList.add("finished");
+          } else {
+            // if some regular construction work is finished, remove the border color
+            if (this.json.options.showProgressIndicators) planet.parentElement.classList.remove("finished");
+
+            if (endDate > now) {
+              // lifeform construction work is still in progress, so show the icon
+              constructionIconsDiv.appendChild(
+                //TODO: find a way to get the correct component (facilities or supplies) instead of overview
+                createConstructionIcon(elem, planetId, techName, "icon_wrench", "overview")
+              );
+            }
+          }
+        }
+
+        //add the construction icons to the planet
+        smallplanet.appendChild(constructionIconsDiv);
+      });
+    };
+
     if (needLifeformUpdateForResearch) {
       document.querySelectorAll(".planet-koords").forEach((planet) => {
         this.json.needLifeformUpdate[planet.parentElement.href.match(/=(\d+)/)[1]] = true;
       });
     }
 
-    if (document.querySelector("#productionboxbuildingcomponent") && !this.current.isMoon) {
+    if (document.querySelector("#productionboxbuildingcomponent")) {
       let coords = this.current.coords;
       let building = document.querySelector("#productionboxbuildingcomponent .queuePic");
       if (building) {
@@ -15313,15 +15510,26 @@ class OGInfinity {
           time[1],
           time[2]
         );
-        this.json.productionProgress[coords] = {
+        const elem = {
           technoId: technoId,
           tolvl: tolvl,
           endDate: endDate.toGMTString(),
         };
+
+        if (this.current.isMoon) {
+          this.json.moonProductionProgress[coords] = elem;
+        } else {
+          this.json.productionProgress[coords] = elem;
+        }
       } else {
-        delete this.json.productionProgress[coords];
+        if (this.current.isMoon) {
+          delete this.json.moonProductionProgress[coords];
+        } else {
+          delete this.json.productionProgress[coords];
+        }
       }
     }
+
     if (document.querySelector("#productionboxlfbuildingcomponent") && !this.current.isMoon) {
       let coords = this.current.coords;
       let lfbuilding = document.querySelector("#productionboxlfbuildingcomponent .queuePic");
@@ -15351,6 +15559,7 @@ class OGInfinity {
         delete this.json.lfProductionProgress[coords];
       }
     }
+
     if (document.querySelector("#productionboxresearchcomponent")) {
       let research = document.querySelector("#productionboxresearchcomponent .queuePic");
       if (research) {
@@ -15417,6 +15626,9 @@ class OGInfinity {
         delete this.json.lfResearchProgress[coords];
       }
     }
+
+    updateProgressIndicators();
+
     this.saveData();
   }
 
@@ -15884,22 +16096,6 @@ class OGInfinity {
         document.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", ctrlKey: "true" }))
       );
     }
-  }
-
-  initializeLFTypeName() {
-    if (!this.hasLifeforms) return;
-    fetch(`/game/index.php?page=ingame&component=lfsettings&cp=${this.current.id}`)
-      .then((rep) => rep.text())
-      .then((str) => {
-        const htmlDocument = new window.DOMParser().parseFromString(str, "text/html");
-        const listName = htmlDocument.querySelectorAll("div.lfsettingsContent > h3");
-        listName.forEach((lfName) => {
-          const lifeformIcon = lfName.parentElement.querySelector(".lifeform1, .lifeform2, .lifeform3, .lifeform4");
-          this.json.lfTypeNames[lfName.textContent.trim()] = lifeformIcon.classList[1];
-        });
-        // last fetch has to be from current planet/moon else Ogame switches on next refresh
-        if (this.current.isMoon) fetch(this.current.planet.querySelector(".moonlink").href);
-      });
   }
 
   markLifeforms() {

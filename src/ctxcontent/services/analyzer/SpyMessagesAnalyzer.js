@@ -15,7 +15,7 @@ import * as stalk from "../../../util/stalk.js";
 import PlayerClass from "../../../util/enum/playerClass.js";
 import OgamePageData from "../../../util/OgamePageData.js";
 import OGIData from "../../../util/OGIData.js";
-import { translate } from "../../../util/translate.js";
+import Translator from "../../../util/translate.js";
 
 class SpyMessagesAnalyzer {
   #logger;
@@ -107,7 +107,7 @@ class SpyMessagesAnalyzer {
 
     const tableOptions = createDOM("div", { class: "ogl-tableOptions" });
     const enableTable = tableOptions.appendChild(
-      createDOM("button", { class: "icon icon_eye tooltip", title: translate(106, "text") })
+      createDOM("button", { class: "icon icon_eye tooltip", title: Translator.translate(106, "text") })
     );
     if (options.spyTableEnable) enableTable.classList.add("ogl-active");
     enableTable.addEventListener("click", () => {
@@ -122,7 +122,7 @@ class SpyMessagesAnalyzer {
     const appendOption = tableOptions.appendChild(
       createDOM("button", {
         class: "icon icon_plus tooltip",
-        title: translate(182, "text"),
+        title: Translator.translate(182, "text"),
       })
     );
 
@@ -137,7 +137,7 @@ class SpyMessagesAnalyzer {
     const autoDelete = tableOptions.appendChild(
       createDOM("button", {
         class: "icon icon_trash tooltip",
-        title: translate(104, "text"),
+        title: Translator.translate(104, "text"),
       })
     );
     if (options.autoDeleteEnable) autoDelete.classList.add("ogl-active");

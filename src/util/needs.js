@@ -5,7 +5,7 @@ import planetType from "./enum/planetType.js";
 import { tooltip } from "./tooltip.js";
 import OGIObserver from "./observer.js";
 import flying from "./flying.js";
-import { translate } from "./translate.js";
+import Translator from "./translate.js";
 
 const needs = {
   ...OGIData.needs,
@@ -219,7 +219,7 @@ function createLockIcon(planet, isMoon) {
   }
 
   const tooltipContent = createDOM("div");
-  tooltipContent.appendChild(createDOM("div", { style: "width: 75px" }, translate(39)));
+  tooltipContent.appendChild(createDOM("div", { style: "width: 75px" }, Translator.translate(39)));
   tooltipContent.appendChild(createDOM("hr"));
   tooltipContent.appendChild(
     createDOM("div", { class: "ogl-metal" }, toFormattedNumber(Math.max(0, needsTarget.metal), null, true))
