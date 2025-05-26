@@ -11468,8 +11468,8 @@ class OGInfinity {
           )
         );
 
-    var empireObjectPlanets = await empireRequest(new URLSearchParams({ page: "standalone", component: "empire" }));
-    var empireObjectMoons = await empireRequest(
+    const empireObjectPlanets = await empireRequest(new URLSearchParams({ page: "standalone", component: "empire" }));
+    const empireObjectMoons = await empireRequest(
       new URLSearchParams({ page: "standalone", component: "empire", planetType: "1" })
     );
 
@@ -15320,9 +15320,9 @@ class OGInfinity {
         const planetId = planet.parentElement.href.match(/=(\d+)/)[1];
         const planetCoords = planet.textContent.trim();
         // remove old constructions icons
-        var constructionIconLink = smallplanet.querySelector(".constructionIcon:not(.moon)");
+        const constructionIconLink = smallplanet.querySelector(".constructionIcon:not(.moon)");
         if (constructionIconLink) smallplanet.removeChild(constructionIconLink);
-        var moonConstructionIconLink = smallplanet.querySelector(".constructionIcon.moon");
+        const moonConstructionIconLink = smallplanet.querySelector(".constructionIcon.moon");
         if (moonConstructionIconLink) smallplanet.removeChild(moonConstructionIconLink);
 
         const constructionIconsDiv = DOM.createDOM("div", { class: "constructionIcons" });
