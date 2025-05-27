@@ -11469,7 +11469,7 @@ class OGInfinity {
     this.json.lifeformPlanetBonus = lifeformPlanetBonus;
   }
 
-  async getEmpireInfo() {
+  getEmpireInfo() {
     const abortController = new AbortController();
     window.onbeforeunload = () => abortController.abort();
 
@@ -11487,28 +11487,31 @@ class OGInfinity {
           )
         );
 
-    const empireObjectPlanets = await empireRequest(new URLSearchParams({ page: "standalone", component: "empire" }));
-    const empireObjectMoons = await empireRequest(
+    const empireRequestPlanets = empireRequest(new URLSearchParams({ page: "standalone", component: "empire" }));
+    const empireRequestMoons = empireRequest(
       new URLSearchParams({ page: "standalone", component: "empire", planetType: "1" })
     );
 
-    Translator.UpdateAllTechNamesFromEmpire(empireObjectPlanets, empireObjectMoons);
+    return Promise.all([empireRequestPlanets, empireRequestMoons]).then((values) => {
+      const empireObjectPlanets = values[0];
+      const empireObjectMoons = values[1];
 
-    const planets = empireObjectPlanets.planets;
-    const moons = empireObjectMoons.planets;
+      Translator.UpdateAllTechNamesFromEmpire(empireObjectPlanets, empireObjectMoons);
 
-    empireObjectPlanets.planets.forEach((planet) => {
-      planet.invalidate = false;
-      if (moons) {
-        moons.forEach((moon) => {
-          if (planet.moonID === moon.id) {
-            planet.moon = moon;
-            planet.moon.invalidate = false;
-          }
-        });
-      }
+      empireObjectPlanets.planets.forEach((planet) => {
+        planet.invalidate = false;
+        if (empireObjectMoons.planets) {
+          empireObjectMoons.planets.forEach((moon) => {
+            if (planet.moonID === moon.id) {
+              planet.moon = moon;
+              planet.moon.invalidate = false;
+            }
+          });
+        }
+      });
+
+      return empireObjectPlanets.planets;
     });
-    return empireObjectPlanets.planets;
   }
 
   updateEmpireProduction() {
