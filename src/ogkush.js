@@ -1967,7 +1967,8 @@ class OGInfinity {
                 (that.playerClass == PLAYER_CLASS_MINER ? that.json.minerBonusEnergy : 0) +
                 (that.allOfficers ? OFFICER_ENERGY_BONUS : 0) +
                 (that.json.allianceClass == ALLY_CLASS_MINER ? TRADER_ENERGY_BONUS : 0) +
-                (that.json.lifeformBonus.productionBonus?.[3] || 0);
+                (that.json.lifeformBonus.productionBonus?.[3] || 0) +
+                (that.json.lifeformPlanetBonus[that.current.id]?.productionBonus[3] || 0);
               let satsNeeded = Math.ceil(-diff / (1 + energyBonus) / Math.floor((temp + 140) / 6));
               let link =
                 "https://" +
@@ -2009,7 +2010,8 @@ class OGInfinity {
                 (that.playerClass == PLAYER_CLASS_MINER ? that.json.minerBonusEnergy : 0) +
                 (that.allOfficers ? OFFICER_ENERGY_BONUS : 0) +
                 (that.json.allianceClass == ALLY_CLASS_MINER ? TRADER_ENERGY_BONUS : 0) +
-                (that.json.lifeformBonus.productionBonus?.[3] || 0);
+                (that.json.lifeformBonus.productionBonus?.[3] || 0) +
+                (that.json.lifeformPlanetBonus[that.current.id]?.productionBonus[3] || 0);
               let satsNeeded = Math.ceil(Math.floor(-diff / (1 + energyBonus)) / Math.floor((temp + 140) / 6));
               let satsSpan = createDOM("span");
               satsSpan.replaceChildren(
@@ -2288,7 +2290,8 @@ class OGInfinity {
                 (that.playerClass == PLAYER_CLASS_MINER ? that.json.minerBonusEnergy : 0) +
                 (that.allOfficers ? OFFICER_ENERGY_BONUS : 0) +
                 (that.json.allianceClass == ALLY_CLASS_MINER ? TRADER_ENERGY_BONUS : 0) +
-                (that.json.lifeformBonus.productionBonus?.[3] || 0);
+                (that.json.lifeformBonus.productionBonus?.[3] || 0) +
+                (that.json.lifeformPlanetBonus[that.current.id]?.productionBonus[3] || 0);
               let temp = that.json.empire[that.current.index].db_par2 + 40;
               let satsNeeded = Math.ceil(-missing[3] / (1 + energyBonus) / Math.floor((temp + 140) / 6));
               let link =
@@ -2467,8 +2470,9 @@ class OGInfinity {
                   (that.playerClass == PLAYER_CLASS_MINER ? that.json.minerBonusEnergy : 0) +
                   (that.allOfficers ? OFFICER_ENERGY_BONUS : 0) +
                   (that.json.allianceClass == ALLY_CLASS_MINER ? TRADER_ENERGY_BONUS : 0) +
-                  (that.json.lifeformBonus.productionBonus?.[3] || 0);
-                let diff = Number(currentEnergy) + Math.round(value * base * (1 + energyBonus));
+                  (that.json.lifeformBonus.productionBonus?.[3] || 0) +
+                  (that.json.lifeformPlanetBonus[that.current.id]?.productionBonus[3] || 0);
+                let diff = Number(currentEnergy) + Math.round(value * base);
                 energyDiv.replaceChildren(
                   document.createTextNode(`${toFormatedNumber(value * base)}`),
                   createDOM("span", { class: `${diff < 0 ? "overmark" : "undermark"}` }, ` (${toFormatedNumber(diff)})`)
@@ -2500,7 +2504,9 @@ class OGInfinity {
                     (that.engineer ? ENGINEER_ENERGY_BONUS : 0) +
                     (that.playerClass == PLAYER_CLASS_MINER ? that.json.minerBonusEnergy : 0) +
                     (that.allOfficers ? OFFICER_ENERGY_BONUS : 0) +
-                    (that.json.allianceClass == ALLY_CLASS_MINER ? TRADER_ENERGY_BONUS : 0);
+                    (that.json.allianceClass == ALLY_CLASS_MINER ? TRADER_ENERGY_BONUS : 0) +
+                    (that.json.lifeformBonus.productionBonus?.[3] || 0) +
+                    (that.json.lifeformPlanetBonus[that.current.id]?.productionBonus[3] || 0);
                   let temp = that.json.empire[that.current.index].db_par2 + 40;
                   let satsNeeded = Math.ceil(-diff / (1 + energyBonus) / Math.floor((temp + 140) / 6));
                   let satsSpan = createDOM("span");
@@ -11453,9 +11459,11 @@ class OGInfinity {
           productionBonus[0] = 0.02 * planet[12106];
           productionBonus[1] = 0.02 * planet[12109];
           productionBonus[2] = 0.02 * planet[12110];
+          productionBonus[3] = 0.015 * planet[12107];
           break;
         case "lifeform3":
           productionBonus[2] = 0.02 * planet[13110];
+          productionBonus[3] = 0.01 * planet[13107];
       }
 
       lifeformPlanetBonus[planet.id] = {
