@@ -11459,13 +11459,11 @@ class OGInfinity {
           productionBonus[0] = 0.02 * planet[12106];
           productionBonus[1] = 0.02 * planet[12109];
           productionBonus[2] = 0.02 * planet[12110];
-	  productionBonus[3] = 0.015* planet[12107];
+          productionBonus[3] = 0.015 * planet[12107];
           break;
         case "lifeform3":
           productionBonus[2] = 0.02 * planet[13110];
-          break;
-        case "lifeform4":
-	  productionBonus[3] = 0.01 * planet[14107];
+          productionBonus[3] = 0.01 * planet[13107];
       }
 
       lifeformPlanetBonus[planet.id] = {
