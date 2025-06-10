@@ -5289,6 +5289,11 @@ class OGInfinity {
         delete this.json.expeditions[id];
       }
     }
+    for (let [id, result] of Object.entries(this.json.discoveries)) {
+      if (!result.favorited && new Date() - new Date(result.date) > 5 * 24 * 60 * 60 * 1e3) {
+        delete this.json.discoveries[id];
+      }
+    }
     for (let [id, result] of Object.entries(this.json.combats)) {
       if (!result.favorited && new Date() - new Date(result.timestamp) > 30 * 24 * 60 * 60 * 1e3) {
         delete this.json.combats[id];
