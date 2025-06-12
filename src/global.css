@@ -8752,6 +8752,10 @@ li.resource {
   background-position: calc(5.2625% * 4) 0% !important;
 }
 
+.moonlink.finished {
+  border: solid 1px #ffa500;
+}
+
 .planetlink.finished {
   border: solid 1px #ffa500;
 }
