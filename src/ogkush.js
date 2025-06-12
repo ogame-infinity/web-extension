@@ -1328,7 +1328,7 @@ const RESEARCH_INFO = {
 };
 
 const SUPPLIES_TECHID = [1, 2, 3, 4, 12, 22, 23, 24];
-const FACILITIES_TECHID = [14, 15, 21, 31, 33, 34, 36, 44];
+const FACILITIES_TECHID = [14, 15, 21, 31, 33, 34, 36, 44, 41, 42, 43];
 const IONTECHNOLOGY_BONUS = 0.04;
 const PLASMATECH_BONUS = [0.01, 0.0066, 0.0033];
 const ENGINEER_ENERGY_BONUS = 0.1;
@@ -15432,7 +15432,7 @@ class OGInfinity {
             if (endDate > now) {
               // regular construction work is still in progress, so show the icon
               moonConstructionIconsDiv.appendChild(
-                createConstructionIcon(elem, moonId, techName, "icon_wrench", "facilities")
+                createConstructionIcon(elem, moonId, techName, "icon_wrench", SUPPLIES_TECHID.includes(Number(elem.technoId)) ? "supplies" : FACILITIES_TECHID.includes(Number(elem.technoId)) ? "facilities" : "overview")
               );
 
               smallplanet.appendChild(moonConstructionIconsDiv);
