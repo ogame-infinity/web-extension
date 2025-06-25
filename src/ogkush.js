@@ -1746,8 +1746,9 @@ class OGInfinity {
     if (
       force ||
       isNaN(new Date(this.json.lastEmpireUpdate)) ||
-      (timeSinceLastUpdate > 5 * 60 * 1e3 && this.json.needsUpdate) ||
-      (timeSinceLastUpdate > 1 * 60 * 1e3 && !this.json.options.lessAggressiveEmpireAutomaticUpdate)
+      (this.mode == 0 &&
+        ((timeSinceLastUpdate > 5 * 60 * 1e3 && this.json.needsUpdate) ||
+          (timeSinceLastUpdate > 1 * 60 * 1e3 && !this.json.options.lessAggressiveEmpireAutomaticUpdate)))
     ) {
       await this.updateInfo();
     }
