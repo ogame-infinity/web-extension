@@ -1327,6 +1327,8 @@ const RESEARCH_INFO = {
   },
 };
 
+const SUPPLIES_TECHID = [1, 2, 3, 4, 12, 22, 23, 24];
+const FACILITIES_TECHID = [14, 15, 21, 31, 33, 34, 36, 44, 41, 42, 43];
 const IONTECHNOLOGY_BONUS = 0.04;
 const PLASMATECH_BONUS = [0.01, 0.0066, 0.0033];
 const ENGINEER_ENERGY_BONUS = 0.1;
@@ -15419,16 +15421,34 @@ class OGInfinity {
           const moonId = moon.href.match(/=(\d+)/)[1];
           if (elem) {
             const endDate = new Date(elem.endDate);
-            const techName = Translator.translate(elem.technoId, "tech");
+            if (endDate < now) {
+              // regular construction work is finished, so show border color
+              if (this.json.options.showProgressIndicators) moon.classList.add("finished");
+            } else {
+              // if some regular construction work is finished, remove the border color
+              if (this.json.options.showProgressIndicators) moon.classList.remove("finished");
+              if (endDate > now) {
+                // regular construction work is still in progress, so show the icon
+                const techName = Translator.translate(elem.technoId, "tech");
+                const moonConstructionIconsDiv = DOM.createDOM("div", {
+                  class: "constructionIcons moonConstructionIcons",
+                });
+                moonConstructionIconsDiv.appendChild(
+                  createConstructionIcon(
+                    elem,
+                    moonId,
+                    techName,
+                    "icon_wrench",
+                    SUPPLIES_TECHID.includes(Number(elem.technoId))
+                      ? "supplies"
+                      : FACILITIES_TECHID.includes(Number(elem.technoId))
+                      ? "facilities"
+                      : "overview"
+                  )
+                );
 
-            const moonConstructionIconsDiv = DOM.createDOM("div", { class: "constructionIcons moonConstructionIcons" });
-            if (endDate > now) {
-              // regular construction work is still in progress, so show the icon
-              moonConstructionIconsDiv.appendChild(
-                createConstructionIcon(elem, moonId, techName, "icon_wrench", "facilities")
-              );
-
-              smallplanet.appendChild(moonConstructionIconsDiv);
+                smallplanet.appendChild(moonConstructionIconsDiv);
+              }
             }
           }
         }
@@ -15453,7 +15473,6 @@ class OGInfinity {
         elem = this.json.lfProductionProgress[planetCoords];
         if (elem) {
           const endDate = new Date(elem.endDate);
-          const techName = Translator.translate(elem.technoId, "tech");
 
           if (endDate < now) {
             // lifeform construction work is finished
@@ -15468,6 +15487,7 @@ class OGInfinity {
 
             if (endDate > now) {
               // lifeform construction work is still in progress, so show the icon
+              const techName = Translator.translate(elem.technoId, "tech");
               constructionIconsDiv.appendChild(
                 createConstructionIcon(elem, planetId, techName, "icon_wrench_lf", "lfbuildings")
               );
@@ -15488,10 +15508,19 @@ class OGInfinity {
             if (this.json.options.showProgressIndicators) planet.parentElement.classList.remove("finished");
 
             if (endDate > now) {
-              // lifeform construction work is still in progress, so show the icon
+              // regular construction work is still in progress, so show the icon
               constructionIconsDiv.appendChild(
-                //TODO: find a way to get the correct component (facilities or supplies) instead of overview
-                createConstructionIcon(elem, planetId, techName, "icon_wrench", "overview")
+                createConstructionIcon(
+                  elem,
+                  planetId,
+                  techName,
+                  "icon_wrench",
+                  SUPPLIES_TECHID.includes(Number(elem.technoId))
+                    ? "supplies"
+                    : FACILITIES_TECHID.includes(Number(elem.technoId))
+                    ? "facilities"
+                    : "overview"
+                )
               );
             }
           }
