@@ -14680,8 +14680,8 @@ class OGInfinity {
       const destFleetCell = row.querySelector(".destFleet");
 
       const destCoords = destCoordCell.textContent.replace("[", "").replace("]", "").trim();
-      const date = new Date();
       const timestamp = row.getAttribute("data-arrival-time");
+      const date = new Date(timestamp * 1000);
 
       const flying = {
         missionType: fleetMissionType,
