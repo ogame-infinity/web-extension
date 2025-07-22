@@ -11496,7 +11496,6 @@ class OGInfinity {
           JSON.parse(
             string.substring(string.indexOf("createImperiumHtml") + 47, string.indexOf("initEmpire") - 16),
             (key, value) => {
-              if (key.includes("html") && key !== "equipment_html") return;
               if (value === "0") return 0;
               return value;
             }
@@ -11508,11 +11507,94 @@ class OGInfinity {
       new URLSearchParams({ page: "standalone", component: "empire", planetType: "1" })
     );
 
+    const getWorkinProgressGroupsAndPatterns = (groups) => {
+      //create a list of patterns to match the groups ('?' is a wildcard for lifeform groups)
+      //there is also "ships" and "defence" groups for any future evolution
+      const toParseGroups = ["supply", "station", "research", "lifeform?buildings", "lifeform?research"];
+
+      const patterns = toParseGroups.map((pattern) => ({
+        pattern,
+        name: pattern.replace("?", ""),
+        regex: new RegExp("^" + pattern.replace("?", ".*") + "$"),
+      }));
+
+      const result = [];
+      for (const key of Object.keys(groups)) {
+        const match = patterns.find(({ regex }) => regex.test(key));
+        if (match) {
+          result.push({ property: key, name: match.name, techIds: groups[key] });
+        }
+      }
+      return result;
+    };
+    const getWorkInProgressTechs = (planetOrMoon, groups) => {
+      const workInProgressTechs = new Array();
+
+      groups.forEach((group) => {
+        group.techIds.forEach((techId) => {
+          const htmlKey = `${techId}_html`;
+
+          if (planetOrMoon[htmlKey]) {
+            const htmlString = planetOrMoon[htmlKey];
+            if (htmlString) {
+              // Create a temporary element to parse the HTML string
+              const temp = document.createElement("div");
+              temp.innerHTML = htmlString.trim();
+
+              /*
+               * if there is only one child, we can ignore it, because it is just a text node.
+               * but if there is more than one child, there is a downgrade or an upgrade
+               */
+              if (temp.children.length > 1) {
+                const activeElement = temp.querySelector(".active");
+                const activeValue = activeElement ? parseInt(activeElement.textContent.trim(), 10) : null;
+
+                if (!isNaN(activeValue)) {
+                  workInProgressTechs.push({
+                    group: group.name,
+                    id: techId,
+                    from: planetOrMoon[techId],
+                    to:
+                      group.name === "defence" || group.name === "ships"
+                        ? planetOrMoon[techId] + activeValue
+                        : activeValue, // for defence and ships, the value is the current level + the upgrade level
+                  });
+                }
+              }
+            }
+          }
+        });
+      });
+
+      return workInProgressTechs;
+    };
+
+    const setWorkInProgressTechs = (planetsOrMoons, groups) => {
+      planetsOrMoons.forEach((planetOrMoon) => {
+        planetOrMoon.workInProgressTechs = getWorkInProgressTechs(
+          planetOrMoon,
+          getWorkinProgressGroupsAndPatterns(groups)
+        );
+
+        // Remove HTML keys that was only used for the work in progress techs
+        // We don't need the HTML keys anymore, so we can delete them
+        for (const key in planetOrMoon) {
+          if (key.includes("html") && key !== "equipment_html") {
+            delete planetOrMoon[key];
+          }
+        }
+      });
+    };
+
     return Promise.all([empireRequestPlanets, empireRequestMoons]).then((values) => {
       const empireObjectPlanets = values[0];
       const empireObjectMoons = values[1];
 
       Translator.UpdateAllTechNamesFromEmpire(empireObjectPlanets, empireObjectMoons);
+      setWorkInProgressTechs(empireObjectPlanets.planets, empireObjectPlanets.groups);
+      if (empireObjectMoons.planets) {
+        setWorkInProgressTechs(empireObjectMoons.planets, empireObjectMoons.groups);
+      }
 
       empireObjectPlanets.planets.forEach((planet) => {
         planet.invalidate = false;
@@ -15385,9 +15467,13 @@ class OGInfinity {
     let needLifeformUpdateForResearch = false;
 
     const updateProgressIndicators = () => {
+      const regularBuildingsGroups = ["supply", "station"];
+      const lifeformBuildingsGroup = "lifeformbuildings";
+      const lifeformResearchGroup = "lifeformresearch";
       document.querySelectorAll(".planet-koords").forEach((planet) => {
         const smallplanet = planet.parentElement.parentElement;
         const planetId = planet.parentElement.href.match(/=(\d+)/)[1];
+        const planetFromEmpire = OGIData.empire.find((p) => p.id === parseInt(planetId));
         const planetCoords = planet.textContent.trim();
         // remove old constructions icons
         const constructionIconLink = smallplanet.querySelector(".constructionIcon:not(.moon)");
@@ -15451,6 +15537,36 @@ class OGInfinity {
               }
             }
           }
+        } else {
+          //if elem is not found, check if there is a work in progress tech from empire data
+          const moonFromEmpire = planetFromEmpire.moon;
+          if (moonFromEmpire?.workInProgressTechs) {
+            const elemFromEmpire = moonFromEmpire.workInProgressTechs.find((x) =>
+              regularBuildingsGroups.includes(x.group)
+            );
+            if (elemFromEmpire) {
+              const moonConstructionIconsDiv = DOM.createDOM("div", {
+                class: "constructionIcons moonConstructionIcons",
+              });
+              moonConstructionIconsDiv.appendChild(
+                createConstructionIcon(
+                  {
+                    technoId: elemFromEmpire.id,
+                    tolvl: elemFromEmpire.to,
+                  },
+                  moonFromEmpire.id,
+                  Translator.translate(elemFromEmpire.id, "tech"),
+                  "icon_wrench",
+                  SUPPLIES_TECHID.includes(Number(elemFromEmpire.id))
+                    ? "supplies"
+                    : FACILITIES_TECHID.includes(Number(elemFromEmpire.id))
+                    ? "facilities"
+                    : "overview"
+                )
+              );
+              smallplanet.appendChild(moonConstructionIconsDiv);
+            }
+          }
         }
 
         // check if the planet is in lifeform research
@@ -15465,6 +15581,23 @@ class OGInfinity {
             const techName = Translator.translate(elem.technoId, "tech");
             constructionIconsDiv.appendChild(
               createConstructionIcon(elem, planetId, techName, "icon_research_lf", "lfresearch")
+            );
+          }
+        } else {
+          //if elem is not found, check if there is a work in progress tech from empire data
+          const elemFromEmpire = planetFromEmpire.workInProgressTechs.find((x) => x.group == lifeformResearchGroup);
+          if (elemFromEmpire) {
+            constructionIconsDiv.appendChild(
+              createConstructionIcon(
+                {
+                  technoId: elemFromEmpire.id,
+                  tolvl: elemFromEmpire.to,
+                },
+                planetId,
+                Translator.translate(elemFromEmpire.id, "tech"),
+                "icon_research_lf",
+                "lfresearch"
+              )
             );
           }
         }
@@ -15492,6 +15625,23 @@ class OGInfinity {
                 createConstructionIcon(elem, planetId, techName, "icon_wrench_lf", "lfbuildings")
               );
             }
+          }
+        } else {
+          //if elem is not found, check if there is a work in progress tech from empire data
+          const elemFromEmpire = planetFromEmpire.workInProgressTechs.find((x) => x.group == lifeformBuildingsGroup);
+          if (elemFromEmpire) {
+            constructionIconsDiv.appendChild(
+              createConstructionIcon(
+                {
+                  technoId: elemFromEmpire.id,
+                  tolvl: elemFromEmpire.to,
+                },
+                planetId,
+                Translator.translate(elemFromEmpire.id, "tech"),
+                "icon_wrench_lf",
+                "lfbuildings"
+              )
+            );
           }
         }
 
@@ -15523,6 +15673,29 @@ class OGInfinity {
                 )
               );
             }
+          }
+        } else {
+          //if elem is not found, check if there is a work in progress tech from empire data
+          const elemFromEmpire = planetFromEmpire.workInProgressTechs.find((x) =>
+            regularBuildingsGroups.includes(x.group)
+          );
+          if (elemFromEmpire) {
+            constructionIconsDiv.appendChild(
+              createConstructionIcon(
+                {
+                  technoId: elemFromEmpire.id,
+                  tolvl: elemFromEmpire.to,
+                },
+                planetId,
+                Translator.translate(elemFromEmpire.id, "tech"),
+                "icon_wrench",
+                SUPPLIES_TECHID.includes(Number(elemFromEmpire.id))
+                  ? "supplies"
+                  : FACILITIES_TECHID.includes(Number(elemFromEmpire.id))
+                  ? "facilities"
+                  : "overview"
+              )
+            );
           }
         }
 
