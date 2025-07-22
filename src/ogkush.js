@@ -11403,9 +11403,9 @@ class OGInfinity {
         const discovererDiv = htmlDocument.querySelector(
           "inner-bonus-item-heading[data-toggable='subcategoryCharacterclasses3'] .subCategoryBonus"
         );
-        classBonus.miner = collectorDiv ? parseBonus(collectorDiv.textContent.split(":")[1]) : 0;
-        classBonus.warrior = generalDiv ? parseBonus(generalDiv.textContent.split(":")[1]) : 0;
-        classBonus.explorer = discovererDiv ? parseBonus(discovererDiv.textContent.split(":")[1]) : 0;
+        classBonus.miner = collectorDiv ? parseBonus(collectorDiv.textContent.match(/[\d].*/)[0]) : 0;
+        classBonus.warrior = generalDiv ? parseBonus(generalDiv.textContent.match(/[\d].*/)[0]) : 0;
+        classBonus.explorer = discovererDiv ? parseBonus(discovererDiv.textContent.match(/[\d].*/)[0]) : 0;
 
         // crawler bonus
         const crawlerDiv = htmlDocument.querySelectorAll(
