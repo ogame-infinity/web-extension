@@ -11549,7 +11549,7 @@ class OGInfinity {
                 const activeElement = temp.querySelector(".active");
                 const activeValue = activeElement ? parseInt(activeElement.textContent.trim(), 10) : null;
 
-                if (!isNaN(activeValue)) {
+                if (activeValue && !isNaN(activeValue)) {
                   workInProgressTechs.push({
                     group: group.name,
                     id: techId,
