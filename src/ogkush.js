@@ -11529,6 +11529,7 @@ class OGInfinity {
     };
     const getWorkInProgressTechs = (planetOrMoon, groups) => {
       const workInProgressTechs = new Array();
+      const parser = new window.DOMParser();
 
       groups.forEach((group) => {
         group.techIds.forEach((techId) => {
@@ -11537,9 +11538,8 @@ class OGInfinity {
           if (planetOrMoon[htmlKey]) {
             const htmlString = planetOrMoon[htmlKey];
             if (htmlString) {
-              // Create a temporary element to parse the HTML string
-              const temp = document.createElement("div");
-              temp.innerHTML = htmlString.trim();
+              // Create a temporary document to parse the HTML string
+              const temp = parser.parseFromString(htmlString, "text/html").querySelector("body");
 
               /*
                * if there is only one child, we can ignore it, because it is just a text node.
