@@ -65,8 +65,9 @@ class SpyMessagesAnalyzer {
 
   #isReport(message) {
     return (
-      message.querySelector(".msgContent .espionageInfo") !== null &&
-      message.querySelector(".rawMessageData[data-raw-playername]").getAttribute("data-raw-playername").length
+      (message.querySelector(".msgContent .espionageInfo") !== null &&
+        message.querySelector(".rawMessageData[data-raw-playername]").getAttribute("data-raw-playername").length) ||
+      message.querySelector(".rawMessageData[data-raw-counterespionagechance]") !== null
     );
   }
 
@@ -93,7 +94,7 @@ class SpyMessagesAnalyzer {
 
       const report = new SpyReport(message);
 
-      this.#spyReports[report.id] = report;
+      if (!report.targetIsSelf) this.#spyReports[report.id] = report;
     });
 
     if (this.#spyReports.length === 0) return;

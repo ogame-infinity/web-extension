@@ -1366,6 +1366,7 @@ class OGInfinity {
   OverviewPage = new OverviewPage();
 
   constructor() {
+    this.playerId = parseInt(document.querySelector('meta[name="ogame-player-id"]').content);
     this.commander = document.querySelector("#officers > a.commander.on") !== null;
     this.rawURL = new URL(window.location.href);
     this.page = this.rawURL.searchParams.get("component") || this.rawURL.searchParams.get("page");
@@ -1407,9 +1408,20 @@ class OGInfinity {
       type: planetType.planet,
     };
 
+    const getMetaValue = (name) => {
+      return document.querySelector(`meta[name="${name}"]`);
+    };
+
     this.isMobile = "ontouchstart" in document.documentElement;
     this.eventAction = this.isMobile ? "touchstart" : "mouseenter";
     this.universe = window.location.host.replace(/\D/g, "");
+    this.universeUrl = `https://${getMetaValue("ogame-universe").content}`;
+    this.universeName = parseInt(getMetaValue("ogame-universe-name").content);
+    this.universeSpeed = parseInt(getMetaValue("ogame-universe-speed").content);
+    this.universeSpeedFleetPeaceful = parseInt(getMetaValue("ogame-universe-speed-fleet-peaceful").content);
+    this.universeSpeedFleetWar = parseInt(getMetaValue("ogame-universe-speed-fleet-war").content);
+    this.universeSpeedFleetHolding = parseInt(getMetaValue("ogame-universe-speed-fleet-holding").content);
+
     this.geologist = !!document.querySelector(".geologist.on");
     this.technocrat = !!document.querySelector(".technocrat.on");
     this.admiral = !!document.querySelector(".admiral.on");
@@ -1444,6 +1456,16 @@ class OGInfinity {
 
   init() {
     this.json = OGIData.json;
+    this.json.playerId = this.playerId;
+    this.json.universe = {
+      id: this.universe,
+      name: this.universeName,
+      url: this.universeUrl,
+      speed: this.universeSpeed,
+      speedFleetPeaceful: this.universeSpeedFleetPeaceful,
+      speedFleetWar: this.universeSpeedFleetWar,
+      speedFleetHolding: this.universeSpeedFleetHolding,
+    };
     this.json.welcome = this.json.welcome !== false;
     this.json.needLifeformUpdate = this.json.needLifeformUpdate || {};
     this.json.pantrySync = this.json.pantrySync || "";

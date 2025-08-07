@@ -2050,6 +2050,14 @@ const translation = Object.freeze({
       br: "Modo de alerta de frota hostil",
     },
     188: {
+      de: "Öffnen Sie den Spionagebericht",
+      en: "Open the spy report",
+      es: "Abrir el informe de espionaje",
+      fr: "Ouvrir le rapport d'espionnage",
+      tr: "Casus raporunu aç",
+      br: "Abrir o relatório de espionagem",
+    },
+    189: {
       de: undefined,
       en: undefined,
       es: undefined,

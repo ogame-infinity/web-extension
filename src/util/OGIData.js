@@ -2,6 +2,14 @@ const localStorageKey = "ogk-data";
 
 class OGIData {
   _json;
+  get playerId() {
+    return this._json.playerId;
+  }
+
+  get universe() {
+    return this._json.universe;
+  }
+
   get options() {
     return this._json.options;
   }
@@ -30,13 +38,13 @@ class OGIData {
   get playerMarkers() {
     return this._json.playerMarkers;
   }
-  
+
   set playerMarkers(playerMarkers) {
     this._json.playerMarkers = playerMarkers;
 
     this.#save();
   }
-  
+
   get markers() {
     return this._json.markers;
   }
