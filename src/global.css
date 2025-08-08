@@ -2640,6 +2640,24 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
   color: #fff !important;
 }
 
+.ogl-spyReportTargetIsSelf .msgFilteredHeaderRow {
+  background-color: #280a0a !important;
+}
+.msg_new.ogl-spyReportTargetIsSelf .msgFilteredHeaderRow {
+  background-color: #460a0a !important;
+}
+
+.ogl-spyReportTargetIsSelf .seeReportIcon {
+  display: inline-block;
+  height: 28px;
+  width: 28px;
+  background-image: url("chrome-extension://__MSG_@@extension_id__/assets/images/message.svg");
+  background-position: 2px 5px;
+  background-repeat: no-repeat;
+  background-size: 21px 21px;
+  filter: invert(59%) sepia(5%) saturate(582%) hue-rotate(174deg) brightness(95%) contrast(86%);
+}
+
 .ogl-tooltip .ogk-cargo {
   width: auto;
   display: grid;
@@ -2833,8 +2851,8 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
   float: left;
 }
 
-#highscoreContent .ogi-ready[data-marked] td[class*="movement"], 
-#highscoreContent .ogi-ready[data-marked] td[class*="sendmsg"], 
+#highscoreContent .ogi-ready[data-marked] td[class*="movement"],
+#highscoreContent .ogi-ready[data-marked] td[class*="sendmsg"],
 #highscoreContent .ogi-ready[data-marked] td[class*="name"],
 #highscoreContent .ogi-ready[data-marked] td[class*="score"] {
   box-shadow: rgba(0, 0, 0, 0.5) 0px 63.8px 0px inset;
@@ -2879,37 +2897,37 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
 
 #highscoreContent .ogi-ready[data-marked="yellow"] td[class*="sendmsg"],
 #highscoreContent .ogi-ready[data-marked="yellow"] td[class*="name"] {
-  background-color:#907923 !important;
+  background-color: #907923 !important;
 }
 
 #highscoreContent .ogi-ready[data-marked="green"] td[class*="sendmsg"],
 #highscoreContent .ogi-ready[data-marked="green"] td[class*="name"] {
-  background-color:#24777b !important;
+  background-color: #24777b !important;
 }
 
 #highscoreContent .ogi-ready[data-marked="blue"] td[class*="sendmsg"],
 #highscoreContent .ogi-ready[data-marked="blue"] td[class*="name"] {
-  background-color:#355084 !important;
+  background-color: #355084 !important;
 }
 
 #highscoreContent .ogi-ready[data-marked="violet"] td[class*="sendmsg"],
 #highscoreContent .ogi-ready[data-marked="violet"] td[class*="name"] {
-  background-color:#a833da !important;
+  background-color: #a833da !important;
 }
 
 #highscoreContent .ogi-ready[data-marked="gray"] td[class*="sendmsg"],
 #highscoreContent .ogi-ready[data-marked="gray"] td[class*="name"] {
-  background-color:#8a8a8a !important;
+  background-color: #8a8a8a !important;
 }
 
 #highscoreContent .ogi-ready[data-marked="orange"] td[class*="sendmsg"],
 #highscoreContent .ogi-ready[data-marked="orange"] td[class*="name"] {
-  background-color:#ff956b !important;
+  background-color: #ff956b !important;
 }
 
 #highscoreContent .ogi-ready[data-marked="brown"] td[class*="sendmsg"],
 #highscoreContent .ogi-ready[data-marked="brown"] td[class*="name"] {
-  background-color:#c6622d !important;
+  background-color: #c6622d !important;
 }
 
 #highscoreContent .ogi-ready[data-marked="red"] td[class*="score"] {
@@ -3774,11 +3792,11 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
     visibility: visible;
     right: -407px;
     opacity: 0;
-    }
-  to {  
+  }
+  to {
     visibility: visible;
     right: 0px;
-    opacity: 1;     
+    opacity: 1;
   }
 }
 
@@ -3813,11 +3831,11 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
     visibility: visible;
     bottom: -36px;
     opacity: 0;
-    }
-  to {  
+  }
+  to {
     visibility: visible;
     bottom: 4px;
-    opacity: 1;     
+    opacity: 1;
   }
 }
 
@@ -3832,7 +3850,8 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
   background-position: center;
   background-repeat: no-repeat;
   background-size: 25px 25px;
-  filter: brightness(0) saturate(100%) invert(17%) sepia(7%) saturate(497%) hue-rotate(161deg) brightness(94%) contrast(84%);
+  filter: brightness(0) saturate(100%) invert(17%) sepia(7%) saturate(497%) hue-rotate(161deg) brightness(94%)
+    contrast(84%);
   display: block;
 }
 #overviewcomponent #planet #toggleBuffBar {
@@ -3846,19 +3865,21 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
   background-position: center;
   background-repeat: no-repeat;
   background-size: 25px 25px;
-  filter: brightness(0) saturate(100%) invert(17%) sepia(7%) saturate(497%) hue-rotate(161deg) brightness(94%) contrast(84%);
+  filter: brightness(0) saturate(100%) invert(17%) sepia(7%) saturate(497%) hue-rotate(161deg) brightness(94%)
+    contrast(84%);
   display: block;
 }
 
 #overviewcomponent #planet[buffBar-active="true"] #toggleBuffBar {
-  filter: brightness(0) saturate(100%) invert(63%) sepia(11%) saturate(483%) hue-rotate(160deg) brightness(91%) contrast(91%);
+  filter: brightness(0) saturate(100%) invert(63%) sepia(11%) saturate(483%) hue-rotate(160deg) brightness(91%)
+    contrast(91%);
 }
 
 #overviewcomponent #planet[buffBar-active="true"] #toggleBuffBar:hover,
 #overviewcomponent #planet[buffBar-active="false"] #toggleBuffBar:hover {
-  filter: brightness(0) saturate(100%) invert(77%) sepia(23%) saturate(1188%) hue-rotate(338deg) brightness(86%) contrast(92%);
+  filter: brightness(0) saturate(100%) invert(77%) sepia(23%) saturate(1188%) hue-rotate(338deg) brightness(86%)
+    contrast(92%);
 }
-
 
 .ogl-option {
   background-color: #1b1b1b !important;

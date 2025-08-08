@@ -1366,6 +1366,7 @@ class OGInfinity {
   OverviewPage = new OverviewPage();
 
   constructor() {
+    this.playerId = parseInt(document.querySelector('meta[name="ogame-player-id"]').content);
     this.commander = document.querySelector("#officers > a.commander.on") !== null;
     this.rawURL = new URL(window.location.href);
     this.page = this.rawURL.searchParams.get("component") || this.rawURL.searchParams.get("page");
@@ -1407,9 +1408,14 @@ class OGInfinity {
       type: planetType.planet,
     };
 
+    const getMetaValue = (name) => {
+      return document.querySelector(`meta[name="${name}"]`);
+    };
+
     this.isMobile = "ontouchstart" in document.documentElement;
     this.eventAction = this.isMobile ? "touchstart" : "mouseenter";
     this.universe = window.location.host.replace(/\D/g, "");
+    this.universeUrl = `https://${getMetaValue("ogame-universe").content}`;
     this.geologist = !!document.querySelector(".geologist.on");
     this.technocrat = !!document.querySelector(".technocrat.on");
     this.admiral = !!document.querySelector(".admiral.on");
@@ -1444,6 +1450,8 @@ class OGInfinity {
 
   init() {
     this.json = OGIData.json;
+    this.json.playerId = this.playerId;
+    this.json.universeUrl = this.universeUrl;
     this.json.welcome = this.json.welcome !== false;
     this.json.needLifeformUpdate = this.json.needLifeformUpdate || {};
     this.json.pantrySync = this.json.pantrySync || "";
@@ -3166,6 +3174,7 @@ class OGInfinity {
       .then((str) => new window.DOMParser().parseFromString(str, "text/xml"))
       .then((xml) => {
         this.json.serverSettingsTimeStamp = xml.querySelector("serverData").getAttribute("timestamp");
+        this.json.universeUrl = `https://${xml.querySelector("domain").innerHTML}`;
         this.json.topScore = Number(xml.querySelector("topScore").innerHTML);
         this.json.speed = Number(xml.querySelector("speed").innerHTML);
         this.json.speedResearch =
@@ -14268,6 +14277,18 @@ class OGInfinity {
         value: toFormatedNumber(this.json.options.rvalLimit),
       })
     );
+
+    optiondiv = featureSettings.appendChild(
+      createDOM("span", { class: "tooltip", title: this.getTranslatedText(190) }, this.getTranslatedText(189))
+    );
+    let rvalSelfInput = optiondiv.appendChild(
+      createDOM("input", {
+        type: "text",
+        class: "ogl-rvalInput ogl-formatInput tooltip",
+        value: toFormatedNumber(this.json.options.rvalSelfLimit),
+      })
+    );
+
     optiondiv = featureSettings.appendChild(createDOM("span", {}, this.getTranslatedText(101)));
     let expeditionDefaultTime = optiondiv.appendChild(
       createDOM("input", {
@@ -14573,6 +14594,7 @@ class OGInfinity {
     settingDiv.appendChild(saveBtn);
     saveBtn.addEventListener("click", () => {
       this.json.options.rvalLimit = fromFormatedNumber(rvalInput.value, true);
+      this.json.options.rvalSelfLimit = fromFormatedNumber(rvalSelfInput.value, true);
       if (ptreInput.value && ptreInput.value.replace(/-/g, "").length === 18 && ptreInput.value.startsWith("TM")) {
         this.json.options.ptreTK = ptreInput.value;
       } else {

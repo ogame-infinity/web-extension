@@ -1,7 +1,13 @@
 import { cleanValue } from "../../../../util/cleanValue.js";
 import { calcNeededShips } from "../../../../util/calcNeededShips.js";
+import * as DOM from "../../../../util/dom.js";
 import ship from "../../../../util/enum/ship.js";
 import planetType from "../../../../util/enum/planetType.js";
+import Translator from "../../../../util/translate.js";
+import OGIData from "../../../../util/OGIData.js";
+import FleetAndDefenceCostCalculator from "../../../../util/fleetAndDefenceCostCalculator.js";
+import * as standardUnit from "../../../../util/standardUnit.js";
+import { toFormattedNumber } from "../../../../util/numbers.js";
 
 export class SpyReport {
   get date() {
@@ -97,8 +103,13 @@ export class SpyReport {
   get id() {
     return this._id;
   }
+  get targetIsSelf() {
+    return this._targetIsSelf;
+  }
   constructor(message) {
     this._id = message.getAttribute("data-msg-id");
+    this._targetIsSelf =
+      message.querySelector(`.rawMessageData[data-raw-targetplayerid="${OGIData.playerId}"]`) !== null;
     this._isNew = message.classList.contains("msg_new");
     this._isFavorited = message.querySelector(".icon_favorited");
     this._attacked = message.querySelector(".fleetAction.fleetHostile");
@@ -112,12 +123,14 @@ export class SpyReport {
       .trim();
 
     this._status = "";
+    const classList = message.querySelector(".playerName > span:last-child")?.classList;
+    if (classList) {
+      const classes = Array.from(classList);
+      this._statusCssClass = classes.find((c) => c.substring(0, 12) === "status_abbr_");
 
-    const classes = Array.from(message.querySelector(".playerName > span:last-child")?.classList);
-    this._statusCssClass = classes.find((c) => c.substring(0, 12) === "status_abbr_");
-
-    if (message.querySelectorAll(`.playerName > span.${this._statusCssClass}`).length === 2) {
-      this._status = message.querySelector(`.playerName > span.${this._statusCssClass}:last-child`)?.textContent;
+      if (message.querySelectorAll(`.playerName > span.${this._statusCssClass}`).length === 2) {
+        this._status = message.querySelector(`.playerName > span.${this._statusCssClass}:last-child`)?.textContent;
+      }
     }
 
     this._spyLink = message.querySelector('.msg_actions [onclick*="sendShipsWithPopup"]').getAttribute("onclick");
@@ -126,7 +139,7 @@ export class SpyReport {
     this._coords = /\[.*\]/g.exec(message.getAttribute("data-messages-filters-coordinates"))[0]?.slice(1, -1);
     this._coordsLink = message.querySelector(".msgTitle a")?.href || "#";
 
-    this._detailLink = message.querySelector(".msg_actions message-footer-details a.fright").href;
+    this._detailLink = message.querySelector(".msg_actions message-footer-details a.fright")?.href;
 
     // TODO: after 11.16.0, modify fleet& defense to obtain values directly of data raw. no need of regex & cleanValue
     const fleet = message.getAttribute("data-messages-filters-fleet");
@@ -209,5 +222,55 @@ export class SpyReport {
     let _tmpCoords = this._coords.split(":");
     _tmpCoords = _tmpCoords.map((x) => x.padStart(3, "0"));
     this._tmpCoords = _tmpCoords.join("");
+
+    if (this._targetIsSelf) {
+      this.#DecorateAsTargetIsSelf(message);
+    }
+  }
+
+  #DecorateAsTargetIsSelf(message) {
+    message.classList.add("ogl-spyReportTargetIsSelf");
+
+    const fleet = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-fleet"));
+    const defence = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-defense"));
+    const recyclingYield = FleetAndDefenceCostCalculator.CalculateRecyclingYield(
+      fleet,
+      defence,
+      OGIData.universeSettingsTooltip.debrisFactor,
+      OGIData.universeSettingsTooltip.debrisFactorDef
+    );
+    const amount = [recyclingYield.metal, recyclingYield.crystal, recyclingYield.deut];
+    const standardUnitSum = standardUnit.standardUnit(amount);
+    const amountDisplay = `${toFormattedNumber(standardUnitSum, [0, 1], true)} ${standardUnit.unitType()}`;
+
+    const msgTitle = message.querySelector(".msgHeadItem .msgTitle");
+
+    const labelClass = `ogk-label ${standardUnitSum <= OGIData.options.rvalSelfLimit ? "" : "ogi-negative"}`;
+    msgTitle.appendChild(DOM.createDOM("span", { class: labelClass }, amountDisplay));
+
+    const msgFilteredHeaderResources = message.querySelector(
+      ".msgFilteredHeaderRow .msgFilteredHeaderCell.msgFilteredHeaderCell_resources"
+    );
+    msgFilteredHeaderResources.removeChild(msgFilteredHeaderResources.firstChild);
+    msgFilteredHeaderResources.appendChild(DOM.createDOM("span", { class: labelClass }, amountDisplay));
+
+    const msgFooterActions = message.querySelector(".messageContentWrapper > .msg_actions > message-footer-actions");
+
+    const gradientButton = DOM.createDOM("gradient-button", { sq28: null });
+
+    const searchParams = new URLSearchParams({
+      page: "componentOnly",
+      component: "messagedetails",
+      messageId: this.id,
+    });
+
+    const seeReportButton = DOM.createDOM("button", {
+      class: "custom_btn tooltip seeReportButton overlay",
+      href: `${OGIData.universeUrl}/game/index.php?${searchParams.toString()}`,
+      title: Translator.translate(188),
+    });
+    seeReportButton.appendChild(DOM.createDOM("span", { class: "seeReportIcon" }));
+    gradientButton.appendChild(seeReportButton);
+    msgFooterActions.prepend(gradientButton);
   }
 }
