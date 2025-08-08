@@ -5,6 +5,7 @@ import ship from "../../../../util/enum/ship.js";
 import planetType from "../../../../util/enum/planetType.js";
 import Translator from "../../../../util/translate.js";
 import OGIData from "../../../../util/OGIData.js";
+import FleetAndDefenceCostCalculator from "../../../../util/fleetAndDefenceCostCalculator.js";
 
 export class SpyReport {
   get date() {
@@ -227,6 +228,17 @@ export class SpyReport {
 
   #DecorateAsTargetIsSelf(message) {
     message.classList.add("ogl-spyReportTargetIsSelf");
+
+    const fleet = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-fleet"));
+    const defence = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-defense"));
+    const recyclingYield = FleetAndDefenceCostCalculator.CalculateRecyclingYield(
+      fleet,
+      defence,
+      OGIData.universeSettingsTooltip.debrisFactor,
+      OGIData.universeSettingsTooltip.debrisFactorDef
+    );
+    debugger;
+
     const msgFooterActions = message.querySelector(".messageContentWrapper > .msg_actions > message-footer-actions");
 
     const gradientButton = createDOM("gradient-button", { sq28: null });
@@ -239,7 +251,7 @@ export class SpyReport {
 
     const seeReportButton = createDOM("button", {
       class: "custom_btn tooltip seeReportButton overlay",
-      href: `${OGIData.universe.url}/game/index.php?${searchParams.toString()}`,
+      href: `${OGIData.universeUrl}/game/index.php?${searchParams.toString()}`,
       title: Translator.translate(188),
     });
     seeReportButton.appendChild(createDOM("span", { class: "seeReportIcon" }));

@@ -6,8 +6,8 @@ class OGIData {
     return this._json.playerId;
   }
 
-  get universe() {
-    return this._json.universe;
+  get universeUrl() {
+    return this._json.universeUrl;
   }
 
   get options() {
