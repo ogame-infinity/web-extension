@@ -57,6 +57,7 @@ const _options = {
   pantryKey: "",
   simulator: "",
   rvalLimit: 1e6, // needs revision to consider the speed of the universe.
+  rvalSelfLimit: 1e6,
   standardUnitBase: 0,
   spyTableEnable: true,
   spyTableAppend: true,

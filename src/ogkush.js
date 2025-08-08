@@ -14277,6 +14277,18 @@ class OGInfinity {
         value: toFormatedNumber(this.json.options.rvalLimit),
       })
     );
+
+    optiondiv = featureSettings.appendChild(
+      createDOM("span", { class: "tooltip", title: this.getTranslatedText(190) }, this.getTranslatedText(189))
+    );
+    let rvalSelfInput = optiondiv.appendChild(
+      createDOM("input", {
+        type: "text",
+        class: "ogl-rvalInput ogl-formatInput tooltip",
+        value: toFormatedNumber(this.json.options.rvalSelfLimit),
+      })
+    );
+
     optiondiv = featureSettings.appendChild(createDOM("span", {}, this.getTranslatedText(101)));
     let expeditionDefaultTime = optiondiv.appendChild(
       createDOM("input", {
@@ -14582,6 +14594,7 @@ class OGInfinity {
     settingDiv.appendChild(saveBtn);
     saveBtn.addEventListener("click", () => {
       this.json.options.rvalLimit = fromFormatedNumber(rvalInput.value, true);
+      this.json.options.rvalSelfLimit = fromFormatedNumber(rvalSelfInput.value, true);
       if (ptreInput.value && ptreInput.value.replace(/-/g, "").length === 18 && ptreInput.value.startsWith("TM")) {
         this.json.options.ptreTK = ptreInput.value;
       } else {

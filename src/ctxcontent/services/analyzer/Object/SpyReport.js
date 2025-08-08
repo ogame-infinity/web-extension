@@ -1,11 +1,13 @@
 import { cleanValue } from "../../../../util/cleanValue.js";
 import { calcNeededShips } from "../../../../util/calcNeededShips.js";
-import { createDOM } from "../../../../util/dom.js";
+import * as DOM from "../../../../util/dom.js";
 import ship from "../../../../util/enum/ship.js";
 import planetType from "../../../../util/enum/planetType.js";
 import Translator from "../../../../util/translate.js";
 import OGIData from "../../../../util/OGIData.js";
 import FleetAndDefenceCostCalculator from "../../../../util/fleetAndDefenceCostCalculator.js";
+import * as standardUnit from "../../../../util/standardUnit.js";
+import { toFormattedNumber } from "../../../../util/numbers.js";
 
 export class SpyReport {
   get date() {
@@ -237,11 +239,24 @@ export class SpyReport {
       OGIData.universeSettingsTooltip.debrisFactor,
       OGIData.universeSettingsTooltip.debrisFactorDef
     );
-    debugger;
+    const amount = [recyclingYield.metal, recyclingYield.crystal, recyclingYield.deut];
+    const standardUnitSum = standardUnit.standardUnit(amount);
+    const amountDisplay = `${toFormattedNumber(standardUnitSum, [0, 1], true)} ${standardUnit.unitType()}`;
+
+    const msgTitle = message.querySelector(".msgHeadItem .msgTitle");
+
+    const labelClass = `ogk-label ${standardUnitSum <= OGIData.options.rvalSelfLimit ? "" : "ogi-negative"}`;
+    msgTitle.appendChild(DOM.createDOM("span", { class: labelClass }, amountDisplay));
+
+    const msgFilteredHeaderResources = message.querySelector(
+      ".msgFilteredHeaderRow .msgFilteredHeaderCell.msgFilteredHeaderCell_resources"
+    );
+    msgFilteredHeaderResources.removeChild(msgFilteredHeaderResources.firstChild);
+    msgFilteredHeaderResources.appendChild(DOM.createDOM("span", { class: labelClass }, amountDisplay));
 
     const msgFooterActions = message.querySelector(".messageContentWrapper > .msg_actions > message-footer-actions");
 
-    const gradientButton = createDOM("gradient-button", { sq28: null });
+    const gradientButton = DOM.createDOM("gradient-button", { sq28: null });
 
     const searchParams = new URLSearchParams({
       page: "componentOnly",
@@ -249,12 +264,12 @@ export class SpyReport {
       messageId: this.id,
     });
 
-    const seeReportButton = createDOM("button", {
+    const seeReportButton = DOM.createDOM("button", {
       class: "custom_btn tooltip seeReportButton overlay",
       href: `${OGIData.universeUrl}/game/index.php?${searchParams.toString()}`,
       title: Translator.translate(188),
     });
-    seeReportButton.appendChild(createDOM("span", { class: "seeReportIcon" }));
+    seeReportButton.appendChild(DOM.createDOM("span", { class: "seeReportIcon" }));
     gradientButton.appendChild(seeReportButton);
     msgFooterActions.prepend(gradientButton);
   }
