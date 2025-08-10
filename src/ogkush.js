@@ -1460,6 +1460,7 @@ class OGInfinity {
     this.json.searchHistory = this.json.searchHistory || [];
     this.json.watchList = this.json.watchList || {};
     this.json.expeditions = this.json.expeditions || {};
+    this.json.spies = this.json.spies || {};
     this.json.combats = this.json.combats || {};
     this.json.harvests = this.json.harvests || {};
     this.json.trades = this.json.trades || {};

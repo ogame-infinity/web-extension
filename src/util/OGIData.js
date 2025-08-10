@@ -69,6 +69,14 @@ class OGIData {
 
     this.#save();
   }
+  get spies() {
+    return this._json.spies;
+  }
+  set spies(spies) {
+    this._json.spies = spies;
+
+    this.#save();
+  }
   get discoveries() {
     return this._json.discoveries;
   }

@@ -824,9 +824,14 @@ class SpyMessagesAnalyzer {
     this.#messageCallable().forEach((message) => {
       const dataRaw = message.querySelector(".rawMessageData");
 
+      // Check if the target is the current player and skip if not
       if (parseInt(dataRaw?.getAttribute("data-raw-targetplayerid")) !== playerId) return;
 
       const id = message.getAttribute("data-msg-id");
+
+      // Check if the spy data already exists and skip if it does
+      if (OGIData.spies[id]) return;
+
       const tmpHTML = createDOM("div", {});
       tmpHTML.insertAdjacentHTML("afterbegin", message.querySelector("span.player").getAttribute("data-tooltip-title"));
       const playerID = tmpHTML.querySelector("[data-playerId]").getAttribute("data-playerId");
@@ -837,25 +842,35 @@ class SpyMessagesAnalyzer {
 
       const type = parseInt(spyFromUrl.get("type"));
       const timestamp = dataRaw.getAttribute("data-raw-timestamp");
-      ptreJSON[id] = {};
-      ptreJSON[id].player_id = playerID;
-      ptreJSON[id].teamkey = OGIData.options.ptreTK;
-      ptreJSON[id].galaxy = spyFromUrl.get("galaxy");
-      ptreJSON[id].system = spyFromUrl.get("system");
-      ptreJSON[id].position = spyFromUrl.get("position");
-      ptreJSON[id].spy_message_ts = timestamp * 1e3;
-      ptreJSON[id].moon = {};
-      ptreJSON[id].main = false;
 
-      if (type === planetType.planet) {
-        ptreJSON[id].activity = "*";
-        ptreJSON[id].moon.activity = "60";
-      } else {
-        ptreJSON[id].activity = "60";
-        ptreJSON[id].moon.activity = "*";
-      }
+      const spy = {
+        id: id,
+        targetPlayerId: playerId,
+        sourcePlayerId: playerID,
+        galaxy: spyFromUrl.get("galaxy"),
+        system: spyFromUrl.get("system"),
+        position: spyFromUrl.get("position"),
+        type: type,
+        timestamp: timestamp * 1e3,
+      };
+
+      ptreJSON[id] = {
+        player_id: spy.sourcePlayerId,
+        teamkey: OGIData.options.ptreTK,
+        galaxy: spy.galaxy,
+        system: spy.system,
+        position: spy.position,
+        spy_message_ts: spy.timestamp,
+        moon: {
+          activity: type === planetType.planet ? "60" : "*",
+        },
+        main: false,
+        activity: type === planetType.planet ? "*" : "60",
+      };
 
       message.classList.add("ogl-reportReady");
+
+      OGIData.spies[id] = spy;
     });
 
     if (Object.keys(ptreJSON).length > 0) {
