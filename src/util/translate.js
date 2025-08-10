@@ -2074,6 +2074,14 @@ const translation = Object.freeze({
       br: "Seu lucro mínimo para ser considerado interessante pelo inimigo",
     },
     191: {
+      de: "Spionagedaten",
+      en: "Spy data",
+      es: "Datos de espionaje",
+      fr: "Données d'espionnage",
+      tr: "Casus verileri",
+      br: "Dados de espionagem",
+    },
+    192: {
       de: undefined,
       en: undefined,
       es: undefined,

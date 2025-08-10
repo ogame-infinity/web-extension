@@ -1472,6 +1472,7 @@ class OGInfinity {
     this.json.expeditionSums = this.json.expeditionSums || {};
     this.json.discoveriesSums = this.json.discoveriesSums || {};
     this.json.discoveries = this.json.discoveries || {};
+    this.json.spies = this.json.spies || {};
     this.json.flying = this.json.flying || {
       metal: 0,
       crystal: 0,
@@ -12922,6 +12923,7 @@ class OGInfinity {
       mainSyncJsonObj.combats = await this.getObjLastElements(this?.json?.combats, 5000);
       mainSyncJsonObj.combatsSums = this?.json?.combatsSums;
       mainSyncJsonObj.harvests = this?.json?.harvests;
+      mainSyncJsonObj.spies = await this.getObjLastElements(this?.json?.spies, 5000);
 
       let finalJson = {
         data: LZString.compressToUTF16(JSON.stringify(mainSyncJsonObj)),
@@ -14368,6 +14370,14 @@ class OGInfinity {
         <input type="checkbox" id="targets" name="targets">`
       )
     );
+    let spiesBox = dataManagement.appendChild(
+      this.createDOM(
+        "div",
+        { class: "ogi-checkbox" },
+        `<label for="spies">${this.getTranslatedText(191)}</label>
+        <input type="checkbox" id="spies" name="spies">`
+      )
+    );
     let scanBox = dataManagement.appendChild(
       this.createDOM(
         "div",
@@ -14380,8 +14390,8 @@ class OGInfinity {
       this.createDOM(
         "div",
         { class: "ogi-checkbox" },
-        `<label for="combats">${this.getTranslatedText(20)}</label>
-        <input type="checkbox" id="combats" name="combats">`
+        `<label for="options">${this.getTranslatedText(20)}</label>
+        <input type="checkbox" id="options" name="options ">`
       )
     );
     let cacheBox = dataManagement.appendChild(
@@ -14629,6 +14639,7 @@ class OGInfinity {
         json.discoveriesSums = {};
         json.combats = {};
         json.combatsSums = {};
+        json.spies = {};
         if (scanBox.children[1].checked) {
           document.dispatchEvent(new CustomEvent("ogi-clear"));
         }
@@ -14668,6 +14679,9 @@ class OGInfinity {
         }
         if (!targetsBox.children[1].checked) {
           json.markers = this.json.markers;
+        }
+        if (!spiesBox.children[1].checked) {
+          json.spies = this.json.spies;
         }
         if (!OptionsBox.children[1].checked) {
           json.options = this.json.options;
