@@ -258,7 +258,10 @@ export class SpyReport {
 
       const totalAmountDisplay = `${toFormattedNumber(totalStandardUnitSum, [0, 1], true)} ${standardUnit.unitType()}`;
 
-      msgTitle.appendChild(DOM.createDOM("span", { class: "ogk-label ogi-warning" }, totalAmountDisplay));
+      const warningLabel = DOM.createDOM("span", {}, `${Translator.translate(65)}:`);
+      warningLabel.appendChild(DOM.createDOM("span", { class: "ogk-label ogi-warning" }, totalAmountDisplay));
+
+      msgTitle.appendChild(warningLabel);
 
       // ogame table display for fleet
       if (standardUnitSumFleet > 0) {
