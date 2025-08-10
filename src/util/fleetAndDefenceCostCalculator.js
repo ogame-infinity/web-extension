@@ -25,7 +25,7 @@ class FleetAndDefenceCostCalculator {
     return this.#calculateCost(defence, defenceCosts);
   }
 
-  #calculateRecyclingYield(costs, rate) {
+  #calculateRecyclingYield(costs, rate, includeDeut) {
     let totalMetal = 0;
     let totalCrystal = 0;
     let totalDeut = 0;
@@ -44,22 +44,17 @@ class FleetAndDefenceCostCalculator {
     return {
       metal: totalMetal,
       crystal: totalCrystal,
-      deut: totalDeut,
+      deut: includeDeut ? totalDeut : 0,
     };
   }
 
-  CalculateRecyclingYield(fleet, defence, rateFleet, rateDefence) {
+  CalculateRecyclingYieldFleet(fleet, rateFleet, includeDeut) {
     const fleetCosts = this.CalculateFleetCost(fleet);
+    return this.#calculateRecyclingYield(fleetCosts, rateFleet, includeDeut);
+  }
+  CalculateRecyclingYieldDefence(defence, rateDefence, includeDeut) {
     const defenceCosts = this.CalculateDefenceCost(defence);
-
-    const fleetRecyclingYield = this.#calculateRecyclingYield(fleetCosts, rateFleet);
-    const defenceRecyclingYield = this.#calculateRecyclingYield(defenceCosts, rateDefence);
-
-    return {
-      metal: fleetRecyclingYield.metal + defenceRecyclingYield.metal,
-      crystal: fleetRecyclingYield.crystal + defenceRecyclingYield.crystal,
-      deut: fleetRecyclingYield.deut + defenceRecyclingYield.deut,
-    };
+    return this.#calculateRecyclingYield(defenceCosts, rateDefence, includeDeut);
   }
 }
 export default new FleetAndDefenceCostCalculator();

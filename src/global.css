@@ -2192,6 +2192,10 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
 .ogk-label.ogi-negative {
   color: #ea6868;
 }
+/* warning label */
+.ogk-label.ogi-warning {
+  color: #d2b62c;
+}
 
 /* expedition label */
 .ogk-label.ogk-metal {

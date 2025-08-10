@@ -3213,6 +3213,7 @@ class OGInfinity {
           bonusFields: Number(xml.querySelector("bonusFields").innerHTML),
           debrisFactor: Number(xml.querySelector("debrisFactor").innerHTML),
           debrisFactorDef: Number(xml.querySelector("debrisFactorDef").innerHTML),
+          deuteriumInDebris: Boolean(xml.querySelector("deuteriumInDebris").innerHTML),
           repairFactor: Number(xml.querySelector("repairFactor").innerHTML),
           fuelConsumption: Number(xml.querySelector("globalDeuteriumSaveFactor").innerHTML),
           probeCargo: Number(xml.querySelector("probeCargo").innerHTML),

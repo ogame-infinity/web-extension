@@ -233,44 +233,89 @@ export class SpyReport {
 
     const fleet = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-fleet"));
     const defence = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-defense"));
-    const recyclingYield = FleetAndDefenceCostCalculator.CalculateRecyclingYield(
+
+    const recyclingYieldFleet = FleetAndDefenceCostCalculator.CalculateRecyclingYieldFleet(
       fleet,
-      defence,
       OGIData.universeSettingsTooltip.debrisFactor,
-      OGIData.universeSettingsTooltip.debrisFactorDef
+      OGIData.universeSettingsTooltip.deuteriumInDebris
     );
-    const amount = [recyclingYield.metal, recyclingYield.crystal, recyclingYield.deut];
-    const standardUnitSum = standardUnit.standardUnit(amount);
-    const amountDisplay = `${toFormattedNumber(standardUnitSum, [0, 1], true)} ${standardUnit.unitType()}`;
+    const amountFleet = [recyclingYieldFleet.metal, recyclingYieldFleet.crystal, recyclingYieldFleet.deut];
+    const standardUnitSumFleet = standardUnit.standardUnit(amountFleet);
 
-    const msgTitle = message.querySelector(".msgHeadItem .msgTitle");
-
-    const labelClass = `ogk-label ${standardUnitSum <= OGIData.options.rvalSelfLimit ? "" : "ogi-negative"}`;
-    msgTitle.appendChild(DOM.createDOM("span", { class: labelClass }, amountDisplay));
-
-    const msgFilteredHeaderResources = message.querySelector(
-      ".msgFilteredHeaderRow .msgFilteredHeaderCell.msgFilteredHeaderCell_resources"
+    const recyclingYieldDefence = FleetAndDefenceCostCalculator.CalculateRecyclingYieldDefence(
+      defence,
+      OGIData.universeSettingsTooltip.debrisFactorDef,
+      OGIData.universeSettingsTooltip.deuteriumInDebris
     );
-    msgFilteredHeaderResources.removeChild(msgFilteredHeaderResources.firstChild);
-    msgFilteredHeaderResources.appendChild(DOM.createDOM("span", { class: labelClass }, amountDisplay));
+    const amountDefence = [recyclingYieldDefence.metal, recyclingYieldDefence.crystal, recyclingYieldDefence.deut];
+    const standardUnitSumDefence = standardUnit.standardUnit(amountDefence);
 
+    const totalStandardUnitSum = standardUnitSumFleet + standardUnitSumDefence;
+
+    // If the standard unit sum is above the limit, display warning labels
+    if (totalStandardUnitSum >= OGIData.options.rvalSelfLimit) {
+      const msgTitle = message.querySelector(".msgHeadItem .msgTitle");
+
+      const totalAmountDisplay = `${toFormattedNumber(totalStandardUnitSum, [0, 1], true)} ${standardUnit.unitType()}`;
+
+      msgTitle.appendChild(DOM.createDOM("span", { class: "ogk-label ogi-warning" }, totalAmountDisplay));
+
+      // ogame table display for fleet
+      if (standardUnitSumFleet > 0) {
+        const fleetAmountDisplay = `${toFormattedNumber(
+          standardUnitSumFleet,
+          [0, 1],
+          true
+        )} ${standardUnit.unitType()}`;
+        const msgFilteredHeaderFleet = message.querySelector(
+          ".msgFilteredHeaderRow .msgFilteredHeaderCell.msgFilteredHeaderCell_fleetValue"
+        );
+        if (msgFilteredHeaderFleet) {
+          msgFilteredHeaderFleet.removeChild(msgFilteredHeaderFleet.firstChild);
+          msgFilteredHeaderFleet.appendChild(
+            DOM.createDOM("span", { class: "ogk-label ogi-warning" }, `${fleetAmountDisplay}`)
+          );
+        }
+      }
+      // ogame table display for defence
+      if (standardUnitSumDefence > 0) {
+        const defenceAmountDisplay = `${toFormattedNumber(
+          standardUnitSumDefence,
+          [0, 1],
+          true
+        )} ${standardUnit.unitType()}`;
+        const msgFilteredHeaderDefence = message.querySelector(
+          ".msgFilteredHeaderRow .msgFilteredHeaderCell.msgFilteredHeaderCell_defenseValue"
+        );
+        if (msgFilteredHeaderDefence) {
+          msgFilteredHeaderDefence.removeChild(msgFilteredHeaderDefence.firstChild);
+          msgFilteredHeaderDefence.appendChild(
+            DOM.createDOM("span", { class: "ogk-label ogi-warning" }, `${defenceAmountDisplay}`)
+          );
+        }
+      }
+    }
+
+    // Add button for seeing report
     const msgFooterActions = message.querySelector(".messageContentWrapper > .msg_actions > message-footer-actions");
+    if (msgFooterActions) {
+      const searchParams = new URLSearchParams({
+        page: "componentOnly",
+        component: "messagedetails",
+        messageId: this.id,
+      });
 
-    const gradientButton = DOM.createDOM("gradient-button", { sq28: null });
+      const seeReportButton = DOM.createDOM("button", {
+        class: "custom_btn tooltip seeReportButton overlay",
+        href: `${OGIData.universeUrl}/game/index.php?${searchParams.toString()}`,
+        title: Translator.translate(188),
+      });
+      seeReportButton.appendChild(DOM.createDOM("span", { class: "seeReportIcon" }));
 
-    const searchParams = new URLSearchParams({
-      page: "componentOnly",
-      component: "messagedetails",
-      messageId: this.id,
-    });
+      const gradientButton = DOM.createDOM("gradient-button", { sq28: null });
+      gradientButton.appendChild(seeReportButton);
 
-    const seeReportButton = DOM.createDOM("button", {
-      class: "custom_btn tooltip seeReportButton overlay",
-      href: `${OGIData.universeUrl}/game/index.php?${searchParams.toString()}`,
-      title: Translator.translate(188),
-    });
-    seeReportButton.appendChild(DOM.createDOM("span", { class: "seeReportIcon" }));
-    gradientButton.appendChild(seeReportButton);
-    msgFooterActions.prepend(gradientButton);
+      msgFooterActions.prepend(gradientButton);
+    }
   }
 }
