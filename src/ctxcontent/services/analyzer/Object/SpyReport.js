@@ -5,7 +5,7 @@ import ship from "../../../../util/enum/ship.js";
 import planetType from "../../../../util/enum/planetType.js";
 import Translator from "../../../../util/translate.js";
 import OGIData from "../../../../util/OGIData.js";
-import FleetAndDefenceCostCalculator from "../../../../util/fleetAndDefenceCostCalculator.js";
+import RecyclingYieldCalculator from "../../../../util/recyclingYieldCalculator.js";
 import * as standardUnit from "../../../../util/standardUnit.js";
 import { toFormattedNumber } from "../../../../util/numbers.js";
 
@@ -234,7 +234,7 @@ export class SpyReport {
     const fleet = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-fleet"));
     const defence = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-defense"));
 
-    const recyclingYieldFleet = FleetAndDefenceCostCalculator.CalculateRecyclingYieldFleet(
+    const recyclingYieldFleet = RecyclingYieldCalculator.CalculateRecyclingYieldFleet(
       fleet,
       OGIData.universeSettingsTooltip.debrisFactor,
       OGIData.universeSettingsTooltip.deuteriumInDebris
@@ -242,7 +242,7 @@ export class SpyReport {
     const amountFleet = [recyclingYieldFleet.metal, recyclingYieldFleet.crystal, recyclingYieldFleet.deut];
     const standardUnitSumFleet = standardUnit.standardUnit(amountFleet);
 
-    const recyclingYieldDefence = FleetAndDefenceCostCalculator.CalculateRecyclingYieldDefence(
+    const recyclingYieldDefence = RecyclingYieldCalculator.CalculateRecyclingYieldDefence(
       defence,
       OGIData.universeSettingsTooltip.debrisFactorDef,
       OGIData.universeSettingsTooltip.deuteriumInDebris
