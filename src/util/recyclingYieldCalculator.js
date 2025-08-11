@@ -25,7 +25,6 @@ class RecyclingYieldCalculator {
     let totalDeut = 0;
 
     if (costs && rate > 0) {
-      debugger;
       totalMetal = costs[0] * rate;
       totalCrystal = costs[1] * rate;
       totalDeut = costs[2] * rate;
