@@ -1,4 +1,5 @@
 import { fleetCost } from "./fleetCost.js";
+import shipEnum from "./enum/ship.js";
 import { defenceCost } from "./defenceCost.js";
 
 class RecyclingYieldCalculator {
@@ -37,6 +38,24 @@ class RecyclingYieldCalculator {
     };
   }
 
+  CalculateRecyclingYieldFleetFromEmpireData(planetFromEmpire, rateFleet, includeDeut) {
+    // Get fleet information
+    const planetFleet = [];
+    const moonFleet = [];
+    Object.values(shipEnum).forEach((shipId) => {
+      planetFleet[shipId] = planetFromEmpire[shipId] || 0;
+      if (planetFromEmpire.moon) {
+        moonFleet[shipId] = planetFromEmpire.moon[shipId] || 0;
+      }
+    });
+
+    const planetFleetRecyclingYield = this.CalculateRecyclingYieldFleet(planetFleet, rateFleet, includeDeut);
+    const moonFleetRecyclingYield = this.CalculateRecyclingYieldFleet(moonFleet, rateFleet, includeDeut);
+    return {
+      planetFleetRecyclingYield: planetFleetRecyclingYield,
+      moonFleetRecyclingYield: moonFleetRecyclingYield,
+    };
+  }
   CalculateRecyclingYieldFleet(fleet, rateFleet, includeDeut) {
     return this.#calculateRecyclingYield(fleetCost(fleet), rateFleet, includeDeut);
   }

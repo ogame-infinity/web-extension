@@ -31,6 +31,7 @@ import * as standardUnit from "./util/standardUnit.js";
 import planetType from "./util/enum/planetType.js";
 import shipEnum from "./util/enum/ship.js";
 import OverviewPage from "./ctxpage/overview/OverviewPage.js";
+import RecyclingYieldCalculator from "./util/recyclingYieldCalculator.js";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 //const VERSION = "__VERSION__";
@@ -1631,6 +1632,7 @@ class OGInfinity {
             ogkush.updatePlanets_IncomingHostileFleet();
             ogkush.updatePlanets_FleetActivity();
             ogkush.updateProductionProgress();
+            ogkush.updateSpaceShipsPresence();
             ogkush.markLifeforms();
           }
         });
@@ -1675,6 +1677,7 @@ class OGInfinity {
     this.timeZone();
     this.checkRedirect();
     this.updateProductionProgress();
+    this.updateSpaceShipsPresence();
     this.showStorageTimers();
     // this.showTabTimer(); TODO: enable when timer is moved to the clock area
     this.markLifeforms();
@@ -8669,6 +8672,8 @@ class OGInfinity {
     td.appendChild(planetIcon);
     td.appendChild(moonIcon);
     row.appendChild(td);
+
+    let sumFlying = 0;
     OGIData.empire.forEach((planet) => {
       let name = moon ? (planet.moon ? planet.moon.name : "-") : planet.name;
       let link = `?page=ingame&component=fleetdispatch&cp=${planet.id}`;
@@ -8684,12 +8689,15 @@ class OGInfinity {
     row.appendChild(createDOM("th", { class: "ogl-sum-symbol" }, "Σ"));
     table.appendChild(row);
     let flying = this.getFlyingRes();
-    [202, 203, 208, 209, 210, 204, 205, 206, 219, 207, 215, 211, 213, 218, 214].forEach((id) => {
+
+    const sumPerPlanet = [];
+    Object.values(shipEnum).forEach((id) => {
       if (id == 212 || (id > 400 && id < 410)) {
         return;
       }
       row = createDOM("tr");
       let shipCount = flying.fleet[id];
+      sumFlying += shipCount ?? 0;
       let td = createDOM("td", { class: shipCount ? "" : "ogl-fleet-empty" });
       td.appendChild(
         createDOM(
@@ -8707,6 +8715,18 @@ class OGInfinity {
         if (planet.coordinates.slice(1, -1) == this.current.coords) {
           current = true;
         }
+
+        if (!sumPerPlanet[planet.id]) {
+          sumPerPlanet[planet.id] = { planet: 0, moon: 0 };
+        }
+        if (moon) {
+          if (planet.moon) {
+            sumPerPlanet[planet.id].moon += Number(planet.moon[id]);
+          }
+        } else {
+          sumPerPlanet[planet.id].planet += planet[id];
+        }
+
         sum += moon && planet.moon ? Number(planet.moon[id]) : Number(planet[id]);
         let valuePLa = planet[id] == 0 ? "-" : toFormatedNumber(planet[id], null, true);
         let valueMooon = "-";
@@ -8750,6 +8770,66 @@ class OGInfinity {
       row.appendChild(td);
       table.appendChild(row);
     });
+
+    row = createDOM("tr");
+    td = createDOM("td");
+    td.appendChild(
+      DOM.createDOM(
+        "span",
+        { class: sumFlying == 0 ? "ogl-fleet-empty" : "" },
+        sumFlying == 0 ? "-" : toFormatedNumber(sumFlying, null, true)
+      )
+    );
+
+    row.appendChild(td);
+    row.appendChild(createDOM("td", { class: "ogl-sum-symbol smallIcon" }, "Σ")); //SUM ICON TODO
+
+    let totalSum = 0;
+    OGIData.empire.forEach((planet) => {
+      let current = false;
+      if (planet.coordinates.slice(1, -1) == this.current.coords) {
+        current = true;
+      }
+
+      td = createDOM("td");
+
+      const fleetYield = RecyclingYieldCalculator.CalculateRecyclingYieldFleetFromEmpireData(
+        planet,
+        OGIData.universeSettingsTooltip.debrisFactor,
+        OGIData.universeSettingsTooltip.deuteriumInDebris
+      );
+
+      let sum = 0;
+      if (moon) {
+        sum = sumPerPlanet[planet.id].moon;
+      } else {
+        sum = sumPerPlanet[planet.id].planet;
+      }
+      totalSum += sum;
+      td.appendChild(
+        DOM.createDOM(
+          "span",
+          { class: sum == 0 ? "ogl-fleet-empty" : "" },
+          sum == 0 ? "-" : toFormatedNumber(sum, null, true)
+        )
+      );
+      if (current) {
+        td.classList.add("ogl-current");
+      }
+      row.appendChild(td);
+    });
+
+    td = createDOM("td");
+    td.appendChild(
+      DOM.createDOM(
+        "span",
+        { class: totalSum == 0 ? "ogl-fleet-empty" : "" },
+        totalSum == 0 ? "-" : toFormatedNumber(totalSum, null, true)
+      )
+    );
+
+    row.appendChild(td);
+    table.appendChild(row);
     content.appendChild(table);
 
     return content;
@@ -10693,6 +10773,36 @@ class OGInfinity {
       }
       update(false);
     }
+
+    if (this.page == "fleetdispatch") {
+      //Display fleet recycling yield
+      const slots = document.querySelector(".fleetStatus #slots");
+      if (slots) {
+        const fleetYield = RecyclingYieldCalculator.CalculateRecyclingYieldFleetFromEmpireData(
+          OGIData.empire[this.current.index],
+          OGIData.universeSettingsTooltip.debrisFactor,
+          OGIData.universeSettingsTooltip.deuteriumInDebris
+        );
+
+        const fleetAmount = this.current.isMoon
+          ? [
+              fleetYield.moonFleetRecyclingYield.metal,
+              fleetYield.moonFleetRecyclingYield.crystal,
+              fleetYield.moonFleetRecyclingYield.deut,
+            ]
+          : [
+              fleetYield.planetFleetRecyclingYield.metal,
+              fleetYield.planetFleetRecyclingYield.crystal,
+              fleetYield.planetFleetRecyclingYield.deut,
+            ];
+
+        const standardUnitSum = standardUnit.standardUnit(fleetAmount);
+        if (standardUnitSum > 0) {
+          const totalDisplay = `${Numbers.toFormattedNumber(standardUnitSum, [0, 1], true)} ${standardUnit.unitType()}`;
+          slots.appendChild(DOM.createDOM("span", { class: "ogk-label ogi-warning" }, totalDisplay));
+        }
+      }
+    }
   }
 
   neededCargo() {
@@ -11508,7 +11618,6 @@ class OGInfinity {
           JSON.parse(
             string.substring(string.indexOf("createImperiumHtml") + 47, string.indexOf("initEmpire") - 16),
             (key, value) => {
-              if (key.includes("html") && key !== "equipment_html") return;
               if (value === "0") return 0;
               return value;
             }
@@ -11520,11 +11629,94 @@ class OGInfinity {
       new URLSearchParams({ page: "standalone", component: "empire", planetType: "1" })
     );
 
+    const getWorkinProgressGroupsAndPatterns = (groups) => {
+      //create a list of patterns to match the groups ('?' is a wildcard for lifeform groups)
+      //there is also "ships" and "defence" groups for any future evolution
+      const toParseGroups = ["supply", "station", "research", "lifeform?buildings", "lifeform?research"];
+
+      const patterns = toParseGroups.map((pattern) => ({
+        pattern,
+        name: pattern.replace("?", ""),
+        regex: new RegExp("^" + pattern.replace("?", ".*") + "$"),
+      }));
+
+      const result = [];
+      for (const key of Object.keys(groups)) {
+        const match = patterns.find(({ regex }) => regex.test(key));
+        if (match) {
+          result.push({ property: key, name: match.name, techIds: groups[key] });
+        }
+      }
+      return result;
+    };
+    const getWorkInProgressTechs = (planetOrMoon, groups) => {
+      const workInProgressTechs = new Array();
+      const parser = new window.DOMParser();
+
+      groups.forEach((group) => {
+        group.techIds.forEach((techId) => {
+          const htmlKey = `${techId}_html`;
+
+          if (planetOrMoon[htmlKey]) {
+            const htmlString = planetOrMoon[htmlKey];
+            if (htmlString) {
+              // Create a temporary document to parse the HTML string
+              const temp = parser.parseFromString(htmlString, "text/html").querySelector("body");
+
+              /*
+               * if there is only one child, we can ignore it, because it is just a text node.
+               * but if there is more than one child, there is a downgrade or an upgrade
+               */
+              if (temp.children.length > 1) {
+                const activeElement = temp.querySelector(".active");
+                const activeValue = activeElement ? parseInt(activeElement.textContent.trim(), 10) : null;
+
+                if (activeValue && !isNaN(activeValue)) {
+                  workInProgressTechs.push({
+                    group: group.name,
+                    id: techId,
+                    from: planetOrMoon[techId],
+                    to:
+                      group.name === "defence" || group.name === "ships"
+                        ? planetOrMoon[techId] + activeValue
+                        : activeValue, // for defence and ships, the value is the current level + the upgrade level
+                  });
+                }
+              }
+            }
+          }
+        });
+      });
+
+      return workInProgressTechs;
+    };
+
+    const setWorkInProgressTechs = (planetsOrMoons, groups) => {
+      planetsOrMoons.forEach((planetOrMoon) => {
+        planetOrMoon.workInProgressTechs = getWorkInProgressTechs(
+          planetOrMoon,
+          getWorkinProgressGroupsAndPatterns(groups)
+        );
+
+        // Remove HTML keys that was only used for the work in progress techs
+        // We don't need the HTML keys anymore, so we can delete them
+        for (const key in planetOrMoon) {
+          if (key.includes("html") && key !== "equipment_html") {
+            delete planetOrMoon[key];
+          }
+        }
+      });
+    };
+
     return Promise.all([empireRequestPlanets, empireRequestMoons]).then((values) => {
       const empireObjectPlanets = values[0];
       const empireObjectMoons = values[1];
 
       Translator.UpdateAllTechNamesFromEmpire(empireObjectPlanets, empireObjectMoons);
+      setWorkInProgressTechs(empireObjectPlanets.planets, empireObjectPlanets.groups);
+      if (empireObjectMoons.planets) {
+        setWorkInProgressTechs(empireObjectMoons.planets, empireObjectMoons.groups);
+      }
 
       empireObjectPlanets.planets.forEach((planet) => {
         planet.invalidate = false;
@@ -15416,6 +15608,59 @@ class OGInfinity {
     }
 
     return roi.sort((a, b) => a.time - b.time);
+  }
+
+  updateSpaceShipsPresence() {
+    let now = new Date();
+    document.querySelectorAll(".planet-koords").forEach((planet) => {
+      const smallplanet = planet.parentElement.parentElement;
+      const planetId = planet.parentElement.href.match(/=(\d+)/)[1];
+
+      const planetFromEmpire = OGIData.empire.find((p) => p.id === parseInt(planetId));
+
+      const fleetYield = RecyclingYieldCalculator.CalculateRecyclingYieldFleetFromEmpireData(
+        planetFromEmpire,
+        OGIData.universeSettingsTooltip.debrisFactor,
+        OGIData.universeSettingsTooltip.deuteriumInDebris
+      );
+      const planetFleetAmount = [
+        fleetYield.planetFleetRecyclingYield.metal,
+        fleetYield.planetFleetRecyclingYield.crystal,
+        fleetYield.planetFleetRecyclingYield.deut,
+      ];
+      const moonFleetAmount = [
+        fleetYield.moonFleetRecyclingYield.metal,
+        fleetYield.moonFleetRecyclingYield.crystal,
+        fleetYield.moonFleetRecyclingYield.deut,
+      ];
+
+      const planetFleetStandardUnitSum = standardUnit.standardUnit(planetFleetAmount);
+      const moonFleetStandardUnitSum = standardUnit.standardUnit(moonFleetAmount);
+
+      const createFleetIcon = (standardUnitSum, planetOrMoonId, iconClass) => {
+        const fleetIcon = DOM.createDOM("a", {
+          class: "fleetIcon planet tooltip js_hideTipOnMobile",
+          href: `/game/index.php?page=ingame&component=fleetdispatch&cp=${planetOrMoonId}`,
+        });
+
+        fleetIcon.appendChild(DOM.createDOM("span", { class: `icon12px ${iconClass}` }));
+        return fleetIcon;
+      };
+
+      if (moonFleetStandardUnitSum >= OGIData.options.rvalSelfLimit) {
+        const moonFleetIconsDiv = DOM.createDOM("div", { class: "moonFleetIcons" });
+        moonFleetIconsDiv.appendChild(
+          createFleetIcon(moonFleetStandardUnitSum, planetFromEmpire.moon.id, "icon_spaceship")
+        );
+        smallplanet.appendChild(moonFleetIconsDiv);
+      }
+
+      if (planetFleetStandardUnitSum >= OGIData.options.rvalSelfLimit) {
+        const planetFleetIconsDiv = DOM.createDOM("div", { class: "planetFleetIcons" });
+        planetFleetIconsDiv.appendChild(createFleetIcon(planetFleetStandardUnitSum, planetId, "icon_spaceship"));
+        smallplanet.appendChild(planetFleetIconsDiv);
+      }
+    });
   }
 
   updateProductionProgress() {

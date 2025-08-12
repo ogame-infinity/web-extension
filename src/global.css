@@ -4514,7 +4514,7 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
   left: 55px;
   width: fit-content;
   visibility: hidden;
-  animation: appearing-planetConstructionIcons 0.2s forwards;
+  animation: appearing-smallplanetIcons 0.2s forwards;
 }
 
 .moon-construction-sum .smallplanet .constructionIcons.moonConstructionIcons {
@@ -4526,7 +4526,31 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
   left: unset;
   right: 5px;
 }
-@keyframes appearing-planetConstructionIcons {
+
+.smallplanet .planetFleetIcons {
+  transform: translateX(-100%);
+  position: absolute;
+  top: 28px !important;
+  left: 16px;
+  width: fit-content;
+  visibility: hidden;
+  animation: appearing-smallplanetIcons 0.2s forwards;
+}
+
+.smallplanet .moonFleetIcons {
+  position: absolute;
+  top: 28px !important;
+  right: 102px;
+  width: fit-content;
+  visibility: hidden;
+  animation: appearing-smallplanetIcons 0.2s forwards;
+}
+.smallplanet .moonFleetIcons:not(.moon-construction-sum .smallplanet .moonFleetIcons) {
+  position: absolute;
+  right: 43px !important;
+}
+
+@keyframes appearing-smallplanetIcons {
   from {
     visibility: visible;
     opacity: 0;
@@ -4544,6 +4568,25 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
 .constructionIconTooltip .techEndDate {
   display: block;
   margin-top: 10px;
+}
+.smallplanet .icon_spaceship {
+  background: url("chrome-extension://__MSG_@@extension_id__/assets/images/space-ship.svg");
+  background-size: 12px 12px;
+
+  background-repeat: no-repeat;
+  display: inline-block;
+  height: 12px !important;
+  width: 12px !important;
+  background-position: center !important;
+  background-origin: content-box !important;
+
+  filter: invert(43%) sepia(15%) saturate(5794%) hue-rotate(343deg) brightness(97%) contrast(94%);
+  transform: rotate(45deg);
+}
+
+.smallplanet:has(a.planetlink.active) .planetFleetIcons .icon_spaceship,
+.smallplanet:has(a.moonlink.active) .moonFleetIcons .icon_spaceship {
+  filter: invert(10%) sepia(56%) saturate(3892%) hue-rotate(351deg) brightness(90%) contrast(118%);
 }
 
 .smallplanet .icon_wrench {
@@ -5414,6 +5457,11 @@ body.ogame select {
 .ogl-fleet-table .ogl-sum-symbol {
   font-weight: 800;
   width: 80px;
+}
+
+.ogl-fleet-table .ogl-sum-symbol.smallIcon {
+  font-weight: 800;
+  width: 55px;
 }
 
 .ogl-fleet-table td:first-child,
