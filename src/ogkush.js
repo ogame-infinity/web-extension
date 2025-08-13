@@ -8673,7 +8673,6 @@ class OGInfinity {
     td.appendChild(moonIcon);
     row.appendChild(td);
 
-    let sumFlying = 0;
     OGIData.empire.forEach((planet) => {
       let name = moon ? (planet.moon ? planet.moon.name : "-") : planet.name;
       let link = `?page=ingame&component=fleetdispatch&cp=${planet.id}`;
@@ -8697,7 +8696,6 @@ class OGInfinity {
       }
       row = createDOM("tr");
       let shipCount = flying.fleet[id];
-      sumFlying += shipCount ?? 0;
       let td = createDOM("td", { class: shipCount ? "" : "ogl-fleet-empty" });
       td.appendChild(
         createDOM(
@@ -8771,26 +8769,21 @@ class OGInfinity {
       table.appendChild(row);
     });
 
+    // Add recycling yield row
     row = createDOM("tr");
-    td = createDOM("td");
-    td.appendChild(
-      DOM.createDOM(
-        "span",
-        { class: sumFlying == 0 ? "ogl-fleet-empty" : "" },
-        sumFlying == 0 ? "-" : toFormatedNumber(sumFlying, null, true)
-      )
-    );
-
+    td = createDOM("td", { class: "ogl-fleet-empty" }, "-");
     row.appendChild(td);
-    row.appendChild(createDOM("td", { class: "ogl-sum-symbol smallIcon" }, "Σ")); //SUM ICON TODO
+    td = createDOM("th");
+    td.appendChild(createDOM("th", { class: "ogl-option ogl-fleet-ship ogl-fleet-value" }));
+    row.appendChild(td);
 
-    let totalSum = 0;
+    let totalYield = 0;
+    let totalDisplay = 0;
     OGIData.empire.forEach((planet) => {
       let current = false;
       if (planet.coordinates.slice(1, -1) == this.current.coords) {
         current = true;
       }
-
       td = createDOM("td");
 
       const fleetYield = RecyclingYieldCalculator.CalculateRecyclingYieldFleetFromEmpireData(
@@ -8799,20 +8792,26 @@ class OGInfinity {
         OGIData.universeSettingsTooltip.deuteriumInDebris
       );
 
-      let sum = 0;
-      if (moon) {
-        sum = sumPerPlanet[planet.id].moon;
-      } else {
-        sum = sumPerPlanet[planet.id].planet;
-      }
-      totalSum += sum;
-      td.appendChild(
-        DOM.createDOM(
-          "span",
-          { class: sum == 0 ? "ogl-fleet-empty" : "" },
-          sum == 0 ? "-" : toFormatedNumber(sum, null, true)
-        )
-      );
+      const fleetAmount = moon
+        ? [
+            fleetYield.moonFleetRecyclingYield.metal,
+            fleetYield.moonFleetRecyclingYield.crystal,
+            fleetYield.moonFleetRecyclingYield.deut,
+          ]
+        : [
+            fleetYield.planetFleetRecyclingYield.metal,
+            fleetYield.planetFleetRecyclingYield.crystal,
+            fleetYield.planetFleetRecyclingYield.deut,
+          ];
+
+      const standardUnitSum = standardUnit.standardUnit(fleetAmount);
+      const labelClass =
+        standardUnitSum >= OGIData.options.rvalSelfLimit ? "ogk-label ogi-warning" : "ogk-label ogi-info";
+
+      const unitSumAsUts = standardUnit.standardUnit(fleetAmount, [1, 1, 1]);
+      totalYield += unitSumAsUts;
+      totalDisplay = unitSumAsUts > 0 ? `${Numbers.toFormattedNumber(unitSumAsUts, [0, 1], true)} Uts` : "-";
+      td.appendChild(DOM.createDOM("span", { class: unitSumAsUts > 0 ? labelClass : "ogl-fleet-empty" }, totalDisplay));
       if (current) {
         td.classList.add("ogl-current");
       }
@@ -8820,12 +8819,9 @@ class OGInfinity {
     });
 
     td = createDOM("td");
+    totalDisplay = totalYield > 0 ? `${Numbers.toFormattedNumber(totalYield, [0, 1], true)} Uts` : "-";
     td.appendChild(
-      DOM.createDOM(
-        "span",
-        { class: totalSum == 0 ? "ogl-fleet-empty" : "" },
-        totalSum == 0 ? "-" : toFormatedNumber(totalSum, null, true)
-      )
+      DOM.createDOM("span", { class: totalYield > 0 ? "ogk-label ogi-info" : "ogl-fleet-empty" }, totalDisplay)
     );
 
     row.appendChild(td);
@@ -10798,8 +10794,10 @@ class OGInfinity {
 
         const standardUnitSum = standardUnit.standardUnit(fleetAmount);
         if (standardUnitSum > 0) {
+          const labelClass =
+            standardUnitSum >= OGIData.options.rvalSelfLimit ? "ogk-label ogi-warning" : "ogk-label ogi-info";
           const totalDisplay = `${Numbers.toFormattedNumber(standardUnitSum, [0, 1], true)} ${standardUnit.unitType()}`;
-          slots.appendChild(DOM.createDOM("span", { class: "ogk-label ogi-warning" }, totalDisplay));
+          slots.appendChild(DOM.createDOM("span", { class: labelClass }, totalDisplay));
         }
       }
     }

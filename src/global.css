@@ -2194,7 +2194,7 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
 }
 /* warning label */
 .ogk-label.ogi-warning {
-  color: #d2b62c;
+  color: #ff9b00;
 }
 
 /* expedition label */
@@ -2210,6 +2210,7 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
   color: #a6e0b0;
   border-color: #a6e0b0;
 }
+.ogk-label.ogi-info,
 .ogk-label.ogk-am {
   color: #dddddd;
   border-color: #dddddd;
@@ -5464,6 +5465,11 @@ body.ogame select {
   width: 55px;
 }
 
+.ogl-fleet-table .ogk-label {
+  display: block;
+  max-width: 45px;
+}
+
 .ogl-fleet-table td:first-child,
 .ogl-fleet-table td:last-child {
   font-weight: 800;
@@ -5694,6 +5700,11 @@ body.ogame select {
 
 .ogl-fleet-503 {
   background-position: calc(5.2625% * 9) 34.5% !important;
+}
+
+.ogl-fleet-value {
+  background-image: url(/cdn/img/item-images/18145145a76b71f151ba97b7c17891a5389ceeb5.png) !important;
+  background-size: contain !important;
 }
 
 .ogl-moon-icon {
