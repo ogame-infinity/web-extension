@@ -8808,10 +8808,14 @@ class OGInfinity {
       const labelClass =
         standardUnitSum >= OGIData.options.rvalSelfLimit ? "ogk-label ogi-warning" : "ogk-label ogi-info";
 
-      const unitSumAsUts = standardUnit.standardUnit(fleetAmount, [1, 1, 1]);
-      totalYield += unitSumAsUts;
-      totalDisplay = unitSumAsUts > 0 ? `${Numbers.toFormattedNumber(unitSumAsUts, [0, 1], true)} Uts` : "-";
-      td.appendChild(DOM.createDOM("span", { class: unitSumAsUts > 0 ? labelClass : "ogl-fleet-empty" }, totalDisplay));
+      totalYield += standardUnitSum;
+      totalDisplay =
+        standardUnitSum > 0
+          ? `${Numbers.toFormattedNumber(standardUnitSum, [0, 1], true)} ${standardUnit.unitType()}`
+          : "-";
+      td.appendChild(
+        DOM.createDOM("span", { class: standardUnitSum > 0 ? labelClass : "ogl-fleet-empty" }, totalDisplay)
+      );
       if (current) {
         td.classList.add("ogl-current");
       }
@@ -8819,7 +8823,8 @@ class OGInfinity {
     });
 
     td = createDOM("td");
-    totalDisplay = totalYield > 0 ? `${Numbers.toFormattedNumber(totalYield, [0, 1], true)} Uts` : "-";
+    totalDisplay =
+      totalYield > 0 ? `${Numbers.toFormattedNumber(totalYield, [0, 1], true)} ${standardUnit.unitType()}` : "-";
     td.appendChild(
       DOM.createDOM("span", { class: totalYield > 0 ? "ogk-label ogi-info" : "ogl-fleet-empty" }, totalDisplay)
     );
