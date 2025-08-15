@@ -333,14 +333,14 @@ input[type="password"]::selection {
 }
 
 #logoLink {
-  width: 200px;
+  width: 200px !important;
   height: 70px;
   background: rgba(0, 0, 0, 0.44);
   z-index: 123;
   position: absolute;
   border-radius: 50px;
-  left: 68px;
-  top: 44px;
+  left: 68px !important;
+  top: 44px !important;
 }
 
 .ogk-logo {
@@ -1406,8 +1406,8 @@ input[type="file"] {
   background: rgba(0, 0, 0, 0.44);
   border-radius: 50px;
   left: -7px;
-  top: 45px;
-  width: 200px;
+  top: 45px !important;
+  width: 200px !important;
 }
 
 #links .leftmenu li {
@@ -2833,8 +2833,8 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
   float: left;
 }
 
-#highscoreContent .ogi-ready[data-marked] td[class*="movement"], 
-#highscoreContent .ogi-ready[data-marked] td[class*="sendmsg"], 
+#highscoreContent .ogi-ready[data-marked] td[class*="movement"],
+#highscoreContent .ogi-ready[data-marked] td[class*="sendmsg"],
 #highscoreContent .ogi-ready[data-marked] td[class*="name"],
 #highscoreContent .ogi-ready[data-marked] td[class*="score"] {
   box-shadow: rgba(0, 0, 0, 0.5) 0px 63.8px 0px inset;
@@ -2879,37 +2879,37 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
 
 #highscoreContent .ogi-ready[data-marked="yellow"] td[class*="sendmsg"],
 #highscoreContent .ogi-ready[data-marked="yellow"] td[class*="name"] {
-  background-color:#907923 !important;
+  background-color: #907923 !important;
 }
 
 #highscoreContent .ogi-ready[data-marked="green"] td[class*="sendmsg"],
 #highscoreContent .ogi-ready[data-marked="green"] td[class*="name"] {
-  background-color:#24777b !important;
+  background-color: #24777b !important;
 }
 
 #highscoreContent .ogi-ready[data-marked="blue"] td[class*="sendmsg"],
 #highscoreContent .ogi-ready[data-marked="blue"] td[class*="name"] {
-  background-color:#355084 !important;
+  background-color: #355084 !important;
 }
 
 #highscoreContent .ogi-ready[data-marked="violet"] td[class*="sendmsg"],
 #highscoreContent .ogi-ready[data-marked="violet"] td[class*="name"] {
-  background-color:#a833da !important;
+  background-color: #a833da !important;
 }
 
 #highscoreContent .ogi-ready[data-marked="gray"] td[class*="sendmsg"],
 #highscoreContent .ogi-ready[data-marked="gray"] td[class*="name"] {
-  background-color:#8a8a8a !important;
+  background-color: #8a8a8a !important;
 }
 
 #highscoreContent .ogi-ready[data-marked="orange"] td[class*="sendmsg"],
 #highscoreContent .ogi-ready[data-marked="orange"] td[class*="name"] {
-  background-color:#ff956b !important;
+  background-color: #ff956b !important;
 }
 
 #highscoreContent .ogi-ready[data-marked="brown"] td[class*="sendmsg"],
 #highscoreContent .ogi-ready[data-marked="brown"] td[class*="name"] {
-  background-color:#c6622d !important;
+  background-color: #c6622d !important;
 }
 
 #highscoreContent .ogi-ready[data-marked="red"] td[class*="score"] {
@@ -3774,11 +3774,11 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
     visibility: visible;
     right: -407px;
     opacity: 0;
-    }
-  to {  
+  }
+  to {
     visibility: visible;
     right: 0px;
-    opacity: 1;     
+    opacity: 1;
   }
 }
 
@@ -3813,11 +3813,11 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
     visibility: visible;
     bottom: -36px;
     opacity: 0;
-    }
-  to {  
+  }
+  to {
     visibility: visible;
     bottom: 4px;
-    opacity: 1;     
+    opacity: 1;
   }
 }
 
@@ -3832,7 +3832,8 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
   background-position: center;
   background-repeat: no-repeat;
   background-size: 25px 25px;
-  filter: brightness(0) saturate(100%) invert(17%) sepia(7%) saturate(497%) hue-rotate(161deg) brightness(94%) contrast(84%);
+  filter: brightness(0) saturate(100%) invert(17%) sepia(7%) saturate(497%) hue-rotate(161deg) brightness(94%)
+    contrast(84%);
   display: block;
 }
 #overviewcomponent #planet #toggleBuffBar {
@@ -3846,19 +3847,21 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
   background-position: center;
   background-repeat: no-repeat;
   background-size: 25px 25px;
-  filter: brightness(0) saturate(100%) invert(17%) sepia(7%) saturate(497%) hue-rotate(161deg) brightness(94%) contrast(84%);
+  filter: brightness(0) saturate(100%) invert(17%) sepia(7%) saturate(497%) hue-rotate(161deg) brightness(94%)
+    contrast(84%);
   display: block;
 }
 
 #overviewcomponent #planet[buffBar-active="true"] #toggleBuffBar {
-  filter: brightness(0) saturate(100%) invert(63%) sepia(11%) saturate(483%) hue-rotate(160deg) brightness(91%) contrast(91%);
+  filter: brightness(0) saturate(100%) invert(63%) sepia(11%) saturate(483%) hue-rotate(160deg) brightness(91%)
+    contrast(91%);
 }
 
 #overviewcomponent #planet[buffBar-active="true"] #toggleBuffBar:hover,
 #overviewcomponent #planet[buffBar-active="false"] #toggleBuffBar:hover {
-  filter: brightness(0) saturate(100%) invert(77%) sepia(23%) saturate(1188%) hue-rotate(338deg) brightness(86%) contrast(92%);
+  filter: brightness(0) saturate(100%) invert(77%) sepia(23%) saturate(1188%) hue-rotate(338deg) brightness(86%)
+    contrast(92%);
 }
-
 
 .ogl-option {
   background-color: #1b1b1b !important;
@@ -4573,6 +4576,13 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
   padding: 5px;
 }
 
+#myWorlds a.planetlink .planetBarSpaceObjectContainer {
+  height: 33px;
+  width: 0px;
+  left: 7px;
+  top: 4px;
+}
+
 #planetbarcomponent #rechts .smaller a.moonlink .planetBarSpaceObjectContainer {
   height: auto !important;
 }
@@ -4617,13 +4627,15 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
 }
 
 #cutty,
+#norm,
 #planetList,
 #rechts {
   min-width: 136px;
   width: max-content !important;
 }
 
-#cutty > div {
+#cutty > div,
+#norm > div {
   width: auto !important;
 }
 
@@ -8869,6 +8881,10 @@ table.flyingFleet td.friendly {
   z-index: auto;
 }
 
+#myWorlds .smallplanet .lifeform-item-icon.small {
+  top: -50px !important;
+}
+
 div#eventboxFilled p.event_list {
   position: relative;
 }
@@ -8926,4 +8942,8 @@ div.ogi-movement .ogi-movement-target > div:nth-child(1) {
 
 .ogi-movement-scroll::-webkit-scrollbar {
   display: none;
+}
+
+body.no-commander .contentBoxBody {
+  top: 32px !important;
 }
