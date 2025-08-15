@@ -11738,7 +11738,15 @@ class OGInfinity {
         const style = div.getAttribute("style");
         const id = style.substring(style.indexOf("images/") + 7, style.indexOf(".png"));
         const item = itemImageID[id];
-        if (item) activeItems[item.resource] = item.bonus;
+        if (item) {
+          if (item.resource === 4) {
+            // 3 resource item
+            [0, 1, 2].forEach((resource) => (activeItems[resource] += item.bonus));
+          } else {
+            // regular resource item
+            activeItems[item.resource] += item.bonus;
+          }
+        }
       });
 
       //console.log("planet: " + planet.coordinates);
