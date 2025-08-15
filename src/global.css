@@ -8882,7 +8882,7 @@ table.flyingFleet td.friendly {
 }
 
 #myWorlds .smallplanet .lifeform-item-icon.small {
-  top: -50px !important; /*Why the fuck this is needed ?*/
+  top: -50px !important;
 }
 
 div#eventboxFilled p.event_list {
