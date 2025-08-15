@@ -2179,7 +2179,6 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
 }
 
 .ogk-label {
-  display: inline-block;
   background-color: #111a21;
   color: #dbee56;
   border: 1px solid #709090;
@@ -2187,6 +2186,10 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
   padding: 0px 1em;
   border-radius: 1em;
   margin: 0 0.5em;
+}
+
+.msgTitle .ogk-label {
+  display: inline-block;
 }
 
 /* negative value for MSU */
