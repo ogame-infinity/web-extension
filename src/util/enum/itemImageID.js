@@ -43,4 +43,6 @@ export default Object.freeze({
   "253e0610c53379ce1c99410b23be2d49ee869d45": { resource: 3, bonus: 0.8 },
   "9acaa2896f0e6750d121d4b2263dc772dd36ad60": { resource: 3, bonus: 0.8 },
   bcf756fab39cd83c5975c9aa7dfbc087ec0dbb3b: { resource: 3, bonus: 0.8 },
+  // 3 Resource boosters
+  "1c633f2c013527fe03545840701f9a2673537d74": { resource: 4, bonus: 0.15 },
 });
