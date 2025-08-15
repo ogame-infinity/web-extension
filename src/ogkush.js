@@ -8804,9 +8804,10 @@ class OGInfinity {
             fleetYield.planetFleetRecyclingYield.deut,
           ];
 
+      const limit = moon === true ? OGIData.options.rvalSelfLimitMoon : OGIData.options.rvalSelfLimitPlanet;
+
       const standardUnitSum = standardUnit.standardUnit(fleetAmount);
-      const labelClass =
-        standardUnitSum >= OGIData.options.rvalSelfLimit ? "ogk-label ogi-warning" : "ogk-label ogi-info";
+      const labelClass = standardUnitSum >= limit ? "ogk-label ogi-warning" : "ogk-label ogi-info";
 
       totalYield += standardUnitSum;
       totalDisplay =
@@ -10799,8 +10800,8 @@ class OGInfinity {
 
         const standardUnitSum = standardUnit.standardUnit(fleetAmount);
         if (standardUnitSum > 0) {
-          const labelClass =
-            standardUnitSum >= OGIData.options.rvalSelfLimit ? "ogk-label ogi-warning" : "ogk-label ogi-info";
+          const limit = this.current.isMoon ? OGIData.options.rvalSelfLimitMoon : OGIData.options.rvalSelfLimitPlanet;
+          const labelClass = standardUnitSum >= limit ? "ogk-label ogi-warning" : "ogk-label ogi-info";
           const totalDisplay = `${Numbers.toFormattedNumber(standardUnitSum, [0, 1], true)} ${standardUnit.unitType()}`;
           slots.appendChild(DOM.createDOM("span", { class: labelClass }, totalDisplay));
         }
@@ -14478,13 +14479,31 @@ class OGInfinity {
     );
 
     optiondiv = featureSettings.appendChild(
-      createDOM("span", { class: "tooltip", title: this.getTranslatedText(190) }, this.getTranslatedText(189))
+      createDOM(
+        "span",
+        { class: "tooltip", title: this.getTranslatedText(190) },
+        `${this.getTranslatedText(189)} - ${this.getTranslatedText(193)}`
+      )
     );
-    let rvalSelfInput = optiondiv.appendChild(
+    let rvalSelfInputPlanet = optiondiv.appendChild(
       createDOM("input", {
         type: "text",
         class: "ogl-rvalInput ogl-formatInput tooltip",
-        value: toFormatedNumber(this.json.options.rvalSelfLimit),
+        value: toFormatedNumber(this.json.options.rvalSelfLimitPlanet),
+      })
+    );
+    optiondiv = featureSettings.appendChild(
+      createDOM(
+        "span",
+        { class: "tooltip", title: this.getTranslatedText(190) },
+        `${this.getTranslatedText(189)} - ${this.getTranslatedText(192)}`
+      )
+    );
+    let rvalSelfInputMoon = optiondiv.appendChild(
+      createDOM("input", {
+        type: "text",
+        class: "ogl-rvalInput ogl-formatInput tooltip",
+        value: toFormatedNumber(this.json.options.rvalSelfLimitMoon),
       })
     );
 
@@ -14801,7 +14820,8 @@ class OGInfinity {
     settingDiv.appendChild(saveBtn);
     saveBtn.addEventListener("click", () => {
       this.json.options.rvalLimit = fromFormatedNumber(rvalInput.value, true);
-      this.json.options.rvalSelfLimit = fromFormatedNumber(rvalSelfInput.value, true);
+      this.json.options.rvalSelfLimitPlanet = fromFormatedNumber(rvalSelfInputPlanet.value, true);
+      this.json.options.rvalSelfLimitMoon = fromFormatedNumber(rvalSelfInputMoon.value, true);
       if (ptreInput.value && ptreInput.value.replace(/-/g, "").length === 18 && ptreInput.value.startsWith("TM")) {
         this.json.options.ptreTK = ptreInput.value;
       } else {
@@ -15650,7 +15670,7 @@ class OGInfinity {
         return fleetIcon;
       };
 
-      if (moonFleetStandardUnitSum >= OGIData.options.rvalSelfLimit) {
+      if (moonFleetStandardUnitSum >= OGIData.options.rvalSelfLimitMoon) {
         const moonFleetIconsDiv = DOM.createDOM("div", { class: "moonFleetIcons" });
         moonFleetIconsDiv.appendChild(
           createFleetIcon(moonFleetStandardUnitSum, planetFromEmpire.moon.id, "icon_spaceship")
@@ -15658,7 +15678,7 @@ class OGInfinity {
         smallplanet.appendChild(moonFleetIconsDiv);
       }
 
-      if (planetFleetStandardUnitSum >= OGIData.options.rvalSelfLimit) {
+      if (planetFleetStandardUnitSum >= OGIData.options.rvalSelfLimitPlanet) {
         const planetFleetIconsDiv = DOM.createDOM("div", { class: "planetFleetIcons" });
         planetFleetIconsDiv.appendChild(createFleetIcon(planetFleetStandardUnitSum, planetId, "icon_spaceship"));
         smallplanet.appendChild(planetFleetIconsDiv);

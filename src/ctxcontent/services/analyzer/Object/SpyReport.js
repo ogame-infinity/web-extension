@@ -233,6 +233,7 @@ export class SpyReport {
 
     const fleet = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-fleet"));
     const defence = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-defense"));
+    const planetType = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-targetplanettype"));
 
     const recyclingYieldFleet = RecyclingYieldCalculator.CalculateRecyclingYieldFleet(
       fleet,
@@ -252,8 +253,10 @@ export class SpyReport {
 
     const totalStandardUnitSum = standardUnitSumFleet + standardUnitSumDefence;
 
+    const limit = planetType === 1 ? OGIData.options.rvalSelfLimitPlanet : OGIData.options.rvalSelfLimitMoon;
+
     // If the standard unit sum is above the limit, display warning labels
-    if (totalStandardUnitSum >= OGIData.options.rvalSelfLimit) {
+    if (totalStandardUnitSum >= limit) {
       const msgTitle = message.querySelector(".msgHeadItem .msgTitle");
 
       const totalAmountDisplay = `${toFormattedNumber(totalStandardUnitSum, [0, 1], true)} ${standardUnit.unitType()}`;

@@ -407,7 +407,7 @@ input[type="password"]::selection {
   display: flex;
   width: fit-content;
   min-width: 650px;
-  max-width: 900px;
+  max-width: 950px;
   justify-content: space-around;
   overflow: auto;
 }

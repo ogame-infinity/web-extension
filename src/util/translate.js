@@ -2082,6 +2082,22 @@ const translation = Object.freeze({
       br: "Dados de espionagem",
     },
     192: {
+      de: "Mond",
+      en: "Moon",
+      es: "Luna",
+      fr: "Lune",
+      tr: "Ay",
+      br: "Lua",
+    },
+    193: {
+      de: "Planet",
+      en: "Planet",
+      es: "Planeta",
+      fr: "Planète",
+      tr: "Gezegen",
+      br: "Planeta",
+    },
+    194: {
       de: undefined,
       en: undefined,
       es: undefined,
