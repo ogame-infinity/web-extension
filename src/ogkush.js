@@ -1481,7 +1481,6 @@ class OGInfinity {
     this.json.sideStalk = this.json.sideStalk || [];
     this.json.playerMarkers = this.json.playerMarkers || {};
     this.json.markers = this.json.markers || {};
-    this.json.locked = this.json.locked || {};
     this.json.missing = this.json.missing || {};
     this.json.targetTabs = this.json.targetTabs || { g: 1, s: 0 };
     this.json.spyProbes = this.json.spyProbes || 5;
@@ -12979,19 +12978,24 @@ class OGInfinity {
       mainSyncJsonObj.searchHistory = this?.json?.searchHistory;
       mainSyncJsonObj.search = this?.json?.search;
       mainSyncJsonObj.sideStalk = this?.json?.sideStalk;
-      mainSyncJsonObj.locked = this?.json?.locked;
+      mainSyncJsonObj.myActivities = this?.json?.myActivities;
+      mainSyncJsonObj.needs = this?.json?.needs;
       mainSyncJsonObj.playerMarkers = this?.json?.playerMarkers;
       mainSyncJsonObj.markers = this?.json?.markers;
       mainSyncJsonObj.sideStargetTabstalk = this?.json?.targetTabs;
       mainSyncJsonObj.missing = this?.json?.missing;
       mainSyncJsonObj.flying = this?.json?.flying;
-      mainSyncJsonObj.buildingProgress = this?.json?.productionProgress;
+      mainSyncJsonObj.productionProgress = this?.json?.productionProgress;
+      mainSyncJsonObj.lfProductionProgress = this?.json?.lfProductionProgress;
       mainSyncJsonObj.researchProgress = this?.json?.researchProgress;
+      mainSyncJsonObj.lfResearchProgress = this?.json?.lfResearchProgress;
 
       mainSyncJsonObj.expeditions = await this.getObjLastElements(this?.json?.expeditions, 5000);
       mainSyncJsonObj.expeditionSums = this?.json?.expeditionSums;
       mainSyncJsonObj.combats = await this.getObjLastElements(this?.json?.combats, 5000);
       mainSyncJsonObj.combatsSums = this?.json?.combatsSums;
+      mainSyncJsonObj.discoveries = await this.getObjLastElements(this?.json?.discoveries, 5000);
+      mainSyncJsonObj.discoveriesSums = this?.json?.discoveriesSums;
       mainSyncJsonObj.harvests = this?.json?.harvests;
 
       let finalJson = {
@@ -14661,7 +14665,7 @@ class OGInfinity {
         this.json.options.ptreTK = "";
         // TODO: Display an error message "Invalid PTRE Team Key Format. TK should look like: TM-XXXX-XXXX-XXXX-XXXX"
       }
-      this.json.options.pantryKey = pantryInput.value;
+      this.json.options.pantryKey = pantryInput.value.trim();
       this.json.options.simulator = simulatorInput.value;
       this.json.options.expedition.defaultTime = Math.max(1, Math.min(~~expeditionDefaultTime.value, 16));
       this.json.options.expedition.limitCargo = Math.max(1, Math.min(~~expeditionLimitCargo.value, 500)) / 100;
