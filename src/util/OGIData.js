@@ -2,6 +2,14 @@ const localStorageKey = "ogk-data";
 
 class OGIData {
   _json;
+  get playerId() {
+    return this._json.playerId;
+  }
+
+  get universeUrl() {
+    return this._json.universeUrl;
+  }
+
   get options() {
     return this._json.options;
   }
@@ -30,13 +38,13 @@ class OGIData {
   get playerMarkers() {
     return this._json.playerMarkers;
   }
-  
+
   set playerMarkers(playerMarkers) {
     this._json.playerMarkers = playerMarkers;
 
     this.#save();
   }
-  
+
   get markers() {
     return this._json.markers;
   }
@@ -58,6 +66,14 @@ class OGIData {
   }
   set expeditions(expeditions) {
     this._json.expeditions = expeditions;
+
+    this.#save();
+  }
+  get spies() {
+    return this._json.spies;
+  }
+  set spies(spies) {
+    this._json.spies = spies;
 
     this.#save();
   }
