@@ -1262,8 +1262,18 @@ input[type="password"]::selection {
   width: 32px;
   height: 32px;
   overflow: hidden;
-  background: url("https://gf3.geo.gfsrv.net/cdneb/f5f81e8302aaad56c958c033677fb8.png") -374px -162px no-repeat;
+  background: url("chrome-extension://__MSG_@@extension_id__/assets/images/sendall.jpg") no-repeat left top;
   transform: scale(0.75);
+}
+
+.ogl-collect.ogk-route.sendall {
+  background: url("chrome-extension://__MSG_@@extension_id__/assets/images/sendall.jpg") no-repeat left top !important;
+  background-size: 29px !important;
+  filter: unset !important;
+  transform: unset !important;
+  width: 30px !important;
+  height: 30px !important;
+  overflow: unset !important;
 }
 
 .res_wrap .resourceIcon {
@@ -1359,8 +1369,13 @@ input[type="password"]::selection {
   height: 32px;
   width: 32px;
 }
+.ogl-collect.ogk-route.select-most {
+  background: url("chrome-extension://__MSG_@@extension_id__/assets/images/select_most.jpg") no-repeat left top !important;
+  background-size: 29px !important;
+  filter: unset !important;
+}
 
-.select-most:hover {
+.select-most:not(.ogl-option.choice.select-most):hover {
   background-position: 0 -32px;
 }
 
@@ -2833,8 +2848,8 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
   float: left;
 }
 
-#highscoreContent .ogi-ready[data-marked] td[class*="movement"], 
-#highscoreContent .ogi-ready[data-marked] td[class*="sendmsg"], 
+#highscoreContent .ogi-ready[data-marked] td[class*="movement"],
+#highscoreContent .ogi-ready[data-marked] td[class*="sendmsg"],
 #highscoreContent .ogi-ready[data-marked] td[class*="name"],
 #highscoreContent .ogi-ready[data-marked] td[class*="score"] {
   box-shadow: rgba(0, 0, 0, 0.5) 0px 63.8px 0px inset;
@@ -2879,37 +2894,37 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
 
 #highscoreContent .ogi-ready[data-marked="yellow"] td[class*="sendmsg"],
 #highscoreContent .ogi-ready[data-marked="yellow"] td[class*="name"] {
-  background-color:#907923 !important;
+  background-color: #907923 !important;
 }
 
 #highscoreContent .ogi-ready[data-marked="green"] td[class*="sendmsg"],
 #highscoreContent .ogi-ready[data-marked="green"] td[class*="name"] {
-  background-color:#24777b !important;
+  background-color: #24777b !important;
 }
 
 #highscoreContent .ogi-ready[data-marked="blue"] td[class*="sendmsg"],
 #highscoreContent .ogi-ready[data-marked="blue"] td[class*="name"] {
-  background-color:#355084 !important;
+  background-color: #355084 !important;
 }
 
 #highscoreContent .ogi-ready[data-marked="violet"] td[class*="sendmsg"],
 #highscoreContent .ogi-ready[data-marked="violet"] td[class*="name"] {
-  background-color:#a833da !important;
+  background-color: #a833da !important;
 }
 
 #highscoreContent .ogi-ready[data-marked="gray"] td[class*="sendmsg"],
 #highscoreContent .ogi-ready[data-marked="gray"] td[class*="name"] {
-  background-color:#8a8a8a !important;
+  background-color: #8a8a8a !important;
 }
 
 #highscoreContent .ogi-ready[data-marked="orange"] td[class*="sendmsg"],
 #highscoreContent .ogi-ready[data-marked="orange"] td[class*="name"] {
-  background-color:#ff956b !important;
+  background-color: #ff956b !important;
 }
 
 #highscoreContent .ogi-ready[data-marked="brown"] td[class*="sendmsg"],
 #highscoreContent .ogi-ready[data-marked="brown"] td[class*="name"] {
-  background-color:#c6622d !important;
+  background-color: #c6622d !important;
 }
 
 #highscoreContent .ogi-ready[data-marked="red"] td[class*="score"] {
@@ -3774,11 +3789,11 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
     visibility: visible;
     right: -407px;
     opacity: 0;
-    }
-  to {  
+  }
+  to {
     visibility: visible;
     right: 0px;
-    opacity: 1;     
+    opacity: 1;
   }
 }
 
@@ -3813,11 +3828,11 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
     visibility: visible;
     bottom: -36px;
     opacity: 0;
-    }
-  to {  
+  }
+  to {
     visibility: visible;
     bottom: 4px;
-    opacity: 1;     
+    opacity: 1;
   }
 }
 
@@ -3832,7 +3847,8 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
   background-position: center;
   background-repeat: no-repeat;
   background-size: 25px 25px;
-  filter: brightness(0) saturate(100%) invert(17%) sepia(7%) saturate(497%) hue-rotate(161deg) brightness(94%) contrast(84%);
+  filter: brightness(0) saturate(100%) invert(17%) sepia(7%) saturate(497%) hue-rotate(161deg) brightness(94%)
+    contrast(84%);
   display: block;
 }
 #overviewcomponent #planet #toggleBuffBar {
@@ -3846,19 +3862,21 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
   background-position: center;
   background-repeat: no-repeat;
   background-size: 25px 25px;
-  filter: brightness(0) saturate(100%) invert(17%) sepia(7%) saturate(497%) hue-rotate(161deg) brightness(94%) contrast(84%);
+  filter: brightness(0) saturate(100%) invert(17%) sepia(7%) saturate(497%) hue-rotate(161deg) brightness(94%)
+    contrast(84%);
   display: block;
 }
 
 #overviewcomponent #planet[buffBar-active="true"] #toggleBuffBar {
-  filter: brightness(0) saturate(100%) invert(63%) sepia(11%) saturate(483%) hue-rotate(160deg) brightness(91%) contrast(91%);
+  filter: brightness(0) saturate(100%) invert(63%) sepia(11%) saturate(483%) hue-rotate(160deg) brightness(91%)
+    contrast(91%);
 }
 
 #overviewcomponent #planet[buffBar-active="true"] #toggleBuffBar:hover,
 #overviewcomponent #planet[buffBar-active="false"] #toggleBuffBar:hover {
-  filter: brightness(0) saturate(100%) invert(77%) sepia(23%) saturate(1188%) hue-rotate(338deg) brightness(86%) contrast(92%);
+  filter: brightness(0) saturate(100%) invert(77%) sepia(23%) saturate(1188%) hue-rotate(338deg) brightness(86%)
+    contrast(92%);
 }
-
 
 .ogl-option {
   background-color: #1b1b1b !important;
@@ -3870,6 +3888,27 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
   width: 22px;
   position: sticky;
   float: left;
+}
+.ogl-option.choice.select-most {
+  background-size: 25px;
+  height: 25px;
+  width: 25px;
+  margin: 2px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(95, 93, 107);
+  border-image: initial;
+}
+.ogl-option.choice.sendall {
+  background-size: 25px;
+  height: 25px;
+  width: 25px;
+  margin: 2px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(95, 93, 107);
+  border-image: initial;
+  transform: unset;
 }
 
 .ogl-option:after {
@@ -5409,11 +5448,14 @@ body.ogame select {
   display: flex;
   margin: 0 auto;
 }
-
+.ogl-option.choice.select-most:hover,
+.ogl-option.choice.sendall:hover,
 .ogl-fleet-ship:hover {
   border: solid 1px #da961a;
 }
 
+.ogl-option.choice.select-most:hover + span,
+.ogl-option.choice.sendall:hover + span,
 .ogl-fleet-ship:hover + span {
   color: #da961a;
 }
@@ -8436,7 +8478,7 @@ li.resource {
   border-color: #b00001;
 }
 
-.ogl-tooltip .ogk-collect-cargo {
+.ogl-tooltip .ogk-collect-cargo:not(.ogk-route) {
   width: auto;
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -8447,12 +8489,17 @@ li.resource {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
 }
+
+.ogl-tooltip .ogk-route .choice,
+.ogl-tooltip .ogk-route .choice-mission-icon,
 .ogl-tooltip .ogk-collect-cargo .choice,
 .ogl-tooltip .ogk-collect-cargo .choice-mission-icon,
 .ogl-tooltip .ogk-expedition-options .choice {
   filter: brightness(0.75);
   background-blend-mode: luminosity;
 }
+.ogl-tooltip .ogk-route .choicee.highlight,
+.ogl-tooltip .ogk-route .choice-mission-icone.highlight,
 .ogl-tooltip .ogk-collect-cargo .choice.highlight,
 .ogl-tooltip .ogk-collect-cargo .choice-mission-icon.highlight,
 .ogl-tooltip .ogk-expedition-options .choice.highlight {
@@ -8460,6 +8507,18 @@ li.resource {
   background-blend-mode: normal;
 }
 
+.ogl-tooltip .ogi-fleet-options {
+  width: auto;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+}
+.ogl-tooltip .ogi-mission-options {
+  width: auto;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+}
+
+.choice-route-icon,
 .choice-expedition-icon {
   width: 25px;
   height: 25px;
@@ -8470,15 +8529,15 @@ li.resource {
   background-position: calc(-25px * 12) calc(-25px * 0) !important;
   overflow: hidden;
 }
-
+.choice-route-icon:hover,
 .choice-expedition-icon:hover {
   border: solid 1px #da961a;
 }
-
+.choice-route-icon.route-rotation,
 .choice-expedition-icon.expedition-rotation {
   background-position: calc(-25px * 12) calc(-25px * 0) !important;
 }
-
+.choice-route-icon.route-rotation.highlight,
 .choice-expedition-icon.expedition-rotation.highlight {
   background-position: calc(-25px * 12) calc(-25px * 1) !important;
   border: solid 1px #da961a;
@@ -8514,6 +8573,8 @@ li.resource {
   background-size: calc(50px * 10) !important;
 }
 
+.ogl-option.sendall.highlight,
+.ogl-option.select-most.highlight,
 .ogl-fleet-ship.highlight {
   border: solid 1px #da961a;
   filter: brightness(1.3);
@@ -8626,7 +8687,7 @@ li.resource {
   width: 28px;
 }
 
-.ogl-collect:before {
+.ogl-collect:not(.ogk-route):before {
   background: url(https://gf2.geo.gfsrv.net/cdn14/f45a18b5e55d2d38e7bdc3151b1fee.jpg) no-repeat;
   background-size: calc(36px * 11) !important;
   background-position: -40px -5px;
@@ -8642,7 +8703,63 @@ li.resource {
   width: 28px;
 }
 
-.ogl-collect:after {
+.ogl-collect.ogk-route {
+  margin-top: 10px;
+}
+
+.ogl-collect.ogk-route:before {
+  background: url(https://gf2.geo.gfsrv.net/cdn14/f45a18b5e55d2d38e7bdc3151b1fee.jpg) no-repeat;
+  background-size: calc(36px * 11) !important;
+  background-position: -184px -4px;
+  content: "";
+  display: block;
+  height: 28px;
+  right: -5px;
+  position: absolute;
+  top: -5px;
+  transform: scale(0.5);
+  transform-origin: top right;
+  width: 28px;
+}
+.ogl-collect.ogk-route.statio:before {
+  background-position: -112px -4px;
+}
+
+.ogl-collect.ogk-route:after {
+  background-color: #d29d00;
+  border: 1px solid #000;
+  border-bottom: none;
+  border-right: none;
+  display: block;
+  height: 18px;
+  width: 18px;
+  right: 0px;
+  transform: scale(0.5);
+  transform-origin: bottom right;
+  position: absolute;
+  top: 9px;
+  text-align: center;
+  font-size: large;
+  font-weight: bolder;
+}
+
+.ogl-collect.ogk-route.ogk-route-1::after {
+  content: "1";
+}
+.ogl-collect.ogk-route.ogk-route-2::after {
+  content: "2";
+}
+.ogl-collect.ogk-route.ogk-route-3::after {
+  content: "3";
+}
+.ogl-collect.ogk-route.ogk-route-4::after {
+  content: "4";
+}
+.ogl-collect.ogk-route.ogk-route-5::after {
+  content: "5";
+}
+
+.ogl-collect:not(.ogk-route):after {
   background: url(https://gf2.geo.gfsrv.net/cdn14/f45a18b5e55d2d38e7bdc3151b1fee.jpg) no-repeat;
   background-size: calc(36px * 11) !important;
   background-position: -184px -4px;

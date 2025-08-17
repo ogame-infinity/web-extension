@@ -76,6 +76,7 @@ const _options = {
       type: 1,
     },
   },
+  route: {},
   expedition: {
     cargoShip: 202,
     combatShip: 218,
@@ -100,11 +101,15 @@ export function initConfOptions(options) {
   const collect = options?.collect || _options.collect;
   delete options["collect"];
 
+  const route = options?.route || _options.route;
+  delete options["route"];
+
   const expedition = options?.expedition || _options.expedition;
   delete options["expedition"];
 
   Object.assign(_options, options);
   Object.assign(_options.collect, collect);
+  Object.assign(_options.route, route);
   Object.assign(_options.expedition, expedition);
 }
 
