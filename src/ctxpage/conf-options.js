@@ -64,6 +64,7 @@ const _options = {
   autoDeleteEnable: false,
   kept: {},
   defaultKept: {},
+  defaultKeptMoon: {},
   hiddenTargets: {},
   timeZone: true,
   collect: {

@@ -2756,52 +2756,76 @@ class OGInfinity {
 
   keepOnPlanetDialog(coords, btn) {
     let kept;
+    let defaultKeptMoon;
     if (coords) {
       kept = this.json.options.kept[coords];
+    } else {
+      defaultKeptMoon = this.json.options.defaultKeptMoon;
     }
     if (!kept) kept = this.json.options.defaultKept;
+    if (!defaultKeptMoon) defaultKeptMoon = this.json.options.defaultKept; //initialize with defaultKept values if not set
     let container = createDOM("div");
     if (coords) {
       container.appendChild(
         createDOM(
           "h1",
           { style: "text-align: center; font-weight: 800" },
-          this.current.coords + (this.current.isMoon ? " (Moon)" : " (Planet)")
+          this.current.coords +
+            (this.current.isMoon ? ` (${this.getTranslatedText(194)})` : ` (${this.getTranslatedText(42)})`)
         )
       );
       container.appendChild(createDOM("hr"));
     }
     let box = createDOM("div", { class: "ogk-keep-dialog" });
     box.appendChild(createDOM("h1", {}, this.getTranslatedText(28)));
-    let prod = box.appendChild(createDOM("div", { class: "ogk-adjust-grid" }));
-    prod.appendChild(createDOM("span").appendChild(createDOM("a", { class: "resourceIcon metal" })).parentElement);
-    let metInput = prod.appendChild(
+    let boxResources = box.appendChild(
+      createDOM("div", { class: `ogk-keep-dialog-resources${coords ? " ogk-keep-dialog-resources-coord" : ""}` })
+    );
+    let prodPlanet;
+    if (!coords) {
+      prodPlanet = boxResources.appendChild(createDOM("div"));
+      prodPlanet.appendChild(createDOM("h1", {}, this.getTranslatedText(42)));
+
+      prodPlanet = prodPlanet.appendChild(createDOM("div", { class: "ogk-adjust-grid" }));
+    } else {
+      prodPlanet = boxResources.appendChild(createDOM("div", { class: "ogk-adjust-grid" }));
+    }
+    prodPlanet.appendChild(
+      createDOM("span").appendChild(createDOM("a", { class: "resourceIcon metal" })).parentElement
+    );
+    let metInputPlanet = prodPlanet.appendChild(
       createDOM("input", {
         class: "ogl-formatInput metal",
         type: "text",
         value: toFormatedNumber(kept[0]) || toFormatedNumber(0),
       })
     );
-    prod.appendChild(createDOM("span").appendChild(createDOM("a", { class: "resourceIcon crystal" })).parentElement);
-    let criInput = prod.appendChild(
+    prodPlanet.appendChild(
+      createDOM("span").appendChild(createDOM("a", { class: "resourceIcon crystal" })).parentElement
+    );
+    let criInputPlanet = prodPlanet.appendChild(
       createDOM("input", {
         class: "ogl-formatInput crystal",
         type: "text",
         value: toFormatedNumber(kept[1]) || toFormatedNumber(0),
       })
     );
-    prod.appendChild(createDOM("span").appendChild(createDOM("a", { class: "resourceIcon deuterium" })).parentElement);
-    let deutInput = prod.appendChild(
+    prodPlanet.appendChild(
+      createDOM("span").appendChild(createDOM("a", { class: "resourceIcon deuterium" })).parentElement
+    );
+    let deutInputPlanet = prodPlanet.appendChild(
       createDOM("input", {
         class: "ogl-formatInput deuterium",
         type: "text",
         value: toFormatedNumber(kept[2]) || toFormatedNumber(0),
       })
     );
-    let foodInput;
+    let foodInputPlanet;
     if (this.hasLifeforms) {
-      prod.appendChild(createDOM("span").appendChild(createDOM("a", { class: "resourceIcon food" })).parentElement);
-      foodInput = prod.appendChild(
+      prodPlanet.appendChild(
+        createDOM("span").appendChild(createDOM("a", { class: "resourceIcon food" })).parentElement
+      );
+      foodInputPlanet = prodPlanet.appendChild(
         createDOM("input", {
           class: "ogl-formatInput food",
           type: "text",
@@ -2809,13 +2833,76 @@ class OGInfinity {
         })
       );
     }
+    // Moon resources
+    let metInputMoon;
+    let criInputMoon;
+    let deutInputMoon;
+    let foodInputMoon;
+    if (!coords) {
+      boxResources.appendChild(createDOM("div", { class: "ogk-keep-dialog-separator" }));
+      let prodMoon = boxResources.appendChild(createDOM("div"));
+      prodMoon.appendChild(createDOM("h1", {}, this.getTranslatedText(194)));
+      prodMoon = prodMoon.appendChild(createDOM("div", { class: "ogk-adjust-grid" }));
+      prodMoon.appendChild(
+        createDOM("span").appendChild(createDOM("a", { class: "resourceIcon metal" })).parentElement
+      );
+      metInputMoon = prodMoon.appendChild(
+        createDOM("input", {
+          class: "ogl-formatInput metal",
+          type: "text",
+          value: toFormatedNumber(defaultKeptMoon[0]) || toFormatedNumber(0),
+        })
+      );
+      prodMoon.appendChild(
+        createDOM("span").appendChild(createDOM("a", { class: "resourceIcon crystal" })).parentElement
+      );
+      criInputMoon = prodMoon.appendChild(
+        createDOM("input", {
+          class: "ogl-formatInput crystal",
+          type: "text",
+          value: toFormatedNumber(defaultKeptMoon[1]) || toFormatedNumber(0),
+        })
+      );
+      prodMoon.appendChild(
+        createDOM("span").appendChild(createDOM("a", { class: "resourceIcon deuterium" })).parentElement
+      );
+      deutInputMoon = prodMoon.appendChild(
+        createDOM("input", {
+          class: "ogl-formatInput deuterium",
+          type: "text",
+          value: toFormatedNumber(defaultKeptMoon[2]) || toFormatedNumber(0),
+        })
+      );
+
+      if (this.hasLifeforms) {
+        prodMoon.appendChild(
+          createDOM("span").appendChild(createDOM("a", { class: "resourceIcon food" })).parentElement
+        );
+        foodInputMoon = prodMoon.appendChild(
+          createDOM("input", {
+            class: "ogl-formatInput food",
+            type: "text",
+            value: toFormatedNumber(defaultKeptMoon[3]) || toFormatedNumber(0),
+          })
+        );
+      }
+    }
+
     box.appendChild(createDOM("hr"));
     box.appendChild(createDOM("h1", {}, this.getTranslatedText(29)));
-    let fleet = box.appendChild(createDOM("div", { class: "ogk-bhole-grid" }));
+
+    let boxFleet = box.appendChild(
+      createDOM("div", { class: `ogk-keep-dialog-fleet${coords ? " ogk-keep-dialog-fleet-coord" : ""}` })
+    );
+    let fleetPlanet = boxFleet.appendChild(createDOM("div"));
+    if (!coords) fleetPlanet.appendChild(createDOM("h1", {}, this.getTranslatedText(42)));
+    fleetPlanet = fleetPlanet.appendChild(createDOM("div", { class: "ogk-bhole-grid" }));
     let inputs = [];
-    [202, 203, 210, 208, 209, 204, 205, 206, 219, 207, 215, 211, 213, 218, 214].forEach((id) => {
-      fleet.appendChild(createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-fleet-" + id }));
-      let input = fleet.appendChild(
+    let inputsMoon = [];
+    const shipIds = [202, 203, 210, 208, 209, 204, 205, 206, 219, 207, 215, 211, 213, 218, 214];
+    shipIds.forEach((id) => {
+      fleetPlanet.appendChild(createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-fleet-" + id }));
+      let input = fleetPlanet.appendChild(
         createDOM("input", {
           class: "ogl-formatInput",
           type: "text",
@@ -2825,11 +2912,32 @@ class OGInfinity {
       );
       inputs.push(input);
     });
+    if (!coords) {
+      boxFleet.appendChild(createDOM("div", { class: "ogk-keep-dialog-separator" }));
+      let fleetMoon = boxFleet.appendChild(createDOM("div"));
+      fleetMoon.appendChild(createDOM("h1", {}, this.getTranslatedText(194)));
+      fleetMoon = fleetMoon.appendChild(createDOM("div", { class: "ogk-bhole-grid" }));
+
+      shipIds.forEach((id) => {
+        fleetMoon.appendChild(createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-fleet-" + id }));
+        inputsMoon.push(
+          fleetMoon.appendChild(
+            createDOM("input", {
+              class: "ogl-formatInput",
+              type: "text",
+              data: id,
+              value: toFormatedNumber(kept[id]) || toFormatedNumber(0),
+            })
+          )
+        );
+      });
+    }
     if (!btn) {
       btn = box.appendChild(createDOM("button", { class: "btn_blue" }, this.getTranslatedText(27)));
     }
     btn.addEventListener("click", () => {
       kept = {};
+      defaultKeptMoon = {};
       inputs.forEach((input) => {
         let id = Number(input.getAttribute("data"));
         let amount = fromFormatedNumber(input.value, true);
@@ -2837,14 +2945,28 @@ class OGInfinity {
           kept[id] = amount;
         }
       });
-      kept[0] = fromFormatedNumber(metInput.value, true);
-      kept[1] = fromFormatedNumber(criInput.value, true);
-      kept[2] = fromFormatedNumber(deutInput.value, true);
-      if (this.hasLifeforms) kept[3] = fromFormatedNumber(foodInput.value, true);
+      if (!coords) {
+        inputsMoon.forEach((input) => {
+          let id = Number(input.getAttribute("data"));
+          let amount = fromFormatedNumber(input.value, true);
+          if (amount > 0) {
+            defaultKeptMoon[id] = amount;
+          }
+        });
+        defaultKeptMoon[0] = fromFormatedNumber(metInputMoon.value, true);
+        defaultKeptMoon[1] = fromFormatedNumber(criInputMoon.value, true);
+        defaultKeptMoon[2] = fromFormatedNumber(deutInputMoon.value, true);
+        if (this.hasLifeforms) defaultKeptMoon[3] = fromFormatedNumber(foodInputMoon.value, true);
+      }
+      kept[0] = fromFormatedNumber(metInputPlanet.value, true);
+      kept[1] = fromFormatedNumber(criInputPlanet.value, true);
+      kept[2] = fromFormatedNumber(deutInputPlanet.value, true);
+      if (this.hasLifeforms) kept[3] = fromFormatedNumber(foodInputPlanet.value, true);
       if (coords) {
         this.json.options.kept[coords] = kept;
       } else {
         this.json.options.defaultKept = kept;
+        this.json.options.defaultKeptMoon = defaultKeptMoon;
       }
       this.json.needSync = true;
       this.saveData();
@@ -4141,7 +4263,8 @@ class OGInfinity {
           $("#jumpgate .send_all").after(createDOM("span", { class: "select-most" }));
           $(".select-most").on("click", () => {
             let kept =
-              this.json.options.kept[this.current.coords + (this.current.isMoon ? "M" : "P")] ||
+              this.json.options.kept[this.current.coords + (this.current.isMoon ? "M" : "P")] ??
+              this.json.options.defaultKeptMoon ??
               this.json.options.defaultKept;
             document.querySelectorAll(".ship_input_row input").forEach((elem) => {
               let id = elem.getAttribute("name").replace("ship_", "");
@@ -10272,9 +10395,10 @@ class OGInfinity {
           }
         }
       };
-      let kept =
-        this.json.options.kept[this.current.coords + (this.current.isMoon ? "M" : "P")] ||
-        this.json.options.defaultKept;
+      const defaultKept = this.current.isMoon
+        ? this.json.options.defaultKeptMoon ?? this.json.options.defaultKept
+        : this.json.options.defaultKept;
+      let kept = this.json.options.kept[this.current.coords + (this.current.isMoon ? "M" : "P")] || defaultKept;
       $("#selectMostMetal").on("click", () => {
         let capacity = fleetDispatcher.getFreeCargoSpace();
         let cargo = Math.min(capacity, metalAvailable - (kept[0] || 0));
@@ -10688,8 +10812,10 @@ class OGInfinity {
   }
 
   neededCargo() {
-    let kept =
-      this.json.options.kept[this.current.coords + (this.current.isMoon ? "M" : "P")] || this.json.options.defaultKept;
+    const defaultKept = this.current.isMoon
+      ? this.json.options.defaultKeptMoon ?? this.json.options.defaultKept
+      : this.json.options.defaultKept;
+    let kept = this.json.options.kept[this.current.coords + (this.current.isMoon ? "M" : "P")] || defaultKept;
     if (this.page == "fleetdispatch" && document.querySelector("#shipChosen")) {
       shipsOnPlanet.forEach((ship) => {
         if (ship.id == 202 || ship.id == 203) {
@@ -12762,9 +12888,10 @@ class OGInfinity {
 
   selectMostShips(reclickSelectedTargetType = true) {
     fleetDispatcher.shipsOnPlanet.forEach((ship) => {
-      let kept =
-        this.json.options.kept[this.current.coords + (this.current.isMoon ? "M" : "P")] ||
-        this.json.options.defaultKept;
+      const defaultKept = this.current.isMoon
+        ? this.json.options.defaultKeptMoon ?? this.json.options.defaultKept
+        : this.json.options.defaultKept;
+      let kept = this.json.options.kept[this.current.coords + (this.current.isMoon ? "M" : "P")] || defaultKept;
       this.selectShips(ship.id, Math.max(0, ship.number - (kept[ship.id] || 0)));
     });
     if (reclickSelectedTargetType) {

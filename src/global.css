@@ -398,6 +398,20 @@ input[type="password"]::selection {
   margin-bottom: 10px;
   width: 187px;
 }
+.ogk-keep-dialog-fleet:not(.ogk-keep-dialog-fleet-coord),
+.ogk-keep-dialog-resources:not(.ogk-keep-dialog-resources-coord) {
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.ogk-keep-dialog-separator {
+  width: 1px;
+  height: 100%;
+  background: #10171d;
+}
 
 .ogl-settings hr {
   margin: 4px 0;
