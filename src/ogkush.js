@@ -16606,9 +16606,9 @@ class OGInfinity {
               }
             }
 
-            if (this.json.options.customMissions[urlRouteId].rotation) {
+            if (this.json.options.customMissions[urlcustomMissionId].rotation) {
               const customMissionButton = document.querySelector(
-                `.ogl-collect.ogk-customMission.ogk-customMission-${urlRouteId}`
+                `.ogl-collect.ogk-customMission.ogk-customMission-${urlcustomMissionId}`
               );
               if (customMissionButton) {
                 customMissionButton.click();
