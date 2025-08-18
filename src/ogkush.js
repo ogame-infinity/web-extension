@@ -3,6 +3,7 @@ import { initConfOptions, getOptions, getOption, setOption } from "./ctxpage/con
 import ctxMessageAnalyzer from "./ctxpage/messages-analyzer/index.js";
 import * as DOM from "./util/dom.js";
 import { getLogger } from "./util/logger.js";
+import itemType from "./util/enum/itemType.js";
 import itemImageID from "./util/enum/itemImageID.js";
 import * as Numbers from "./util/numbers.js";
 import { pageContextInit, pageContextRequest } from "./util/service.callbackEvent.js";
@@ -11012,6 +11013,18 @@ class OGInfinity {
         }
         // LF expedition bonus
         maxResources *= 1 + (this.json.lifeformBonus.expeditionBonus || 0);
+        // expedition resource boost item bonus
+        let resourceBoostItemBonus = 0;
+        // expedition resource boost item has global effect, we look in the planet 1
+        const html = new window.DOMParser().parseFromString(OGIData.empire[0].equipment_html, "text/html");
+        const itemDivs = html.querySelectorAll(".item_img");
+        itemDivs.forEach((div) => {
+          const style = div.getAttribute("style");
+          const id = style.substring(style.indexOf("images/") + 7, style.indexOf(".png"));
+          const item = itemImageID[id];
+          if (item && item.type === itemType.ExpeditionResources) resourceBoostItemBonus = item.bonus;
+        });
+        maxResources *= 1 + resourceBoostItemBonus;
 
         const availableShips = {
           202: 0,
@@ -11739,12 +11752,19 @@ class OGInfinity {
         const id = style.substring(style.indexOf("images/") + 7, style.indexOf(".png"));
         const item = itemImageID[id];
         if (item) {
-          if (item.resource === 4) {
+          if (item.type === itemType.All3Resources) {
             // 3 resource item
-            [0, 1, 2].forEach((resource) => (activeItems[resource] += item.bonus));
-          } else {
+            [itemType.Metal, itemType.Crystal, itemType.Deuterium].forEach((resource) => {
+              activeItems[resource] += item.bonus;
+            });
+          } else if (
+            item.type === itemType.Metal ||
+            item.type === itemType.Crystal ||
+            item.type === itemType.Deuterium ||
+            item.type === itemType.Energy
+          ) {
             // regular resource item
-            activeItems[item.resource] += item.bonus;
+            activeItems[item.type] += item.bonus;
           }
         }
       });
