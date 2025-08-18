@@ -8767,7 +8767,7 @@ li.resource {
   margin-top: 10px;
 }
 
-.ogk-customMission:before {
+.ogk-customMission::before {
   background: url(https://gf2.geo.gfsrv.net/cdn14/f45a18b5e55d2d38e7bdc3151b1fee.jpg) no-repeat;
   background-size: calc(36px * 11) !important;
   background-position: -184px -4px;
@@ -8785,10 +8785,10 @@ li.resource {
   background-position: -112px -4px;
 }
 
-.ogk-customMission:after {
-  border: 1px solid #000;
-  border-bottom: none;
-  border-right: none;
+.ogk-customMission::after {
+  border: 1px solid #000 !important;
+  border-bottom: none !important;
+  border-right: none !important;
   display: block;
   height: 18px;
   width: 18px;
@@ -8835,10 +8835,10 @@ li.resource {
 .ogl-option.choice-color[data-marked="red"],
 .ogk-customMission[data-marked="red"]:after {
   background-color: #b13434 !important;
-  border-color: #b13434 !important;
+  border-color: #b13434;
 }
 .ogk-customMission-colorChoice [data-marked="red"] {
-  border-color: #b13434 !important;
+  border-color: #b13434;
 }
 
 /*yellow*/
@@ -8847,10 +8847,10 @@ li.resource {
 .ogl-option.choice-color[data-marked="yellow"],
 .ogk-customMission[data-marked="yellow"]:after {
   background-color: #fef86c !important;
-  border-color: #fef86c !important;
+  border-color: #fef86c;
 }
 .ogk-customMission-colorChoice [data-marked="yellow"] {
-  border-color: #fef86c !important;
+  border-color: #fef86c;
 }
 
 /*green*/
@@ -8859,10 +8859,10 @@ li.resource {
 .ogl-option.choice-color[data-marked="green"],
 .ogk-customMission[data-marked="green"]:after {
   background-color: #8bcc0b !important;
-  border-color: #8bcc0b !important;
+  border-color: #8bcc0b;
 }
 .ogk-customMission-colorChoice [data-marked="green"] {
-  border-color: #8bcc0b !important;
+  border-color: #8bcc0b;
 }
 
 /*blue*/
@@ -8883,10 +8883,10 @@ li.resource {
 .ogl-option.choice-color[data-marked="violet"],
 .ogk-customMission[data-marked="violet"]:after {
   background-color: #a833da !important;
-  border-color: #a833da !important;
+  border-color: #a833da;
 }
 .ogk-customMission-colorChoice [data-marked="violet"] {
-  border-color: #a833da !important;
+  border-color: #a833da;
 }
 
 /*gray*/
@@ -8895,10 +8895,10 @@ li.resource {
 .ogl-option.choice-color[data-marked="gray"],
 .ogk-customMission[data-marked="gray"]:after {
   background-color: #b7babd !important;
-  border-color: #b7babd !important;
+  border-color: #b7babd;
 }
 .ogk-customMission-colorChoice [data-marked="gray"] {
-  border-color: #b7babd !important;
+  border-color: #b7babd;
 }
 
 /*orange*/
@@ -8907,10 +8907,10 @@ li.resource {
 .ogl-option.choice-color[data-marked="orange"],
 .ogk-customMission[data-marked="orange"]:after {
   background-color: #ffa800 !important;
-  border-color: #ffa800 !important;
+  border-color: #ffa800;
 }
 .ogk-customMission-colorChoice [data-marked="orange"] {
-  border-color: #ffa800 !important;
+  border-color: #ffa800;
 }
 
 /*brown*/
@@ -8919,14 +8919,14 @@ li.resource {
 .ogl-option.choice-color[data-marked="brown"],
 .ogk-customMission[data-marked="brown"]:after {
   background-color: #a66437 !important;
-  border-color: #a66437 !important;
+  border-color: #a66437;
 }
 .ogk-customMission-colorChoice [data-marked="brown"] {
-  border-color: #a66437 !important;
+  border-color: #a66437;
 }
 
 .ogl-option.choice-customMission-icon.choice-color:hover {
-  border: solid 1px #da961a !important;
+  border: solid 1px #da961a;
 }
 
 .ogk-customMission.ogk-customMission-1::after {
