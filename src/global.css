@@ -8565,6 +8565,7 @@ li.resource {
   overflow: hidden;
 }
 
+.choice-expedition-icon,
 .choice-customMission-icon:not(.choice-color) {
   border: solid 1px #5f5d6b;
   background: url("https://gf3.geo.gfsrv.net/cdn81/ce44d444b7d14a3ea6fa51fa6c1148.png");
