@@ -14715,6 +14715,65 @@ class OGInfinity {
     nbCustomMissionsSelect.value = getOption("nbCustomMissions");
     nbCustomMissionsDiv.appendChild(nbCustomMissionsSelect);
 
+    if (this.json.options.customMissions) {
+      let resetCustomMissions = customMissions.appendChild(
+        createDOM("div", { style: "margin-top: 15px; display:grid; grid-template-columns: auto 1fr" })
+      );
+      resetCustomMissions.appendChild(
+        createDOM("span", { style: "margin-top: 20px;" }, `${this.getTranslatedText(26)} :`)
+      );
+      let resetButtonsDiv = resetCustomMissions.appendChild(
+        createDOM("div", {
+          style: " display:grid; grid-template-columns: auto auto auto auto 1fr; gap: 5px 10px; margin-left: 15px;",
+        })
+      );
+
+      const getresetBuittonClass = (customMissionId) => {
+        const customMissionClass = `ogk-customMission ogk-customMission-${customMissionId}`;
+        const missionClass = this.json.options.customMissions[customMissionId].mission == 4 ? "statio" : "";
+
+        const shipClass =
+          this.json.options.customMissions[customMissionId].ship === "select-most"
+            ? "select-most"
+            : this.json.options.customMissions[customMissionId].ship === "sendall"
+            ? "sendall"
+            : this.json.options.customMissions[customMissionId].ship == 202
+            ? "smallCargo"
+            : this.json.options.customMissions[customMissionId].ship == 219
+            ? "pathFinder"
+            : "largeCargo";
+        return `${customMissionClass} ${missionClass} ${shipClass}`;
+      };
+
+      for (let customMissionId = 1; customMissionId <= 5; customMissionId++) {
+        if (this.json.options.customMissions[customMissionId]) {
+          let btnReset = resetButtonsDiv.appendChild(
+            createDOM("button", {
+              class: getresetBuittonClass(customMissionId),
+              "data-marked": this.json.options.customMissions[customMissionId].color,
+            })
+          );
+          btnReset.addEventListener("click", () => {
+            let reset = confirm(this.getTranslatedText(197));
+            if (reset) {
+              this.json.options.customMissions[customMissionId] = {
+                ship: 202,
+                mission: 4,
+                rotation: false,
+                keepSpeed: false,
+                resources: true,
+                target: {},
+                color: "orange",
+              };
+              btnReset.classList = getresetBuittonClass(customMissionId);
+              btnReset.setAttribute("data-marked", this.json.options.customMissions[customMissionId].color);
+              this.saveData();
+            }
+          });
+        }
+      }
+    }
+
     settingDiv.appendChild(createDOM("hr"));
     let keys = settingDiv.appendChild(createDOM("div", { style: "display: grid;" }));
     keys.appendChild(createDOM("h1", {}, this.getTranslatedText(147)));

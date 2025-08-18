@@ -2074,6 +2074,14 @@ const translation = Object.freeze({
       br: "Número de missões",
     },
     197: {
+      de: "Sind Sie sicher, dass Sie diese Aktion durchführen möchten?",
+      en: "Are you sure you want to perform this action?",
+      es: "¿Está seguro de que desea realizar esta acción?",
+      fr: "Êtes-vous sûr de vouloir effectuer cette action ?",
+      tr: "Bu işlemi yapmak istediğinizden emin misiniz?",
+      br: "Você tem certeza de que deseja realizar esta ação?",
+    },
+    198: {
       de: undefined,
       en: undefined,
       es: undefined,
