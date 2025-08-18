@@ -8562,15 +8562,19 @@ li.resource {
   width: 25px;
   height: 25px;
   margin: 2px;
+  overflow: hidden;
+}
+
+.choice-customMission-icon:not(.choice-color) {
   border: solid 1px #5f5d6b;
   background: url("https://gf3.geo.gfsrv.net/cdn81/ce44d444b7d14a3ea6fa51fa6c1148.png");
   background-size: calc(25px * 16) !important;
   background-position: calc(-25px * 12) calc(-25px * 0) !important;
-  overflow: hidden;
 }
+
 .choice-customMission-icon:hover,
 .choice-expedition-icon:hover {
-  border: solid 1px #da961a;
+  border: solid 1px #da961a !important;
 }
 .choice-customMission-icon.customMission-rotation,
 .choice-expedition-icon.expedition-rotation {
@@ -8781,7 +8785,6 @@ li.resource {
 }
 
 .ogk-customMission:after {
-  background-color: #d29d00;
   border: 1px solid #000;
   border-bottom: none;
   border-right: none;
@@ -8796,6 +8799,133 @@ li.resource {
   text-align: center;
   font-size: large;
   font-weight: bolder;
+}
+
+.ogk-customMission-colorChoice {
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 6px;
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: repeat(2, 1fr);
+  padding: 10px;
+}
+
+.ogk-customMission-colorChoice div[data-marked] {
+  cursor: pointer;
+  height: 16px;
+  width: 16px;
+  background-color: #212121;
+  border-width: 2px;
+  border-style: solid;
+  border-image: initial;
+  border-radius: 50%;
+}
+
+.ogk-customMission-colorChoice [data-marked].ogl-active,
+.ogk-customMission-colorChoice [data-marked]:hover {
+  box-shadow:
+    inset 0 50px rgba(0, 0, 0, 0.3),
+    inset 0 5px 5px rgba(0, 0, 0, 0.3);
+}
+
+/*red*/
+.ogk-customMission-colorChoice .ogl-active[data-marked="red"],
+.ogk-customMission-colorChoice [data-marked="red"]:hover,
+.ogl-option.choice-color[data-marked="red"],
+.ogk-customMission[data-marked="red"]:after {
+  background-color: #b13434 !important;
+  border-color: #b13434 !important;
+}
+.ogk-customMission-colorChoice [data-marked="red"] {
+  border-color: #b13434 !important;
+}
+
+/*yellow*/
+.ogk-customMission-colorChoice .ogl-active[data-marked="yellow"],
+.ogk-customMission-colorChoice [data-marked="yellow"]:hover,
+.ogl-option.choice-color[data-marked="yellow"],
+.ogk-customMission[data-marked="yellow"]:after {
+  background-color: #fef86c !important;
+  border-color: #fef86c !important;
+}
+.ogk-customMission-colorChoice [data-marked="yellow"] {
+  border-color: #fef86c !important;
+}
+
+/*green*/
+.ogk-customMission-colorChoice .ogl-active[data-marked="green"],
+.ogk-customMission-colorChoice [data-marked="green"]:hover,
+.ogl-option.choice-color[data-marked="green"],
+.ogk-customMission[data-marked="green"]:after {
+  background-color: #8bcc0b !important;
+  border-color: #8bcc0b !important;
+}
+.ogk-customMission-colorChoice [data-marked="green"] {
+  border-color: #8bcc0b !important;
+}
+
+/*blue*/
+.ogk-customMission-colorChoice .ogl-active[data-marked="blue"],
+.ogk-customMission-colorChoice [data-marked="blue"]:hover,
+.ogl-option.choice-color[data-marked="blue"],
+.ogk-customMission[data-marked="blue"]:after {
+  background-color: #009bd7 !important;
+  border-color: #009bd7 !important;
+}
+.ogk-customMission-colorChoice [data-marked="blue"] {
+  border-color: #009bd7 !important;
+}
+
+/*violet*/
+.ogk-customMission-colorChoice .ogl-active[data-marked="violet"],
+.ogk-customMission-colorChoice [data-marked="violet"]:hover,
+.ogl-option.choice-color[data-marked="violet"],
+.ogk-customMission[data-marked="violet"]:after {
+  background-color: #a833da !important;
+  border-color: #a833da !important;
+}
+.ogk-customMission-colorChoice [data-marked="violet"] {
+  border-color: #a833da !important;
+}
+
+/*gray*/
+.ogk-customMission-colorChoice .ogl-active[data-marked="gray"],
+.ogk-customMission-colorChoice [data-marked="gray"]:hover,
+.ogl-option.choice-color[data-marked="gray"],
+.ogk-customMission[data-marked="gray"]:after {
+  background-color: #b7babd !important;
+  border-color: #b7babd !important;
+}
+.ogk-customMission-colorChoice [data-marked="gray"] {
+  border-color: #b7babd !important;
+}
+
+/*orange*/
+.ogk-customMission-colorChoice .ogl-active[data-marked="orange"],
+.ogk-customMission-colorChoice [data-marked="orange"]:hover,
+.ogl-option.choice-color[data-marked="orange"],
+.ogk-customMission[data-marked="orange"]:after {
+  background-color: #ffa800 !important;
+  border-color: #ffa800 !important;
+}
+.ogk-customMission-colorChoice [data-marked="orange"] {
+  border-color: #ffa800 !important;
+}
+
+/*brown*/
+.ogk-customMission-colorChoice .ogl-active[data-marked="brown"],
+.ogk-customMission-colorChoice [data-marked="brown"]:hover,
+.ogl-option.choice-color[data-marked="brown"],
+.ogk-customMission[data-marked="brown"]:after {
+  background-color: #a66437 !important;
+  border-color: #a66437 !important;
+}
+.ogk-customMission-colorChoice [data-marked="brown"] {
+  border-color: #a66437 !important;
+}
+
+.ogl-option.choice-customMission-icon.choice-color:hover {
+  border: solid 1px #da961a !important;
 }
 
 .ogk-customMission.ogk-customMission-1::after {

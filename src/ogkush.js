@@ -16266,6 +16266,7 @@ class OGInfinity {
               keepSpeed: false,
               resources: true,
               target: {},
+              color: "orange",
             };
           }
 
@@ -16306,6 +16307,7 @@ class OGInfinity {
           let btnCollect = missionsDiv.appendChild(
             createDOM("button", {
               class: `${customMissionClass} ${missionClass} ${shipClass}`,
+              "data-marked": this.json.options.customMissions[customMissionId].color,
             })
           );
 
@@ -16371,6 +16373,14 @@ class OGInfinity {
               class: `ogl-option choice-target ${
                 this.json.options.customMissions[customMissionId].target[currentId].type == 3 ? "moon" : "planet"
               }`,
+            })
+          );
+
+          //color choice
+          let color = optionsDivSettings.appendChild(
+            createDOM("div", {
+              class: `ogl-option choice-customMission-icon choice-color`,
+              "data-marked": this.json.options.customMissions[customMissionId].color,
             })
           );
 
@@ -16497,6 +16507,34 @@ class OGInfinity {
             this.popup(false, container);
             this.saveData();
           });
+
+          color.addEventListener("click", () => {
+            const colors = ["red", "orange", "yellow", "green", "blue", "violet", "gray", "brown"];
+
+            let container = DOM.createDOM("div", { class: "ogk-customMission-colorChoice" });
+            colors.forEach((colorName) => {
+              const circle = container.appendChild(createDOM("div", { "data-marked": colorName }));
+              container.appendChild(circle);
+              if (this.json.options.customMissions[customMissionId].color == colorName) {
+                circle.classList.add("ogl-active");
+              }
+
+              circle.addEventListener("click", () => {
+                this.json.options.customMissions[customMissionId].color = colorName;
+                this.saveData();
+                // Update UI
+                btnCollect.setAttribute("data-marked", colorName);
+                color.setAttribute("data-marked", colorName);
+                container.querySelectorAll("div[data-marked]").forEach((e) => e.classList.remove("ogl-active"));
+                circle.classList.add("ogl-active");
+                container.closest(".ogl-dialog").querySelector(".close-tooltip").click();
+              });
+            });
+
+            this.popup(false, container);
+            this.saveData();
+          });
+
           btnCollect.addEventListener("mouseover", () => this.tooltip(btnCollect, optionsDiv, false, false, 500));
           btnCollect.addEventListener("click", () => {
             if (btnCollectProcessing) {
