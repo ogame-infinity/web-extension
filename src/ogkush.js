@@ -16258,6 +16258,7 @@ class OGInfinity {
               mission: 4,
               rotation: false,
               keepSpeed: false,
+              resources: true,
               target: {},
             };
           }
@@ -16324,6 +16325,26 @@ class OGInfinity {
             );
           };
 
+          const forseResourcesUsing = (used) => {
+            this.json.options.customMissions[customMissionId].resources = used;
+            resources.classList.remove("highlight");
+            if (used) {
+              resources.classList.add("highlight");
+            }
+          };
+
+          const toggleResources = () => {
+            forseResourcesUsing(!this.json.options.customMissions[customMissionId].resources);
+            if (
+              !this.json.options.customMissions[customMissionId].resources &&
+              this.json.options.customMissions[customMissionId].ship !== "select-most" &&
+              this.json.options.customMissions[customMissionId].ship !== "sendall"
+            ) {
+              updateDefaultCollectShip("select-most");
+            }
+            this.saveData();
+          };
+
           //fleet choices
           const selectmost = createFleetChoice("select-most");
           const sendall = createFleetChoice("sendall");
@@ -16331,7 +16352,6 @@ class OGInfinity {
           const lc = createFleetChoice(203);
           const pf = createFleetChoice(219);
 
-          optionsDivMission.appendChild(createDOM("div"));
           //mission choices
           const tr = createMissionChoice(3);
           const dp = createMissionChoice(4);
@@ -16369,6 +16389,15 @@ class OGInfinity {
             this.saveData();
           });
 
+          //resources choice
+          const resources = optionsDivMission.appendChild(
+            createDOM("div", { class: "ogl-option choice-customMission-icon customMission-resources" })
+          );
+          resources.classList.toggle("highlight", this.json.options.customMissions[customMissionId].resources);
+          resources.addEventListener("click", () => {
+            toggleResources();
+          });
+
           let updateCollectTooltipIcon = () => {
             let remove =
               this.json.options.customMissions[customMissionId].target[currentId].type == 1 ? "moon" : "planet";
@@ -16395,6 +16424,11 @@ class OGInfinity {
 
           let updateDefaultCollectShip = (shipId) => {
             this.json.options.customMissions[customMissionId].ship = shipId;
+
+            if (shipId !== "select-most" && shipId !== "sendall") {
+              forseResourcesUsing(true);
+            }
+
             this.saveData();
 
             const missionClass = getMissionClass(this.json.options.customMissions[customMissionId].mission);
@@ -16512,7 +16546,9 @@ class OGInfinity {
 
               //select cargo
               document.querySelector(".ogl-cargo a.send_none").click();
-              document.querySelector(".ogl-cargo a.select-most").click();
+              if (this.json.options.customMissions[customMissionId].resources) {
+                document.querySelector(".ogl-cargo a.select-most").click();
+              }
 
               //fleet selection
               fleetDispatcher.resetShips();
@@ -16530,7 +16566,9 @@ class OGInfinity {
               fleetDispatcher.refresh();
 
               //reselect cargo
-              document.querySelector(".ogl-cargo a.select-most").click();
+              if (this.json.options.customMissions[customMissionId].resources) {
+                document.querySelector(".ogl-cargo a.select-most").click();
+              }
 
               let nextId = currentId;
               if (this.json.options.customMissions[customMissionId].rotation) {
