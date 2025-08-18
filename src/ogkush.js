@@ -1631,7 +1631,7 @@ class OGInfinity {
     this.harvest();
     this.expedition();
     this.collect();
-    this.fleetCollectAutoRoute(2);
+    this.customMissions();
     this.messagesAnalyzer();
     this.cleanupMessages();
     this.quickPlanetList();
@@ -14583,7 +14583,7 @@ class OGInfinity {
     let span = standardMissions.appendChild(
       createDOM(
         "span",
-        { style: "display: flex;justify-content: space-between; align-items: center;" },
+        { style: "display: flex;justify-content: space-between; align-items: center;", class: "ogl-w-300" },
         this.getTranslatedText(30)
       )
     );
@@ -14623,7 +14623,7 @@ class OGInfinity {
     span = standardMissions.appendChild(
       createDOM(
         "span",
-        { style: "display: flex;justify-content: space-between; align-items: center;" },
+        { style: "display: flex;justify-content: space-between; align-items: center;", class: "ogl-w-300" },
         this.getTranslatedText(31)
       )
     );
@@ -14659,7 +14659,7 @@ class OGInfinity {
     span = standardMissions.appendChild(
       createDOM(
         "span",
-        { style: "display: flex;justify-content: space-between; align-items: center;" },
+        { style: "display: flex;justify-content: space-between; align-items: center;", class: "ogl-w-300" },
         this.getTranslatedText(32)
       )
     );
@@ -14692,6 +14692,23 @@ class OGInfinity {
       expe6.classList.remove("ogl-active");
       this.json.options.expeditionMission = 0;
     });
+
+    settingDiv.appendChild(createDOM("hr"));
+    let customMissions = settingDiv.appendChild(createDOM("div"));
+    customMissions.appendChild(createDOM("h1", {}, this.getTranslatedText(195)));
+    let nbCustomMissionsDiv = customMissions.appendChild(createDOM("div", { class: "ogl-w-200" }));
+
+    nbCustomMissionsDiv.appendChild(
+      createDOM("span", { style: "justify-content: space-between; align-items: center;" }, this.getTranslatedText(196))
+    );
+
+    const nbCustomMissionsSelect = DOM.createDOM("select", { class: "ogl-selectInput ogl-w-50" });
+    for (let i = 0; i <= 5; i++) {
+      nbCustomMissionsSelect.append(DOM.createDOM("option", { value: i.toString() }, i.toString()));
+    }
+    nbCustomMissionsSelect.value = getOption("nbCustomMissions");
+    nbCustomMissionsDiv.appendChild(nbCustomMissionsSelect);
+
     settingDiv.appendChild(createDOM("hr"));
     let keys = settingDiv.appendChild(createDOM("div", { style: "display: grid;" }));
     keys.appendChild(createDOM("h1", {}, this.getTranslatedText(147)));
@@ -14749,6 +14766,8 @@ class OGInfinity {
       this.json.options.expedition.rotationAfter = Math.max(1, Math.min(~~expeditionRotationAfter.value, 16));
       setOption("standardUnitBase", standardUnitInput.value);
       setOption("alertHostileIncomingMode", alertHostileIncomingMode.value);
+      setOption("nbCustomMissions", nbCustomMissionsSelect.value);
+
       this.json.needSync = true;
       this.saveData();
       document.querySelector(".ogl-dialog .close-tooltip").click();
@@ -16201,14 +16220,15 @@ class OGInfinity {
     }
   }
 
-  fleetCollectAutoRoute(nbRoutes) {
+  customMissions() {
     if (this.page == "fleetdispatch" && fleetDispatcher.shipsOnPlanet.length !== 0 && !fleetDispatcher.isOnVacation) {
-      let routesDiv = document.querySelector("#allornone .secondcol");
-      const maxRoutes = 5;
-      if (nbRoutes > maxRoutes) nbRoutes = maxRoutes;
-      const fillerCount = maxRoutes - nbRoutes;
+      let missionsDiv = document.querySelector("#allornone .secondcol");
+      const maxMissions = 5;
+      let nbMissions = getOption("nbCustomMissions");
+      if (nbMissions > maxMissions) nbMissions = maxMissions;
+      const fillerCount = maxMissions - nbMissions;
       for (let i = 0; i < fillerCount; i++) {
-        routesDiv.appendChild(createDOM("div"));
+        missionsDiv.appendChild(createDOM("div"));
       }
 
       //ensure no double clicks
@@ -16230,10 +16250,10 @@ class OGInfinity {
         return false;
       };
       wait.waitFor(everyThingIsReady).then(() => {
-        for (let routeId = 1; routeId <= nbRoutes; routeId++) {
-          //init default route if not exists
-          if (!this.json.options.route[routeId]) {
-            this.json.options.route[routeId] = {
+        for (let customMissionId = 1; customMissionId <= nbMissions; customMissionId++) {
+          //init default customMission if not exists
+          if (!this.json.options.customMissions[customMissionId]) {
+            this.json.options.customMissions[customMissionId] = {
               ship: 202,
               mission: 4,
               rotation: false,
@@ -16242,8 +16262,8 @@ class OGInfinity {
             };
           }
 
-          if (!this.json.options.route[routeId].target[currentId]) {
-            this.json.options.route[routeId].target[currentId] = {
+          if (!this.json.options.customMissions[customMissionId].target[currentId]) {
+            this.json.options.customMissions[customMissionId].target[currentId] = {
               galaxy: currentFromEmpire.galaxy,
               system: currentFromEmpire.system,
               position: currentFromEmpire.position,
@@ -16253,29 +16273,29 @@ class OGInfinity {
             };
           }
 
-          const routeClassSelector = `.ogl-collect.ogk-route.ogk-route-${routeId}`;
-          const routeClass = `ogl-collect ogk-route ogk-route-${routeId}`;
-          const missionClass = this.json.options.route[routeId].mission == 4 ? "statio" : "";
-          const optionClass = `ogk-collect-cargo ogk-route ogk-route-${routeId}`;
-          const optionClassSelector = `.ogk-collect-cargo.ogk-route.ogk-route-${routeId}`;
+          const customMissionClassSelector = `.ogl-collect.ogk-customMission.ogk-customMission-${customMissionId}`;
+          const customMissionClass = `ogl-collect ogk-customMission ogk-customMission-${customMissionId}`;
+          const missionClass = this.json.options.customMissions[customMissionId].mission == 4 ? "statio" : "";
+          const optionClass = `ogk-collect-cargo ogk-customMission ogk-customMission-${customMissionId}`;
+          const optionClassSelector = `.ogk-collect-cargo.ogk-customMission.ogk-customMission-${customMissionId}`;
 
           const shipClass =
-            this.json.options.route[routeId].ship === "select-most"
+            this.json.options.customMissions[customMissionId].ship === "select-most"
               ? "select-most"
-              : this.json.options.route[routeId].ship === "sendall"
+              : this.json.options.customMissions[customMissionId].ship === "sendall"
               ? "sendall"
-              : this.json.options.route[routeId].ship == 202
+              : this.json.options.customMissions[customMissionId].ship == 202
               ? "smallCargo"
-              : this.json.options.route[routeId].ship == 219
+              : this.json.options.customMissions[customMissionId].ship == 219
               ? "pathFinder"
               : "largeCargo";
 
           let optionsDiv = createDOM("div", { class: optionClass });
           const optionsDivFleet = optionsDiv.appendChild(createDOM("div", { class: "ogi-fleet-options" }));
           const optionsDivMission = optionsDiv.appendChild(createDOM("div", { class: "ogi-mission-options" }));
-          let btnCollect = routesDiv.appendChild(
+          let btnCollect = missionsDiv.appendChild(
             createDOM("button", {
-              class: `${routeClass} ${missionClass} ${shipClass}`,
+              class: `${customMissionClass} ${missionClass} ${shipClass}`,
             })
           );
 
@@ -16288,15 +16308,17 @@ class OGInfinity {
                 : `ogl-option ogl-fleet-ship choice ogl-fleet-${shipId}`;
             return optionsDivFleet.appendChild(
               createDOM("div", {
-                class: `${shipClass} ${this.json.options.route[routeId].ship === shipId ? "highlight" : ""}`,
+                class: `${shipClass} ${
+                  this.json.options.customMissions[customMissionId].ship === shipId ? "highlight" : ""
+                }`,
               })
             );
           };
-          const createMissionChoice = (missionId) => {
+          const createMissionChoice = (mission) => {
             return optionsDivMission.appendChild(
               createDOM("div", {
-                class: `ogl-option choice-mission-icon ogl-mission-${missionId} ${
-                  this.json.options.route[routeId].mission === missionId ? "highlight" : ""
+                class: `ogl-option choice-mission-icon ogl-mission-${mission} ${
+                  this.json.options.customMissions[customMissionId].mission === mission ? "highlight" : ""
                 }`,
               })
             );
@@ -16318,36 +16340,39 @@ class OGInfinity {
           let tgt = optionsDivMission.appendChild(
             createDOM("div", {
               class: `ogl-option choice-target ${
-                this.json.options.route[routeId].target[currentId].type == 3 ? "moon" : "planet"
+                this.json.options.customMissions[customMissionId].target[currentId].type == 3 ? "moon" : "planet"
               }`,
             })
           );
 
           //rotation choice
           const rotation = optionsDivMission.appendChild(
-            createDOM("div", { class: "ogl-option choice-route-icon route-rotation" })
+            createDOM("div", { class: "ogl-option choice-customMission-icon customMission-rotation" })
           );
-          rotation.classList.toggle("highlight", this.json.options.route[routeId].rotation);
+          rotation.classList.toggle("highlight", this.json.options.customMissions[customMissionId].rotation);
           rotation.addEventListener("click", () => {
             rotation.classList.toggle("highlight");
-            this.json.options.route[routeId].rotation = !this.json.options.route[routeId].rotation;
+            this.json.options.customMissions[customMissionId].rotation =
+              !this.json.options.customMissions[customMissionId].rotation;
             this.saveData();
           });
 
           //keep speed choice
           const keepSpeed = optionsDivMission.appendChild(
-            createDOM("div", { class: "ogl-option choice-route-icon route-keep-speed" })
+            createDOM("div", { class: "ogl-option choice-customMission-icon customMission-keep-speed" })
           );
-          keepSpeed.classList.toggle("highlight", this.json.options.route[routeId].keepSpeed);
+          keepSpeed.classList.toggle("highlight", this.json.options.customMissions[customMissionId].keepSpeed);
           keepSpeed.addEventListener("click", () => {
             keepSpeed.classList.toggle("highlight");
-            this.json.options.route[routeId].keepSpeed = !this.json.options.route[routeId].keepSpeed;
+            this.json.options.customMissions[customMissionId].keepSpeed =
+              !this.json.options.customMissions[customMissionId].keepSpeed;
             this.saveData();
           });
 
           let updateCollectTooltipIcon = () => {
-            let remove = this.json.options.route[routeId].target[currentId].type == 1 ? "moon" : "planet";
-            let add = this.json.options.route[routeId].target[currentId].type == 3 ? "moon" : "planet";
+            let remove =
+              this.json.options.customMissions[customMissionId].target[currentId].type == 1 ? "moon" : "planet";
+            let add = this.json.options.customMissions[customMissionId].target[currentId].type == 3 ? "moon" : "planet";
             let classList = optionsDivMission.querySelector(".choice-target").classList;
             if (classList.contains(remove)) classList.remove(remove);
             if (!classList.contains(add)) classList.add(add);
@@ -16365,18 +16390,20 @@ class OGInfinity {
               : "largeCargo";
           const getShipClassSelector = (shipId) =>
             shipId === "select-most" ? ".select-most" : shipId === "sendall" ? ".sendall" : `.ogl-fleet-${shipId}`;
-          const getMissionClass = (missionId) => (missionId == 4 ? "statio" : "");
-          const getMissionClassSelector = (missionId) => `.ogl-mission-${missionId}`;
+          const getMissionClass = (mission) => (mission == 4 ? "statio" : "");
+          const getMissionClassSelector = (mission) => `.ogl-mission-${mission}`;
 
           let updateDefaultCollectShip = (shipId) => {
-            this.json.options.route[routeId].ship = shipId;
+            this.json.options.customMissions[customMissionId].ship = shipId;
             this.saveData();
 
-            const missionClass = getMissionClass(this.json.options.route[routeId].mission);
+            const missionClass = getMissionClass(this.json.options.customMissions[customMissionId].mission);
             const shipClass = getShipClass(shipId);
             const shipOptionClassSelector = getShipClassSelector(shipId);
 
-            document.querySelector(routeClassSelector).classList = `${routeClass} ${missionClass} ${shipClass}`;
+            document.querySelector(
+              customMissionClassSelector
+            ).classList = `${customMissionClass} ${missionClass} ${shipClass}`;
 
             const oldHighlight = optionsDivFleet.querySelector(".highlight");
             if (oldHighlight) oldHighlight.classList.remove("highlight");
@@ -16386,14 +16413,18 @@ class OGInfinity {
           };
 
           let updateDefaultCollectMission = (mission) => {
-            this.json.options.route[routeId].mission = mission;
+            this.json.options.customMissions[customMissionId].mission = mission;
             this.saveData();
 
-            const missionClass = getMissionClass(this.json.options.route[routeId].mission);
-            const missionClassSelector = getMissionClassSelector(this.json.options.route[routeId].mission);
-            const shipClass = getShipClass(this.json.options.route[routeId].ship);
+            const missionClass = getMissionClass(this.json.options.customMissions[customMissionId].mission);
+            const missionClassSelector = getMissionClassSelector(
+              this.json.options.customMissions[customMissionId].mission
+            );
+            const shipClass = getShipClass(this.json.options.customMissions[customMissionId].ship);
 
-            document.querySelector(routeClassSelector).classList = `${routeClass} ${missionClass} ${shipClass}`;
+            document.querySelector(
+              customMissionClassSelector
+            ).classList = `${customMissionClass} ${missionClass} ${shipClass}`;
 
             const oldHighlight = optionsDivMission.querySelector(".highlight");
             if (oldHighlight) oldHighlight.classList.remove("highlight");
@@ -16412,13 +16443,13 @@ class OGInfinity {
           tgt.addEventListener("click", () => {
             let container = this.openPlanetList(
               (planet) => {
-                this.json.options.route[routeId].target[currentId] = planet;
+                this.json.options.customMissions[customMissionId].target[currentId] = planet;
                 document.querySelector(".ogl-dialogOverlay").classList.remove("ogl-active");
                 this.saveData();
                 updateCollectTooltipIcon();
               },
-              this.json.options.route[routeId].target[currentId],
-              this.json.options.route[routeId].mission
+              this.json.options.customMissions[customMissionId].target[currentId],
+              this.json.options.customMissions[customMissionId].mission
             );
             this.popup(false, container);
             this.saveData();
@@ -16432,7 +16463,7 @@ class OGInfinity {
             try {
               btnCollectProcessing = true;
 
-              const selectedRoute = this.json.options.route[routeId];
+              const selectedRoute = this.json.options.customMissions[customMissionId];
               const selectedTarget = selectedRoute.target[currentId];
 
               //resest
@@ -16502,7 +16533,7 @@ class OGInfinity {
               document.querySelector(".ogl-cargo a.select-most").click();
 
               let nextId = currentId;
-              if (this.json.options.route[routeId].rotation) {
+              if (this.json.options.customMissions[customMissionId].rotation) {
                 nextId = this.current.planet.nextElementSibling.id
                   ? this.current.planet.nextElementSibling.id.split("-")[1]
                   : document.querySelectorAll(".smallplanet")[0].id.split("-")[1];
@@ -16515,7 +16546,7 @@ class OGInfinity {
                 "https://" +
                 window.location.host +
                 window.location.pathname +
-                `?page=ingame&component=fleetdispatch&cp=${nextId}&galaxy=${selectedTarget.galaxy}&system=${selectedTarget.system}&position=${selectedTarget.position}&type=${selectedTarget.type}&mission=${selectedRoute.mission}&oglMode=${ogiMode.AUTOROUTE}&routeId=${routeId}`;
+                `?page=ingame&component=fleetdispatch&cp=${nextId}&galaxy=${selectedTarget.galaxy}&system=${selectedTarget.system}&position=${selectedTarget.position}&type=${selectedTarget.type}&mission=${selectedRoute.mission}&oglMode=${ogiMode.CUSTOM_MISSION}&customMissionId=${customMissionId}`;
             } catch (error) {
               logger.error(error);
             } finally {
@@ -16524,11 +16555,11 @@ class OGInfinity {
           });
         }
 
-        if (this.mode == ogiMode.AUTOROUTE /*&& fleetDispatcher.fleetCount < fleetDispatcher.maxFleetCount*/) {
-          let urlRouteId = this.rawURL.searchParams.get("routeId");
-          if (urlRouteId) {
-            urlRouteId = parseInt(urlRouteId);
-            if (this.json.options.route[urlRouteId].keepSpeed) {
+        if (this.mode == ogiMode.CUSTOM_MISSION && fleetDispatcher.fleetCount < fleetDispatcher.maxFleetCount) {
+          let urlcustomMissionId = this.rawURL.searchParams.get("customMissionId");
+          if (urlcustomMissionId) {
+            urlcustomMissionId = parseInt(urlcustomMissionId);
+            if (this.json.options.customMissions[urlcustomMissionId].keepSpeed) {
               const lastSentFleet = OGIData.lastSentFleet;
 
               if (lastSentFleet?.speedPercent) {
@@ -16537,10 +16568,12 @@ class OGInfinity {
               }
             }
 
-            if (this.json.options.route[urlRouteId].rotation) {
-              const routeButton = document.querySelector(`.ogl-collect.ogk-route.ogk-route-${urlRouteId}`);
-              if (routeButton) {
-                routeButton.click();
+            if (this.json.options.customMissions[urlRouteId].rotation) {
+              const customMissionButton = document.querySelector(
+                `.ogl-collect.ogk-customMission.ogk-customMission-${urlRouteId}`
+              );
+              if (customMissionButton) {
+                customMissionButton.click();
               }
             }
           }

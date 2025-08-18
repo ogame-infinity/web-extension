@@ -2058,6 +2058,22 @@ const translation = Object.freeze({
       br: "Lua",
     },
     195: {
+      de: "Benutzerdefinierte Missionen",
+      en: "Custom missions",
+      es: "Misiónes personalizadas",
+      fr: "Missions personnalisées",
+      tr: "Özel görevler",
+      br: "Missões personalizadas",
+    },
+    196: {
+      de: "Anzahl der Missionen",
+      en: "Number of missions",
+      es: "Número de misiones",
+      fr: "Nombre de missions",
+      tr: "Görevlerin sayısı",
+      br: "Número de missões",
+    },
+    197: {
       de: undefined,
       en: undefined,
       es: undefined,

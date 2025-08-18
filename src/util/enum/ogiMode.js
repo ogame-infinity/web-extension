@@ -6,5 +6,5 @@ export default Object.freeze({
   RAID: 4, //click ship amount in spylist
   UNKNOWN_NB_5: 5, //? (seems some harvest mode, not in use, remanent traces of code, use for autoraid? (to be implemented))
   AUTOEXPEDITION: 6, //click expedition button/keyE or expedition button in galaxy
-  AUTOROUTE: 7,
+  CUSTOM_MISSION: 7, //custom mission, set by the player
 });

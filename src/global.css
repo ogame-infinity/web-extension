@@ -500,8 +500,17 @@ input[type="password"]::selection {
 .ogl-settings .ogl-simulator {
   width: 190px !important;
 }
+.ogl-settings .ogl-w-50 {
+  width: 50px !important;
+}
 .ogl-settings .ogl-w-125 {
   width: 125px !important;
+}
+.ogl-settings .ogl-w-200 {
+  width: 200px !important;
+}
+.ogl-settings .ogl-w-300 {
+  width: 300px !important;
 }
 
 .ogl-settings .ogl-right {
@@ -1280,7 +1289,7 @@ input[type="password"]::selection {
   transform: scale(0.75);
 }
 
-.ogl-collect.ogk-route.sendall {
+.ogl-collect.ogk-customMission.sendall {
   background: url("chrome-extension://__MSG_@@extension_id__/assets/images/sendall.jpg") no-repeat left top !important;
   background-size: 29px !important;
   filter: unset !important;
@@ -1383,7 +1392,7 @@ input[type="password"]::selection {
   height: 32px;
   width: 32px;
 }
-.ogl-collect.ogk-route.select-most {
+.ogl-collect.ogk-customMission.select-most {
   background: url("chrome-extension://__MSG_@@extension_id__/assets/images/select_most.jpg") no-repeat left top !important;
   background-size: 29px !important;
   filter: unset !important;
@@ -8492,7 +8501,7 @@ li.resource {
   border-color: #b00001;
 }
 
-.ogl-tooltip .ogk-collect-cargo:not(.ogk-route) {
+.ogl-tooltip .ogk-collect-cargo:not(.ogk-customMission) {
   width: auto;
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -8504,16 +8513,16 @@ li.resource {
   grid-template-columns: repeat(6, 1fr);
 }
 
-.ogl-tooltip .ogk-route .choice,
-.ogl-tooltip .ogk-route .choice-mission-icon,
+.ogl-tooltip .ogk-customMission .choice,
+.ogl-tooltip .ogk-customMission .choice-mission-icon,
 .ogl-tooltip .ogk-collect-cargo .choice,
 .ogl-tooltip .ogk-collect-cargo .choice-mission-icon,
 .ogl-tooltip .ogk-expedition-options .choice {
   filter: brightness(0.75);
   background-blend-mode: luminosity;
 }
-.ogl-tooltip .ogk-route .choicee.highlight,
-.ogl-tooltip .ogk-route .choice-mission-icone.highlight,
+.ogl-tooltip .ogk-customMission .choicee.highlight,
+.ogl-tooltip .ogk-customMission .choice-mission-icon.highlight,
 .ogl-tooltip .ogk-collect-cargo .choice.highlight,
 .ogl-tooltip .ogk-collect-cargo .choice-mission-icon.highlight,
 .ogl-tooltip .ogk-expedition-options .choice.highlight {
@@ -8532,7 +8541,7 @@ li.resource {
   grid-template-columns: repeat(6, 1fr);
 }
 
-.choice-route-icon,
+.choice-customMission-icon,
 .choice-expedition-icon {
   width: 25px;
   height: 25px;
@@ -8543,23 +8552,23 @@ li.resource {
   background-position: calc(-25px * 12) calc(-25px * 0) !important;
   overflow: hidden;
 }
-.choice-route-icon:hover,
+.choice-customMission-icon:hover,
 .choice-expedition-icon:hover {
   border: solid 1px #da961a;
 }
-.choice-route-icon.route-rotation,
+.choice-customMission-icon.customMission-rotation,
 .choice-expedition-icon.expedition-rotation {
   background-position: calc(-25px * 12) calc(-25px * 0) !important;
 }
-.choice-route-icon.route-rotation.highlight,
+.choice-customMission-icon.customMission-rotation.highlight,
 .choice-expedition-icon.expedition-rotation.highlight {
   background-position: calc(-25px * 12) calc(-25px * 1) !important;
   border: solid 1px #da961a;
 }
-.choice-route-icon.route-keep-speed {
+.choice-customMission-icon.customMission-keep-speed {
   background-position: calc(-25px * 9) calc(-25px * 0) !important;
 }
-.choice-route-icon.route-keep-speed.highlight {
+.choice-customMission-icon.customMission-keep-speed.highlight {
   background-position: calc(-25px * 9) calc(-25px * 1) !important;
   border: solid 1px #da961a;
 }
@@ -8708,7 +8717,7 @@ li.resource {
   width: 28px;
 }
 
-.ogl-collect:not(.ogk-route):before {
+.ogl-collect:not(.ogk-customMission):before {
   background: url(https://gf2.geo.gfsrv.net/cdn14/f45a18b5e55d2d38e7bdc3151b1fee.jpg) no-repeat;
   background-size: calc(36px * 11) !important;
   background-position: -40px -5px;
@@ -8724,11 +8733,11 @@ li.resource {
   width: 28px;
 }
 
-.ogl-collect.ogk-route {
+.ogl-collect.ogk-customMission {
   margin-top: 10px;
 }
 
-.ogl-collect.ogk-route:before {
+.ogl-collect.ogk-customMission:before {
   background: url(https://gf2.geo.gfsrv.net/cdn14/f45a18b5e55d2d38e7bdc3151b1fee.jpg) no-repeat;
   background-size: calc(36px * 11) !important;
   background-position: -184px -4px;
@@ -8742,11 +8751,11 @@ li.resource {
   transform-origin: top right;
   width: 28px;
 }
-.ogl-collect.ogk-route.statio:before {
+.ogl-collect.ogk-customMission.statio:before {
   background-position: -112px -4px;
 }
 
-.ogl-collect.ogk-route:after {
+.ogl-collect.ogk-customMission:after {
   background-color: #d29d00;
   border: 1px solid #000;
   border-bottom: none;
@@ -8764,23 +8773,23 @@ li.resource {
   font-weight: bolder;
 }
 
-.ogl-collect.ogk-route.ogk-route-1::after {
+.ogl-collect.ogk-customMission.ogk-customMission-1::after {
   content: "1";
 }
-.ogl-collect.ogk-route.ogk-route-2::after {
+.ogl-collect.ogk-customMission.ogk-customMission-2::after {
   content: "2";
 }
-.ogl-collect.ogk-route.ogk-route-3::after {
+.ogl-collect.ogk-customMission.ogk-customMission-3::after {
   content: "3";
 }
-.ogl-collect.ogk-route.ogk-route-4::after {
+.ogl-collect.ogk-customMission.ogk-customMission-4::after {
   content: "4";
 }
-.ogl-collect.ogk-route.ogk-route-5::after {
+.ogl-collect.ogk-customMission.ogk-customMission-5::after {
   content: "5";
 }
 
-.ogl-collect:not(.ogk-route):after {
+.ogl-collect:not(.ogk-customMission):after {
   background: url(https://gf2.geo.gfsrv.net/cdn14/f45a18b5e55d2d38e7bdc3151b1fee.jpg) no-repeat;
   background-size: calc(36px * 11) !important;
   background-position: -184px -4px;
