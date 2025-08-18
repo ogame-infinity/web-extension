@@ -13677,6 +13677,12 @@ class OGInfinity {
             }
           }
           if (document.activeElement.tagName != "INPUT" && !!document.querySelector("#continueToFleet2")) {
+            if (event.ctrlKey && ["1", "2", "3", "4", "5"].includes(event.key)) {
+              //prevent default action from browser
+              event.preventDefault();
+              const customMissionButton = document.querySelector(`.ogk-customMission.ogk-customMission-${event.key}`);
+              if (customMissionButton) customMissionButton.click();
+            }
             if (event.key.toUpperCase() == "E") {
               document.querySelector(".ogl-expedition").click();
               document.querySelector("#continueToFleet2").click();
