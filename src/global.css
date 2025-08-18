@@ -1289,7 +1289,7 @@ input[type="password"]::selection {
   transform: scale(0.75);
 }
 
-.ogl-collect.ogk-customMission.sendall {
+.ogk-customMission.sendall {
   background: url("chrome-extension://__MSG_@@extension_id__/assets/images/sendall.jpg") no-repeat left top !important;
   background-size: 29px !important;
   filter: unset !important;
@@ -1392,7 +1392,7 @@ input[type="password"]::selection {
   height: 32px;
   width: 32px;
 }
-.ogl-collect.ogk-customMission.select-most {
+.ogk-customMission.select-most {
   background: url("chrome-extension://__MSG_@@extension_id__/assets/images/select_most.jpg") no-repeat left top !important;
   background-size: 29px !important;
   filter: unset !important;
@@ -8501,10 +8501,26 @@ li.resource {
   border-color: #b00001;
 }
 
-.ogl-tooltip .ogk-collect-cargo:not(.ogk-customMission) {
+.ogl-tooltip .ogk-collect-cargo {
   width: auto;
   display: grid;
   grid-template-columns: repeat(6, 1fr);
+}
+
+.ogl-tooltip .ogk-customMission-options {
+  width: auto;
+  display: grid;
+}
+.ogl-tooltip .ogk-customMission-options .ogk-customMission-options-3l {
+  grid-template-rows: repeat(3, 1fr);
+}
+.ogl-tooltip .ogk-customMission-options .ogk-customMission-options-6c {
+  justify-self: end;
+  grid-template-columns: repeat(6, 1fr);
+}
+.ogl-tooltip .ogk-customMission-options .ogk-customMission-options-5c {
+  justify-self: end;
+  grid-template-columns: repeat(5, 1fr);
 }
 
 .ogl-tooltip .ogk-expedition-options {
@@ -8695,6 +8711,7 @@ li.resource {
   opacity: 0.6;
 }
 
+.ogk-customMission,
 .ogl-collect,
 .ogl-expedition {
   background: url(https://gf2.geo.gfsrv.net/cdn7e/41c09757d8212f48fc574515c8bc87.jpg);
@@ -8725,7 +8742,7 @@ li.resource {
   width: 28px;
 }
 
-.ogl-collect:not(.ogk-customMission):before {
+.ogl-collect:before {
   background: url(https://gf2.geo.gfsrv.net/cdn14/f45a18b5e55d2d38e7bdc3151b1fee.jpg) no-repeat;
   background-size: calc(36px * 11) !important;
   background-position: -40px -5px;
@@ -8741,11 +8758,11 @@ li.resource {
   width: 28px;
 }
 
-.ogl-collect.ogk-customMission {
+.ogk-customMission {
   margin-top: 10px;
 }
 
-.ogl-collect.ogk-customMission:before {
+.ogk-customMission:before {
   background: url(https://gf2.geo.gfsrv.net/cdn14/f45a18b5e55d2d38e7bdc3151b1fee.jpg) no-repeat;
   background-size: calc(36px * 11) !important;
   background-position: -184px -4px;
@@ -8759,11 +8776,11 @@ li.resource {
   transform-origin: top right;
   width: 28px;
 }
-.ogl-collect.ogk-customMission.statio:before {
+.ogk-customMission.statio:before {
   background-position: -112px -4px;
 }
 
-.ogl-collect.ogk-customMission:after {
+.ogk-customMission:after {
   background-color: #d29d00;
   border: 1px solid #000;
   border-bottom: none;
@@ -8781,23 +8798,23 @@ li.resource {
   font-weight: bolder;
 }
 
-.ogl-collect.ogk-customMission.ogk-customMission-1::after {
+.ogk-customMission.ogk-customMission-1::after {
   content: "1";
 }
-.ogl-collect.ogk-customMission.ogk-customMission-2::after {
+.ogk-customMission.ogk-customMission-2::after {
   content: "2";
 }
-.ogl-collect.ogk-customMission.ogk-customMission-3::after {
+.ogk-customMission.ogk-customMission-3::after {
   content: "3";
 }
-.ogl-collect.ogk-customMission.ogk-customMission-4::after {
+.ogk-customMission.ogk-customMission-4::after {
   content: "4";
 }
-.ogl-collect.ogk-customMission.ogk-customMission-5::after {
+.ogk-customMission.ogk-customMission-5::after {
   content: "5";
 }
 
-.ogl-collect:not(.ogk-customMission):after {
+.ogl-collect:after {
   background: url(https://gf2.geo.gfsrv.net/cdn14/f45a18b5e55d2d38e7bdc3151b1fee.jpg) no-repeat;
   background-size: calc(36px * 11) !important;
   background-position: -184px -4px;
@@ -8817,11 +8834,13 @@ li.resource {
   background-position: -112px -4px;
 }
 
+.ogk-customMission:hover,
 .ogl-collect:hover,
 .ogl-expedition:hover {
   border: 1px solid orange;
 }
 
+.ogk-customMission.largeCargo,
 .ogl-collect.largeCargo,
 .ogl-expedition.largeCargo {
   background-position: calc(-9px * 30) 0 !important;
