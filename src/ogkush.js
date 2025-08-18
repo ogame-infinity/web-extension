@@ -16237,6 +16237,7 @@ class OGInfinity {
               ship: 202,
               mission: 4,
               rotation: false,
+              keepSpeed: false,
               target: {},
             };
           }
@@ -16309,7 +16310,6 @@ class OGInfinity {
           const pf = createFleetChoice(219);
 
           optionsDivMission.appendChild(createDOM("div"));
-          optionsDivMission.appendChild(createDOM("div"));
           //mission choices
           const tr = createMissionChoice(3);
           const dp = createMissionChoice(4);
@@ -16331,6 +16331,17 @@ class OGInfinity {
           rotation.addEventListener("click", () => {
             rotation.classList.toggle("highlight");
             this.json.options.route[routeId].rotation = !this.json.options.route[routeId].rotation;
+            this.saveData();
+          });
+
+          //keep speed choice
+          const keepSpeed = optionsDivMission.appendChild(
+            createDOM("div", { class: "ogl-option choice-route-icon route-keep-speed" })
+          );
+          keepSpeed.classList.toggle("highlight", this.json.options.route[routeId].keepSpeed);
+          keepSpeed.addEventListener("click", () => {
+            keepSpeed.classList.toggle("highlight");
+            this.json.options.route[routeId].keepSpeed = !this.json.options.route[routeId].keepSpeed;
             this.saveData();
           });
 
@@ -16490,20 +16501,21 @@ class OGInfinity {
               //reselect cargo
               document.querySelector(".ogl-cargo a.select-most").click();
 
+              let nextId = currentId;
               if (this.json.options.route[routeId].rotation) {
-                let nextId = this.current.planet.nextElementSibling.id
+                nextId = this.current.planet.nextElementSibling.id
                   ? this.current.planet.nextElementSibling.id.split("-")[1]
                   : document.querySelectorAll(".smallplanet")[0].id.split("-")[1];
                 if (this.current.isMoon) {
                   nextId = new URL(document.querySelector(`#planet-${nextId} .moonlink`).href).searchParams.get("cp");
                 }
-
-                this.onFleetSentRedirectUrl =
-                  "https://" +
-                  window.location.host +
-                  window.location.pathname +
-                  `?page=ingame&component=fleetdispatch&cp=${nextId}&galaxy=${selectedTarget.galaxy}&system=${selectedTarget.system}&position=${selectedTarget.position}&type=${selectedTarget.type}&mission=${selectedRoute.mission}&oglMode=${ogiMode.AUTOROUTE}&routeId=${routeId}`;
               }
+
+              this.onFleetSentRedirectUrl =
+                "https://" +
+                window.location.host +
+                window.location.pathname +
+                `?page=ingame&component=fleetdispatch&cp=${nextId}&galaxy=${selectedTarget.galaxy}&system=${selectedTarget.system}&position=${selectedTarget.position}&type=${selectedTarget.type}&mission=${selectedRoute.mission}&oglMode=${ogiMode.AUTOROUTE}&routeId=${routeId}`;
             } catch (error) {
               logger.error(error);
             } finally {
@@ -16512,20 +16524,21 @@ class OGInfinity {
           });
         }
 
-        if (this.mode == ogiMode.AUTOROUTE && fleetDispatcher.fleetCount < fleetDispatcher.maxFleetCount) {
+        if (this.mode == ogiMode.AUTOROUTE /*&& fleetDispatcher.fleetCount < fleetDispatcher.maxFleetCount*/) {
           let urlRouteId = this.rawURL.searchParams.get("routeId");
           if (urlRouteId) {
             urlRouteId = parseInt(urlRouteId);
-            if (this.json.options.route[urlRouteId].rotation) {
-              const routeButton = document.querySelector(`.ogl-collect.ogk-route.ogk-route-${urlRouteId}`);
-
+            if (this.json.options.route[urlRouteId].keepSpeed) {
               const lastSentFleet = OGIData.lastSentFleet;
 
               if (lastSentFleet?.speedPercent) {
                 fleetDispatcher.speedPercent = lastSentFleet.speedPercent;
                 document.querySelector(`.ogl-fleetSpeed [data-step=\"${lastSentFleet?.speedPercent}\"]`).click();
               }
+            }
 
+            if (this.json.options.route[urlRouteId].rotation) {
+              const routeButton = document.querySelector(`.ogl-collect.ogk-route.ogk-route-${urlRouteId}`);
               if (routeButton) {
                 routeButton.click();
               }

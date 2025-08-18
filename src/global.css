@@ -8556,6 +8556,13 @@ li.resource {
   background-position: calc(-25px * 12) calc(-25px * 1) !important;
   border: solid 1px #da961a;
 }
+.choice-route-icon.route-keep-speed {
+  background-position: calc(-25px * 9) calc(-25px * 0) !important;
+}
+.choice-route-icon.route-keep-speed.highlight {
+  background-position: calc(-25px * 9) calc(-25px * 1) !important;
+  border: solid 1px #da961a;
+}
 
 .choice-expedition-icon.expedition-fleet {
   background-position: calc(-25px * 4) calc(-25px * 0) !important;
