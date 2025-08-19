@@ -5707,8 +5707,8 @@ body.ogame select {
 }
 
 .ogl-fleet-value {
-  background-image: url(/cdn/img/item-images/18145145a76b71f151ba97b7c17891a5389ceeb5.png) !important;
-  background-size: contain !important;
+  background: url("chrome-extension://__MSG_@@extension_id__/assets/images/menuicons.png") -68px -23px;
+  background-size: calc(23px * 14) !important;
 }
 
 .ogl-moon-icon {
