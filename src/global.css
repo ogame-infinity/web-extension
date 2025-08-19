@@ -1291,7 +1291,8 @@ input[type="password"]::selection {
 
 .ogk-customMission.sendall {
   background: url("chrome-extension://__MSG_@@extension_id__/assets/images/sendall.jpg") no-repeat left top !important;
-  background-size: 29px !important;
+  background-size: 32px !important;
+  background-position: -2px -2px !important;
   filter: unset !important;
   transform: unset !important;
   width: 30px !important;
@@ -1394,7 +1395,8 @@ input[type="password"]::selection {
 }
 .ogk-customMission.select-most {
   background: url("chrome-extension://__MSG_@@extension_id__/assets/images/select_most.jpg") no-repeat left top !important;
-  background-size: 29px !important;
+  background-size: 32px !important;
+  background-position: -2px -2px !important;
   filter: unset !important;
 }
 
@@ -8789,16 +8791,18 @@ li.resource {
   border: 1px solid #000 !important;
   border-bottom: none !important;
   border-right: none !important;
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 18px;
   width: 18px;
   right: 0px;
   transform: scale(0.5);
   transform-origin: bottom right;
   position: absolute;
-  top: 9px;
-  text-align: center;
-  font-size: large;
+  bottom: 0px;
+  right: 0px;
+  font-size: larger;
   font-weight: bolder;
 }
 
