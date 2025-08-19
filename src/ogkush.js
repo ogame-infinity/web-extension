@@ -13416,7 +13416,7 @@ class OGInfinity {
       }
       return false;
     };
-    const avoidIn = ["chat_box_textarea", "markItUpEditor", "textBox"];
+    const avoidIn = ["chat_box_textarea", "markItUpEditor", "textBox", "textInput"];
     document.addEventListener("keydown", (event) => {
       if (avoidIn.some((avoidInClass) => document.activeElement.classList.contains(avoidInClass))) return;
       if (event.key == "Escape") {
