@@ -1125,9 +1125,18 @@ input[type="password"]::selection {
   filter: grayscale(1) !important;
 }
 
+.allornonewrap #sendall:hover {
+  filter: unset !important;
+  background-position-y: -162px;
+}
+
 .allornonewrap .select-most:hover,
 .allornonewrap .sendall:hover {
   filter: none !important;
+}
+.ogl-dispatch .ogl-cargo .select-most:hover,
+#allornone .secondcol.fleft span.select-most:hover {
+  background-position-y: 0px !important;
 }
 
 .ogl-cargo .select-most:hover,
