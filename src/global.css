@@ -9019,3 +9019,7 @@ div.ogi-movement .ogi-movement-target > div:nth-child(1) {
 .ogiSeeReportAboutMyself .detail_msg .messageDetails {
   margin-bottom: 0px !important;
 }
+
+.ogiSeeReportAboutMyself .detail_msg .messageDetails .msgContent {
+  margin: 15px 0px !important;
+}

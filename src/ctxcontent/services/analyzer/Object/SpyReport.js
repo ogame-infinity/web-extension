@@ -329,6 +329,8 @@ export class SpyReport {
         messageId: this.id,
       });
 
+      const msgContent = message.querySelector(".messageContentWrapper .msgContent");
+
       const removeElement = (parent, selector) => {
         const element = parent.querySelector(selector);
         if (element) element.remove();
@@ -346,10 +348,12 @@ export class SpyReport {
             });
             const messagedetails = parser.parseFromString(stringResponse, "text/html").querySelector("#messagedetails");
 
+            messagedetails.querySelector(".espionageInfo").appendChild(msgContent.cloneNode(true));
+
             removeElement(messagedetails, ".lootPercentage"); //removed becode from our own point of view
             /*removed because we don't need it*/
             removeElement(messagedetails, ".detail_msg_head");
-            removeElement(messagedetails, ".rawMessageData");
+            //removeElement(messagedetails, ".rawMessageData");
             removeElement(messagedetails, ".sectionTitle");
             removeElement(messagedetails, ".commentBlock");
             removeElement(messagedetails, ".commentsHolder");
