@@ -4,6 +4,7 @@ import { contentContextInit } from "../util/service.callbackEvent.js";
 import * as wait from "../util/wait.js";
 import { getExpeditionType } from "./callbacks/expedition-type.js";
 import { DataHelper } from "./data-helper.js";
+import { isChrome, isFirefox } from "../util/runContext.js";
 
 const mainLogger = getLogger();
 
@@ -17,6 +18,8 @@ contentContextInit({
     expeditionType: getExpeditionType,
   },
 });
+
+const browserApi = isChrome() ? chrome : isFirefox() ? browser : null;
 
 const UNIVERSE = window.location.host.split(".")[0];
 let universes = {};
@@ -93,10 +96,17 @@ document.addEventListener("ogi-clear", function (e) {
   dataHelper.clearData();
 });
 document.addEventListener("ogi-notification", function (e) {
-  try {
-    chrome.runtime.sendMessage({ type: "notification", universe: UNIVERSE, detail: e.detail }, function (response) {});
-  } catch (error) {
-    mainLogger.error("Error sending notification:", error);
+  if (browserApi) {
+    try {
+      browserApi.runtime.sendMessage(
+        { type: "notification", universe: UNIVERSE, detail: e.detail },
+        function (response) {
+          mainLogger.debug("Notification sent successfully:", response);
+        }
+      );
+    } catch (error) {
+      mainLogger.error("Error sending notification:", error);
+    }
   }
 });
 
