@@ -347,8 +347,10 @@ export class SpyReport {
               title: Translator.translate(188),
             });
             const messagedetails = parser.parseFromString(stringResponse, "text/html").querySelector("#messagedetails");
-
-            messagedetails.querySelector(".espionageInfo").appendChild(msgContent.cloneNode(true));
+            const spyReportMessageContent = messagedetails.querySelector(".messagedetails");
+            if (spyReportMessageContent) {
+              spyReportMessageContent.insertBefore(msgContent.cloneNode(true), spyReportMessageContent.firstChild);
+            }
 
             removeElement(messagedetails, ".lootPercentage"); //removed becode from our own point of view
             /*removed because we don't need it*/
