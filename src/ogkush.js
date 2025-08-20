@@ -1484,6 +1484,7 @@ class OGInfinity {
     this.json.playerMarkers = this.json.playerMarkers || {};
     this.json.markers = this.json.markers || {};
     this.json.missing = this.json.missing || {};
+    this.json.notifications = this.json.notifications || {};
     this.json.targetTabs = this.json.targetTabs || { g: 1, s: 0 };
     this.json.spyProbes = this.json.spyProbes || 5;
     this.json.openTooltip = this.json.openTooltip || false;
@@ -1703,6 +1704,13 @@ class OGInfinity {
     /*Fix banner styles for messages, premium and shop page*/
     if (this.page == "messages" || this.page == "premium" || this.page == "shop")
       document.querySelector("#banner_skyscraper").classList.add("fix-banner");
+
+    /*
+     * When browser is closed, all scheduled notifications are cleared
+     * => So we need to re-schedule the notification
+     * => close tab doesn't clear scheduled notifications
+     */
+    Notifier.RescheduleAllNotifications();
   }
 
   // remove when complete removal of direct probin in stalks and target list or GF start to wake up
@@ -14116,36 +14124,73 @@ class OGInfinity {
             toFormatedNumber(fleetCount, null, true) + " " + this.getTranslatedText(64)
           )
         );
-        if (!fleet.querySelector(".reversal")) return;
-        let back =
-          fleet.querySelector(".reversal a").title ||
-          fleet.querySelector(".reversal a").getAttribute("data-tooltip-title");
-        let splitted = back.split("|")[1].replace("<br>", "/").replace(/:|\./g, "/").split("/");
-        let backDate = {
-          year: splitted[2],
-          month: splitted[1],
-          day: splitted[0],
-          h: splitted[3],
-          m: splitted[4],
-          s: splitted[5],
-        };
-        let lastTimer = new Date(
-          backDate.year,
-          backDate.month - 1,
-          backDate.day,
-          backDate.h,
-          backDate.m,
-          backDate.s
-        ).getTime();
-        let content = details.appendChild(createDOM("div", { class: "ogl-date" }));
-        let date;
-        let updateTimer = () => {
-          lastTimer += 1e3;
-          date = new Date(lastTimer);
-          content.textContent = getFormatedDate(date.getTime(), "[d].[m].[y] - [G]:[i]:[s] ");
-        };
-        updateTimer();
-        setInterval(() => updateTimer(), 500);
+        const backButton = fleet.querySelector(".reversal a");
+        let isBack = false;
+        if (backButton) {
+          let back = backButton.title || backButton.getAttribute("data-tooltip-title");
+          let splitted = back.split("|")[1].replace("<br>", "/").replace(/:|\./g, "/").split("/");
+          let backDate = {
+            year: splitted[2],
+            month: splitted[1],
+            day: splitted[0],
+            h: splitted[3],
+            m: splitted[4],
+            s: splitted[5],
+          };
+          let lastTimer = new Date(
+            backDate.year,
+            backDate.month - 1,
+            backDate.day,
+            backDate.h,
+            backDate.m,
+            backDate.s
+          ).getTime();
+          let content = details.appendChild(createDOM("div", { class: "ogl-date" }));
+          let date;
+          let updateTimer = () => {
+            lastTimer += 1e3;
+            date = new Date(lastTimer);
+            content.textContent = getFormatedDate(date.getTime(), "[d].[m].[y] - [G]:[i]:[s] ");
+          };
+          updateTimer();
+          setInterval(() => updateTimer(), 500);
+        } else {
+          isBack = true;
+        }
+
+        if (Notifier.IsFleetMissionNotifiable(type)) {
+          const arrivalTime = fleet.querySelector(".timer").getAttribute("data-tooltip-title"); // Séparer la date et l'heure
+          const [datePart, timePart] = arrivalTime.split(" ");
+          const [dayPart, monthPart, yearPart] = datePart.split(".");
+          const formatedDate = `${yearPart}-${monthPart}-${dayPart}`;
+          const arrivaleDatetime = new Date(`${formatedDate}T${timePart}`);
+
+          const notifyMeButton = fleet.appendChild(createDOM("button", { class: "notify-me-button" }));
+
+          if (Notifier.IsFleetArrivalScheduled(id)) {
+            notifyMeButton.classList.add("active");
+          }
+
+          notifyMeButton.addEventListener("click", () => {
+            if (!Notifier.IsFleetArrivalScheduled(id)) {
+              Notifier.NotifyFleetArrival(id, destCoords, type, isBack, arrivaleDatetime);
+              if (!notifyMeButton.classList.contains("active")) {
+                notifyMeButton.classList.add("active");
+              }
+            } else {
+              Notifier.CancelFleetArrivalNotification(id);
+              if (notifyMeButton.classList.contains("active")) {
+                notifyMeButton.classList.remove("active");
+              }
+            }
+          });
+
+          if (backButton) {
+            backButton.addEventListener("click", () => {
+              Notifier.CancelFleetArrivalNotification(id);
+            });
+          }
+        }
       });
       if (lastFleetBtn) {
         lastFleetBtn.style.filter = "hue-rotate(180deg) saturate(150%)";

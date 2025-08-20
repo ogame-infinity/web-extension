@@ -1,6 +1,7 @@
 import OgamePageData from "./OgamePageData.js";
 import OGIData from "./OGIData.js";
 import { getLogger } from "./logger.js";
+import MissionType from "./enum/missionType.js";
 
 const translation = Object.freeze({
   tech: {
@@ -2049,7 +2050,127 @@ const translation = Object.freeze({
       tr: "Düşman Filosu Uyarı Modu",
       br: "Modo de alerta de frota hostil",
     },
-    188: {
+    198: {
+      de: "Eine Flotte ist an ihrem Ziel angekommen.",
+      en: "A fleet has arrived at its destination.",
+      es: "Una flota ha llegado a su destino.",
+      fr: "Une flotte est arrivée à sa destination.",
+      tr: "Bir filo varış noktasına ulaştı.",
+      br: "Uma frota chegou ao seu destino.",
+    },
+    199: {
+      de: "Mission",
+      en: "Mission",
+      es: "Misión",
+      fr: "Mission",
+      tr: "Görev",
+      br: "Missão",
+    },
+    200: {
+      de: "Angriff",
+      en: "Attack",
+      es: "Ataque",
+      fr: "Attaque",
+      tr: "Saldırı",
+      br: "Ataque",
+    },
+    201: {
+      de: "Transport",
+      en: "Transport",
+      es: "Transporte",
+      fr: "Transport",
+      tr: "Taşımacılık",
+      br: "Transporte",
+    },
+    202: {
+      de: "Stationierung",
+      en: "Deployment",
+      es: "Despliegue",
+      fr: "Stationnement",
+      tr: "Dağıtım",
+      br: "Desdobramento",
+    },
+    203: {
+      de: "Verteidigung",
+      en: "Defense",
+      es: "Defensa",
+      fr: "Défense",
+      tr: "Savunma",
+      br: "Defesa",
+    },
+    204: {
+      de: "Spion",
+      en: "Spy",
+      es: "Espionaje",
+      fr: "Espionnage",
+      tr: "Casus",
+      br: "Espião",
+    },
+    205: {
+      de: "Kolonisierung",
+      en: "Colonization",
+      es: "Colonización",
+      fr: "Colonisation",
+      tr: "Kolonizasyon",
+      br: "Colonização",
+    },
+    206: {
+      de: "Ernte",
+      en: "Harvest",
+      es: "Reciclaje",
+      fr: "Recyclage",
+      tr: "Hasat",
+      br: "Colheita",
+    },
+    207: {
+      de: "Mondzerstörung",
+      en: "Moon destruction",
+      es: "Destrucción de luna",
+      fr: "Destruction de lune",
+      tr: "Ay yok etme",
+      br: "Destruição da lua",
+    },
+    208: {
+      de: "Raketenangriff",
+      en: "Missile attack",
+      es: "Ataque de misiles",
+      fr: "Attaque de missiles",
+      tr: "Füze saldırısı",
+      br: "Ataque de mísseis",
+    },
+    209: {
+      de: "Expedition",
+      en: "Expedition",
+      es: "Expedición",
+      fr: "Expédition",
+      tr: "Keşif",
+      br: "Expedição",
+    },
+    210: {
+      de: "Erforschung",
+      en: "Exploration",
+      es: "Exploración",
+      fr: "Exploration",
+      tr: "Keşif",
+      br: "Exploração",
+    },
+    211: {
+      de: undefined,
+      en: undefined,
+      es: undefined,
+      fr: undefined,
+      tr: undefined,
+      br: undefined,
+    },
+    212: {
+      de: undefined,
+      en: undefined,
+      es: undefined,
+      fr: undefined,
+      tr: undefined,
+      br: undefined,
+    },
+    213: {
       de: undefined,
       en: undefined,
       es: undefined,
@@ -2085,6 +2206,32 @@ class Translator {
       return OGIData.json.translations.tech[id];
     }
     return this.#translate(id, type);
+  }
+
+  TranslateMissionType(missionTypeId) {
+    if (missionTypeId == MissionType.ATTACK || missionTypeId == MissionType.ACS_ATTACK) {
+      return this.#translate(200); //attack
+    } else if (missionTypeId == MissionType.TRANSPORT) {
+      return this.#translate(201); //transport
+    } else if (missionTypeId == MissionType.DEPLOYMENT) {
+      return this.#translate(202); //deployment
+    } else if (missionTypeId == MissionType.ACS_DEFEND) {
+      return this.#translate(203); //defense
+    } else if (missionTypeId == MissionType.SPY) {
+      return this.#translate(204); //spy
+    } else if (missionTypeId == MissionType.COLONISATION) {
+      return this.#translate(205); //colonization
+    } else if (missionTypeId == MissionType.HARVEST) {
+      return this.#translate(206); //harvest
+    } else if (missionTypeId == MissionType.MOON_DESTRUCTION) {
+      return this.#translate(207); //moon destruction
+    } else if (missionTypeId == MissionType.MISSILE_ATTACK) {
+      return this.#translate(208); //missile attack
+    } else if (missionTypeId == MissionType.EXPEDITION) {
+      return this.#translate(209); //expedition
+    } else if (missionTypeId == MissionType.EXPLORATION) {
+      return this.#translate(210); //exploration
+    }
   }
 
   GetClassFromLifeformName(name) {

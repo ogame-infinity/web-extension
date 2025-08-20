@@ -4757,6 +4757,25 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
   font-size: 11px;
 }
 
+.fleetDetails .notify-me-button {
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-image: url("chrome-extension://__MSG_@@extension_id__/assets/images/bell.svg");
+  filter: invert(75%) sepia(86%) saturate(2714%) hue-rotate(357deg) brightness(99%) contrast(106%);
+  background-size: 15px;
+  height: 15px;
+  width: 15px;
+  position: absolute;
+  top: 45px;
+  right: 5px;
+  cursor: pointer;
+}
+
+.fleetDetails .notify-me-button:hover,
+.fleetDetails .notify-me-button.active {
+  filter: invert(78%) sepia(63%) saturate(2832%) hue-rotate(33deg) brightness(98%) contrast(91%) !important;
+}
+
 .fleetDetails[data-mission-type="1"] .ogl-mission-icon {
   display: none !important;
 }

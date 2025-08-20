@@ -1,14 +1,18 @@
 import { getLogger } from "../logger.js";
 import NotificationType from "./NotificationType.js";
+import { isChrome, isFirefox } from "../runContext.js";
 
 class BackgroundNotifier {
   logger = getLogger("BackgroundNotifier");
 
   notifications = [];
+  browserApi = isChrome() ? chrome : isFirefox() ? browser : null;
 
   #createNotification(id, title, message) {
+    if (!this.browserApi) return;
+
     try {
-      chrome.notifications.create(id, {
+      this.browserApi.notifications.create(id, {
         type: "basic",
         iconUrl: "/assets/images/logo128.png",
         title: title,
@@ -20,8 +24,15 @@ class BackgroundNotifier {
   }
 
   #scheduleNotification(id, title, message, when) {
+    if (!this.browserApi) return;
+
     try {
-      chrome.alarms.create(id, { when: when });
+      if (this.notifications[id]) {
+        // if a notification with the same ID exists, cancel it
+        this.#cancelScheduledNotification(id);
+      }
+
+      this.browserApi.alarms.create(id, { when: when });
       this.notifications[id] = { title, message };
     } catch (error) {
       this.logger.error("Error while scheduling notification:", error);
@@ -29,9 +40,13 @@ class BackgroundNotifier {
   }
 
   #cancelScheduledNotification(id) {
+    if (!this.browserApi) return;
+
     try {
-      chrome.alarms.clear(id);
-      delete this.notifications[id];
+      this.browserApi.alarms.clear(id);
+      if (this.notifications[id]) {
+        delete this.notifications[id];
+      }
     } catch (error) {
       this.logger.error("Error while canceling scheduled notification:", error);
     }
