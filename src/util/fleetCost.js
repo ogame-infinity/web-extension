@@ -11,14 +11,15 @@ function fleetCost(ships) {
     crystal: 0,
     deuterium: 0,
   };
-
-  Object.keys(shipCosts).forEach((id) => {
-    if (ships[id]) {
-      fleetRes.metal += shipCosts[id][0] * ships[id];
-      fleetRes.crystal += shipCosts[id][1] * ships[id];
-      fleetRes.deuterium += shipCosts[id][2] * ships[id];
-    }
-  });
+  if (ships) {
+    Object.keys(shipCosts).forEach((id) => {
+      if (ships[id]) {
+        fleetRes.metal += shipCosts[id][0] * ships[id];
+        fleetRes.crystal += shipCosts[id][1] * ships[id];
+        fleetRes.deuterium += shipCosts[id][2] * ships[id];
+      }
+    });
+  }
   return Object.values(fleetRes);
 }
 
