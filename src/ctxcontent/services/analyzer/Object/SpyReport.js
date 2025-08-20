@@ -8,6 +8,7 @@ import OGIData from "../../../../util/OGIData.js";
 import RecyclingYieldCalculator from "../../../../util/recyclingYieldCalculator.js";
 import * as standardUnit from "../../../../util/standardUnit.js";
 import { toFormattedNumber } from "../../../../util/numbers.js";
+import * as popupUtil from "../../../../util/popup.js";
 
 export class SpyReport {
   get date() {
@@ -328,10 +329,46 @@ export class SpyReport {
         messageId: this.id,
       });
 
+      const removeElement = (parent, selector) => {
+        const element = parent.querySelector(selector);
+        if (element) element.remove();
+      };
+      const parser = new window.DOMParser();
+      const abortController = new AbortController();
+      window.onbeforeunload = () => abortController.abort();
+      const seeReportRequest = (href) => {
+        fetch(`${href.toString()}`, { signal: abortController.signal })
+          .then((response) => response.text())
+          .then((stringResponse) => {
+            const container = DOM.createDOM("div", {
+              class: "ogiSeeReportAboutMyself",
+              title: Translator.translate(188),
+            });
+            const messagedetails = parser.parseFromString(stringResponse, "text/html").querySelector("#messagedetails");
+
+            removeElement(messagedetails, ".lootPercentage"); //removed becode from our own point of view
+            /*removed because we don't need it*/
+            removeElement(messagedetails, ".detail_msg_head");
+            removeElement(messagedetails, ".rawMessageData");
+            removeElement(messagedetails, ".buildingsSection");
+            removeElement(messagedetails, ".researchSection");
+            removeElement(messagedetails, ".lfBonusReportWrapper");
+            removeElement(messagedetails, ".sectionTitle");
+            removeElement(messagedetails, ".commentBlock");
+            removeElement(messagedetails, ".commentsHolder");
+
+            container.appendChild(messagedetails);
+            popupUtil.popup(false, container);
+          });
+      };
+
       const seeReportButton = DOM.createDOM("button", {
-        class: "custom_btn tooltip seeReportButton overlay",
-        href: `${OGIData.universeUrl}/game/index.php?${searchParams.toString()}`,
+        class: "custom_btn tooltip seeReportButton",
         title: Translator.translate(188),
+      });
+      seeReportButton.addEventListener("click", () => {
+        const url = `${OGIData.universeUrl}/game/index.php?${searchParams.toString()}`;
+        seeReportRequest(url);
       });
       seeReportButton.appendChild(DOM.createDOM("span", { class: "seeReportIcon" }));
 

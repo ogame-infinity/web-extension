@@ -9015,3 +9015,7 @@ div.ogi-movement .ogi-movement-target > div:nth-child(1) {
 .ogi-movement-scroll::-webkit-scrollbar {
   display: none;
 }
+
+.ogiSeeReportAboutMyself .detail_msg .messageDetails {
+  margin-bottom: 0px !important;
+}
