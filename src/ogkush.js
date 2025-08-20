@@ -1409,9 +1409,15 @@ class OGInfinity {
       type: planetType.planet,
     };
 
+    const getMetaValue = (name) => {
+      return document.querySelector(`meta[name="${name}"]`);
+    };
+
     this.isMobile = "ontouchstart" in document.documentElement;
     this.eventAction = this.isMobile ? "touchstart" : "mouseenter";
     this.universe = window.location.host.replace(/\D/g, "");
+    this.universeUrl = `https://${getMetaValue("ogame-universe").content}`;
+    this.universeName = getMetaValue("ogame-universe-name").content;
     this.geologist = !!document.querySelector(".geologist.on");
     this.technocrat = !!document.querySelector(".technocrat.on");
     this.admiral = !!document.querySelector(".admiral.on");
@@ -1446,6 +1452,9 @@ class OGInfinity {
 
   init() {
     this.json = OGIData.json;
+    this.json.universeId = this.universe;
+    this.json.universeUrl = this.universeUrl;
+    this.json.universeName = this.universeName;
     this.json.welcome = this.json.welcome !== false;
     this.json.needLifeformUpdate = this.json.needLifeformUpdate || {};
     this.json.pantrySync = this.json.pantrySync || "";
@@ -3178,6 +3187,8 @@ class OGInfinity {
       .then((str) => new window.DOMParser().parseFromString(str, "text/xml"))
       .then((xml) => {
         this.json.serverSettingsTimeStamp = xml.querySelector("serverData").getAttribute("timestamp");
+        this.json.universeUrl = `https://${xml.querySelector("domain").innerHTML}`;
+        this.json.universeName = `https://${xml.querySelector("name").innerHTML}`;
         this.json.topScore = Number(xml.querySelector("topScore").innerHTML);
         this.json.speed = Number(xml.querySelector("speed").innerHTML);
         this.json.speedResearch =

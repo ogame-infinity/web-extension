@@ -13,6 +13,7 @@ class Notifier {
 
   #dispatch(type, detail) {
     detail.type = type;
+    detail.id = `${OGIData.json.universeId}-${detail.id}`;
     document.dispatchEvent(new CustomEvent(Notifier.OGI_NOTIFICATION, { detail: detail }));
   }
 
@@ -27,7 +28,7 @@ class Notifier {
 
     this.#dispatch(NotificationType.CREATE_SCHEDULED_NOTIFICATION, {
       id: detail.id,
-      title: detail.title,
+      title: `${OGIData.json.universeName} - ${detail.title}`,
       message: detail.message,
       when: when, //date is recalculated for the notification
     });
