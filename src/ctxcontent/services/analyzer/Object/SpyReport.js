@@ -231,12 +231,23 @@ export class SpyReport {
   #DecorateAsTargetIsSelf(message) {
     message.classList.add("ogl-spyReportTargetIsSelf");
 
-    const fleet = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-fleet"));
-    const defence = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-defense"));
-    const planetType = JSON.parse(message.querySelector(".rawMessageData").getAttribute("data-raw-targetplanettype"));
+    const getAttributeValue = (elem, attributeName) => {
+      if (elem) {
+        const value = elem.getAttribute(attributeName);
+        if (value) {
+          return JSON.parse(value);
+        }
+      }
+      return null;
+    };
+
+    const rawMessageData = message.querySelector(".rawMessageData");
+    const fleet = getAttributeValue(rawMessageData, "data-raw-fleet");
+    const defence = getAttributeValue(rawMessageData, "data-raw-defense");
+    const planetType = getAttributeValue(rawMessageData, "data-raw-targetplanettype");
 
     const recyclingYieldFleet = RecyclingYieldCalculator.CalculateRecyclingYieldFleet(
-      fleet,
+      fleet ?? [],
       OGIData.universeSettingsTooltip.debrisFactor,
       OGIData.universeSettingsTooltip.deuteriumInDebris
     );
@@ -244,7 +255,7 @@ export class SpyReport {
     const standardUnitSumFleet = standardUnit.standardUnit(amountFleet);
 
     const recyclingYieldDefence = RecyclingYieldCalculator.CalculateRecyclingYieldDefence(
-      defence,
+      defence ?? [],
       OGIData.universeSettingsTooltip.debrisFactorDef,
       OGIData.universeSettingsTooltip.deuteriumInDebris
     );
@@ -253,18 +264,24 @@ export class SpyReport {
 
     const totalStandardUnitSum = standardUnitSumFleet + standardUnitSumDefence;
 
-    const limit = planetType === 1 ? OGIData.options.rvalSelfLimitPlanet : OGIData.options.rvalSelfLimitMoon;
+    const limit = planetType === 3 ? OGIData.options.rvalSelfLimitMoon : OGIData.options.rvalSelfLimitPlanet;
 
     // If the standard unit sum is above the limit, display warning labels
     if (totalStandardUnitSum >= limit) {
       const msgTitle = message.querySelector(".msgHeadItem .msgTitle");
+      if (msgTitle) {
+        const totalAmountDisplay = `${toFormattedNumber(
+          totalStandardUnitSum,
+          [0, 1],
+          true
+        )} ${standardUnit.unitType()}`;
 
-      const totalAmountDisplay = `${toFormattedNumber(totalStandardUnitSum, [0, 1], true)} ${standardUnit.unitType()}`;
-
-      const warningLabel = DOM.createDOM("span", {}, `${Translator.translate(65)}:`);
-      warningLabel.appendChild(DOM.createDOM("span", { class: "ogk-label ogi-warning" }, totalAmountDisplay));
-
-      msgTitle.appendChild(warningLabel);
+        const warningLabel = DOM.createDOM("span", {}, `${Translator.translate(65)}:`);
+        if (warningLabel) {
+          warningLabel.appendChild(DOM.createDOM("span", { class: "ogk-label ogi-warning" }, totalAmountDisplay));
+          msgTitle.appendChild(warningLabel);
+        }
+      }
 
       // ogame table display for fleet
       if (standardUnitSumFleet > 0) {

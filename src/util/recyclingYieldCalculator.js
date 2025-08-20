@@ -57,10 +57,10 @@ class RecyclingYieldCalculator {
     };
   }
   CalculateRecyclingYieldFleet(fleet, rateFleet, includeDeut) {
-    return this.#calculateRecyclingYield(fleetCost(fleet), rateFleet, includeDeut);
+    return this.#calculateRecyclingYield(fleetCost(fleet ?? []), rateFleet, includeDeut);
   }
   CalculateRecyclingYieldDefence(defence, rateDefence, includeDeut) {
-    return this.#calculateRecyclingYield(defenceCost(defence), rateDefence, includeDeut);
+    return this.#calculateRecyclingYield(defenceCost(defence ?? []), rateDefence, includeDeut);
   }
 }
 export default new RecyclingYieldCalculator();
