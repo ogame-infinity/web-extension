@@ -32,6 +32,7 @@ import * as standardUnit from "./util/standardUnit.js";
 import planetType from "./util/enum/planetType.js";
 import shipEnum from "./util/enum/ship.js";
 import OverviewPage from "./ctxpage/overview/OverviewPage.js";
+import Notifier from "./util/Notifications/Notifier.js";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 //const VERSION = "__VERSION__";
@@ -1668,6 +1669,9 @@ class OGInfinity {
     this.showStorageTimers();
     // this.showTabTimer(); TODO: enable when timer is moved to the clock area
     this.markLifeforms();
+
+    //Notifier.ScheduleNotification("0", "titre", "message", new Date("2025-08-20T16:28:00"));
+
     this.navigationArrows();
     this.expedition = false;
     this.collect = false;

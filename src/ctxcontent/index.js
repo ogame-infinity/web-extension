@@ -93,8 +93,11 @@ document.addEventListener("ogi-clear", function (e) {
   dataHelper.clearData();
 });
 document.addEventListener("ogi-notification", function (e) {
-  const msg = Object.assign({ iconUrl: "assets/images/logo128.png" }, e.detail);
-  chrome.runtime.sendMessage({ type: "notification", universe: UNIVERSE, message: msg }, function (response) {});
+  try {
+    chrome.runtime.sendMessage({ type: "notification", universe: UNIVERSE, detail: e.detail }, function (response) {});
+  } catch (error) {
+    mainLogger.error("Error sending notification:", error);
+  }
 });
 
 export function main() {
