@@ -350,9 +350,6 @@ export class SpyReport {
             /*removed because we don't need it*/
             removeElement(messagedetails, ".detail_msg_head");
             removeElement(messagedetails, ".rawMessageData");
-            removeElement(messagedetails, ".buildingsSection");
-            removeElement(messagedetails, ".researchSection");
-            removeElement(messagedetails, ".lfBonusReportWrapper");
             removeElement(messagedetails, ".sectionTitle");
             removeElement(messagedetails, ".commentBlock");
             removeElement(messagedetails, ".commentsHolder");
