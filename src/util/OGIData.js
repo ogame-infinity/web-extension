@@ -30,13 +30,13 @@ class OGIData {
   get playerMarkers() {
     return this._json.playerMarkers;
   }
-  
+
   set playerMarkers(playerMarkers) {
     this._json.playerMarkers = playerMarkers;
 
     this.#save();
   }
-  
+
   get markers() {
     return this._json.markers;
   }
@@ -211,6 +211,15 @@ class OGIData {
 
   set needs(needs) {
     this._json.needs = needs;
+
+    this.#save();
+  }
+
+  get lastSentFleet() {
+    return this._json.lastSentFleet;
+  }
+  set lastSentFleet(lastSentFleet) {
+    this._json.lastSentFleet = lastSentFleet;
 
     this.#save();
   }
