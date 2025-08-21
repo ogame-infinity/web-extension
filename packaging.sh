@@ -78,11 +78,13 @@ mkdir "${DIST_MODULE}"
 cp -r src/* "${DIST_MODULE}"
 sed_version
 
+<<'REMOVE_MINIFYING'
 find "${DIST_MODULE}" \
   -type f -iname '*.js' \
   -not -path '*/libs/*' \
   -exec bash -c 'minified "$@"' bash {} +
 cleancss "${DIST_MODULE}/${CSS_BUNDLE_FILE}"
+REMOVE_MINIFYING
 
 (cd "${DIST_MODULE}" && \
   zip -qr -X "../ogi-chrome.zip" .)
