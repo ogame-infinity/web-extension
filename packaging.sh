@@ -9,7 +9,6 @@ VERSION="${1:-`date +%-m.%-d.%-H.%-M`}"
 echo "Build version $VERSION"
 
 MANIFEST_FILE_NAME="manifest.json"
-MANIFEST_FILE_NAME_V2="manifestv2.json"
 CSS_BUNDLE_FILE="global.css"
 VERSION_JS_FILE_NAME="util/version.js"
 
@@ -19,7 +18,6 @@ VERSION_JS_FILE_NAME="util/version.js"
 function sed_version {
   echo "Stream version"
   sed -i "s/0\.0\.0/$VERSION/g" "${DIST_MODULE}/${MANIFEST_FILE_NAME}"
-  sed -i "s/0\.0\.0/$VERSION/g" "${DIST_MODULE}/${MANIFEST_FILE_NAME_V2}"
   sed -i "s/__VERSION__/$VERSION/g" "${DIST_MODULE}/${VERSION_JS_FILE_NAME}"
 }
 
@@ -49,9 +47,20 @@ cp -r src/* "${DIST_MODULE}"
 sed_version
 
 cp readme.md "${DIST_MODULE}"
-## Patch to use manifest v2
-rm "${DIST_MODULE}/${MANIFEST_FILE_NAME}"
-mv "${DIST_MODULE}/${MANIFEST_FILE_NAME_V2}" "${DIST_MODULE}/${MANIFEST_FILE_NAME}"
+
+
+## Patch to use manifest v3 with Firefox
+#remove "update_url"
+sed -i '/"update_url":/d' "${DIST_MODULE}/${MANIFEST_FILE_NAME}"
+#remove "extension_ids"
+sed -i '/"extension_ids":/d' "${DIST_MODULE}/${MANIFEST_FILE_NAME}"
+
+#remove "service_worker" and replace by "scripts"
+#need to be improved, but i'm pretty bad with .sh
+SERVICE_WORKER="background.js"
+sed -i '/"service_worker":/d' "${DIST_MODULE}/${MANIFEST_FILE_NAME}"
+sed -i "/\"background\": {/a\    \"scripts\": [\"${SERVICE_WORKER}\"]" "${DIST_MODULE}/${MANIFEST_FILE_NAME}"
+
 ## Modifing chrome-extension:// to moz-extension://
 sed -i "s/chrome/moz/g" "${DIST_MODULE}/${CSS_BUNDLE_FILE}"
 (cd "${DIST_MODULE}" && \
