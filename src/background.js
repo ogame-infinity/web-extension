@@ -20,7 +20,7 @@ class BackgroundNotifier {
         title: title,
         message: message,
       });
-      console.log("Created notification:", { id, title, message });
+      console.log(`Created notification ${id}:`, { id, title, message });
     } catch (error) {
       console.error("Error while creating notification:", error);
     }
@@ -37,7 +37,7 @@ class BackgroundNotifier {
 
       this.browserApi.alarms.create(id, { when: when });
       this.notifications[id] = { title, message };
-      console.log("Scheduled notification:", this.notifications[id]);
+      console.log(`Scheduled notification ${id}:`, this.notifications[id]);
     } catch (error) {
       console.error("Error while scheduling notification:", error);
     }
@@ -47,11 +47,11 @@ class BackgroundNotifier {
     if (!this.browserApi) return;
 
     try {
-      this.browserApi.alarms.clear(id);
       if (this.notifications[id]) {
+        this.browserApi.alarms.clear(id);
         delete this.notifications[id];
+        console.log(`Canceled scheduled notification ${id}`);
       }
-      console.log("Canceled scheduled notification:", id);
     } catch (error) {
       console.error("Error while canceling scheduled notification:", error);
     }
