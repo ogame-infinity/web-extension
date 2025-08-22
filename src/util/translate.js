@@ -883,12 +883,12 @@ const translation = Object.freeze({
       br: "Expedições",
     },
     42: {
-      de: "Planet(en)",
-      en: "planet(s)",
-      es: "planeta(s)",
-      fr: "planète(s)",
+      de: "Planet",
+      en: "Planet",
+      es: "planeta",
+      fr: "Planète",
       tr: "Gezegen",
-      br: "Planeta(s)",
+      br: "Planeta",
     },
     43: {
       de: "Ankunft",
@@ -2049,6 +2049,14 @@ const translation = Object.freeze({
       fr: "Mode d'alerte de flotte hostile",
       tr: "Düşman Filosu Uyarı Modu",
       br: "Modo de alerta de frota hostil",
+    },
+    194: {
+      de: "Mond",
+      en: "Moon",
+      es: "Luna",
+      fr: "Lune",
+      tr: "Ay",
+      br: "Lua",
     },
     198: {
       de: "Eine Flotte ist an ihrem Ziel angekommen.",

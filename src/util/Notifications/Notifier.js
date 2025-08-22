@@ -68,49 +68,52 @@ class Notifier {
     }
   }
 
-  #formatFleetArrivalId(fleetId) {
-    return `fleet-arrival-${this.#formatId(fleetId)}`;
+  #formatFleetArrivalId(fleetId, isBack) {
+    return `fleet-${isBack ? "return" : "arrival"}-${this.#formatId(fleetId)}`;
   }
 
   IsFleetMissionNotifiable(missionType) {
-    const notifiableMissions = [
-      MissionType.ATTACK,
-      MissionType.ACS_ATTACK,
-      MissionType.TRANSPORT,
-      MissionType.DEPLOYMENT,
-      MissionType.ACS_DEFEND,
-      //MissionType.SPY,
-      MissionType.COLONISATION,
-      MissionType.HARVEST,
-      MissionType.MOON_DESTRUCTION,
-      //MissionType.MISSILE_ATTACK,
-      //MissionType.EXPEDITION,
-      //MissionType.EXPLORATION,
-    ];
-    return notifiableMissions.includes(parseInt(missionType));
+    /*Only peaceful fleets are affected.
+     * For now, managing hostile fleets is complicated due to the possible change in fleet arrival time.*/
+    const notifiableMissions = [MissionType.TRANSPORT, MissionType.DEPLOYMENT, MissionType.HARVEST];
+    return notifiableMissions.includes(missionType);
   }
 
-  IsFleetArrivalScheduled(fleetId) {
-    const id = this.#formatFleetArrivalId(fleetId);
+  IsFleetArrivalScheduled(fleetId, isBack) {
+    const id = this.#formatFleetArrivalId(fleetId, isBack);
     const exists = OGIData.notifications[id] !== undefined && OGIData.notifications[id] !== null;
     return exists;
   }
 
-  NotifyFleetArrival(fleetId, coords, missionType, isBack, date) {
-    const id = this.#formatFleetArrivalId(fleetId);
+  NotifyFleetArrival(fleetId, coords, isMoon, missionType, isBack, arrivalDatetime) {
+    const id = this.#formatFleetArrivalId(fleetId, isBack);
 
     const title = Translator.translate(198);
     const missionTranslated = `${Translator.translate(199)}: ${Translator.TranslateMissionType(missionType)}${
       isBack ? ` (${Translator.translate(45)})` : ""
     }`;
-    const coordsTranslated = `${Translator.translate(98)}: ${coords}`;
+
+    const destinationNameTranslated = `${Translator.translate(73)} ${
+      isMoon
+        ? OGIData.empire.find((x) => x.coordinates === coords)?.moon?.name
+        : OGIData.empire.find((x) => x.coordinates === coords)?.name
+    }`;
+
+    const coordsTranslated = `${Translator.translate(98)}: ${coords} (${
+      isMoon ? Translator.translate(194) : Translator.translate(42)
+    })`;
 
     if (id && coords) {
-      this.ScheduleNotification(id, title, `${missionTranslated}\n${coordsTranslated}`, date);
+      this.ScheduleNotification(
+        id,
+        title,
+        `${missionTranslated}\n${destinationNameTranslated}\n${coordsTranslated}`,
+        arrivalDatetime
+      );
     }
   }
-  CancelFleetArrivalNotification(fleetId) {
-    const id = this.#formatFleetArrivalId(fleetId);
+  CancelFleetArrivalNotification(fleetId, isBack) {
+    const id = this.#formatFleetArrivalId(fleetId, isBack);
     this.CancelScheduledNotification(id);
   }
 }

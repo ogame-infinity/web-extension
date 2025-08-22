@@ -14103,7 +14103,7 @@ class OGInfinity {
           lastFleetId = id;
           lastFleetBtn = fleet.querySelector(".reversal a");
         }
-        let type = fleet.getAttribute("data-mission-type");
+        let type = parseInt(fleet.getAttribute("data-mission-type"));
         let originCoords = fleet.querySelector(".originCoords").textContent;
         OGIData.empire.forEach((planet) => {
           if (planet.coordinates == originCoords) {
@@ -14120,11 +14120,11 @@ class OGInfinity {
         // to get 1 ship in discoveries, as it does not have ".fleetinfo"
         fleetCount = Math.max(1, fleetCount);
         const destCoords = fleet.querySelector(".destinationCoords a").textContent;
-        const destMoon = !!fleet.querySelector(".destinationData moon");
+        const isDestMoon = !!fleet.querySelector(".destinationData .moon");
         const reversal = fleet.querySelector(".reversal a");
         if (reversal) {
           reversal.addEventListener("click", () => {
-            needsUtil.displayLocksByCoords(destCoords.slice(1, -1), destMoon);
+            needsUtil.displayLocksByCoords(destCoords.slice(1, -1), isDestMoon);
           });
         }
         let details = fleet.appendChild(createDOM("div", { class: "ogk-fleet-detail" }));
@@ -14170,26 +14170,45 @@ class OGInfinity {
         }
 
         if (Notifier.IsFleetMissionNotifiable(type)) {
-          const arrivalTime = fleet.querySelector(".timer").getAttribute("data-tooltip-title"); // Séparer la date et l'heure
-          const [datePart, timePart] = arrivalTime.split(" ");
-          const [dayPart, monthPart, yearPart] = datePart.split(".");
-          const formatedDate = `${yearPart}-${monthPart}-${dayPart}`;
-          const arrivaleDatetime = new Date(`${formatedDate}T${timePart}`);
+          const convertToDate = (timeString) => {
+            const [datePart, timePart] = timeString.split(" ");
+            const [dayPart, monthPart, yearPart] = datePart.split(".");
+            const formatedDate = `${yearPart}-${monthPart}-${dayPart}`;
+            return new Date(`${formatedDate}T${timePart}`);
+          };
+
+          const arrivaleDatetime = convertToDate(fleet.querySelector(".timer").getAttribute("data-tooltip-title"));
 
           const notifyMeButton = fleet.appendChild(createDOM("button", { class: "notify-me-button" }));
 
-          if (Notifier.IsFleetArrivalScheduled(id)) {
+          if (Notifier.IsFleetArrivalScheduled(id, isBack)) {
             notifyMeButton.classList.add("active");
           }
 
+          const backBasedMissions = [missionType.TRANSPORT, missionType.HARVEST];
+
           notifyMeButton.addEventListener("click", () => {
-            if (!Notifier.IsFleetArrivalScheduled(id)) {
-              Notifier.NotifyFleetArrival(id, destCoords, type, isBack, arrivaleDatetime);
+            if (!Notifier.IsFleetArrivalScheduled(id, isBack)) {
+              Notifier.NotifyFleetArrival(id, destCoords, isDestMoon, type, isBack, arrivaleDatetime);
+
+              if (!isBack && fleet.querySelector(".nextTimer") && type === missionType.TRANSPORT) {
+                //if fleet type is a return based like transport or harvest, then also preshot the return notification
+                const returnDatetime = convertToDate(
+                  fleet.querySelector(".nextTimer").getAttribute("data-tooltip-title")
+                );
+                Notifier.NotifyFleetArrival(id, originCoords, isDestMoon, type, true, returnDatetime);
+              }
+
               if (!notifyMeButton.classList.contains("active")) {
                 notifyMeButton.classList.add("active");
               }
             } else {
-              Notifier.CancelFleetArrivalNotification(id);
+              Notifier.CancelFleetArrivalNotification(id, isBack);
+              if (!isBack && backBasedMissions.includes(type)) {
+                //if fleet type is a return based like transport or harvest, then cancel also the return notification
+                Notifier.CancelFleetArrivalNotification(id, true);
+              }
+              // remove active class from button
               if (notifyMeButton.classList.contains("active")) {
                 notifyMeButton.classList.remove("active");
               }
@@ -14198,7 +14217,7 @@ class OGInfinity {
 
           if (backButton) {
             backButton.addEventListener("click", () => {
-              Notifier.CancelFleetArrivalNotification(id);
+              Notifier.CancelFleetArrivalNotification(id, isBack);
             });
           }
         }
