@@ -2105,6 +2105,14 @@ const translation = Object.freeze({
       tr: undefined,
       br: undefined,
     },
+    211: {
+      de: "Der Bericht ist nicht mehr verfügbar",
+      en: "The report is no longer available",
+      es: "El informe ya no está disponible",
+      fr: "Le rapport n'est plus disponible",
+      tr: "Rapor artık mevcut değil",
+      br: "O relatório não está mais disponível",
+    },
   },
 });
 

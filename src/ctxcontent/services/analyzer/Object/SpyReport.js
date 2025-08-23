@@ -340,7 +340,10 @@ export class SpyReport {
       window.onbeforeunload = () => abortController.abort();
       const seeReportRequest = (href) => {
         fetch(`${href.toString()}`, { signal: abortController.signal })
-          .then((response) => response.text())
+          .then((response) => {
+            if (!response.ok) throw new Error(Translator.translate(211));
+            return response.text();
+          })
           .then((stringResponse) => {
             const container = DOM.createDOM("div", {
               class: "ogiSeeReportAboutMyself",
@@ -361,6 +364,14 @@ export class SpyReport {
             removeElement(messagedetails, ".commentsHolder");
 
             container.appendChild(messagedetails);
+            popupUtil.popup(false, container);
+          })
+          .catch((error) => {
+            const container = DOM.createDOM("div", {
+              class: "ogiSeeReportAboutMyself",
+              title: Translator.translate(188),
+            });
+            container.appendChild(DOM.createDOM("span", { class: "error" }, error));
             popupUtil.popup(false, container);
           });
       };

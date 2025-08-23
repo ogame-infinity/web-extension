@@ -15674,12 +15674,14 @@ class OGInfinity {
         return fleetIcon;
       };
 
-      if (moonFleetStandardUnitSum >= OGIData.options.rvalSelfLimitMoon) {
-        const moonFleetIconsDiv = DOM.createDOM("div", { class: "moonFleetIcons" });
-        moonFleetIconsDiv.appendChild(
-          createFleetIcon(moonFleetStandardUnitSum, planetFromEmpire.moon.id, "icon_spaceship")
-        );
-        smallplanet.appendChild(moonFleetIconsDiv);
+      if (planetFromEmpire.moon) {
+        if (moonFleetStandardUnitSum >= OGIData.options.rvalSelfLimitMoon) {
+          const moonFleetIconsDiv = DOM.createDOM("div", { class: "moonFleetIcons" });
+          moonFleetIconsDiv.appendChild(
+            createFleetIcon(moonFleetStandardUnitSum, planetFromEmpire.moon.id, "icon_spaceship")
+          );
+          smallplanet.appendChild(moonFleetIconsDiv);
+        }
       }
 
       if (planetFleetStandardUnitSum >= OGIData.options.rvalSelfLimitPlanet) {
