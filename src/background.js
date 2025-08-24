@@ -66,12 +66,13 @@ class BackgroundNotifier {
     this.notificationData = notificationData;
   }
 
-  #raiseNotification(id, title, message) {
+  #raiseNotification(id, title, message, priority = 2) {
     if (!chrome) return;
 
     try {
       chrome.notifications.create(id, {
         type: "basic",
+        priority: priority,
         iconUrl: "/assets/images/logo128.png",
         title: title,
         message: message,
@@ -82,7 +83,7 @@ class BackgroundNotifier {
     }
   }
 
-  async #scheduleNotificationAsync(id, domain, title, message, when) {
+  async #scheduleNotificationAsync(id, domain, title, message, url, when) {
     try {
       let shouldUpdateAlarm = false;
       let shouldUpdateNotification = false;
@@ -105,6 +106,10 @@ class BackgroundNotifier {
           shouldUpdateNotification = true;
           console.log(`Notification ${id} exists but when is different`, { old: notification.when, new: when });
         }
+        if (notification.url !== url) {
+          shouldUpdateNotification = true;
+          console.log(`Notification ${id} exists but url is different`, { old: notification.url, new: url });
+        }
       } else {
         shouldUpdateNotification = true;
       }
@@ -122,9 +127,9 @@ class BackgroundNotifier {
       }
 
       if (shouldUpdateNotification) {
-        this.notificationData.notifications[id] = { domain, title, message, when };
+        this.notificationData.notifications[id] = { domain, title, message, url, when };
         await this.notificationData.SaveAsync();
-        console.log(`Saved notification ${id}:`, { domain, title, message, when });
+        console.log(`Saved notification ${id}:`, { domain, title, message, url, when });
       } else {
         console.log(`Notification ${id} is unchanged`);
       }
@@ -173,12 +178,13 @@ class BackgroundNotifier {
     const now = Date.now();
 
     const fiveMinutes = 5 * 60 * 1000;
+    const oneHour = 60 * 60 * 1000;
 
-    //if last cleaned is more than 5 minutes ago, clean old notifications
+    //if last cleaned is more than 5 minutes ago, clean notifications that are older than 1 hour
     if (new Date(this.notificationData.lastCleaned).getTime() < now - fiveMinutes) {
       console.log(`Cleaning old notifications`);
       for (const [id, notification] of Object.entries(this.notificationData.notifications)) {
-        if (new Date(notification.when).getTime() < now - fiveMinutes) idsToRemove.push(id);
+        if (new Date(notification.when).getTime() < now - oneHour) idsToRemove.push(id);
       }
 
       for (const id of idsToRemove) {
@@ -200,7 +206,14 @@ class BackgroundNotifier {
     if (message.type === "NOTIFICATION") {
       this.#raiseNotification(message.id, message.title, message.message);
     } else if (message.type === "CREATE_SCHEDULED_NOTIFICATION") {
-      await this.#scheduleNotificationAsync(message.id, message.domain, message.title, message.message, message.when);
+      await this.#scheduleNotificationAsync(
+        message.id,
+        message.domain,
+        message.title,
+        message.message,
+        message.url,
+        message.when
+      );
     } else if (message.type === "CANCEL_SCHEDULED_NOTIFICATION") {
       await this.#cancelScheduledNotificationAsync(message.id);
     }
@@ -214,8 +227,45 @@ class BackgroundNotifier {
     const notification = this.notificationData.notifications[notificationId];
     if (notification) {
       this.#raiseNotification(notificationId, notification.title, notification.message);
+      //if the notification has no URL, it can be considered for removal
+      if (!notification.url) {
+        delete this.notificationData.notifications[notificationId];
+        await this.notificationData.SaveAsync();
+      }
+    }
+
+    await this.#cleanOldNotificationsAsync();
+  }
+
+  async ActionOnNotificationClickAsync(notificationId) {
+    if (!notificationId) return;
+
+    const notification = this.notificationData.notifications[notificationId];
+    if (notification) {
+      const urlPattern = `https://${notification.domain}/game/*`;
+
+      //find all matching tabs
+      const tabs = await chrome.tabs.query({ url: urlPattern });
+
+      if (tabs.length > 0) {
+        // If an existing tab is found, activate it
+        const ogameTab = tabs[0];
+        if (notification.url) await chrome.tabs.update(ogameTab.id, { url: notification.url, active: true });
+        else await chrome.tabs.update(ogameTab.id, { active: true });
+
+        console.log(`Found existing OGame tab for domain ${notification.domain}, activating it.`);
+      } else {
+        // Otherwise, create a new one
+        await chrome.tabs.create({ url: notification.url });
+        console.log(`No OGame tab found for domain ${notification.domain}, creating a new one.`);
+      }
+
+      //remove the notification from the list
       delete this.notificationData.notifications[notificationId];
       await this.notificationData.SaveAsync();
+    } else {
+      //else open lobby
+      await chrome.tabs.create({ url: `https://lobby.ogame.gameforge.com/` });
     }
 
     await this.#cleanOldNotificationsAsync();
@@ -262,5 +312,15 @@ chrome.alarms.onAlarm.addListener(async function (alarm) {
     await backgroundNotifier.NotifyScheduledAsync(alarm.name);
   } catch (error) {
     console.error("Error handling alarm:", error);
+  }
+});
+
+chrome.notifications.onClicked.addListener(async function (notificationId) {
+  try {
+    await notificationData.InitializeFromStorageAsync();
+    await backgroundNotifier.ActionOnNotificationClickAsync(notificationId);
+    chrome.notifications.clear(notificationId);
+  } catch (error) {
+    console.error("Error handling notification click:", error);
   }
 });

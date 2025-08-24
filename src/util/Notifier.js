@@ -32,9 +32,11 @@ class Notifier {
     this.#dispatch({
       type: "CREATE_SCHEDULED_NOTIFICATION",
       id: detail.id,
+      priority: detail.priority ?? 0,
       domain: OGIData.json.universeDomain,
       title: detail.title,
       message: detail.message,
+      url: detail.url,
       when: detail.when,
     });
 
@@ -44,11 +46,13 @@ class Notifier {
     OGIData.notifications[detail.id] = detail;
     OGIData.Save();
   }
-  ScheduleNotification(id, title, message, date) {
+  ScheduleNotification(id, priority, title, message, url, date) {
     this.#scheduleNotification({
       id: this.#formatId(id),
+      priority: priority,
       title: this.#formatTitle(title),
       message: message,
+      url: url,
       when: date.toISOString(),
     });
   }
@@ -93,6 +97,7 @@ class Notifier {
     for (const notification of notificationsToReschedule) {
       this.#scheduleNotification({
         id: notification.id,
+        priority: notification.priority ?? 0,
         title: notification.title,
         message: notification.message,
         when: notification.when,
@@ -132,11 +137,11 @@ class Notifier {
     this.#cancelScheduledNotification(this.#formatId(id));
   }
 
-  Notify(id, title, message) {
+  Notify(id, priority, title, message) {
     if (id && title && message) {
       const formattedId = this.#formatId(id);
       const formattedTitle = this.#formatTitle(title);
-      this.#dispatch({ type: "NOTIFICATION", id: formattedId, title: formattedTitle, message });
+      this.#dispatch({ type: "NOTIFICATION", id: formattedId, priority: priority, title: formattedTitle, message });
       this.logger.info(`Sent notification ${formattedId}: ${formattedTitle} - ${message}`);
     }
   }
@@ -166,21 +171,22 @@ class Notifier {
       isBack ? ` (${Translator.translate(45)})` : ""
     }`;
 
-    const destinationNameTranslated = `${Translator.translate(127)}: ${
-      isMoon
-        ? OGIData.empire.find((x) => x.coordinates === coords)?.moon?.name
-        : OGIData.empire.find((x) => x.coordinates === coords)?.name
-    }`;
+    const destination = isMoon
+      ? OGIData.empire.find((x) => x.coordinates === coords)?.moon
+      : OGIData.empire.find((x) => x.coordinates === coords);
+
+    const destinationNameTranslated = `${Translator.translate(127)}: ${destination?.name}`;
 
     const coordsTranslated = `${Translator.translate(98)}: ${coords} (${
       isMoon ? Translator.translate(194) : Translator.translate(42)
     })`;
-
     if (id && coords) {
       this.ScheduleNotification(
         id,
+        2,
         title,
         `${missionTranslated}\n${destinationNameTranslated}\n${coordsTranslated}`,
+        `https://${OGIData.json.universeDomain}/game/index.php?page=ingame&component=fleetdispatch&cp=${destination.id}`,
         arrivalDatetime
       );
     }

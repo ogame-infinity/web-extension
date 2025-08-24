@@ -1682,7 +1682,7 @@ class OGInfinity {
     // this.showTabTimer(); TODO: enable when timer is moved to the clock area
     this.markLifeforms();
 
-    //Notifier.Notify("0", "titre", "message", new Date("2025-08-20T16:28:00"));
+    //Notifier.Notify("0", 0, "titre", "message", new Date("2025-08-20T16:28:00"));
 
     this.navigationArrows();
     this.expedition = false;
