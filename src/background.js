@@ -33,9 +33,7 @@ class BackgroundNotificationData {
   async InitializeAsync() {
     const data = await chrome.storage.local.get("ogi-notifications");
     if (data && Object.keys(data).length > 0) {
-      if (data["ogi-notifications"]) {
-        this._json = data["ogi-notifications"];
-      }
+      this._json = JSON.parse(data["ogi-notifications"]);
       if (!this._json.notifications) {
         this._json.notifications = {};
       }
@@ -51,7 +49,8 @@ class BackgroundNotificationData {
   }
 
   async SaveAsync() {
-    await chrome.storage.local.set({ ["ogi-notifications"]: this._json });
+    const json = JSON.stringify(this._json);
+    await chrome.storage.local.set({ ["ogi-notifications"]: json });
   }
 }
 
@@ -84,10 +83,23 @@ class BackgroundNotifier {
       //Verify if the notification exists and if it has changed
       const notification = this.notificationData.notifications[id];
       if (notification) {
-        shouldUpdateNotification =
-          notification.title !== title || notification.message !== message || notification.when !== when;
+        if (notification.title !== title) {
+          shouldUpdateNotification = true;
+          console.log(`Notification ${id} exists but title is different (old: ${notification.title}, new: ${title})`);
+        }
+        if (notification.message !== message) {
+          shouldUpdateNotification = true;
+          console.log(
+            `Notification ${id} exists but message is different (old: ${notification.message}, new: ${message})`
+          );
+        }
+        if (notification.when !== when) {
+          shouldUpdateNotification = true;
+          console.log(`Notification ${id} exists but when is different (old: ${notification.when}, new: ${when})`);
+        }
       } else {
         shouldUpdateNotification = true;
+        console.log(`Notification ${id} is totally new (title: ${title}, message: ${message}, when: ${when})`);
       }
 
       //Verify if the alarm exists and if it should be updated
@@ -96,9 +108,11 @@ class BackgroundNotifier {
         const alarmDate = new Date(alarm.scheduledTime).toISOString();
         if (alarmDate !== when) {
           shouldUpdateAlarm = true;
+          console.log(`Alarm ${id} exists but scheduled time is different (old: ${alarmDate}, new: ${when})`);
         }
       } else {
         shouldUpdateAlarm = true;
+        console.log(`Alarm ${id} is totally new (scheduled time: ${when})`);
       }
 
       if (shouldUpdateNotification) {

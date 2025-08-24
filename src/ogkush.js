@@ -1713,13 +1713,6 @@ class OGInfinity {
     /*Fix banner styles for messages, premium and shop page*/
     if (this.page == "messages" || this.page == "premium" || this.page == "shop")
       document.querySelector("#banner_skyscraper").classList.add("fix-banner");
-
-    /*
-     * When browser is closed, all scheduled notifications are cleared
-     * => So we need to re-schedule the notification
-     * => close tab doesn't clear scheduled notifications
-     */
-    Notifier.RescheduleAllNotifications();
   }
 
   // remove when complete removal of direct probin in stalks and target list or GF start to wake up
@@ -1793,6 +1786,13 @@ class OGInfinity {
           }
         });
     }, 100);
+
+    /*
+     * When browser is closed, all scheduled notifications are cleared
+     * => So we need to re-schedule the notification
+     * => close tab doesn't clear scheduled notifications
+     */
+    Notifier.RescheduleAllNotifications(force);
   }
 
   overviewDates() {
@@ -3188,7 +3188,7 @@ class OGInfinity {
       .then((xml) => {
         this.json.serverSettingsTimeStamp = xml.querySelector("serverData").getAttribute("timestamp");
         this.json.universeUrl = `https://${xml.querySelector("domain").innerHTML}`;
-        this.json.universeName = `https://${xml.querySelector("name").innerHTML}`;
+        this.json.universeName = xml.querySelector("name").innerHTML;
         this.json.topScore = Number(xml.querySelector("topScore").innerHTML);
         this.json.speed = Number(xml.querySelector("speed").innerHTML);
         this.json.speedResearch =

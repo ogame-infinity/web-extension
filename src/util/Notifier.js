@@ -41,15 +41,15 @@ class Notifier {
     OGIData.Save();
   }
 
-  RescheduleAllNotifications() {
+  RescheduleAllNotifications(force) {
     const now = Date.now();
     const oneMinute = 60 * 1000;
     const fiveMinutes = 5 * 60 * 1000;
 
     const idsToCancel = [];
     const notificationsToReschedule = [];
-    if (new Date(OGIData.lastSyncNotification).getTime() < now - fiveMinutes) {
-      this.logger.info(`Last sync notifications is older than 5 minutes`);
+    if (force || new Date(OGIData.lastSyncNotification).getTime() < now - fiveMinutes) {
+      this.logger.info(`Rescheduling all notifications (Forced: ${force})`);
 
       for (const [id, notification] of Object.entries(OGIData.notifications)) {
         const notificationTime = new Date(notification.when).getTime();
