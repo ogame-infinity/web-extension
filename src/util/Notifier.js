@@ -1,20 +1,22 @@
-import { getLogger } from "../logger.js";
-import NotificationType from "./NotificationType.js";
-import OGIData from "../OGIData.js";
-import Translator from "../translate.js";
-import MissionType from "../enum/missionType.js";
+import { getLogger } from "./logger.js";
+import OGIData from "./OGIData.js";
+import Translator from "./translate.js";
+import MissionType from "./enum/missionType.js";
 
 class Notifier {
-  static OGI_NOTIFICATION = "ogi-notification";
-
   constructor() {
     this.logger = getLogger("Notifier");
   }
 
-  #dispatch(type, detail) {
-    detail.type = type;
-    detail.id = `${OGIData.json.universeId}-${detail.id}`;
-    document.dispatchEvent(new CustomEvent(Notifier.OGI_NOTIFICATION, { detail: detail }));
+  #dispatch(detail) {
+    if (detail.id) {
+      detail.id = this.#formatIdWithUniverse(detail.id);
+    }
+    document.dispatchEvent(new CustomEvent("ogi-notification", { detail: detail }));
+  }
+
+  #formatIdWithUniverse(id) {
+    return `${OGIData.json.universeId}-${id}`;
   }
 
   #formatId(id) {
@@ -22,39 +24,62 @@ class Notifier {
   }
 
   ScheduleNotification(id, title, message, date) {
-    const delay = date.getTime() - Date.now();
-    const when = Date.now() + delay;
-    const detail = { id: this.#formatId(id), title: title, message: message, when: date };
+    const detail = { id: this.#formatId(id), title: title, message: message, when: date.toISOString() };
 
-    this.#dispatch(NotificationType.CREATE_SCHEDULED_NOTIFICATION, {
+    this.#dispatch({
+      type: "CREATE_SCHEDULED_NOTIFICATION",
       id: detail.id,
       title: `${OGIData.json.universeName} - ${detail.title}`,
       message: detail.message,
-      when: when, //date is recalculated for the notification
+      when: detail.when,
     });
 
-    this.logger.info(`Scheduling notification ${id} at ${when} (${date})`);
+    this.logger.info(`Scheduling notification ${id}: `, detail);
+
+    //Save for synchronization in case of multiple devices
     OGIData.notifications[id] = detail;
     OGIData.Save();
   }
 
   RescheduleAllNotifications() {
-    for (const id in OGIData.notifications) {
-      const notification = OGIData.notifications[id];
+    const now = Date.now();
+    const oneMinute = 60 * 1000;
+    const fiveMinutes = 5 * 60 * 1000;
 
-      const date = new Date(notification.when);
-      //if date is passed, cancel notification
-      if (date < Date.now()) {
-        this.CancelScheduledNotification(notification.id);
-      } else {
-        this.ScheduleNotification(notification.id, notification.title, notification.message, date);
+    const idsToCancel = [];
+    const notificationsToReschedule = [];
+    if (new Date(OGIData.lastSyncNotification).getTime() < now - fiveMinutes) {
+      this.logger.info(`Last sync notifications is older than 5 minutes`);
+
+      for (const [id, notification] of Object.entries(OGIData.notifications)) {
+        const notificationTime = new Date(notification.when).getTime();
+        //if notification is passed since one minute, then cancel it
+        if (notificationTime < now - oneMinute) idsToCancel.push(id);
+        //if notification is still valid, reschedule it
+        else if (notificationTime > now) notificationsToReschedule.push(notification);
       }
+
+      for (const id of idsToCancel) {
+        this.CancelScheduledNotification(id);
+      }
+      for (const notification of notificationsToReschedule) {
+        this.ScheduleNotification(
+          notification.id,
+          notification.title,
+          notification.message,
+          new Date(notification.when)
+        );
+      }
+
+      OGIData.lastSyncNotification = new Date().toISOString();
+      OGIData.Save();
     }
   }
 
   CancelScheduledNotification(id) {
-    this.#dispatch(NotificationType.CANCEL_SCHEDULED_NOTIFICATION, { id: this.#formatId(id) });
+    this.#dispatch({ type: "CANCEL_SCHEDULED_NOTIFICATION", id: this.#formatId(id) });
     if (OGIData.notifications[id]) {
+      //Save for synchronization in case of multiple devices
       delete OGIData.notifications[id];
       this.logger.info(`Cancelled notification ${id}`);
       OGIData.Save();
@@ -63,7 +88,7 @@ class Notifier {
 
   Notify(id, title, message) {
     if (id && title && message) {
-      this.#dispatch(NotificationType.NOTIFICATION, { id: this.#formatId(id), title, message });
+      this.#dispatch({ type: "NOTIFICATION", id: this.#formatId(id), title, message });
       this.logger.info(`Sent notification ${id}: ${title} - ${message}`);
     }
   }

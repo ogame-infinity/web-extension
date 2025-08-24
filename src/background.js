@@ -1,108 +1,215 @@
-const NotificationType = Object.freeze({
-  NOTIFICATION: 0,
-  CREATE_SCHEDULED_NOTIFICATION: 1,
-  CANCEL_SCHEDULED_NOTIFICATION: 2,
-});
+const localStorageKey = "ogi-notifications";
 
-class BackgroundNotifier {
-  notifications = [];
-  constructor(browserApi) {
-    this.browserApi = browserApi;
+/*
+ * We absolutely need to store the notification data into the extension local storage
+ * At runtime, the background scripts are loaded when events are fired.
+ * When a background script is unloaded, all its variables are lost.
+ * Therefore, we need to persist the notification data
+ *
+ * The chosen storage is the extension local storage because it allows us to store data that can be accessed by background scripts.
+ * => Background scripts cannot access to the local storage.
+ *
+ * When an alarm is triggered, we only have its ID to work with. So we can't separate the notification data per universe Ids
+ * We also have only one instance of the background script running at a time.
+ * => The notification data is shared across all universes.
+ */
+class BackgroundNotificationData {
+  _json = {
+    lastCleaned: new Date().toISOString(),
+    notifications: {},
+  };
+
+  get notifications() {
+    return this._json.notifications;
   }
 
-  #createNotification(id, title, message) {
-    if (!this.browserApi) return;
+  get lastCleaned() {
+    return this._json.lastCleaned;
+  }
+  set lastCleaned(date) {
+    this._json.lastCleaned = date ?? new Date().toISOString();
+  }
+
+  async InitializeAsync() {
+    const data = await chrome.storage.local.get("ogi-notifications");
+    if (data && Object.keys(data).length > 0) {
+      this._json = JSON.parse(data["ogi-notifications"]);
+      if (!this._json.notifications) {
+        this._json.notifications = {};
+      }
+      if (!this._json.lastCleaned) {
+        this._json.lastCleaned = new Date().toISOString();
+      }
+    } else {
+      this._json = {
+        notifications: {},
+        lastCleaned: new Date().toISOString(),
+      };
+    }
+  }
+
+  async SaveAsync() {
+    const json = JSON.stringify(this._json);
+    await chrome.storage.local.set({ ["ogi-notifications"]: json });
+  }
+}
+
+class BackgroundNotifier {
+  #raiseNotification(id, title, message) {
+    if (!chrome) return;
 
     try {
-      this.browserApi.notifications.create(id, {
+      chrome.notifications.create(id, {
         type: "basic",
         iconUrl: "/assets/images/logo128.png",
         title: title,
         message: message,
       });
-      console.log(`Created notification ${id}:`, { id, title, message });
+      console.log(`Raised notification ${id}:`, { title, message });
     } catch (error) {
       console.error("Error while creating notification:", error);
     }
   }
 
-  #scheduleNotification(id, title, message, when) {
-    if (!this.browserApi) return;
-
+  async #scheduleNotificationAsync(notificationData, id, title, message, when) {
     try {
-      if (this.notifications[id]) {
-        // if a notification with the same ID exists, cancel it
-        this.#cancelScheduledNotification(id);
+      let shouldUpdateAlarm = false;
+      let shouldUpdateNotification = false;
+
+      //Verify if the notification exists and if it has changed
+      const notification = notificationData.notifications[id];
+      if (notification) {
+        shouldUpdateNotification =
+          notification.title !== title || notification.message !== message || notification.when !== when;
+      } else {
+        shouldUpdateNotification = true;
       }
 
-      this.browserApi.alarms.create(id, { when: when });
-      this.notifications[id] = { title, message };
-      console.log(`Scheduled notification ${id}:`, this.notifications[id]);
+      //Verify if the alarm exists and if it should be updated
+      const alarm = await chrome.alarms.get(id);
+      if (alarm) {
+        const alarmDate = new Date(alarm.scheduledTime).toISOString();
+        if (alarmDate !== when) {
+          shouldUpdateAlarm = true;
+        }
+      } else {
+        shouldUpdateAlarm = true;
+      }
+
+      if (shouldUpdateNotification) {
+        notificationData.notifications[id] = { title, message, when };
+        await notificationData.SaveAsync();
+        console.log(`Saved notification ${id}:`, { title, message, when });
+      } else {
+        console.log(`Notification ${id} is unchanged`);
+      }
+
+      if (shouldUpdateAlarm) {
+        const delay = new Date(when).getTime() - Date.now();
+        const newAlarmDate = Date.now() + delay;
+
+        chrome.alarms.create(id, { when: newAlarmDate });
+        console.log(`Scheduled alarm ${id} at ${when}`);
+      } else {
+        console.log(`Alarm ${id} is unchanged`);
+      }
     } catch (error) {
       console.error("Error while scheduling notification:", error);
     }
   }
 
-  #cancelScheduledNotification(id) {
-    if (!this.browserApi) return;
-
+  async #cancelScheduledNotificationAsync(notificationData, id) {
     try {
-      if (this.notifications[id]) {
-        this.browserApi.alarms.clear(id);
-        delete this.notifications[id];
-        console.log(`Canceled scheduled notification ${id}`);
+      if (notificationData.notifications[id]) {
+        delete notificationData.notifications[id];
+        await notificationData.SaveAsync();
+        console.log(`Removed notification ${id}`);
+      }
+
+      const wasCleared = await chrome.alarms.clear(id);
+      if (wasCleared) {
+        console.log(`Cleared alarm ${id}`);
       }
     } catch (error) {
       console.error("Error while canceling scheduled notification:", error);
     }
   }
 
-  Notify(notification) {
-    if (!notification) return;
+  async #cleanOldNotificationsAsync(notificationData) {
+    const idsToRemove = [];
+    const now = Date.now();
 
-    if (notification.type === NotificationType.NOTIFICATION) {
-      this.#createNotification(notification.id, notification.title, notification.message);
-    } else if (notification.type === NotificationType.CREATE_SCHEDULED_NOTIFICATION) {
-      this.#scheduleNotification(notification.id, notification.title, notification.message, notification.when);
-    } else if (notification.type === NotificationType.CANCEL_SCHEDULED_NOTIFICATION) {
-      this.#cancelScheduledNotification(notification.id);
+    const fiveMinutes = 5 * 60 * 1000;
+
+    //if last cleaned is more than 5 minutes ago, clean old notifications
+    if (new Date(notificationData.lastCleaned).getTime() < now - fiveMinutes) {
+      console.log(`Cleaning old notifications`);
+      for (const [id, notification] of Object.entries(notificationData.notifications)) {
+        if (new Date(notification.when).getTime() < now - fiveMinutes) idsToRemove.push(id);
+      }
+
+      for (const id of idsToRemove) {
+        delete notificationData.notifications[id];
+        console.log(`Removed old notification ${id}`);
+      }
+
+      const lastCleaned = new Date().toISOString();
+      notificationData.lastCleaned = lastCleaned;
+      await notificationData.SaveAsync();
+
+      console.log(`Last cleaned old notifications: ${lastCleaned}`);
     }
   }
 
-  NotifyScheduled(notificationId) {
-    const notification = this.notifications[notificationId];
+  async HandleMessageAsync(message) {
+    if (!message) return;
+
+    const notificationData = new BackgroundNotificationData();
+    await notificationData.InitializeAsync();
+
+    if (message.type === "NOTIFICATION") {
+      this.#raiseNotification(message.id, message.title, message.message);
+    } else if (message.type === "CREATE_SCHEDULED_NOTIFICATION") {
+      await this.#scheduleNotificationAsync(notificationData, message.id, message.title, message.message, message.when);
+    } else if (message.type === "CANCEL_SCHEDULED_NOTIFICATION") {
+      await this.#cancelScheduledNotificationAsync(notificationData, message.id);
+    }
+
+    await this.#cleanOldNotificationsAsync(notificationData);
+  }
+
+  async NotifyScheduledAsync(notificationId) {
+    if (!notificationId) return;
+
+    const notificationData = new BackgroundNotificationData();
+    await notificationData.InitializeAsync();
+
+    const notification = notificationData.notifications[notificationId];
     if (notification) {
-      delete this.notifications[notificationId];
-      this.#createNotification(notificationId, notification.title, notification.message);
+      this.#raiseNotification(notificationId, notification.title, notification.message);
+      delete notificationData.notifications[notificationId];
+      notificationData.Save();
     }
+
+    await this.#cleanOldNotificationsAsync(notificationData);
   }
 }
-var isChrome = typeof chrome !== "undefined";
-var isFirefox = typeof browser !== "undefined";
-const browserApi = isChrome ? chrome : isFirefox ? browser : null;
-const backgroundNotifier = new BackgroundNotifier(browserApi);
 
-if (browserApi) {
-  browserApi.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    try {
-      if (request.type == "notification") {
-        if (request.detail) {
-          backgroundNotifier.Notify(request.detail);
-          if (sendResponse) return sendResponse(request.detail);
-        }
-      }
-    } catch (error) {
-      console.error("Error handling message:", error);
-    }
-  });
+const backgroundNotifier = new BackgroundNotifier();
 
-  browserApi.alarms.onAlarm.addListener((alarm) => {
-    try {
-      if (alarm.name) {
-        backgroundNotifier.NotifyScheduled(alarm.name);
-      }
-    } catch (error) {
-      console.error("Error handling alarm:", error);
-    }
-  });
-}
+chrome.runtime.onMessage.addListener(async function (request, sender, sendResponse) {
+  try {
+    if (request.eventType === "ogi-notification" && request.message)
+      await backgroundNotifier.HandleMessageAsync(request.message);
+  } catch (error) {
+    console.error("Error handling message:", error);
+  }
+});
+
+chrome.alarms.onAlarm.addListener(async function (alarm) {
+  try {
+    await backgroundNotifier.NotifyScheduledAsync(alarm.name);
+  } catch (error) {
+    console.error("Error handling alarm:", error);
+  }
+});
