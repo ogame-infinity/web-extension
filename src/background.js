@@ -117,7 +117,8 @@ class BackgroundNotifier {
          * At that point, the alarm is considered expired and is simply never triggered.
          * This is why the documentation recommends a minimum delay of one minute to ensure the alarm has enough time to be properly registered and processed by the scheduling system.
          */
-        const minRequiredDelayInMs = 60 * 1000; // set minimum delay to 1 minute
+
+        const minRequiredDelayInMs = 60 * 1000; // ensure minimum delay of 1 minute
         const newAlarmDate = Math.max(new Date(when).getTime(), Date.now() + minRequiredDelayInMs);
 
         chrome.alarms.create(id, { when: newAlarmDate });

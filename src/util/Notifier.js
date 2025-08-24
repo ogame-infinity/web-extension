@@ -55,8 +55,9 @@ class Notifier {
         const notificationTime = new Date(notification.when).getTime();
         //if notification is passed since one minute, then cancel it
         if (notificationTime < now - oneMinute) idsToCancel.push(id);
-        //if notification is still valid, reschedule it
-        else if (notificationTime > now) notificationsToReschedule.push(notification);
+        //if notification occurs more than one minute in the future, then reschedule it
+        else if (notificationTime > now + oneMinute) notificationsToReschedule.push(notification);
+        //else ignore it
       }
 
       for (const id of idsToCancel) {
