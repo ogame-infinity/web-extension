@@ -33,7 +33,8 @@ class BackgroundNotificationData {
   async InitializeAsync() {
     const data = await chrome.storage.local.get("ogi-notifications");
     if (data && Object.keys(data).length > 0) {
-      this._json = JSON.parse(data["ogi-notifications"]);
+      // this._json = JSON.parse(data["ogi-notifications"]);
+      this._json = data["ogi-notifications"];
       if (!this._json.notifications) {
         this._json.notifications = {};
       }
@@ -49,8 +50,11 @@ class BackgroundNotificationData {
   }
 
   async SaveAsync() {
+    /*
     const json = JSON.stringify(this._json);
     await chrome.storage.local.set({ ["ogi-notifications"]: json });
+    */
+    await chrome.storage.local.set({ ["ogi-notifications"]: this._json });
   }
 }
 
@@ -75,7 +79,7 @@ class BackgroundNotifier {
     }
   }
 
-  async #scheduleNotificationAsync(id, title, message, when) {
+  async #scheduleNotificationAsync(id, domain, title, message, when) {
     try {
       let shouldUpdateAlarm = false;
       let shouldUpdateNotification = false;
@@ -116,9 +120,9 @@ class BackgroundNotifier {
       }
 
       if (shouldUpdateNotification) {
-        this.notificationData.notifications[id] = { title, message, when };
+        this.notificationData.notifications[id] = { domain, title, message, when };
         await this.notificationData.SaveAsync();
-        console.log(`Saved notification ${id}:`, { title, message, when });
+        console.log(`Saved notification ${id}:`, { domain, title, message, when });
       } else {
         console.log(`Notification ${id} is unchanged`);
       }
@@ -194,7 +198,7 @@ class BackgroundNotifier {
     if (message.type === "NOTIFICATION") {
       this.#raiseNotification(message.id, message.title, message.message);
     } else if (message.type === "CREATE_SCHEDULED_NOTIFICATION") {
-      await this.#scheduleNotificationAsync(message.id, message.title, message.message, message.when);
+      await this.#scheduleNotificationAsync(message.id, message.domain, message.title, message.message, message.when);
     } else if (message.type === "CANCEL_SCHEDULED_NOTIFICATION") {
       await this.#cancelScheduledNotificationAsync(message.id);
     }
@@ -214,6 +218,13 @@ class BackgroundNotifier {
 
     await this.#cleanOldNotificationsAsync();
   }
+
+  GetAllNotifications(domain) {
+    if (!domain) return [];
+    return Object.entries(this.notificationData.notifications)
+      .filter(([id, notification]) => notification.domain === domain)
+      .map(([id, notification]) => ({ id, ...notification }));
+  }
 }
 
 const notificationData = new BackgroundNotificationData();
@@ -221,11 +232,15 @@ const backgroundNotifier = new BackgroundNotifier(notificationData);
 async function setup() {
   await notificationData.InitializeAsync();
 }
+setup();
 
 chrome.runtime.onMessage.addListener(async function (request, sender, sendResponse) {
   try {
     if (request.eventType === "ogi-notification" && request.message)
       await backgroundNotifier.HandleMessageAsync(request.message);
+    else if (request.eventType === "ogi-notification-sync" && sendResponse) {
+      sendResponse(backgroundNotifier.GetAllNotifications(request.message.domain));
+    }
   } catch (error) {
     console.error("Error handling message:", error);
   }

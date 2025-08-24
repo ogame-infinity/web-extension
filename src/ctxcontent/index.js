@@ -100,6 +100,16 @@ document.addEventListener("ogi-notification", function (e) {
     mainLogger.error("Error sending notification:", error);
   }
 });
+document.addEventListener("ogi-notification-sync", function (e) {
+  try {
+    if (!e.detail) throw new Error("No notification details provided");
+    chrome.runtime.sendMessage({ eventType: "ogi-notification-sync", message: e.detail }, function (response) {
+      if (response) document.dispatchEvent(new CustomEvent("ogi-notification-sync-response", { detail: response }));
+    });
+  } catch (error) {
+    mainLogger.error("Error syncing notification:", error);
+  }
+});
 
 export function main() {
   mainLogger.log("Starting OGame Infinity");

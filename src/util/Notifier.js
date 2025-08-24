@@ -6,6 +6,14 @@ import MissionType from "./enum/missionType.js";
 class Notifier {
   constructor() {
     this.logger = getLogger("Notifier");
+    const self = this;
+    document.addEventListener("ogi-notification-sync-response", function (e) {
+      try {
+        self.#syncNotifications(e.detail);
+      } catch (error) {
+        self.logger.error("Error syncing notifications:", error);
+      }
+    });
   }
 
   #dispatch(detail) {
@@ -29,6 +37,7 @@ class Notifier {
     this.#dispatch({
       type: "CREATE_SCHEDULED_NOTIFICATION",
       id: detail.id,
+      domain: OGIData.json.universeDomain,
       title: `${OGIData.json.universeName} - ${detail.title}`,
       message: detail.message,
       when: detail.when,
@@ -41,39 +50,63 @@ class Notifier {
     OGIData.Save();
   }
 
-  RescheduleAllNotifications(force) {
-    const now = Date.now();
-    const oneMinute = 60 * 1000;
-    const fiveMinutes = 5 * 60 * 1000;
-
+  #syncNotifications(backgroundNotifications) {
     const idsToCancel = [];
     const notificationsToReschedule = [];
+
+    const dateIsPassed = (date) => new Date(date).getTime() < Date.now();
+
+    for (const [id, notification] of Object.entries(OGIData.notifications)) {
+      const backgroundNotification = backgroundNotifications[id];
+      if (!backgroundNotification) {
+        // If there's no background notification, and date is not passed, we must reschedule it, else we can cancel it
+        if (!dateIsPassed(notification.when)) notificationsToReschedule.push(notification);
+        else if (!idsToCancel.find((x) => x === id)) idsToCancel.push(id);
+      } else {
+        if (
+          backgroundNotification.title !== notification.title ||
+          backgroundNotification.message !== notification.message ||
+          backgroundNotification.when !== notification.when
+        ) {
+          //if any property is different, and date is not passed, we can reschedule it, else we can cancel it
+          if (!dateIsPassed(new Date(notification.when).getTime())) notificationsToReschedule.push(notification);
+          else if (!idsToCancel.find((x) => x === id)) idsToCancel.push(id);
+        }
+      }
+    }
+
+    for (const [id, backgroundNotification] of Object.entries(backgroundNotifications)) {
+      const notification = OGIData.notifications[id];
+      if (!notification) {
+        // If there's no local notification, we must cancel it
+        if (!idsToCancel.find((x) => x === id)) idsToCancel.push(id);
+      }
+    }
+
+    for (const id of idsToCancel) {
+      this.CancelScheduledNotification(id);
+    }
+    for (const notification of notificationsToReschedule) {
+      this.ScheduleNotification(notification.id, notification.title, notification.message, new Date(notification.when));
+    }
+
+    OGIData.lastSyncNotification = new Date().toISOString();
+    OGIData.Save();
+
+    this.logger.info(
+      `Synchronized notifications: ${notificationsToReschedule.length} rescheduled, ${idsToCancel.length} canceled`
+    );
+  }
+
+  SyncNotifications(force) {
+    const now = Date.now();
+    const fiveMinutes = 5 * 60 * 1000;
+    //if force or last sync was more than 5 minutes ago, then sync
     if (force || new Date(OGIData.lastSyncNotification).getTime() < now - fiveMinutes) {
-      this.logger.info(`Rescheduling all notifications (Forced: ${force})`);
-
-      for (const [id, notification] of Object.entries(OGIData.notifications)) {
-        const notificationTime = new Date(notification.when).getTime();
-        //if notification is passed since one minute, then cancel it
-        if (notificationTime < now - oneMinute) idsToCancel.push(id);
-        //if notification occurs more than one minute in the future, then reschedule it
-        else if (notificationTime > now + oneMinute) notificationsToReschedule.push(notification);
-        //else ignore it
-      }
-
-      for (const id of idsToCancel) {
-        this.CancelScheduledNotification(id);
-      }
-      for (const notification of notificationsToReschedule) {
-        this.ScheduleNotification(
-          notification.id,
-          notification.title,
-          notification.message,
-          new Date(notification.when)
-        );
-      }
-
-      OGIData.lastSyncNotification = new Date().toISOString();
-      OGIData.Save();
+      this.logger.info(`Syncing notifications (Forced: ${force})`);
+      document.dispatchEvent(
+        new CustomEvent("ogi-notification-sync", { detail: { domain: OGIData.json.universeDomain } })
+      );
     }
   }
 
@@ -119,7 +152,7 @@ class Notifier {
       isBack ? ` (${Translator.translate(45)})` : ""
     }`;
 
-    const destinationNameTranslated = `${Translator.translate(73)} ${
+    const destinationNameTranslated = `${Translator.translate(127)}: ${
       isMoon
         ? OGIData.empire.find((x) => x.coordinates === coords)?.moon?.name
         : OGIData.empire.find((x) => x.coordinates === coords)?.name

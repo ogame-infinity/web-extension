@@ -1418,6 +1418,7 @@ class OGInfinity {
     this.universe = window.location.host.replace(/\D/g, "");
     this.universeUrl = `https://${getMetaValue("ogame-universe").content}`;
     this.universeName = getMetaValue("ogame-universe-name").content;
+    this.universeDomain = getMetaValue("ogame-universe").content;
     this.geologist = !!document.querySelector(".geologist.on");
     this.technocrat = !!document.querySelector(".technocrat.on");
     this.admiral = !!document.querySelector(".admiral.on");
@@ -1455,6 +1456,7 @@ class OGInfinity {
     this.json.universeId = this.universe;
     this.json.universeUrl = this.universeUrl;
     this.json.universeName = this.universeName;
+    this.json.universeDomain = this.universeDomain;
     this.json.welcome = this.json.welcome !== false;
     this.json.needLifeformUpdate = this.json.needLifeformUpdate || {};
     this.json.pantrySync = this.json.pantrySync || "";
@@ -1792,7 +1794,7 @@ class OGInfinity {
      * => So we need to re-schedule the notification
      * => close tab doesn't clear scheduled notifications
      */
-    Notifier.RescheduleAllNotifications(force);
+    Notifier.SyncNotifications(force);
   }
 
   overviewDates() {
@@ -3189,6 +3191,7 @@ class OGInfinity {
         this.json.serverSettingsTimeStamp = xml.querySelector("serverData").getAttribute("timestamp");
         this.json.universeUrl = `https://${xml.querySelector("domain").innerHTML}`;
         this.json.universeName = xml.querySelector("name").innerHTML;
+        this.json.universeDomain = xml.querySelector("domain").innerHTML;
         this.json.topScore = Number(xml.querySelector("topScore").innerHTML);
         this.json.speed = Number(xml.querySelector("speed").innerHTML);
         this.json.speedResearch =
