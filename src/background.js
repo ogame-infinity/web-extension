@@ -33,7 +33,9 @@ class BackgroundNotificationData {
   async InitializeAsync() {
     const data = await chrome.storage.local.get("ogi-notifications");
     if (data && Object.keys(data).length > 0) {
-      this._json = JSON.parse(data["ogi-notifications"]);
+      if (data["ogi-notifications"]) {
+        this._json = data["ogi-notifications"];
+      }
       if (!this._json.notifications) {
         this._json.notifications = {};
       }
@@ -49,12 +51,15 @@ class BackgroundNotificationData {
   }
 
   async SaveAsync() {
-    const json = JSON.stringify(this._json);
-    await chrome.storage.local.set({ ["ogi-notifications"]: json });
+    await chrome.storage.local.set({ ["ogi-notifications"]: this._json });
   }
 }
 
 class BackgroundNotifier {
+  constructor(notificationData) {
+    this.notificationData = notificationData;
+  }
+
   #raiseNotification(id, title, message) {
     if (!chrome) return;
 
@@ -71,13 +76,13 @@ class BackgroundNotifier {
     }
   }
 
-  async #scheduleNotificationAsync(notificationData, id, title, message, when) {
+  async #scheduleNotificationAsync(id, title, message, when) {
     try {
       let shouldUpdateAlarm = false;
       let shouldUpdateNotification = false;
 
       //Verify if the notification exists and if it has changed
-      const notification = notificationData.notifications[id];
+      const notification = this.notificationData.notifications[id];
       if (notification) {
         shouldUpdateNotification =
           notification.title !== title || notification.message !== message || notification.when !== when;
@@ -97,8 +102,8 @@ class BackgroundNotifier {
       }
 
       if (shouldUpdateNotification) {
-        notificationData.notifications[id] = { title, message, when };
-        await notificationData.SaveAsync();
+        this.notificationData.notifications[id] = { title, message, when };
+        await this.notificationData.SaveAsync();
         console.log(`Saved notification ${id}:`, { title, message, when });
       } else {
         console.log(`Notification ${id} is unchanged`);
@@ -112,9 +117,8 @@ class BackgroundNotifier {
          * At that point, the alarm is considered expired and is simply never triggered.
          * This is why the documentation recommends a minimum delay of one minute to ensure the alarm has enough time to be properly registered and processed by the scheduling system.
          */
-
-        const delay = new Date(when).getTime() - Date.now();
-        const newAlarmDate = Date.now() + delay;
+        const minRequiredDelayInMs = 60 * 1000; // set minimum delay to 1 minute
+        const newAlarmDate = Math.max(new Date(when).getTime(), Date.now() + minRequiredDelayInMs);
 
         chrome.alarms.create(id, { when: newAlarmDate });
         console.log(`Scheduled alarm ${id} at ${when}`);
@@ -126,11 +130,11 @@ class BackgroundNotifier {
     }
   }
 
-  async #cancelScheduledNotificationAsync(notificationData, id) {
+  async #cancelScheduledNotificationAsync(id) {
     try {
-      if (notificationData.notifications[id]) {
-        delete notificationData.notifications[id];
-        await notificationData.SaveAsync();
+      if (this.notificationData.notifications[id]) {
+        delete this.notificationData.notifications[id];
+        await this.notificationData.SaveAsync();
         console.log(`Removed notification ${id}`);
       }
 
@@ -143,27 +147,27 @@ class BackgroundNotifier {
     }
   }
 
-  async #cleanOldNotificationsAsync(notificationData) {
+  async #cleanOldNotificationsAsync() {
     const idsToRemove = [];
     const now = Date.now();
 
     const fiveMinutes = 5 * 60 * 1000;
 
     //if last cleaned is more than 5 minutes ago, clean old notifications
-    if (new Date(notificationData.lastCleaned).getTime() < now - fiveMinutes) {
+    if (new Date(this.notificationData.lastCleaned).getTime() < now - fiveMinutes) {
       console.log(`Cleaning old notifications`);
-      for (const [id, notification] of Object.entries(notificationData.notifications)) {
+      for (const [id, notification] of Object.entries(this.notificationData.notifications)) {
         if (new Date(notification.when).getTime() < now - fiveMinutes) idsToRemove.push(id);
       }
 
       for (const id of idsToRemove) {
-        delete notificationData.notifications[id];
+        delete this.notificationData.notifications[id];
         console.log(`Removed old notification ${id}`);
       }
 
       const lastCleaned = new Date().toISOString();
-      notificationData.lastCleaned = lastCleaned;
-      await notificationData.SaveAsync();
+      this.notificationData.lastCleaned = lastCleaned;
+      await this.notificationData.SaveAsync();
 
       console.log(`Last cleaned old notifications: ${lastCleaned}`);
     }
@@ -172,38 +176,36 @@ class BackgroundNotifier {
   async HandleMessageAsync(message) {
     if (!message) return;
 
-    const notificationData = new BackgroundNotificationData();
-    await notificationData.InitializeAsync();
-
     if (message.type === "NOTIFICATION") {
       this.#raiseNotification(message.id, message.title, message.message);
     } else if (message.type === "CREATE_SCHEDULED_NOTIFICATION") {
-      await this.#scheduleNotificationAsync(notificationData, message.id, message.title, message.message, message.when);
+      await this.#scheduleNotificationAsync(message.id, message.title, message.message, message.when);
     } else if (message.type === "CANCEL_SCHEDULED_NOTIFICATION") {
-      await this.#cancelScheduledNotificationAsync(notificationData, message.id);
+      await this.#cancelScheduledNotificationAsync(message.id);
     }
 
-    await this.#cleanOldNotificationsAsync(notificationData);
+    await this.#cleanOldNotificationsAsync();
   }
 
   async NotifyScheduledAsync(notificationId) {
     if (!notificationId) return;
 
-    const notificationData = new BackgroundNotificationData();
-    await notificationData.InitializeAsync();
-
-    const notification = notificationData.notifications[notificationId];
+    const notification = this.notificationData.notifications[notificationId];
     if (notification) {
       this.#raiseNotification(notificationId, notification.title, notification.message);
-      delete notificationData.notifications[notificationId];
-      await notificationData.SaveAsync();
+      delete this.notificationData.notifications[notificationId];
+      await this.notificationData.SaveAsync();
     }
 
-    await this.#cleanOldNotificationsAsync(notificationData);
+    await this.#cleanOldNotificationsAsync();
   }
 }
 
-const backgroundNotifier = new BackgroundNotifier();
+const notificationData = new BackgroundNotificationData();
+const backgroundNotifier = new BackgroundNotifier(notificationData);
+async function setup() {
+  await notificationData.InitializeAsync();
+}
 
 chrome.runtime.onMessage.addListener(async function (request, sender, sendResponse) {
   try {
