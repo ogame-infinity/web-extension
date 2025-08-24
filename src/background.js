@@ -105,6 +105,14 @@ class BackgroundNotifier {
       }
 
       if (shouldUpdateAlarm) {
+        /*
+         * The browser doesn't execute tasks with millisecond-level precision.
+         * It manages an event scheduling cycle to optimize performance and battery consumption.
+         * If you create an alarm for a time that's too short (e.g., 10 seconds from now), the browser might not process the scheduling request until after that time has already passed.
+         * At that point, the alarm is considered expired and is simply never triggered.
+         * This is why the documentation recommends a minimum delay of one minute to ensure the alarm has enough time to be properly registered and processed by the scheduling system.
+         */
+
         const delay = new Date(when).getTime() - Date.now();
         const newAlarmDate = Date.now() + delay;
 
@@ -188,7 +196,7 @@ class BackgroundNotifier {
     if (notification) {
       this.#raiseNotification(notificationId, notification.title, notification.message);
       delete notificationData.notifications[notificationId];
-      notificationData.Save();
+      await notificationData.SaveAsync();
     }
 
     await this.#cleanOldNotificationsAsync(notificationData);
