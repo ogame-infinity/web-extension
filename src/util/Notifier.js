@@ -94,7 +94,7 @@ class Notifier {
   }
 
   #formatFleetArrivalId(fleetId, isBack) {
-    return `fleet-${isBack ? "return" : "arrival"}-${this.#formatId(fleetId)}`;
+    return `fleet-${this.#formatId(fleetId)}-${isBack ? "return" : "arrival"}`;
   }
 
   IsFleetMissionNotifiable(missionType) {
