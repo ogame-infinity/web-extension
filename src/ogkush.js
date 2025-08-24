@@ -13051,6 +13051,7 @@ class OGInfinity {
       mainSyncJsonObj.discoveries = await this.getObjLastElements(this?.json?.discoveries, 5000);
       mainSyncJsonObj.discoveriesSums = this?.json?.discoveriesSums;
       mainSyncJsonObj.harvests = this?.json?.harvests;
+      mainSyncJsonObj.notifications = this?.json?.notifications;
 
       let finalJson = {
         data: LZString.compressToUTF16(JSON.stringify(mainSyncJsonObj)),
