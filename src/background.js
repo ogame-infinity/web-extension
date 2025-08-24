@@ -30,10 +30,12 @@ class BackgroundNotificationData {
     this._json.lastCleaned = date ?? new Date().toISOString();
   }
 
-  async InitializeAsync() {
+  async InitializeFromStorageAsync() {
+    console.log("Initializing from storage...");
     const data = await chrome.storage.local.get("ogi-notifications");
-    if (data && Object.keys(data).length > 0) {
-      // this._json = JSON.parse(data["ogi-notifications"]);
+
+    if (data && data["ogi-notifications"]) {
+      console.log("Data found in storage, initializing...");
       this._json = data["ogi-notifications"];
       if (!this._json.notifications) {
         this._json.notifications = {};
@@ -41,20 +43,21 @@ class BackgroundNotificationData {
       if (!this._json.lastCleaned) {
         this._json.lastCleaned = new Date().toISOString();
       }
+      console.log("Initialization complete:", this._json);
     } else {
+      console.warn("No data found in storage, initializing with default values");
       this._json = {
         notifications: {},
         lastCleaned: new Date().toISOString(),
       };
+      await this.SaveAsync();
     }
   }
 
   async SaveAsync() {
-    /*
-    const json = JSON.stringify(this._json);
-    await chrome.storage.local.set({ ["ogi-notifications"]: json });
-    */
+    console.log("Saving to storage...");
     await chrome.storage.local.set({ ["ogi-notifications"]: this._json });
+    console.log("Saving complete");
   }
 }
 
@@ -89,21 +92,21 @@ class BackgroundNotifier {
       if (notification) {
         if (notification.title !== title) {
           shouldUpdateNotification = true;
-          console.log(`Notification ${id} exists but title is different (old: ${notification.title}, new: ${title})`);
+          console.log(`Notification ${id} exists but title is different`, { old: notification.title, new: title });
         }
         if (notification.message !== message) {
           shouldUpdateNotification = true;
-          console.log(
-            `Notification ${id} exists but message is different (old: ${notification.message}, new: ${message})`
-          );
+          console.log(`Notification ${id} exists but message is different`, {
+            old: notification.message,
+            new: message,
+          });
         }
         if (notification.when !== when) {
           shouldUpdateNotification = true;
-          console.log(`Notification ${id} exists but when is different (old: ${notification.when}, new: ${when})`);
+          console.log(`Notification ${id} exists but when is different`, { old: notification.when, new: when });
         }
       } else {
         shouldUpdateNotification = true;
-        console.log(`Notification ${id} is totally new (title: ${title}, message: ${message}, when: ${when})`);
       }
 
       //Verify if the alarm exists and if it should be updated
@@ -116,7 +119,6 @@ class BackgroundNotifier {
         }
       } else {
         shouldUpdateAlarm = true;
-        console.log(`Alarm ${id} is totally new (scheduled time: ${when})`);
       }
 
       if (shouldUpdateNotification) {
@@ -230,20 +232,29 @@ class BackgroundNotifier {
 const notificationData = new BackgroundNotificationData();
 const backgroundNotifier = new BackgroundNotifier(notificationData);
 async function setup() {
-  await notificationData.InitializeAsync();
+  await notificationData.InitializeFromStorageAsync();
 }
 setup();
 
-chrome.runtime.onMessage.addListener(async function (request, sender, sendResponse) {
-  try {
-    if (request.eventType === "ogi-notification" && request.message)
-      await backgroundNotifier.HandleMessageAsync(request.message);
-    else if (request.eventType === "ogi-notification-sync" && sendResponse) {
-      sendResponse(backgroundNotifier.GetAllNotifications(request.message.domain));
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  // execute into IIFE (Immediately Invoked Function Expression)
+  (async () => {
+    try {
+      if (request.eventType === "ogi-notification" && request.message) {
+        await backgroundNotifier.HandleMessageAsync(request.message);
+      } else if (request.eventType === "ogi-notification-sync" && sendResponse) {
+        await notificationData.InitializeFromStorageAsync();
+        sendResponse(backgroundNotifier.GetAllNotifications(request.message.domain));
+      }
+    } catch (error) {
+      console.error("Error processing message:", error);
+      // Send an empty response in case of error to avoid the port being suspended
+      sendResponse({});
     }
-  } catch (error) {
-    console.error("Error handling message:", error);
-  }
+  })();
+
+  // Send a response indicating that the message was received
+  return true;
 });
 
 chrome.alarms.onAlarm.addListener(async function (alarm) {

@@ -14108,6 +14108,7 @@ class OGInfinity {
         }
         let type = parseInt(fleet.getAttribute("data-mission-type"));
         let originCoords = fleet.querySelector(".originCoords").textContent;
+        const isOriginMoon = !!fleet.querySelector(".originData .moon");
         OGIData.empire.forEach((planet) => {
           if (planet.coordinates == originCoords) {
             fleet.querySelector(".timer").classList.add("friendly");
@@ -14184,32 +14185,32 @@ class OGInfinity {
 
           const notifyMeButton = fleet.appendChild(createDOM("button", { class: "notify-me-button" }));
 
-          if (Notifier.IsFleetArrivalScheduled(id, isBack)) {
+          if (Notifier.IsFleetArrivalNotificationScheduled(id, isBack)) {
             notifyMeButton.classList.add("active");
           }
 
           const backBasedMissions = [missionType.TRANSPORT, missionType.HARVEST];
 
           notifyMeButton.addEventListener("click", () => {
-            if (!Notifier.IsFleetArrivalScheduled(id, isBack)) {
-              Notifier.NotifyFleetArrival(id, destCoords, isDestMoon, type, isBack, arrivaleDatetime);
+            if (!Notifier.IsFleetArrivalNotificationScheduled(id, isBack)) {
+              Notifier.ScheduleFleetArrivalNotification(id, destCoords, isDestMoon, type, isBack, arrivaleDatetime);
 
-              if (!isBack && fleet.querySelector(".nextTimer") && type === missionType.TRANSPORT) {
+              if (!isBack && fleet.querySelector(".nextTimer") && backBasedMissions.includes(type)) {
                 //if fleet type is a return based like transport or harvest, then also preshot the return notification
                 const returnDatetime = convertToDate(
                   fleet.querySelector(".nextTimer").getAttribute("data-tooltip-title")
                 );
-                Notifier.NotifyFleetArrival(id, originCoords, isDestMoon, type, true, returnDatetime);
+                Notifier.ScheduleFleetArrivalNotification(id, originCoords, isOriginMoon, type, true, returnDatetime);
               }
 
               if (!notifyMeButton.classList.contains("active")) {
                 notifyMeButton.classList.add("active");
               }
             } else {
-              Notifier.CancelFleetArrivalNotification(id, isBack);
+              Notifier.CancelFleetArrivalScheduledNotification(id, isBack);
               if (!isBack && backBasedMissions.includes(type)) {
                 //if fleet type is a return based like transport or harvest, then cancel also the return notification
-                Notifier.CancelFleetArrivalNotification(id, true);
+                Notifier.CancelFleetArrivalScheduledNotification(id, true);
               }
               // remove active class from button
               if (notifyMeButton.classList.contains("active")) {
@@ -14220,7 +14221,11 @@ class OGInfinity {
 
           if (backButton) {
             backButton.addEventListener("click", () => {
-              Notifier.CancelFleetArrivalNotification(id, isBack);
+              Notifier.CancelFleetArrivalScheduledNotification(id, isBack);
+              if (!isBack) {
+                // if fleet type is a return based like transport or harvest, then cancel also the return notification
+                Notifier.CancelFleetArrivalScheduledNotification(id, true);
+              }
             });
           }
         }

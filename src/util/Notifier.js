@@ -9,6 +9,7 @@ class Notifier {
     const self = this;
     document.addEventListener("ogi-notification-sync-response", function (e) {
       try {
+        if (!e.detail) return;
         self.#syncNotifications(e.detail);
       } catch (error) {
         self.logger.error("Error syncing notifications:", error);
@@ -17,37 +18,39 @@ class Notifier {
   }
 
   #dispatch(detail) {
-    if (detail.id) {
-      detail.id = this.#formatIdWithUniverse(detail.id);
-    }
     document.dispatchEvent(new CustomEvent("ogi-notification", { detail: detail }));
   }
 
-  #formatIdWithUniverse(id) {
+  #formatId(id) {
     return `${OGIData.json.universeId}-${id}`;
   }
-
-  #formatId(id) {
-    return id.toString().trim();
+  #formatTitle(title) {
+    return `${OGIData.json.universeName} - ${title}`;
   }
 
-  ScheduleNotification(id, title, message, date) {
-    const detail = { id: this.#formatId(id), title: title, message: message, when: date.toISOString() };
-
+  #scheduleNotification(detail) {
     this.#dispatch({
       type: "CREATE_SCHEDULED_NOTIFICATION",
       id: detail.id,
       domain: OGIData.json.universeDomain,
-      title: `${OGIData.json.universeName} - ${detail.title}`,
+      title: detail.title,
       message: detail.message,
       when: detail.when,
     });
 
-    this.logger.info(`Scheduling notification ${id}: `, detail);
+    this.logger.info(`Scheduling notification ${detail.id}: `, detail);
 
     //Save for synchronization in case of multiple devices
-    OGIData.notifications[id] = detail;
+    OGIData.notifications[detail.id] = detail;
     OGIData.Save();
+  }
+  ScheduleNotification(id, title, message, date) {
+    this.#scheduleNotification({
+      id: this.#formatId(id),
+      title: this.#formatTitle(title),
+      message: message,
+      when: date.toISOString(),
+    });
   }
 
   #syncNotifications(backgroundNotifications) {
@@ -57,7 +60,7 @@ class Notifier {
     const dateIsPassed = (date) => new Date(date).getTime() < Date.now();
 
     for (const [id, notification] of Object.entries(OGIData.notifications)) {
-      const backgroundNotification = backgroundNotifications[id];
+      const backgroundNotification = backgroundNotifications.find((x) => x.id === id);
       if (!backgroundNotification) {
         // If there's no background notification, and date is not passed, we must reschedule it, else we can cancel it
         if (!dateIsPassed(notification.when)) notificationsToReschedule.push(notification);
@@ -75,19 +78,25 @@ class Notifier {
       }
     }
 
-    for (const [id, backgroundNotification] of Object.entries(backgroundNotifications)) {
-      const notification = OGIData.notifications[id];
+    for (const [index, backgroundNotification] of Object.entries(backgroundNotifications)) {
+      const backgroundNotificationId = backgroundNotification.id;
+      const notification = OGIData.notifications[backgroundNotificationId];
       if (!notification) {
         // If there's no local notification, we must cancel it
-        if (!idsToCancel.find((x) => x === id)) idsToCancel.push(id);
+        if (!idsToCancel.find((x) => x === backgroundNotificationId)) idsToCancel.push(backgroundNotificationId);
       }
     }
 
     for (const id of idsToCancel) {
-      this.CancelScheduledNotification(id);
+      this.#cancelScheduledNotification(id);
     }
     for (const notification of notificationsToReschedule) {
-      this.ScheduleNotification(notification.id, notification.title, notification.message, new Date(notification.when));
+      this.#scheduleNotification({
+        id: notification.id,
+        title: notification.title,
+        message: notification.message,
+        when: notification.when,
+      });
     }
 
     OGIData.lastSyncNotification = new Date().toISOString();
@@ -110,8 +119,8 @@ class Notifier {
     }
   }
 
-  CancelScheduledNotification(id) {
-    this.#dispatch({ type: "CANCEL_SCHEDULED_NOTIFICATION", id: this.#formatId(id) });
+  #cancelScheduledNotification(id) {
+    this.#dispatch({ type: "CANCEL_SCHEDULED_NOTIFICATION", id: id });
     if (OGIData.notifications[id]) {
       //Save for synchronization in case of multiple devices
       delete OGIData.notifications[id];
@@ -119,16 +128,21 @@ class Notifier {
       OGIData.Save();
     }
   }
+  CancelScheduledNotification(id) {
+    this.#cancelScheduledNotification(this.#formatId(id));
+  }
 
   Notify(id, title, message) {
     if (id && title && message) {
-      this.#dispatch({ type: "NOTIFICATION", id: this.#formatId(id), title, message });
-      this.logger.info(`Sent notification ${id}: ${title} - ${message}`);
+      const formattedId = this.#formatId(id);
+      const formattedTitle = this.#formatTitle(title);
+      this.#dispatch({ type: "NOTIFICATION", id: formattedId, title: formattedTitle, message });
+      this.logger.info(`Sent notification ${formattedId}: ${formattedTitle} - ${message}`);
     }
   }
 
   #formatFleetArrivalId(fleetId, isBack) {
-    return `fleet-${this.#formatId(fleetId)}-${isBack ? "return" : "arrival"}`;
+    return `fleet-${fleetId}-${isBack ? "return" : "arrival"}`;
   }
 
   IsFleetMissionNotifiable(missionType) {
@@ -138,13 +152,13 @@ class Notifier {
     return notifiableMissions.includes(missionType);
   }
 
-  IsFleetArrivalScheduled(fleetId, isBack) {
-    const id = this.#formatFleetArrivalId(fleetId, isBack);
-    const exists = OGIData.notifications[id] !== undefined && OGIData.notifications[id] !== null;
+  IsFleetArrivalNotificationScheduled(fleetId, isBack) {
+    const formattedId = this.#formatId(this.#formatFleetArrivalId(fleetId, isBack));
+    const exists = OGIData.notifications[formattedId] !== undefined && OGIData.notifications[formattedId] !== null;
     return exists;
   }
 
-  NotifyFleetArrival(fleetId, coords, isMoon, missionType, isBack, arrivalDatetime) {
+  ScheduleFleetArrivalNotification(fleetId, coords, isMoon, missionType, isBack, arrivalDatetime) {
     const id = this.#formatFleetArrivalId(fleetId, isBack);
 
     const title = Translator.translate(198);
@@ -171,7 +185,7 @@ class Notifier {
       );
     }
   }
-  CancelFleetArrivalNotification(fleetId, isBack) {
+  CancelFleetArrivalScheduledNotification(fleetId, isBack) {
     const id = this.#formatFleetArrivalId(fleetId, isBack);
     this.CancelScheduledNotification(id);
   }
