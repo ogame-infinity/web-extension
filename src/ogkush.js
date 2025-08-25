@@ -30,6 +30,7 @@ import * as loadingUtil from "./util/loading.js";
 import * as standardUnit from "./util/standardUnit.js";
 import planetType from "./util/enum/planetType.js";
 import shipEnum from "./util/enum/ship.js";
+import * as iconVisibility from "./util/iconVisibility.js";
 import OverviewPage from "./ctxpage/overview/OverviewPage.js";
 import RecyclingYieldCalculator from "./util/recyclingYieldCalculator.js";
 
@@ -14545,6 +14546,53 @@ class OGInfinity {
     );
     standardUnitInput.value = getOption("standardUnitBase");
     optiondiv.appendChild(standardUnitInput);
+
+    /* ICONS SETTINGS*/
+    featureSettings.appendChild(createDOM("h1", { style: "margin-top: 10px;" }, this.getTranslatedText(221)));
+
+    const addIconModeChoice = (parent, labelText, iconClass, value) => {
+      const label = parent.appendChild(DOM.createDOM("span", {}, labelText));
+      if (iconClass) {
+        label.appendChild(DOM.createDOM("span", { class: iconClass }));
+      }
+      const select = label.appendChild(DOM.createDOM("select", { class: "ogl-selectInput ogl-w-175 tooltip" }));
+      select.append(
+        DOM.createDOM("option", { value: "0" }, this.getTranslatedText(212)),
+        DOM.createDOM("option", { value: "1" }, this.getTranslatedText(213)),
+        DOM.createDOM("option", { value: "2" }, this.getTranslatedText(214)),
+        DOM.createDOM("option", { value: "3" }, this.getTranslatedText(215)),
+        DOM.createDOM("option", { value: "4" }, this.getTranslatedText(216))
+      );
+      select.value = value ?? "0";
+      return select;
+    };
+
+    const regularConstructionsIconsInput = addIconModeChoice(
+      featureSettings,
+      this.getTranslatedText(217),
+      "icon12px icon_wrench",
+      getOption("regularConstructionsIconsDisplayMode")
+    );
+
+    const lifeformConstructionsIconsInput = addIconModeChoice(
+      featureSettings,
+      this.getTranslatedText(218),
+      "icon12px icon_wrench_lf",
+      getOption("lifeformConstructionsIconsDisplayMode")
+    );
+    const lifeformResearchsIconsInput = addIconModeChoice(
+      featureSettings,
+      this.getTranslatedText(219),
+      "icon12px icon_research_lf",
+      getOption("lifeformResearchsIconsDisplayMode")
+    );
+    const ownFleetYieldIconsInput = addIconModeChoice(
+      featureSettings,
+      this.getTranslatedText(220),
+      "icon12px icon_spaceship",
+      getOption("ownFleetYieldIconsDisplayMode")
+    );
+
     dataDiv.appendChild(createDOM("hr"));
     let dataManagement = dataDiv.appendChild(createDOM("div", { style: "display: grid;" }));
     dataManagement.appendChild(
@@ -14839,6 +14887,12 @@ class OGInfinity {
       this.json.options.expedition.rotationAfter = Math.max(1, Math.min(~~expeditionRotationAfter.value, 16));
       setOption("standardUnitBase", standardUnitInput.value);
       setOption("alertHostileIncomingMode", alertHostileIncomingMode.value);
+
+      setOption("regularConstructionsIconsDisplayMode", regularConstructionsIconsInput.value);
+      setOption("lifeformConstructionsIconsDisplayMode", lifeformConstructionsIconsInput.value);
+      setOption("lifeformResearchsIconsDisplayMode", lifeformResearchsIconsInput.value);
+      setOption("ownFleetYieldIconsDisplayMode", ownFleetYieldIconsInput.value);
+
       this.json.needSync = true;
       this.saveData();
       document.querySelector(".ogl-dialog .close-tooltip").click();
@@ -15638,6 +15692,9 @@ class OGInfinity {
   }
 
   updateSpaceShipsPresence() {
+    const ownFleetYieldIconsDisplayMode = getOption("ownFleetYieldIconsDisplayMode");
+    if (!iconVisibility.shouldDisplayIcon(ownFleetYieldIconsDisplayMode)) return;
+
     let now = new Date();
     document.querySelectorAll(".planet-koords").forEach((planet) => {
       const smallplanet = planet.parentElement.parentElement;
@@ -15664,10 +15721,10 @@ class OGInfinity {
       const planetFleetStandardUnitSum = standardUnit.standardUnit(planetFleetAmount);
       const moonFleetStandardUnitSum = standardUnit.standardUnit(moonFleetAmount);
 
-      const createFleetIcon = (standardUnitSum, planetOrMoonId, iconClass) => {
+      const createFleetIcon = (standardUnitSum, planetOrMoonId, iconClass, redirect) => {
         const fleetIcon = DOM.createDOM("a", {
           class: "fleetIcon planet tooltip js_hideTipOnMobile",
-          href: `/game/index.php?page=ingame&component=fleetdispatch&cp=${planetOrMoonId}`,
+          href: `/game/index.php?page=ingame&component=${redirect ? "fleetdispatch" : "overview"}&cp=${planetOrMoonId}`,
         });
 
         fleetIcon.appendChild(DOM.createDOM("span", { class: `icon12px ${iconClass}` }));
@@ -15678,7 +15735,12 @@ class OGInfinity {
         if (moonFleetStandardUnitSum >= OGIData.options.rvalSelfLimitMoon) {
           const moonFleetIconsDiv = DOM.createDOM("div", { class: "moonFleetIcons" });
           moonFleetIconsDiv.appendChild(
-            createFleetIcon(moonFleetStandardUnitSum, planetFromEmpire.moon.id, "icon_spaceship")
+            createFleetIcon(
+              moonFleetStandardUnitSum,
+              planetFromEmpire.moon.id,
+              "icon_spaceship",
+              iconVisibility.shouldAddIconRedirection(ownFleetYieldIconsDisplayMode)
+            )
           );
           smallplanet.appendChild(moonFleetIconsDiv);
         }
@@ -15686,7 +15748,14 @@ class OGInfinity {
 
       if (planetFleetStandardUnitSum >= OGIData.options.rvalSelfLimitPlanet) {
         const planetFleetIconsDiv = DOM.createDOM("div", { class: "planetFleetIcons" });
-        planetFleetIconsDiv.appendChild(createFleetIcon(planetFleetStandardUnitSum, planetId, "icon_spaceship"));
+        planetFleetIconsDiv.appendChild(
+          createFleetIcon(
+            planetFleetStandardUnitSum,
+            planetId,
+            "icon_spaceship",
+            iconVisibility.shouldAddIconRedirection(ownFleetYieldIconsDisplayMode)
+          )
+        );
         smallplanet.appendChild(planetFleetIconsDiv);
       }
     });
@@ -15697,6 +15766,10 @@ class OGInfinity {
     let needLifeformUpdateForResearch = false;
 
     const updateProgressIndicators = () => {
+      const regularConstructionsIconsDisplayMode = getOption("regularConstructionsIconsDisplayMode");
+      const lifeformConstructionsIconsDisplayMode = getOption("lifeformConstructionsIconsDisplayMode");
+      const lifeformResearchsIconsDisplayMode = getOption("lifeformResearchsIconsDisplayMode");
+
       const regularBuildingsGroups = ["supply", "station"];
       const lifeformBuildingsGroup = "lifeformbuildings";
       const lifeformResearchGroup = "lifeformresearch";
@@ -15713,19 +15786,22 @@ class OGInfinity {
 
         const constructionIconsDiv = DOM.createDOM("div", { class: "constructionIcons" });
 
-        const createConstructionIcon = (elem, planetOrMoonId, techName, iconClass, component) => {
+        const createConstructionIcon = (elem, planetOrMoonId, techName, iconClass, component, addToolTip, redirect) => {
           const constructionIcon = DOM.createDOM("a", {
             class: "constructionIcon planet tooltip js_hideTipOnMobile",
-            href: `/game/index.php?page=ingame&component=${component}&cp=${planetOrMoonId}`,
+            href: `/game/index.php?page=ingame&component=${redirect ? component : "overview"}&cp=${planetOrMoonId}`,
           });
 
-          const tooltipDiv = DOM.createDOM("div", { class: "constructionIconTooltip" });
-          tooltipDiv.appendChild(DOM.createDOM("span", { class: "techName" }, `${techName} (${elem.tolvl})`));
+          if (addToolTip) {
+            const tooltipDiv = DOM.createDOM("div", { class: "constructionIconTooltip" });
+            tooltipDiv.appendChild(DOM.createDOM("span", { class: "techName" }, `${techName} (${elem.tolvl})`));
+
+            constructionIcon.addEventListener("mouseover", () =>
+              tooltip(constructionIcon, tooltipDiv, true, { auto: true }, 50, false)
+            );
+          }
 
           constructionIcon.appendChild(DOM.createDOM("span", { class: `icon12px ${iconClass}` }));
-          constructionIcon.addEventListener("mouseover", () =>
-            tooltip(constructionIcon, tooltipDiv, true, { auto: true }, 50, false)
-          );
 
           return constructionIcon;
         };
@@ -15744,12 +15820,13 @@ class OGInfinity {
           } else {
             // if some regular construction work is finished, remove the border color
             if (this.json.options.showProgressIndicators) moon.classList.remove("finished");
-            if (endDate > now) {
+            if (endDate > now && iconVisibility.shouldDisplayIcon(regularConstructionsIconsDisplayMode)) {
               // regular construction work is still in progress, so show the icon
               const techName = Translator.translate(elem.technoId, "tech");
               const moonConstructionIconsDiv = DOM.createDOM("div", {
                 class: "constructionIcons moonConstructionIcons",
               });
+
               moonConstructionIconsDiv.appendChild(
                 createConstructionIcon(
                   elem,
@@ -15760,7 +15837,9 @@ class OGInfinity {
                     ? "supplies"
                     : FACILITIES_TECHID.includes(Number(elem.technoId))
                     ? "facilities"
-                    : "overview"
+                    : "overview",
+                  iconVisibility.shouldAddIconTooltip(regularConstructionsIconsDisplayMode),
+                  iconVisibility.shouldAddIconRedirection(regularConstructionsIconsDisplayMode)
                 )
               );
 
@@ -15775,10 +15854,11 @@ class OGInfinity {
             const elemFromEmpire = moonFromEmpire.workInProgressTechs.find((x) =>
               regularBuildingsGroups.includes(x.group)
             );
-            if (elemFromEmpire) {
+            if (elemFromEmpire && iconVisibility.shouldDisplayIcon(regularConstructionsIconsDisplayMode)) {
               const moonConstructionIconsDiv = DOM.createDOM("div", {
                 class: "constructionIcons moonConstructionIcons",
               });
+
               moonConstructionIconsDiv.appendChild(
                 createConstructionIcon(
                   {
@@ -15792,9 +15872,12 @@ class OGInfinity {
                     ? "supplies"
                     : FACILITIES_TECHID.includes(Number(elemFromEmpire.id))
                     ? "facilities"
-                    : "overview"
+                    : "overview",
+                  iconVisibility.shouldAddIconTooltip(regularConstructionsIconsDisplayMode),
+                  iconVisibility.shouldAddIconRedirection(regularConstructionsIconsDisplayMode)
                 )
               );
+
               smallplanet.appendChild(moonConstructionIconsDiv);
             }
           }
@@ -15809,18 +15892,26 @@ class OGInfinity {
             // lifeform research work is finished, so we need to update the lifeform
             needLifeformUpdateForResearch = true;
             checkFromEmpire = true;
-          } else if (endDate > now) {
+          } else if (endDate > now && iconVisibility.shouldDisplayIcon(lifeformResearchsIconsDisplayMode)) {
             // lifeform research work is in progress, so show the icon
             const techName = Translator.translate(elem.technoId, "tech");
             constructionIconsDiv.appendChild(
-              createConstructionIcon(elem, planetId, techName, "icon_research_lf", "lfresearch")
+              createConstructionIcon(
+                elem,
+                planetId,
+                techName,
+                "icon_research_lf",
+                "lfresearch",
+                iconVisibility.shouldAddIconTooltip(lifeformResearchsIconsDisplayMode),
+                iconVisibility.shouldAddIconRedirection(lifeformResearchsIconsDisplayMode)
+              )
             );
           }
         }
         if (checkFromEmpire) {
           //if elem is not found, check if there is a work in progress tech from empire data
           const elemFromEmpire = planetFromEmpire.workInProgressTechs.find((x) => x.group == lifeformResearchGroup);
-          if (elemFromEmpire) {
+          if (elemFromEmpire && iconVisibility.shouldDisplayIcon(lifeformResearchsIconsDisplayMode)) {
             constructionIconsDiv.appendChild(
               createConstructionIcon(
                 {
@@ -15830,7 +15921,9 @@ class OGInfinity {
                 planetId,
                 Translator.translate(elemFromEmpire.id, "tech"),
                 "icon_research_lf",
-                "lfresearch"
+                "lfresearch",
+                iconVisibility.shouldAddIconTooltip(lifeformResearchsIconsDisplayMode),
+                iconVisibility.shouldAddIconRedirection(lifeformResearchsIconsDisplayMode)
               )
             );
           }
@@ -15854,11 +15947,19 @@ class OGInfinity {
             // if some lifeform construction work is finished, remove the border color
             if (this.json.options.showProgressIndicators) planet.parentElement.classList.remove("finishedLf");
 
-            if (endDate > now) {
+            if (endDate > now && iconVisibility.shouldDisplayIcon(lifeformConstructionsIconsDisplayMode)) {
               // lifeform construction work is still in progress, so show the icon
               const techName = Translator.translate(elem.technoId, "tech");
               constructionIconsDiv.appendChild(
-                createConstructionIcon(elem, planetId, techName, "icon_wrench_lf", "lfbuildings")
+                createConstructionIcon(
+                  elem,
+                  planetId,
+                  techName,
+                  "icon_wrench_lf",
+                  "lfbuildings",
+                  iconVisibility.shouldAddIconTooltip(lifeformConstructionsIconsDisplayMode),
+                  iconVisibility.shouldAddIconRedirection(lifeformConstructionsIconsDisplayMode)
+                )
               );
             }
           }
@@ -15866,7 +15967,7 @@ class OGInfinity {
         if (checkFromEmpire) {
           //if elem is not found, check if there is a work in progress tech from empire data
           const elemFromEmpire = planetFromEmpire.workInProgressTechs.find((x) => x.group == lifeformBuildingsGroup);
-          if (elemFromEmpire) {
+          if (elemFromEmpire && iconVisibility.shouldDisplayIcon(lifeformConstructionsIconsDisplayMode)) {
             constructionIconsDiv.appendChild(
               createConstructionIcon(
                 {
@@ -15876,7 +15977,9 @@ class OGInfinity {
                 planetId,
                 Translator.translate(elemFromEmpire.id, "tech"),
                 "icon_wrench_lf",
-                "lfbuildings"
+                "lfbuildings",
+                iconVisibility.shouldAddIconTooltip(lifeformConstructionsIconsDisplayMode),
+                iconVisibility.shouldAddIconRedirection(lifeformConstructionsIconsDisplayMode)
               )
             );
           }
@@ -15896,7 +15999,7 @@ class OGInfinity {
             // if some regular construction work is finished, remove the border color
             if (this.json.options.showProgressIndicators) planet.parentElement.classList.remove("finished");
 
-            if (endDate > now) {
+            if (endDate > now && iconVisibility.shouldDisplayIcon(regularConstructionsIconsDisplayMode)) {
               // regular construction work is still in progress, so show the icon
               constructionIconsDiv.appendChild(
                 createConstructionIcon(
@@ -15908,18 +16011,21 @@ class OGInfinity {
                     ? "supplies"
                     : FACILITIES_TECHID.includes(Number(elem.technoId))
                     ? "facilities"
-                    : "overview"
+                    : "overview",
+                  iconVisibility.shouldAddIconTooltip(regularConstructionsIconsDisplayMode),
+                  iconVisibility.shouldAddIconRedirection(regularConstructionsIconsDisplayMode)
                 )
               );
             }
           }
         }
+
         if (checkFromEmpire) {
           //if elem is not found, check if there is a work in progress tech from empire data
           const elemFromEmpire = planetFromEmpire.workInProgressTechs.find((x) =>
             regularBuildingsGroups.includes(x.group)
           );
-          if (elemFromEmpire) {
+          if (elemFromEmpire && iconVisibility.shouldDisplayIcon(regularConstructionsIconsDisplayMode)) {
             constructionIconsDiv.appendChild(
               createConstructionIcon(
                 {
@@ -15933,7 +16039,9 @@ class OGInfinity {
                   ? "supplies"
                   : FACILITIES_TECHID.includes(Number(elemFromEmpire.id))
                   ? "facilities"
-                  : "overview"
+                  : "overview",
+                iconVisibility.shouldAddIconTooltip(regularConstructionsIconsDisplayMode),
+                iconVisibility.shouldAddIconRedirection(regularConstructionsIconsDisplayMode)
               )
             );
           }

@@ -489,6 +489,9 @@ input[type="password"]::selection {
 .ogl-settings .ogl-w-125 {
   width: 125px !important;
 }
+.ogl-settings .ogl-w-175 {
+  width: 175px !important;
+}
 
 .ogl-settings .ogl-right {
   margin-top: 0;
@@ -4574,6 +4577,8 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
   display: block;
   margin-top: 10px;
 }
+
+.ogl-settings .icon_spaceship,
 .smallplanet .icon_spaceship {
   background: url("chrome-extension://__MSG_@@extension_id__/assets/images/space-ship.svg");
   background-size: 12px 12px;
@@ -4593,7 +4598,7 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
 .smallplanet:has(a.moonlink.active) .moonFleetIcons .icon_spaceship {
   filter: invert(10%) sepia(56%) saturate(3892%) hue-rotate(351deg) brightness(90%) contrast(118%);
 }
-
+.ogl-settings .icon_wrench,
 .smallplanet .icon_wrench {
   background: url("chrome-extension://__MSG_@@extension_id__/assets/images/icon_wrench.svg");
   background-size: 12px 12px;
@@ -4605,7 +4610,7 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
   background-position: center !important;
   background-origin: content-box !important;
 }
-
+.ogl-settings .icon_wrench_lf,
 .smallplanet .icon_wrench_lf {
   background: url("chrome-extension://__MSG_@@extension_id__/assets/images/icon_wrench_lf.svg");
   background-size: 12px 12px;
@@ -4618,6 +4623,7 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
   background-origin: content-box;
 }
 
+.ogl-settings .icon_research_lf,
 .smallplanet .icon_research_lf {
   background: url("chrome-extension://__MSG_@@extension_id__/assets/images/icon_research_lf.svg");
   background-size: 12px 12px;
@@ -4629,6 +4635,13 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
   width: 12px !important;
   background-position: center;
   background-origin: content-box;
+}
+
+.ogl-settings .icon_wrench,
+.ogl-settings .icon_wrench_lf,
+.ogl-settings .icon_research_lf,
+.ogl-settings .icon_spaceship {
+  margin-left: 5px;
 }
 
 .smallplanet .alert {
