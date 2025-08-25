@@ -127,10 +127,6 @@
   width: 60px !important;
 }
 
-#highscoreContent #ranks .sendmsg {
-  width: 37px !important;
-}
-
 #highscoreContent #ranks .sendmsg a {
   margin: 0 !important;
 }
@@ -141,6 +137,10 @@
 
 #highscoreContent #ranks .score {
   width: unset !important;
+}
+
+#highscoreContent:has(#fleet.active) #ranks .ogl-colors {
+  margin-top: 5px;
 }
 
 .ogl-unknown-warning {

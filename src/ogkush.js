@@ -13878,10 +13878,14 @@ class OGInfinity {
             if (countDiv) {
               let count = countDiv.getAttribute("title") || countDiv.getAttribute("data-tooltip-title");
               count = count.split(":")[1].trim();
-              countDiv.replaceChildren(
-                DOM.createDOM("span", { class: "ogi-highscore-ships" }, `(${count})`),
-                document.createTextNode(` ${countDiv.textContent.trim()}`)
+              const countValues = DOM.createDOM("div", { style: "max-width: 175px; float: right;" });
+              countValues.appendChild(
+                DOM.createDOM("span", { style: "display: block;" }, ` ${countDiv.textContent.trim()}`)
               );
+              countValues.appendChild(
+                DOM.createDOM("span", { class: "ogi-highscore-ships", style: "display: block;" }, `(${count})`)
+              );
+              countDiv.replaceChildren(countValues);
             }
 
             if (playerDiv) {
@@ -13896,12 +13900,12 @@ class OGInfinity {
 
               /*get score cell and add marker ui*/
               const tdScore = position.querySelector(".score");
-              const colors = DOM.createDOM("div", {
-                class: "ogi-highscore-flag ogl-colors",
-                "data-context": "players-highscore",
-              });
-              const spanScore = DOM.createDOM("span", { class: "ogi-highscore-score" }, tdScore.textContent);
-              tdScore.replaceChildren(colors, spanScore);
+              const colors = tdScore.appendChild(
+                DOM.createDOM("div", {
+                  class: "ogi-highscore-flag ogl-colors",
+                  "data-context": "players-highscore",
+                })
+              );
               this.addPlayerMarkerUI(colors, highscorePlayerId);
 
               // Update UI with player marker

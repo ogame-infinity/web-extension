@@ -7,14 +7,20 @@ function shouldDisplayIcon(mode = 1) {
   return true;
 }
 function shouldAddIconTooltip(mode = 1) {
-  if (parseInt(mode) === iconMode.VISIBLE_WITH_TOOLTIP || parseInt(mode) === iconMode.VISIBLE_WITH_TOOLTIP_AND_LINK) {
+  if (
+    parseInt(mode) === iconMode.VISIBLE_WITH_TOOLTIP ||
+    parseInt(mode) === iconMode.VISIBLE_WITH_TOOLTIP_AND_REDIRECTION
+  ) {
     return true;
   }
 
   return false;
 }
 function shouldAddIconRedirection(mode = 1) {
-  if (parseInt(mode) === iconMode.VISIBLE_WITH_LINK || parseInt(mode) === iconMode.VISIBLE_WITH_TOOLTIP_AND_LINK) {
+  if (
+    parseInt(mode) === iconMode.VISIBLE_WITH_REDIRECTION ||
+    parseInt(mode) === iconMode.VISIBLE_WITH_TOOLTIP_AND_REDIRECTION
+  ) {
     return true;
   }
   return false;
