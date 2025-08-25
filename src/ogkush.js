@@ -1447,6 +1447,7 @@ class OGInfinity {
     Translator.InitializeLFNames(this.current, this.hasLifeforms);
     await this.updateEmpireData(true);
     await this.updateLifeform();
+    this.updateSpaceShipsPresence();
     document.querySelector(".ogl-dialogOverlay").classList.remove("ogl-active");
   }
 
