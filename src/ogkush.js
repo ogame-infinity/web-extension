@@ -1447,8 +1447,6 @@ class OGInfinity {
     Translator.InitializeLFNames(this.current, this.hasLifeforms);
     await this.updateEmpireData(true);
     await this.updateLifeform();
-    this.updateProductionProgress(true);
-    this.updateSpaceShipsPresence();
     document.querySelector(".ogl-dialogOverlay").classList.remove("ogl-active");
   }
 
@@ -12574,6 +12572,8 @@ class OGInfinity {
       this.updateEmpireProduction();
       this.updateresourceDetail();
       this.flyingFleet();
+      this.updateProductionProgress(true);
+      this.updateSpaceShipsPresence();
       this.isLoading = false;
       this.json.needsUpdate = false;
       this.saveData();
