@@ -15873,6 +15873,7 @@ class OGInfinity {
     });
   }
   updateProductionProgress() {
+    const oneYear = 1000 * 60 * 60 * 24 * 365;
     let now = new Date();
     let needLifeformUpdateForResearch = false;
 
@@ -15930,7 +15931,7 @@ class OGInfinity {
           } else {
             // if some regular construction work is finished, remove the border color
             if (this.json.options.showProgressIndicators) moon.classList.remove("finished");
-            if (endDate > now && iconVisibility.shouldDisplayIcon(regularConstructionsIconsDisplayMode)) {
+            if (iconVisibility.shouldDisplayIcon(regularConstructionsIconsDisplayMode)) {
               // regular construction work is still in progress, so show the icon
               const techName = Translator.translate(elem.technoId, "tech");
               const moonConstructionIconsDiv = DOM.createDOM("div", {
@@ -15965,7 +15966,7 @@ class OGInfinity {
           if (endDate < now) {
             // lifeform research work is finished, so we need to update the lifeform
             needLifeformUpdateForResearch = true;
-          } else if (endDate > now && iconVisibility.shouldDisplayIcon(lifeformResearchsIconsDisplayMode)) {
+          } else if (iconVisibility.shouldDisplayIcon(lifeformResearchsIconsDisplayMode)) {
             // lifeform research work is in progress, so show the icon
             const techName = Translator.translate(elem.technoId, "tech");
             constructionIconsDiv.appendChild(
@@ -15998,7 +15999,7 @@ class OGInfinity {
             // if some lifeform construction work is finished, remove the border color
             if (this.json.options.showProgressIndicators) planet.parentElement.classList.remove("finishedLf");
 
-            if (endDate > now && iconVisibility.shouldDisplayIcon(lifeformConstructionsIconsDisplayMode)) {
+            if (iconVisibility.shouldDisplayIcon(lifeformConstructionsIconsDisplayMode)) {
               // lifeform construction work is still in progress, so show the icon
               const techName = Translator.translate(elem.technoId, "tech");
               constructionIconsDiv.appendChild(
@@ -16028,7 +16029,7 @@ class OGInfinity {
             // if some regular construction work is finished, remove the border color
             if (this.json.options.showProgressIndicators) planet.parentElement.classList.remove("finished");
 
-            if (endDate > now && iconVisibility.shouldDisplayIcon(regularConstructionsIconsDisplayMode)) {
+            if (iconVisibility.shouldDisplayIcon(regularConstructionsIconsDisplayMode)) {
               // regular construction work is still in progress, so show the icon
               constructionIconsDiv.appendChild(
                 createConstructionIcon(
