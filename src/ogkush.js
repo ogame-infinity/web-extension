@@ -15752,6 +15752,7 @@ class OGInfinity {
         }
       }
 
+      smallplanet.querySelector(".planetFleetIcons")?.remove();
       if (planetFleetStandardUnitSum >= OGIData.options.rvalSelfLimitPlanet) {
         const planetFleetIconsDiv = DOM.createDOM("div", { class: "planetFleetIcons" });
         planetFleetIconsDiv.appendChild(
