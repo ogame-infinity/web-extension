@@ -1447,6 +1447,7 @@ class OGInfinity {
     Translator.InitializeLFNames(this.current, this.hasLifeforms);
     await this.updateEmpireData(true);
     await this.updateLifeform();
+    this.updateProductionProgress(true);
     this.updateSpaceShipsPresence();
     document.querySelector(".ogl-dialogOverlay").classList.remove("ogl-active");
   }
@@ -1632,7 +1633,7 @@ class OGInfinity {
             ogkush.updateFlyings();
             ogkush.updatePlanets_IncomingHostileFleet();
             ogkush.updatePlanets_FleetActivity();
-            ogkush.updateProductionProgress();
+            ogkush.updateProductionProgress(false);
             ogkush.updateSpaceShipsPresence();
             ogkush.markLifeforms();
           }
@@ -1677,7 +1678,7 @@ class OGInfinity {
     this.onGalaxyUpdate();
     this.timeZone();
     this.checkRedirect();
-    this.updateProductionProgress();
+    this.updateProductionProgress(false);
     this.updateSpaceShipsPresence();
     this.showStorageTimers();
     // this.showTabTimer(); TODO: enable when timer is moved to the clock area
@@ -15766,7 +15767,7 @@ class OGInfinity {
     });
   }
 
-  updateProductionProgress() {
+  updateProductionProgress(onlyCheckFromEmpire) {
     let now = new Date();
     let needLifeformUpdateForResearch = false;
 
@@ -15784,12 +15785,14 @@ class OGInfinity {
         const planetFromEmpire = OGIData.empire.find((p) => p.id === parseInt(planetId));
         const planetCoords = planet.textContent.trim();
         // remove old constructions icons
+        smallplanet.querySelector(".constructionIcons:not(.moonConstructionIcons)")?.remove();
+        smallplanet.querySelector(".constructionIcons.moonConstructionIcons")?.remove();
+
+        const constructionIconsDiv = DOM.createDOM("div", { class: "constructionIcons" });
         const constructionIconLink = smallplanet.querySelector(".constructionIcon:not(.moon)");
         if (constructionIconLink) smallplanet.removeChild(constructionIconLink);
         const moonConstructionIconLink = smallplanet.querySelector(".constructionIcon.moon");
         if (moonConstructionIconLink) smallplanet.removeChild(moonConstructionIconLink);
-
-        const constructionIconsDiv = DOM.createDOM("div", { class: "constructionIcons" });
 
         const createConstructionIcon = (elem, planetOrMoonId, techName, iconClass, component, addToolTip, redirect) => {
           const constructionIcon = DOM.createDOM("a", {
@@ -15811,47 +15814,52 @@ class OGInfinity {
           return constructionIcon;
         };
 
-        // check if the moon is in regular construction
-        let elem = this.json.moonProductionProgress[planetCoords];
+        let elem;
         const moon = smallplanet.querySelector(".moonlink");
-        let checkFromEmpire = false;
-        if (elem && moon) {
-          const moonId = moon.href.match(/=(\d+)/)[1];
-          const endDate = new Date(elem.endDate);
-          if (endDate < now) {
-            // regular construction work is finished, so show border color
-            if (this.json.options.showProgressIndicators) moon.classList.add("finished");
-            checkFromEmpire = true;
-          } else {
-            // if some regular construction work is finished, remove the border color
-            if (this.json.options.showProgressIndicators) moon.classList.remove("finished");
-            if (endDate > now && iconVisibility.shouldDisplayIcon(regularConstructionsIconsDisplayMode)) {
-              // regular construction work is still in progress, so show the icon
-              const techName = Translator.translate(elem.technoId, "tech");
-              const moonConstructionIconsDiv = DOM.createDOM("div", {
-                class: "constructionIcons moonConstructionIcons",
-              });
+        let checkFromEmpire = onlyCheckFromEmpire;
 
-              moonConstructionIconsDiv.appendChild(
-                createConstructionIcon(
-                  elem,
-                  moonId,
-                  techName,
-                  "icon_wrench",
-                  SUPPLIES_TECHID.includes(Number(elem.technoId))
-                    ? "supplies"
-                    : FACILITIES_TECHID.includes(Number(elem.technoId))
-                    ? "facilities"
-                    : "overview",
-                  iconVisibility.shouldAddIconTooltip(regularConstructionsIconsDisplayMode),
-                  iconVisibility.shouldAddIconRedirection(regularConstructionsIconsDisplayMode)
-                )
-              );
+        if (!onlyCheckFromEmpire) {
+          // check if the moon is in regular construction
+          elem = this.json.moonProductionProgress[planetCoords];
+          if (elem && elem.endDate && moon) {
+            const moonId = moon.href.match(/=(\d+)/)[1];
+            const endDate = new Date(elem.endDate);
+            if (endDate < now) {
+              // regular construction work is finished, so show border color
+              if (this.json.options.showProgressIndicators) moon.classList.add("finished");
+              checkFromEmpire = true;
+            } else {
+              // if some regular construction work is finished, remove the border color
+              if (this.json.options.showProgressIndicators) moon.classList.remove("finished");
+              if (endDate > now && iconVisibility.shouldDisplayIcon(regularConstructionsIconsDisplayMode)) {
+                // regular construction work is still in progress, so show the icon
+                const techName = Translator.translate(elem.technoId, "tech");
+                const moonConstructionIconsDiv = DOM.createDOM("div", {
+                  class: "constructionIcons moonConstructionIcons",
+                });
 
-              smallplanet.appendChild(moonConstructionIconsDiv);
+                moonConstructionIconsDiv.appendChild(
+                  createConstructionIcon(
+                    elem,
+                    moonId,
+                    techName,
+                    "icon_wrench",
+                    SUPPLIES_TECHID.includes(Number(elem.technoId))
+                      ? "supplies"
+                      : FACILITIES_TECHID.includes(Number(elem.technoId))
+                      ? "facilities"
+                      : "overview",
+                    iconVisibility.shouldAddIconTooltip(regularConstructionsIconsDisplayMode),
+                    iconVisibility.shouldAddIconRedirection(regularConstructionsIconsDisplayMode)
+                  )
+                );
+
+                smallplanet.appendChild(moonConstructionIconsDiv);
+              }
             }
-          }
+          } else checkFromEmpire = true;
         }
+
         if (checkFromEmpire) {
           //if elem is not found, check if there is a work in progress tech from empire data
           const moonFromEmpire = planetFromEmpire.moon;
@@ -15859,18 +15867,213 @@ class OGInfinity {
             const elemFromEmpire = moonFromEmpire.workInProgressTechs.find((x) =>
               regularBuildingsGroups.includes(x.group)
             );
-            if (elemFromEmpire && iconVisibility.shouldDisplayIcon(regularConstructionsIconsDisplayMode)) {
-              const moonConstructionIconsDiv = DOM.createDOM("div", {
-                class: "constructionIcons moonConstructionIcons",
-              });
+            if (elemFromEmpire) {
+              if (iconVisibility.shouldDisplayIcon(regularConstructionsIconsDisplayMode)) {
+                const moonConstructionIconsDiv = DOM.createDOM("div", {
+                  class: "constructionIcons moonConstructionIcons",
+                });
 
-              moonConstructionIconsDiv.appendChild(
+                moonConstructionIconsDiv.appendChild(
+                  createConstructionIcon(
+                    {
+                      technoId: elemFromEmpire.id,
+                      tolvl: elemFromEmpire.to,
+                    },
+                    moonFromEmpire.id,
+                    Translator.translate(elemFromEmpire.id, "tech"),
+                    "icon_wrench",
+                    SUPPLIES_TECHID.includes(Number(elemFromEmpire.id))
+                      ? "supplies"
+                      : FACILITIES_TECHID.includes(Number(elemFromEmpire.id))
+                      ? "facilities"
+                      : "overview",
+                    iconVisibility.shouldAddIconTooltip(regularConstructionsIconsDisplayMode),
+                    iconVisibility.shouldAddIconRedirection(regularConstructionsIconsDisplayMode)
+                  )
+                );
+
+                smallplanet.appendChild(moonConstructionIconsDiv);
+              }
+              this.json.moonProductionProgress[planetCoords] = {
+                technoId: elemFromEmpire.id,
+                tolvl: elemFromEmpire.to,
+              };
+            }
+          }
+        }
+
+        if (!onlyCheckFromEmpire) {
+          // check if the planet is in lifeform research
+          elem = this.json.lfResearchProgress[planetCoords];
+          checkFromEmpire = false;
+          if (elem && elem.endDate) {
+            const endDate = new Date(elem.endDate);
+            if (endDate < now) {
+              // lifeform research work is finished, so we need to update the lifeform
+              needLifeformUpdateForResearch = true;
+              checkFromEmpire = true;
+            } else if (endDate > now && iconVisibility.shouldDisplayIcon(lifeformResearchsIconsDisplayMode)) {
+              // lifeform research work is in progress, so show the icon
+              const techName = Translator.translate(elem.technoId, "tech");
+              constructionIconsDiv.appendChild(
+                createConstructionIcon(
+                  elem,
+                  planetId,
+                  techName,
+                  "icon_research_lf",
+                  "lfresearch",
+                  iconVisibility.shouldAddIconTooltip(lifeformResearchsIconsDisplayMode),
+                  iconVisibility.shouldAddIconRedirection(lifeformResearchsIconsDisplayMode)
+                )
+              );
+            }
+          } else checkFromEmpire = true;
+        }
+
+        if (checkFromEmpire) {
+          //if elem is not found, check if there is a work in progress tech from empire data
+          const elemFromEmpire = planetFromEmpire.workInProgressTechs.find((x) => x.group == lifeformResearchGroup);
+          if (elemFromEmpire) {
+            if (iconVisibility.shouldDisplayIcon(lifeformResearchsIconsDisplayMode)) {
+              constructionIconsDiv.appendChild(
                 createConstructionIcon(
                   {
                     technoId: elemFromEmpire.id,
                     tolvl: elemFromEmpire.to,
                   },
-                  moonFromEmpire.id,
+                  planetId,
+                  Translator.translate(elemFromEmpire.id, "tech"),
+                  "icon_research_lf",
+                  "lfresearch",
+                  iconVisibility.shouldAddIconTooltip(lifeformResearchsIconsDisplayMode),
+                  iconVisibility.shouldAddIconRedirection(lifeformResearchsIconsDisplayMode)
+                )
+              );
+            }
+            this.json.lfResearchProgress[planetCoords] = {
+              technoId: elemFromEmpire.id,
+              tolvl: elemFromEmpire.to,
+            };
+          }
+        }
+
+        if (!onlyCheckFromEmpire) {
+          // check if the planet is in lifeform construction
+          elem = this.json.lfProductionProgress[planetCoords];
+          checkFromEmpire = false;
+          if (elem && elem.endDate) {
+            const endDate = new Date(elem.endDate);
+
+            if (endDate < now) {
+              // lifeform construction work is finished
+              this.json.needLifeformUpdate[planet.parentElement.href.match(/=(\d+)/)[1]] = true;
+              if (this.json.options.showProgressIndicators) {
+                // regular construction work is finished, so show border color
+                planet.parentElement.classList.add("finishedLf");
+              }
+              checkFromEmpire = true;
+            } else {
+              // if some lifeform construction work is finished, remove the border color
+              if (this.json.options.showProgressIndicators) planet.parentElement.classList.remove("finishedLf");
+
+              if (endDate > now && iconVisibility.shouldDisplayIcon(lifeformConstructionsIconsDisplayMode)) {
+                // lifeform construction work is still in progress, so show the icon
+                const techName = Translator.translate(elem.technoId, "tech");
+                constructionIconsDiv.appendChild(
+                  createConstructionIcon(
+                    elem,
+                    planetId,
+                    techName,
+                    "icon_wrench_lf",
+                    "lfbuildings",
+                    iconVisibility.shouldAddIconTooltip(lifeformConstructionsIconsDisplayMode),
+                    iconVisibility.shouldAddIconRedirection(lifeformConstructionsIconsDisplayMode)
+                  )
+                );
+              }
+            }
+          } else checkFromEmpire = true;
+        }
+
+        if (checkFromEmpire) {
+          //if elem is not found, check if there is a work in progress tech from empire data
+          const elemFromEmpire = planetFromEmpire.workInProgressTechs.find((x) => x.group == lifeformBuildingsGroup);
+          if (elemFromEmpire) {
+            if (iconVisibility.shouldDisplayIcon(lifeformConstructionsIconsDisplayMode)) {
+              constructionIconsDiv.appendChild(
+                createConstructionIcon(
+                  {
+                    technoId: elemFromEmpire.id,
+                    tolvl: elemFromEmpire.to,
+                  },
+                  planetId,
+                  Translator.translate(elemFromEmpire.id, "tech"),
+                  "icon_wrench_lf",
+                  "lfbuildings",
+                  iconVisibility.shouldAddIconTooltip(lifeformConstructionsIconsDisplayMode),
+                  iconVisibility.shouldAddIconRedirection(lifeformConstructionsIconsDisplayMode)
+                )
+              );
+            }
+
+            this.json.lfProductionProgress[planetCoords] = {
+              technoId: elemFromEmpire.id,
+              tolvl: elemFromEmpire.to,
+            };
+          }
+        }
+
+        if (!onlyCheckFromEmpire) {
+          // check if the planet is in regular construction
+          elem = this.json.productionProgress[planetCoords];
+          checkFromEmpire = false;
+          if (elem && elem.endDate) {
+            const endDate = new Date(elem.endDate);
+            const techName = Translator.translate(elem.technoId, "tech");
+            if (endDate < now) {
+              // regular construction work is finished, so show border color
+              if (this.json.options.showProgressIndicators) planet.parentElement.classList.add("finished");
+              checkFromEmpire = true;
+            } else {
+              // if some regular construction work is finished, remove the border color
+              if (this.json.options.showProgressIndicators) planet.parentElement.classList.remove("finished");
+
+              if (endDate > now && iconVisibility.shouldDisplayIcon(regularConstructionsIconsDisplayMode)) {
+                // regular construction work is still in progress, so show the icon
+                constructionIconsDiv.appendChild(
+                  createConstructionIcon(
+                    elem,
+                    planetId,
+                    techName,
+                    "icon_wrench",
+                    SUPPLIES_TECHID.includes(Number(elem.technoId))
+                      ? "supplies"
+                      : FACILITIES_TECHID.includes(Number(elem.technoId))
+                      ? "facilities"
+                      : "overview",
+                    iconVisibility.shouldAddIconTooltip(regularConstructionsIconsDisplayMode),
+                    iconVisibility.shouldAddIconRedirection(regularConstructionsIconsDisplayMode)
+                  )
+                );
+              }
+            }
+          } else checkFromEmpire = true;
+        }
+
+        if (checkFromEmpire) {
+          //if elem is not found, check if there is a work in progress tech from empire data
+          const elemFromEmpire = planetFromEmpire.workInProgressTechs.find((x) =>
+            regularBuildingsGroups.includes(x.group)
+          );
+          if (elemFromEmpire) {
+            if (iconVisibility.shouldDisplayIcon(regularConstructionsIconsDisplayMode)) {
+              constructionIconsDiv.appendChild(
+                createConstructionIcon(
+                  {
+                    technoId: elemFromEmpire.id,
+                    tolvl: elemFromEmpire.to,
+                  },
+                  planetId,
                   Translator.translate(elemFromEmpire.id, "tech"),
                   "icon_wrench",
                   SUPPLIES_TECHID.includes(Number(elemFromEmpire.id))
@@ -15882,173 +16085,12 @@ class OGInfinity {
                   iconVisibility.shouldAddIconRedirection(regularConstructionsIconsDisplayMode)
                 )
               );
-
-              smallplanet.appendChild(moonConstructionIconsDiv);
             }
-          }
-        }
 
-        // check if the planet is in lifeform research
-        elem = this.json.lfResearchProgress[planetCoords];
-        checkFromEmpire = false;
-        if (elem) {
-          const endDate = new Date(elem.endDate);
-          if (endDate < now) {
-            // lifeform research work is finished, so we need to update the lifeform
-            needLifeformUpdateForResearch = true;
-            checkFromEmpire = true;
-          } else if (endDate > now && iconVisibility.shouldDisplayIcon(lifeformResearchsIconsDisplayMode)) {
-            // lifeform research work is in progress, so show the icon
-            const techName = Translator.translate(elem.technoId, "tech");
-            constructionIconsDiv.appendChild(
-              createConstructionIcon(
-                elem,
-                planetId,
-                techName,
-                "icon_research_lf",
-                "lfresearch",
-                iconVisibility.shouldAddIconTooltip(lifeformResearchsIconsDisplayMode),
-                iconVisibility.shouldAddIconRedirection(lifeformResearchsIconsDisplayMode)
-              )
-            );
-          }
-        }
-        if (checkFromEmpire) {
-          //if elem is not found, check if there is a work in progress tech from empire data
-          const elemFromEmpire = planetFromEmpire.workInProgressTechs.find((x) => x.group == lifeformResearchGroup);
-          if (elemFromEmpire && iconVisibility.shouldDisplayIcon(lifeformResearchsIconsDisplayMode)) {
-            constructionIconsDiv.appendChild(
-              createConstructionIcon(
-                {
-                  technoId: elemFromEmpire.id,
-                  tolvl: elemFromEmpire.to,
-                },
-                planetId,
-                Translator.translate(elemFromEmpire.id, "tech"),
-                "icon_research_lf",
-                "lfresearch",
-                iconVisibility.shouldAddIconTooltip(lifeformResearchsIconsDisplayMode),
-                iconVisibility.shouldAddIconRedirection(lifeformResearchsIconsDisplayMode)
-              )
-            );
-          }
-        }
-
-        // check if the planet is in lifeform construction
-        elem = this.json.lfProductionProgress[planetCoords];
-        checkFromEmpire = false;
-        if (elem) {
-          const endDate = new Date(elem.endDate);
-
-          if (endDate < now) {
-            // lifeform construction work is finished
-            this.json.needLifeformUpdate[planet.parentElement.href.match(/=(\d+)/)[1]] = true;
-            if (this.json.options.showProgressIndicators) {
-              // regular construction work is finished, so show border color
-              planet.parentElement.classList.add("finishedLf");
-            }
-            checkFromEmpire = true;
-          } else {
-            // if some lifeform construction work is finished, remove the border color
-            if (this.json.options.showProgressIndicators) planet.parentElement.classList.remove("finishedLf");
-
-            if (endDate > now && iconVisibility.shouldDisplayIcon(lifeformConstructionsIconsDisplayMode)) {
-              // lifeform construction work is still in progress, so show the icon
-              const techName = Translator.translate(elem.technoId, "tech");
-              constructionIconsDiv.appendChild(
-                createConstructionIcon(
-                  elem,
-                  planetId,
-                  techName,
-                  "icon_wrench_lf",
-                  "lfbuildings",
-                  iconVisibility.shouldAddIconTooltip(lifeformConstructionsIconsDisplayMode),
-                  iconVisibility.shouldAddIconRedirection(lifeformConstructionsIconsDisplayMode)
-                )
-              );
-            }
-          }
-        }
-        if (checkFromEmpire) {
-          //if elem is not found, check if there is a work in progress tech from empire data
-          const elemFromEmpire = planetFromEmpire.workInProgressTechs.find((x) => x.group == lifeformBuildingsGroup);
-          if (elemFromEmpire && iconVisibility.shouldDisplayIcon(lifeformConstructionsIconsDisplayMode)) {
-            constructionIconsDiv.appendChild(
-              createConstructionIcon(
-                {
-                  technoId: elemFromEmpire.id,
-                  tolvl: elemFromEmpire.to,
-                },
-                planetId,
-                Translator.translate(elemFromEmpire.id, "tech"),
-                "icon_wrench_lf",
-                "lfbuildings",
-                iconVisibility.shouldAddIconTooltip(lifeformConstructionsIconsDisplayMode),
-                iconVisibility.shouldAddIconRedirection(lifeformConstructionsIconsDisplayMode)
-              )
-            );
-          }
-        }
-
-        // check if the planet is in regular construction
-        elem = this.json.productionProgress[planetCoords];
-        checkFromEmpire = false;
-        if (elem) {
-          const endDate = new Date(elem.endDate);
-          const techName = Translator.translate(elem.technoId, "tech");
-          if (endDate < now) {
-            // regular construction work is finished, so show border color
-            if (this.json.options.showProgressIndicators) planet.parentElement.classList.add("finished");
-            checkFromEmpire = true;
-          } else {
-            // if some regular construction work is finished, remove the border color
-            if (this.json.options.showProgressIndicators) planet.parentElement.classList.remove("finished");
-
-            if (endDate > now && iconVisibility.shouldDisplayIcon(regularConstructionsIconsDisplayMode)) {
-              // regular construction work is still in progress, so show the icon
-              constructionIconsDiv.appendChild(
-                createConstructionIcon(
-                  elem,
-                  planetId,
-                  techName,
-                  "icon_wrench",
-                  SUPPLIES_TECHID.includes(Number(elem.technoId))
-                    ? "supplies"
-                    : FACILITIES_TECHID.includes(Number(elem.technoId))
-                    ? "facilities"
-                    : "overview",
-                  iconVisibility.shouldAddIconTooltip(regularConstructionsIconsDisplayMode),
-                  iconVisibility.shouldAddIconRedirection(regularConstructionsIconsDisplayMode)
-                )
-              );
-            }
-          }
-        }
-
-        if (checkFromEmpire) {
-          //if elem is not found, check if there is a work in progress tech from empire data
-          const elemFromEmpire = planetFromEmpire.workInProgressTechs.find((x) =>
-            regularBuildingsGroups.includes(x.group)
-          );
-          if (elemFromEmpire && iconVisibility.shouldDisplayIcon(regularConstructionsIconsDisplayMode)) {
-            constructionIconsDiv.appendChild(
-              createConstructionIcon(
-                {
-                  technoId: elemFromEmpire.id,
-                  tolvl: elemFromEmpire.to,
-                },
-                planetId,
-                Translator.translate(elemFromEmpire.id, "tech"),
-                "icon_wrench",
-                SUPPLIES_TECHID.includes(Number(elemFromEmpire.id))
-                  ? "supplies"
-                  : FACILITIES_TECHID.includes(Number(elemFromEmpire.id))
-                  ? "facilities"
-                  : "overview",
-                iconVisibility.shouldAddIconTooltip(regularConstructionsIconsDisplayMode),
-                iconVisibility.shouldAddIconRedirection(regularConstructionsIconsDisplayMode)
-              )
-            );
+            this.json.productionProgress[planetCoords] = {
+              technoId: elemFromEmpire.id,
+              tolvl: elemFromEmpire.to,
+            };
           }
         }
 
@@ -16064,37 +16106,39 @@ class OGInfinity {
     }
 
     if (document.querySelector("#productionboxbuildingcomponent")) {
-      let coords = this.current.coords;
-      let building = document.querySelector("#productionboxbuildingcomponent .queuePic");
+      const coords = this.current.coords;
+      const building = document.querySelector("#productionboxbuildingcomponent .queuePic");
       if (building) {
-        let technoId =
+        const technoId =
           building.getAttribute("alt").split("_")[1] ||
           building.parentElement.getAttribute("onclick").split("(")[1].split(", ")[0];
-        let tolvl = document
+        const tolvl = document
           .querySelector("#productionboxbuildingcomponent .level")
           .textContent.trim()
           .replace(/[^0-9]/g, "");
-        let datestring = document.querySelector("#productionboxbuildingcomponent .ogl-date").textContent.trim();
-        let date = datestring.split(" - ")[0].split(".");
-        let time = datestring.split(" - ")[1].split(":");
-        let endDate = new Date(
-          2000 + parseInt(date[2]),
-          parseInt(date[1]) - 1,
-          parseInt(date[0]),
-          time[0],
-          time[1],
-          time[2]
-        );
-        const elem = {
-          technoId: technoId,
-          tolvl: tolvl,
-          endDate: endDate.toGMTString(),
-        };
-
-        if (this.current.isMoon) {
-          this.json.moonProductionProgress[coords] = elem;
-        } else {
-          this.json.productionProgress[coords] = elem;
+        const dateElement = document.querySelector("#productionboxbuildingcomponent .ogl-date");
+        if (dateElement) {
+          const datestring = dateElement.textContent.trim();
+          const date = datestring.split(" - ")[0].split(".");
+          const time = datestring.split(" - ")[1].split(":");
+          const endDate = new Date(
+            2000 + parseInt(date[2]),
+            parseInt(date[1]) - 1,
+            parseInt(date[0]),
+            time[0],
+            time[1],
+            time[2]
+          );
+          const elem = {
+            technoId: technoId,
+            tolvl: tolvl,
+            endDate: endDate.toGMTString(),
+          };
+          if (this.current.isMoon) {
+            this.json.moonProductionProgress[coords] = elem;
+          } else {
+            this.json.productionProgress[coords] = elem;
+          }
         }
       } else {
         if (this.current.isMoon) {
@@ -16103,100 +16147,110 @@ class OGInfinity {
           delete this.json.productionProgress[coords];
         }
       }
+    } else if (onlyCheckFromEmpire) {
     }
 
     if (document.querySelector("#productionboxlfbuildingcomponent") && !this.current.isMoon) {
-      let coords = this.current.coords;
-      let lfbuilding = document.querySelector("#productionboxlfbuildingcomponent .queuePic");
+      const coords = this.current.coords;
+      const lfbuilding = document.querySelector("#productionboxlfbuildingcomponent .queuePic");
       if (lfbuilding) {
-        let technoId = lfbuilding.classList[2].replace("lifeformTech", "");
-        let tolvl = document
+        const technoId = lfbuilding.classList[2].replace("lifeformTech", "");
+        const tolvl = document
           .querySelector("#productionboxlfbuildingcomponent .level")
           .textContent.trim()
           .replace(/[^0-9]/g, "");
-        let datestring = document.querySelector("#productionboxlfbuildingcomponent .ogl-date").textContent.trim();
-        let date = datestring.split(" - ")[0].split(".");
-        let time = datestring.split(" - ")[1].split(":");
-        let endDate = new Date(
-          2000 + parseInt(date[2]),
-          parseInt(date[1]) - 1,
-          parseInt(date[0]),
-          time[0],
-          time[1],
-          time[2]
-        );
-        this.json.lfProductionProgress[coords] = {
-          technoId: technoId,
-          tolvl: tolvl,
-          endDate: endDate.toGMTString(),
-        };
+        const dateElement = document.querySelector("#productionboxlfbuildingcomponent .ogl-date");
+        if (dateElement) {
+          const datestring = document.querySelector("#productionboxlfbuildingcomponent .ogl-date").textContent.trim();
+          const date = datestring.split(" - ")[0].split(".");
+          const time = datestring.split(" - ")[1].split(":");
+          const endDate = new Date(
+            2000 + parseInt(date[2]),
+            parseInt(date[1]) - 1,
+            parseInt(date[0]),
+            time[0],
+            time[1],
+            time[2]
+          );
+          this.json.lfProductionProgress[coords] = {
+            technoId: technoId,
+            tolvl: tolvl,
+            endDate: endDate.toGMTString(),
+          };
+        }
       } else {
         delete this.json.lfProductionProgress[coords];
       }
     }
 
     if (document.querySelector("#productionboxresearchcomponent")) {
-      let research = document.querySelector("#productionboxresearchcomponent .queuePic");
+      const research = document.querySelector("#productionboxresearchcomponent .queuePic");
       if (research) {
-        let technoId =
+        const technoId =
           research.getAttribute("alt").split("_")[1] ||
           research.parentElement.getAttribute("onclick").split("(")[1].split(", ")[0];
-        let tolvl = document
+        const tolvl = document
           .querySelector("#productionboxresearchcomponent .level")
           .textContent.trim()
           .replace(/[^0-9]/g, "");
-        let coords = document
+        const coords = document
           .querySelector("#productionboxresearchcomponent .tooltip")
           .getAttribute("onclick")
           .split("[")[1]
           .split("]")[0];
-        let datestring = document.querySelector("#productionboxresearchcomponent .ogl-date").textContent.trim();
-        let date = datestring.split(" - ")[0].split(".");
-        let time = datestring.split(" - ")[1].split(":");
-        let endDate = new Date(
-          2000 + parseInt(date[2]),
-          parseInt(date[1]) - 1,
-          parseInt(date[0]),
-          time[0],
-          time[1],
-          time[2]
-        );
-        this.json.researchProgress = {
-          technoId: technoId,
-          coords: coords,
-          tolvl: tolvl,
-          planetId: this.current.id,
-          endDate: endDate.toGMTString(),
-        };
+        const dateElement = document.querySelector("#productionboxresearchcomponent .ogl-date");
+        if (dateElement) {
+          const datestring = document.querySelector("#productionboxresearchcomponent .ogl-date").textContent.trim();
+          const date = datestring.split(" - ")[0].split(".");
+          const time = datestring.split(" - ")[1].split(":");
+          const endDate = new Date(
+            2000 + parseInt(date[2]),
+            parseInt(date[1]) - 1,
+            parseInt(date[0]),
+            time[0],
+            time[1],
+            time[2]
+          );
+          this.json.researchProgress = {
+            technoId: technoId,
+            coords: coords,
+            tolvl: tolvl,
+            planetId: this.current.id,
+            endDate: endDate.toGMTString(),
+          };
+        }
       } else {
         this.json.researchProgress = {};
       }
     }
     if (document.querySelector("#productionboxlfresearchcomponent")) {
-      let coords = this.current.coords;
-      let lfresearch = document.querySelector("#productionboxlfresearchcomponent .queuePic");
+      const coords = this.current.coords;
+      const lfresearch = document.querySelector("#productionboxlfresearchcomponent .queuePic");
       if (lfresearch) {
-        let technoId = lfresearch.classList[2].replace("lifeformTech", "");
-        let tolvl = document
+        const technoId = lfresearch.classList[2].replace("lifeformTech", "");
+        const tolvl = document
           .querySelector("#productionboxlfresearchcomponent .level")
           .textContent.trim()
           .replace(/[^0-9]/g, "");
-        let datestring = document.querySelector("#productionboxlfresearchcomponent .ogl-date").textContent.trim();
-        let date = datestring.split(" - ")[0].split(".");
-        let time = datestring.split(" - ")[1].split(":");
-        let endDate = new Date(
-          2000 + parseInt(date[2]),
-          parseInt(date[1]) - 1,
-          parseInt(date[0]),
-          time[0],
-          time[1],
-          time[2]
-        );
-        this.json.lfResearchProgress[coords] = {
-          technoId: technoId,
-          tolvl: tolvl,
-          endDate: endDate.toGMTString(),
-        };
+        const dateElement = document.querySelector("#productionboxlfresearchcomponent .ogl-date");
+        if (dateElement) {
+          const datestring = dateElement.textContent.trim();
+          const date = datestring.split(" - ")[0].split(".");
+          const time = datestring.split(" - ")[1].split(":");
+          const endDate = new Date(
+            2000 + parseInt(date[2]),
+            parseInt(date[1]) - 1,
+            parseInt(date[0]),
+            time[0],
+            time[1],
+            time[2]
+          );
+          this.json.lfResearchProgress[coords] = {
+            technoId: technoId,
+            tolvl: tolvl,
+            endDate: endDate.toGMTString(),
+          };
+        }
       } else {
         delete this.json.lfResearchProgress[coords];
       }
