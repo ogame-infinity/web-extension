@@ -15816,7 +15816,6 @@ class OGInfinity {
 
         let elem;
         const moon = smallplanet.querySelector(".moonlink");
-        let checkFromEmpire = onlyCheckFromEmpire;
 
         if (!onlyCheckFromEmpire) {
           // check if the moon is in regular construction
@@ -15827,7 +15826,6 @@ class OGInfinity {
             if (endDate < now) {
               // regular construction work is finished, so show border color
               if (this.json.options.showProgressIndicators) moon.classList.add("finished");
-              checkFromEmpire = true;
             } else {
               // if some regular construction work is finished, remove the border color
               if (this.json.options.showProgressIndicators) moon.classList.remove("finished");
@@ -15857,10 +15855,8 @@ class OGInfinity {
                 smallplanet.appendChild(moonConstructionIconsDiv);
               }
             }
-          } else checkFromEmpire = true;
-        }
-
-        if (checkFromEmpire) {
+          }
+        } else {
           //if elem is not found, check if there is a work in progress tech from empire data
           const moonFromEmpire = planetFromEmpire.moon;
           if (moonFromEmpire?.workInProgressTechs) {
@@ -15905,13 +15901,11 @@ class OGInfinity {
         if (!onlyCheckFromEmpire) {
           // check if the planet is in lifeform research
           elem = this.json.lfResearchProgress[planetCoords];
-          checkFromEmpire = false;
           if (elem && elem.endDate) {
             const endDate = new Date(elem.endDate);
             if (endDate < now) {
               // lifeform research work is finished, so we need to update the lifeform
               needLifeformUpdateForResearch = true;
-              checkFromEmpire = true;
             } else if (endDate > now && iconVisibility.shouldDisplayIcon(lifeformResearchsIconsDisplayMode)) {
               // lifeform research work is in progress, so show the icon
               const techName = Translator.translate(elem.technoId, "tech");
@@ -15927,10 +15921,8 @@ class OGInfinity {
                 )
               );
             }
-          } else checkFromEmpire = true;
-        }
-
-        if (checkFromEmpire) {
+          }
+        } else {
           //if elem is not found, check if there is a work in progress tech from empire data
           const elemFromEmpire = planetFromEmpire.workInProgressTechs.find((x) => x.group == lifeformResearchGroup);
           if (elemFromEmpire) {
@@ -15960,7 +15952,6 @@ class OGInfinity {
         if (!onlyCheckFromEmpire) {
           // check if the planet is in lifeform construction
           elem = this.json.lfProductionProgress[planetCoords];
-          checkFromEmpire = false;
           if (elem && elem.endDate) {
             const endDate = new Date(elem.endDate);
 
@@ -15971,7 +15962,6 @@ class OGInfinity {
                 // regular construction work is finished, so show border color
                 planet.parentElement.classList.add("finishedLf");
               }
-              checkFromEmpire = true;
             } else {
               // if some lifeform construction work is finished, remove the border color
               if (this.json.options.showProgressIndicators) planet.parentElement.classList.remove("finishedLf");
@@ -15992,10 +15982,8 @@ class OGInfinity {
                 );
               }
             }
-          } else checkFromEmpire = true;
-        }
-
-        if (checkFromEmpire) {
+          }
+        } else {
           //if elem is not found, check if there is a work in progress tech from empire data
           const elemFromEmpire = planetFromEmpire.workInProgressTechs.find((x) => x.group == lifeformBuildingsGroup);
           if (elemFromEmpire) {
@@ -16026,14 +16014,12 @@ class OGInfinity {
         if (!onlyCheckFromEmpire) {
           // check if the planet is in regular construction
           elem = this.json.productionProgress[planetCoords];
-          checkFromEmpire = false;
           if (elem && elem.endDate) {
             const endDate = new Date(elem.endDate);
             const techName = Translator.translate(elem.technoId, "tech");
             if (endDate < now) {
               // regular construction work is finished, so show border color
               if (this.json.options.showProgressIndicators) planet.parentElement.classList.add("finished");
-              checkFromEmpire = true;
             } else {
               // if some regular construction work is finished, remove the border color
               if (this.json.options.showProgressIndicators) planet.parentElement.classList.remove("finished");
@@ -16057,10 +16043,8 @@ class OGInfinity {
                 );
               }
             }
-          } else checkFromEmpire = true;
-        }
-
-        if (checkFromEmpire) {
+          }
+        } else {
           //if elem is not found, check if there is a work in progress tech from empire data
           const elemFromEmpire = planetFromEmpire.workInProgressTechs.find((x) =>
             regularBuildingsGroups.includes(x.group)
