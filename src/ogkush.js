@@ -14553,7 +14553,7 @@ class OGInfinity {
     optiondiv.appendChild(standardUnitInput);
 
     /* ICONS SETTINGS*/
-    featureSettings.appendChild(createDOM("h1", { style: "margin-top: 10px;" }, this.getTranslatedText(221)));
+    featureSettings.appendChild(DOM.createDOM("h1", { style: "margin-top: 10px;" }, this.getTranslatedText(221)));
 
     const addIconModeChoice = (parent, labelText, iconClass, value) => {
       const label = parent.appendChild(DOM.createDOM("span", {}, labelText));
