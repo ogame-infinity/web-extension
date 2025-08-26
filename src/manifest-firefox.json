@@ -3,6 +3,11 @@
   "name": "Ogame Infinity",
   "version": "0.0.0",
   "description": "OGI - To Ogame's infinity and beyond!",
+    "browser_specific_settings": {
+    "gecko": {
+      "id": "{082ec2d7-1c60-4c98-808e-bafd9c33d5ea}"
+    }
+  },
   "icons": {
     "512": "assets/images/logo512.png",
     "256": "assets/images/logo512.png",
