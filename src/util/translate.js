@@ -2124,7 +2124,7 @@ const translation = Object.freeze({
     214: {
       de: "Sichtbar mit Info-Tooltip",
       en: "Visible with tooltip",
-      es: "Visible con información sobre herramientas",
+      es: "Visible con información",
       fr: "Visible avec info-bulle",
       tr: "Açıklayıcı ipucu ile görünür",
       br: "Visível com tooltip",
@@ -2140,7 +2140,7 @@ const translation = Object.freeze({
     216: {
       de: "Sichtbar mit Info-Tooltip und Weiterleitung",
       en: "Visible with tooltip and redirection",
-      es: "Visible con información sobre herramientas y redirección",
+      es: "Visible con información y redirección",
       fr: "Visible avec info-bulle et redirection",
       tr: "Açıklayıcı ipucu ve yeniden yönlendirme ile görünür",
       br: "Visível com tooltip e redirecionamento",
