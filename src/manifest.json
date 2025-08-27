@@ -6,7 +6,8 @@
     "default_title": "Ogame Infinity"
   },
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "type": "module"
   },
   "content_scripts": [
     {
@@ -27,7 +28,7 @@
   },
   "manifest_version": 3,
   "name": "Ogame Infinity",
-  "permissions": ["storage"],
+  "permissions": ["storage", "alarms", "notifications"],
   "update_url": "https://clients2.google.com/service/update2/crx",
   "version": "0.0.0",
   "web_accessible_resources": [

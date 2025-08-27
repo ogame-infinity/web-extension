@@ -93,8 +93,15 @@ document.addEventListener("ogi-clear", function (e) {
   dataHelper.clearData();
 });
 document.addEventListener("ogi-notification", function (e) {
-  const msg = Object.assign({ iconUrl: "assets/images/logo128.png" }, e.detail);
-  chrome.runtime.sendMessage({ type: "notification", universe: UNIVERSE, message: msg }, function (response) {});
+  if (!e.detail) throw new Error("No notification details provided");
+  chrome.runtime.sendMessage({ eventType: "ogi-notification", message: e.detail }, function (response) {});
+});
+document.addEventListener("ogi-notification-sync", function (e) {
+  if (!e.detail) throw new Error("No notification details provided");
+  chrome.runtime.sendMessage({ eventType: "ogi-notification-sync", message: e.detail }, function (response) {
+    if (!response) return;
+    document.dispatchEvent(new CustomEvent("ogi-notification-sync-response", { detail: response }));
+  });
 });
 
 export function main() {

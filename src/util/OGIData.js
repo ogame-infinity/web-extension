@@ -231,6 +231,22 @@ class OGIData {
     this.#save();
   }
 
+  get lastSyncNotification() {
+    return this._json.lastSyncNotification ?? new Date(0).toISOString();
+  }
+  set lastSyncNotification(date) {
+    this._json.lastSyncNotification = date ?? new Date(0).toISOString();
+    this.#save();
+  }
+
+  get notifications() {
+    return this._json.notifications ?? [];
+  }
+  set notifications(notifications) {
+    this._json.notifications = notifications ?? [];
+    this.#save();
+  }
+
   get json() {
     return this._json;
   }
@@ -248,6 +264,10 @@ class OGIData {
 
   #save() {
     localStorage.setItem(localStorageKey, JSON.stringify(this._json));
+  }
+
+  Save() {
+    this.#save();
   }
 }
 
