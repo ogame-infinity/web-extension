@@ -127,10 +127,6 @@
   width: 60px !important;
 }
 
-#highscoreContent #ranks .sendmsg {
-  width: 37px !important;
-}
-
 #highscoreContent #ranks .sendmsg a {
   margin: 0 !important;
 }
@@ -141,6 +137,10 @@
 
 #highscoreContent #ranks .score {
   width: unset !important;
+}
+
+#highscoreContent:has(#fleet.active) #ranks .ogl-colors {
+  margin-top: 5px;
 }
 
 .ogl-unknown-warning {
@@ -407,7 +407,7 @@ input[type="password"]::selection {
   display: flex;
   width: fit-content;
   min-width: 650px;
-  max-width: 900px;
+  max-width: 950px;
   justify-content: space-around;
   overflow: auto;
 }
@@ -488,6 +488,9 @@ input[type="password"]::selection {
 }
 .ogl-settings .ogl-w-125 {
   width: 125px !important;
+}
+.ogl-settings .ogl-w-175 {
+  width: 175px !important;
 }
 
 .ogl-settings .ogl-right {
@@ -2188,9 +2191,17 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
   margin: 0 0.5em;
 }
 
+.msgTitle .ogk-label {
+  display: inline-block;
+}
+
 /* negative value for MSU */
 .ogk-label.ogi-negative {
   color: #ea6868;
+}
+/* warning label */
+.ogk-label.ogi-warning {
+  color: #ff9b00;
 }
 
 /* expedition label */
@@ -2206,6 +2217,7 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
   color: #a6e0b0;
   border-color: #a6e0b0;
 }
+.ogk-label.ogi-info,
 .ogk-label.ogk-am {
   color: #dddddd;
   border-color: #dddddd;
@@ -2638,6 +2650,24 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
 
 .ogl-spyTable .ogl-lootable:hover {
   color: #fff !important;
+}
+
+.ogl-spyReportTargetIsSelf .msgFilteredHeaderRow {
+  background-color: #280a0a !important;
+}
+.msg_new.ogl-spyReportTargetIsSelf .msgFilteredHeaderRow {
+  background-color: #460a0a !important;
+}
+
+.ogl-spyReportTargetIsSelf .seeReportIcon {
+  display: inline-block;
+  height: 28px;
+  width: 28px;
+  background-image: url("chrome-extension://__MSG_@@extension_id__/assets/images/message.svg");
+  background-position: 2px 5px;
+  background-repeat: no-repeat;
+  background-size: 21px 21px;
+  filter: invert(59%) sepia(5%) saturate(582%) hue-rotate(174deg) brightness(95%) contrast(86%);
 }
 
 .ogl-tooltip .ogk-cargo {
@@ -4492,7 +4522,7 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
   left: 55px;
   width: fit-content;
   visibility: hidden;
-  animation: appearing-planetConstructionIcons 0.2s forwards;
+  animation: appearing-smallplanetIcons 0.2s forwards;
 }
 
 .moon-construction-sum .smallplanet .constructionIcons.moonConstructionIcons {
@@ -4504,7 +4534,31 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
   left: unset;
   right: 5px;
 }
-@keyframes appearing-planetConstructionIcons {
+
+.smallplanet .planetFleetIcons {
+  transform: translateX(-100%);
+  position: absolute;
+  top: 28px !important;
+  left: 16px;
+  width: fit-content;
+  visibility: hidden;
+  animation: appearing-smallplanetIcons 0.2s forwards;
+}
+
+.smallplanet .moonFleetIcons {
+  position: absolute;
+  top: 28px !important;
+  right: 102px;
+  width: fit-content;
+  visibility: hidden;
+  animation: appearing-smallplanetIcons 0.2s forwards;
+}
+.smallplanet .moonFleetIcons:not(.moon-construction-sum .smallplanet .moonFleetIcons) {
+  position: absolute;
+  right: 43px !important;
+}
+
+@keyframes appearing-smallplanetIcons {
   from {
     visibility: visible;
     opacity: 0;
@@ -4524,6 +4578,27 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
   margin-top: 10px;
 }
 
+.ogl-settings .icon_spaceship,
+.smallplanet .icon_spaceship {
+  background: url("chrome-extension://__MSG_@@extension_id__/assets/images/space-ship.svg");
+  background-size: 12px 12px;
+
+  background-repeat: no-repeat;
+  display: inline-block;
+  height: 12px !important;
+  width: 12px !important;
+  background-position: center !important;
+  background-origin: content-box !important;
+
+  filter: invert(43%) sepia(15%) saturate(5794%) hue-rotate(343deg) brightness(97%) contrast(94%);
+  transform: rotate(45deg);
+}
+
+.smallplanet:has(a.planetlink.active) .planetFleetIcons .icon_spaceship,
+.smallplanet:has(a.moonlink.active) .moonFleetIcons .icon_spaceship {
+  filter: invert(10%) sepia(56%) saturate(3892%) hue-rotate(351deg) brightness(90%) contrast(118%);
+}
+.ogl-settings .icon_wrench,
 .smallplanet .icon_wrench {
   background: url("chrome-extension://__MSG_@@extension_id__/assets/images/icon_wrench.svg");
   background-size: 12px 12px;
@@ -4535,7 +4610,7 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
   background-position: center !important;
   background-origin: content-box !important;
 }
-
+.ogl-settings .icon_wrench_lf,
 .smallplanet .icon_wrench_lf {
   background: url("chrome-extension://__MSG_@@extension_id__/assets/images/icon_wrench_lf.svg");
   background-size: 12px 12px;
@@ -4548,6 +4623,7 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
   background-origin: content-box;
 }
 
+.ogl-settings .icon_research_lf,
 .smallplanet .icon_research_lf {
   background: url("chrome-extension://__MSG_@@extension_id__/assets/images/icon_research_lf.svg");
   background-size: 12px 12px;
@@ -4559,6 +4635,13 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
   width: 12px !important;
   background-position: center;
   background-origin: content-box;
+}
+
+.ogl-settings .icon_wrench,
+.ogl-settings .icon_wrench_lf,
+.ogl-settings .icon_research_lf,
+.ogl-settings .icon_spaceship {
+  margin-left: 5px;
 }
 
 .smallplanet .alert {
@@ -5403,6 +5486,16 @@ body.ogame select {
   width: 80px;
 }
 
+.ogl-fleet-table .ogl-sum-symbol.smallIcon {
+  font-weight: 800;
+  width: 55px;
+}
+
+.ogl-fleet-table .ogk-label {
+  display: block;
+  max-width: 45px;
+}
+
 .ogl-fleet-table td:first-child,
 .ogl-fleet-table td:last-child {
   font-weight: 800;
@@ -5633,6 +5726,11 @@ body.ogame select {
 
 .ogl-fleet-503 {
   background-position: calc(5.2625% * 9) 34.5% !important;
+}
+
+.ogl-fleet-value {
+  background: url("chrome-extension://__MSG_@@extension_id__/assets/images/debris.gif") no-repeat left top !important;
+  background-size: 23px 23px !important;
 }
 
 .ogl-moon-icon {
@@ -8942,6 +9040,19 @@ div.ogi-movement .ogi-movement-target > div:nth-child(1) {
 
 .ogi-movement-scroll::-webkit-scrollbar {
   display: none;
+}
+
+.ogiSeeReportAboutMyself .detail_msg .messageDetails {
+  margin-bottom: 0px !important;
+}
+
+.ogiSeeReportAboutMyself .detail_msg .messageDetails .msgContent {
+  margin: 5px 0px 15px 0px !important;
+}
+
+.ogiSeeReportAboutMyself .error {
+  margin: 0px 10px !important;
+  display: block;
 }
 
 body.no-commander .contentBoxBody {
