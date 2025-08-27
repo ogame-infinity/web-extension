@@ -1,12 +1,12 @@
 import iconMode from "./enum/iconMode.js";
 
-function shouldDisplayIcon(mode = 1) {
+function shouldDisplayIcon(mode = 4) {
   if (parseInt(mode) === iconMode.HIDDEN) {
     return false;
   }
   return true;
 }
-function shouldAddIconTooltip(mode = 1) {
+function shouldAddIconTooltip(mode = 4) {
   if (
     parseInt(mode) === iconMode.VISIBLE_WITH_TOOLTIP ||
     parseInt(mode) === iconMode.VISIBLE_WITH_TOOLTIP_AND_REDIRECTION
@@ -16,7 +16,7 @@ function shouldAddIconTooltip(mode = 1) {
 
   return false;
 }
-function shouldAddIconRedirection(mode = 1) {
+function shouldAddIconRedirection(mode = 4) {
   if (
     parseInt(mode) === iconMode.VISIBLE_WITH_REDIRECTION ||
     parseInt(mode) === iconMode.VISIBLE_WITH_TOOLTIP_AND_REDIRECTION

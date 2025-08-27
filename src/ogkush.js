@@ -14570,7 +14570,7 @@ class OGInfinity {
         DOM.createDOM("option", { value: "3" }, this.getTranslatedText(215)),
         DOM.createDOM("option", { value: "4" }, this.getTranslatedText(216))
       );
-      select.value = value ?? "0";
+      select.value = value ?? "4";
       return select;
     };
 
