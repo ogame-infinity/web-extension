@@ -1,3 +1,10 @@
+@supports (-moz-appearance: none) {
+  /* Firefox specific styles */
+  html {
+    overflow-x: scroll;
+  }
+}
+
 /* fallback */
 @font-face {
   font-family: "Material Icons";
