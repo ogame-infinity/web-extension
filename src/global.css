@@ -333,14 +333,14 @@ input[type="password"]::selection {
 }
 
 #logoLink {
-  width: 200px;
+  width: 200px !important;
   height: 70px;
   background: rgba(0, 0, 0, 0.44);
   z-index: 123;
   position: absolute;
   border-radius: 50px;
-  left: 68px;
-  top: 44px;
+  left: 68px !important;
+  top: 44px !important;
 }
 
 .ogk-logo {
@@ -1409,8 +1409,8 @@ input[type="file"] {
   background: rgba(0, 0, 0, 0.44);
   border-radius: 50px;
   left: -7px;
-  top: 45px;
-  width: 200px;
+  top: 45px !important;
+  width: 200px !important;
 }
 
 #links .leftmenu li {
@@ -4659,6 +4659,13 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
   padding: 5px;
 }
 
+#myWorlds a.planetlink .planetBarSpaceObjectContainer {
+  height: 33px;
+  width: 0px;
+  left: 7px;
+  top: 4px;
+}
+
 #planetbarcomponent #rechts .smaller a.moonlink .planetBarSpaceObjectContainer {
   height: auto !important;
 }
@@ -4703,13 +4710,15 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
 }
 
 #cutty,
+#norm,
 #planetList,
 #rechts {
   min-width: 136px;
   width: max-content !important;
 }
 
-#cutty > div {
+#cutty > div,
+#norm > div {
   width: auto !important;
 }
 
@@ -8970,6 +8979,10 @@ table.flyingFleet td.friendly {
   z-index: auto;
 }
 
+#myWorlds .smallplanet .lifeform-item-icon.small {
+  top: -50px !important;
+}
+
 div#eventboxFilled p.event_list {
   position: relative;
 }
@@ -9040,4 +9053,8 @@ div.ogi-movement .ogi-movement-target > div:nth-child(1) {
 .ogiSeeReportAboutMyself .error {
   margin: 0px 10px !important;
   display: block;
+}
+
+body.no-commander .contentBoxBody {
+  top: 32px !important;
 }
