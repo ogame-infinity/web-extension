@@ -57,6 +57,8 @@ const _options = {
   pantryKey: "",
   simulator: "",
   rvalLimit: 1e6, // needs revision to consider the speed of the universe.
+  rvalSelfLimitPlanet: 1e6,
+  rvalSelfLimitMoon: 1e6,
   standardUnitBase: 0,
   spyTableEnable: true,
   spyTableAppend: true,
@@ -93,6 +95,10 @@ const _options = {
   },
   overview_display_planet_details: true,
   overview_display_planet_buffBar: true,
+  regularConstructionsIconsDisplayMode: 4,
+  lifeformConstructionsIconsDisplayMode: 4,
+  lifeformResearchsIconsDisplayMode: 4,
+  ownFleetYieldIconsDisplayMode: 4,
 };
 
 export function initConfOptions(options) {
