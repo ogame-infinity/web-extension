@@ -31,7 +31,9 @@ import * as loadingUtil from "./util/loading.js";
 import * as standardUnit from "./util/standardUnit.js";
 import planetType from "./util/enum/planetType.js";
 import shipEnum from "./util/enum/ship.js";
+import * as iconVisibility from "./util/iconVisibility.js";
 import OverviewPage from "./ctxpage/overview/OverviewPage.js";
+import RecyclingYieldCalculator from "./util/recyclingYieldCalculator.js";
 import Notifier from "./util/Notifier.js";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
@@ -1368,6 +1370,7 @@ class OGInfinity {
   OverviewPage = new OverviewPage();
 
   constructor() {
+    this.playerId = parseInt(document.querySelector('meta[name="ogame-player-id"]').content);
     this.commander = document.querySelector("#officers > a.commander.on") !== null;
     this.rawURL = new URL(window.location.href);
     this.page = this.rawURL.searchParams.get("component") || this.rawURL.searchParams.get("page");
@@ -1453,6 +1456,7 @@ class OGInfinity {
 
   init() {
     this.json = OGIData.json;
+    this.json.playerId = this.playerId;
     this.json.universeId = this.universe;
     this.json.universeUrl = this.universeUrl;
     this.json.universeName = this.universeName;
@@ -1465,6 +1469,7 @@ class OGInfinity {
     this.json.searchHistory = this.json.searchHistory || [];
     this.json.watchList = this.json.watchList || {};
     this.json.expeditions = this.json.expeditions || {};
+    this.json.spies = this.json.spies || {};
     this.json.combats = this.json.combats || {};
     this.json.harvests = this.json.harvests || {};
     this.json.trades = this.json.trades || {};
@@ -1476,6 +1481,7 @@ class OGInfinity {
     this.json.expeditionSums = this.json.expeditionSums || {};
     this.json.discoveriesSums = this.json.discoveriesSums || {};
     this.json.discoveries = this.json.discoveries || {};
+    this.json.spies = this.json.spies || {};
     this.json.flying = this.json.flying || {
       metal: 0,
       crystal: 0,
@@ -1634,6 +1640,7 @@ class OGInfinity {
             ogkush.updatePlanets_IncomingHostileFleet();
             ogkush.updatePlanets_FleetActivity();
             ogkush.updateProductionProgress();
+            ogkush.updateSpaceShipsPresence();
             ogkush.markLifeforms();
           }
         });
@@ -1678,6 +1685,7 @@ class OGInfinity {
     this.timeZone();
     this.checkRedirect();
     this.updateProductionProgress();
+    this.updateSpaceShipsPresence();
     this.showStorageTimers();
     // this.showTabTimer(); TODO: enable when timer is moved to the clock area
     this.markLifeforms();
@@ -3230,6 +3238,7 @@ class OGInfinity {
           bonusFields: Number(xml.querySelector("bonusFields").innerHTML),
           debrisFactor: Number(xml.querySelector("debrisFactor").innerHTML),
           debrisFactorDef: Number(xml.querySelector("debrisFactorDef").innerHTML),
+          deuteriumInDebris: Boolean(xml.querySelector("deuteriumInDebris").innerHTML),
           repairFactor: Number(xml.querySelector("repairFactor").innerHTML),
           fuelConsumption: Number(xml.querySelector("globalDeuteriumSaveFactor").innerHTML),
           probeCargo: Number(xml.querySelector("probeCargo").innerHTML),
@@ -8683,6 +8692,7 @@ class OGInfinity {
     td.appendChild(planetIcon);
     td.appendChild(moonIcon);
     row.appendChild(td);
+
     OGIData.empire.forEach((planet) => {
       let name = moon ? (planet.moon ? planet.moon.name : "-") : planet.name;
       let link = `?page=ingame&component=fleetdispatch&cp=${planet.id}`;
@@ -8698,7 +8708,9 @@ class OGInfinity {
     row.appendChild(createDOM("th", { class: "ogl-sum-symbol" }, "Σ"));
     table.appendChild(row);
     let flying = this.getFlyingRes();
-    [202, 203, 208, 209, 210, 204, 205, 206, 219, 207, 215, 211, 213, 218, 214].forEach((id) => {
+
+    const sumPerPlanet = [];
+    Object.values(shipEnum).forEach((id) => {
       if (id == 212 || (id > 400 && id < 410)) {
         return;
       }
@@ -8721,6 +8733,18 @@ class OGInfinity {
         if (planet.coordinates.slice(1, -1) == this.current.coords) {
           current = true;
         }
+
+        if (!sumPerPlanet[planet.id]) {
+          sumPerPlanet[planet.id] = { planet: 0, moon: 0 };
+        }
+        if (moon) {
+          if (planet.moon) {
+            sumPerPlanet[planet.id].moon += Number(planet.moon[id]);
+          }
+        } else {
+          sumPerPlanet[planet.id].planet += planet[id];
+        }
+
         sum += moon && planet.moon ? Number(planet.moon[id]) : Number(planet[id]);
         let valuePLa = planet[id] == 0 ? "-" : toFormatedNumber(planet[id], null, true);
         let valueMooon = "-";
@@ -8764,6 +8788,70 @@ class OGInfinity {
       row.appendChild(td);
       table.appendChild(row);
     });
+
+    // Add recycling yield row
+    row = createDOM("tr");
+    td = createDOM("td", { class: "ogl-fleet-empty" }, "-");
+    row.appendChild(td);
+    td = createDOM("th");
+    td.appendChild(createDOM("th", { class: "ogl-option ogl-fleet-ship ogl-fleet-value" }));
+    row.appendChild(td);
+
+    let totalYield = 0;
+    let totalDisplay = 0;
+    OGIData.empire.forEach((planet) => {
+      let current = false;
+      if (planet.coordinates.slice(1, -1) == this.current.coords) {
+        current = true;
+      }
+      td = createDOM("td");
+
+      const fleetYield = RecyclingYieldCalculator.CalculateRecyclingYieldFleetFromEmpireData(
+        planet,
+        OGIData.universeSettingsTooltip.debrisFactor,
+        OGIData.universeSettingsTooltip.deuteriumInDebris
+      );
+
+      const fleetAmount = moon
+        ? [
+            fleetYield.moonFleetRecyclingYield.metal,
+            fleetYield.moonFleetRecyclingYield.crystal,
+            fleetYield.moonFleetRecyclingYield.deut,
+          ]
+        : [
+            fleetYield.planetFleetRecyclingYield.metal,
+            fleetYield.planetFleetRecyclingYield.crystal,
+            fleetYield.planetFleetRecyclingYield.deut,
+          ];
+
+      const limit = moon === true ? OGIData.options.rvalSelfLimitMoon : OGIData.options.rvalSelfLimitPlanet;
+
+      const standardUnitSum = standardUnit.standardUnit(fleetAmount);
+      const labelClass = standardUnitSum >= limit ? "ogk-label ogi-warning" : "ogk-label ogi-info";
+
+      totalYield += standardUnitSum;
+      totalDisplay =
+        standardUnitSum > 0
+          ? `${Numbers.toFormattedNumber(standardUnitSum, [0, 1], true)} ${standardUnit.unitType()}`
+          : "-";
+      td.appendChild(
+        DOM.createDOM("span", { class: standardUnitSum > 0 ? labelClass : "ogl-fleet-empty" }, totalDisplay)
+      );
+      if (current) {
+        td.classList.add("ogl-current");
+      }
+      row.appendChild(td);
+    });
+
+    td = createDOM("td");
+    totalDisplay =
+      totalYield > 0 ? `${Numbers.toFormattedNumber(totalYield, [0, 1], true)} ${standardUnit.unitType()}` : "-";
+    td.appendChild(
+      DOM.createDOM("span", { class: totalYield > 0 ? "ogk-label ogi-info" : "ogl-fleet-empty" }, totalDisplay)
+    );
+
+    row.appendChild(td);
+    table.appendChild(row);
     content.appendChild(table);
 
     return content;
@@ -10707,6 +10795,38 @@ class OGInfinity {
       }
       update(false);
     }
+
+    if (this.page == "fleetdispatch") {
+      //Display fleet recycling yield
+      const slots = document.querySelector(".fleetStatus #slots");
+      if (slots) {
+        const fleetYield = RecyclingYieldCalculator.CalculateRecyclingYieldFleetFromEmpireData(
+          OGIData.empire[this.current.index],
+          OGIData.universeSettingsTooltip.debrisFactor,
+          OGIData.universeSettingsTooltip.deuteriumInDebris
+        );
+
+        const fleetAmount = this.current.isMoon
+          ? [
+              fleetYield.moonFleetRecyclingYield.metal,
+              fleetYield.moonFleetRecyclingYield.crystal,
+              fleetYield.moonFleetRecyclingYield.deut,
+            ]
+          : [
+              fleetYield.planetFleetRecyclingYield.metal,
+              fleetYield.planetFleetRecyclingYield.crystal,
+              fleetYield.planetFleetRecyclingYield.deut,
+            ];
+
+        const standardUnitSum = standardUnit.standardUnit(fleetAmount);
+        if (standardUnitSum > 0) {
+          const limit = this.current.isMoon ? OGIData.options.rvalSelfLimitMoon : OGIData.options.rvalSelfLimitPlanet;
+          const labelClass = standardUnitSum >= limit ? "ogk-label ogi-warning" : "ogk-label ogi-info";
+          const totalDisplay = `${Numbers.toFormattedNumber(standardUnitSum, [0, 1], true)} ${standardUnit.unitType()}`;
+          slots.appendChild(DOM.createDOM("span", { class: labelClass }, totalDisplay));
+        }
+      }
+    }
   }
 
   neededCargo() {
@@ -12499,6 +12619,9 @@ class OGInfinity {
       this.updateEmpireProduction();
       this.updateresourceDetail();
       this.flyingFleet();
+      this.updateProductionProgressFromEmpireData();
+      this.updateProductionProgress();
+      this.updateSpaceShipsPresence();
       this.isLoading = false;
       this.json.needsUpdate = false;
       this.saveData();
@@ -13051,6 +13174,7 @@ class OGInfinity {
       mainSyncJsonObj.discoveries = await this.getObjLastElements(this?.json?.discoveries, 5000);
       mainSyncJsonObj.discoveriesSums = this?.json?.discoveriesSums;
       mainSyncJsonObj.harvests = this?.json?.harvests;
+      mainSyncJsonObj.spies = await this.getObjLastElements(this?.json?.spies, 5000);
       mainSyncJsonObj.notifications = this?.json?.notifications;
 
       let finalJson = {
@@ -13805,10 +13929,14 @@ class OGInfinity {
             if (countDiv) {
               let count = countDiv.getAttribute("title") || countDiv.getAttribute("data-tooltip-title");
               count = count.split(":")[1].trim();
-              countDiv.replaceChildren(
-                DOM.createDOM("span", { class: "ogi-highscore-ships" }, `(${count})`),
-                document.createTextNode(` ${countDiv.textContent.trim()}`)
+              const countValues = DOM.createDOM("div", { style: "max-width: 175px; float: right;" });
+              countValues.appendChild(
+                DOM.createDOM("span", { style: "display: block;" }, ` ${countDiv.textContent.trim()}`)
               );
+              countValues.appendChild(
+                DOM.createDOM("span", { class: "ogi-highscore-ships", style: "display: block;" }, `(${count})`)
+              );
+              countDiv.replaceChildren(countValues);
             }
 
             if (playerDiv) {
@@ -13823,12 +13951,12 @@ class OGInfinity {
 
               /*get score cell and add marker ui*/
               const tdScore = position.querySelector(".score");
-              const colors = DOM.createDOM("div", {
-                class: "ogi-highscore-flag ogl-colors",
-                "data-context": "players-highscore",
-              });
-              const spanScore = DOM.createDOM("span", { class: "ogi-highscore-score" }, tdScore.textContent);
-              tdScore.replaceChildren(colors, spanScore);
+              const colors = tdScore.appendChild(
+                DOM.createDOM("div", {
+                  class: "ogi-highscore-flag ogl-colors",
+                  "data-context": "players-highscore",
+                })
+              );
               this.addPlayerMarkerUI(colors, highscorePlayerId);
 
               // Update UI with player marker
@@ -14470,6 +14598,36 @@ class OGInfinity {
         value: toFormatedNumber(this.json.options.rvalLimit),
       })
     );
+
+    optiondiv = featureSettings.appendChild(
+      createDOM(
+        "span",
+        { class: "tooltip", title: this.getTranslatedText(190) },
+        `${this.getTranslatedText(189)} - ${this.getTranslatedText(193)}`
+      )
+    );
+    let rvalSelfInputPlanet = optiondiv.appendChild(
+      createDOM("input", {
+        type: "text",
+        class: "ogl-rvalInput ogl-formatInput tooltip",
+        value: toFormatedNumber(this.json.options.rvalSelfLimitPlanet),
+      })
+    );
+    optiondiv = featureSettings.appendChild(
+      createDOM(
+        "span",
+        { class: "tooltip", title: this.getTranslatedText(190) },
+        `${this.getTranslatedText(189)} - ${this.getTranslatedText(192)}`
+      )
+    );
+    let rvalSelfInputMoon = optiondiv.appendChild(
+      createDOM("input", {
+        type: "text",
+        class: "ogl-rvalInput ogl-formatInput tooltip",
+        value: toFormatedNumber(this.json.options.rvalSelfLimitMoon),
+      })
+    );
+
     optiondiv = featureSettings.appendChild(createDOM("span", {}, this.getTranslatedText(101)));
     let expeditionDefaultTime = optiondiv.appendChild(
       createDOM("input", {
@@ -14504,6 +14662,53 @@ class OGInfinity {
     );
     standardUnitInput.value = getOption("standardUnitBase");
     optiondiv.appendChild(standardUnitInput);
+
+    /* ICONS SETTINGS*/
+    featureSettings.appendChild(DOM.createDOM("h1", { style: "margin-top: 10px;" }, this.getTranslatedText(221)));
+
+    const addIconModeChoice = (parent, labelText, iconClass, value) => {
+      const label = parent.appendChild(DOM.createDOM("span", {}, labelText));
+      if (iconClass) {
+        label.appendChild(DOM.createDOM("span", { class: iconClass }));
+      }
+      const select = label.appendChild(DOM.createDOM("select", { class: "ogl-selectInput ogl-w-175 tooltip" }));
+      select.append(
+        DOM.createDOM("option", { value: "0" }, this.getTranslatedText(212)),
+        DOM.createDOM("option", { value: "1" }, this.getTranslatedText(213)),
+        DOM.createDOM("option", { value: "2" }, this.getTranslatedText(214)),
+        DOM.createDOM("option", { value: "3" }, this.getTranslatedText(215)),
+        DOM.createDOM("option", { value: "4" }, this.getTranslatedText(216))
+      );
+      select.value = value ?? "4";
+      return select;
+    };
+
+    const regularConstructionsIconsInput = addIconModeChoice(
+      featureSettings,
+      this.getTranslatedText(217),
+      "icon12px icon_wrench",
+      getOption("regularConstructionsIconsDisplayMode")
+    );
+
+    const lifeformConstructionsIconsInput = addIconModeChoice(
+      featureSettings,
+      this.getTranslatedText(218),
+      "icon12px icon_wrench_lf",
+      getOption("lifeformConstructionsIconsDisplayMode")
+    );
+    const lifeformResearchsIconsInput = addIconModeChoice(
+      featureSettings,
+      this.getTranslatedText(219),
+      "icon12px icon_research_lf",
+      getOption("lifeformResearchsIconsDisplayMode")
+    );
+    const ownFleetYieldIconsInput = addIconModeChoice(
+      featureSettings,
+      this.getTranslatedText(220),
+      "icon12px icon_spaceship",
+      getOption("ownFleetYieldIconsDisplayMode")
+    );
+
     dataDiv.appendChild(createDOM("hr"));
     let dataManagement = dataDiv.appendChild(createDOM("div", { style: "display: grid;" }));
     dataManagement.appendChild(
@@ -14547,6 +14752,14 @@ class OGInfinity {
         <input type="checkbox" id="targets" name="targets">`
       )
     );
+    let spiesBox = dataManagement.appendChild(
+      this.createDOM(
+        "div",
+        { class: "ogi-checkbox" },
+        `<label for="spies">${this.getTranslatedText(191)}</label>
+        <input type="checkbox" id="spies" name="spies">`
+      )
+    );
     let scanBox = dataManagement.appendChild(
       this.createDOM(
         "div",
@@ -14559,8 +14772,8 @@ class OGInfinity {
       this.createDOM(
         "div",
         { class: "ogi-checkbox" },
-        `<label for="combats">${this.getTranslatedText(20)}</label>
-        <input type="checkbox" id="combats" name="combats">`
+        `<label for="options">${this.getTranslatedText(20)}</label>
+        <input type="checkbox" id="options" name="options ">`
       )
     );
     let cacheBox = dataManagement.appendChild(
@@ -14775,6 +14988,8 @@ class OGInfinity {
     settingDiv.appendChild(saveBtn);
     saveBtn.addEventListener("click", () => {
       this.json.options.rvalLimit = fromFormatedNumber(rvalInput.value, true);
+      this.json.options.rvalSelfLimitPlanet = fromFormatedNumber(rvalSelfInputPlanet.value, true);
+      this.json.options.rvalSelfLimitMoon = fromFormatedNumber(rvalSelfInputMoon.value, true);
       if (ptreInput.value && ptreInput.value.replace(/-/g, "").length === 18 && ptreInput.value.startsWith("TM")) {
         this.json.options.ptreTK = ptreInput.value;
       } else {
@@ -14788,6 +15003,12 @@ class OGInfinity {
       this.json.options.expedition.rotationAfter = Math.max(1, Math.min(~~expeditionRotationAfter.value, 16));
       setOption("standardUnitBase", standardUnitInput.value);
       setOption("alertHostileIncomingMode", alertHostileIncomingMode.value);
+
+      setOption("regularConstructionsIconsDisplayMode", regularConstructionsIconsInput.value);
+      setOption("lifeformConstructionsIconsDisplayMode", lifeformConstructionsIconsInput.value);
+      setOption("lifeformResearchsIconsDisplayMode", lifeformResearchsIconsInput.value);
+      setOption("ownFleetYieldIconsDisplayMode", ownFleetYieldIconsInput.value);
+
       this.json.needSync = true;
       this.saveData();
       document.querySelector(".ogl-dialog .close-tooltip").click();
@@ -14807,6 +15028,7 @@ class OGInfinity {
         json.discoveriesSums = {};
         json.combats = {};
         json.combatsSums = {};
+        json.spies = {};
         if (scanBox.children[1].checked) {
           document.dispatchEvent(new CustomEvent("ogi-clear"));
         }
@@ -14846,6 +15068,9 @@ class OGInfinity {
         }
         if (!targetsBox.children[1].checked) {
           json.markers = this.json.markers;
+        }
+        if (!spiesBox.children[1].checked) {
+          json.spies = this.json.spies;
         }
         if (!OptionsBox.children[1].checked) {
           json.options = this.json.options;
@@ -15582,40 +15807,221 @@ class OGInfinity {
     return roi.sort((a, b) => a.time - b.time);
   }
 
+  updateSpaceShipsPresence() {
+    const ownFleetYieldIconsDisplayMode = getOption("ownFleetYieldIconsDisplayMode");
+    if (!iconVisibility.shouldDisplayIcon(ownFleetYieldIconsDisplayMode)) return;
+
+    let now = new Date();
+    document.querySelectorAll(".planet-koords").forEach((planet) => {
+      const smallplanet = planet.parentElement.parentElement;
+      const planetId = planet.parentElement.href.match(/=(\d+)/)[1];
+
+      const planetFromEmpire = OGIData.empire.find((p) => p.id === parseInt(planetId));
+
+      const fleetYield = RecyclingYieldCalculator.CalculateRecyclingYieldFleetFromEmpireData(
+        planetFromEmpire,
+        OGIData.universeSettingsTooltip.debrisFactor,
+        OGIData.universeSettingsTooltip.deuteriumInDebris
+      );
+      const planetFleetAmount = [
+        fleetYield.planetFleetRecyclingYield.metal,
+        fleetYield.planetFleetRecyclingYield.crystal,
+        fleetYield.planetFleetRecyclingYield.deut,
+      ];
+      const moonFleetAmount = [
+        fleetYield.moonFleetRecyclingYield.metal,
+        fleetYield.moonFleetRecyclingYield.crystal,
+        fleetYield.moonFleetRecyclingYield.deut,
+      ];
+
+      const planetFleetStandardUnitSum = standardUnit.standardUnit(planetFleetAmount);
+      const moonFleetStandardUnitSum = standardUnit.standardUnit(moonFleetAmount);
+
+      const createFleetIcon = (standardUnitSum, planetOrMoonId, iconClass, redirect) => {
+        const fleetIcon = DOM.createDOM("a", {
+          class: "fleetIcon planet tooltip js_hideTipOnMobile",
+          href: `/game/index.php?page=ingame&component=${redirect ? "fleetdispatch" : "overview"}&cp=${planetOrMoonId}`,
+        });
+
+        fleetIcon.appendChild(DOM.createDOM("span", { class: `icon12px ${iconClass}` }));
+        return fleetIcon;
+      };
+
+      if (planetFromEmpire.moon) {
+        if (moonFleetStandardUnitSum >= OGIData.options.rvalSelfLimitMoon) {
+          const moonFleetIconsDiv = DOM.createDOM("div", { class: "moonFleetIcons" });
+          moonFleetIconsDiv.appendChild(
+            createFleetIcon(
+              moonFleetStandardUnitSum,
+              planetFromEmpire.moon.id,
+              "icon_spaceship",
+              iconVisibility.shouldAddIconRedirection(ownFleetYieldIconsDisplayMode)
+            )
+          );
+          smallplanet.appendChild(moonFleetIconsDiv);
+        }
+      }
+
+      smallplanet.querySelector(".planetFleetIcons")?.remove();
+      if (planetFleetStandardUnitSum >= OGIData.options.rvalSelfLimitPlanet) {
+        const planetFleetIconsDiv = DOM.createDOM("div", { class: "planetFleetIcons" });
+        planetFleetIconsDiv.appendChild(
+          createFleetIcon(
+            planetFleetStandardUnitSum,
+            planetId,
+            "icon_spaceship",
+            iconVisibility.shouldAddIconRedirection(ownFleetYieldIconsDisplayMode)
+          )
+        );
+        smallplanet.appendChild(planetFleetIconsDiv);
+      }
+    });
+  }
+  updateProductionProgressFromEmpireData() {
+    const lastMinute = new Date(Date.now() - 60000);
+    const regularBuildingsGroups = ["supply", "station"];
+    const lifeformBuildingsGroup = "lifeformbuildings";
+    const lifeformResearchGroup = "lifeformresearch";
+
+    document.querySelectorAll(".planet-koords").forEach((planet) => {
+      const smallplanet = planet.parentElement.parentElement;
+      const planetId = planet.parentElement.href.match(/=(\d+)/)[1];
+      const planetFromEmpire = OGIData.empire.find((p) => p.id === parseInt(planetId));
+      const planetCoords = planet.textContent.trim();
+
+      const moonFromEmpire = planetFromEmpire.moon;
+      let elemFromEmpire;
+      if (moonFromEmpire?.workInProgressTechs) {
+        elemFromEmpire = moonFromEmpire.workInProgressTechs.find((x) => regularBuildingsGroups.includes(x.group));
+        if (elemFromEmpire) {
+          //new
+          if (!this.json.moonProductionProgress[planetCoords]) {
+            this.json.moonProductionProgress[planetCoords] = {};
+          } else if (
+            this.json.moonProductionProgress[planetCoords].technoId != elemFromEmpire.id ||
+            this.json.moonProductionProgress[planetCoords].tolvl != elemFromEmpire.to
+          ) {
+            //different, so set passed
+            this.json.moonProductionProgress[planetCoords].endDate = lastMinute;
+          }
+          //force update id and level
+          this.json.moonProductionProgress[planetCoords].technoId = elemFromEmpire.id;
+          this.json.moonProductionProgress[planetCoords].tolvl = elemFromEmpire.to;
+        } else {
+          //set passed
+          if (this.json.moonProductionProgress[planetCoords]) {
+            this.json.moonProductionProgress[planetCoords].endDate = lastMinute;
+          }
+        }
+      }
+
+      elemFromEmpire = planetFromEmpire.workInProgressTechs.find((x) => x.group == lifeformResearchGroup);
+      if (elemFromEmpire) {
+        //new
+        if (!this.json.lfResearchProgress[planetCoords]) {
+          this.json.lfResearchProgress[planetCoords] = {};
+        } else if (
+          this.json.lfResearchProgress[planetCoords].technoId != elemFromEmpire.id ||
+          this.json.lfResearchProgress[planetCoords].tolvl != elemFromEmpire.to
+        ) {
+          //different, so set passed
+          this.json.lfResearchProgress[planetCoords].endDate = lastMinute;
+        }
+        //force update id and level
+        this.json.lfResearchProgress[planetCoords].tolvl = elemFromEmpire.to;
+        this.json.lfResearchProgress[planetCoords].technoId = elemFromEmpire.id;
+      } else {
+        //set passed
+        if (this.json.lfResearchProgress[planetCoords]) {
+          this.json.lfResearchProgress[planetCoords].endDate = lastMinute;
+        }
+      }
+
+      elemFromEmpire = planetFromEmpire.workInProgressTechs.find((x) => x.group == lifeformBuildingsGroup);
+      if (elemFromEmpire) {
+        //new
+        if (!this.json.lfProductionProgress[planetCoords]) {
+          this.json.lfProductionProgress[planetCoords] = {};
+        } else if (
+          this.json.lfProductionProgress[planetCoords].technoId != elemFromEmpire.id ||
+          this.json.lfProductionProgress[planetCoords].tolvl != elemFromEmpire.to
+        ) {
+          //different, so set passed
+          this.json.lfProductionProgress[planetCoords].endDate = lastMinute;
+        }
+        //force update id and level
+        this.json.lfProductionProgress[planetCoords].technoId = elemFromEmpire.id;
+        this.json.lfProductionProgress[planetCoords].tolvl = elemFromEmpire.to;
+      } else {
+        //set passed
+        if (this.json.lfProductionProgress[planetCoords]) {
+        }
+      }
+
+      elemFromEmpire = planetFromEmpire.workInProgressTechs.find((x) => regularBuildingsGroups.includes(x.group));
+      if (elemFromEmpire) {
+        //new
+        if (!this.json.productionProgress[planetCoords]) {
+          this.json.productionProgress[planetCoords] = {};
+        } else if (
+          this.json.productionProgress[planetCoords].technoId != elemFromEmpire.id ||
+          this.json.productionProgress[planetCoords].tolvl != elemFromEmpire.to
+        ) {
+          //different, so set passed
+          this.json.productionProgress[planetCoords].endDate = lastMinute;
+        }
+        //force update id and level
+        this.json.productionProgress[planetCoords].technoId = elemFromEmpire.id;
+        this.json.productionProgress[planetCoords].tolvl = elemFromEmpire.to;
+      } else {
+        //set passed
+        if (this.json.productionProgress[planetCoords]) {
+          this.json.productionProgress[planetCoords].endDate = lastMinute;
+        }
+      }
+    });
+  }
   updateProductionProgress() {
+    const oneYear = 1000 * 60 * 60 * 24 * 365;
     let now = new Date();
     let needLifeformUpdateForResearch = false;
 
     const updateProgressIndicators = () => {
-      const regularBuildingsGroups = ["supply", "station"];
-      const lifeformBuildingsGroup = "lifeformbuildings";
-      const lifeformResearchGroup = "lifeformresearch";
+      const regularConstructionsIconsDisplayMode = getOption("regularConstructionsIconsDisplayMode");
+      const lifeformConstructionsIconsDisplayMode = getOption("lifeformConstructionsIconsDisplayMode");
+      const lifeformResearchsIconsDisplayMode = getOption("lifeformResearchsIconsDisplayMode");
+
       document.querySelectorAll(".planet-koords").forEach((planet) => {
         const smallplanet = planet.parentElement.parentElement;
         const planetId = planet.parentElement.href.match(/=(\d+)/)[1];
         const planetFromEmpire = OGIData.empire.find((p) => p.id === parseInt(planetId));
         const planetCoords = planet.textContent.trim();
         // remove old constructions icons
+        smallplanet.querySelector(".constructionIcons:not(.moonConstructionIcons)")?.remove();
+        smallplanet.querySelector(".constructionIcons.moonConstructionIcons")?.remove();
+
+        const constructionIconsDiv = DOM.createDOM("div", { class: "constructionIcons" });
         const constructionIconLink = smallplanet.querySelector(".constructionIcon:not(.moon)");
         if (constructionIconLink) smallplanet.removeChild(constructionIconLink);
         const moonConstructionIconLink = smallplanet.querySelector(".constructionIcon.moon");
         if (moonConstructionIconLink) smallplanet.removeChild(moonConstructionIconLink);
 
-        const constructionIconsDiv = DOM.createDOM("div", { class: "constructionIcons" });
-
-        const createConstructionIcon = (elem, planetOrMoonId, techName, iconClass, component) => {
+        const createConstructionIcon = (elem, planetOrMoonId, techName, iconClass, component, addToolTip, redirect) => {
           const constructionIcon = DOM.createDOM("a", {
             class: "constructionIcon planet tooltip js_hideTipOnMobile",
-            href: `/game/index.php?page=ingame&component=${component}&cp=${planetOrMoonId}`,
+            href: `/game/index.php?page=ingame&component=${redirect ? component : "overview"}&cp=${planetOrMoonId}`,
           });
 
-          const tooltipDiv = DOM.createDOM("div", { class: "constructionIconTooltip" });
-          tooltipDiv.appendChild(DOM.createDOM("span", { class: "techName" }, `${techName} (${elem.tolvl})`));
+          if (addToolTip) {
+            const tooltipDiv = DOM.createDOM("div", { class: "constructionIconTooltip" });
+            tooltipDiv.appendChild(DOM.createDOM("span", { class: "techName" }, `${techName} (${elem.tolvl})`));
+
+            constructionIcon.addEventListener("mouseover", () =>
+              tooltip(constructionIcon, tooltipDiv, true, { auto: true }, 50, false)
+            );
+          }
 
           constructionIcon.appendChild(DOM.createDOM("span", { class: `icon12px ${iconClass}` }));
-          constructionIcon.addEventListener("mouseover", () =>
-            tooltip(constructionIcon, tooltipDiv, true, { auto: true }, 50, false)
-          );
 
           return constructionIcon;
         };
@@ -15634,12 +16040,13 @@ class OGInfinity {
           } else {
             // if some regular construction work is finished, remove the border color
             if (this.json.options.showProgressIndicators) moon.classList.remove("finished");
-            if (endDate > now) {
+            if (iconVisibility.shouldDisplayIcon(regularConstructionsIconsDisplayMode)) {
               // regular construction work is still in progress, so show the icon
               const techName = Translator.translate(elem.technoId, "tech");
               const moonConstructionIconsDiv = DOM.createDOM("div", {
                 class: "constructionIcons moonConstructionIcons",
               });
+
               moonConstructionIconsDiv.appendChild(
                 createConstructionIcon(
                   elem,
@@ -15650,41 +16057,12 @@ class OGInfinity {
                     ? "supplies"
                     : FACILITIES_TECHID.includes(Number(elem.technoId))
                     ? "facilities"
-                    : "overview"
+                    : "overview",
+                  iconVisibility.shouldAddIconTooltip(regularConstructionsIconsDisplayMode),
+                  iconVisibility.shouldAddIconRedirection(regularConstructionsIconsDisplayMode)
                 )
               );
 
-              smallplanet.appendChild(moonConstructionIconsDiv);
-            }
-          }
-        }
-        if (checkFromEmpire) {
-          //if elem is not found, check if there is a work in progress tech from empire data
-          const moonFromEmpire = planetFromEmpire.moon;
-          if (moonFromEmpire?.workInProgressTechs) {
-            const elemFromEmpire = moonFromEmpire.workInProgressTechs.find((x) =>
-              regularBuildingsGroups.includes(x.group)
-            );
-            if (elemFromEmpire) {
-              const moonConstructionIconsDiv = DOM.createDOM("div", {
-                class: "constructionIcons moonConstructionIcons",
-              });
-              moonConstructionIconsDiv.appendChild(
-                createConstructionIcon(
-                  {
-                    technoId: elemFromEmpire.id,
-                    tolvl: elemFromEmpire.to,
-                  },
-                  moonFromEmpire.id,
-                  Translator.translate(elemFromEmpire.id, "tech"),
-                  "icon_wrench",
-                  SUPPLIES_TECHID.includes(Number(elemFromEmpire.id))
-                    ? "supplies"
-                    : FACILITIES_TECHID.includes(Number(elemFromEmpire.id))
-                    ? "facilities"
-                    : "overview"
-                )
-              );
               smallplanet.appendChild(moonConstructionIconsDiv);
             }
           }
@@ -15692,35 +16070,23 @@ class OGInfinity {
 
         // check if the planet is in lifeform research
         elem = this.json.lfResearchProgress[planetCoords];
-        checkFromEmpire = false;
         if (elem) {
           const endDate = new Date(elem.endDate);
           if (endDate < now) {
             // lifeform research work is finished, so we need to update the lifeform
             needLifeformUpdateForResearch = true;
-            checkFromEmpire = true;
-          } else if (endDate > now) {
+          } else if (iconVisibility.shouldDisplayIcon(lifeformResearchsIconsDisplayMode)) {
             // lifeform research work is in progress, so show the icon
             const techName = Translator.translate(elem.technoId, "tech");
             constructionIconsDiv.appendChild(
-              createConstructionIcon(elem, planetId, techName, "icon_research_lf", "lfresearch")
-            );
-          }
-        }
-        if (checkFromEmpire) {
-          //if elem is not found, check if there is a work in progress tech from empire data
-          const elemFromEmpire = planetFromEmpire.workInProgressTechs.find((x) => x.group == lifeformResearchGroup);
-          if (elemFromEmpire) {
-            constructionIconsDiv.appendChild(
               createConstructionIcon(
-                {
-                  technoId: elemFromEmpire.id,
-                  tolvl: elemFromEmpire.to,
-                },
+                elem,
                 planetId,
-                Translator.translate(elemFromEmpire.id, "tech"),
+                techName,
                 "icon_research_lf",
-                "lfresearch"
+                "lfresearch",
+                iconVisibility.shouldAddIconTooltip(lifeformResearchsIconsDisplayMode),
+                iconVisibility.shouldAddIconRedirection(lifeformResearchsIconsDisplayMode)
               )
             );
           }
@@ -15728,7 +16094,6 @@ class OGInfinity {
 
         // check if the planet is in lifeform construction
         elem = this.json.lfProductionProgress[planetCoords];
-        checkFromEmpire = false;
         if (elem) {
           const endDate = new Date(elem.endDate);
 
@@ -15739,54 +16104,41 @@ class OGInfinity {
               // regular construction work is finished, so show border color
               planet.parentElement.classList.add("finishedLf");
             }
-            checkFromEmpire = true;
           } else {
             // if some lifeform construction work is finished, remove the border color
             if (this.json.options.showProgressIndicators) planet.parentElement.classList.remove("finishedLf");
 
-            if (endDate > now) {
+            if (iconVisibility.shouldDisplayIcon(lifeformConstructionsIconsDisplayMode)) {
               // lifeform construction work is still in progress, so show the icon
               const techName = Translator.translate(elem.technoId, "tech");
               constructionIconsDiv.appendChild(
-                createConstructionIcon(elem, planetId, techName, "icon_wrench_lf", "lfbuildings")
+                createConstructionIcon(
+                  elem,
+                  planetId,
+                  techName,
+                  "icon_wrench_lf",
+                  "lfbuildings",
+                  iconVisibility.shouldAddIconTooltip(lifeformConstructionsIconsDisplayMode),
+                  iconVisibility.shouldAddIconRedirection(lifeformConstructionsIconsDisplayMode)
+                )
               );
             }
-          }
-        }
-        if (checkFromEmpire) {
-          //if elem is not found, check if there is a work in progress tech from empire data
-          const elemFromEmpire = planetFromEmpire.workInProgressTechs.find((x) => x.group == lifeformBuildingsGroup);
-          if (elemFromEmpire) {
-            constructionIconsDiv.appendChild(
-              createConstructionIcon(
-                {
-                  technoId: elemFromEmpire.id,
-                  tolvl: elemFromEmpire.to,
-                },
-                planetId,
-                Translator.translate(elemFromEmpire.id, "tech"),
-                "icon_wrench_lf",
-                "lfbuildings"
-              )
-            );
           }
         }
 
         // check if the planet is in regular construction
         elem = this.json.productionProgress[planetCoords];
-        checkFromEmpire = false;
         if (elem) {
           const endDate = new Date(elem.endDate);
           const techName = Translator.translate(elem.technoId, "tech");
           if (endDate < now) {
             // regular construction work is finished, so show border color
             if (this.json.options.showProgressIndicators) planet.parentElement.classList.add("finished");
-            checkFromEmpire = true;
           } else {
             // if some regular construction work is finished, remove the border color
             if (this.json.options.showProgressIndicators) planet.parentElement.classList.remove("finished");
 
-            if (endDate > now) {
+            if (iconVisibility.shouldDisplayIcon(regularConstructionsIconsDisplayMode)) {
               // regular construction work is still in progress, so show the icon
               constructionIconsDiv.appendChild(
                 createConstructionIcon(
@@ -15798,34 +16150,12 @@ class OGInfinity {
                     ? "supplies"
                     : FACILITIES_TECHID.includes(Number(elem.technoId))
                     ? "facilities"
-                    : "overview"
+                    : "overview",
+                  iconVisibility.shouldAddIconTooltip(regularConstructionsIconsDisplayMode),
+                  iconVisibility.shouldAddIconRedirection(regularConstructionsIconsDisplayMode)
                 )
               );
             }
-          }
-        }
-        if (checkFromEmpire) {
-          //if elem is not found, check if there is a work in progress tech from empire data
-          const elemFromEmpire = planetFromEmpire.workInProgressTechs.find((x) =>
-            regularBuildingsGroups.includes(x.group)
-          );
-          if (elemFromEmpire) {
-            constructionIconsDiv.appendChild(
-              createConstructionIcon(
-                {
-                  technoId: elemFromEmpire.id,
-                  tolvl: elemFromEmpire.to,
-                },
-                planetId,
-                Translator.translate(elemFromEmpire.id, "tech"),
-                "icon_wrench",
-                SUPPLIES_TECHID.includes(Number(elemFromEmpire.id))
-                  ? "supplies"
-                  : FACILITIES_TECHID.includes(Number(elemFromEmpire.id))
-                  ? "facilities"
-                  : "overview"
-              )
-            );
           }
         }
 
@@ -15841,37 +16171,39 @@ class OGInfinity {
     }
 
     if (document.querySelector("#productionboxbuildingcomponent")) {
-      let coords = this.current.coords;
-      let building = document.querySelector("#productionboxbuildingcomponent .queuePic");
+      const coords = this.current.coords;
+      const building = document.querySelector("#productionboxbuildingcomponent .queuePic");
       if (building) {
-        let technoId =
+        const technoId =
           building.getAttribute("alt").split("_")[1] ||
           building.parentElement.getAttribute("onclick").split("(")[1].split(", ")[0];
-        let tolvl = document
+        const tolvl = document
           .querySelector("#productionboxbuildingcomponent .level")
           .textContent.trim()
           .replace(/[^0-9]/g, "");
-        let datestring = document.querySelector("#productionboxbuildingcomponent .ogl-date").textContent.trim();
-        let date = datestring.split(" - ")[0].split(".");
-        let time = datestring.split(" - ")[1].split(":");
-        let endDate = new Date(
-          2000 + parseInt(date[2]),
-          parseInt(date[1]) - 1,
-          parseInt(date[0]),
-          time[0],
-          time[1],
-          time[2]
-        );
-        const elem = {
-          technoId: technoId,
-          tolvl: tolvl,
-          endDate: endDate.toGMTString(),
-        };
-
-        if (this.current.isMoon) {
-          this.json.moonProductionProgress[coords] = elem;
-        } else {
-          this.json.productionProgress[coords] = elem;
+        const dateElement = document.querySelector("#productionboxbuildingcomponent .ogl-date");
+        if (dateElement) {
+          const datestring = dateElement.textContent.trim();
+          const date = datestring.split(" - ")[0].split(".");
+          const time = datestring.split(" - ")[1].split(":");
+          const endDate = new Date(
+            2000 + parseInt(date[2]),
+            parseInt(date[1]) - 1,
+            parseInt(date[0]),
+            time[0],
+            time[1],
+            time[2]
+          );
+          const elem = {
+            technoId: technoId,
+            tolvl: tolvl,
+            endDate: endDate.toGMTString(),
+          };
+          if (this.current.isMoon) {
+            this.json.moonProductionProgress[coords] = elem;
+          } else {
+            this.json.productionProgress[coords] = elem;
+          }
         }
       } else {
         if (this.current.isMoon) {
@@ -15883,97 +16215,107 @@ class OGInfinity {
     }
 
     if (document.querySelector("#productionboxlfbuildingcomponent") && !this.current.isMoon) {
-      let coords = this.current.coords;
-      let lfbuilding = document.querySelector("#productionboxlfbuildingcomponent .queuePic");
+      const coords = this.current.coords;
+      const lfbuilding = document.querySelector("#productionboxlfbuildingcomponent .queuePic");
       if (lfbuilding) {
-        let technoId = lfbuilding.classList[2].replace("lifeformTech", "");
-        let tolvl = document
+        const technoId = lfbuilding.classList[2].replace("lifeformTech", "");
+        const tolvl = document
           .querySelector("#productionboxlfbuildingcomponent .level")
           .textContent.trim()
           .replace(/[^0-9]/g, "");
-        let datestring = document.querySelector("#productionboxlfbuildingcomponent .ogl-date").textContent.trim();
-        let date = datestring.split(" - ")[0].split(".");
-        let time = datestring.split(" - ")[1].split(":");
-        let endDate = new Date(
-          2000 + parseInt(date[2]),
-          parseInt(date[1]) - 1,
-          parseInt(date[0]),
-          time[0],
-          time[1],
-          time[2]
-        );
-        this.json.lfProductionProgress[coords] = {
-          technoId: technoId,
-          tolvl: tolvl,
-          endDate: endDate.toGMTString(),
-        };
+        const dateElement = document.querySelector("#productionboxlfbuildingcomponent .ogl-date");
+        if (dateElement) {
+          const datestring = document.querySelector("#productionboxlfbuildingcomponent .ogl-date").textContent.trim();
+          const date = datestring.split(" - ")[0].split(".");
+          const time = datestring.split(" - ")[1].split(":");
+          const endDate = new Date(
+            2000 + parseInt(date[2]),
+            parseInt(date[1]) - 1,
+            parseInt(date[0]),
+            time[0],
+            time[1],
+            time[2]
+          );
+          this.json.lfProductionProgress[coords] = {
+            technoId: technoId,
+            tolvl: tolvl,
+            endDate: endDate.toGMTString(),
+          };
+        }
       } else {
         delete this.json.lfProductionProgress[coords];
       }
     }
 
     if (document.querySelector("#productionboxresearchcomponent")) {
-      let research = document.querySelector("#productionboxresearchcomponent .queuePic");
+      const research = document.querySelector("#productionboxresearchcomponent .queuePic");
       if (research) {
-        let technoId =
+        const technoId =
           research.getAttribute("alt").split("_")[1] ||
           research.parentElement.getAttribute("onclick").split("(")[1].split(", ")[0];
-        let tolvl = document
+        const tolvl = document
           .querySelector("#productionboxresearchcomponent .level")
           .textContent.trim()
           .replace(/[^0-9]/g, "");
-        let coords = document
+        const coords = document
           .querySelector("#productionboxresearchcomponent .tooltip")
           .getAttribute("onclick")
           .split("[")[1]
           .split("]")[0];
-        let datestring = document.querySelector("#productionboxresearchcomponent .ogl-date").textContent.trim();
-        let date = datestring.split(" - ")[0].split(".");
-        let time = datestring.split(" - ")[1].split(":");
-        let endDate = new Date(
-          2000 + parseInt(date[2]),
-          parseInt(date[1]) - 1,
-          parseInt(date[0]),
-          time[0],
-          time[1],
-          time[2]
-        );
-        this.json.researchProgress = {
-          technoId: technoId,
-          coords: coords,
-          tolvl: tolvl,
-          planetId: this.current.id,
-          endDate: endDate.toGMTString(),
-        };
+        const dateElement = document.querySelector("#productionboxresearchcomponent .ogl-date");
+        if (dateElement) {
+          const datestring = document.querySelector("#productionboxresearchcomponent .ogl-date").textContent.trim();
+          const date = datestring.split(" - ")[0].split(".");
+          const time = datestring.split(" - ")[1].split(":");
+          const endDate = new Date(
+            2000 + parseInt(date[2]),
+            parseInt(date[1]) - 1,
+            parseInt(date[0]),
+            time[0],
+            time[1],
+            time[2]
+          );
+          this.json.researchProgress = {
+            technoId: technoId,
+            coords: coords,
+            tolvl: tolvl,
+            planetId: this.current.id,
+            endDate: endDate.toGMTString(),
+          };
+        }
       } else {
         this.json.researchProgress = {};
       }
     }
+
     if (document.querySelector("#productionboxlfresearchcomponent")) {
-      let coords = this.current.coords;
-      let lfresearch = document.querySelector("#productionboxlfresearchcomponent .queuePic");
+      const coords = this.current.coords;
+      const lfresearch = document.querySelector("#productionboxlfresearchcomponent .queuePic");
       if (lfresearch) {
-        let technoId = lfresearch.classList[2].replace("lifeformTech", "");
-        let tolvl = document
+        const technoId = lfresearch.classList[2].replace("lifeformTech", "");
+        const tolvl = document
           .querySelector("#productionboxlfresearchcomponent .level")
           .textContent.trim()
           .replace(/[^0-9]/g, "");
-        let datestring = document.querySelector("#productionboxlfresearchcomponent .ogl-date").textContent.trim();
-        let date = datestring.split(" - ")[0].split(".");
-        let time = datestring.split(" - ")[1].split(":");
-        let endDate = new Date(
-          2000 + parseInt(date[2]),
-          parseInt(date[1]) - 1,
-          parseInt(date[0]),
-          time[0],
-          time[1],
-          time[2]
-        );
-        this.json.lfResearchProgress[coords] = {
-          technoId: technoId,
-          tolvl: tolvl,
-          endDate: endDate.toGMTString(),
-        };
+        const dateElement = document.querySelector("#productionboxlfresearchcomponent .ogl-date");
+        if (dateElement) {
+          const datestring = dateElement.textContent.trim();
+          const date = datestring.split(" - ")[0].split(".");
+          const time = datestring.split(" - ")[1].split(":");
+          const endDate = new Date(
+            2000 + parseInt(date[2]),
+            parseInt(date[1]) - 1,
+            parseInt(date[0]),
+            time[0],
+            time[1],
+            time[2]
+          );
+          this.json.lfResearchProgress[coords] = {
+            technoId: technoId,
+            tolvl: tolvl,
+            endDate: endDate.toGMTString(),
+          };
+        }
       } else {
         delete this.json.lfResearchProgress[coords];
       }
