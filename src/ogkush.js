@@ -15874,6 +15874,7 @@ class OGInfinity {
       } else {
         //set passed
         if (this.json.lfProductionProgress[planetCoords]) {
+          this.json.lfProductionProgress[planetCoords].endDate = lastMinute;
         }
       }
 
