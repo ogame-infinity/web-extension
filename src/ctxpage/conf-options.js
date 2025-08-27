@@ -92,6 +92,10 @@ const _options = {
   },
   overview_display_planet_details: true,
   overview_display_planet_buffBar: true,
+  regularConstructionsIconsDisplayMode: 4,
+  lifeformConstructionsIconsDisplayMode: 4,
+  lifeformResearchsIconsDisplayMode: 4,
+  ownFleetYieldIconsDisplayMode: 4,
 };
 
 export function initConfOptions(options) {
