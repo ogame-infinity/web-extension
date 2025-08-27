@@ -153,7 +153,12 @@ class Notifier {
   IsFleetMissionNotifiable(missionType) {
     /*Only peaceful fleets are affected.
      * For now, managing hostile fleets is complicated due to the possible change in fleet arrival time.*/
-    const notifiableMissions = [MissionType.TRANSPORT, MissionType.DEPLOYMENT, MissionType.HARVEST];
+    const notifiableMissions = [
+      MissionType.TRANSPORT,
+      MissionType.DEPLOYMENT,
+      MissionType.HARVEST,
+      MissionType.COLONISATION,
+    ];
     return notifiableMissions.includes(missionType);
   }
 
@@ -175,20 +180,20 @@ class Notifier {
       ? OGIData.empire.find((x) => x.coordinates === coords)?.moon
       : OGIData.empire.find((x) => x.coordinates === coords);
 
-    const destinationNameTranslated = `${Translator.translate(127)}: ${destination?.name}`;
+    const destinationNameTranslated = destination ? `\n${Translator.translate(127)}: ${destination.name}` : "";
 
     const coordsTranslated = `${Translator.translate(98)}: ${coords} (${
       isMoon ? Translator.translate(194) : Translator.translate(42)
     })`;
+
+    const link = destination
+      ? `https://${OGIData.json.universeDomain}/game/index.php?page=ingame&component=fleetdispatch&cp=${destination.id}`
+      : `https://${OGIData.json.universeDomain}/game/index.php?page=ingame&component=overview`;
+
+    const message = `${missionTranslated}${destinationNameTranslated}\n${coordsTranslated}`;
+
     if (id && coords) {
-      this.ScheduleNotification(
-        id,
-        2,
-        title,
-        `${missionTranslated}\n${destinationNameTranslated}\n${coordsTranslated}`,
-        `https://${OGIData.json.universeDomain}/game/index.php?page=ingame&component=fleetdispatch&cp=${destination.id}`,
-        arrivalDatetime
-      );
+      this.ScheduleNotification(id, 2, title, message, link, arrivalDatetime);
     }
   }
   CancelFleetArrivalScheduledNotification(fleetId, isBack) {

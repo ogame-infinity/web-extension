@@ -14310,7 +14310,7 @@ class OGInfinity {
             return new Date(`${formatedDate}T${timePart}`);
           };
 
-          const arrivaleDatetime = convertToDate(fleet.querySelector(".timer").getAttribute("data-tooltip-title"));
+          let eventDate = convertToDate(fleet.querySelector(".timer").getAttribute("data-tooltip-title"));
 
           const notifyMeButton = fleet.appendChild(createDOM("button", { class: "notify-me-button" }));
 
@@ -14322,29 +14322,26 @@ class OGInfinity {
 
           notifyMeButton.addEventListener("click", () => {
             if (!Notifier.IsFleetArrivalNotificationScheduled(id, isBack)) {
-              Notifier.ScheduleFleetArrivalNotification(id, destCoords, isDestMoon, type, isBack, arrivaleDatetime);
+              if (isBack)
+                Notifier.ScheduleFleetArrivalNotification(id, originCoords, isOriginMoon, type, isBack, eventDate);
+              else Notifier.ScheduleFleetArrivalNotification(id, destCoords, isDestMoon, type, isBack, eventDate);
 
               if (!isBack && fleet.querySelector(".nextTimer") && backBasedMissions.includes(type)) {
                 //if fleet type is a return based like transport or harvest, then also preshot the return notification
-                const returnDatetime = convertToDate(
-                  fleet.querySelector(".nextTimer").getAttribute("data-tooltip-title")
-                );
-                Notifier.ScheduleFleetArrivalNotification(id, originCoords, isOriginMoon, type, true, returnDatetime);
+                eventDate = convertToDate(fleet.querySelector(".nextTimer").getAttribute("data-tooltip-title"));
+                Notifier.ScheduleFleetArrivalNotification(id, originCoords, isOriginMoon, type, true, eventDate);
               }
 
-              if (!notifyMeButton.classList.contains("active")) {
-                notifyMeButton.classList.add("active");
-              }
+              if (!notifyMeButton.classList.contains("active")) notifyMeButton.classList.add("active");
             } else {
               Notifier.CancelFleetArrivalScheduledNotification(id, isBack);
+
               if (!isBack && backBasedMissions.includes(type)) {
                 //if fleet type is a return based like transport or harvest, then cancel also the return notification
                 Notifier.CancelFleetArrivalScheduledNotification(id, true);
               }
               // remove active class from button
-              if (notifyMeButton.classList.contains("active")) {
-                notifyMeButton.classList.remove("active");
-              }
+              if (notifyMeButton.classList.contains("active")) notifyMeButton.classList.remove("active");
             }
           });
 
