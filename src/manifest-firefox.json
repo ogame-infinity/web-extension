@@ -5,7 +5,8 @@
   "description": "OGI - To Ogame's infinity and beyond!",
     "browser_specific_settings": {
     "gecko": {
-      "id": "{082ec2d7-1c60-4c98-808e-bafd9c33d5ea}"
+      "id": "{082ec2d7-1c60-4c98-808e-bafd9c33d5ea}",
+      "strict_min_version": "120.0"
     }
   },
   "icons": {
