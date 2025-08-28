@@ -4,6 +4,7 @@ import { contentContextInit } from "../util/service.callbackEvent.js";
 import * as wait from "../util/wait.js";
 import { getExpeditionType } from "./callbacks/expedition-type.js";
 import { DataHelper } from "./data-helper.js";
+import Notifier from "../util/Notifier.js";
 
 const mainLogger = getLogger();
 
@@ -99,8 +100,7 @@ document.addEventListener("ogi-notification", function (e) {
 document.addEventListener("ogi-notification-sync", function (e) {
   if (!e.detail) throw new Error("No notification details provided");
   chrome.runtime.sendMessage({ eventType: "ogi-notification-sync", message: e.detail }, function (response) {
-    if (!response) return;
-    document.dispatchEvent(new CustomEvent("ogi-notification-sync-response", { detail: response }));
+    Notifier.EndSyncNotifications(response);
   });
 });
 

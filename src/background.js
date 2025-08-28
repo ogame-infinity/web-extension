@@ -29,6 +29,12 @@ class BackgroundNotificationData {
   set lastCleaned(date) {
     this._json.lastCleaned = date ?? new Date().toISOString();
   }
+  get lastSynced() {
+    return this._json.lastSynced;
+  }
+  set lastSynced(date) {
+    this._json.lastSynced = date ?? new Date().toISOString();
+  }
 
   async InitializeFromStorageAsync() {
     console.log("Initializing from storage...");
@@ -40,15 +46,19 @@ class BackgroundNotificationData {
       if (!this._json.notifications) {
         this._json.notifications = {};
       }
+      if (!this._json.lastSynced) {
+        this._json.lastSynced = new Date(0).toISOString();
+      }
       if (!this._json.lastCleaned) {
-        this._json.lastCleaned = new Date().toISOString();
+        this._json.lastCleaned = new Date(0).toISOString();
       }
       console.log("Initialization complete:", this._json);
     } else {
       console.warn("No data found in storage, initializing with default values");
       this._json = {
         notifications: {},
-        lastCleaned: new Date().toISOString(),
+        lastSynced: new Date(0).toISOString(),
+        lastCleaned: new Date(0).toISOString(),
       };
       await this.SaveAsync();
     }
@@ -66,7 +76,7 @@ class BackgroundNotifier {
     this.notificationData = notificationData;
   }
 
-  #raiseNotification(id, title, message, priority = 2) {
+  #raiseNotification(id, title, message, priority = 0) {
     if (!chrome) return;
 
     try {
@@ -83,77 +93,63 @@ class BackgroundNotifier {
     }
   }
 
-  async #scheduleNotificationAsync(id, domain, title, message, url, when) {
+  async #scheduleNotificationAsync(notificationToSchedule) {
     try {
       let shouldUpdateAlarm = false;
       let shouldUpdateNotification = false;
 
       //Verify if the notification exists and if it has changed
-      const notification = this.notificationData.notifications[id];
+      const notification = this.notificationData.notifications[notificationToSchedule.id];
       if (notification) {
-        if (notification.title !== title) {
+        if (!this.#areEquals(notificationToSchedule, notification)) {
           shouldUpdateNotification = true;
-          console.log(`Notification ${id} exists but title is different`, { old: notification.title, new: title });
-        }
-        if (notification.message !== message) {
-          shouldUpdateNotification = true;
-          console.log(`Notification ${id} exists but message is different`, {
-            old: notification.message,
-            new: message,
-          });
-        }
-        if (notification.when !== when) {
-          shouldUpdateNotification = true;
-          console.log(`Notification ${id} exists but when is different`, { old: notification.when, new: when });
-        }
-        if (notification.url !== url) {
-          shouldUpdateNotification = true;
-          console.log(`Notification ${id} exists but url is different`, { old: notification.url, new: url });
         }
       } else {
         shouldUpdateNotification = true;
       }
 
       //Verify if the alarm exists and if it should be updated
-      const alarm = await chrome.alarms.get(id);
+      const alarm = await chrome.alarms.get(notificationToSchedule.id);
       if (alarm) {
         const alarmDate = new Date(alarm.scheduledTime).toISOString();
-        if (alarmDate !== when) {
+        if (alarmDate !== notificationToSchedule.when) {
           shouldUpdateAlarm = true;
-          console.log(`Alarm ${id} exists but scheduled time is different (old: ${alarmDate}, new: ${when})`);
+          console.log(
+            `Alarm ${notificationToSchedule.id} exists but scheduled time is different (old: ${alarmDate}, new: ${notificationToSchedule.when})`
+          );
         }
       } else {
         shouldUpdateAlarm = true;
       }
 
       if (shouldUpdateNotification) {
-        this.notificationData.notifications[id] = { domain, title, message, url, when };
+        this.notificationData.notifications[notificationToSchedule.id] = notificationToSchedule;
         await this.notificationData.SaveAsync();
-        console.log(`Saved notification ${id}:`, { domain, title, message, url, when });
+        console.log(`Saved notification ${notificationToSchedule.id}:`, notificationToSchedule);
       } else {
-        console.log(`Notification ${id} is unchanged`);
+        console.log(`Notification ${notificationToSchedule.id} is unchanged`);
       }
 
-      if (shouldUpdateAlarm) {
-        /*
-         * The browser doesn't execute tasks with millisecond-level precision.
-         * It manages an event scheduling cycle to optimize performance and battery consumption.
-         * If you create an alarm for a time that's too short (e.g., 10 seconds from now), the browser might not process the scheduling request until after that time has already passed.
-         * At that point, the alarm is considered expired and is simply never triggered.
-         * This is why the documentation recommends a minimum delay of one minute to ensure the alarm has enough time to be properly registered and processed by the scheduling system.
-         */
-
-        const minRequiredDelayInMs = 60 * 1000; // ensure minimum delay of 1 minute
-        const newAlarmDate = Math.max(new Date(when).getTime(), Date.now() + minRequiredDelayInMs);
-
-        chrome.alarms.create(id, { when: newAlarmDate });
-        console.log(`Scheduled alarm ${id} at ${when}`);
-      } else {
-        console.log(`Alarm ${id} is unchanged`);
-      }
+      if (shouldUpdateAlarm) this.#createAlarm(notificationToSchedule.id, notificationToSchedule.when);
+      else console.log(`Alarm ${notificationToSchedule.id} is unchanged`);
     } catch (error) {
       console.error("Error while scheduling notification:", error);
     }
+  }
+
+  #createAlarm(id, when) {
+    /*
+     * The browser doesn't execute tasks with millisecond-level precision.
+     * It manages an event scheduling cycle to optimize performance and battery consumption.
+     * If you create an alarm for a time that's too short (e.g., 10 seconds from now), the browser might not process the scheduling request until after that time has already passed.
+     * At that point, the alarm is considered expired and is simply never triggered.
+     * This is why the documentation recommends a minimum delay of one minute to ensure the alarm has enough time to be properly registered and processed by the scheduling system.
+     */
+    const minRequiredDelayInMs = 60 * 1000; // ensure minimum delay of 1 minute
+    const newAlarmDate = Math.max(new Date(when).getTime(), Date.now() + minRequiredDelayInMs);
+
+    chrome.alarms.create(id, { when: newAlarmDate });
+    console.log(`Scheduled alarm  ${id} at ${when}`);
   }
 
   async #cancelScheduledNotificationAsync(id) {
@@ -173,18 +169,24 @@ class BackgroundNotifier {
     }
   }
 
-  async #cleanOldNotificationsAsync() {
+  async #cleanOrRefreshOldNotificationsAsync() {
     const idsToRemove = [];
     const now = Date.now();
 
     const fiveMinutes = 5 * 60 * 1000;
-    const oneHour = 60 * 60 * 1000;
 
-    //if last cleaned is more than 5 minutes ago, clean notifications that are older than 1 hour
-    if (new Date(this.notificationData.lastCleaned).getTime() < now - fiveMinutes) {
+    const isObsoleteSinceFiveMinutes = (date) => new Date(date).getTime() < now - fiveMinutes;
+
+    //if last cleaned is more than 5 minutes ago, clean notifications that are older than 5 minutes
+    if (isObsoleteSinceFiveMinutes(this.notificationData.lastCleaned)) {
       console.log(`Cleaning old notifications`);
       for (const [id, notification] of Object.entries(this.notificationData.notifications)) {
-        if (new Date(notification.when).getTime() < now - oneHour) idsToRemove.push(id);
+        if (isObsoleteSinceFiveMinutes(notification.when)) idsToRemove.push(id);
+        else {
+          //if the notification is not obsolete, verify an alarm exists, and if not, create one
+          const alarm = await chrome.alarms.get(id);
+          if (!alarm) this.#createAlarm(id, notification.when);
+        }
       }
 
       for (const id of idsToRemove) {
@@ -200,25 +202,149 @@ class BackgroundNotifier {
     }
   }
 
+  #areEquals = (notificationA, notificationB) => {
+    if (notificationA.id !== notificationB.id) {
+      console.debug(`Notification ID mismatch`, {
+        notificationA: notificationA.id,
+        notificationB: notificationB.id,
+      });
+      return false;
+    }
+    if (notificationA.when !== notificationB.when) {
+      console.debug(`Notification ${notificationA.id} When mismatch`, {
+        notificationA: notificationA.id,
+        notificationB: notificationB.id,
+      });
+      return false;
+    }
+    if (notificationA.url !== notificationB.url) {
+      console.debug(`Notification ${notificationA.id} URL mismatch`, {
+        notificationA: notificationA.url,
+        notificationB: notificationB.url,
+      });
+      return false;
+    }
+    if (notificationA.priority !== notificationB.priority) {
+      console.debug(`Notification ${notificationA.id} Priority mismatch`, {
+        notificationA: notificationA.priority,
+        notificationB: notificationB.priority,
+      });
+      return false;
+    }
+    if (notificationA.message !== notificationB.message) {
+      console.debug(`Notification ${notificationA.id} Message mismatch`, {
+        notificationA: notificationA.message,
+        notificationB: notificationB.message,
+      });
+      return false;
+    }
+    if (notificationA.title !== notificationB.title) {
+      console.debug(`Notification ${notificationA.id} Title mismatch`, {
+        notificationA: notificationA.title,
+        notificationB: notificationB.title,
+      });
+      return false;
+    }
+    return true;
+  };
+
+  async SyncNotifications(domain, notifications) {
+    const notificationsToCancel = [];
+    const notificationsToReschedule = [];
+    const perfectlySynced = [];
+
+    const isObsolete = (date) => new Date(date).getTime() < Date.now();
+
+    const registerForCancellation = (id, notification) => {
+      if (!notificationsToCancel.find((x) => x[0] === id)) notificationsToCancel.push([id, notification]);
+    };
+    const registerForReschedule = (id, notification) => {
+      if (!notificationsToReschedule.find((x) => x[0] === id)) notificationsToReschedule.push([id, notification]);
+    };
+    const registerAsPerfectlySynced = (id, notification) => {
+      if (!perfectlySynced.find((x) => x[0] === id)) perfectlySynced.push([id, notification]);
+    };
+
+    //compare notifications to background notifications for cancellation/rescheduling
+    for (const [id, notification] of Object.entries(notifications)) {
+      //if notification is obsolete, maybe we must cancel it
+      if (isObsolete(new Date(notification.when).getTime())) {
+        registerForCancellation(id, notification);
+      }
+
+      const [backgroundNotificationId, backgroundNotification] = Object.entries(
+        this.notificationData.notifications
+      ).find(
+        (x) => x[0] === id && x[1].domain === domain //⚠️ Filter by domain
+      );
+
+      if (backgroundNotification) {
+        if (this.#areEquals(notification, backgroundNotification)) registerAsPerfectlySynced(id, notification);
+        else registerForReschedule(id, notification); //if any details differ, we must reschedule it
+      } else registerForReschedule(id, notification); //if notification is new, we must reschedule it
+    }
+    //compare background notifications to notifications for cancellation
+    for (const [backgroundNotificationId, backgroundNotification] of Object.entries(
+      this.notificationData.notifications
+    ).filter(
+      (x) => x[1].domain === domain //⚠️ Filter by domain
+    )) {
+      const notification = notifications[backgroundNotificationId];
+      if (!notification) registerForCancellation(backgroundNotificationId, backgroundNotification);
+    }
+
+    for (const [id, notification] of notificationsToCancel) {
+      await this.#cancelScheduledNotificationAsync(id);
+    }
+    for (const [id, notification] of notificationsToReschedule) {
+      await this.#scheduleNotificationAsync({
+        id: notification.id,
+        domain: domain,
+        title: notification.title,
+        message: notification.message,
+        url: notification.url,
+        when: notification.when,
+        priority: notification.priority,
+      });
+    }
+
+    this.notificationData.lastSynced = new Date().toISOString();
+    await this.notificationData.SaveAsync();
+
+    const syncResult = {
+      SyncDate: this.notificationData.lastSynced,
+      PerfectlySynced: perfectlySynced.map((x) => x[1]),
+      Rescheduled: notificationsToReschedule.map((x) => x[1]),
+      Canceled: notificationsToCancel.map((x) => x[1]),
+    };
+    console.log(
+      `Synchronized notifications: ${perfectlySynced.length} perfectly synced, ${notificationsToReschedule.length} rescheduled, ${notificationsToCancel.length} canceled`,
+      syncResult
+    );
+
+    return syncResult;
+  }
+
   async HandleMessageAsync(message) {
     if (!message) return;
 
     if (message.type === "NOTIFICATION") {
-      this.#raiseNotification(message.id, message.title, message.message);
+      this.#raiseNotification(message.id, message.title, message.message, message.priority ?? 0);
     } else if (message.type === "CREATE_SCHEDULED_NOTIFICATION") {
-      await this.#scheduleNotificationAsync(
-        message.id,
-        message.domain,
-        message.title,
-        message.message,
-        message.url,
-        message.when
-      );
+      await this.#scheduleNotificationAsync({
+        id: message.id,
+        domain: message.domain,
+        title: message.title,
+        message: message.message,
+        url: message.url,
+        when: message.when,
+        priority: message.priority,
+      });
     } else if (message.type === "CANCEL_SCHEDULED_NOTIFICATION") {
       await this.#cancelScheduledNotificationAsync(message.id);
     }
 
-    await this.#cleanOldNotificationsAsync();
+    await this.#cleanOrRefreshOldNotificationsAsync();
   }
 
   async NotifyScheduledAsync(notificationId) {
@@ -226,7 +352,7 @@ class BackgroundNotifier {
 
     const notification = this.notificationData.notifications[notificationId];
     if (notification) {
-      this.#raiseNotification(notificationId, notification.title, notification.message);
+      this.#raiseNotification(notificationId, notification.title, notification.message, notification.priority ?? 0);
       //if the notification has no URL, it can be considered for removal
       if (!notification.url) {
         delete this.notificationData.notifications[notificationId];
@@ -234,7 +360,7 @@ class BackgroundNotifier {
       }
     }
 
-    await this.#cleanOldNotificationsAsync();
+    await this.#cleanOrRefreshOldNotificationsAsync();
   }
 
   async ActionOnNotificationClickAsync(notificationId) {
@@ -268,7 +394,7 @@ class BackgroundNotifier {
       await chrome.tabs.create({ url: `https://lobby.ogame.gameforge.com/` });
     }
 
-    await this.#cleanOldNotificationsAsync();
+    await this.#cleanOrRefreshOldNotificationsAsync();
   }
 
   GetAllNotifications(domain) {
@@ -282,6 +408,7 @@ class BackgroundNotifier {
 const notificationData = new BackgroundNotificationData();
 const backgroundNotifier = new BackgroundNotifier(notificationData);
 async function setup() {
+  console.log("Setting up background notifier...");
   await notificationData.InitializeFromStorageAsync();
 }
 setup();
@@ -291,10 +418,13 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   (async () => {
     try {
       if (request.eventType === "ogi-notification" && request.message) {
+        console.log("Handling notification...");
+        await notificationData.InitializeFromStorageAsync();
         await backgroundNotifier.HandleMessageAsync(request.message);
       } else if (request.eventType === "ogi-notification-sync" && sendResponse) {
+        console.log("Syncing notifications...");
         await notificationData.InitializeFromStorageAsync();
-        sendResponse(backgroundNotifier.GetAllNotifications(request.message.domain));
+        sendResponse(await backgroundNotifier.SyncNotifications(request.message.domain, request.message.notifications));
       }
     } catch (error) {
       console.error("Error processing message:", error);
@@ -309,6 +439,8 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
 chrome.alarms.onAlarm.addListener(async function (alarm) {
   try {
+    console.log("Alarm triggered:", alarm);
+    await notificationData.InitializeFromStorageAsync();
     await backgroundNotifier.NotifyScheduledAsync(alarm.name);
   } catch (error) {
     console.error("Error handling alarm:", error);
@@ -317,6 +449,7 @@ chrome.alarms.onAlarm.addListener(async function (alarm) {
 
 chrome.notifications.onClicked.addListener(async function (notificationId) {
   try {
+    console.log("Notification clicked:", notificationId);
     await notificationData.InitializeFromStorageAsync();
     await backgroundNotifier.ActionOnNotificationClickAsync(notificationId);
     chrome.notifications.clear(notificationId);

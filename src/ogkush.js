@@ -1690,7 +1690,7 @@ class OGInfinity {
     // this.showTabTimer(); TODO: enable when timer is moved to the clock area
     this.markLifeforms();
 
-    //Notifier.Notify("0", 0, "titre", "message", new Date("2025-08-20T16:28:00"));
+    //Notifier.Notify("0", "titre", "message", new Date("2025-08-20T16:28:00"), 0);
 
     this.navigationArrows();
     this.expedition = false;
@@ -1802,7 +1802,7 @@ class OGInfinity {
      * => So we need to re-schedule the notification
      * => close tab doesn't clear scheduled notifications
      */
-    Notifier.SyncNotifications(force);
+    Notifier.BeginSyncNotifications(force);
   }
 
   overviewDates() {
