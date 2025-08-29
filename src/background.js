@@ -29,11 +29,12 @@ class BackgroundNotificationData {
   set lastCleaned(date) {
     this._json.lastCleaned = date ?? new Date().toISOString();
   }
-  get lastSynced() {
-    return this._json.lastSynced;
+
+  getLastSynced(domain) {
+    return this._json.lastSynced[domain] ?? new Date(0).toISOString();
   }
-  set lastSynced(date) {
-    this._json.lastSynced = date ?? new Date().toISOString();
+  setLastSynced(domain, date) {
+    this._json.lastSynced[domain] = date ?? new Date().toISOString();
   }
 
   async InitializeFromStorageAsync() {
@@ -47,7 +48,7 @@ class BackgroundNotificationData {
         this._json.notifications = {};
       }
       if (!this._json.lastSynced) {
-        this._json.lastSynced = new Date(0).toISOString();
+        this._json.lastSynced = {};
       }
       if (!this._json.lastCleaned) {
         this._json.lastCleaned = new Date(0).toISOString();
@@ -57,7 +58,7 @@ class BackgroundNotificationData {
       console.warn("No data found in storage, initializing with default values");
       this._json = {
         notifications: {},
-        lastSynced: new Date(0).toISOString(),
+        lastSynced: {},
         lastCleaned: new Date(0).toISOString(),
       };
       await this.SaveAsync();
@@ -76,18 +77,16 @@ class BackgroundNotifier {
     this.notificationData = notificationData;
   }
 
-  #raiseNotification(id, title, message, priority = 0) {
-    if (!chrome) return;
-
+  #raiseNotification(notification) {
     try {
-      chrome.notifications.create(id, {
+      chrome.notifications.create(notification.id, {
         type: "basic",
-        priority: priority,
+        priority: notification.priority ?? 0,
         iconUrl: "/assets/images/logo128.png",
-        title: title,
-        message: message,
+        title: notification.title,
+        message: notification.message,
       });
-      console.log(`Raised notification ${id}:`, { title, message });
+      console.log(`Raised notification ${notification.id}:`, notification);
     } catch (error) {
       console.error("Error while creating notification:", error);
     }
@@ -271,18 +270,16 @@ class BackgroundNotifier {
       if (isObsolete(new Date(notification.when).getTime())) {
         registerForCancellation(id, notification);
       }
-
-      const [backgroundNotificationId, backgroundNotification] = Object.entries(
-        this.notificationData.notifications
-      ).find(
+      const backgroundNotificationFound = Object.entries(this.notificationData.notifications).find(
         (x) => x[0] === id && x[1].domain === domain //⚠️ Filter by domain
       );
-
-      if (backgroundNotification) {
+      if (backgroundNotificationFound) {
+        const [backgroundNotificationId, backgroundNotification] = backgroundNotificationFound;
         if (this.#areEquals(notification, backgroundNotification)) registerAsPerfectlySynced(id, notification);
         else registerForReschedule(id, notification); //if any details differ, we must reschedule it
       } else registerForReschedule(id, notification); //if notification is new, we must reschedule it
     }
+
     //compare background notifications to notifications for cancellation
     for (const [backgroundNotificationId, backgroundNotification] of Object.entries(
       this.notificationData.notifications
@@ -308,11 +305,11 @@ class BackgroundNotifier {
       });
     }
 
-    this.notificationData.lastSynced = new Date().toISOString();
+    this.notificationData.setLastSynced(domain, new Date().toISOString());
     await this.notificationData.SaveAsync();
 
     const syncResult = {
-      SyncDate: this.notificationData.lastSynced,
+      SyncDate: this.notificationData.getLastSynced(domain),
       PerfectlySynced: perfectlySynced.map((x) => x[1]),
       Rescheduled: notificationsToReschedule.map((x) => x[1]),
       Canceled: notificationsToCancel.map((x) => x[1]),
@@ -325,25 +322,16 @@ class BackgroundNotifier {
     return syncResult;
   }
 
-  async HandleMessageAsync(message) {
-    if (!message) return;
-
-    if (message.type === "NOTIFICATION") {
-      this.#raiseNotification(message.id, message.title, message.message, message.priority ?? 0);
-    } else if (message.type === "CREATE_SCHEDULED_NOTIFICATION") {
-      await this.#scheduleNotificationAsync({
-        id: message.id,
-        domain: message.domain,
-        title: message.title,
-        message: message.message,
-        url: message.url,
-        when: message.when,
-        priority: message.priority,
-      });
-    } else if (message.type === "CANCEL_SCHEDULED_NOTIFICATION") {
-      await this.#cancelScheduledNotificationAsync(message.id);
-    }
-
+  async RaiseNotificationAsync(notification) {
+    this.#raiseNotification(notification);
+    await this.#cleanOrRefreshOldNotificationsAsync();
+  }
+  async ScheduleNotificationAsync(notification) {
+    await this.#scheduleNotificationAsync(notification);
+    await this.#cleanOrRefreshOldNotificationsAsync();
+  }
+  async CancelScheduledNotificationAsync(notification) {
+    await this.#cancelScheduledNotificationAsync(notification.id);
     await this.#cleanOrRefreshOldNotificationsAsync();
   }
 
@@ -352,7 +340,7 @@ class BackgroundNotifier {
 
     const notification = this.notificationData.notifications[notificationId];
     if (notification) {
-      this.#raiseNotification(notificationId, notification.title, notification.message, notification.priority ?? 0);
+      this.#raiseNotification(notification);
       //if the notification has no URL, it can be considered for removal
       if (!notification.url) {
         delete this.notificationData.notifications[notificationId];
@@ -396,13 +384,6 @@ class BackgroundNotifier {
 
     await this.#cleanOrRefreshOldNotificationsAsync();
   }
-
-  GetAllNotifications(domain) {
-    if (!domain) return [];
-    return Object.entries(this.notificationData.notifications)
-      .filter(([id, notification]) => notification.domain === domain)
-      .map(([id, notification]) => ({ id, ...notification }));
-  }
 }
 
 const notificationData = new BackgroundNotificationData();
@@ -418,18 +399,32 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   (async () => {
     try {
       if (request.eventType === "ogi-notification" && request.message) {
-        console.log("Handling notification...");
+        console.log("ogi-notification");
+
         await notificationData.InitializeFromStorageAsync();
-        await backgroundNotifier.HandleMessageAsync(request.message);
-      } else if (request.eventType === "ogi-notification-sync" && sendResponse) {
-        console.log("Syncing notifications...");
+        await backgroundNotifier.RaiseNotificationAsync(request.message);
+      }
+      if (request.eventType === "ogi-notification-scheduled" && request.message) {
+        console.log("ogi-notification-scheduled");
+
+        await notificationData.InitializeFromStorageAsync();
+        await backgroundNotifier.ScheduleNotificationAsync(request.message);
+      }
+      if (request.eventType === "ogi-notification-cancel" && request.message) {
+        console.log("ogi-notification-cancel");
+
+        await notificationData.InitializeFromStorageAsync();
+        await backgroundNotifier.CancelScheduledNotificationAsync(request.message);
+      }
+      if (request.eventType === "ogi-notification-sync" && sendResponse) {
+        console.log("ogi-notification-sync");
+
         await notificationData.InitializeFromStorageAsync();
         sendResponse(await backgroundNotifier.SyncNotifications(request.message.domain, request.message.notifications));
       }
     } catch (error) {
       console.error("Error processing message:", error);
-      // Send an empty response in case of error to avoid the port being suspended
-      sendResponse({});
+      sendResponse({}); // Send an empty response in case of error to avoid the port being suspended
     }
   })();
 

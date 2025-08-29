@@ -97,6 +97,14 @@ document.addEventListener("ogi-notification", function (e) {
   if (!e.detail) throw new Error("No notification details provided");
   chrome.runtime.sendMessage({ eventType: "ogi-notification", message: e.detail }, function (response) {});
 });
+document.addEventListener("ogi-notification-scheduled", function (e) {
+  if (!e.detail) throw new Error("No notification details provided");
+  chrome.runtime.sendMessage({ eventType: "ogi-notification-scheduled", message: e.detail }, function (response) {});
+});
+document.addEventListener("ogi-notification-cancel", function (e) {
+  if (!e.detail) throw new Error("No notification details provided");
+  chrome.runtime.sendMessage({ eventType: "ogi-notification-cancel", message: e.detail }, function (response) {});
+});
 document.addEventListener("ogi-notification-sync", function (e) {
   if (!e.detail) throw new Error("No notification details provided");
   chrome.runtime.sendMessage({ eventType: "ogi-notification-sync", message: e.detail }, function (response) {

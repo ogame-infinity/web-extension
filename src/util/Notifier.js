@@ -9,8 +9,18 @@ class Notifier {
     this.logger = getLogger("Notifier");
   }
 
-  #dispatch(detail) {
-    document.dispatchEvent(new CustomEvent("ogi-notification", { detail: detail }));
+  #controlNotification(notification, isScheduled) {
+    if (!notification.id) throw new Error("Notification must have an id");
+    if (!notification.title) throw new Error("Notification must have a title");
+    if (!notification.message) throw new Error("Notification must have a message");
+    if (isScheduled && !notification.when) throw new Error("Scheduled notification must have a 'when' date");
+  }
+  #dispatchEvent(event, data) {
+    document.dispatchEvent(new CustomEvent(event, { detail: data }));
+  }
+  #dispatchNotification(event, notification, isScheduled) {
+    this.#controlNotification(notification, isScheduled);
+    this.#dispatchEvent(event, notification);
   }
 
   #formatId(id) {
@@ -20,22 +30,13 @@ class Notifier {
     return `${OGIData.json.universeName} - ${title}`;
   }
 
-  #scheduleNotification(detail) {
-    this.#dispatch({
-      type: "CREATE_SCHEDULED_NOTIFICATION",
-      id: detail.id,
-      priority: detail.priority ?? NotificationPriority.NORMAL,
-      domain: OGIData.json.universeDomain,
-      title: detail.title,
-      message: detail.message,
-      url: detail.url,
-      when: detail.when,
-    });
+  #scheduleNotification(notification) {
+    this.#dispatchNotification("ogi-notification-scheduled", notification, true);
 
-    this.logger.info(`Scheduling notification ${detail.id}: `, detail);
+    this.logger.info(`Scheduling notification ${notification.id}: `, notification);
 
     //Save for synchronization in case of multiple devices
-    OGIData.notifications[detail.id] = detail;
+    OGIData.notifications[notification.id] = notification;
     OGIData.Save();
   }
   ScheduleNotification(id, priority, title, message, url, date) {
@@ -75,17 +76,16 @@ class Notifier {
     //if force or last sync was more than 5 minutes ago, then sync
     if (force || new Date(OGIData.lastSyncNotification).getTime() < now - fiveMinutes) {
       this.logger.info(`Start syncing notifications (Forced: ${force})`);
-      document.dispatchEvent(
-        new CustomEvent("ogi-notification-sync", {
-          detail: { domain: OGIData.json.universeDomain, notifications: OGIData.notifications },
-        })
-      );
+      this.#dispatchEvent("ogi-notification-sync", {
+        domain: OGIData.json.universeDomain,
+        notifications: OGIData.notifications,
+      });
     }
   }
 
   #cancelScheduledNotification(id, sendDispatch = true) {
     if (sendDispatch) {
-      this.#dispatch({ type: "CANCEL_SCHEDULED_NOTIFICATION", id: id });
+      this.#dispatchEvent("ogi-notification-cancel", { id: id });
     }
     if (OGIData.notifications[id]) {
       //Save for synchronization in case of multiple devices
@@ -98,12 +98,12 @@ class Notifier {
     this.#cancelScheduledNotification(this.#formatId(id), true);
   }
 
-  Notify(id, title, message, priority = 0) {
-    if (id && title && message) {
-      const formattedId = this.#formatId(id);
-      const formattedTitle = this.#formatTitle(title);
-      this.#dispatch({ type: "NOTIFICATION", id: formattedId, priority: priority, title: formattedTitle, message });
-      this.logger.info(`Sent notification ${formattedId}: ${formattedTitle} - ${message}`);
+  Notify(notification) {
+    if (notification.id && notification.title && notification.message) {
+      notification.id = this.#formatId(notification.id);
+      notification.title = this.#formatTitle(notification.title);
+      this.#dispatchNotification("ogi-notification", notification);
+      this.logger.info(`Sent notification ${notification.id}`, notification);
     }
   }
 
@@ -154,7 +154,7 @@ class Notifier {
     const message = `${missionTranslated}${destinationNameTranslated}\n${coordsTranslated}`;
 
     if (id && coords) {
-      this.ScheduleNotification(id, NotificationPriority.VERY_LOW, title, message, link, arrivalDatetime);
+      this.ScheduleNotification(id, NotificationPriority.VERY_HIGH, title, message, link, arrivalDatetime);
     }
   }
   CancelFleetArrivalScheduledNotification(fleetId, isBack) {
