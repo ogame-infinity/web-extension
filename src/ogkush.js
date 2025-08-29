@@ -15839,7 +15839,7 @@ class OGInfinity {
           }
         } else if (elemFromEmpire) {
           //if both exist, but elem is not finished, then it means that the construction could have changed, and we need to compare techId and level
-          if (elem.technoId !== elemFromEmpire.id || elem.tolvl !== elemFromEmpire.to) {
+          if (elem.technoId != elemFromEmpire.id || elem.tolvl != elemFromEmpire.to) {
             //techId or level has changed, so the element has finished and we must copy it to the finished progress and update the active progress
             this.json.moonProductionProgressFinished[planetCoords] = elem;
             this.json.moonProductionProgress[planetCoords] = {
@@ -15850,7 +15850,7 @@ class OGInfinity {
         }
       } else if (elem && elemFromEmpire) {
         //if both exist, but elem has no end date, then it means that the construction could have changed, and we need to compare techId and level
-        if (elem.technoId !== elemFromEmpire.id || elem.tolvl !== elemFromEmpire.to) {
+        if (elem.technoId != elemFromEmpire.id || elem.tolvl != elemFromEmpire.to) {
           //techId or level has changed, so the element has finished and we must copy it to the finished progress and update the active progress
           this.json.moonProductionProgressFinished[planetCoords] = elem;
           this.json.moonProductionProgress[planetCoords] = {
@@ -15894,7 +15894,7 @@ class OGInfinity {
           }
         } else if (elemFromEmpire) {
           //if both exist, but elem is not finished, then it means that the construction could have changed, and we need to compare techId and level
-          if (elem.technoId !== elemFromEmpire.id || elem.tolvl !== elemFromEmpire.to) {
+          if (elem.technoId != elemFromEmpire.id || elem.tolvl != elemFromEmpire.to) {
             //techId or level has changed, so the element has finished and we must copy it to the finished progress and update the active progress
             this.json.lfResearchProgressFinished[planetCoords] = elem;
             this.json.lfResearchProgress[planetCoords] = {
@@ -15905,7 +15905,7 @@ class OGInfinity {
         }
       } else if (elem && elemFromEmpire) {
         //if both exist, but elem has no end date, then it means that the construction could have changed, and we need to compare techId and level
-        if (elem.technoId !== elemFromEmpire.id || elem.tolvl !== elemFromEmpire.to) {
+        if (elem.technoId != elemFromEmpire.id || elem.tolvl != elemFromEmpire.to) {
           //techId or level has changed, so the element has finished and we must copy it to the finished progress and update the active progress
           this.json.lfResearchProgressFinished[planetCoords] = elem;
           this.json.lfResearchProgress[planetCoords] = {
@@ -15949,7 +15949,7 @@ class OGInfinity {
           }
         } else if (elemFromEmpire) {
           //if both exist, but elem is not finished, then it means that the construction could have changed, and we need to compare techId and level
-          if (elem.technoId !== elemFromEmpire.id || elem.tolvl !== elemFromEmpire.to) {
+          if (elem.technoId != elemFromEmpire.id || elem.tolvl != elemFromEmpire.to) {
             //techId or level has changed, so the element has finished and we must copy it to the finished progress and update the active progress
             this.json.lfProductionProgressFinished[planetCoords] = elem;
             this.json.lfProductionProgress[planetCoords] = {
@@ -15960,7 +15960,7 @@ class OGInfinity {
         }
       } else if (elem && elemFromEmpire) {
         //if both exist, but elem has no end date, then it means that the construction could have changed, and we need to compare techId and level
-        if (elem.technoId !== elemFromEmpire.id || elem.tolvl !== elemFromEmpire.to) {
+        if (elem.technoId != elemFromEmpire.id || elem.tolvl != elemFromEmpire.to) {
           //techId or level has changed, so the element has finished and we must copy it to the finished progress and update the active progress
           this.json.lfProductionProgressFinished[planetCoords] = elem;
           this.json.lfProductionProgress[planetCoords] = {
@@ -16004,7 +16004,7 @@ class OGInfinity {
           }
         } else if (elemFromEmpire) {
           //if both exist, but elem is not finished, then it means that the construction could have changed, and we need to compare techId and level
-          if (elem.technoId !== elemFromEmpire.id || elem.tolvl !== elemFromEmpire.to) {
+          if (elem.technoId != elemFromEmpire.id || elem.tolvl != elemFromEmpire.to) {
             //techId or level has changed, so the element has finished and we must copy it to the finished progress and update the active progress
             this.json.productionProgressFinished[planetCoords] = elem;
             this.json.productionProgress[planetCoords] = {
@@ -16015,7 +16015,7 @@ class OGInfinity {
         }
       } else if (elem && elemFromEmpire) {
         //if both exist, but elem has no end date, then it means that the construction could have changed, and we need to compare techId and level
-        if (elem.technoId !== elemFromEmpire.id || elem.tolvl !== elemFromEmpire.to) {
+        if (elem.technoId != elemFromEmpire.id || elem.tolvl != elemFromEmpire.to) {
           //techId or level has changed, so the element has finished and we must copy it to the finished progress and update the active progress
           this.json.productionProgressFinished[planetCoords] = elem;
           this.json.productionProgress[planetCoords] = {
@@ -16167,11 +16167,13 @@ class OGInfinity {
           this.json.needLifeformUpdate[planet.parentElement.href.match(/=(\d+)/)[1]] = true;
           if (this.json.options.showProgressIndicators) {
             //if an element is finished, we need to add the finished class, if it doesn't already have it
-            if (!smallplanet.classList.contains("finishedLf")) smallplanet.classList.add("finishedLf");
+            if (!planet.parentElement.classList.contains("finishedLf"))
+              planet.parentElement.classList.add("finishedLf");
           }
         } else {
           //if there is no finished element, we need to remove the finished class, if it has it
-          if (smallplanet.classList.contains("finishedLf")) smallplanet.classList.remove("finishedLf");
+          if (planet.parentElement.classList.contains("finishedLf"))
+            planet.parentElement.classList.remove("finishedLf");
         }
 
         /* WORK IN PROGRESS */
@@ -16204,11 +16206,11 @@ class OGInfinity {
           this.json.needLifeformUpdate[planet.parentElement.href.match(/=(\d+)/)[1]] = true;
           if (this.json.options.showProgressIndicators) {
             //if an element is finished, we need to add the finished class, if it doesn't already have it
-            if (!smallplanet.classList.contains("finished")) smallplanet.classList.add("finished");
+            if (!planet.parentElement.classList.contains("finished")) planet.parentElement.classList.add("finished");
           }
         } else {
           //if there is no finished element, we need to remove the finished class, if it has it
-          if (smallplanet.classList.contains("finished")) smallplanet.classList.remove("finished");
+          if (planet.parentElement.classList.contains("finished")) planet.parentElement.classList.remove("finished");
         }
 
         /* WORK IN PROGRESS */
