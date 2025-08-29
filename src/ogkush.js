@@ -1523,6 +1523,12 @@ class OGInfinity {
     this.json.lfProductionProgress = this.json.lfProductionProgress || {};
     this.json.researchProgress = this.json.researchProgress || {};
     this.json.lfResearchProgress = this.json.lfResearchProgress || {};
+
+    this.json.productionProgressFinished = this.json.productionProgressFinished || {};
+    this.json.moonProductionProgressFinished = this.json.moonProductionProgressFinished || {};
+    this.json.lfProductionProgressFinished = this.json.lfProductionProgressFinished || {};
+    this.json.lfResearchProgressFinished = this.json.lfResearchProgressFinished || {};
+
     this.json.tchat = this.json.tchat || false;
     this.json.needSync = this.json.needSync || false;
     this.json.timezoneDiff = this.json.timezoneDiff || 0;
@@ -1632,7 +1638,7 @@ class OGInfinity {
             ogkush.updateFlyings();
             ogkush.updatePlanets_IncomingHostileFleet();
             ogkush.updatePlanets_FleetActivity();
-            ogkush.updateProductionProgress();
+            ogkush.updateProductionProgress(false); //We haven't refreshed the empire data recently => false
             ogkush.updateSpaceShipsPresence();
             ogkush.markLifeforms();
           }
@@ -1677,7 +1683,7 @@ class OGInfinity {
     this.onGalaxyUpdate();
     this.timeZone();
     this.checkRedirect();
-    this.updateProductionProgress();
+    this.updateProductionProgress(false); //We haven't refreshed the empire data recently => false
     this.updateSpaceShipsPresence();
     this.showStorageTimers();
     // this.showTabTimer(); TODO: enable when timer is moved to the clock area
@@ -12600,8 +12606,7 @@ class OGInfinity {
       this.updateEmpireProduction();
       this.updateresourceDetail();
       this.flyingFleet();
-      this.updateProductionProgressFromEmpireData();
-      this.updateProductionProgress();
+      this.updateProductionProgress(true); //We just updated the empire data, so => true
       this.updateSpaceShipsPresence();
       this.isLoading = false;
       this.json.needsUpdate = false;
@@ -15796,7 +15801,8 @@ class OGInfinity {
       }
     });
   }
-  updateProductionProgressFromEmpireData() {
+  ProcessProductionProgressData(canCheckFromEmpire = false) {
+    let now = new Date();
     const lastMinute = new Date(Date.now() - 60000);
     const regularBuildingsGroups = ["supply", "station"];
     const lifeformBuildingsGroup = "lifeformbuildings";
@@ -15806,101 +15812,232 @@ class OGInfinity {
       const smallplanet = planet.parentElement.parentElement;
       const planetId = planet.parentElement.href.match(/=(\d+)/)[1];
       const planetFromEmpire = OGIData.empire.find((p) => p.id === parseInt(planetId));
+      const moonFromEmpire = planetFromEmpire.moon;
       const planetCoords = planet.textContent.trim();
 
-      const moonFromEmpire = planetFromEmpire.moon;
-      let elemFromEmpire;
-      if (moonFromEmpire?.workInProgressTechs) {
-        elemFromEmpire = moonFromEmpire.workInProgressTechs.find((x) => regularBuildingsGroups.includes(x.group));
-        if (elemFromEmpire) {
-          //new
-          if (!this.json.moonProductionProgress[planetCoords]) {
-            this.json.moonProductionProgress[planetCoords] = {};
-          } else if (
-            this.json.moonProductionProgress[planetCoords].technoId != elemFromEmpire.id ||
-            this.json.moonProductionProgress[planetCoords].tolvl != elemFromEmpire.to
-          ) {
-            //different, so set passed
-            this.json.moonProductionProgress[planetCoords].endDate = lastMinute;
+      /* MOON CONSTRUCTIION */
+      let elemFromEmpire =
+        canCheckFromEmpire && moonFromEmpire?.workInProgressTechs
+          ? moonFromEmpire.workInProgressTechs.find((x) => regularBuildingsGroups.includes(x.group))
+          : null; //elemFromEmpire is set only if canCheckFromEmpire is true
+      let elem = this.json.moonProductionProgress[planetCoords];
+      if (elem && elem.endDate) {
+        //if an element exists and have an end date, we must check if it is finished
+        const endDate = new Date(elem.endDate);
+        if (endDate < now) {
+          //if an element is finished, then copy it to the finished progress
+          this.json.moonProductionProgressFinished[planetCoords] = elem;
+          if (elemFromEmpire) {
+            //if elemFromEmpire exists, then we need to update the active progress
+            this.json.moonProductionProgress[planetCoords] = {
+              technoId: elemFromEmpire.id,
+              tolvl: elemFromEmpire.to,
+            };
+          } else {
+            //if elemFromEmpire does not exist, then we can consider that there is no construction in progress
+            delete this.json.moonProductionProgress[planetCoords];
           }
-          //force update id and level
-          this.json.moonProductionProgress[planetCoords].technoId = elemFromEmpire.id;
-          this.json.moonProductionProgress[planetCoords].tolvl = elemFromEmpire.to;
-        } else {
-          //set passed
-          if (this.json.moonProductionProgress[planetCoords]) {
-            this.json.moonProductionProgress[planetCoords].endDate = lastMinute;
+        } else if (elemFromEmpire) {
+          //if both exist, but elem is not finished, then it means that the construction could have changed, and we need to compare techId and level
+          if (elem.technoId != elemFromEmpire.id || elem.tolvl != elemFromEmpire.to) {
+            //techId or level has changed, so the element has finished and we must copy it to the finished progress and update the active progress
+            this.json.moonProductionProgressFinished[planetCoords] = elem;
+            this.json.moonProductionProgress[planetCoords] = {
+              technoId: elemFromEmpire.id,
+              tolvl: elemFromEmpire.to,
+            };
           }
         }
+      } else if (elem && elemFromEmpire) {
+        //if both exist, but elem has no end date, then it means that the construction could have changed, and we need to compare techId and level
+        if (elem.technoId != elemFromEmpire.id || elem.tolvl != elemFromEmpire.to) {
+          //techId or level has changed, so the element has finished and we must copy it to the finished progress and update the active progress
+          this.json.moonProductionProgressFinished[planetCoords] = elem;
+          this.json.moonProductionProgress[planetCoords] = {
+            technoId: elemFromEmpire.id,
+            tolvl: elemFromEmpire.to,
+          };
+        }
+      } else if (elem && canCheckFromEmpire) {
+        //if only elem exists, and we have checked from empire, but no constructions are in progress, we can consider it finished
+        this.json.moonProductionProgressFinished[planetCoords] = elem;
+        delete this.json.moonProductionProgress[planetCoords];
+      } else if (elemFromEmpire) {
+        //if only elemFromEmpire exists, then it means that a new construction has started
+        this.json.moonProductionProgress[planetCoords] = {
+          technoId: elemFromEmpire.id,
+          tolvl: elemFromEmpire.to,
+        };
       }
 
-      elemFromEmpire = planetFromEmpire.workInProgressTechs.find((x) => x.group == lifeformResearchGroup);
-      if (elemFromEmpire) {
-        //new
-        if (!this.json.lfResearchProgress[planetCoords]) {
-          this.json.lfResearchProgress[planetCoords] = {};
-        } else if (
-          this.json.lfResearchProgress[planetCoords].technoId != elemFromEmpire.id ||
-          this.json.lfResearchProgress[planetCoords].tolvl != elemFromEmpire.to
-        ) {
-          //different, so set passed
-          this.json.lfResearchProgress[planetCoords].endDate = lastMinute;
+      /* PLANET LIFEFORM RESEARCH */
+      elemFromEmpire =
+        canCheckFromEmpire && planetFromEmpire?.workInProgressTechs
+          ? planetFromEmpire.workInProgressTechs.find((x) => x.group == lifeformResearchGroup)
+          : null; //elemFromEmpire is set only if canCheckFromEmpire is true
+      elem = this.json.lfResearchProgress[planetCoords];
+      if (elem && elem.endDate) {
+        //if an element exists and have an end date, we must check if it is finished
+        const endDate = new Date(elem.endDate);
+        if (endDate < now) {
+          //if an element is finished, then copy it to the finished progress
+          this.json.lfResearchProgressFinished[planetCoords] = elem;
+          if (elemFromEmpire) {
+            //if elemFromEmpire exists, then we need to update the active progress
+            this.json.lfResearchProgress[planetCoords] = {
+              technoId: elemFromEmpire.id,
+              tolvl: elemFromEmpire.to,
+            };
+          } else {
+            //if elemFromEmpire does not exist, then we can consider that there is no construction in progress
+            delete this.json.lfResearchProgress[planetCoords];
+          }
+        } else if (elemFromEmpire) {
+          //if both exist, but elem is not finished, then it means that the construction could have changed, and we need to compare techId and level
+          if (elem.technoId != elemFromEmpire.id || elem.tolvl != elemFromEmpire.to) {
+            //techId or level has changed, so the element has finished and we must copy it to the finished progress and update the active progress
+            this.json.lfResearchProgressFinished[planetCoords] = elem;
+            this.json.lfResearchProgress[planetCoords] = {
+              technoId: elemFromEmpire.id,
+              tolvl: elemFromEmpire.to,
+            };
+          }
         }
-        //force update id and level
-        this.json.lfResearchProgress[planetCoords].tolvl = elemFromEmpire.to;
-        this.json.lfResearchProgress[planetCoords].technoId = elemFromEmpire.id;
-      } else {
-        //set passed
-        if (this.json.lfResearchProgress[planetCoords]) {
-          this.json.lfResearchProgress[planetCoords].endDate = lastMinute;
+      } else if (elem && elemFromEmpire) {
+        //if both exist, but elem has no end date, then it means that the construction could have changed, and we need to compare techId and level
+        if (elem.technoId != elemFromEmpire.id || elem.tolvl != elemFromEmpire.to) {
+          //techId or level has changed, so the element has finished and we must copy it to the finished progress and update the active progress
+          this.json.lfResearchProgressFinished[planetCoords] = elem;
+          this.json.lfResearchProgress[planetCoords] = {
+            technoId: elemFromEmpire.id,
+            tolvl: elemFromEmpire.to,
+          };
         }
+      } else if (elem && canCheckFromEmpire) {
+        //if only elem exists, and we have checked from empire, but no constructions are in progress, we can consider it finished
+        this.json.lfResearchProgressFinished[planetCoords] = elem;
+        delete this.json.lfResearchProgress[planetCoords];
+      } else if (elemFromEmpire) {
+        //if only elemFromEmpire exists, then it means that a new construction has started
+        this.json.lfResearchProgress[planetCoords] = {
+          technoId: elemFromEmpire.id,
+          tolvl: elemFromEmpire.to,
+        };
       }
 
-      elemFromEmpire = planetFromEmpire.workInProgressTechs.find((x) => x.group == lifeformBuildingsGroup);
-      if (elemFromEmpire) {
-        //new
-        if (!this.json.lfProductionProgress[planetCoords]) {
-          this.json.lfProductionProgress[planetCoords] = {};
-        } else if (
-          this.json.lfProductionProgress[planetCoords].technoId != elemFromEmpire.id ||
-          this.json.lfProductionProgress[planetCoords].tolvl != elemFromEmpire.to
-        ) {
-          //different, so set passed
-          this.json.lfProductionProgress[planetCoords].endDate = lastMinute;
+      /* PLANET LIFEFORM BUILDINGS */
+      elemFromEmpire =
+        canCheckFromEmpire && planetFromEmpire?.workInProgressTechs
+          ? planetFromEmpire.workInProgressTechs.find((x) => x.group == lifeformBuildingsGroup)
+          : null; //elemFromEmpire is set only if canCheckFromEmpire is true
+      elem = this.json.lfProductionProgress[planetCoords];
+      if (elem && elem.endDate) {
+        //if an element exists and have an end date, we must check if it is finished
+        const endDate = new Date(elem.endDate);
+        if (endDate < now) {
+          //if an element is finished, then copy it to the finished progress
+          this.json.lfProductionProgressFinished[planetCoords] = elem;
+          if (elemFromEmpire) {
+            //if elemFromEmpire exists, then we need to update the active progress
+            this.json.lfProductionProgress[planetCoords] = {
+              technoId: elemFromEmpire.id,
+              tolvl: elemFromEmpire.to,
+            };
+          } else {
+            //if elemFromEmpire does not exist, then we can consider that there is no construction in progress
+            delete this.json.lfProductionProgress[planetCoords];
+          }
+        } else if (elemFromEmpire) {
+          //if both exist, but elem is not finished, then it means that the construction could have changed, and we need to compare techId and level
+          if (elem.technoId != elemFromEmpire.id || elem.tolvl != elemFromEmpire.to) {
+            //techId or level has changed, so the element has finished and we must copy it to the finished progress and update the active progress
+            this.json.lfProductionProgressFinished[planetCoords] = elem;
+            this.json.lfProductionProgress[planetCoords] = {
+              technoId: elemFromEmpire.id,
+              tolvl: elemFromEmpire.to,
+            };
+          }
         }
-        //force update id and level
-        this.json.lfProductionProgress[planetCoords].technoId = elemFromEmpire.id;
-        this.json.lfProductionProgress[planetCoords].tolvl = elemFromEmpire.to;
-      } else {
-        //set passed
-        if (this.json.lfProductionProgress[planetCoords]) {
+      } else if (elem && elemFromEmpire) {
+        //if both exist, but elem has no end date, then it means that the construction could have changed, and we need to compare techId and level
+        if (elem.technoId != elemFromEmpire.id || elem.tolvl != elemFromEmpire.to) {
+          //techId or level has changed, so the element has finished and we must copy it to the finished progress and update the active progress
+          this.json.lfProductionProgressFinished[planetCoords] = elem;
+          this.json.lfProductionProgress[planetCoords] = {
+            technoId: elemFromEmpire.id,
+            tolvl: elemFromEmpire.to,
+          };
         }
+      } else if (elem && canCheckFromEmpire) {
+        //if only elem exists, and we have checked from empire, but no constructions are in progress, we can consider it finished
+        this.json.lfProductionProgressFinished[planetCoords] = elem;
+        delete this.json.lfProductionProgress[planetCoords];
+      } else if (elemFromEmpire) {
+        //if only elemFromEmpire exists, then it means that a new construction has started
+        this.json.lfProductionProgress[planetCoords] = {
+          technoId: elemFromEmpire.id,
+          tolvl: elemFromEmpire.to,
+        };
       }
 
-      elemFromEmpire = planetFromEmpire.workInProgressTechs.find((x) => regularBuildingsGroups.includes(x.group));
-      if (elemFromEmpire) {
-        //new
-        if (!this.json.productionProgress[planetCoords]) {
-          this.json.productionProgress[planetCoords] = {};
-        } else if (
-          this.json.productionProgress[planetCoords].technoId != elemFromEmpire.id ||
-          this.json.productionProgress[planetCoords].tolvl != elemFromEmpire.to
-        ) {
-          //different, so set passed
-          this.json.productionProgress[planetCoords].endDate = lastMinute;
+      /* PLANET CONSTRUCTIION */
+      elemFromEmpire =
+        canCheckFromEmpire && planetFromEmpire?.workInProgressTechs
+          ? planetFromEmpire.workInProgressTechs.find((x) => regularBuildingsGroups.includes(x.group))
+          : null; //elemFromEmpire is set only if canCheckFromEmpire is true
+      elem = this.json.productionProgress[planetCoords];
+      if (elem && elem.endDate) {
+        //if an element exists and have an end date, we must check if it is finished
+        const endDate = new Date(elem.endDate);
+        if (endDate < now) {
+          //if an element is finished, then copy it to the finished progress
+          this.json.productionProgressFinished[planetCoords] = elem;
+          if (elemFromEmpire) {
+            //if elemFromEmpire exists, then we need to update the active progress
+            this.json.productionProgress[planetCoords] = {
+              technoId: elemFromEmpire.id,
+              tolvl: elemFromEmpire.to,
+            };
+          } else {
+            //if elemFromEmpire does not exist, then we can consider that there is no construction in progress
+            delete this.json.productionProgress[planetCoords];
+          }
+        } else if (elemFromEmpire) {
+          //if both exist, but elem is not finished, then it means that the construction could have changed, and we need to compare techId and level
+          if (elem.technoId != elemFromEmpire.id || elem.tolvl != elemFromEmpire.to) {
+            //techId or level has changed, so the element has finished and we must copy it to the finished progress and update the active progress
+            this.json.productionProgressFinished[planetCoords] = elem;
+            this.json.productionProgress[planetCoords] = {
+              technoId: elemFromEmpire.id,
+              tolvl: elemFromEmpire.to,
+            };
+          }
         }
-        //force update id and level
-        this.json.productionProgress[planetCoords].technoId = elemFromEmpire.id;
-        this.json.productionProgress[planetCoords].tolvl = elemFromEmpire.to;
-      } else {
-        //set passed
-        if (this.json.productionProgress[planetCoords]) {
-          this.json.productionProgress[planetCoords].endDate = lastMinute;
+      } else if (elem && elemFromEmpire) {
+        //if both exist, but elem has no end date, then it means that the construction could have changed, and we need to compare techId and level
+        if (elem.technoId != elemFromEmpire.id || elem.tolvl != elemFromEmpire.to) {
+          //techId or level has changed, so the element has finished and we must copy it to the finished progress and update the active progress
+          this.json.productionProgressFinished[planetCoords] = elem;
+          this.json.productionProgress[planetCoords] = {
+            technoId: elemFromEmpire.id,
+            tolvl: elemFromEmpire.to,
+          };
         }
+      } else if (elem && canCheckFromEmpire) {
+        //if only elem exists, and we have checked from empire, but no constructions are in progress, we can consider it finished
+        this.json.productionProgressFinished[planetCoords] = elem;
+        delete this.json.productionProgress[planetCoords];
+      } else if (elemFromEmpire) {
+        //if only elemFromEmpire exists, then it means that a new construction has started
+        this.json.productionProgress[planetCoords] = {
+          technoId: elemFromEmpire.id,
+          tolvl: elemFromEmpire.to,
+        };
       }
     });
   }
-  updateProductionProgress() {
+  updateProductionProgress(canCheckFromEmpire = false) {
+    this.ProcessProductionProgressData(canCheckFromEmpire); //Update production progress data
     const oneYear = 1000 * 60 * 60 * 24 * 365;
     let now = new Date();
     let needLifeformUpdateForResearch = false;
@@ -15909,6 +16046,26 @@ class OGInfinity {
       const regularConstructionsIconsDisplayMode = getOption("regularConstructionsIconsDisplayMode");
       const lifeformConstructionsIconsDisplayMode = getOption("lifeformConstructionsIconsDisplayMode");
       const lifeformResearchsIconsDisplayMode = getOption("lifeformResearchsIconsDisplayMode");
+
+      const createConstructionIcon = (elem, planetOrMoonId, techName, iconClass, component, addToolTip, redirect) => {
+        const constructionIcon = DOM.createDOM("a", {
+          class: "constructionIcon planet tooltip js_hideTipOnMobile",
+          href: `/game/index.php?page=ingame&component=${redirect ? component : "overview"}&cp=${planetOrMoonId}`,
+        });
+
+        if (addToolTip) {
+          const tooltipDiv = DOM.createDOM("div", { class: "constructionIconTooltip" });
+          tooltipDiv.appendChild(DOM.createDOM("span", { class: "techName" }, `${techName} (${elem.tolvl})`));
+
+          constructionIcon.addEventListener("mouseover", () =>
+            tooltip(constructionIcon, tooltipDiv, true, { auto: true }, 50, false)
+          );
+        }
+
+        constructionIcon.appendChild(DOM.createDOM("span", { class: `icon12px ${iconClass}` }));
+
+        return constructionIcon;
+      };
 
       document.querySelectorAll(".planet-koords").forEach((planet) => {
         const smallplanet = planet.parentElement.parentElement;
@@ -15925,47 +16082,36 @@ class OGInfinity {
         const moonConstructionIconLink = smallplanet.querySelector(".constructionIcon.moon");
         if (moonConstructionIconLink) smallplanet.removeChild(moonConstructionIconLink);
 
-        const createConstructionIcon = (elem, planetOrMoonId, techName, iconClass, component, addToolTip, redirect) => {
-          const constructionIcon = DOM.createDOM("a", {
-            class: "constructionIcon planet tooltip js_hideTipOnMobile",
-            href: `/game/index.php?page=ingame&component=${redirect ? component : "overview"}&cp=${planetOrMoonId}`,
-          });
+        let elem;
+        let finishedElem;
 
-          if (addToolTip) {
-            const tooltipDiv = DOM.createDOM("div", { class: "constructionIconTooltip" });
-            tooltipDiv.appendChild(DOM.createDOM("span", { class: "techName" }, `${techName} (${elem.tolvl})`));
+        /* MOON CONSTRUCTION */
+        const moon = smallplanet.querySelector(".moonlink");
+        if (moon) {
+          const moonId = moon.href.match(/=(\d+)/)[1];
+          elem = this.json.moonProductionProgress[planetCoords];
+          finishedElem = this.json.moonProductionProgressFinished[planetCoords];
 
-            constructionIcon.addEventListener("mouseover", () =>
-              tooltip(constructionIcon, tooltipDiv, true, { auto: true }, 50, false)
-            );
+          /* FINISHED */
+          if (finishedElem) {
+            if (this.json.options.showProgressIndicators) {
+              //if an element is finished, we need to add the finished class, if it doesn't already have it
+              if (!moon.classList.contains("finished")) moon.classList.add("finished");
+            }
+          } else {
+            //if there is no finished element, we need to remove the finished class, if it has it
+            if (moon.classList.contains("finished")) moon.classList.remove("finished");
           }
 
-          constructionIcon.appendChild(DOM.createDOM("span", { class: `icon12px ${iconClass}` }));
-
-          return constructionIcon;
-        };
-
-        // check if the moon is in regular construction
-        let elem = this.json.moonProductionProgress[planetCoords];
-        const moon = smallplanet.querySelector(".moonlink");
-        let checkFromEmpire = false;
-        if (elem && moon) {
-          const moonId = moon.href.match(/=(\d+)/)[1];
-          const endDate = new Date(elem.endDate);
-          if (endDate < now) {
-            // regular construction work is finished, so show border color
-            if (this.json.options.showProgressIndicators) moon.classList.add("finished");
-            checkFromEmpire = true;
-          } else {
-            // if some regular construction work is finished, remove the border color
-            if (this.json.options.showProgressIndicators) moon.classList.remove("finished");
+          /* WORK IN PROGRESS */
+          if (elem) {
+            //if there is a work in progress element, we need to add an icon
             if (iconVisibility.shouldDisplayIcon(regularConstructionsIconsDisplayMode)) {
-              // regular construction work is still in progress, so show the icon
-              const techName = Translator.translate(elem.technoId, "tech");
               const moonConstructionIconsDiv = DOM.createDOM("div", {
                 class: "constructionIcons moonConstructionIcons",
               });
 
+              const techName = Translator.translate(elem.technoId, "tech");
               moonConstructionIconsDiv.appendChild(
                 createConstructionIcon(
                   elem,
@@ -15987,14 +16133,14 @@ class OGInfinity {
           }
         }
 
-        // check if the planet is in lifeform research
+        /* PLANET LIFEFORM RESEARCH */
         elem = this.json.lfResearchProgress[planetCoords];
+        //there is no finished indicator for lifeform research
+
+        /* WORK IN PROGRESS */
         if (elem) {
-          const endDate = new Date(elem.endDate);
-          if (endDate < now) {
-            // lifeform research work is finished, so we need to update the lifeform
-            needLifeformUpdateForResearch = true;
-          } else if (iconVisibility.shouldDisplayIcon(lifeformResearchsIconsDisplayMode)) {
+          //if there is a work in progress element, we need to add an icon
+          if (iconVisibility.shouldDisplayIcon(lifeformResearchsIconsDisplayMode)) {
             // lifeform research work is in progress, so show the icon
             const techName = Translator.translate(elem.technoId, "tech");
             constructionIconsDiv.appendChild(
@@ -16011,70 +16157,83 @@ class OGInfinity {
           }
         }
 
-        // check if the planet is in lifeform construction
+        /* PLANET LIFEFORM CONSTRUCTION */
         elem = this.json.lfProductionProgress[planetCoords];
-        if (elem) {
-          const endDate = new Date(elem.endDate);
+        finishedElem = this.json.lfProductionProgressFinished[planetCoords];
 
-          if (endDate < now) {
-            // lifeform construction work is finished
-            this.json.needLifeformUpdate[planet.parentElement.href.match(/=(\d+)/)[1]] = true;
-            if (this.json.options.showProgressIndicators) {
-              // regular construction work is finished, so show border color
+        /* FINISHED */
+        if (finishedElem) {
+          // lifeform production work is finished, so we need to update the lifeform
+          this.json.needLifeformUpdate[planet.parentElement.href.match(/=(\d+)/)[1]] = true;
+          if (this.json.options.showProgressIndicators) {
+            //if an element is finished, we need to add the finished class, if it doesn't already have it
+            if (!planet.parentElement.classList.contains("finishedLf"))
               planet.parentElement.classList.add("finishedLf");
-            }
-          } else {
-            // if some lifeform construction work is finished, remove the border color
-            if (this.json.options.showProgressIndicators) planet.parentElement.classList.remove("finishedLf");
+          }
+        } else {
+          //if there is no finished element, we need to remove the finished class, if it has it
+          if (planet.parentElement.classList.contains("finishedLf"))
+            planet.parentElement.classList.remove("finishedLf");
+        }
 
-            if (iconVisibility.shouldDisplayIcon(lifeformConstructionsIconsDisplayMode)) {
-              // lifeform construction work is still in progress, so show the icon
-              const techName = Translator.translate(elem.technoId, "tech");
-              constructionIconsDiv.appendChild(
-                createConstructionIcon(
-                  elem,
-                  planetId,
-                  techName,
-                  "icon_wrench_lf",
-                  "lfbuildings",
-                  iconVisibility.shouldAddIconTooltip(lifeformConstructionsIconsDisplayMode),
-                  iconVisibility.shouldAddIconRedirection(lifeformConstructionsIconsDisplayMode)
-                )
-              );
-            }
+        /* WORK IN PROGRESS */
+        if (elem) {
+          //if there is a work in progress element, we need to add an icon
+          if (iconVisibility.shouldDisplayIcon(lifeformConstructionsIconsDisplayMode)) {
+            // lifeform construction work is still in progress, so show the icon
+            const techName = Translator.translate(elem.technoId, "tech");
+            constructionIconsDiv.appendChild(
+              createConstructionIcon(
+                elem,
+                planetId,
+                techName,
+                "icon_wrench_lf",
+                "lfbuildings",
+                iconVisibility.shouldAddIconTooltip(lifeformConstructionsIconsDisplayMode),
+                iconVisibility.shouldAddIconRedirection(lifeformConstructionsIconsDisplayMode)
+              )
+            );
           }
         }
 
-        // check if the planet is in regular construction
+        /* PLANET CONSTRUCTION */
         elem = this.json.productionProgress[planetCoords];
-        if (elem) {
-          const endDate = new Date(elem.endDate);
-          const techName = Translator.translate(elem.technoId, "tech");
-          if (endDate < now) {
-            // regular construction work is finished, so show border color
-            if (this.json.options.showProgressIndicators) planet.parentElement.classList.add("finished");
-          } else {
-            // if some regular construction work is finished, remove the border color
-            if (this.json.options.showProgressIndicators) planet.parentElement.classList.remove("finished");
+        finishedElem = this.json.productionProgressFinished[planetCoords];
 
-            if (iconVisibility.shouldDisplayIcon(regularConstructionsIconsDisplayMode)) {
-              // regular construction work is still in progress, so show the icon
-              constructionIconsDiv.appendChild(
-                createConstructionIcon(
-                  elem,
-                  planetId,
-                  techName,
-                  "icon_wrench",
-                  SUPPLIES_TECHID.includes(Number(elem.technoId))
-                    ? "supplies"
-                    : FACILITIES_TECHID.includes(Number(elem.technoId))
-                    ? "facilities"
-                    : "overview",
-                  iconVisibility.shouldAddIconTooltip(regularConstructionsIconsDisplayMode),
-                  iconVisibility.shouldAddIconRedirection(regularConstructionsIconsDisplayMode)
-                )
-              );
-            }
+        /* FINISHED */
+        if (finishedElem) {
+          // lifeform production work is finished, so we need to update the lifeform
+          this.json.needLifeformUpdate[planet.parentElement.href.match(/=(\d+)/)[1]] = true;
+          if (this.json.options.showProgressIndicators) {
+            //if an element is finished, we need to add the finished class, if it doesn't already have it
+            if (!planet.parentElement.classList.contains("finished")) planet.parentElement.classList.add("finished");
+          }
+        } else {
+          //if there is no finished element, we need to remove the finished class, if it has it
+          if (planet.parentElement.classList.contains("finished")) planet.parentElement.classList.remove("finished");
+        }
+
+        /* WORK IN PROGRESS */
+        if (elem) {
+          //if there is a work in progress element, we need to add an icon
+          if (iconVisibility.shouldDisplayIcon(regularConstructionsIconsDisplayMode)) {
+            const techName = Translator.translate(elem.technoId, "tech");
+            // regular construction work is still in progress, so show the icon
+            constructionIconsDiv.appendChild(
+              createConstructionIcon(
+                elem,
+                planetId,
+                techName,
+                "icon_wrench",
+                SUPPLIES_TECHID.includes(Number(elem.technoId))
+                  ? "supplies"
+                  : FACILITIES_TECHID.includes(Number(elem.technoId))
+                  ? "facilities"
+                  : "overview",
+                iconVisibility.shouldAddIconTooltip(regularConstructionsIconsDisplayMode),
+                iconVisibility.shouldAddIconRedirection(regularConstructionsIconsDisplayMode)
+              )
+            );
           }
         }
 
@@ -16092,6 +16251,14 @@ class OGInfinity {
     if (document.querySelector("#productionboxbuildingcomponent")) {
       const coords = this.current.coords;
       const building = document.querySelector("#productionboxbuildingcomponent .queuePic");
+
+      // remove the finished production progress (we are on <coords>, so we don't need it anymore)
+      if (this.current.isMoon) {
+        delete this.json.moonProductionProgressFinished[coords];
+      } else {
+        delete this.json.productionProgressFinished[coords];
+      }
+
       if (building) {
         const technoId =
           building.getAttribute("alt").split("_")[1] ||
@@ -16136,6 +16303,10 @@ class OGInfinity {
     if (document.querySelector("#productionboxlfbuildingcomponent") && !this.current.isMoon) {
       const coords = this.current.coords;
       const lfbuilding = document.querySelector("#productionboxlfbuildingcomponent .queuePic");
+
+      // remove the finished production progress (we are on <coords>, so we don't need it anymore)
+      delete this.json.lfProductionProgressFinished[coords];
+
       if (lfbuilding) {
         const technoId = lfbuilding.classList[2].replace("lifeformTech", "");
         const tolvl = document
@@ -16210,6 +16381,10 @@ class OGInfinity {
     if (document.querySelector("#productionboxlfresearchcomponent")) {
       const coords = this.current.coords;
       const lfresearch = document.querySelector("#productionboxlfresearchcomponent .queuePic");
+
+      // remove the finished production progress (we are on <coords>, so we don't need it anymore)
+      delete this.json.lfResearchProgress[coords];
+
       if (lfresearch) {
         const technoId = lfresearch.classList[2].replace("lifeformTech", "");
         const tolvl = document
