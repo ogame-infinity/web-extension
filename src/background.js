@@ -252,7 +252,8 @@ class BackgroundNotifier {
     const notificationsToReschedule = [];
     const perfectlySynced = [];
 
-    const isObsolete = (date) => new Date(date).getTime() < Date.now();
+    //is obsolete since one minute
+    const isObsolete = (date) => new Date(date).getTime() < Date.now() - 60 * 1000;
 
     const registerForCancellation = (id, notification) => {
       if (!notificationsToCancel.find((x) => x[0] === id)) notificationsToCancel.push([id, notification]);
@@ -266,10 +267,6 @@ class BackgroundNotifier {
 
     //compare notifications to background notifications for cancellation/rescheduling
     for (const [id, notification] of Object.entries(notifications)) {
-      //if notification is obsolete, maybe we must cancel it
-      if (isObsolete(new Date(notification.when).getTime())) {
-        registerForCancellation(id, notification);
-      }
       const backgroundNotificationFound = Object.entries(this.notificationData.notifications).find(
         (x) => x[0] === id && x[1].domain === domain //⚠️ Filter by domain
       );
@@ -286,6 +283,7 @@ class BackgroundNotifier {
     ).filter(
       (x) => x[1].domain === domain //⚠️ Filter by domain
     )) {
+      //if notification is not found, we must cancel it
       const notification = notifications[backgroundNotificationId];
       if (!notification) registerForCancellation(backgroundNotificationId, backgroundNotification);
     }
