@@ -35,6 +35,9 @@ class Notifier {
   #formatId(id) {
     return `${OGIData.json.universeId}-${id}`;
   }
+  #formatFleetArrivalId(fleetId, isBack) {
+    return this.#formatId(`fleet-${fleetId}-${isBack ? "return" : "arrival"}`);
+  }
   #formatTitle(title) {
     return `${OGIData.json.universeName} - ${title}`;
   }
@@ -51,9 +54,10 @@ class Notifier {
     this.logger.debug(`Saved scheduled notification ${notification.id} to OGIData.`, notification);
   }
 
-  ScheduleNotification(id, priority, title, message, url, date) {
+  ScheduleNotification(id, category, priority, title, message, url, date) {
     this.#createOrUpdateScheduledNotification({
       id: this.#formatId(id),
+      category: category,
       domain: OGIData.json.universeDomain,
       priority: priority,
       title: this.#formatTitle(title),
@@ -88,14 +92,17 @@ class Notifier {
       this.logger.info(`Start syncing notifications (Forced: ${force})`);
 
       //remove notified notifications or obsoletes since 30 minutes
-      OGIData.notifications = Object.values(OGIData.notifications).filter(
-        (n) => !n.notified && !this.#isObsoleteSinceMinutes(n.when, 30)
-      );
+      for (const [obsoleteNotificationId, obsoleteNotification] of Object.entries(OGIData.notifications).filter(
+        ([, x]) => x.notified || this.#isObsoleteSinceMinutes(x.when, 30)
+      )) {
+        delete OGIData.notifications[obsoleteNotificationId];
+        this.logger.info(`Removed obsolete notification ${obsoleteNotificationId}`, obsoleteNotification);
+      }
       OGIData.Save();
 
       this.#dispatchEvent("ogi-notification-sync", {
         domain: OGIData.json.universeDomain,
-        notifications: OGIData.notifications,
+        notifications: Object.values(OGIData.notifications),
       });
     }
   }
@@ -124,10 +131,6 @@ class Notifier {
     }
   }
 
-  #formatFleetArrivalId(fleetId, isBack) {
-    return `fleet-${fleetId}-${isBack ? "return" : "arrival"}`;
-  }
-
   IsFleetMissionNotifiable(missionType) {
     /*Only peaceful fleets are affected.
      * For now, managing hostile fleets is complicated due to the possible change in fleet arrival time.*/
@@ -139,11 +142,35 @@ class Notifier {
     ];
     return notifiableMissions.includes(missionType);
   }
+  IsFleetReturnBasedMission(missionType) {
+    const backBasedMissions = [missionType.TRANSPORT, missionType.HARVEST];
+    return backBasedMissions.includes(missionType);
+  }
 
   IsFleetArrivalNotificationScheduled(fleetId, isBack) {
-    const formattedId = this.#formatId(this.#formatFleetArrivalId(fleetId, isBack));
+    const formattedId = this.#formatFleetArrivalId(fleetId, isBack);
     const exists = OGIData.notifications[formattedId] !== undefined && OGIData.notifications[formattedId] !== null;
     return exists;
+  }
+
+  CleanObsoleteFleetsNotifications(allRemainingFleets) {
+    const possibleRemainingFleetIds = [];
+    for (const [fleetId, type, isBack] of allRemainingFleets) {
+      if (this.IsFleetMissionNotifiable(type)) {
+        possibleRemainingFleetIds.push(this.#formatFleetArrivalId(fleetId, isBack));
+        if (!isBack && this.IsFleetReturnBasedMission(type)) {
+          //if not back and back is notifiable, then add back notification id
+          possibleRemainingFleetIds.push(this.#formatFleetArrivalId(fleetId, true));
+        }
+      }
+    }
+    //remove notifications about fleets that are no longer present
+    for (const [obsoleteNotificationId, obsoleteNotification] of Object.entries(OGIData.notifications).filter(
+      ([id, x]) => x.category === "fleet" && !possibleRemainingFleetIds.includes(id)
+    )) {
+      debugger;
+      this.#cancelScheduledNotification(obsoleteNotificationId, true);
+    }
   }
 
   ScheduleFleetArrivalNotification(fleetId, coords, isMoon, missionType, isBack, arrivalDatetime) {
@@ -164,20 +191,29 @@ class Notifier {
       isMoon ? Translator.translate(194) : Translator.translate(42)
     })`;
 
-    const link = destination
+    const url = destination
       ? `https://${OGIData.json.universeDomain}/game/index.php?page=ingame&component=fleetdispatch&cp=${destination.id}`
       : `https://${OGIData.json.universeDomain}/game/index.php?page=ingame&component=overview`;
 
     const message = `${missionTranslated}${destinationNameTranslated}\n${coordsTranslated}`;
 
     if (id && coords) {
-      this.ScheduleNotification(id, NotificationPriority.VERY_HIGH, title, message, link, arrivalDatetime);
+      this.#createOrUpdateScheduledNotification({
+        id: id,
+        category: "fleet",
+        domain: OGIData.json.universeDomain,
+        priority: NotificationPriority.VERY_HIGH,
+        title: this.#formatTitle(title),
+        message: message,
+        url: url,
+        when: arrivalDatetime.toISOString(),
+        notified: false,
+      });
     }
   }
 
   CancelFleetArrivalScheduledNotification(fleetId, isBack) {
-    const id = this.#formatFleetArrivalId(fleetId, isBack);
-    this.CancelScheduledNotification(id);
+    this.#cancelScheduledNotification(this.#formatFleetArrivalId(fleetId, isBack), true);
   }
 }
 

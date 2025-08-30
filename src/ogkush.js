@@ -14227,6 +14227,17 @@ class OGInfinity {
       }
     }
     if (this.page == "movement") {
+      const allRemainingFleets = Array.from(document.querySelectorAll(".fleetDetails"))
+        .map((fleet) => {
+          const fleetId = Number(fleet.getAttribute("id").replace("fleet", ""));
+          const type = parseInt(fleet.getAttribute("data-mission-type"));
+          const isBack = !fleet.querySelector(".reversal a");
+          return [fleetId, type, isBack];
+        })
+        .filter(([fleetId, type, isBack]) => Notifier.IsFleetMissionNotifiable(type));
+
+      Notifier.CleanObsoleteFleetsNotifications(allRemainingFleets);
+
       let lastFleetId = -1;
       let lastFleetBtn;
       document.querySelectorAll(".fleetDetails").forEach((fleet) => {
@@ -14318,15 +14329,13 @@ class OGInfinity {
             notifyMeButton.classList.add("active");
           }
 
-          const backBasedMissions = [missionType.TRANSPORT, missionType.HARVEST];
-
           notifyMeButton.addEventListener("click", () => {
             if (!Notifier.IsFleetArrivalNotificationScheduled(id, isBack)) {
               if (isBack)
                 Notifier.ScheduleFleetArrivalNotification(id, originCoords, isOriginMoon, type, isBack, eventDate);
               else Notifier.ScheduleFleetArrivalNotification(id, destCoords, isDestMoon, type, isBack, eventDate);
 
-              if (!isBack && fleet.querySelector(".nextTimer") && backBasedMissions.includes(type)) {
+              if (!isBack && fleet.querySelector(".nextTimer") && Notifier.IsFleetReturnBasedMission(type)) {
                 //if fleet type is a return based like transport or harvest, then also preshot the return notification
                 eventDate = convertToDate(fleet.querySelector(".nextTimer").getAttribute("data-tooltip-title"));
                 Notifier.ScheduleFleetArrivalNotification(id, originCoords, isOriginMoon, type, true, eventDate);
@@ -14336,7 +14345,7 @@ class OGInfinity {
             } else {
               Notifier.CancelFleetArrivalScheduledNotification(id, isBack);
 
-              if (!isBack && backBasedMissions.includes(type)) {
+              if (!isBack && Notifier.IsFleetReturnBasedMission(type)) {
                 //if fleet type is a return based like transport or harvest, then cancel also the return notification
                 Notifier.CancelFleetArrivalScheduledNotification(id, true);
               }
