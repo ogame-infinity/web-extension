@@ -11,6 +11,7 @@ class Notifier {
 
   #controlNotification(notification, isScheduled) {
     if (!notification.id) throw new Error("Notification must have an id");
+    if (!notification.domain) throw new Error("Notification must have a domain");
     if (!notification.title) throw new Error("Notification must have a title");
     if (!notification.message) throw new Error("Notification must have a message");
     if (isScheduled && !notification.when) throw new Error("Scheduled notification must have a 'when' date");
@@ -19,20 +20,16 @@ class Notifier {
     document.dispatchEvent(new CustomEvent(event, { detail: data }));
   }
   #dispatchNotification(event, notification, isScheduled) {
+    if (!notification.domain) {
+      notification.domain = OGIData.json.universeDomain;
+    }
     this.#controlNotification(notification, isScheduled);
     this.#dispatchEvent(event, notification);
   }
 
-  //is obsolete since one minute
-  #isObsoleteSinceOneMinute(date) {
+  #isObsoleteSinceMinutes(date, minutes) {
     const now = Date.now();
-    const oneMinute = 1 * 60 * 1000;
-    return new Date(date).getTime() < now - oneMinute;
-  } //is obsolete since one minute
-  #isObsoleteSinceFiveMinutes(date) {
-    const now = Date.now();
-    const fiveMinutes = 5 * 60 * 1000;
-    return new Date(date).getTime() < now - fiveMinutes;
+    return new Date(date).getTime() < now - minutes * 60 * 1000;
   }
 
   #formatId(id) {
@@ -42,50 +39,39 @@ class Notifier {
     return `${OGIData.json.universeName} - ${title}`;
   }
 
-  #scheduleNotification(notification) {
-    this.#dispatchNotification("ogi-notification-scheduled", notification, true);
-
-    this.logger.info(`Scheduling notification ${notification.id}: `, notification);
+  #createOrUpdateScheduledNotification(notification, sendDispatch = true) {
+    if (sendDispatch) {
+      this.#dispatchNotification("ogi-notification-scheduled", notification, true);
+      this.logger.info(`Scheduled notification ${notification.id}: `, notification);
+    }
 
     //Save for synchronization in case of multiple devices
     OGIData.notifications[notification.id] = notification;
     OGIData.Save();
+    this.logger.debug(`Saved scheduled notification ${notification.id} to OGIData.`, notification);
   }
 
   ScheduleNotification(id, priority, title, message, url, date) {
-    this.#scheduleNotification({
+    this.#createOrUpdateScheduledNotification({
       id: this.#formatId(id),
+      domain: OGIData.json.universeDomain,
       priority: priority,
       title: this.#formatTitle(title),
       message: message,
       url: url,
       when: date.toISOString(),
+      notified: false,
     });
   }
 
   EndSyncNotifications(notificationResult) {
     if (!notificationResult) return;
 
-    // Cancel any notifications that were canceled during the sync
-    for (const id of notificationResult.Canceled) {
-      this.#cancelScheduledNotification(id, false);
-    }
-
-    // Cancel any notifications that are not perfectly synced or rescheduled (not known by background.js)
-    const notificationsToCancel = Object.values(OGIData.notifications).filter(
-      (notification) =>
-        !notificationResult.PerfectlySynced.includes(notification.id) &&
-        !notificationResult.Rescheduled.includes(notification.id)
-    );
-    for (const notification of notificationsToCancel) {
-      this.#cancelScheduledNotification(notification.id, false);
-    }
-
     OGIData.lastSyncNotification = notificationResult.SyncDate;
     OGIData.Save();
 
     this.logger.info(
-      `Synchronized notifications: ${notificationResult.PerfectlySynced.length} perfectly synced, ${notificationResult.Rescheduled.length} rescheduled, ${notificationResult.Canceled.length} canceled`,
+      `Synchronized notifications: ${notificationResult.Saved.length} saved, ${notificationResult.Canceled.length} canceled`,
       notificationResult
     );
   }
@@ -98,17 +84,18 @@ class Notifier {
 
     this.logger.debug(`Last notifications sync was ${minutesAgoSync} minutes ago (${OGIData.lastSyncNotification})`);
     //if force or last sync was more than 5 minutes ago, then sync
-    if (force || this.#isObsoleteSinceFiveMinutes(OGIData.lastSyncNotification)) {
+    if (force || this.#isObsoleteSinceMinutes(OGIData.lastSyncNotification, 5)) {
       this.logger.info(`Start syncing notifications (Forced: ${force})`);
 
-      //notifications to sync (not obsolete since one minute)
-      const notificationsToSync = Object.values(OGIData.notifications).filter(
-        (notification) => !this.#isObsoleteSinceOneMinute(notification.when)
+      //remove notified notifications or obsoletes since 30 minutes
+      OGIData.notifications = Object.values(OGIData.notifications).filter(
+        (n) => !n.notified && !this.#isObsoleteSinceMinutes(n.when, 30)
       );
+      OGIData.Save();
 
       this.#dispatchEvent("ogi-notification-sync", {
         domain: OGIData.json.universeDomain,
-        notifications: notificationsToSync,
+        notifications: OGIData.notifications,
       });
     }
   }
@@ -187,6 +174,7 @@ class Notifier {
       this.ScheduleNotification(id, NotificationPriority.VERY_HIGH, title, message, link, arrivalDatetime);
     }
   }
+
   CancelFleetArrivalScheduledNotification(fleetId, isBack) {
     const id = this.#formatFleetArrivalId(fleetId, isBack);
     this.CancelScheduledNotification(id);
