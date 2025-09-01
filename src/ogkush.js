@@ -1720,19 +1720,24 @@ class OGInfinity {
   remindMeImportExport() {
     if (!getOption("displayImportExportReminder")) return;
 
-    // Initialize reminder if not set
-    if (!this.json.reminders["importExport"]) {
-      this.json.reminders["importExport"] = new Date(0).toISOString();
-    }
-
-    const isObsolete = (date) => {
+    const getNextReminderDate = () => {
       const now = new Date();
-      const fromReminder = new Date(now.getFullYear(), now.getMonth(), now.getDate()); //Today at 00:00
-      const reminded = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-      return reminded < fromReminder;
+      const next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1); // Tomorrow at 00:00
+      return next.toISOString();
     };
 
-    if (isObsolete(new Date(this.json.reminders["importExport"]))) {
+    // Initialize reminder if not set
+    if (!this.json.reminders["importExport"]) {
+      this.json.reminders["importExport"] = getNextReminderDate(); //init to the next day
+    }
+
+    const isObsolete = () => {
+      const now = new Date();
+      const nextReminder = new Date(this.json.reminders["importExport"]);
+      return nextReminder < now;
+    };
+
+    if (isObsolete()) {
       const addHint = (element) => {
         if (!element) return;
 
@@ -1754,7 +1759,7 @@ class OGInfinity {
         if (importExportShop) {
           addHint(importExportShop);
           importExportShop.addEventListener("click", () => {
-            this.json.reminders["importExport"] = new Date().toISOString();
+            this.json.reminders["importExport"] = getNextReminderDate();
             this.saveData();
             if (importExportShop.classList.contains("ipiHintActive")) {
               importExportShop.classList.remove("ipiHintActive");
