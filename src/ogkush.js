@@ -1534,6 +1534,7 @@ class OGInfinity {
     this.json.selectedLifeforms = this.json.selectedLifeforms || {};
     this.json.lifeformBonus = this.json.lifeformBonus || {};
     this.json.lifeformPlanetBonus = this.json.lifeformPlanetBonus || {};
+    this.json.reminders = this.json.reminders || {};
     this.isLoading = false;
     this.autoQueue = new AutoQueue();
   }
@@ -1683,6 +1684,7 @@ class OGInfinity {
     // this.showTabTimer(); TODO: enable when timer is moved to the clock area
     this.markLifeforms();
     this.navigationArrows();
+    this.remindMeImportExport();
     this.expedition = false;
     this.collect = false;
     let storage = this.getLocalStorageSize();
@@ -1713,6 +1715,54 @@ class OGInfinity {
     /*Fix banner styles for messages, premium and shop page*/
     if (this.page == "messages" || this.page == "premium" || this.page == "shop")
       document.querySelector("#banner_skyscraper").classList.add("fix-banner");
+  }
+
+  remindMeImportExport() {
+    if (!getOption("displayImportExportReminder")) return;
+
+    // Initialize reminder if not set
+    if (!this.json.reminders["importExport"]) {
+      this.json.reminders["importExport"] = new Date(0).toISOString();
+    }
+
+    const isObsolete = (date) => {
+      const now = new Date();
+      const fromReminder = new Date(now.getFullYear(), now.getMonth(), now.getDate()); //Today at 00:00
+      const reminded = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      return reminded < fromReminder;
+    };
+
+    if (isObsolete(new Date(this.json.reminders["importExport"]))) {
+      const addHint = (element) => {
+        if (!element) return;
+
+        if (!element.classList.contains("ipiHintable")) {
+          element.classList.add("ipiHintable");
+        }
+        if (!element.classList.contains("ipiHintActive")) {
+          element.classList.add("ipiHintActive");
+        }
+      };
+
+      if (this.page != "traderOverview") {
+        addHint(
+          document.querySelector("#left .menubutton[data-ipi-hint='ipiToolbarTrader']") ??
+            document.querySelector("#leftMenu .menubutton[data-ipi-hint='ipiToolbarTrader']")
+        );
+      } else {
+        const importExportShop = document.querySelector("#js_traderImportExport");
+        if (importExportShop) {
+          addHint(importExportShop);
+          importExportShop.addEventListener("click", () => {
+            this.json.reminders["importExport"] = new Date().toISOString();
+            this.saveData();
+            if (importExportShop.classList.contains("ipiHintActive")) {
+              importExportShop.classList.remove("ipiHintActive");
+            }
+          });
+        }
+      }
+    }
   }
 
   // remove when complete removal of direct probin in stalks and target list or GF start to wake up
@@ -13147,6 +13197,7 @@ class OGInfinity {
       mainSyncJsonObj.lfProductionProgress = this?.json?.lfProductionProgress;
       mainSyncJsonObj.researchProgress = this?.json?.researchProgress;
       mainSyncJsonObj.lfResearchProgress = this?.json?.lfResearchProgress;
+      mainSyncJsonObj.reminders = this?.json?.reminders;
 
       mainSyncJsonObj.expeditions = await this.getObjLastElements(this?.json?.expeditions, 5000);
       mainSyncJsonObj.expeditionSums = this?.json?.expeditionSums;
@@ -14435,6 +14486,19 @@ class OGInfinity {
       createDOM(
         "span",
         { style: "display: flex;justify-content: space-between; align-items: center;" },
+        this.getTranslatedText(222)
+      )
+    );
+
+    let displayImportExportReminder = optiondiv.appendChild(createDOM("input", { type: "checkbox" }));
+    if (this.json.options.displayImportExportReminder) {
+      displayImportExportReminder.checked = true;
+    }
+
+    optiondiv = featureSettings.appendChild(
+      createDOM(
+        "span",
+        { style: "display: flex;justify-content: space-between; align-items: center;" },
         this.getTranslatedText(33)
       )
     );
@@ -14906,6 +14970,7 @@ class OGInfinity {
     simulator.appendChild(simulatorInput);
     settingDiv.appendChild(saveBtn);
     saveBtn.addEventListener("click", () => {
+      this.json.options.displayImportExportReminder = displayImportExportReminder.checked;
       this.json.options.rvalLimit = fromFormatedNumber(rvalInput.value, true);
       this.json.options.rvalSelfLimitPlanet = fromFormatedNumber(rvalSelfInputPlanet.value, true);
       this.json.options.rvalSelfLimitMoon = fromFormatedNumber(rvalSelfInputMoon.value, true);
