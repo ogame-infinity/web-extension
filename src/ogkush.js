@@ -33,6 +33,7 @@ import planetType from "./util/enum/planetType.js";
 import shipEnum from "./util/enum/ship.js";
 import * as iconVisibility from "./util/iconVisibility.js";
 import OverviewPage from "./ctxpage/overview/OverviewPage.js";
+import TraderImportExportPage from "./ctxpage/traderOverview/TraderImportExportPage.js";
 import RecyclingYieldCalculator from "./util/recyclingYieldCalculator.js";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
@@ -1367,6 +1368,7 @@ const isOwnPlanet = (coords) => {
 
 class OGInfinity {
   OverviewPage = new OverviewPage();
+  TraderImportExportPage = new TraderImportExportPage();
 
   constructor() {
     this.playerId = parseInt(document.querySelector('meta[name="ogame-player-id"]').content);
@@ -1667,6 +1669,7 @@ class OGInfinity {
     this.chat();
     this.uvlinks();
     this.OverviewPage.MakePrettierOverview(this.page);
+    this.TraderImportExportPage.RemindMeImportExport(this.page);
     this.betterHighscore();
     this.overviewDates();
     needsUtil.display();
@@ -1684,7 +1687,6 @@ class OGInfinity {
     // this.showTabTimer(); TODO: enable when timer is moved to the clock area
     this.markLifeforms();
     this.navigationArrows();
-    this.remindMeImportExport();
     this.expedition = false;
     this.collect = false;
     let storage = this.getLocalStorageSize();
@@ -1715,59 +1717,6 @@ class OGInfinity {
     /*Fix banner styles for messages, premium and shop page*/
     if (this.page == "messages" || this.page == "premium" || this.page == "shop")
       document.querySelector("#banner_skyscraper").classList.add("fix-banner");
-  }
-
-  remindMeImportExport() {
-    if (!getOption("displayImportExportReminder")) return;
-
-    const getNextReminderDate = () => {
-      const now = new Date();
-      const next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1); // Tomorrow at 00:00
-      return next.toISOString();
-    };
-
-    // Initialize reminder if not set
-    if (!this.json.reminders["importExport"]) {
-      this.json.reminders["importExport"] = getNextReminderDate(); //init to the next day
-    }
-
-    const isObsolete = () => {
-      const now = new Date();
-      const nextReminder = new Date(this.json.reminders["importExport"]);
-      return nextReminder < now;
-    };
-
-    if (isObsolete()) {
-      const addHint = (element) => {
-        if (!element) return;
-
-        if (!element.classList.contains("ipiHintable")) {
-          element.classList.add("ipiHintable");
-        }
-        if (!element.classList.contains("ipiHintActive")) {
-          element.classList.add("ipiHintActive");
-        }
-      };
-
-      if (this.page != "traderOverview") {
-        addHint(
-          document.querySelector("#left .menubutton[data-ipi-hint='ipiToolbarTrader']") ??
-            document.querySelector("#leftMenu .menubutton[data-ipi-hint='ipiToolbarTrader']")
-        );
-      } else {
-        const importExportShop = document.querySelector("#js_traderImportExport");
-        if (importExportShop) {
-          addHint(importExportShop);
-          importExportShop.addEventListener("click", () => {
-            this.json.reminders["importExport"] = getNextReminderDate();
-            this.saveData();
-            if (importExportShop.classList.contains("ipiHintActive")) {
-              importExportShop.classList.remove("ipiHintActive");
-            }
-          });
-        }
-      }
-    }
   }
 
   // remove when complete removal of direct probin in stalks and target list or GF start to wake up
