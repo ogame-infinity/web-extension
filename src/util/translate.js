@@ -2186,6 +2186,14 @@ const translation = Object.freeze({
       br: "Ícones",
     },
     222: {
+      de: "Import/Export Erinnerung",
+      en: "Import/Export reminder",
+      es: "Recordatorio de importación/exportación",
+      fr: "Rappel d'import/export",
+      tr: "İthalat/İhracat Hatırlatıcısı",
+      br: "Lembrete de Importação/Exportação",
+    },
+    223: {
       de: undefined,
       en: undefined,
       es: undefined,

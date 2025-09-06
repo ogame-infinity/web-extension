@@ -96,6 +96,7 @@ const _options = {
   lifeformConstructionsIconsDisplayMode: 4,
   lifeformResearchsIconsDisplayMode: 4,
   ownFleetYieldIconsDisplayMode: 4,
+  displayImportExportReminder: true,
 };
 
 export function initConfOptions(options) {
