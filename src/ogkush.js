@@ -15764,7 +15764,7 @@ class OGInfinity {
       const createFleetIcon = (standardUnitSum, planetOrMoonId, iconClass, redirect) => {
         const fleetIcon = DOM.createDOM("a", {
           class: "fleetIcon planet tooltip js_hideTipOnMobile",
-          href: `/game/index.php?page=ingame&component=${redirect ? "fleetdispatch" : "overview"}&cp=${planetOrMoonId}`,
+          href: `/game/index.php?page=ingame&component=${redirect ? "fleetdispatch" : this.page}&cp=${planetOrMoonId}`,
         });
 
         fleetIcon.appendChild(DOM.createDOM("span", { class: `icon12px ${iconClass}` }));
@@ -16050,7 +16050,7 @@ class OGInfinity {
       const createConstructionIcon = (elem, planetOrMoonId, techName, iconClass, component, addToolTip, redirect) => {
         const constructionIcon = DOM.createDOM("a", {
           class: "constructionIcon planet tooltip js_hideTipOnMobile",
-          href: `/game/index.php?page=ingame&component=${redirect ? component : "overview"}&cp=${planetOrMoonId}`,
+          href: `/game/index.php?page=ingame&component=${redirect ? component : this.page}&cp=${planetOrMoonId}`,
         });
 
         if (addToolTip) {
