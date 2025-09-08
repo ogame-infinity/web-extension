@@ -9,7 +9,7 @@ VERSION="${1:-`date +%-m.%-d.%-H.%-M`}"
 echo "Build version $VERSION"
 
 MANIFEST_FILE_NAME="manifest.json"
-MANIFEST_FIREFOX_NAME="manifest-firefox.json"
+MANIFEST_FIREFOX_NAME="manifest-firefoxV2.json"
 CSS_BUNDLE_FILE="global.css"
 VERSION_JS_FILE_NAME="util/version.js"
 
