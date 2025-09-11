@@ -3851,31 +3851,32 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
     contrast(84%);
   display: block;
 }
-#overviewcomponent #planet #toggleBuffBar {
-  cursor: pointer;
-  position: absolute;
-  left: 4px;
-  bottom: 4px;
-  width: 36px;
-  height: 28px;
-  background-image: url("https://gf1.geo.gfsrv.net/cdnce/54d37c899703757907c1160db0b1b9.png");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 25px 25px;
-  filter: brightness(0) saturate(100%) invert(17%) sepia(7%) saturate(497%) hue-rotate(161deg) brightness(94%)
-    contrast(84%);
-  display: block;
+
+#overviewcomponent #detailWrapper #planetdata .planetMoveStart {
+  visibility: hidden !important;
 }
 
-#overviewcomponent #planet[buffBar-active="true"] #toggleBuffBar {
-  filter: brightness(0) saturate(100%) invert(63%) sepia(11%) saturate(483%) hue-rotate(160deg) brightness(91%)
-    contrast(91%);
+#overviewcomponent #detailWrapper .planetMoveStart {
+  animation: appearing-planetMoveStart 0.8s forwards;
+  margin-top: 8px;
+  margin-left: 5px;
 }
-
-#overviewcomponent #planet[buffBar-active="true"] #toggleBuffBar:hover,
-#overviewcomponent #planet[buffBar-active="false"] #toggleBuffBar:hover {
-  filter: brightness(0) saturate(100%) invert(77%) sepia(23%) saturate(1188%) hue-rotate(338deg) brightness(86%)
-    contrast(92%);
+@keyframes appearing-planetMoveStart {
+  from {
+    visibility: visible;
+    opacity: 0;
+  }
+  to {
+    visibility: visible;
+    opacity: 1;
+  }
+}
+#overviewcomponent #detailWrapper .planetMoveStart .icon {
+  opacity: 0.3;
+  transform: scale(0.9);
+}
+#overviewcomponent #detailWrapper .planetMoveStart:hover .icon {
+  opacity: unset;
 }
 
 .ogl-option {
