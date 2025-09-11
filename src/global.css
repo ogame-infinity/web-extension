@@ -1432,14 +1432,6 @@ input[type="file"] {
   font-size: 10px;
 }
 
-#commandercomponent {
-  opacity: 0.5;
-}
-
-#commandercomponent:hover {
-  opacity: 1;
-}
-
 .ogl-warning-dialog a.detail_button {
   display: block;
   height: 100px;
