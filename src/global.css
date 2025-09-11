@@ -3840,28 +3840,6 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
   clear: right;
 }
 
-#overviewcomponent #planet[buffBar-active="true"] #buffBar {
-  position: absolute;
-  visibility: hidden;
-  animation: appearing-buffBar 0.8s forwards;
-}
-@keyframes appearing-buffBar {
-  from {
-    visibility: visible;
-    bottom: -36px;
-    opacity: 0;
-  }
-  to {
-    visibility: visible;
-    bottom: 4px;
-    opacity: 1;
-  }
-}
-
-#overviewcomponent #planet #buffBar {
-  visibility: hidden;
-}
-
 #overviewcomponent #planet #spaceObjectHeaderActionIcon {
   width: 36px;
   height: 28px;

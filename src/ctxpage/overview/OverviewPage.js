@@ -10,9 +10,9 @@ class OverviewPage {
     this.logger = getLogger("OverviewPage");
   }
 
-  UpdatePlanetOverviewDisplay(toggle, partName) {
-    const optionName = `overview_display_planet_${partName}`;
-    const attributeName = `${partName}-active`;
+  #updatePlanetOverviewDisplay(toggle) {
+    const optionName = `overview_display_planet_details`;
+    const attributeName = `details-active`;
 
     // get the current display status
     const display = getOption(optionName);
@@ -42,25 +42,14 @@ class OverviewPage {
       // create the toggle planet details button
       const togglePlanetDataButton = createDOM("div", { class: "togglePlanetDetails" });
       togglePlanetDataButton.addEventListener("click", () => {
-        this.UpdatePlanetOverviewDisplay(true, "details");
+        this.#updatePlanetOverviewDisplay(true);
       });
 
       // add the toggle planet details button to the header
       detailWrapper.querySelector("#header_text").appendChild(togglePlanetDataButton);
 
-      // create the toggle buff bar button, and add it instead of the spaceObjectHeaderActionIcons
-      const toggleBuffBarButton = createDOM("div", { id: "toggleBuffBar" });
-      toggleBuffBarButton.addEventListener("click", () => {
-        this.UpdatePlanetOverviewDisplay(true, "buffBar");
-      });
-      planet.insertBefore(toggleBuffBarButton, detailWrapper);
-
-      const spaceObjectHeaderActionIcons = planet.querySelector("#spaceObjectHeaderActionIcon");
-      planet.removeChild(spaceObjectHeaderActionIcons);
-
-      // init the display of the planet details and buff bar
-      this.UpdatePlanetOverviewDisplay(false, "details");
-      this.UpdatePlanetOverviewDisplay(false, "buffBar");
+      // init the display of the planet details
+      this.#updatePlanetOverviewDisplay(false);
     } catch (e) {
       // it would be a shame if a UI error break the game...
       this.logger.error(e);
