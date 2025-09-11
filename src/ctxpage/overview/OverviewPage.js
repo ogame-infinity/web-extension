@@ -51,8 +51,8 @@ class OverviewPage {
       // init the display of the planet details
       this.#updatePlanetOverviewDisplay(false);
 
-      const relocate = detailWrapper.querySelector(".planetMoveStart");
-      detailWrapper.querySelector("#header_text").appendChild(relocate);
+      const planetOptions = detailWrapper.querySelector("#planetOptions");
+      if (planetOptions) detailWrapper.appendChild(planetOptions);
     } catch (e) {
       // it would be a shame if a UI error break the game...
       this.logger.error(e);

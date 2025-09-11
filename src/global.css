@@ -3798,6 +3798,27 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
   visibility: hidden;
   animation: appearing-planetdata 0.8s forwards;
 }
+
+#overviewcomponent #detailWrapper > #planetOptions {
+  animation: appearing-planetdata 0.8s forwards;
+  padding: 3px 5px 0px 5px !important;
+  margin-top: 3px !important;
+  margin-right: 5px !important;
+  background: rgba(20, 30, 38, 0.6);
+  border-radius: 7px 0px 0px 7px;
+  float: right;
+  width: 390px;
+}
+
+#overviewcomponent #detailWrapper > #planetOptions a:link,
+#overviewcomponent #detailWrapper > #planetOptions a:visited,
+.no-touch #overviewcomponent #detailWrapper > #planetOptions a:hover,
+#overviewcomponent #detailWrapper > #planetOptions a:active {
+  color: #fff;
+  cursor: pointer;
+  text-decoration: none;
+}
+
 @keyframes appearing-planetdata {
   from {
     visibility: visible;
@@ -3842,33 +3863,6 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
   filter: brightness(0) saturate(100%) invert(17%) sepia(7%) saturate(497%) hue-rotate(161deg) brightness(94%)
     contrast(84%);
   display: block;
-}
-
-#overviewcomponent #detailWrapper #planetdata .planetMoveStart {
-  visibility: hidden !important;
-}
-
-#overviewcomponent #detailWrapper .planetMoveStart {
-  animation: appearing-planetMoveStart 0.8s forwards;
-  margin-top: 8px;
-  margin-left: 5px;
-}
-@keyframes appearing-planetMoveStart {
-  from {
-    visibility: visible;
-    opacity: 0;
-  }
-  to {
-    visibility: visible;
-    opacity: 1;
-  }
-}
-#overviewcomponent #detailWrapper .planetMoveStart .icon {
-  opacity: 0.3;
-  transform: scale(0.9);
-}
-#overviewcomponent #detailWrapper .planetMoveStart:hover .icon {
-  opacity: unset;
 }
 
 .ogl-option {
@@ -8490,7 +8484,7 @@ li.resource {
 #planetdata {
   margin-top: 7px !important;
   margin-right: 5px !important;
-  height: 220px !important;
+  height: 193px !important;
   width: 400px !important;
 }
 
