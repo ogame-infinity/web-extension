@@ -2940,7 +2940,7 @@ class OGInfinity {
               class: "ogl-formatInput",
               type: "text",
               data: id,
-              value: toFormatedNumber(kept[id]) || toFormatedNumber(0),
+              value: toFormatedNumber(defaultKeptMoon[id]) || toFormatedNumber(0),
             })
           )
         );
