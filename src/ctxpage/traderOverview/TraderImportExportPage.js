@@ -1,7 +1,8 @@
 import { getOption, setOption } from "../conf-options.js";
-import { createDOM } from "../../util/dom.js";
+import * as DOM from "../../util/dom.js";
 import { getLogger } from "../../util/logger.js";
 import OGIData from "../../util/OGIData.js";
+import * as wait from "../../util/wait.js";
 
 class TraderImportExportPage {
   logger;
@@ -10,7 +11,7 @@ class TraderImportExportPage {
     this.logger = getLogger("TraderImportExportPage");
   }
 
-  #isImportExportActive() {
+  #isImportExportActiveRequest() {
     const abortController = new AbortController();
     window.onbeforeunload = () => abortController.abort();
 
@@ -28,26 +29,32 @@ class TraderImportExportPage {
     );
     return request.then((element) => {
       this.logger.info("Checked import/export activity");
-      const paymentElement = element.querySelector(".payment");
-      const bargain_overlay = element.querySelector(".bargain_overlay");
-
-      if (paymentElement.style.display === "block") {
-        return true;
-      }
-
-      if (
-        bargain_overlay &&
-        (bargain_overlay.querySelector(".bargain.import_bargain.change:not(.hidden)") ||
-          bargain_overlay.querySelector(".bargain.import_bargain.take:not(.hidden)"))
-      ) {
-        return true;
-      }
-      return false;
+      return this.#isImportExportActive(element);
     });
   }
 
+  #isImportExportActive(element) {
+    const paymentElement = element.querySelector(".payment");
+    const bargain_overlay = element.querySelector(".bargain_overlay");
+
+    if (paymentElement.style.display === "block") {
+      return true;
+    }
+
+    if (
+      bargain_overlay &&
+      (bargain_overlay.querySelector(".bargain.import_bargain.change:not(.hidden)") ||
+        bargain_overlay.querySelector(".bargain.import_bargain.take:not(.hidden)"))
+    ) {
+      return true;
+    }
+    return false;
+  }
+
   RemindMeImportExport(page) {
-    if (!getOption("displayImportExportReminder")) return;
+    const importExportReminderMode = getOption("importExportReminderMode");
+    if (importExportReminderMode == 0) return;
+
     const addHint = (element) => {
       if (!element) return;
 
@@ -57,12 +64,6 @@ class TraderImportExportPage {
       if (!element.classList.contains("ipiHintActive")) {
         element.classList.add("ipiHintActive");
       }
-    };
-
-    const removeHint = (element) => {
-      if (!element) return;
-      element.classList.remove("ipiHintable");
-      element.classList.remove("ipiHintActive");
     };
 
     const getNextReminderDate = () => {
@@ -103,28 +104,63 @@ class TraderImportExportPage {
     const remind = () => {
       if (OGIData._json.reminders["importExport"].mustRemind) {
         this.logger.debug("Showing import/export reminder");
+
+        const menuItem =
+          document.querySelector("#left .menubutton[data-ipi-hint='ipiToolbarTrader']") ??
+          document.querySelector("#leftMenu .menubutton[data-ipi-hint='ipiToolbarTrader']");
+        if (importExportReminderMode == 1 && menuItem) menuItem.appendChild(DOM.createDOM("span", {}, "*"));
         if (page == "traderOverview") {
           const importExportShop = document.querySelector("#js_traderImportExport");
           if (importExportShop) {
-            addHint(importExportShop);
+            if (importExportReminderMode == 2) addHint(importExportShop);
+
             importExportShop.addEventListener("click", () => {
-              // User has clicked the import/export shop, do not remind for a while
-              updateReminder(getNextReminderDate(), false);
-              removeHint(importExportShop);
+              wait.waitForQuerySelector("#div_traderImportExport", 250, 10000).then((traderImportExportDiv) => {
+                if (this.#isImportExportActive(traderImportExportDiv)) {
+                  // Import/export is active, wee need to detect when user clicks the take button
+                  const paymentElement = traderImportExportDiv.querySelector(".payment");
+                  const payButton = traderImportExportDiv.querySelector("a.pay ");
+                  if (payButton && paymentElement && paymentElement.style.display === "block") {
+                    payButton.addEventListener("click", () => {
+                      wait.waitForQuerySelector("a.bargain.import_bargain.take", 250, 10000).then((takeButton) => {
+                        addHint(takeButton);
+                        //take button is now available, we can update the reminder (in case user does not take it now), and add a listener to it
+                        updateReminder(getNextReminderDate(), true);
+                        takeButton.addEventListener("click", () => {
+                          // User has clicked the import/export take, do not remind for a while
+                          updateReminder(getNextReminderDate(), false);
+                        });
+                      });
+                    });
+                  } else {
+                    // No pay button, probably an active import/export ready to take
+                    const takeButton = traderImportExportDiv.querySelector("a.bargain.import_bargain.take");
+                    if (takeButton) {
+                      addHint(takeButton);
+                      //take button is now available, we can update the reminder (in case user does not take it now), and add a listener to it
+                      updateReminder(getNextReminderDate(), true);
+                      takeButton.addEventListener("click", () => {
+                        // User has clicked the import/export take, do not remind for a while
+                        updateReminder(getNextReminderDate(), false);
+                      });
+                    }
+                  }
+                } else {
+                  // Import/export is not active, do not remind for a while
+                  updateReminder(getNextReminderDate(), false);
+                }
+              });
             });
           }
         } else {
-          addHint(
-            document.querySelector("#left .menubutton[data-ipi-hint='ipiToolbarTrader']") ??
-              document.querySelector("#leftMenu .menubutton[data-ipi-hint='ipiToolbarTrader']")
-          );
+          if (importExportReminderMode == 2) addHint(menuItem);
         }
       }
     };
 
     if (isObsolete()) {
       //check the import/export page only if the reminder is obsolete.
-      this.#isImportExportActive().then((isActive) => {
+      this.#isImportExportActiveRequest().then((isActive) => {
         //immediately update the reminder to avoid multiple checks
         updateReminder(getNextReminderDate(), isActive);
         // show the reminder if import/export is active

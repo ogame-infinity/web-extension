@@ -47,6 +47,7 @@ const _options = {
   foreignMission: 3,
   harvestMission: 4,
   alertHostileIncomingMode: 0,
+  importExportReminderMode: 2,
   activitytimers: false,
   lessAggressiveEmpireAutomaticUpdate: false,
   navigationArrows: true,
@@ -96,7 +97,6 @@ const _options = {
   lifeformConstructionsIconsDisplayMode: 4,
   lifeformResearchsIconsDisplayMode: 4,
   ownFleetYieldIconsDisplayMode: 4,
-  displayImportExportReminder: true,
 };
 
 export function initConfOptions(options) {

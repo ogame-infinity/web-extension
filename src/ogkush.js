@@ -14443,11 +14443,14 @@ class OGInfinity {
         this.getTranslatedText(222)
       )
     );
-
-    let displayImportExportReminder = optiondiv.appendChild(createDOM("input", { type: "checkbox" }));
-    if (this.json.options.displayImportExportReminder) {
-      displayImportExportReminder.checked = true;
-    }
+    const importExportReminderMode = DOM.createDOM("select", { class: "ogl-selectInput ogl-w-125 tooltip" });
+    importExportReminderMode.append(
+      DOM.createDOM("option", { value: "0" }, this.getTranslatedText(212)),
+      DOM.createDOM("option", { value: "1" }, this.getTranslatedText(223)),
+      DOM.createDOM("option", { value: "2" }, this.getTranslatedText(224))
+    );
+    importExportReminderMode.value = getOption("importExportReminderMode");
+    optiondiv.appendChild(importExportReminderMode);
 
     optiondiv = featureSettings.appendChild(
       createDOM(
@@ -14924,7 +14927,7 @@ class OGInfinity {
     simulator.appendChild(simulatorInput);
     settingDiv.appendChild(saveBtn);
     saveBtn.addEventListener("click", () => {
-      this.json.options.displayImportExportReminder = displayImportExportReminder.checked;
+      this.json.options.importExportReminderMode = importExportReminderMode.value;
       this.json.options.rvalLimit = fromFormatedNumber(rvalInput.value, true);
       this.json.options.rvalSelfLimitPlanet = fromFormatedNumber(rvalSelfInputPlanet.value, true);
       this.json.options.rvalSelfLimitMoon = fromFormatedNumber(rvalSelfInputMoon.value, true);

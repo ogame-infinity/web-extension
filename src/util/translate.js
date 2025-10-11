@@ -2194,6 +2194,22 @@ const translation = Object.freeze({
       br: "Lembrete de Importação/Exportação",
     },
     223: {
+      de: "Diskret",
+      en: "Discreet",
+      es: "Discreto",
+      fr: "Discret",
+      tr: "Gizli",
+      br: "Discreto",
+    },
+    224: {
+      de: "Hervorhebungen",
+      en: "Highlights",
+      es: "Destacados",
+      fr: "Mise en évidence",
+      tr: "Vurgular",
+      br: "Destaques",
+    },
+    225: {
       de: undefined,
       en: undefined,
       es: undefined,
