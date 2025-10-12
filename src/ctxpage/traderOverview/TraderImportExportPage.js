@@ -58,11 +58,15 @@ class TraderImportExportPage {
     const addHint = (element) => {
       if (!element) return;
 
-      if (!element.classList.contains("ipiHintable")) {
-        element.classList.add("ipiHintable");
-      }
-      if (!element.classList.contains("ipiHintActive")) {
-        element.classList.add("ipiHintActive");
+      if (importExportReminderMode == 1 && !element.querySelector(".smoothSpanReminder"))
+        element.appendChild(DOM.createDOM("span", { class: "smoothSpanReminder" }, "*"));
+      else if (importExportReminderMode == 2) {
+        if (!element.classList.contains("ipiHintable")) {
+          element.classList.add("ipiHintable");
+        }
+        if (!element.classList.contains("ipiHintActive")) {
+          element.classList.add("ipiHintActive");
+        }
       }
     };
 
@@ -108,12 +112,13 @@ class TraderImportExportPage {
         const menuItem =
           document.querySelector("#left .menubutton[data-ipi-hint='ipiToolbarTrader']") ??
           document.querySelector("#leftMenu .menubutton[data-ipi-hint='ipiToolbarTrader']");
-        if (importExportReminderMode == 1 && menuItem) menuItem.appendChild(DOM.createDOM("span", {}, "*"));
         if (page == "traderOverview") {
           const importExportShop = document.querySelector("#js_traderImportExport");
           if (importExportShop) {
-            if (importExportReminderMode == 2) addHint(importExportShop);
-
+            if (importExportReminderMode == 1) {
+              addHint(menuItem);
+              addHint(importExportShop.querySelector("h2"));
+            } else if (importExportReminderMode == 2) addHint(importExportShop);
             importExportShop.addEventListener("click", () => {
               wait.waitForQuerySelector("#div_traderImportExport", 250, 10000).then((traderImportExportDiv) => {
                 if (this.#isImportExportActive(traderImportExportDiv)) {
@@ -153,7 +158,7 @@ class TraderImportExportPage {
             });
           }
         } else {
-          if (importExportReminderMode == 2) addHint(menuItem);
+          addHint(menuItem);
         }
       }
     };

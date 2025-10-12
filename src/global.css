@@ -7209,6 +7209,27 @@ hr {
   }
 }
 
+.smoothSpanReminder {
+  vertical-align: middle;
+  position: relative;
+  bottom: -2.5px;
+  animation: smoothSpanReminder 0.3s forwards;
+}
+@keyframes smoothSpanReminder {
+  from {
+    visibility: visible;
+    opacity: 0;
+    font-size: 0px;
+    margin-left: 0px;
+  }
+  to {
+    visibility: visible;
+    opacity: 1;
+    font-size: 20px;
+    margin-left: 5px;
+  }
+}
+
 .ogl-dialogContent .ogl-stalkPlanets {
   grid-template-columns: repeat(4, 1fr) !important;
   align-content: start;
