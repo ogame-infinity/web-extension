@@ -48,8 +48,10 @@ export default Object.freeze({
   // 3 Resource boosters
   "1c633f2c013527fe03545840701f9a2673537d74": { type: itemType.All3Resources, bonus: 0.15 },
   "b94f87944e2815af2542f1c30fbc720d1de29abe": { type: itemType.All3Resources, bonus: 0.2 },
+  "f209b636b7041cc29f3c964997b933c6c9d6fb57": { type: itemType.All3Resources, bonus: 0.25 },
   // Expedition resource boosters
   "b1b9720f28ddf8c827d22de4a4ffd6688da313bd": { type: itemType.ExpeditionResources, bonus: 0.1 },
   "c5c657877dff57ac6259b46c584c5686f728d56a": { type: itemType.ExpeditionResources, bonus: 0.15 },
   "5d92137e661b08357166d3be1b968c8ce30f0120": { type: itemType.ExpeditionResources, bonus: 0.2 },
+  "faa65740777d61a34a92e9445003970011247e1f": { type: itemType.ExpeditionResources, bonus: 0.3 },
 });
