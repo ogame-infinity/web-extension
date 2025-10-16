@@ -2202,12 +2202,12 @@ const translation = Object.freeze({
       br: "Discreto",
     },
     224: {
-      de: "Hervorhebungen",
-      en: "Highlights",
-      es: "Destacados",
+      de: "Hervorheben",
+      en: "Highlight",
+      es: "Destacado",
       fr: "Mise en évidence",
-      tr: "Vurgular",
-      br: "Destaques",
+      tr: "Vurgula",
+      br: "Destaque",
     },
     225: {
       de: undefined,
