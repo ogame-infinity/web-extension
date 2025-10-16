@@ -104,6 +104,7 @@ class BackgroundNotifier {
 
   async #createOrUpdateNotificationAsync(notificationToSchedule) {
     try {
+      let ensureMinDelay = false;
       let shouldUpdateAlarm = false;
       let shouldUpdateNotification = false;
 
@@ -137,10 +138,13 @@ class BackgroundNotifier {
             );
           }
         } else {
+          //alarm doesn't exist, we need to create it, and ensure minimum delay
+          ensureMinDelay = true;
           shouldUpdateAlarm = true;
         }
 
-        if (shouldUpdateAlarm) this.#createAlarm(notificationToSchedule.id, notificationToSchedule.when);
+        if (shouldUpdateAlarm)
+          this.#createAlarm(notificationToSchedule.id, notificationToSchedule.when, ensureMinDelay);
         else console.log(`Alarm ${notificationToSchedule.id} is unchanged`);
       } else await this.#cancelAlarmAsync(notificationToSchedule.id); //if already notified, remove any existing alarm to avoid re-notification
     } catch (error) {
@@ -148,7 +152,7 @@ class BackgroundNotifier {
     }
   }
 
-  #createAlarm(id, when) {
+  #createAlarm(id, when, ensureMinDelay) {
     /*
      * The browser doesn't execute tasks with millisecond-level precision.
      * It manages an event scheduling cycle to optimize performance and battery consumption.
@@ -157,9 +161,11 @@ class BackgroundNotifier {
      * This is why the documentation recommends a minimum delay of one minute to ensure the alarm has enough time to be properly registered and processed by the scheduling system.
      */
     const minRequiredDelayInMs = 60 * 1000; // ensure minimum delay of 1 minute
-    const newAlarmDate = Math.max(new Date(when).getTime(), Date.now() + minRequiredDelayInMs);
+    const alarmDate = ensureMinDelay
+      ? Math.max(new Date(when).getTime(), Date.now() + minRequiredDelayInMs)
+      : new Date(when).getTime();
 
-    chrome.alarms.create(id, { when: newAlarmDate });
+    chrome.alarms.create(id, { when: alarmDate });
     console.log(`Scheduled alarm  ${id} at ${when}`);
   }
   async #cancelAlarmAsync(id) {
