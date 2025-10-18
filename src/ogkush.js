@@ -33,6 +33,7 @@ import planetType from "./util/enum/planetType.js";
 import shipEnum from "./util/enum/ship.js";
 import * as iconVisibility from "./util/iconVisibility.js";
 import OverviewPage from "./ctxpage/overview/OverviewPage.js";
+import TraderImportExportPage from "./ctxpage/traderOverview/TraderImportExportPage.js";
 import RecyclingYieldCalculator from "./util/recyclingYieldCalculator.js";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
@@ -1367,6 +1368,7 @@ const isOwnPlanet = (coords) => {
 
 class OGInfinity {
   OverviewPage = new OverviewPage();
+  TraderImportExportPage = new TraderImportExportPage();
 
   constructor() {
     this.playerId = parseInt(document.querySelector('meta[name="ogame-player-id"]').content);
@@ -1540,6 +1542,7 @@ class OGInfinity {
     this.json.selectedLifeforms = this.json.selectedLifeforms || {};
     this.json.lifeformBonus = this.json.lifeformBonus || {};
     this.json.lifeformPlanetBonus = this.json.lifeformPlanetBonus || {};
+    this.json.reminders = this.json.reminders || {};
     this.isLoading = false;
     this.autoQueue = new AutoQueue();
   }
@@ -1672,6 +1675,7 @@ class OGInfinity {
     this.chat();
     this.uvlinks();
     this.OverviewPage.MakePrettierOverview(this.page);
+    this.TraderImportExportPage.RemindMeImportExport(this.page);
     this.betterHighscore();
     this.overviewDates();
     needsUtil.display();
@@ -13152,6 +13156,7 @@ class OGInfinity {
       mainSyncJsonObj.lfProductionProgress = this?.json?.lfProductionProgress;
       mainSyncJsonObj.researchProgress = this?.json?.researchProgress;
       mainSyncJsonObj.lfResearchProgress = this?.json?.lfResearchProgress;
+      mainSyncJsonObj.reminders = this?.json?.reminders;
 
       mainSyncJsonObj.expeditions = await this.getObjLastElements(this?.json?.expeditions, 5000);
       mainSyncJsonObj.expeditionSums = this?.json?.expeditionSums;
@@ -14440,6 +14445,22 @@ class OGInfinity {
       createDOM(
         "span",
         { style: "display: flex;justify-content: space-between; align-items: center;" },
+        this.getTranslatedText(222)
+      )
+    );
+    const importExportReminderMode = DOM.createDOM("select", { class: "ogl-selectInput ogl-w-125 tooltip" });
+    importExportReminderMode.append(
+      DOM.createDOM("option", { value: "0" }, this.getTranslatedText(212)),
+      DOM.createDOM("option", { value: "1" }, this.getTranslatedText(223)),
+      DOM.createDOM("option", { value: "2" }, this.getTranslatedText(224))
+    );
+    importExportReminderMode.value = getOption("importExportReminderMode");
+    optiondiv.appendChild(importExportReminderMode);
+
+    optiondiv = featureSettings.appendChild(
+      createDOM(
+        "span",
+        { style: "display: flex;justify-content: space-between; align-items: center;" },
         this.getTranslatedText(33)
       )
     );
@@ -14911,6 +14932,7 @@ class OGInfinity {
     simulator.appendChild(simulatorInput);
     settingDiv.appendChild(saveBtn);
     saveBtn.addEventListener("click", () => {
+      this.json.options.importExportReminderMode = importExportReminderMode.value;
       this.json.options.rvalLimit = fromFormatedNumber(rvalInput.value, true);
       this.json.options.rvalSelfLimitPlanet = fromFormatedNumber(rvalSelfInputPlanet.value, true);
       this.json.options.rvalSelfLimitMoon = fromFormatedNumber(rvalSelfInputMoon.value, true);

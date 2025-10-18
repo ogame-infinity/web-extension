@@ -249,6 +249,9 @@ class OGIData {
   #save() {
     localStorage.setItem(localStorageKey, JSON.stringify(this._json));
   }
+  Save() {
+    this.#save();
+  }
 }
 
 export default new OGIData();
