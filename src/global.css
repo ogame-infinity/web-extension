@@ -1432,14 +1432,6 @@ input[type="file"] {
   font-size: 10px;
 }
 
-#commandercomponent {
-  opacity: 0.5;
-}
-
-#commandercomponent:hover {
-  opacity: 1;
-}
-
 .ogl-warning-dialog a.detail_button {
   display: block;
   height: 100px;
@@ -3806,6 +3798,27 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
   visibility: hidden;
   animation: appearing-planetdata 0.8s forwards;
 }
+
+#overviewcomponent #detailWrapper > #planetOptions {
+  animation: appearing-planetdata 0.8s forwards;
+  padding: 3px 5px 0px 5px !important;
+  margin-top: 3px !important;
+  margin-right: 5px !important;
+  background: rgba(20, 30, 38, 0.6);
+  border-radius: 7px 0px 0px 7px;
+  float: right;
+  width: 390px;
+}
+
+#overviewcomponent #detailWrapper > #planetOptions a:link,
+#overviewcomponent #detailWrapper > #planetOptions a:visited,
+.no-touch #overviewcomponent #detailWrapper > #planetOptions a:hover,
+#overviewcomponent #detailWrapper > #planetOptions a:active {
+  color: #fff;
+  cursor: pointer;
+  text-decoration: none;
+}
+
 @keyframes appearing-planetdata {
   from {
     visibility: visible;
@@ -3840,28 +3853,6 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
   clear: right;
 }
 
-#overviewcomponent #planet[buffBar-active="true"] #buffBar {
-  position: absolute;
-  visibility: hidden;
-  animation: appearing-buffBar 0.8s forwards;
-}
-@keyframes appearing-buffBar {
-  from {
-    visibility: visible;
-    bottom: -36px;
-    opacity: 0;
-  }
-  to {
-    visibility: visible;
-    bottom: 4px;
-    opacity: 1;
-  }
-}
-
-#overviewcomponent #planet #buffBar {
-  visibility: hidden;
-}
-
 #overviewcomponent #planet #spaceObjectHeaderActionIcon {
   width: 36px;
   height: 28px;
@@ -3872,32 +3863,6 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
   filter: brightness(0) saturate(100%) invert(17%) sepia(7%) saturate(497%) hue-rotate(161deg) brightness(94%)
     contrast(84%);
   display: block;
-}
-#overviewcomponent #planet #toggleBuffBar {
-  cursor: pointer;
-  position: absolute;
-  left: 4px;
-  bottom: 4px;
-  width: 36px;
-  height: 28px;
-  background-image: url("https://gf1.geo.gfsrv.net/cdnce/54d37c899703757907c1160db0b1b9.png");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 25px 25px;
-  filter: brightness(0) saturate(100%) invert(17%) sepia(7%) saturate(497%) hue-rotate(161deg) brightness(94%)
-    contrast(84%);
-  display: block;
-}
-
-#overviewcomponent #planet[buffBar-active="true"] #toggleBuffBar {
-  filter: brightness(0) saturate(100%) invert(63%) sepia(11%) saturate(483%) hue-rotate(160deg) brightness(91%)
-    contrast(91%);
-}
-
-#overviewcomponent #planet[buffBar-active="true"] #toggleBuffBar:hover,
-#overviewcomponent #planet[buffBar-active="false"] #toggleBuffBar:hover {
-  filter: brightness(0) saturate(100%) invert(77%) sepia(23%) saturate(1188%) hue-rotate(338deg) brightness(86%)
-    contrast(92%);
 }
 
 .ogl-option {
@@ -8540,7 +8505,7 @@ li.resource {
 #planetdata {
   margin-top: 7px !important;
   margin-right: 5px !important;
-  height: 220px !important;
+  height: 193px !important;
   width: 400px !important;
 }
 
