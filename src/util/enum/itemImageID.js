@@ -53,5 +53,6 @@ export default Object.freeze({
   "b1b9720f28ddf8c827d22de4a4ffd6688da313bd": { type: itemType.ExpeditionResources, bonus: 0.1 },
   "c5c657877dff57ac6259b46c584c5686f728d56a": { type: itemType.ExpeditionResources, bonus: 0.15 },
   "5d92137e661b08357166d3be1b968c8ce30f0120": { type: itemType.ExpeditionResources, bonus: 0.2 },
+  "4bcebdea863cf45824bd9c0cdba1cf8bb0ed8915": { type: itemType.ExpeditionResources, bonus: 0.25 },
   "faa65740777d61a34a92e9445003970011247e1f": { type: itemType.ExpeditionResources, bonus: 0.3 },
 });
