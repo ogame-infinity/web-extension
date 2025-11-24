@@ -1,0 +1,55 @@
+name: Deploy to AMO
+
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version number for this release
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install web-ext
+        run: npm install --global web-ext
+
+      - name: Packaging
+        run: ./packaging.sh ${{ github.event.inputs.version }}
+
+
+      # 1. Unzip ONLY the Firefox extension
+      - name: Unzip Firefox build
+        run: |
+          rm -rf dist/firefox-src
+          mkdir dist/firefox-src
+          unzip dist/ogi-firefox.zip -d dist/firefox-src
+
+      # 2. Create amo-metadata.json (version notes)
+      - name: Create AMO Metadata JSON
+        run: |
+          NOTES="${{ github.event.inputs.notes }}"
+          jq -n --arg notes "$NOTES" \
+            '{version: {release_notes: $notes}}' \
+            > amo-metadata.json
+
+      - name: Sign Firefox Add-on
+        run: |
+          web-ext sign \
+            --source-dir dist/firefox-src \
+            --artifacts-dir dist \
+            --channel listed \
+            --api-key ${{ secrets.AMO_JWT_ISSUER }} \
+            --api-secret ${{ secrets.AMO_JWT_SECRET }} \
+            --amo-metadata amo-metadata.json
