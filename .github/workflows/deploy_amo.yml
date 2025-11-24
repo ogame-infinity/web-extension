@@ -2,6 +2,7 @@ name: Deploy to AMO
 
 on:
   # Allows you to run this workflow manually from the Actions tab
+  # ask for a version number when triggering as a \d.\d.\d[.\d] format
   workflow_dispatch:
     inputs:
       version:
@@ -25,25 +26,18 @@ jobs:
       - name: Install web-ext
         run: npm install --global web-ext
 
+      # use our packaging script to create the zips
       - name: Packaging
         run: ./packaging.sh ${{ github.event.inputs.version }}
 
-
-      # 1. Unzip ONLY the Firefox extension
+      # unzip the firefox build and sign it
       - name: Unzip Firefox build
         run: |
           rm -rf dist/firefox-src
           mkdir dist/firefox-src
           unzip dist/ogi-firefox.zip -d dist/firefox-src
 
-      # 2. Create amo-metadata.json (version notes)
-      - name: Create AMO Metadata JSON
-        run: |
-          NOTES="${{ github.event.inputs.notes }}"
-          jq -n --arg notes "$NOTES" \
-            '{version: {release_notes: $notes}}' \
-            > amo-metadata.json
-
+      # now sign the firefox add-on and upload
       - name: Sign Firefox Add-on
         run: |
           web-ext sign \
@@ -51,5 +45,4 @@ jobs:
             --artifacts-dir dist \
             --channel listed \
             --api-key ${{ secrets.AMO_JWT_ISSUER }} \
-            --api-secret ${{ secrets.AMO_JWT_SECRET }} \
-            --amo-metadata amo-metadata.json
+            --api-secret ${{ secrets.AMO_JWT_SECRET }}
