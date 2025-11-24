@@ -28,21 +28,28 @@ jobs:
       - name: Packaging
         run: ./packaging.sh ${{ github.event.inputs.version }}
 
-      - name: Load Release Notes (optional text input)
-        id: notes
+
+      # 1. Unzip ONLY the Firefox extension
+      - name: Unzip Firefox build
         run: |
-          # Manual trigger can include notes OR leave empty
+          rm -rf dist/firefox-src
+          mkdir dist/firefox-src
+          unzip dist/ogi-firefox.zip -d dist/firefox-src
+
+      # 2. Create amo-metadata.json (version notes)
+      - name: Create AMO Metadata JSON
+        run: |
           NOTES="${{ github.event.inputs.notes }}"
-          NOTES_ESCAPED=$(printf '%s' "$NOTES" | sed ':a;N;$!ba;s/\n/\\n/g')
-          echo "release_notes=$NOTES_ESCAPED" >> $GITHUB_OUTPUT
+          jq -n --arg notes "$NOTES" \
+            '{version: {release_notes: $notes}}' \
+            > amo-metadata.json
 
       - name: Sign Firefox Add-on
         run: |
           web-ext sign \
-            --source-dir dist \
-            --filename ogi-firefox.zip \
+            --source-dir dist/firefox-src \
             --artifacts-dir dist \
             --channel listed \
             --api-key ${{ secrets.AMO_JWT_ISSUER }} \
             --api-secret ${{ secrets.AMO_JWT_SECRET }} \
-            --release-notes "${{ steps.notes.outputs.release_notes }}"
+            --amo-metadata amo-metadata.json
