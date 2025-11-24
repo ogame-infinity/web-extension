@@ -9,6 +9,11 @@ on:
         required: true
         type: string
 
+      notes:
+        description: "AMO Release Notes (supports multiline)"
+        required: true
+        type: string
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -40,9 +45,14 @@ jobs:
       - name: Create AMO Metadata JSON
         run: |
           NOTES="${{ github.event.inputs.notes }}"
+
+          # Safe JSON generation with multiline support
           jq -n --arg notes "$NOTES" \
             '{version: {release_notes: {"en-US": $notes}}}' \
             > amo-metadata.json
+
+          echo "Generated amo-metadata.json:"
+          cat amo-metadata.json
 
       - name: Sign Firefox Add-on
         run: |
