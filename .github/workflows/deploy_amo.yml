@@ -41,7 +41,7 @@ jobs:
         run: |
           NOTES="${{ github.event.inputs.notes }}"
           jq -n --arg notes "$NOTES" \
-            '{version: {release_notes: $notes}}' \
+            '{version: {release_notes: {"en-US": $notes}}}' \
             > amo-metadata.json
 
       - name: Sign Firefox Add-on
