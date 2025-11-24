@@ -1,0 +1,48 @@
+name: Deploy to AMO
+
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version number for this release
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install web-ext
+        run: npm install --global web-ext
+
+      - name: Packaging
+        run: ./packaging.sh ${{ github.event.inputs.version }}
+
+      - name: Load Release Notes (optional text input)
+        id: notes
+        run: |
+          # Manual trigger can include notes OR leave empty
+          NOTES="${{ github.event.inputs.notes }}"
+          NOTES_ESCAPED=$(printf '%s' "$NOTES" | sed ':a;N;$!ba;s/\n/\\n/g')
+          echo "release_notes=$NOTES_ESCAPED" >> $GITHUB_OUTPUT
+
+      - name: Sign Firefox Add-on
+        run: |
+          web-ext sign \
+            --source-dir dist \
+            --filename ogi-firefox.zip \
+            --artifacts-dir dist \
+            --channel listed \
+            --api-key ${{ secrets.AMO_JWT_ISSUER }} \
+            --api-secret ${{ secrets.AMO_JWT_SECRET }} \
+            --release-notes "${{ steps.notes.outputs.release_notes }}"
