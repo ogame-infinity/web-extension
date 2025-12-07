@@ -2433,6 +2433,14 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
 
 /* endregion: Expeditions Messages */
 
+.msg:has(div[data-raw-messagetype="29"]) {
+  border-left: 7px solid #22303a !important;
+}
+
+.msg:has(div[data-raw-messagetype="29"]):has(.loot-row) {
+  border-left: 7px solid #c08931 !important;
+}
+
 .ogk-grid-discovery {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
