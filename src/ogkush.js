@@ -11117,12 +11117,14 @@ class OGInfinity {
             createDOM("span", { class: "ogl-mission-icon ogl-mission-15 ogi-expedition-fleet", id: fleetId })
           );
           mx.classList.toggle("ogl-active", fleetId == this.json.options.expedition.standardFleetId);
+          mx.classList.toggle("ogl-inactive", fleetId != this.json.options.expedition.standardFleetId);
           mx.addEventListener("click", () => updateStandardFleet(fleetId));
           editTemplate.parentElement.prepend(a);
         });
         const updateStandardFleet = (id) => {
           document.querySelectorAll(".ogl-mission-icon.ogl-mission-15.ogi-expedition-fleet").forEach((mx) => {
             mx.classList.toggle("ogl-active", mx.id == id);
+            mx.classList.toggle("ogl-inactive", mx.id != id);
           });
           this.json.options.expedition.standardFleetId = id;
           this.saveData();

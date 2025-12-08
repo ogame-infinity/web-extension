@@ -8613,6 +8613,10 @@ li.resource {
   display: inline-block;
 }
 
+.ogl-mission-icon.ogl-mission-15.ogi-expedition-fleet.ogl-inactive {
+  background-position: 0 calc(-14px * 2) !important;
+}
+
 .ogl-mission-icon.ogl-mission-15.ogi-expedition-fleet.ogl-active,
 .ogl-mission-icon.ogl-mission-15.ogi-expedition-fleet:hover {
   background-position: 0 calc(-14px * 1) !important;
