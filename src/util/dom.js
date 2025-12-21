@@ -4,6 +4,12 @@ export function createDOM(element, attributes, textContent) {
     e.setAttribute(key, attributes[key]);
   }
   if (textContent) e.textContent = textContent;
+
+  //if element is a select, and doesn't have dropdownInitialized claass, add it => it prevent Ogame restyling it
+  if (element === "select" && !e.classList.contains("dropdownInitialized")) {
+    e.classList.add("dropdownInitialized");
+  }
+
   return e;
 }
 
