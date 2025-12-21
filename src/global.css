@@ -8705,11 +8705,17 @@ li.resource {
   background-position: calc(-25px * 12) calc(-25px * 1) !important;
   border: solid 1px #da961a;
 }
-.choice-customMission-icon.customMission-keep-speed {
-  background-position: calc(-25px * 9) calc(-25px * 0) !important;
+.choice-customMission-icon.customMission-keep-speed svg {
+  position: relative;
+  left: 3.5px;
+  top: 2.5px;
+  /*bottom: unset;*/
+}
+.choice-customMission-icon.customMission-keep-speed svg > path {
+  fill: #8b9ca7;
+  transform: scale(0.75);
 }
 .choice-customMission-icon.customMission-keep-speed.highlight {
-  background-position: calc(-25px * 9) calc(-25px * 1) !important;
   border: solid 1px #da961a;
 }
 
