@@ -1413,27 +1413,6 @@ input[type="file"] {
   width: 200px !important;
 }
 
-#links .leftmenu li {
-  height: 25px;
-  max-height: 25px;
-}
-
-#links .leftmenu :has(.ipiHintActive) {
-  animation: ipiHintActiveExpand 0.2s ease-in forwards !important;
-}
-
-@keyframes ipiHintActiveExpand {
-  0% {
-    height: 25px;
-    max-height: 25px;
-  }
-
-  100% {
-    height: 29px;
-    max-height: 29px;
-  }
-}
-
 .menu_icon .menuImage {
   transform: scale(0.9);
 }
@@ -7242,7 +7221,7 @@ hr {
   to {
     visibility: visible;
     opacity: 1;
-    font-size: 20px;
+    font-size: 15px;
     margin-left: 5px;
   }
 }
