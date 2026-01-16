@@ -1420,10 +1420,6 @@ input[type="file"] {
   width: 200px !important;
 }
 
-#links .leftmenu li {
-  height: 25px !important;
-}
-
 .menu_icon .menuImage {
   transform: scale(0.9);
 }
@@ -7205,7 +7201,7 @@ hr {
   to {
     visibility: visible;
     opacity: 1;
-    font-size: 20px;
+    font-size: 15px;
     margin-left: 5px;
   }
 }
