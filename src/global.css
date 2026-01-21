@@ -1,3 +1,10 @@
+@supports (-moz-appearance: none) {
+  /* Firefox specific styles */
+  html {
+    overflow-x: scroll;
+  }
+}
+
 /* fallback */
 @font-face {
   font-family: "Material Icons";
@@ -1413,24 +1420,12 @@ input[type="file"] {
   width: 200px !important;
 }
 
-#links .leftmenu li {
-  height: 25px !important;
-}
-
 .menu_icon .menuImage {
   transform: scale(0.9);
 }
 
 #links .leftmenu li span {
   font-size: 10px;
-}
-
-#commandercomponent {
-  opacity: 0.5;
-}
-
-#commandercomponent:hover {
-  opacity: 1;
 }
 
 .ogl-warning-dialog a.detail_button {
@@ -2433,6 +2428,14 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
 }
 
 /* endregion: Expeditions Messages */
+
+.msg:has(div[data-raw-messagetype="29"]) {
+  border-left: 7px solid #22303a !important;
+}
+
+.msg:has(div[data-raw-messagetype="29"]):has(.loot-row) {
+  border-left: 7px solid #c08931 !important;
+}
 
 .ogk-grid-discovery {
   display: grid;
@@ -3799,6 +3802,27 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
   visibility: hidden;
   animation: appearing-planetdata 0.8s forwards;
 }
+
+#overviewcomponent #detailWrapper > #planetOptions {
+  animation: appearing-planetdata 0.8s forwards;
+  padding: 3px 5px 0px 5px !important;
+  margin-top: 3px !important;
+  margin-right: 5px !important;
+  background: rgba(20, 30, 38, 0.6);
+  border-radius: 7px 0px 0px 7px;
+  float: right;
+  width: 390px;
+}
+
+#overviewcomponent #detailWrapper > #planetOptions a:link,
+#overviewcomponent #detailWrapper > #planetOptions a:visited,
+.no-touch #overviewcomponent #detailWrapper > #planetOptions a:hover,
+#overviewcomponent #detailWrapper > #planetOptions a:active {
+  color: #fff;
+  cursor: pointer;
+  text-decoration: none;
+}
+
 @keyframes appearing-planetdata {
   from {
     visibility: visible;
@@ -3833,28 +3857,6 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
   clear: right;
 }
 
-#overviewcomponent #planet[buffBar-active="true"] #buffBar {
-  position: absolute;
-  visibility: hidden;
-  animation: appearing-buffBar 0.8s forwards;
-}
-@keyframes appearing-buffBar {
-  from {
-    visibility: visible;
-    bottom: -36px;
-    opacity: 0;
-  }
-  to {
-    visibility: visible;
-    bottom: 4px;
-    opacity: 1;
-  }
-}
-
-#overviewcomponent #planet #buffBar {
-  visibility: hidden;
-}
-
 #overviewcomponent #planet #spaceObjectHeaderActionIcon {
   width: 36px;
   height: 28px;
@@ -3865,32 +3867,6 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
   filter: brightness(0) saturate(100%) invert(17%) sepia(7%) saturate(497%) hue-rotate(161deg) brightness(94%)
     contrast(84%);
   display: block;
-}
-#overviewcomponent #planet #toggleBuffBar {
-  cursor: pointer;
-  position: absolute;
-  left: 4px;
-  bottom: 4px;
-  width: 36px;
-  height: 28px;
-  background-image: url("https://gf1.geo.gfsrv.net/cdnce/54d37c899703757907c1160db0b1b9.png");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 25px 25px;
-  filter: brightness(0) saturate(100%) invert(17%) sepia(7%) saturate(497%) hue-rotate(161deg) brightness(94%)
-    contrast(84%);
-  display: block;
-}
-
-#overviewcomponent #planet[buffBar-active="true"] #toggleBuffBar {
-  filter: brightness(0) saturate(100%) invert(63%) sepia(11%) saturate(483%) hue-rotate(160deg) brightness(91%)
-    contrast(91%);
-}
-
-#overviewcomponent #planet[buffBar-active="true"] #toggleBuffBar:hover,
-#overviewcomponent #planet[buffBar-active="false"] #toggleBuffBar:hover {
-  filter: brightness(0) saturate(100%) invert(77%) sepia(23%) saturate(1188%) hue-rotate(338deg) brightness(86%)
-    contrast(92%);
 }
 
 .ogl-option {
@@ -7228,6 +7204,27 @@ hr {
   }
 }
 
+.smoothSpanReminder {
+  vertical-align: middle;
+  position: relative;
+  bottom: -2.5px;
+  animation: smoothSpanReminder 0.3s forwards;
+}
+@keyframes smoothSpanReminder {
+  from {
+    visibility: visible;
+    opacity: 0;
+    font-size: 0px;
+    margin-left: 0px;
+  }
+  to {
+    visibility: visible;
+    opacity: 1;
+    font-size: 15px;
+    margin-left: 5px;
+  }
+}
+
 .ogl-dialogContent .ogl-stalkPlanets {
   grid-template-columns: repeat(4, 1fr) !important;
   align-content: start;
@@ -8531,7 +8528,7 @@ li.resource {
 #planetdata {
   margin-top: 7px !important;
   margin-right: 5px !important;
-  height: 220px !important;
+  height: 193px !important;
   width: 400px !important;
 }
 
@@ -8629,6 +8626,10 @@ li.resource {
   margin-bottom: 1px;
   background-size: calc(14px * 11) !important;
   display: inline-block;
+}
+
+.ogl-mission-icon.ogl-mission-15.ogi-expedition-fleet.ogl-inactive {
+  background-position: 0 calc(-14px * 2) !important;
 }
 
 .ogl-mission-icon.ogl-mission-15.ogi-expedition-fleet.ogl-active,

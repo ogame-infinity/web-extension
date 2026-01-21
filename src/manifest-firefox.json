@@ -3,7 +3,7 @@
   "name": "Ogame Infinity",
   "version": "0.0.0",
   "description": "OGI - To Ogame's infinity and beyond!",
-    "browser_specific_settings": {
+  "browser_specific_settings": {
     "gecko": {
       "id": "{082ec2d7-1c60-4c98-808e-bafd9c33d5ea}",
       "strict_min_version": "120.0"
@@ -23,6 +23,14 @@
   "content_scripts": [
     {
       "css": ["global.css"],
+      "exclude_matches": [
+        "https://*.ogame.gameforge.com/game/admin2/*",
+        "https://*.ogame.gameforge.com/game/index.php?page=standalone&component=empire"
+      ],
+      "matches": ["https://*.ogame.gameforge.com/game/*"],
+      "run_at": "document_start"
+    },
+    {
       "exclude_matches": ["https://*.ogame.gameforge.com/game/admin2/*"],
       "js": ["main.js"],
       "matches": ["https://*.ogame.gameforge.com/game/*"],

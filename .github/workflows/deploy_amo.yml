@@ -1,0 +1,48 @@
+name: Deploy to AMO
+
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  # ask for a version number when triggering as a \d.\d.\d[.\d] format
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version number for this release
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install web-ext
+        run: npm install --global web-ext
+
+      # use our packaging script to create the zips
+      - name: Packaging
+        run: ./packaging.sh ${{ github.event.inputs.version }}
+
+      # unzip the firefox build and sign it
+      - name: Unzip Firefox build
+        run: |
+          rm -rf dist/firefox-src
+          mkdir dist/firefox-src
+          unzip dist/ogi-firefox.zip -d dist/firefox-src
+
+      # now sign the firefox add-on and upload
+      - name: Sign Firefox Add-on
+        run: |
+          web-ext sign \
+            --source-dir dist/firefox-src \
+            --artifacts-dir dist \
+            --channel listed \
+            --api-key ${{ secrets.AMO_JWT_ISSUER }} \
+            --api-secret ${{ secrets.AMO_JWT_SECRET }}
