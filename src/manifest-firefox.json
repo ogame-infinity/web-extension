@@ -1,12 +1,24 @@
 {
-  "action": {
-    "default_icon": {
-      "32": "assets/images/logo128.png"
-    },
-    "default_title": "Ogame Infinity"
+  "manifest_version": 3,
+  "name": "Ogame Infinity",
+  "version": "0.0.0",
+  "description": "OGI - To Ogame's infinity and beyond!",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{082ec2d7-1c60-4c98-808e-bafd9c33d5ea}",
+      "strict_min_version": "120.0"
+    }
   },
+  "icons": {
+    "512": "assets/images/logo512.png",
+    "256": "assets/images/logo512.png",
+    "128": "assets/images/logo128.png",
+    "32": "assets/images/logo128.png"
+  },
+  "host_permissions": ["https://*.ogame.gameforge.com/game/*"],
+  "permissions": ["storage"],
   "background": {
-    "service_worker": "background.js"
+    "scripts": ["background.js"]
   },
   "content_scripts": [
     {
@@ -25,22 +37,14 @@
       "run_at": "document_start"
     }
   ],
-  "description": "OGI - To Ogame's infinity and beyond!",
-  "host_permissions": ["https://*.ogame.gameforge.com/game/*"],
-  "icons": {
-    "512": "assets/images/logo512.png",
-    "256": "assets/images/logo512.png",
-    "128": "assets/images/logo128.png",
-    "32": "assets/images/logo128.png"
+  "action": {
+    "default_icon": {
+      "32": "assets/images/logo128.png"
+    },
+    "default_title": "Ogame Infinity"
   },
-  "manifest_version": 3,
-  "name": "Ogame Infinity",
-  "permissions": ["storage"],
-  "update_url": "https://clients2.google.com/service/update2/crx",
-  "version": "0.0.0",
   "web_accessible_resources": [
     {
-      "extension_ids": ["hfojakphgokgpbnejoobfamojbgolcbo"],
       "matches": ["<all_urls>"],
       "resources": ["ogkush.js", "main.js", "libs/*", "assets/*", "util/*", "ctxpage/*", "ctxcontent/*"]
     }

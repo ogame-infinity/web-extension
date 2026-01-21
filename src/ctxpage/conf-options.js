@@ -47,6 +47,7 @@ const _options = {
   foreignMission: 3,
   harvestMission: 4,
   alertHostileIncomingMode: 0,
+  importExportReminderMode: 2,
   activitytimers: false,
   lessAggressiveEmpireAutomaticUpdate: false,
   navigationArrows: true,

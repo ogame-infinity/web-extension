@@ -2217,6 +2217,38 @@ const translation = Object.freeze({
       tr: "Simge",
       br: "Ícones",
     },
+    222: {
+      de: "Import/Export Erinnerung",
+      en: "Import/Export reminder",
+      es: "Recordatorio de importación/exportación",
+      fr: "Rappel d'import/export",
+      tr: "İthalat/İhracat Hatırlatıcısı",
+      br: "Lembrete de Importação/Exportação",
+    },
+    223: {
+      de: "Diskret",
+      en: "Discreet",
+      es: "Discreto",
+      fr: "Discret",
+      tr: "Gizli",
+      br: "Discreto",
+    },
+    224: {
+      de: "Hervorheben",
+      en: "Highlight",
+      es: "Destacado",
+      fr: "Mise en évidence",
+      tr: "Vurgula",
+      br: "Destaque",
+    },
+    225: {
+      de: undefined,
+      en: undefined,
+      es: undefined,
+      fr: undefined,
+      tr: undefined,
+      br: undefined,
+    },
   },
 });
 
