@@ -83,10 +83,19 @@ class BackgroundNotificationData {
 class BackgroundNotifier {
   constructor(notificationData) {
     this.notificationData = notificationData;
+    this.displayedNotificationIds = new Set(); // Track displayed notifications in memory
   }
 
   #raiseNotification(notification) {
-    if (notification.notified) return; //avoid raising twice the same notification
+    if (notification.notified) {
+      console.log(`Notification ${notification.id} already marked as notified, skipping display.`);
+      return;
+    }
+
+    if (this.displayedNotificationIds.has(notification.id)) {
+      console.log(`Notification ${notification.id} already displayed in this session, skipping.`);
+      return;
+    }
 
     try {
       chrome.notifications.create(notification.id, {
@@ -96,6 +105,7 @@ class BackgroundNotifier {
         title: notification.title,
         message: notification.message,
       });
+      this.displayedNotificationIds.add(notification.id);
       console.log(`Raised notification ${notification.id}:`, notification);
     } catch (error) {
       console.error("Error while creating notification:", error);
@@ -153,17 +163,8 @@ class BackgroundNotifier {
   }
 
   #createAlarm(id, when, ensureMinDelay) {
-    /*
-     * The browser doesn't execute tasks with millisecond-level precision.
-     * It manages an event scheduling cycle to optimize performance and battery consumption.
-     * If you create an alarm for a time that's too short (e.g., 10 seconds from now), the browser might not process the scheduling request until after that time has already passed.
-     * At that point, the alarm is considered expired and is simply never triggered.
-     * This is why the documentation recommends a minimum delay of one minute to ensure the alarm has enough time to be properly registered and processed by the scheduling system.
-     */
-    const minRequiredDelayInMs = 60 * 1000; // ensure minimum delay of 1 minute
-    const alarmDate = ensureMinDelay
-      ? Math.max(new Date(when).getTime(), Date.now() + minRequiredDelayInMs)
-      : new Date(when).getTime();
+    // Schedule alarm at the requested time (no enforced minimum delay)
+    const alarmDate = new Date(when).getTime();
 
     chrome.alarms.create(id, { when: alarmDate });
     console.log(`Scheduled alarm  ${id} at ${when}`);
@@ -251,34 +252,42 @@ class BackgroundNotifier {
 
   async SyncNotifications(domain, notifications) {
     const notificationsToCancel = [];
-    const perfectlySynced = [];
 
     const registerForCancellation = (id, notification) => {
       if (!notificationsToCancel.find((x) => x[0] === id)) notificationsToCancel.push([id, notification]);
     };
 
-    //remove background notifications that are not into notifications
+    // Remove background notifications that are no longer in the incoming list
     for (const [backgroundNotificationId, backgroundNotification] of Object.entries(
       this.notificationData.notifications
-    ).filter(
-      (x) => x[1].domain === domain //⚠️ Filter by domain
-    )) {
-      //if notification is not found, we must cancel it
+    ).filter((x) => x[1].domain === domain)) {
       const notification = notifications.find((x) => x.domain === domain && x.id === backgroundNotificationId);
       if (!notification) {
         registerForCancellation(backgroundNotificationId, backgroundNotification);
       }
     }
 
-    // proceed removal
+    // Proceed with removal
     for (const [id, notification] of notificationsToCancel) {
       delete this.notificationData.notifications[notification.id];
-      this.#cancelAlarmAsync(notification.id);
+      this.displayedNotificationIds.delete(notification.id); // Clear from session memory too
+      await this.#cancelAlarmAsync(notification.id);
     }
-    await this.notificationData.SaveAsync();
 
-    //proceed updates
+    // Process incoming notifications
     for (const notification of notifications) {
+      // Skip notifications already marked as notified - remove them completely
+      if (notification.notified) {
+        if (this.notificationData.notifications[notification.id]) {
+          delete this.notificationData.notifications[notification.id];
+          this.displayedNotificationIds.delete(notification.id);
+          console.log(`Removed already-notified notification ${notification.id} from storage during sync`);
+        }
+        await this.#cancelAlarmAsync(notification.id);
+        continue;
+      }
+
+      // For non-notified notifications: schedule them (create/update as needed)
       await this.#createOrUpdateNotificationAsync({
         id: notification.id,
         domain: domain,
@@ -296,7 +305,7 @@ class BackgroundNotifier {
 
     const syncResult = {
       SyncDate: this.notificationData.getLastSynced(domain),
-      Saved: notifications.map((x) => this.notificationData.notifications[x.id]),
+      Saved: notifications.filter((x) => !x.notified).map((x) => this.notificationData.notifications[x.id]),
       Canceled: notificationsToCancel.map((x) => x[1]),
     };
     console.log(
@@ -308,7 +317,27 @@ class BackgroundNotifier {
   }
 
   async RaiseNotificationAsync(notification) {
-    this.#raiseNotification(notification);
+    try {
+      // Immediate notification: display now if not already displayed
+      if (this.displayedNotificationIds.has(notification.id)) {
+        console.log(`Notification ${notification.id} already displayed, skipping.`);
+        return;
+      }
+
+      this.#raiseNotification(notification);
+
+      // Mark as notified and persist to prevent future displays
+      notification.notified = true;
+      this.notificationData.notifications[notification.id] = notification;
+      await this.notificationData.SaveAsync();
+
+      // Cancel any pending alarm for this ID
+      await this.#cancelAlarmAsync(notification.id);
+
+      console.log(`Notification ${notification.id} marked as notified and saved.`);
+    } catch (error) {
+      console.error("Error in RaiseNotificationAsync:", error);
+    }
   }
   async ScheduleNotificationAsync(notification) {
     await this.#createOrUpdateNotificationAsync(notification);
@@ -320,12 +349,30 @@ class BackgroundNotifier {
   async NotifyScheduledAsync(notificationId) {
     if (!notificationId) return;
 
+    // Prevent duplicate display via alarm if already displayed
+    if (this.displayedNotificationIds.has(notificationId)) {
+      console.log(`Scheduled notification ${notificationId} already displayed, skipping.`);
+      const notification = this.notificationData.notifications[notificationId];
+      if (notification) {
+        notification.notified = true;
+        this.notificationData.notifications[notificationId] = notification;
+        await this.notificationData.SaveAsync();
+      }
+      return;
+    }
+
     const notification = this.notificationData.notifications[notificationId];
     if (notification) {
+      if (notification.notified) {
+        console.log(`Scheduled notification ${notificationId} already marked as notified, skipping display.`);
+        return;
+      }
+
       this.#raiseNotification(notification);
       notification.notified = true;
       this.notificationData.notifications[notificationId] = notification;
       await this.notificationData.SaveAsync();
+      console.log(`Scheduled notification ${notificationId} displayed and marked as notified.`);
     }
   }
 
