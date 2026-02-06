@@ -13958,6 +13958,9 @@ class OGInfinity {
               }
 
               dataHelper.getPlayer(highscorePlayerId).then((p) => {
+                // if player not found
+                if (p.name == undefined) return;
+
                 let statusClass = this.getPlayerStatus(p.status);
                 if (playerDiv.getAttribute("class").includes("status_abbr_honorableTarget")) {
                   statusClass = "status_abbr_honorableTarget";
