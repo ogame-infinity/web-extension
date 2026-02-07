@@ -19,7 +19,7 @@
     "32": "assets/images/logo128.png"
   },
   "host_permissions": ["https://*.ogame.gameforge.com/game/*"],
-  "permissions": ["storage"],
+  "permissions": ["storage", "alarms", "notifications"],
   "background": {
     "scripts": ["background.js"]
   },

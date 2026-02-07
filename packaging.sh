@@ -1,10 +1,8 @@
 #!/bin/bash
 #set -x     #- for debug
-
 npm i -D
 rm -R ./dist
 mkdir ./dist
-
 VERSION="${1:-`date +%-m.%-d.%-H.%-M`}"
 echo "Build version $VERSION"
 
@@ -29,15 +27,12 @@ function minified() {
   done
 }
 export -f minified
-
 function cleancss() {
   for v in "$@"; do
     npx cleancss "$v" -o "$v"
     echo "Minified: $v"
   done
 }
-
-
 DIST_MODULE="./dist/firefox"
 echo '------------------------------------------------------------'
 echo 'MODULE -- Firefox'
@@ -55,8 +50,6 @@ sed -i "s/chrome/moz/g" "${DIST_MODULE}/${CSS_BUNDLE_FILE}"
   zip -qr -X "../ogi-firefox.zip" .)
 echo "Packing zip for firefox complete!"
 rm -rf "${DIST_MODULE}"
-
-
 DIST_MODULE="./dist/chrome"
 echo '------------------------------------------------------------'
 echo 'MODULE -- Edge, Chrome and Chromium'
@@ -78,7 +71,6 @@ REMOVE_MINIFYING
 (cd "${DIST_MODULE}" && \
   zip -qr -X "../ogi-chrome.zip" .)
 echo "Packing zip for chrome complete!"
-
 sed -i '31d' "${DIST_MODULE}/${MANIFEST_FILE_NAME}" ##- What is this line for?
 (cd "${DIST_MODULE}" && \
   zip -qr -X "../ogi-edge.zip" .)
