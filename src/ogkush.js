@@ -31,6 +31,7 @@ import * as loadingUtil from "./util/loading.js";
 import * as standardUnit from "./util/standardUnit.js";
 import planetType from "./util/enum/planetType.js";
 import shipEnum from "./util/enum/ship.js";
+import ogiMode from "./util/enum/ogiMode.js";
 import * as iconVisibility from "./util/iconVisibility.js";
 import OverviewPage from "./ctxpage/overview/OverviewPage.js";
 import TraderImportExportPage from "./ctxpage/traderOverview/TraderImportExportPage.js";
@@ -1385,17 +1386,7 @@ class OGInfinity {
       this.playerClass = PLAYER_CLASS_NONE;
     }
 
-    this.mode = this.rawURL.searchParams.get("oglMode") || 0;
-    // TODO: implement more features
-    /*
-     0: default
-     1: harvest (click on planet/moon picture)
-     2: lock (click enabled lock on planet list)
-     3: autoharvest (not in use, remanent code, we have collect() instead, to be reworked to autoharvest to moons?)
-     4: raid (click ship amount in spylist)
-     5: ? (seems some harvest mode, not in use, remanent traces of code, use for autoraid? (to be implemented))
-     6: autoexpedition (click expedition button/keyE or expedition button in galaxy)
-     */
+    this.mode = this.rawURL.searchParams.get("oglMode") || ogiMode.DEFAULT;
     this.planetList = document.querySelectorAll(".smallplanet");
     document.querySelectorAll(".planet-koords").forEach((elem) => (elem.textContent = elem.textContent.slice(1, -1)));
 
@@ -1662,6 +1653,7 @@ class OGInfinity {
     this.harvest();
     this.expedition();
     this.collect();
+    this.customMissions();
     this.messagesAnalyzer();
     this.cleanupMessages();
     this.quickPlanetList();
@@ -1772,7 +1764,7 @@ class OGInfinity {
     if (
       force ||
       isNaN(new Date(this.json.lastEmpireUpdate)) ||
-      (this.mode == 0 &&
+      (this.mode == ogiMode.DEFAULT &&
         ((timeSinceLastUpdate > 5 * 60 * 1e3 && this.json.needsUpdate) ||
           (timeSinceLastUpdate > 1 * 60 * 1e3 && !this.json.options.lessAggressiveEmpireAutomaticUpdate)))
     ) {
@@ -2739,6 +2731,28 @@ class OGInfinity {
         if (data.success === true) {
           fadeBox(data.message, false);
           let href = callback();
+
+          OGIData.lastSentFleet = {
+            date: new Date().toISOString(),
+            cargoCapacity: fleetDispatcher.cargoCapacity,
+            cargoMetal: fleetDispatcher.cargoMetal,
+            cargoCrystal: fleetDispatcher.cargoCrystal,
+            cargoDeuterium: fleetDispatcher.cargoDeuterium,
+            fleetCount: fleetDispatcher.fleetCount,
+            hasAdmiral: fleetDispatcher.hasAdmiral,
+            hasCommander: fleetDispatcher.hasCommander,
+            mission: fleetDispatcher.mission,
+            speedPercent: fleetDispatcher.speedPercent,
+            targetIsBuddyOrAllyMember: fleetDispatcher.targetIsBuddyOrAllyMember,
+            targetIsOutlaw: fleetDispatcher.targetIsOutlaw,
+            targetIsStrong: fleetDispatcher.targetIsStrong,
+            currentPlanet: fleetDispatcher.currentPlanet,
+            targetPlanet: fleetDispatcher.targetPlanet,
+            targetPlayerId: fleetDispatcher.targetPlayerId,
+            targetPlayerName: fleetDispatcher.targetPlayerName,
+            useHalfSteps: fleetDispatcher.useHalfSteps,
+          };
+
           setTimeout(function () {
             $("#sendFleet").removeAttr("disabled");
             window.location = href || data.redirectUrl;
@@ -2766,52 +2780,76 @@ class OGInfinity {
 
   keepOnPlanetDialog(coords, btn) {
     let kept;
+    let defaultKeptMoon;
     if (coords) {
       kept = this.json.options.kept[coords];
+    } else {
+      defaultKeptMoon = this.json.options.defaultKeptMoon;
     }
     if (!kept) kept = this.json.options.defaultKept;
+    if (!defaultKeptMoon) defaultKeptMoon = this.json.options.defaultKept; //initialize with defaultKept values if not set
     let container = createDOM("div");
     if (coords) {
       container.appendChild(
         createDOM(
           "h1",
           { style: "text-align: center; font-weight: 800" },
-          this.current.coords + (this.current.isMoon ? " (Moon)" : " (Planet)")
+          this.current.coords +
+            (this.current.isMoon ? ` (${this.getTranslatedText(194)})` : ` (${this.getTranslatedText(42)})`)
         )
       );
       container.appendChild(createDOM("hr"));
     }
     let box = createDOM("div", { class: "ogk-keep-dialog" });
     box.appendChild(createDOM("h1", {}, this.getTranslatedText(28)));
-    let prod = box.appendChild(createDOM("div", { class: "ogk-adjust-grid" }));
-    prod.appendChild(createDOM("span").appendChild(createDOM("a", { class: "resourceIcon metal" })).parentElement);
-    let metInput = prod.appendChild(
+    let boxResources = box.appendChild(
+      createDOM("div", { class: `ogk-keep-dialog-resources${coords ? " ogk-keep-dialog-resources-coord" : ""}` })
+    );
+    let prodPlanet;
+    if (!coords) {
+      prodPlanet = boxResources.appendChild(createDOM("div"));
+      prodPlanet.appendChild(createDOM("h1", {}, this.getTranslatedText(42)));
+
+      prodPlanet = prodPlanet.appendChild(createDOM("div", { class: "ogk-adjust-grid" }));
+    } else {
+      prodPlanet = boxResources.appendChild(createDOM("div", { class: "ogk-adjust-grid" }));
+    }
+    prodPlanet.appendChild(
+      createDOM("span").appendChild(createDOM("a", { class: "resourceIcon metal" })).parentElement
+    );
+    let metInputPlanet = prodPlanet.appendChild(
       createDOM("input", {
         class: "ogl-formatInput metal",
         type: "text",
         value: toFormatedNumber(kept[0]) || toFormatedNumber(0),
       })
     );
-    prod.appendChild(createDOM("span").appendChild(createDOM("a", { class: "resourceIcon crystal" })).parentElement);
-    let criInput = prod.appendChild(
+    prodPlanet.appendChild(
+      createDOM("span").appendChild(createDOM("a", { class: "resourceIcon crystal" })).parentElement
+    );
+    let criInputPlanet = prodPlanet.appendChild(
       createDOM("input", {
         class: "ogl-formatInput crystal",
         type: "text",
         value: toFormatedNumber(kept[1]) || toFormatedNumber(0),
       })
     );
-    prod.appendChild(createDOM("span").appendChild(createDOM("a", { class: "resourceIcon deuterium" })).parentElement);
-    let deutInput = prod.appendChild(
+    prodPlanet.appendChild(
+      createDOM("span").appendChild(createDOM("a", { class: "resourceIcon deuterium" })).parentElement
+    );
+    let deutInputPlanet = prodPlanet.appendChild(
       createDOM("input", {
         class: "ogl-formatInput deuterium",
         type: "text",
         value: toFormatedNumber(kept[2]) || toFormatedNumber(0),
       })
     );
-    let foodInput;
+    let foodInputPlanet;
     if (this.hasLifeforms) {
-      prod.appendChild(createDOM("span").appendChild(createDOM("a", { class: "resourceIcon food" })).parentElement);
-      foodInput = prod.appendChild(
+      prodPlanet.appendChild(
+        createDOM("span").appendChild(createDOM("a", { class: "resourceIcon food" })).parentElement
+      );
+      foodInputPlanet = prodPlanet.appendChild(
         createDOM("input", {
           class: "ogl-formatInput food",
           type: "text",
@@ -2819,13 +2857,76 @@ class OGInfinity {
         })
       );
     }
+    // Moon resources
+    let metInputMoon;
+    let criInputMoon;
+    let deutInputMoon;
+    let foodInputMoon;
+    if (!coords) {
+      boxResources.appendChild(createDOM("div", { class: "ogk-keep-dialog-separator" }));
+      let prodMoon = boxResources.appendChild(createDOM("div"));
+      prodMoon.appendChild(createDOM("h1", {}, this.getTranslatedText(194)));
+      prodMoon = prodMoon.appendChild(createDOM("div", { class: "ogk-adjust-grid" }));
+      prodMoon.appendChild(
+        createDOM("span").appendChild(createDOM("a", { class: "resourceIcon metal" })).parentElement
+      );
+      metInputMoon = prodMoon.appendChild(
+        createDOM("input", {
+          class: "ogl-formatInput metal",
+          type: "text",
+          value: toFormatedNumber(defaultKeptMoon[0]) || toFormatedNumber(0),
+        })
+      );
+      prodMoon.appendChild(
+        createDOM("span").appendChild(createDOM("a", { class: "resourceIcon crystal" })).parentElement
+      );
+      criInputMoon = prodMoon.appendChild(
+        createDOM("input", {
+          class: "ogl-formatInput crystal",
+          type: "text",
+          value: toFormatedNumber(defaultKeptMoon[1]) || toFormatedNumber(0),
+        })
+      );
+      prodMoon.appendChild(
+        createDOM("span").appendChild(createDOM("a", { class: "resourceIcon deuterium" })).parentElement
+      );
+      deutInputMoon = prodMoon.appendChild(
+        createDOM("input", {
+          class: "ogl-formatInput deuterium",
+          type: "text",
+          value: toFormatedNumber(defaultKeptMoon[2]) || toFormatedNumber(0),
+        })
+      );
+
+      if (this.hasLifeforms) {
+        prodMoon.appendChild(
+          createDOM("span").appendChild(createDOM("a", { class: "resourceIcon food" })).parentElement
+        );
+        foodInputMoon = prodMoon.appendChild(
+          createDOM("input", {
+            class: "ogl-formatInput food",
+            type: "text",
+            value: toFormatedNumber(defaultKeptMoon[3]) || toFormatedNumber(0),
+          })
+        );
+      }
+    }
+
     box.appendChild(createDOM("hr"));
     box.appendChild(createDOM("h1", {}, this.getTranslatedText(29)));
-    let fleet = box.appendChild(createDOM("div", { class: "ogk-bhole-grid" }));
+
+    let boxFleet = box.appendChild(
+      createDOM("div", { class: `ogk-keep-dialog-fleet${coords ? " ogk-keep-dialog-fleet-coord" : ""}` })
+    );
+    let fleetPlanet = boxFleet.appendChild(createDOM("div"));
+    if (!coords) fleetPlanet.appendChild(createDOM("h1", {}, this.getTranslatedText(42)));
+    fleetPlanet = fleetPlanet.appendChild(createDOM("div", { class: "ogk-bhole-grid" }));
     let inputs = [];
-    [202, 203, 210, 208, 209, 204, 205, 206, 219, 207, 215, 211, 213, 218, 214].forEach((id) => {
-      fleet.appendChild(createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-fleet-" + id }));
-      let input = fleet.appendChild(
+    let inputsMoon = [];
+    const shipIds = [202, 203, 210, 208, 209, 204, 205, 206, 219, 207, 215, 211, 213, 218, 214];
+    shipIds.forEach((id) => {
+      fleetPlanet.appendChild(createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-fleet-" + id }));
+      let input = fleetPlanet.appendChild(
         createDOM("input", {
           class: "ogl-formatInput",
           type: "text",
@@ -2835,11 +2936,32 @@ class OGInfinity {
       );
       inputs.push(input);
     });
+    if (!coords) {
+      boxFleet.appendChild(createDOM("div", { class: "ogk-keep-dialog-separator" }));
+      let fleetMoon = boxFleet.appendChild(createDOM("div"));
+      fleetMoon.appendChild(createDOM("h1", {}, this.getTranslatedText(194)));
+      fleetMoon = fleetMoon.appendChild(createDOM("div", { class: "ogk-bhole-grid" }));
+
+      shipIds.forEach((id) => {
+        fleetMoon.appendChild(createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-fleet-" + id }));
+        inputsMoon.push(
+          fleetMoon.appendChild(
+            createDOM("input", {
+              class: "ogl-formatInput",
+              type: "text",
+              data: id,
+              value: toFormatedNumber(defaultKeptMoon[id]) || toFormatedNumber(0),
+            })
+          )
+        );
+      });
+    }
     if (!btn) {
       btn = box.appendChild(createDOM("button", { class: "btn_blue" }, this.getTranslatedText(27)));
     }
     btn.addEventListener("click", () => {
       kept = {};
+      defaultKeptMoon = {};
       inputs.forEach((input) => {
         let id = Number(input.getAttribute("data"));
         let amount = fromFormatedNumber(input.value, true);
@@ -2847,14 +2969,28 @@ class OGInfinity {
           kept[id] = amount;
         }
       });
-      kept[0] = fromFormatedNumber(metInput.value, true);
-      kept[1] = fromFormatedNumber(criInput.value, true);
-      kept[2] = fromFormatedNumber(deutInput.value, true);
-      if (this.hasLifeforms) kept[3] = fromFormatedNumber(foodInput.value, true);
+      if (!coords) {
+        inputsMoon.forEach((input) => {
+          let id = Number(input.getAttribute("data"));
+          let amount = fromFormatedNumber(input.value, true);
+          if (amount > 0) {
+            defaultKeptMoon[id] = amount;
+          }
+        });
+        defaultKeptMoon[0] = fromFormatedNumber(metInputMoon.value, true);
+        defaultKeptMoon[1] = fromFormatedNumber(criInputMoon.value, true);
+        defaultKeptMoon[2] = fromFormatedNumber(deutInputMoon.value, true);
+        if (this.hasLifeforms) defaultKeptMoon[3] = fromFormatedNumber(foodInputMoon.value, true);
+      }
+      kept[0] = fromFormatedNumber(metInputPlanet.value, true);
+      kept[1] = fromFormatedNumber(criInputPlanet.value, true);
+      kept[2] = fromFormatedNumber(deutInputPlanet.value, true);
+      if (this.hasLifeforms) kept[3] = fromFormatedNumber(foodInputPlanet.value, true);
       if (coords) {
         this.json.options.kept[coords] = kept;
       } else {
         this.json.options.defaultKept = kept;
+        this.json.options.defaultKeptMoon = defaultKeptMoon;
       }
       this.json.needSync = true;
       this.saveData();
@@ -3052,18 +3188,8 @@ class OGInfinity {
         return this.onFleetSentRedirectUrl;
       });
       $(".send_all").before(createDOM("span", { class: "select-most" }));
-      $(".allornonewrap .select-most").on("click", () => {
-        fleetDispatcher.shipsOnPlanet.forEach((ship) => {
-          let kept =
-            this.json.options.kept[this.current.coords + (this.current.isMoon ? "M" : "P")] ||
-            this.json.options.defaultKept;
-          this.selectShips(ship.id, Math.max(0, ship.number - (kept[ship.id] || 0)));
-        });
-        let elem =
-          document.querySelector(".ogl-planet-icon.ogl-active") ||
-          document.querySelector(".ogl-moon-icon.ogl-active") ||
-          document.querySelector(".ogl-debris-icon.ogl-active");
-        if (elem) elem.click();
+      $(".allornonewrap > .secondcol > span.select-most").on("click", () => {
+        this.selectMostShips();
       });
       let svgButtons = createDOM("div", { class: "ogl-dispatch-icons" });
       $("#civil").append(svgButtons);
@@ -4163,7 +4289,8 @@ class OGInfinity {
           $("#jumpgate .send_all").after(createDOM("span", { class: "select-most" }));
           $(".select-most").on("click", () => {
             let kept =
-              this.json.options.kept[this.current.coords + (this.current.isMoon ? "M" : "P")] ||
+              this.json.options.kept[this.current.coords + (this.current.isMoon ? "M" : "P")] ??
+              this.json.options.defaultKeptMoon ??
               this.json.options.defaultKept;
             document.querySelectorAll(".ship_input_row input").forEach((elem) => {
               let id = elem.getAttribute("name").replace("ship_", "");
@@ -9857,7 +9984,7 @@ class OGInfinity {
             return true;
           }
         }
-        if (index == 1 && (this.mode == 4 || this.json.options.foreignMission == 1)) {
+        if (index == 1 && (this.mode == ogiMode.RAID || this.json.options.foreignMission == 1)) {
           return true;
         }
         if (index == 4 && this.json.options.harvestMission == 4) {
@@ -10373,9 +10500,10 @@ class OGInfinity {
           }
         }
       };
-      let kept =
-        this.json.options.kept[this.current.coords + (this.current.isMoon ? "M" : "P")] ||
-        this.json.options.defaultKept;
+      const defaultKept = this.current.isMoon
+        ? this.json.options.defaultKeptMoon ?? this.json.options.defaultKept
+        : this.json.options.defaultKept;
+      let kept = this.json.options.kept[this.current.coords + (this.current.isMoon ? "M" : "P")] || defaultKept;
       $("#selectMostMetal").on("click", () => {
         let capacity = fleetDispatcher.getFreeCargoSpace();
         let cargo = Math.min(capacity, metalAvailable - (kept[0] || 0));
@@ -10759,12 +10887,12 @@ class OGInfinity {
         onResChange(2);
         e.target.focus();
       });
-      if (this.mode == 2 || this.mode == 1) {
-        if (this.mode == 1) {
+      if (this.mode == ogiMode.LOCK || this.mode == ogiMode.HARVEST) {
+        if (this.mode == ogiMode.HARVEST) {
           metalFiller.value = toFormatedNumber(metalAvailable, 0);
           crystalFiller.value = toFormatedNumber(crystalAvailable, 0);
           deutFiller.value = toFormatedNumber(deutAvailable, 0);
-        } else if (this.mode == 2) {
+        } else if (this.mode == ogiMode.LOCK) {
           const coords =
             fleetDispatcher.targetPlanet.galaxy +
             ":" +
@@ -10821,8 +10949,10 @@ class OGInfinity {
   }
 
   neededCargo() {
-    let kept =
-      this.json.options.kept[this.current.coords + (this.current.isMoon ? "M" : "P")] || this.json.options.defaultKept;
+    const defaultKept = this.current.isMoon
+      ? this.json.options.defaultKeptMoon ?? this.json.options.defaultKept
+      : this.json.options.defaultKept;
+    let kept = this.json.options.kept[this.current.coords + (this.current.isMoon ? "M" : "P")] || defaultKept;
     if (this.page == "fleetdispatch" && document.querySelector("#shipChosen")) {
       shipsOnPlanet.forEach((ship) => {
         if (ship.id == 202 || ship.id == 203) {
@@ -10931,7 +11061,7 @@ class OGInfinity {
   }
 
   autoHarvest() {
-    if (this.mode != 3 && this.mode != 5) return;
+    if (this.mode != ogiMode.AUTOHARVEST && this.mode != ogiMode.UNKNOWN_NB_5) return;
     this.planetList.forEach((planet) => {
       let targetCoords = planet.querySelector(".planet-koords").textContent.split(":");
       if (
@@ -10948,7 +11078,7 @@ class OGInfinity {
     });
     if (this.page == "fleetdispatch") {
       let nextElement = this.current.planet.nextElementSibling || document.querySelectorAll(".smallplanet")[0];
-      if (this.mode == 5) {
+      if (this.mode == ogiMode.UNKNOWN_NB_5) {
         this.json.autoHarvest = false;
       }
       if (
@@ -10958,7 +11088,7 @@ class OGInfinity {
       ) {
         nextElement = nextElement.nextElementSibling || document.querySelectorAll(".smallplanet")[0];
       }
-      if (this.current.isMoon && this.mode == 5 && !nextElement.querySelector(".moonlink")) {
+      if (this.current.isMoon && this.mode == ogiMode.UNKNOWN_NB_5 && !nextElement.querySelector(".moonlink")) {
         do {
           nextElement = nextElement.nextElementSibling || document.querySelectorAll(".smallplanet")[0];
         } while (!nextElement.querySelector(".moonlink"));
@@ -10967,15 +11097,18 @@ class OGInfinity {
       let type = 1;
       let mission = this.json.options.harvestMission;
       let id = nextElement.getAttribute("id").replace("planet-", "");
-      if ((this.current.isMoon && this.mode == 3) || (this.current.isMoon && this.mode == 5)) {
+      if (
+        (this.current.isMoon && this.mode == ogiMode.AUTOHARVEST) ||
+        (this.current.isMoon && this.mode == ogiMode.UNKNOWN_NB_5)
+      ) {
         if (nextElement.querySelector(".moonlink")) {
           id = new URL(nextElement.querySelector(".moonlink").href).searchParams.get("cp");
         }
       }
-      if (this.mode == 3) {
+      if (this.mode == ogiMode.AUTOHARVEST) {
         destination = this.json.autoHarvest[0].split(":");
         type = this.json.autoHarvest[1];
-      } else if (this.mode == 5) {
+      } else if (this.mode == ogiMode.UNKNOWN_NB_5) {
         destination = nextElement.querySelector(".planet-koords").textContent.split(":");
         if (!this.current.isMoon) type = 3;
       }
@@ -11377,7 +11510,7 @@ class OGInfinity {
       });
 
       if (
-        this.mode == 6 &&
+        this.mode == ogiMode.AUTOEXPEDITION &&
         fleetDispatcher.expeditionCount < fleetDispatcher.maxExpeditionCount &&
         fleetDispatcher.fleetCount < fleetDispatcher.maxFleetCount
       ) {
@@ -12971,7 +13104,7 @@ class OGInfinity {
   }
 
   spyTable() {
-    if (this.page == "fleetdispatch" && this.mode == 4) {
+    if (this.page == "fleetdispatch" && this.mode == ogiMode.RAID) {
       let link = "https://" + window.location.host + window.location.pathname + "?page=ingame&component=messages";
       document.querySelector("#sendFleet").addEventListener("click", () => {
         localStorage.setItem("ogl-redirect", link);
@@ -13001,6 +13134,36 @@ class OGInfinity {
     }
 
     highlight(coords);
+  }
+
+  selectMostShips(reclickSelectedTargetType = true) {
+    fleetDispatcher.shipsOnPlanet.forEach((ship) => {
+      const defaultKept = this.current.isMoon
+        ? this.json.options.defaultKeptMoon ?? this.json.options.defaultKept
+        : this.json.options.defaultKept;
+      let kept = this.json.options.kept[this.current.coords + (this.current.isMoon ? "M" : "P")] || defaultKept;
+      this.selectShips(ship.id, Math.max(0, ship.number - (kept[ship.id] || 0)));
+    });
+    if (reclickSelectedTargetType) {
+      const selectedTargetType =
+        document.querySelector(".ogl-planet-icon.ogl-active") ??
+        document.querySelector(".ogl-moon-icon.ogl-active") ??
+        document.querySelector(".ogl-debris-icon.ogl-active");
+      if (selectedTargetType) selectedTargetType.click();
+    }
+  }
+
+  selectAllShips(reclickSelectedTargetType = true) {
+    fleetDispatcher.shipsOnPlanet.forEach((ship) => {
+      this.selectShips(ship.id, ship.number);
+    });
+    if (reclickSelectedTargetType) {
+      const selectedTargetType =
+        document.querySelector(".ogl-planet-icon.ogl-active") ??
+        document.querySelector(".ogl-moon-icon.ogl-active") ??
+        document.querySelector(".ogl-debris-icon.ogl-active");
+      if (selectedTargetType) selectedTargetType.click();
+    }
   }
 
   selectShips(shipID, amount) {
@@ -13727,7 +13890,7 @@ class OGInfinity {
       }
     });
     let actionSkip = () => {
-      if (this.mode == 3 || this.mode == 5) {
+      if (this.mode == ogiMode.AUTOHARVEST || this.mode == ogiMode.UNKNOWN_NB_5) {
         window.location.href = this.keyboardActionSkip;
         return;
       }
@@ -13771,6 +13934,12 @@ class OGInfinity {
             }
           }
           if (document.activeElement.tagName != "INPUT" && !!document.querySelector("#continueToFleet2")) {
+            if (event.ctrlKey && ["1", "2", "3", "4", "5"].includes(event.key)) {
+              //prevent default action from browser
+              event.preventDefault();
+              const customMissionButton = document.querySelector(`.ogk-customMission.ogk-customMission-${event.key}`);
+              if (customMissionButton) customMissionButton.click();
+            }
             if (event.key.toUpperCase() == "E") {
               document.querySelector(".ogl-expedition").click();
               document.querySelector("#continueToFleet2").click();
@@ -14785,7 +14954,7 @@ class OGInfinity {
     let span = standardMissions.appendChild(
       createDOM(
         "span",
-        { style: "display: flex;justify-content: space-between; align-items: center;" },
+        { style: "display: flex;justify-content: space-between; align-items: center;", class: "ogl-w-300" },
         this.getTranslatedText(30)
       )
     );
@@ -14825,7 +14994,7 @@ class OGInfinity {
     span = standardMissions.appendChild(
       createDOM(
         "span",
-        { style: "display: flex;justify-content: space-between; align-items: center;" },
+        { style: "display: flex;justify-content: space-between; align-items: center;", class: "ogl-w-300" },
         this.getTranslatedText(31)
       )
     );
@@ -14861,7 +15030,7 @@ class OGInfinity {
     span = standardMissions.appendChild(
       createDOM(
         "span",
-        { style: "display: flex;justify-content: space-between; align-items: center;" },
+        { style: "display: flex;justify-content: space-between; align-items: center;", class: "ogl-w-300" },
         this.getTranslatedText(32)
       )
     );
@@ -14894,6 +15063,82 @@ class OGInfinity {
       expe6.classList.remove("ogl-active");
       this.json.options.expeditionMission = 0;
     });
+
+    settingDiv.appendChild(createDOM("hr"));
+    let customMissions = settingDiv.appendChild(createDOM("div"));
+    customMissions.appendChild(createDOM("h1", {}, this.getTranslatedText(195)));
+    let nbCustomMissionsDiv = customMissions.appendChild(createDOM("div", { class: "ogl-w-200" }));
+
+    nbCustomMissionsDiv.appendChild(
+      createDOM("span", { style: "justify-content: space-between; align-items: center;" }, this.getTranslatedText(196))
+    );
+
+    const nbCustomMissionsSelect = DOM.createDOM("select", { class: "ogl-selectInput ogl-w-50" });
+    for (let i = 0; i <= 5; i++) {
+      nbCustomMissionsSelect.append(DOM.createDOM("option", { value: i.toString() }, i.toString()));
+    }
+    nbCustomMissionsSelect.value = getOption("nbCustomMissions");
+    nbCustomMissionsDiv.appendChild(nbCustomMissionsSelect);
+
+    if (this.json.options.customMissions) {
+      let resetCustomMissions = customMissions.appendChild(
+        createDOM("div", { style: "margin-top: 15px; display:grid; grid-template-columns: auto 1fr" })
+      );
+      resetCustomMissions.appendChild(
+        createDOM("span", { style: "margin-top: 20px;" }, `${this.getTranslatedText(26)} :`)
+      );
+      let resetButtonsDiv = resetCustomMissions.appendChild(
+        createDOM("div", {
+          style: " display:grid; grid-template-columns: auto auto auto auto 1fr; gap: 5px 10px; margin-left: 15px;",
+        })
+      );
+
+      const getresetBuittonClass = (customMissionId) => {
+        const customMissionClass = `ogk-customMission ogk-customMission-${customMissionId}`;
+        const missionClass = this.json.options.customMissions[customMissionId].mission == 4 ? "statio" : "";
+
+        const shipClass =
+          this.json.options.customMissions[customMissionId].ship === "select-most"
+            ? "select-most"
+            : this.json.options.customMissions[customMissionId].ship === "sendall"
+            ? "sendall"
+            : this.json.options.customMissions[customMissionId].ship == 202
+            ? "smallCargo"
+            : this.json.options.customMissions[customMissionId].ship == 219
+            ? "pathFinder"
+            : "largeCargo";
+        return `${customMissionClass} ${missionClass} ${shipClass}`;
+      };
+
+      for (let customMissionId = 1; customMissionId <= 5; customMissionId++) {
+        if (this.json.options.customMissions[customMissionId]) {
+          let btnReset = resetButtonsDiv.appendChild(
+            createDOM("button", {
+              class: getresetBuittonClass(customMissionId),
+              "data-marked": this.json.options.customMissions[customMissionId].color,
+            })
+          );
+          btnReset.addEventListener("click", () => {
+            let reset = confirm(this.getTranslatedText(197));
+            if (reset) {
+              this.json.options.customMissions[customMissionId] = {
+                ship: 202,
+                mission: 4,
+                rotation: false,
+                keepSpeed: false,
+                resources: true,
+                target: {},
+                color: "orange",
+              };
+              btnReset.classList = getresetBuittonClass(customMissionId);
+              btnReset.setAttribute("data-marked", this.json.options.customMissions[customMissionId].color);
+              this.saveData();
+            }
+          });
+        }
+      }
+    }
+
     settingDiv.appendChild(createDOM("hr"));
     let keys = settingDiv.appendChild(createDOM("div", { style: "display: grid;" }));
     keys.appendChild(createDOM("h1", {}, this.getTranslatedText(147)));
@@ -14954,11 +15199,11 @@ class OGInfinity {
       this.json.options.expedition.rotationAfter = Math.max(1, Math.min(~~expeditionRotationAfter.value, 16));
       setOption("standardUnitBase", standardUnitInput.value);
       setOption("alertHostileIncomingMode", alertHostileIncomingMode.value);
-
       setOption("regularConstructionsIconsDisplayMode", regularConstructionsIconsInput.value);
       setOption("lifeformConstructionsIconsDisplayMode", lifeformConstructionsIconsInput.value);
       setOption("lifeformResearchsIconsDisplayMode", lifeformResearchsIconsInput.value);
       setOption("ownFleetYieldIconsDisplayMode", ownFleetYieldIconsInput.value);
+      setOption("nbCustomMissions", nbCustomMissionsSelect.value);
 
       this.json.needSync = true;
       this.saveData();
@@ -16800,6 +17045,492 @@ class OGInfinity {
           window.location.pathname +
           `?page=ingame&component=fleetdispatch&cp=${nextId}&galaxy=${this.json.options.collect.target.galaxy}&system=${this.json.options.collect.target.system}&position=${this.json.options.collect.target.position}&type=${this.json.options.collect.target.type}&mission=${this.json.options.collect.mission}&oglMode=0`;
         document.querySelector(".ogl-cargo a.select-most").click();
+      });
+    }
+  }
+
+  customMissions() {
+    if (this.page == "fleetdispatch" && fleetDispatcher.shipsOnPlanet.length !== 0 && !fleetDispatcher.isOnVacation) {
+      let missionsDiv = document.querySelector("#allornone .secondcol");
+      const maxMissions = 5;
+      let nbMissions = getOption("nbCustomMissions");
+      if (nbMissions > maxMissions) nbMissions = maxMissions;
+      const fillerCount = maxMissions - nbMissions;
+      for (let i = 0; i < fillerCount; i++) {
+        missionsDiv.appendChild(createDOM("div"));
+      }
+
+      //ensure no double clicks
+      let btnCollectProcessing = false;
+
+      //get the real current id (planet or moon)
+      const currentFromEmpire = this.current.isMoon
+        ? OGIData.empire.find((p) => p.id == this.current.id).moon
+        : OGIData.empire.find((p) => p.id == this.current.id);
+      const currentId = currentFromEmpire.id;
+
+      //ensure everything is ready
+      const everyThingIsReady = () => {
+        const missionsDiv = document.querySelector("#missionsDiv");
+        const cargo = document.querySelector(".ogl-cargo");
+        if (missionsDiv && cargo) {
+          return true;
+        }
+        return false;
+      };
+      wait.waitFor(everyThingIsReady).then(() => {
+        for (let customMissionId = 1; customMissionId <= nbMissions; customMissionId++) {
+          //init default customMission if not exists
+          if (!this.json.options.customMissions[customMissionId]) {
+            this.json.options.customMissions[customMissionId] = {
+              ship: 202,
+              mission: 4,
+              rotation: false,
+              keepSpeed: false,
+              resources: true,
+              target: {},
+              color: "orange",
+            };
+          }
+
+          if (!this.json.options.customMissions[customMissionId].target[currentId]) {
+            this.json.options.customMissions[customMissionId].target[currentId] = {
+              galaxy: currentFromEmpire.galaxy,
+              system: currentFromEmpire.system,
+              position: currentFromEmpire.position,
+              /* if current is a moon => select planet as default target
+               * if current is a planet having moon => select moon as default target */
+              type: this.current.isMoon ? 1 : currentFromEmpire.moon !== undefined ? 3 : 1,
+            };
+          }
+
+          const customMissionClassSelector = `.ogk-customMission.ogk-customMission-${customMissionId}`;
+          const customMissionClass = `ogk-customMission ogk-customMission-${customMissionId}`;
+          const missionClass = this.json.options.customMissions[customMissionId].mission == 4 ? "statio" : "";
+          const optionClass = `ogk-customMission-options ogk-customMission-${customMissionId}`;
+          const optionClassSelector = `.ogk-customMission-options.ogk-customMission-${customMissionId}`;
+
+          const shipClass =
+            this.json.options.customMissions[customMissionId].ship === "select-most"
+              ? "select-most"
+              : this.json.options.customMissions[customMissionId].ship === "sendall"
+              ? "sendall"
+              : this.json.options.customMissions[customMissionId].ship == 202
+              ? "smallCargo"
+              : this.json.options.customMissions[customMissionId].ship == 219
+              ? "pathFinder"
+              : "largeCargo";
+
+          let optionsDiv = createDOM("div", { class: `${optionClass} ogk-customMission-options-3l` });
+          const optionsDivFleet = optionsDiv.appendChild(createDOM("div", { class: "ogk-customMission-options-5c" }));
+          const optionsDivMission = optionsDiv.appendChild(createDOM("div", { class: "ogk-customMission-options-6c" }));
+          const optionsDivSettings = optionsDiv.appendChild(
+            createDOM("div", { class: "ogk-customMission-options-6c" })
+          );
+          let btnCollect = missionsDiv.appendChild(
+            createDOM("button", {
+              class: `${customMissionClass} ${missionClass} ${shipClass}`,
+              "data-marked": this.json.options.customMissions[customMissionId].color,
+            })
+          );
+
+          const createFleetChoice = (shipId) => {
+            const shipClass =
+              shipId == "select-most"
+                ? "ogl-option choice select-most"
+                : shipId == "sendall"
+                ? "ogl-option choice sendall"
+                : `ogl-option ogl-fleet-ship choice ogl-fleet-${shipId}`;
+            return optionsDivFleet.appendChild(
+              createDOM("div", {
+                class: `${shipClass} ${
+                  this.json.options.customMissions[customMissionId].ship === shipId ? "highlight" : ""
+                }`,
+              })
+            );
+          };
+          const createMissionChoice = (mission) => {
+            return optionsDivMission.appendChild(
+              createDOM("div", {
+                class: `ogl-option choice-mission-icon ogl-mission-${mission} ${
+                  this.json.options.customMissions[customMissionId].mission === mission ? "highlight" : ""
+                }`,
+              })
+            );
+          };
+
+          const forseResourcesUsing = (used) => {
+            this.json.options.customMissions[customMissionId].resources = used;
+            resources.classList.remove("highlight");
+            if (used) {
+              resources.classList.add("highlight");
+            }
+          };
+
+          const toggleResources = () => {
+            forseResourcesUsing(!this.json.options.customMissions[customMissionId].resources);
+            if (
+              !this.json.options.customMissions[customMissionId].resources &&
+              this.json.options.customMissions[customMissionId].ship !== "select-most" &&
+              this.json.options.customMissions[customMissionId].ship !== "sendall"
+            ) {
+              updateDefaultCollectShip("select-most");
+            }
+            this.saveData();
+          };
+
+          //fleet choices
+          const selectmost = createFleetChoice("select-most");
+          const sendall = createFleetChoice("sendall");
+          const sc = createFleetChoice(202);
+          const lc = createFleetChoice(203);
+          const pf = createFleetChoice(219);
+
+          //mission choices
+          const tr = createMissionChoice(3);
+          const dp = createMissionChoice(4);
+
+          //target choice
+          let tgt = optionsDivMission.appendChild(
+            createDOM("div", {
+              class: `ogl-option choice-target ${
+                this.json.options.customMissions[customMissionId].target[currentId].type == 3 ? "moon" : "planet"
+              }`,
+            })
+          );
+
+          //color choice
+          let color = optionsDivSettings.appendChild(
+            createDOM("div", {
+              class: `ogl-option choice-customMission-icon choice-color`,
+              "data-marked": this.json.options.customMissions[customMissionId].color,
+            })
+          );
+
+          //rotation choice
+          const rotation = optionsDivSettings.appendChild(
+            createDOM("div", { class: "ogl-option choice-customMission-icon customMission-rotation" })
+          );
+          rotation.classList.toggle("highlight", this.json.options.customMissions[customMissionId].rotation);
+          rotation.addEventListener("click", () => {
+            rotation.classList.toggle("highlight");
+            this.json.options.customMissions[customMissionId].rotation =
+              !this.json.options.customMissions[customMissionId].rotation;
+            this.saveData();
+          });
+
+          //keep speed choice
+
+          const svg1 = createSVG("svg", {
+            x: "0px",
+            y: "0px",
+            viewBox: "0 0 512 512",
+            style: "enable-background:new 0 0 512 512;",
+          });
+          svg1.replaceChildren(
+            createSVG("path", {
+              fill: "white",
+              d:
+                "M268.574,511.69c1.342-0.065,2.678-0.154,4.015-0.239c0.697-0.045,1.396-0.082,2.091-0.133c1.627-0.117,3." +
+                "247-0.259,4.865-0.406c0.37-0.034,0.741-0.063,1.111-0.099c1.895-0.181,3.783-0.387,5.665-0.609c0.056-0.0" +
+                "07,0.111-0.012,0.167-0.019C413.497,495.109,512,387.063,512,256C512,114.618,397.382,0,256,0S0,114.618,0" +
+                ",256c0,131.063,98.503,239.109,225.511,254.185c0.056,0.007,0.111,0.013,0.167,0.019c1.883,0.222,3.77,0.4" +
+                "28,5.665,0.609c0.37,0.036,0.741,0.065,1.111,0.099c1.618,0.148,3.239,0.289,4.865,0.406c0.696,0.051,1.39" +
+                "4,0.087,2.091,0.133c1.337,0.086,2.673,0.174,4.015,0.239c1.098,0.054,2.201,0.086,3.301,0.125c0.976,0.03" +
+                "5,1.95,0.081,2.929,0.105c2.111,0.052,4.225,0.08,6.344,0.08s4.234-0.028,6.344-0.08c0.979-0.024,1.952-0." +
+                "07,2.929-0.105C266.374,511.776,267.476,511.743,268.574,511.69z M273.523,468.613c-0.921,0.076-1.844,0.1" +
+                "4-2.767,0.204c-0.814,0.056-1.629,0.109-2.446,0.155c-0.776,0.045-1.553,0.086-2.331,0.122c-1.037,0.048-2" +
+                ".077,0.086-3.118,0.118c-0.608,0.019-1.215,0.043-1.823,0.057c-1.675,0.039-3.353,0.064-5.037,0.064s-3.36" +
+                "2-0.025-5.037-0.064c-0.609-0.014-1.216-0.038-1.823-0.057c-1.041-0.033-2.081-0.071-3.118-0.118c-0.778-0" +
+                ".036-1.555-0.078-2.331-0.122c-0.817-0.046-1.632-0.099-2.446-0.155c-0.923-0.064-1.846-0.128-2.767-0.204" +
+                "c-0.52-0.042-1.037-0.092-1.555-0.138c-41.142-3.68-79.759-19.195-111.96-44.412c32.024-38.424,79.557-61." +
+                "396,131.038-61.396s99.015,22.972,131.038,61.396c-32.201,25.218-70.819,40.732-111.96,44.412C274.56,468." +
+                "521,274.042,468.571,273.523,468.613z M43.726,277.333h41.608c11.782,0,21.333-9.551,21.333-21.333s-9.551" +
+                "-21.333-21.333-21.333H43.726c4.26-42.904,21.234-82.066,47.099-113.672l29.41,29.41c8.331,8.331,21.839,8" +
+                ".331,30.17,0s8.331-21.839,0-30.17l-29.41-29.41c31.607-25.865,70.768-42.838,113.672-47.099v41.608c0,11." +
+                "782,9.551,21.333,21.333,21.333s21.333-9.551,21.333-21.333V43.726c42.904,4.26,82.066,21.234,113.672,47." +
+                "099l-29.41,29.41c-8.331,8.331-8.331,21.839,0,30.17s21.839,8.331,30.17,0l29.41-29.41c25.865,31.607,42.8" +
+                "38,70.768,47.099,113.672h-41.608c-11.782,0-21.333,9.551-21.333,21.333s9.551,21.333,21.333,21.333h41.60" +
+                "8c-4.428,44.592-22.591,85.14-50.194,117.366C378.101,347.932,319.426,320,256,320s-122.101,27.932-162.08" +
+                ",74.7C66.317,362.474,48.154,321.926,43.726,277.333z",
+            }),
+            createSVG("path", {
+              fill: "white",
+              d:
+                "M248.077,275.807c10.939,4.376,23.355-0.945,27.73-11.885l42.667-106.667c4.376-10.939-0.945-23.355-11.88" +
+                "5-27.731c-10.939-4.376-23.355,0.945-27.73,11.885l-42.667,106.667C231.817,259.016,237.138,271.432,248.0" +
+                "77,275.807z",
+            })
+          );
+          const keepSpeedIcon = createDOM("div", {
+            class: "ogl-option choice-customMission-icon customMission-keep-speed",
+          });
+          keepSpeedIcon.appendChild(svg1);
+
+          const keepSpeed = optionsDivSettings.appendChild(keepSpeedIcon);
+          keepSpeed.classList.toggle("highlight", this.json.options.customMissions[customMissionId].keepSpeed);
+          keepSpeed.addEventListener("click", () => {
+            keepSpeed.classList.toggle("highlight");
+            this.json.options.customMissions[customMissionId].keepSpeed =
+              !this.json.options.customMissions[customMissionId].keepSpeed;
+            this.saveData();
+          });
+
+          //resources choice
+          const resources = optionsDivSettings.appendChild(
+            createDOM("div", { class: "ogl-option choice-customMission-icon customMission-resources" })
+          );
+          resources.classList.toggle("highlight", this.json.options.customMissions[customMissionId].resources);
+          resources.addEventListener("click", () => {
+            toggleResources();
+          });
+
+          let updateCollectTooltipIcon = () => {
+            let remove =
+              this.json.options.customMissions[customMissionId].target[currentId].type == 1 ? "moon" : "planet";
+            let add = this.json.options.customMissions[customMissionId].target[currentId].type == 3 ? "moon" : "planet";
+            let classList = optionsDivMission.querySelector(".choice-target").classList;
+            if (classList.contains(remove)) classList.remove(remove);
+            if (!classList.contains(add)) classList.add(add);
+          };
+
+          const getShipClass = (shipId) =>
+            shipId === "select-most"
+              ? "select-most"
+              : shipId === "sendall"
+              ? "sendall"
+              : shipId == 202
+              ? "smallCargo"
+              : shipId == 219
+              ? "pathFinder"
+              : "largeCargo";
+          const getShipClassSelector = (shipId) =>
+            shipId === "select-most" ? ".select-most" : shipId === "sendall" ? ".sendall" : `.ogl-fleet-${shipId}`;
+          const getMissionClass = (mission) => (mission == 4 ? "statio" : "");
+          const getMissionClassSelector = (mission) => `.ogl-mission-${mission}`;
+
+          let updateDefaultCollectShip = (shipId) => {
+            this.json.options.customMissions[customMissionId].ship = shipId;
+
+            if (shipId !== "select-most" && shipId !== "sendall") {
+              forseResourcesUsing(true);
+            }
+
+            this.saveData();
+
+            const missionClass = getMissionClass(this.json.options.customMissions[customMissionId].mission);
+            const shipClass = getShipClass(shipId);
+            const shipOptionClassSelector = getShipClassSelector(shipId);
+
+            document.querySelector(
+              customMissionClassSelector
+            ).classList = `${customMissionClass} ${missionClass} ${shipClass}`;
+
+            const oldHighlight = optionsDivFleet.querySelector(".highlight");
+            if (oldHighlight) oldHighlight.classList.remove("highlight");
+
+            const newHighlight = optionsDivFleet.querySelector(shipOptionClassSelector);
+            if (newHighlight) newHighlight.classList.add("highlight");
+          };
+
+          let updateDefaultCollectMission = (mission) => {
+            this.json.options.customMissions[customMissionId].mission = mission;
+            this.saveData();
+
+            const missionClass = getMissionClass(this.json.options.customMissions[customMissionId].mission);
+            const missionClassSelector = getMissionClassSelector(
+              this.json.options.customMissions[customMissionId].mission
+            );
+            const shipClass = getShipClass(this.json.options.customMissions[customMissionId].ship);
+
+            document.querySelector(
+              customMissionClassSelector
+            ).classList = `${customMissionClass} ${missionClass} ${shipClass}`;
+
+            const oldHighlight = optionsDivMission.querySelector(".highlight");
+            if (oldHighlight) oldHighlight.classList.remove("highlight");
+
+            const newHighlight = optionsDivMission.querySelector(missionClassSelector);
+            if (newHighlight) newHighlight.classList.add("highlight");
+          };
+
+          selectmost.addEventListener("click", () => updateDefaultCollectShip("select-most"));
+          sendall.addEventListener("click", () => updateDefaultCollectShip("sendall"));
+          sc.addEventListener("click", () => updateDefaultCollectShip(202));
+          lc.addEventListener("click", () => updateDefaultCollectShip(203));
+          pf.addEventListener("click", () => updateDefaultCollectShip(219));
+          tr.addEventListener("click", () => updateDefaultCollectMission(3));
+          dp.addEventListener("click", () => updateDefaultCollectMission(4));
+          tgt.addEventListener("click", () => {
+            let container = this.openPlanetList(
+              (planet) => {
+                this.json.options.customMissions[customMissionId].target[currentId] = planet;
+                document.querySelector(".ogl-dialogOverlay").classList.remove("ogl-active");
+                this.saveData();
+                updateCollectTooltipIcon();
+              },
+              this.json.options.customMissions[customMissionId].target[currentId],
+              this.json.options.customMissions[customMissionId].mission
+            );
+            this.popup(false, container);
+            this.saveData();
+          });
+
+          color.addEventListener("click", () => {
+            const colors = ["red", "orange", "yellow", "green", "blue", "violet", "gray", "brown"];
+
+            let container = DOM.createDOM("div", { class: "ogk-customMission-colorChoice" });
+            colors.forEach((colorName) => {
+              const circle = container.appendChild(createDOM("div", { "data-marked": colorName }));
+              container.appendChild(circle);
+              if (this.json.options.customMissions[customMissionId].color == colorName) {
+                circle.classList.add("ogl-active");
+              }
+
+              circle.addEventListener("click", () => {
+                this.json.options.customMissions[customMissionId].color = colorName;
+                this.saveData();
+                // Update UI
+                btnCollect.setAttribute("data-marked", colorName);
+                color.setAttribute("data-marked", colorName);
+                container.querySelectorAll("div[data-marked]").forEach((e) => e.classList.remove("ogl-active"));
+                circle.classList.add("ogl-active");
+                container.closest(".ogl-dialog").querySelector(".close-tooltip").click();
+              });
+            });
+
+            this.popup(false, container);
+            this.saveData();
+          });
+
+          btnCollect.addEventListener("mouseover", () => this.tooltip(btnCollect, optionsDiv, false, false, 500));
+          btnCollect.addEventListener("click", () => {
+            if (btnCollectProcessing) {
+              logger.warn("btnCollectProcessing->already");
+              return;
+            }
+            try {
+              btnCollectProcessing = true;
+
+              const selectedRoute = this.json.options.customMissions[customMissionId];
+              const selectedTarget = selectedRoute.target[currentId];
+
+              //resest
+              document.querySelector("#resetall").click();
+              this.collect = true;
+              this.expedition = false;
+              document.querySelector("#missionsDiv").setAttribute("data", "false");
+
+              //select target
+              const target = {
+                galaxy: selectedTarget.galaxy,
+                system: selectedTarget.system,
+                position: selectedTarget.position,
+                type: selectedTarget.type,
+              };
+              document.querySelector(".ogl-coords #galaxyInput").value = target.galaxy;
+              document.querySelector(".ogl-coords #systemInput").value = target.system;
+              document.querySelector(".ogl-coords #positionInput").value = target.position;
+              fleetDispatcher.targetPlanet = target;
+
+              //target display
+              this.planetList.forEach((planet) => {
+                let planetCoords = planet.querySelector(".planet-koords").textContent.split(":");
+                planet.querySelector(".planetlink").classList.remove("ogl-target");
+                planet.querySelector(".moonlink") && planet.querySelector(".moonlink").classList.remove("ogl-target");
+                planet.querySelector(".planetlink").classList.remove("mission-3");
+                planet.querySelector(".moonlink") && planet.querySelector(".moonlink").classList.remove("mission-4");
+                if (
+                  target.galaxy == planetCoords[0] &&
+                  target.system == planetCoords[1] &&
+                  target.position == planetCoords[2]
+                ) {
+                  if (target.type == 1) {
+                    planet.querySelector(".planetlink").classList.add("ogl-target");
+                    planet.querySelector(".planetlink").classList.add(`mission-${selectedRoute.mission}`);
+                  } else if (planet.querySelector(".moonlink")) {
+                    planet.querySelector(".moonlink").classList.add("ogl-target");
+                    planet.querySelector(".moonlink").classList.add(`mission-${selectedRoute.mission}`);
+                  }
+                }
+              });
+
+              //select mission
+              fleetDispatcher.mission = selectedRoute.mission;
+              fleetDispatcher.selectMission(selectedRoute.mission);
+
+              //select cargo
+              document.querySelector(".ogl-cargo a.send_none").click();
+              if (this.json.options.customMissions[customMissionId].resources) {
+                document.querySelector(".ogl-cargo a.select-most").click();
+              }
+
+              //fleet selection
+              fleetDispatcher.resetShips();
+              if (selectedRoute.ship === "select-most") {
+                this.selectMostShips(false);
+              } else if (selectedRoute.ship === "sendall") {
+                this.selectAllShips(false);
+              } else {
+                this.selectBestCargoShip(selectedRoute.ship);
+              }
+
+              fleetDispatcher.refreshTarget();
+              fleetDispatcher.updateTarget();
+              fleetDispatcher.fetchTargetPlayerData();
+              fleetDispatcher.refresh();
+
+              //reselect cargo
+              if (this.json.options.customMissions[customMissionId].resources) {
+                document.querySelector(".ogl-cargo a.select-most").click();
+              }
+
+              let nextId = currentId;
+              if (this.json.options.customMissions[customMissionId].rotation) {
+                nextId = this.current.planet.nextElementSibling.id
+                  ? this.current.planet.nextElementSibling.id.split("-")[1]
+                  : document.querySelectorAll(".smallplanet")[0].id.split("-")[1];
+                if (this.current.isMoon) {
+                  nextId = new URL(document.querySelector(`#planet-${nextId} .moonlink`).href).searchParams.get("cp");
+                }
+              }
+
+              this.onFleetSentRedirectUrl =
+                "https://" +
+                window.location.host +
+                window.location.pathname +
+                `?page=ingame&component=fleetdispatch&cp=${nextId}&galaxy=${selectedTarget.galaxy}&system=${selectedTarget.system}&position=${selectedTarget.position}&type=${selectedTarget.type}&mission=${selectedRoute.mission}&oglMode=${ogiMode.CUSTOM_MISSION}&customMissionId=${customMissionId}`;
+            } catch (error) {
+              logger.error(error);
+            } finally {
+              btnCollectProcessing = false;
+            }
+          });
+        }
+
+        if (this.mode == ogiMode.CUSTOM_MISSION && fleetDispatcher.fleetCount < fleetDispatcher.maxFleetCount) {
+          let urlcustomMissionId = this.rawURL.searchParams.get("customMissionId");
+          if (urlcustomMissionId) {
+            urlcustomMissionId = parseInt(urlcustomMissionId);
+            if (this.json.options.customMissions[urlcustomMissionId].keepSpeed) {
+              const lastSentFleet = OGIData.lastSentFleet;
+
+              if (lastSentFleet?.speedPercent) {
+                fleetDispatcher.speedPercent = lastSentFleet.speedPercent;
+                document.querySelector(`.ogl-fleetSpeed [data-step=\"${lastSentFleet?.speedPercent}\"]`).click();
+              }
+            }
+
+            if (this.json.options.customMissions[urlcustomMissionId].rotation) {
+              const customMissionButton = document.querySelector(
+                `.ogk-customMission.ogk-customMission-${urlcustomMissionId}`
+              );
+              if (customMissionButton) {
+                customMissionButton.click();
+              }
+            }
+          }
+        }
       });
     }
   }

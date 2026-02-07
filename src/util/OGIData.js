@@ -231,6 +231,15 @@ class OGIData {
     this.#save();
   }
 
+  get lastSentFleet() {
+    return this._json.lastSentFleet;
+  }
+  set lastSentFleet(lastSentFleet) {
+    this._json.lastSentFleet = lastSentFleet;
+
+    this.#save();
+  }
+
   get json() {
     return this._json;
   }

@@ -67,6 +67,7 @@ const _options = {
   autoDeleteEnable: false,
   kept: {},
   defaultKept: {},
+  defaultKeptMoon: {},
   hiddenTargets: {},
   timeZone: true,
   collect: {
@@ -79,6 +80,8 @@ const _options = {
       type: 1,
     },
   },
+  customMissions: {},
+  nbCustomMissions: 0,
   expedition: {
     cargoShip: 202,
     combatShip: 218,
@@ -107,11 +110,16 @@ export function initConfOptions(options) {
   const collect = options?.collect || _options.collect;
   delete options["collect"];
 
+  const customMissions = options?.customMissions || _options.customMissions;
+  delete options["customMissions"];
+
   const expedition = options?.expedition || _options.expedition;
   delete options["expedition"];
 
   Object.assign(_options, options);
   Object.assign(_options.collect, collect);
+
+  Object.assign(_options.customMissions, customMissions);
   Object.assign(_options.expedition, expedition);
 }
 

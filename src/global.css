@@ -405,6 +405,20 @@ input[type="password"]::selection {
   margin-bottom: 10px;
   width: 187px;
 }
+.ogk-keep-dialog-fleet:not(.ogk-keep-dialog-fleet-coord),
+.ogk-keep-dialog-resources:not(.ogk-keep-dialog-resources-coord) {
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.ogk-keep-dialog-separator {
+  width: 1px;
+  height: 100%;
+  background: #10171d;
+}
 
 .ogl-settings hr {
   margin: 4px 0;
@@ -493,11 +507,21 @@ input[type="password"]::selection {
 .ogl-settings .ogl-simulator {
   width: 190px !important;
 }
+.ogl-settings .ogl-w-50 {
+  width: 50px !important;
+}
 .ogl-settings .ogl-w-125 {
   width: 125px !important;
 }
+
 .ogl-settings .ogl-w-175 {
   width: 175px !important;
+}
+.ogl-settings .ogl-w-200 {
+  width: 200px !important;
+}
+.ogl-settings .ogl-w-300 {
+  width: 300px !important;
 }
 
 .ogl-settings .ogl-right {
@@ -1112,9 +1136,18 @@ input[type="password"]::selection {
   filter: grayscale(1) !important;
 }
 
+.allornonewrap #sendall:hover {
+  filter: unset !important;
+  background-position-y: -162px;
+}
+
 .allornonewrap .select-most:hover,
 .allornonewrap .sendall:hover {
   filter: none !important;
+}
+.ogl-dispatch .ogl-cargo .select-most:hover,
+#allornone .secondcol.fleft span.select-most:hover {
+  background-position-y: 0px !important;
 }
 
 .ogl-cargo .select-most:hover,
@@ -1272,8 +1305,19 @@ input[type="password"]::selection {
   width: 32px;
   height: 32px;
   overflow: hidden;
-  background: url("https://gf3.geo.gfsrv.net/cdneb/f5f81e8302aaad56c958c033677fb8.png") -374px -162px no-repeat;
+  background: url("chrome-extension://__MSG_@@extension_id__/assets/images/sendall.jpg") no-repeat left top;
   transform: scale(0.75);
+}
+
+.ogk-customMission.sendall {
+  background: url("chrome-extension://__MSG_@@extension_id__/assets/images/sendall.jpg") no-repeat left top !important;
+  background-size: 32px !important;
+  background-position: -2px -2px !important;
+  filter: unset !important;
+  transform: unset !important;
+  width: 30px !important;
+  height: 30px !important;
+  overflow: unset !important;
 }
 
 .res_wrap .resourceIcon {
@@ -1369,8 +1413,14 @@ input[type="password"]::selection {
   height: 32px;
   width: 32px;
 }
+.ogk-customMission.select-most {
+  background: url("chrome-extension://__MSG_@@extension_id__/assets/images/select_most.jpg") no-repeat left top !important;
+  background-size: 32px !important;
+  background-position: -2px -2px !important;
+  filter: unset !important;
+}
 
-.select-most:hover {
+.select-most:not(.ogl-option.choice.select-most):hover {
   background-position: 0 -32px;
 }
 
@@ -3880,6 +3930,27 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
   position: sticky;
   float: left;
 }
+.ogl-option.choice.select-most {
+  background-size: 25px;
+  height: 25px;
+  width: 25px;
+  margin: 2px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(95, 93, 107);
+  border-image: initial;
+}
+.ogl-option.choice.sendall {
+  background-size: 25px;
+  height: 25px;
+  width: 25px;
+  margin: 2px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(95, 93, 107);
+  border-image: initial;
+  transform: unset;
+}
 
 .ogl-option:after {
   background: linear-gradient(to top, #000 50%, #fff 50%);
@@ -5490,11 +5561,14 @@ body.ogame select {
   display: flex;
   margin: 0 auto;
 }
-
+.ogl-option.choice.select-most:hover,
+.ogl-option.choice.sendall:hover,
 .ogl-fleet-ship:hover {
   border: solid 1px #da961a;
 }
 
+.ogl-option.choice.select-most:hover + span,
+.ogl-option.choice.sendall:hover + span,
 .ogl-fleet-ship:hover + span {
   color: #da961a;
 }
@@ -8549,17 +8623,38 @@ li.resource {
   grid-template-columns: repeat(6, 1fr);
 }
 
+.ogl-tooltip .ogk-customMission-options {
+  width: auto;
+  display: grid;
+}
+.ogl-tooltip .ogk-customMission-options .ogk-customMission-options-3l {
+  grid-template-rows: repeat(3, 1fr);
+}
+.ogl-tooltip .ogk-customMission-options .ogk-customMission-options-6c {
+  justify-self: end;
+  grid-template-columns: repeat(6, 1fr);
+}
+.ogl-tooltip .ogk-customMission-options .ogk-customMission-options-5c {
+  justify-self: end;
+  grid-template-columns: repeat(5, 1fr);
+}
+
 .ogl-tooltip .ogk-expedition-options {
   width: auto;
   display: grid;
   grid-template-columns: repeat(6, 1fr);
 }
+
+.ogl-tooltip .ogk-customMission .choice,
+.ogl-tooltip .ogk-customMission .choice-mission-icon,
 .ogl-tooltip .ogk-collect-cargo .choice,
 .ogl-tooltip .ogk-collect-cargo .choice-mission-icon,
 .ogl-tooltip .ogk-expedition-options .choice {
   filter: brightness(0.75);
   background-blend-mode: luminosity;
 }
+.ogl-tooltip .ogk-customMission .choicee.highlight,
+.ogl-tooltip .ogk-customMission .choice-mission-icon.highlight,
 .ogl-tooltip .ogk-collect-cargo .choice.highlight,
 .ogl-tooltip .ogk-collect-cargo .choice-mission-icon.highlight,
 .ogl-tooltip .ogk-expedition-options .choice.highlight {
@@ -8567,27 +8662,65 @@ li.resource {
   background-blend-mode: normal;
 }
 
+.ogl-tooltip .ogi-fleet-options {
+  width: auto;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+}
+.ogl-tooltip .ogi-mission-options {
+  width: auto;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+}
+
+.choice-customMission-icon,
 .choice-expedition-icon {
   width: 25px;
   height: 25px;
   margin: 2px;
+  overflow: hidden;
+}
+
+.choice-expedition-icon,
+.choice-customMission-icon:not(.choice-color) {
   border: solid 1px #5f5d6b;
   background: url("https://gf3.geo.gfsrv.net/cdn81/ce44d444b7d14a3ea6fa51fa6c1148.png");
   background-size: calc(25px * 16) !important;
   background-position: calc(-25px * 12) calc(-25px * 0) !important;
-  overflow: hidden;
 }
 
+.choice-customMission-icon:hover,
 .choice-expedition-icon:hover {
-  border: solid 1px #da961a;
+  border: solid 1px #da961a !important;
 }
-
+.choice-customMission-icon.customMission-rotation,
 .choice-expedition-icon.expedition-rotation {
   background-position: calc(-25px * 12) calc(-25px * 0) !important;
 }
-
+.choice-customMission-icon.customMission-rotation.highlight,
 .choice-expedition-icon.expedition-rotation.highlight {
   background-position: calc(-25px * 12) calc(-25px * 1) !important;
+  border: solid 1px #da961a;
+}
+.choice-customMission-icon.customMission-keep-speed svg {
+  position: relative;
+  left: 3.5px;
+  top: 2.5px;
+  /*bottom: unset;*/
+}
+.choice-customMission-icon.customMission-keep-speed svg > path {
+  fill: #8b9ca7;
+  transform: scale(0.75);
+}
+.choice-customMission-icon.customMission-keep-speed.highlight {
+  border: solid 1px #da961a;
+}
+
+.choice-customMission-icon.customMission-resources {
+  background-position: calc(-25px * 3) calc(-25px * 0) !important;
+}
+.choice-customMission-icon.customMission-resources.highlight {
+  background-position: calc(-25px * 3) calc(-25px * 1) !important;
   border: solid 1px #da961a;
 }
 
@@ -8625,6 +8758,8 @@ li.resource {
   background-size: calc(50px * 10) !important;
 }
 
+.ogl-option.sendall.highlight,
+.ogl-option.select-most.highlight,
 .ogl-fleet-ship.highlight {
   border: solid 1px #da961a;
   filter: brightness(1.3);
@@ -8707,6 +8842,7 @@ li.resource {
   opacity: 0.6;
 }
 
+.ogk-customMission,
 .ogl-collect,
 .ogl-expedition {
   background: url(https://gf2.geo.gfsrv.net/cdn7e/41c09757d8212f48fc574515c8bc87.jpg);
@@ -8753,6 +8889,190 @@ li.resource {
   width: 28px;
 }
 
+.ogk-customMission {
+  margin-top: 10px;
+}
+
+.ogk-customMission::before {
+  background: url(https://gf2.geo.gfsrv.net/cdn14/f45a18b5e55d2d38e7bdc3151b1fee.jpg) no-repeat;
+  background-size: calc(36px * 11) !important;
+  background-position: -184px -4px;
+  content: "";
+  display: block;
+  height: 28px;
+  right: -5px;
+  position: absolute;
+  top: -5px;
+  transform: scale(0.5);
+  transform-origin: top right;
+  width: 28px;
+}
+.ogk-customMission.statio:before {
+  background-position: -112px -4px;
+}
+
+.ogk-customMission::after {
+  border: 1px solid #000 !important;
+  border-bottom: none !important;
+  border-right: none !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 18px;
+  width: 18px;
+  right: 0px;
+  transform: scale(0.5);
+  transform-origin: bottom right;
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  font-size: larger;
+  font-weight: bolder;
+}
+
+.ogk-customMission-colorChoice {
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 6px;
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: repeat(2, 1fr);
+  padding: 10px;
+}
+
+.ogk-customMission-colorChoice div[data-marked] {
+  cursor: pointer;
+  height: 16px;
+  width: 16px;
+  background-color: #212121;
+  border-width: 2px;
+  border-style: solid;
+  border-image: initial;
+  border-radius: 50%;
+}
+
+.ogk-customMission-colorChoice [data-marked].ogl-active,
+.ogk-customMission-colorChoice [data-marked]:hover {
+  box-shadow:
+    inset 0 50px rgba(0, 0, 0, 0.3),
+    inset 0 5px 5px rgba(0, 0, 0, 0.3);
+}
+
+/*red*/
+.ogk-customMission-colorChoice .ogl-active[data-marked="red"],
+.ogk-customMission-colorChoice [data-marked="red"]:hover,
+.ogl-option.choice-color[data-marked="red"],
+.ogk-customMission[data-marked="red"]:after {
+  background-color: #b13434 !important;
+  border-color: #b13434;
+}
+.ogk-customMission-colorChoice [data-marked="red"] {
+  border-color: #b13434;
+}
+
+/*yellow*/
+.ogk-customMission-colorChoice .ogl-active[data-marked="yellow"],
+.ogk-customMission-colorChoice [data-marked="yellow"]:hover,
+.ogl-option.choice-color[data-marked="yellow"],
+.ogk-customMission[data-marked="yellow"]:after {
+  background-color: #fef86c !important;
+  border-color: #fef86c;
+}
+.ogk-customMission-colorChoice [data-marked="yellow"] {
+  border-color: #fef86c;
+}
+
+/*green*/
+.ogk-customMission-colorChoice .ogl-active[data-marked="green"],
+.ogk-customMission-colorChoice [data-marked="green"]:hover,
+.ogl-option.choice-color[data-marked="green"],
+.ogk-customMission[data-marked="green"]:after {
+  background-color: #8bcc0b !important;
+  border-color: #8bcc0b;
+}
+.ogk-customMission-colorChoice [data-marked="green"] {
+  border-color: #8bcc0b;
+}
+
+/*blue*/
+.ogk-customMission-colorChoice .ogl-active[data-marked="blue"],
+.ogk-customMission-colorChoice [data-marked="blue"]:hover,
+.ogl-option.choice-color[data-marked="blue"],
+.ogk-customMission[data-marked="blue"]:after {
+  background-color: #009bd7 !important;
+  border-color: #009bd7 !important;
+}
+.ogk-customMission-colorChoice [data-marked="blue"] {
+  border-color: #009bd7 !important;
+}
+
+/*violet*/
+.ogk-customMission-colorChoice .ogl-active[data-marked="violet"],
+.ogk-customMission-colorChoice [data-marked="violet"]:hover,
+.ogl-option.choice-color[data-marked="violet"],
+.ogk-customMission[data-marked="violet"]:after {
+  background-color: #a833da !important;
+  border-color: #a833da;
+}
+.ogk-customMission-colorChoice [data-marked="violet"] {
+  border-color: #a833da;
+}
+
+/*gray*/
+.ogk-customMission-colorChoice .ogl-active[data-marked="gray"],
+.ogk-customMission-colorChoice [data-marked="gray"]:hover,
+.ogl-option.choice-color[data-marked="gray"],
+.ogk-customMission[data-marked="gray"]:after {
+  background-color: #b7babd !important;
+  border-color: #b7babd;
+}
+.ogk-customMission-colorChoice [data-marked="gray"] {
+  border-color: #b7babd;
+}
+
+/*orange*/
+.ogk-customMission-colorChoice .ogl-active[data-marked="orange"],
+.ogk-customMission-colorChoice [data-marked="orange"]:hover,
+.ogl-option.choice-color[data-marked="orange"],
+.ogk-customMission[data-marked="orange"]:after {
+  background-color: #ffa800 !important;
+  border-color: #ffa800;
+}
+.ogk-customMission-colorChoice [data-marked="orange"] {
+  border-color: #ffa800;
+}
+
+/*brown*/
+.ogk-customMission-colorChoice .ogl-active[data-marked="brown"],
+.ogk-customMission-colorChoice [data-marked="brown"]:hover,
+.ogl-option.choice-color[data-marked="brown"],
+.ogk-customMission[data-marked="brown"]:after {
+  background-color: #a66437 !important;
+  border-color: #a66437;
+}
+.ogk-customMission-colorChoice [data-marked="brown"] {
+  border-color: #a66437;
+}
+
+.ogl-option.choice-customMission-icon.choice-color:hover {
+  border: solid 1px #da961a;
+}
+
+.ogk-customMission.ogk-customMission-1::after {
+  content: "1";
+}
+.ogk-customMission.ogk-customMission-2::after {
+  content: "2";
+}
+.ogk-customMission.ogk-customMission-3::after {
+  content: "3";
+}
+.ogk-customMission.ogk-customMission-4::after {
+  content: "4";
+}
+.ogk-customMission.ogk-customMission-5::after {
+  content: "5";
+}
+
 .ogl-collect:after {
   background: url(https://gf2.geo.gfsrv.net/cdn14/f45a18b5e55d2d38e7bdc3151b1fee.jpg) no-repeat;
   background-size: calc(36px * 11) !important;
@@ -8773,11 +9093,13 @@ li.resource {
   background-position: -112px -4px;
 }
 
+.ogk-customMission:hover,
 .ogl-collect:hover,
 .ogl-expedition:hover {
   border: 1px solid orange;
 }
 
+.ogk-customMission.largeCargo,
 .ogl-collect.largeCargo,
 .ogl-expedition.largeCargo {
   background-position: calc(-9px * 30) 0 !important;
