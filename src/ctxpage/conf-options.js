@@ -31,15 +31,15 @@ import { getLogger } from "../util/logger.js";
 const log = getLogger("conf-options");
 
 const _options = {
-  limitCrawler: false,
+  limitCrawler: true,
   crawlerPercent: 1.5,
   reverseFilter: false,
   tradeRate: [2.5, 1.5, 1, 0],
-  dispatcher: false,
+  dispatcher: true,
   sideStalkVisible: true,
   eventBoxExps: true,
   eventBoxKeep: false,
-  empire: false,
+  empire: true,
   targetList: false,
   fret: 202,
   spyFret: 202,
@@ -48,7 +48,7 @@ const _options = {
   harvestMission: 4,
   alertHostileIncomingMode: 0,
   importExportReminderMode: 2,
-  activitytimers: false,
+  activitytimers: true,
   lessAggressiveEmpireAutomaticUpdate: false,
   navigationArrows: true,
   showProgressIndicators: true,
@@ -58,7 +58,7 @@ const _options = {
   pantryKey: "",
   simulator: "",
   rvalLimit: 1e6, // needs revision to consider the speed of the universe.
-  rvalSelfLimitPlanet: 1e6,
+  rvalSelfLimitPlanet: 1e7,
   rvalSelfLimitMoon: 1e6,
   standardUnitBase: 0,
   spyTableEnable: true,
