@@ -35,7 +35,7 @@ const _options = {
   crawlerPercent: 1.5,
   reverseFilter: false,
   tradeRate: [2.5, 1.5, 1, 0],
-  dispatcher: false,
+  dispatcher: true,
   sideStalkVisible: true,
   eventBoxExps: true,
   eventBoxKeep: false,
