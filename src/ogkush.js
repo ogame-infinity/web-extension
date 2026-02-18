@@ -14230,6 +14230,27 @@ class OGInfinity {
           lastFleetId = id;
           lastFleetBtn = fleet.querySelector(".reversal a");
         }
+
+        // By default, the time is in the server timezone, so we need to fix it when the user has the timezone option enabled
+        if (this.json.options.timeZone) {
+          const timeZoneChange = this.json.timezoneDiff;
+          const absTime = fleet.querySelector('.absTime');
+          const nextabsTime = fleet.querySelector('.nextabsTime');
+
+          const arrivalTime = parseInt(fleet.getAttribute('data-arrival-time'), 10) * 1e3 + timeZoneChange * 1e3;
+          const endTime = parseInt(fleet.querySelector('.openCloseDetails').getAttribute('data-end-time'), 10) * 1e3 + timeZoneChange * 1e3;
+
+          if (nextabsTime) {
+            // Fix arrival time to be in the correct timezone
+            absTime.textContent = getFormatedDate(endTime, "[G]:[i]:[s] ");
+            // Fix back time to be in the correct timezone
+            nextabsTime.textContent = getFormatedDate(arrivalTime, "[G]:[i]:[s] ");
+          } else {
+            // Fix back time to be in the correct timezone
+            absTime.textContent = getFormatedDate(arrivalTime, "[G]:[i]:[s] ");
+          }
+        }
+
         let type = fleet.getAttribute("data-mission-type");
         let originCoords = fleet.querySelector(".originCoords").textContent;
         OGIData.empire.forEach((planet) => {
@@ -14275,23 +14296,31 @@ class OGInfinity {
           m: splitted[4],
           s: splitted[5],
         };
-        let lastTimer = new Date(
+
+        // Update the reverse time to be in the correct timezone
+        const timeZoneChangeReverse = this.json.options.timeZone ? this.json.timezoneDiff : 0;
+        let baseTime = new Date(
           backDate.year,
           backDate.month - 1,
           backDate.day,
           backDate.h,
           backDate.m,
           backDate.s
-        ).getTime();
+        ).getTime() + timeZoneChangeReverse * 1e3;
+
         let content = details.appendChild(createDOM("div", { class: "ogl-date" }));
-        let date;
+
+        const realStart = Date.now();
+
         let updateTimer = () => {
-          lastTimer += 1e3;
-          date = new Date(lastTimer);
-          content.textContent = getFormatedDate(date.getTime(), "[d].[m].[y] - [G]:[i]:[s] ");
+          const realElapsed = Date.now() - realStart;
+          const virtualElapsed = realElapsed * 2; // For each second to arrive, we need to add 2 seconds to the back time
+          const currentTimer = baseTime + virtualElapsed;
+          content.textContent = getFormatedDate(currentTimer, "[d].[m].[y] - [G]:[i]:[s] ");
         };
+
         updateTimer();
-        setInterval(() => updateTimer(), 500);
+        setInterval(updateTimer, 500);
       });
       if (lastFleetBtn) {
         lastFleetBtn.style.filter = "hue-rotate(180deg) saturate(150%)";
