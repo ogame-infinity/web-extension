@@ -2732,27 +2732,6 @@ class OGInfinity {
           fadeBox(data.message, false);
           let href = callback();
 
-          OGIData.lastSentFleet = {
-            date: new Date().toISOString(),
-            cargoCapacity: fleetDispatcher.cargoCapacity,
-            cargoMetal: fleetDispatcher.cargoMetal,
-            cargoCrystal: fleetDispatcher.cargoCrystal,
-            cargoDeuterium: fleetDispatcher.cargoDeuterium,
-            fleetCount: fleetDispatcher.fleetCount,
-            hasAdmiral: fleetDispatcher.hasAdmiral,
-            hasCommander: fleetDispatcher.hasCommander,
-            mission: fleetDispatcher.mission,
-            speedPercent: fleetDispatcher.speedPercent,
-            targetIsBuddyOrAllyMember: fleetDispatcher.targetIsBuddyOrAllyMember,
-            targetIsOutlaw: fleetDispatcher.targetIsOutlaw,
-            targetIsStrong: fleetDispatcher.targetIsStrong,
-            currentPlanet: fleetDispatcher.currentPlanet,
-            targetPlanet: fleetDispatcher.targetPlanet,
-            targetPlayerId: fleetDispatcher.targetPlayerId,
-            targetPlayerName: fleetDispatcher.targetPlayerName,
-            useHalfSteps: fleetDispatcher.useHalfSteps,
-          };
-
           setTimeout(function () {
             $("#sendFleet").removeAttr("disabled");
             window.location = href || data.redirectUrl;
@@ -3184,6 +3163,28 @@ class OGInfinity {
           }
           this.json.combatsSums[dateStr].fuel -= fuel;
         }
+        
+        this.json.lastSentFleet = {
+          date: new Date().toISOString(),
+          cargoCapacity: fleetDispatcher.cargoCapacity,
+          cargoMetal: fleetDispatcher.cargoMetal,
+          cargoCrystal: fleetDispatcher.cargoCrystal,
+          cargoDeuterium: fleetDispatcher.cargoDeuterium,
+          fleetCount: fleetDispatcher.fleetCount,
+          hasAdmiral: fleetDispatcher.hasAdmiral,
+          hasCommander: fleetDispatcher.hasCommander,
+          mission: fleetDispatcher.mission,
+          speedPercent: fleetDispatcher.speedPercent,
+          targetIsBuddyOrAllyMember: fleetDispatcher.targetIsBuddyOrAllyMember,
+          targetIsOutlaw: fleetDispatcher.targetIsOutlaw,
+          targetIsStrong: fleetDispatcher.targetIsStrong,
+          currentPlanet: fleetDispatcher.currentPlanet,
+          targetPlanet: fleetDispatcher.targetPlanet,
+          targetPlayerId: fleetDispatcher.targetPlayerId,
+          targetPlayerName: fleetDispatcher.targetPlayerName,
+          useHalfSteps: fleetDispatcher.useHalfSteps,
+        };
+
         this.saveData();
         return this.onFleetSentRedirectUrl;
       });
@@ -17510,7 +17511,7 @@ class OGInfinity {
           if (urlcustomMissionId) {
             urlcustomMissionId = parseInt(urlcustomMissionId);
             if (this.json.options.customMissions[urlcustomMissionId].keepSpeed) {
-              const lastSentFleet = OGIData.lastSentFleet;
+              const lastSentFleet = this.json.lastSentFleet;
 
               if (lastSentFleet?.speedPercent) {
                 fleetDispatcher.speedPercent = lastSentFleet.speedPercent;
