@@ -3163,7 +3163,7 @@ class OGInfinity {
           }
           this.json.combatsSums[dateStr].fuel -= fuel;
         }
-        
+
         this.json.lastSentFleet = {
           date: new Date().toISOString(),
           cargoCapacity: fleetDispatcher.cargoCapacity,
@@ -17067,6 +17067,11 @@ class OGInfinity {
         : OGIData.empire.find((p) => p.id == this.current.id);
       const currentId = currentFromEmpire.id;
 
+      //get the mirror id 
+      const mirrorId = this.current.isMoon
+        ? OGIData.empire.find((p) => p.id == this.current.id)// if current is a moon => get planet id
+        : OGIData.empire.find((p) => p.id == this.current.id).moon?.id ?? undefined;// if current is a planet having moon => get moon id, else get undefined
+
       //ensure everything is ready
       const everyThingIsReady = () => {
         const missionsDiv = document.querySelector("#missionsDiv");
@@ -17093,6 +17098,7 @@ class OGInfinity {
 
           if (!this.json.options.customMissions[customMissionId].target[currentId]) {
             this.json.options.customMissions[customMissionId].target[currentId] = {
+              id: mirrorId,
               galaxy: currentFromEmpire.galaxy,
               system: currentFromEmpire.system,
               position: currentFromEmpire.position,
@@ -17419,11 +17425,16 @@ class OGInfinity {
               this.expedition = false;
               document.querySelector("#missionsDiv").setAttribute("data", "false");
 
-              //select target
+              //select real target based on id to avoir weird issue after a planet or a moon has been moved or destroyed since the selected target has been saved
+              const realTarget = selectedTarget.type == 3 
+                ? OGIData.empire.find((p) => p.moon && p.moon.id == selectedTarget.id)// if target is a moon => get moon data based on moon id
+                : OGIData.empire.find((p) => p.id == selectedTarget.id);// if target is a planet => get planet data based on planet id
+          
               const target = {
-                galaxy: selectedTarget.galaxy,
-                system: selectedTarget.system,
-                position: selectedTarget.position,
+                id: realTarget ? realTarget.id : selectedTarget.id,
+                galaxy: realTarget ? realTarget.galaxy : selectedTarget.galaxy,
+                system: realTarget ? realTarget.system : selectedTarget.system,
+                position: realTarget ? realTarget.position : selectedTarget.position,
                 type: selectedTarget.type,
               };
               document.querySelector(".ogl-coords #galaxyInput").value = target.galaxy;
