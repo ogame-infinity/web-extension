@@ -17426,43 +17426,40 @@ class OGInfinity {
               document.querySelector("#missionsDiv").setAttribute("data", "false");
 
               //select real target based on id to avoir weird issue after a planet or a moon has been moved or destroyed since the selected target has been saved
-              const realTarget = selectedTarget.type == 3 
-                ? OGIData.empire.find((p) => p.moon && p.moon.id == selectedTarget.id)// if target is a moon => get moon data based on moon id
+              const target = selectedTarget.type == 3 
+                ? OGIData.empire.find((p) => p.moon && p.moon.id == selectedTarget.id).moon// if target is a moon => get moon data based on moon id
                 : OGIData.empire.find((p) => p.id == selectedTarget.id);// if target is a planet => get planet data based on planet id
           
-              const target = {
-                id: realTarget ? realTarget.id : selectedTarget.id,
-                galaxy: realTarget ? realTarget.galaxy : selectedTarget.galaxy,
-                system: realTarget ? realTarget.system : selectedTarget.system,
-                position: realTarget ? realTarget.position : selectedTarget.position,
-                type: selectedTarget.type,
-              };
-              document.querySelector(".ogl-coords #galaxyInput").value = target.galaxy;
-              document.querySelector(".ogl-coords #systemInput").value = target.system;
-              document.querySelector(".ogl-coords #positionInput").value = target.position;
-              fleetDispatcher.targetPlanet = target;
+              //if target doesn't exist anymore (moved or destroyed) do not select a target and let the player select a new one by himself to avoid error and bad experience
+              if(target)
+              {
+                document.querySelector(".ogl-coords #galaxyInput").value = target.galaxy;
+                document.querySelector(".ogl-coords #systemInput").value = target.system;
+                document.querySelector(".ogl-coords #positionInput").value = target.position;
+                fleetDispatcher.targetPlanet = target;
 
-              //target display
-              this.planetList.forEach((planet) => {
-                let planetCoords = planet.querySelector(".planet-koords").textContent.split(":");
-                planet.querySelector(".planetlink").classList.remove("ogl-target");
-                planet.querySelector(".moonlink") && planet.querySelector(".moonlink").classList.remove("ogl-target");
-                planet.querySelector(".planetlink").classList.remove("mission-3");
-                planet.querySelector(".moonlink") && planet.querySelector(".moonlink").classList.remove("mission-4");
-                if (
-                  target.galaxy == planetCoords[0] &&
-                  target.system == planetCoords[1] &&
-                  target.position == planetCoords[2]
-                ) {
-                  if (target.type == 1) {
-                    planet.querySelector(".planetlink").classList.add("ogl-target");
-                    planet.querySelector(".planetlink").classList.add(`mission-${selectedRoute.mission}`);
-                  } else if (planet.querySelector(".moonlink")) {
-                    planet.querySelector(".moonlink").classList.add("ogl-target");
-                    planet.querySelector(".moonlink").classList.add(`mission-${selectedRoute.mission}`);
+                //target display
+                this.planetList.forEach((planet) => {
+                  let planetCoords = planet.querySelector(".planet-koords").textContent.split(":");
+                  planet.querySelector(".planetlink").classList.remove("ogl-target");
+                  planet.querySelector(".moonlink") && planet.querySelector(".moonlink").classList.remove("ogl-target");
+                  planet.querySelector(".planetlink").classList.remove("mission-3");
+                  planet.querySelector(".moonlink") && planet.querySelector(".moonlink").classList.remove("mission-4");
+                  if (
+                    target.galaxy == planetCoords[0] &&
+                    target.system == planetCoords[1] &&
+                    target.position == planetCoords[2]
+                  ) {
+                   if (target.type == 1) {
+                      planet.querySelector(".planetlink").classList.add("ogl-target");
+                      planet.querySelector(".planetlink").classList.add(`mission-${selectedRoute.mission}`);
+                    } else if (planet.querySelector(".moonlink")) {
+                      planet.querySelector(".moonlink").classList.add("ogl-target");
+                      planet.querySelector(".moonlink").classList.add(`mission-${selectedRoute.mission}`);
+                    }
                   }
-                }
-              });
+                });
+              }
 
               //select mission
               fleetDispatcher.mission = selectedRoute.mission;
