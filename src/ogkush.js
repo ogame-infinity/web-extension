@@ -17425,10 +17425,28 @@ class OGInfinity {
               this.expedition = false;
               document.querySelector("#missionsDiv").setAttribute("data", "false");
 
-              //select real target based on id to avoir weird issue after a planet or a moon has been moved or destroyed since the selected target has been saved
-              const target = selectedTarget.type == 3 
-                ? OGIData.empire.find((p) => p.moon && p.moon.id == selectedTarget.id).moon// if target is a moon => get moon data based on moon id
-                : OGIData.empire.find((p) => p.id == selectedTarget.id);// if target is a planet => get planet data based on planet id
+              // select real target based on id or fallback to coordinates
+              const findTargetByIdOrCoords = (sel) => {
+                if (sel.type == 3) { // moon
+                  const byId = sel.id ? OGIData.empire.find(p => p.moon && p.moon.id == sel.id)?.moon : undefined;
+                  if (byId) return byId;
+                  return OGIData.empire.find(
+                    p => p.moon &&
+                         p.moon.galaxy == sel.galaxy &&
+                         p.moon.system == sel.system &&
+                         p.moon.position == sel.position
+                  )?.moon;
+                } else { // planet
+                  const byId = sel.id ? OGIData.empire.find(p => p.id == sel.id) : undefined;
+                  if (byId) return byId;
+                  return OGIData.empire.find(
+                    p => p.galaxy == sel.galaxy &&
+                         p.system == sel.system &&
+                         p.position == sel.position
+                  );
+                }
+              };
+              const target = findTargetByIdOrCoords(selectedTarget);
           
               //if target doesn't exist anymore (moved or destroyed) do not select a target and let the player select a new one by himself to avoid error and bad experience
               if(target)
