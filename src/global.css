@@ -8645,16 +8645,18 @@ li.resource {
   grid-template-columns: repeat(6, 1fr);
 }
 
-.ogl-tooltip .ogk-customMission .choice,
-.ogl-tooltip .ogk-customMission .choice-mission-icon,
+.ogl-tooltip .ogk-customMission-options .choice,
+.ogl-tooltip .ogk-customMission-options .choice-mission-icon,
+.ogl-tooltip .ogk-customMission-options .choice-customMission-icon.customMission-keep-speed svg,
 .ogl-tooltip .ogk-collect-cargo .choice,
 .ogl-tooltip .ogk-collect-cargo .choice-mission-icon,
 .ogl-tooltip .ogk-expedition-options .choice {
   filter: brightness(0.75);
   background-blend-mode: luminosity;
 }
-.ogl-tooltip .ogk-customMission .choicee.highlight,
-.ogl-tooltip .ogk-customMission .choice-mission-icon.highlight,
+.ogl-tooltip .ogk-customMission-options .choice.highlight,
+.ogl-tooltip .ogk-customMission-options .choice-mission-icon.highlight,
+.ogl-tooltip .ogk-customMission-options .choice-customMission-icon.customMission-keep-speed.highlight svg,
 .ogl-tooltip .ogk-collect-cargo .choice.highlight,
 .ogl-tooltip .ogk-collect-cargo .choice-mission-icon.highlight,
 .ogl-tooltip .ogk-expedition-options .choice.highlight {
@@ -8704,7 +8706,7 @@ li.resource {
 }
 .choice-customMission-icon.customMission-keep-speed svg {
   position: relative;
-  left: 3.5px;
+  left: 3px;
   top: 2.5px;
   /*bottom: unset;*/
 }
