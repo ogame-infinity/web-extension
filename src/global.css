@@ -1186,7 +1186,7 @@ input[type="password"]::selection {
   transform: scale(0.75);
 }
 
-.ogl-dest > div {
+.ogl-dest > div:not(.ogl-system-buttons) {
   width: 0;
   margin-bottom: 5px;
   width: 300px;
@@ -1202,7 +1202,7 @@ input[type="password"]::selection {
   background: linear-gradient(0deg, #1a232d, transparent);
 }
 
-.ogl-dest > div:nth-child(2) {
+.ogl-dest > div:nth-child(3) {
   margin-bottom: 10px;
 }
 
@@ -1259,17 +1259,54 @@ input[type="password"]::selection {
 .ogl-dest .ogl-union-btn:hover {
   filter: sepia(70%) hue-rotate(-50deg) saturate(11) brightness(0.8);
 }
+/* Hide system input buttons minus and plus, if custom mission with spy mission is not active */
+.ogl-dest:not(:has(.ogk-customMission.ogl-active)):not(:has(.ogl-mission-icon.ogl-active[mission="6"])) .ogl-system-buttons {
+  display: none;
+}
+.ogl-dest .ogl-system-buttons{
+  position: relative;
+}
+.ogl-dest .ogl-system-input-minus,
+.ogl-dest .ogl-system-input-plus {
+  height: 23px;
+  width: 23px;
+  justify-content: center;
+  cursor: pointer;
+  background: #5b768a70;
+  border-radius: 50%;
+  position: absolute;
+  top: -9px;
+  height: 15px;
+  width: 15px;
+  display: inline-block;
+  align-content: center;
+  text-align: center;
+  font-weight: bolder;
+}
+.ogl-dest .ogl-system-input-minus{
+  left: 51px;
+}
+.ogl-dest .ogl-system-input-minus::before{
+  content: "-";
+}
+.ogl-dest .ogl-system-input-plus{
+  left: 92.5px;
+}
+.ogl-dest .ogl-system-input-plus::before{
+  content: "+";
+}
+
+
 
 .ogl-dest .ogl-coords .ogl-homes {
-  width: 50px;
   height: auto;
+  width: 69px;
   display: flex;
   height: 23px;
   justify-content: center;
   cursor: pointer;
   background: #5b768a70;
   border-radius: 5px;
-  width: 69px;
   margin-left: 5px;
 }
 
@@ -1294,7 +1331,8 @@ input[type="password"]::selection {
   margin-left: -2px;
   padding: 3px;
 }
-
+.ogl-dest .ogl-system-input-minus:hover,
+.ogl-dest .ogl-system-input-plus:hover,
 .ogl-dest .ogl-coords .ogl-homes:hover {
   filter: hue-rotate(180deg) saturate(150%);
   opacity: 1;
@@ -8909,8 +8947,11 @@ li.resource {
   transform-origin: top right;
   width: 28px;
 }
-.ogk-customMission.statio:before {
+.ogk-customMission.statio::before {
   background-position: -112px -4px;
+}
+.ogk-customMission.spy::before {
+  background-position: -220px -4px;
 }
 
 .ogk-customMission::after {
@@ -9095,6 +9136,7 @@ li.resource {
   background-position: -112px -4px;
 }
 
+.ogk-customMission.ogl-active,
 .ogk-customMission:hover,
 .ogl-collect:hover,
 .ogl-expedition:hover {
