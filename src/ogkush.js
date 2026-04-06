@@ -9870,9 +9870,9 @@ class OGInfinity {
       returnDiv.style.visibility = "hidden";
       info.appendChild(createDOM("div", {}, this.getTranslatedText(49)));
       let consDiv = info.appendChild(createDOM("div", { class: "undermark" }));
-      info.appendChild(createDOM("div", {}, "empty-systems"));
+      info.appendChild(createDOM("div", {}, this.getTranslatedText(225)));
       let emptySystemsDiv = info.appendChild(createDOM("div", { class: "ogl-empty-systems" }));
-      info.appendChild(createDOM("div", {}, "inactive-systems"));
+      info.appendChild(createDOM("div", {}, this.getTranslatedText(226)));
       let inactiveSystemsDiv = info.appendChild(createDOM("div", { class: "ogl-inactive-systems" }));
 
       // fleet speed selector in page fleet 1
