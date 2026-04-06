@@ -9870,6 +9870,10 @@ class OGInfinity {
       returnDiv.style.visibility = "hidden";
       info.appendChild(createDOM("div", {}, this.getTranslatedText(49)));
       let consDiv = info.appendChild(createDOM("div", { class: "undermark" }));
+      info.appendChild(createDOM("div", {}, "empty-systems"));
+      let emptySystemsDiv = info.appendChild(createDOM("div", { class: "ogl-empty-systems" }));
+      info.appendChild(createDOM("div", {}, "inactive-systems"));
+      let inactiveSystemsDiv = info.appendChild(createDOM("div", { class: "ogl-inactive-systems" }));
 
       // fleet speed selector in page fleet 1
       const slider = DOM.createDOM("div", { style: "margin-top: 10px" });
@@ -10177,6 +10181,8 @@ class OGInfinity {
           consDiv.textContent = "-";
           arrivalDiv.textContent = "-";
           returnDiv.textContent = "-";
+          emptySystemsDiv.textContent = "-";
+          inactiveSystemsDiv.textContent = "-";
           document
             .querySelector(".ogl-dispatch .ogl-missions")
             .replaceChildren(createDOM("span", { style: "color: #9099a3" }, `${that.getTranslatedText(111)}`));
@@ -10220,6 +10226,21 @@ class OGInfinity {
           icon.classList.add("ogl-active");
         }
         durationDiv.replaceChildren(createDOM("strong", {}, formatTime(fleetDispatcher.getDuration())));
+        if(fleetDispatcher.emptySystems > 0) {
+          emptySystemsDiv.textContent = fleetDispatcher.emptySystems;
+          emptySystemsDiv.classList.add("middlemark");
+        } else {
+          emptySystemsDiv.textContent = "-";
+          emptySystemsDiv.classList.remove("middlemark");
+        }
+
+        if(fleetDispatcher.inactiveSystems > 0) {
+          inactiveSystemsDiv.textContent = fleetDispatcher.inactiveSystems;
+          inactiveSystemsDiv.classList.add("middlemark");
+        } else {
+          inactiveSystemsDiv.textContent = "-";
+          inactiveSystemsDiv.classList.remove("middlemark");
+        }
         consDiv.textContent = toFormatedNumber(fleetDispatcher.getConsumption(), 0);
         if (fleetDispatcher.getConsumption() > deutAvailable) {
           consDiv.classList.add("overmark");
