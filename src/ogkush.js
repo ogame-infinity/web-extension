@@ -17684,15 +17684,15 @@ class OGInfinity {
                     if(fleetDispatcher.targetPlanet.system !== OgamePageData.currentSystem)
                     {
                       const maxSystem = fleetDispatcher.fleetHelper.MAX_SYSTEM;
-                      let distance = Math.abs(fleetDispatcher.targetPlanet.system - OgamePageData.currentSystem);
+                      let distance = fleetDispatcher.targetPlanet.system - OgamePageData.currentSystem;
                       // In a donut system, if the distance is greater than half of the max, it's shorter to go through the loop.
                       if (OgamePageData.donutSystem )
                       {                    
-                        if(distance > maxSystem / 2) {
+                        if(Math.abs(distance) > maxSystem / 2) {
                           distance = distance > 0 ? distance - maxSystem : distance + maxSystem;
                         }
                       }
-                      urlParams.set("systemDistance", Math.abs(distance));
+                      urlParams.set("systemDistance", distance);
                     }
                   }
                   else {
