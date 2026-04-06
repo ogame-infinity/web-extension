@@ -2281,6 +2281,23 @@ const translation = Object.freeze({
       tr: "Galaksi depolama",
       br: "Armazenamento de galáxia",
     },
+    
+    229: {
+      de: "Leere Systeme",
+      en: "Empty systems",
+      es: "Sistemas vacíos",
+      fr: "Systèmes vides",
+      tr: "Boş sistemler",
+      br: "Sistemas vazios",
+    },
+    230: {
+      de: "Inaktive Systeme",
+      en: "Inactive systems",
+      es: "Sistemas inactivos",
+      fr: "Systèmes inactifs",
+      tr: "Pasif sistemler",
+      br: "Sistemas inativos",
+    },
   },
 });
 
