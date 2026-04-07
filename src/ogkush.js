@@ -4915,7 +4915,7 @@ class OGInfinity {
   generalStats(player) {
     let content = createDOM("div", { class: "ogk-stats" });
     let globalInfo = content.appendChild(createDOM("div", { class: "ogk-global" }));
-    let honorRank = document.querySelector(".honorRank");
+    let honorRank = document.querySelector("#playerName .honorRank");
     if (honorRank) {
       honorRank = honorRank.cloneNode(true);
     } else {
