@@ -5211,7 +5211,7 @@ class OGInfinity {
     let totalSum = 0;
     let transport = 0;
     Object.values(shipEnum)
-      .filter((id) => id !== shipEnum.SolarSatellite)
+      .filter((id) => id !== shipEnum.SolarSatellite && id !== shipEnum.Crawler)
       .forEach((id) => {
         let flyingCount = flying.fleet[id];
         let sum = 0;
