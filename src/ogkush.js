@@ -11144,7 +11144,7 @@ class OGInfinity {
   }
 
   expedition() {
-    if (this.page == "fleetdispatch" && fleetDispatcher.shipsOnPlanet.length !== 0 && !fleetDispatcher.isOnVacation) {
+    if (this.page == "fleetdispatch" && fleetDispatcher.shipsOnPlanet?.find(x => x.number > 0) !== undefined && !fleetDispatcher.isOnVacation) {
       if (!document.querySelector("#allornone .allornonewrap")) return;
       document.querySelector("#expeditiontime").value = this.json.options.expedition.defaultTime;
       const dropdown = document.querySelector("#expeditiontime + .dropdown > a");
