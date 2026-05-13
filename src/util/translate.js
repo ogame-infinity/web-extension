@@ -2306,7 +2306,10 @@ class Translator {
       this.logger.debug(`Translations (${currentLanguage}) will be updated`);
 
       this.#ForceUpdateAllTechNamesFromEmpire(translations, empireFromPlanets);
-      this.#ForceUpdateAllTechNamesFromEmpire(translations, empireFromMoons);
+      if(empireFromMoons)
+      {
+        this.#ForceUpdateAllTechNamesFromEmpire(translations, empireFromMoons);
+      }
 
       //set date to now and language to currentLanguage
       translations.lastUpdate = new Date().toISOString();

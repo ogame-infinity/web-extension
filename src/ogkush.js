@@ -11771,6 +11771,7 @@ class OGInfinity {
   }
 
   getEmpireInfo() {
+    const hasMoon = document.querySelector("a.moonlink") !== null;
     const abortController = new AbortController();
     window.onbeforeunload = () => abortController.abort();
 
@@ -11786,11 +11787,10 @@ class OGInfinity {
             }
           )
         );
-
     const empireRequestPlanets = empireRequest(new URLSearchParams({ page: "standalone", component: "empire" }));
-    const empireRequestMoons = empireRequest(
+    const empireRequestMoons = hasMoon ? empireRequest(
       new URLSearchParams({ page: "standalone", component: "empire", planetType: "1" })
-    );
+    ) : null;
 
     const getWorkinProgressGroupsAndPatterns = (groups) => {
       //create a list of patterns to match the groups ('?' is a wildcard for lifeform groups)
@@ -11871,19 +11871,21 @@ class OGInfinity {
       });
     };
 
-    return Promise.all([empireRequestPlanets, empireRequestMoons]).then((values) => {
+    const promises = [empireRequestPlanets];
+    if (empireRequestMoons) promises.push(empireRequestMoons);
+    return Promise.all(promises).then((values) => {
       const empireObjectPlanets = values[0];
-      const empireObjectMoons = values[1];
+      const empireObjectMoons = values.length > 1 ? values[1] : null;
 
       Translator.UpdateAllTechNamesFromEmpire(empireObjectPlanets, empireObjectMoons);
       setWorkInProgressTechs(empireObjectPlanets.planets, empireObjectPlanets.groups);
-      if (empireObjectMoons.planets) {
+      if (empireObjectMoons && empireObjectMoons.planets) {
         setWorkInProgressTechs(empireObjectMoons.planets, empireObjectMoons.groups);
       }
 
       empireObjectPlanets.planets.forEach((planet) => {
         planet.invalidate = false;
-        if (empireObjectMoons.planets) {
+        if (empireObjectMoons && empireObjectMoons.planets) {
           empireObjectMoons.planets.forEach((moon) => {
             if (planet.moonID === moon.id) {
               planet.moon = moon;
@@ -11892,7 +11894,7 @@ class OGInfinity {
           });
         }
       });
-
+      
       return empireObjectPlanets.planets;
     });
   }
@@ -16866,7 +16868,7 @@ class OGInfinity {
   }
 
   collect() {
-    if (this.page == "fleetdispatch" && fleetDispatcher.shipsOnPlanet.length !== 0 && !fleetDispatcher.isOnVacation) {
+    if (this.page == "fleetdispatch" && fleetDispatcher.shipsOnPlanet.length !== 0 && fleetDispatcher.shipsOnPlanet.find(x => x.number > 0) !== undefined && !fleetDispatcher.isOnVacation) {
       let cargoChoice = createDOM("div", { class: "ogk-collect-cargo" });
       let btnCollect = document.querySelector("#allornone .secondcol").appendChild(
         createDOM("button", {
@@ -17051,7 +17053,7 @@ class OGInfinity {
   }
 
   customMissions() {
-    if (this.page == "fleetdispatch" && fleetDispatcher.shipsOnPlanet.length !== 0 && !fleetDispatcher.isOnVacation) {
+    if (this.page == "fleetdispatch" && fleetDispatcher.shipsOnPlanet.length !== 0 && fleetDispatcher.shipsOnPlanet.find(x => x.number > 0) !== undefined && !fleetDispatcher.isOnVacation) {
       let missionsDiv = document.querySelector("#allornone .secondcol");
       const maxMissions = 5;
       let nbMissions = getOption("nbCustomMissions");
