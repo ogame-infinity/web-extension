@@ -16868,7 +16868,7 @@ class OGInfinity {
   }
 
   collect() {
-    if (this.page == "fleetdispatch" && fleetDispatcher.shipsOnPlanet.length !== 0 && fleetDispatcher.shipsOnPlanet.find(x => x.number > 0) !== undefined && !fleetDispatcher.isOnVacation) {
+    if (this.page == "fleetdispatch" && fleetDispatcher.shipsOnPlanet?.find(x => x.number > 0) !== undefined && !fleetDispatcher.isOnVacation) {
       let cargoChoice = createDOM("div", { class: "ogk-collect-cargo" });
       let btnCollect = document.querySelector("#allornone .secondcol").appendChild(
         createDOM("button", {
@@ -17053,7 +17053,7 @@ class OGInfinity {
   }
 
   customMissions() {
-    if (this.page == "fleetdispatch" && fleetDispatcher.shipsOnPlanet.length !== 0 && fleetDispatcher.shipsOnPlanet.find(x => x.number > 0) !== undefined && !fleetDispatcher.isOnVacation) {
+    if (this.page == "fleetdispatch" && fleetDispatcher.shipsOnPlanet?.find(x => x.number > 0) !== undefined && !fleetDispatcher.isOnVacation) {
       let missionsDiv = document.querySelector("#allornone .secondcol");
       const maxMissions = 5;
       let nbMissions = getOption("nbCustomMissions");
