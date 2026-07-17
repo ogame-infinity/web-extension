@@ -37,6 +37,28 @@ import OverviewPage from "./ctxpage/overview/OverviewPage.js";
 import TraderImportExportPage from "./ctxpage/traderOverview/TraderImportExportPage.js";
 import RecyclingYieldCalculator from "./util/recyclingYieldCalculator.js";
 
+
+const OGAME_VERSION = document.querySelector("meta[name='ogame-version']")?.content || "0.0.0";
+function IsOgameVersionEqualOrGreaterThan(v) {
+  // Extract the numeric parts of the version strings and convert them to numbers for comparison (ex: "13.0.0-r1" -> "13.0.0")
+  const cleanVersion = (v) => v.split("-")[0].split(".").map(Number);
+
+  const ogameVersionParts = cleanVersion(OGAME_VERSION);
+  const vParts = cleanVersion(v);
+
+  const maxLength = Math.max(ogameVersionParts.length, vParts.length);
+
+  for (let i = 0; i < maxLength; i++) {
+    const ogameV = ogameVersionParts[i] || 0;
+    const b = vParts[i] || 0;
+
+    if (ogameV > b) return true; // Ogame version is greater
+    if (ogameV < b) return false; // Ogame version is lesser
+  }
+  
+  return true; // Versions are equal
+}
+
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 //const VERSION = "__VERSION__";
 const logger = getLogger();
@@ -3061,6 +3083,7 @@ class OGInfinity {
         const isMoon = fleetDispatcher.targetPlanet.type == fleetDispatcher.fleetHelper.PLANETTYPE_MOON;
         let object = OGIData.empire[this.current.index];
         object = this.current.isMoon ? object.moon : object;
+        debugger;
         object.metal = fleetDispatcher.metalOnPlanet - fleetDispatcher.cargoMetal;
         object.crystal = fleetDispatcher.crystalOnPlanet - fleetDispatcher.cargoCrystal;
         object.deuterium = fleetDispatcher.deuteriumOnPlanet - fleetDispatcher.cargoDeuterium;
@@ -3108,6 +3131,7 @@ class OGInfinity {
             7;
         }
         if (!this.current.isMoon && object.deuterium < object.deuteriumStorage && object.production.hourly[2] == 0) {
+          debugger;
           object.production.hourly[2] = Math.floor(
             (resourcesBar.resources.deuterium.baseProduction +
               resourcesBar.techs[3].production.deuterium * object.production.productionFactor -
@@ -5220,7 +5244,7 @@ class OGInfinity {
           if (planet) sum += Number(planet[id]);
           if (planet.moon) sum += Number(planet.moon[id]);
         });
-        transport += sum * this.json.ships[id].cargoCapacity;
+        transport += sum * this.json.ships[id]?.cargoCapacity ?? 0;
         totalSum += sum;
         let shipDiv = fleet.appendChild(createDOM("div"));
         shipDiv.appendChild(createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-fleet-" + id }));
