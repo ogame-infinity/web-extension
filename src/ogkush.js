@@ -1667,7 +1667,7 @@ class OGInfinity {
     this.chat();
     this.uvlinks();
     this.OverviewPage.MakePrettierOverview(this.page);
-    this.TraderImportExportPage.RemindMeImportExport(this.page);
+    //this.TraderImportExportPage.RemindMeImportExport(this.page); //Disabled for V13
     this.betterHighscore();
     this.overviewDates();
     needsUtil.display();
@@ -11788,9 +11788,9 @@ class OGInfinity {
           )
         );
     const empireRequestPlanets = empireRequest(new URLSearchParams({ page: "standalone", component: "empire" }));
-    const empireRequestMoons = hasMoon ? empireRequest(
+    const empireRequestMoons = hasMoon ? wait.delay(10).then(() => empireRequest(
       new URLSearchParams({ page: "standalone", component: "empire", planetType: "1" })
-    ) : null;
+    )) : null;
 
     const getWorkinProgressGroupsAndPatterns = (groups) => {
       //create a list of patterns to match the groups ('?' is a wildcard for lifeform groups)
