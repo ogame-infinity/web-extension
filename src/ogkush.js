@@ -11654,11 +11654,10 @@ class OGInfinity {
         const technologyTimeReduction = {};
         htmlDocument
           .querySelectorAll(
-            OGAME_VERSION_AT_LEAST_13_0_0 ? "bonus-item-content[data-toggable-target^='costreduction'] inner-bonus-item-heading"
+            OGAME_VERSION_AT_LEAST_13_0_0 ? "bonus-item-content[data-toggable-target^='costreduction'] bonus-item-content-holder > inner-bonus-item-heading"
             : "inner-bonus-item-heading[data-toggable^='subcategoryCostAndTime']")
           .forEach((category) => {
             let techId = OGAME_VERSION_AT_LEAST_13_0_0 ? category.getAttribute("data-toggable") : category.getAttribute("data-toggable").split("subcategoryCostAndTime")[1];
-            if(OGAME_VERSION_AT_LEAST_13_0_0 && techId > 199) return;
             if(OGAME_VERSION_AT_LEAST_13_0_0 && techId  == -200) techId = "LfResearch";
 
               const bonus = category.querySelectorAll("bonus-item");
