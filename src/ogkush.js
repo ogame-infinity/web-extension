@@ -11600,6 +11600,7 @@ class OGInfinity {
     )
       .then((rep) => rep.text())
       .then((str) => {
+        
         const htmlDocument = new window.DOMParser().parseFromString(str, "text/html");
 
         // update selectedLifeforms & their levels
@@ -11618,16 +11619,21 @@ class OGInfinity {
 
         // production bonus
         const metalDiv = htmlDocument.querySelector(
-          "inner-bonus-item-heading[data-toggable='subcategoryResources0'] .subCategoryBonus"
+          OGAME_VERSION_AT_LEAST_13_0_0 ? "inner-bonus-item-heading[data-toggable='metal'] .subCategoryBonus"
+          : "inner-bonus-item-heading[data-toggable='subcategoryResources0'] .subCategoryBonus"
         );
         const crystalDiv = htmlDocument.querySelector(
-          "inner-bonus-item-heading[data-toggable='subcategoryResources1'] .subCategoryBonus"
+          OGAME_VERSION_AT_LEAST_13_0_0 ? "inner-bonus-item-heading[data-toggable='crystal'] .subCategoryBonus"
+          : "inner-bonus-item-heading[data-toggable='subcategoryResources1'] .subCategoryBonus"
         );
         const deuteriumDiv = htmlDocument.querySelector(
-          "inner-bonus-item-heading[data-toggable='subcategoryResources2'] .subCategoryBonus"
+          OGAME_VERSION_AT_LEAST_13_0_0 ? "inner-bonus-item-heading[data-toggable='deuterium'] .subCategoryBonus"
+          : "inner-bonus-item-heading[data-toggable='subcategoryResources2'] .subCategoryBonus"
         );
+        
         const energyDiv = htmlDocument.querySelector(
-          "inner-bonus-item-heading[data-toggable='subcategoryResources3'] .subCategoryBonus"
+          OGAME_VERSION_AT_LEAST_13_0_0 ? "inner-bonus-item-heading[data-toggable='energy'] .subCategoryBonus"
+          : "inner-bonus-item-heading[data-toggable='subcategoryResources3'] .subCategoryBonus"
         );
         const productionBonus = [
           metalDiv ? parseBonus(metalDiv.textContent) : 0,
@@ -11638,7 +11644,8 @@ class OGInfinity {
 
         // expedition bonus
         const expeditionDiv = htmlDocument.querySelector(
-          "inner-bonus-item-heading[data-toggable='subcategoryResourcesExpedition'] .subCategoryBonus"
+          OGAME_VERSION_AT_LEAST_13_0_0 ? "inner-bonus-item-heading[data-toggable='ResultBooster'] .subCategoryBonus"
+          : "inner-bonus-item-heading[data-toggable='subcategoryResourcesExpedition'] .subCategoryBonus"
         );
         const expeditionBonus = expeditionDiv ? parseBonus(expeditionDiv.textContent) : 0;
 
@@ -11646,32 +11653,42 @@ class OGInfinity {
         const technologyCostReduction = {};
         const technologyTimeReduction = {};
         htmlDocument
-          .querySelectorAll("inner-bonus-item-heading[data-toggable^='subcategoryCostAndTime']")
+          .querySelectorAll(
+            OGAME_VERSION_AT_LEAST_13_0_0 ? "bonus-item-content[data-toggable-target^='costreduction'] inner-bonus-item-heading"
+            : "inner-bonus-item-heading[data-toggable^='subcategoryCostAndTime']")
           .forEach((category) => {
-            const techId = category.getAttribute("data-toggable").split("subcategoryCostAndTime")[1];
-            const bonus = category.querySelectorAll("bonus-item");
-            technologyCostReduction[techId] = parseBonus(bonus[0].textContent);
-            technologyTimeReduction[techId] = parseBonus(bonus[1].textContent);
+            let techId = OGAME_VERSION_AT_LEAST_13_0_0 ? category.getAttribute("data-toggable") : category.getAttribute("data-toggable").split("subcategoryCostAndTime")[1];
+            if(OGAME_VERSION_AT_LEAST_13_0_0 && techId > 199) return;
+            if(OGAME_VERSION_AT_LEAST_13_0_0 && techId  == -200) techId = "LfResearch";
+
+              const bonus = category.querySelectorAll("bonus-item");
+              technologyCostReduction[techId] = parseBonus(bonus[0].textContent);
+              technologyTimeReduction[techId] = parseBonus(bonus[1].textContent);            
           });
 
         // class bonus
         const classBonus = {};
-        const collectorDiv = htmlDocument.querySelector(
-          "inner-bonus-item-heading[data-toggable='subcategoryCharacterclasses1'] .subCategoryBonus"
-        );
-        const generalDiv = htmlDocument.querySelector(
-          "inner-bonus-item-heading[data-toggable='subcategoryCharacterclasses2'] .subCategoryBonus"
-        );
-        const discovererDiv = htmlDocument.querySelector(
-          "inner-bonus-item-heading[data-toggable='subcategoryCharacterclasses3'] .subCategoryBonus"
-        );
-        classBonus.miner = collectorDiv ? parseBonus(collectorDiv.textContent.match(/[\d].*/)[0]) : 0;
-        classBonus.warrior = generalDiv ? parseBonus(generalDiv.textContent.match(/[\d].*/)[0]) : 0;
-        classBonus.explorer = discovererDiv ? parseBonus(discovererDiv.textContent.match(/[\d].*/)[0]) : 0;
+      const collectorDiv = htmlDocument.querySelector(
+         OGAME_VERSION_AT_LEAST_13_0_0 ? "inner-bonus-item-heading[data-toggable='601'] .subCategoryBonus"
+        : "inner-bonus-item-heading[data-toggable='subcategoryCharacterclasses1'] .subCategoryBonus"
+      );
+      const generalDiv = htmlDocument.querySelector(
+        OGAME_VERSION_AT_LEAST_13_0_0 ? "inner-bonus-item-heading[data-toggable='602'] .subCategoryBonus"
+        : "inner-bonus-item-heading[data-toggable='subcategoryCharacterclasses2'] .subCategoryBonus"
+      );
+      const discovererDiv = htmlDocument.querySelector(
+        OGAME_VERSION_AT_LEAST_13_0_0 ? "inner-bonus-item-heading[data-toggable='603'] .subCategoryBonus"
+        : "inner-bonus-item-heading[data-toggable='subcategoryCharacterclasses3'] .subCategoryBonus"
+      );
+      classBonus.miner = collectorDiv ? parseBonus(collectorDiv.textContent.match(/[\d].*/)[0]) : 0;
+      classBonus.warrior = generalDiv ? parseBonus(generalDiv.textContent.match(/[\d].*/)[0]) : 0;
+      classBonus.explorer = discovererDiv ? parseBonus(discovererDiv.textContent.match(/[\d].*/)[0]) : 0;
+        
 
         // crawler bonus
         const crawlerDiv = htmlDocument.querySelectorAll(
-          "inner-bonus-item-heading[data-toggable='subcategoryMiscImprovedCrawler'] bonus-item"
+        OGAME_VERSION_AT_LEAST_13_0_0 ? "inner-bonus-item-heading[data-toggable='buggyBonus'] bonus-item"
+          : "inner-bonus-item-heading[data-toggable='subcategoryMiscImprovedCrawler'] bonus-item"
         );
         const crawlerConsumptionBonus = crawlerDiv.length ? parseBonus(crawlerDiv[0].textContent) : 0;
         const crawlerProductionBonus = crawlerDiv.length ? parseBonus(crawlerDiv[1].textContent) : 0;
