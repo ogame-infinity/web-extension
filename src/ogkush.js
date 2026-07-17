@@ -59,6 +59,8 @@ function IsOgameVersionEqualOrGreaterThan(v) {
   return true; // Versions are equal
 }
 
+const OGAME_VERSION_AT_LEAST_13_0_0 = IsOgameVersionEqualOrGreaterThan("13.0.0");
+
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 //const VERSION = "__VERSION__";
 const logger = getLogger();
@@ -1689,7 +1691,10 @@ class OGInfinity {
     this.chat();
     this.uvlinks();
     this.OverviewPage.MakePrettierOverview(this.page);
-    //this.TraderImportExportPage.RemindMeImportExport(this.page); //Disabled for V13
+    if(!OGAME_VERSION_AT_LEAST_13_0_0) {
+      //Disabled for V13
+      this.TraderImportExportPage.RemindMeImportExport(this.page); 
+    }
     this.betterHighscore();
     this.overviewDates();
     needsUtil.display();
@@ -3083,77 +3088,24 @@ class OGInfinity {
         const isMoon = fleetDispatcher.targetPlanet.type == fleetDispatcher.fleetHelper.PLANETTYPE_MOON;
         let object = OGIData.empire[this.current.index];
         object = this.current.isMoon ? object.moon : object;
-        debugger;
         object.metal = fleetDispatcher.metalOnPlanet - fleetDispatcher.cargoMetal;
         object.crystal = fleetDispatcher.crystalOnPlanet - fleetDispatcher.cargoCrystal;
         object.deuterium = fleetDispatcher.deuteriumOnPlanet - fleetDispatcher.cargoDeuterium;
         object.deuterium -= fuel;
         if (!this.current.isMoon && object.metal < object.metalStorage && object.production.hourly[0] == 0) {
-          object.production.hourly[0] = Math.floor(
-            (resourcesBar.resources.metal.baseProduction +
-              resourcesBar.techs[1].production.metal * object.production.productionFactor) *
-              3600
-          );
-          object.production.daily[0] =
-            Math.floor(
-              (resourcesBar.resources.metal.baseProduction +
-                resourcesBar.techs[1].production.metal * object.production.productionFactor) *
-                3600
-            ) * 24;
-          object.production.weekly[0] =
-            Math.floor(
-              (resourcesBar.resources.metal.baseProduction +
-                resourcesBar.techs[1].production.metal * object.production.productionFactor) *
-                3600
-            ) *
-            24 *
-            7;
+            object.production.hourly[0] = Math.floor((resourcesBar.resources.metal.baseProduction + resourcesBar.resources.metal.production) * 3600);
+          object.production.daily[0] = object.production.hourly[0] * 24;
+          object.production.weekly[0] = object.production.daily[0] * 7;
         }
         if (!this.current.isMoon && object.crystal < object.crystalStorage && object.production.hourly[1] == 0) {
-          object.production.hourly[1] = Math.floor(
-            (resourcesBar.resources.crystal.baseProduction +
-              resourcesBar.techs[2].production.crystal * object.production.productionFactor) *
-              3600
-          );
-          object.production.daily[1] =
-            Math.floor(
-              (resourcesBar.resources.crystal.baseProduction +
-                resourcesBar.techs[2].production.crystal * object.production.productionFactor) *
-                3600
-            ) * 24;
-          object.production.weekly[1] =
-            Math.floor(
-              (resourcesBar.resources.crystal.baseProduction +
-                resourcesBar.techs[2].production.crystal * object.production.productionFactor) *
-                3600
-            ) *
-            24 *
-            7;
+          object.production.hourly[1] = Math.floor((resourcesBar.resources.crystal.baseProduction + resourcesBar.resources.crystal.production) * 3600);
+          object.production.daily[1] = object.production.hourly[1] * 24;
+          object.production.weekly[1] = object.production.daily[1] * 7;
         }
         if (!this.current.isMoon && object.deuterium < object.deuteriumStorage && object.production.hourly[2] == 0) {
-          debugger;
-          object.production.hourly[2] = Math.floor(
-            (resourcesBar.resources.deuterium.baseProduction +
-              resourcesBar.techs[3].production.deuterium * object.production.productionFactor -
-              resourcesBar.techs[12].consumption.deuterium) *
-              3600
-          );
-          object.production.daily[2] =
-            Math.floor(
-              (resourcesBar.resources.deuterium.baseProduction +
-                resourcesBar.techs[3].production.deuterium * object.production.productionFactor -
-                resourcesBar.techs[12].consumption.deuterium) *
-                3600
-            ) * 24;
-          object.production.weekly[2] =
-            Math.floor(
-              (resourcesBar.resources.deuterium.baseProduction +
-                resourcesBar.techs[3].production.deuterium * object.production.productionFactor -
-                resourcesBar.techs[12].consumption.deuterium) *
-                3600
-            ) *
-            24 *
-            7;
+          object.production.hourly[2] = Math.floor((resourcesBar.resources.deuterium.baseProduction + resourcesBar.resources.deuterium.production) * 3600);
+          object.production.daily[2] = object.production.hourly[2] * 24;
+          object.production.weekly[2] = object.production.daily[2] * 7;
         }
         fleetDispatcher.shipsToSend.forEach((ship) => {
           object[ship.id] -= ship.number;
@@ -5097,19 +5049,19 @@ class OGInfinity {
       dprodw = 0;
     let sum = OGIData.empire.length;
     sum &&
-      OGIData.empire.forEach((planet) => {
-        mlvl += Number(planet[1]);
-        mprodh += Number(planet.production.hourly[0] || 0);
-        mprodd += Number(planet.production.daily[0] || 0);
-        mprodw += Number(planet.production.weekly[0] || 0);
-        clvl += Number(planet[2]);
-        cprodh += Number(planet.production.hourly[1] || 0);
-        cprodd += Number(planet.production.daily[1] || 0);
-        cprodw += Number(planet.production.weekly[1] || 0);
-        dlvl += Number(planet[3]);
-        dprodh += Number(planet.production.hourly[2] || 0);
-        dprodd += Number(planet.production.daily[2] || 0);
-        dprodw += Number(planet.production.weekly[2] || 0);
+      OGIData.empire.forEach((planetObj) => {
+        mlvl += Number(planetObj[1]);
+        mprodh += Number(planetObj.production.hourly[0] || 0);
+        mprodd += Number(planetObj.production.daily[0] || 0);
+        mprodw += Number(planetObj.production.weekly[0] || 0);
+        clvl += Number(planetObj[2]);
+        cprodh += Number(planetObj.production.hourly[1] || 0);
+        cprodd += Number(planetObj.production.daily[1] || 0);
+        cprodw += Number(planetObj.production.weekly[1] || 0);
+        dlvl += Number(planetObj[3]);
+        dprodh += Number(planetObj.production.hourly[2] || 0);
+        dprodd += Number(planetObj.production.daily[2] || 0);
+        dprodw += Number(planetObj.production.weekly[2] || 0);
       });
     let mStorage = Math.ceil((Math.log(Math.ceil(mprodd / 5000)) * 33) / 22);
     let cStorage = Math.ceil((Math.log(Math.ceil(cprodd / 5000)) * 33) / 22);
@@ -5244,7 +5196,8 @@ class OGInfinity {
           if (planet) sum += Number(planet[id]);
           if (planet.moon) sum += Number(planet.moon[id]);
         });
-        transport += sum * this.json.ships[id]?.cargoCapacity ?? 0;
+        const cargoCapacity = this.json.ships[id]?.cargoCapacity;
+        if(typeof cargoCapacity === "number") transport += sum * cargoCapacity;
         totalSum += sum;
         let shipDiv = fleet.appendChild(createDOM("div"));
         shipDiv.appendChild(createDOM("a", { class: "ogl-option ogl-fleet-ship ogl-fleet-" + id }));
@@ -5277,7 +5230,7 @@ class OGInfinity {
         `${this.getTranslatedText(47)}: <strong>${toFormatedNumber(transport, null, transport >= 1e6)}</strong>`
       )
     );
-    const rcpower = this.json.ships[shipEnum.Recycler].cargoCapacity * cyclos;
+    const rcpower = (this.json.ships[shipEnum.Recycler]?.cargoCapacity ?? 0) * cyclos;
     fleetInfo.appendChild(
       this.createDOM(
         "span",
@@ -14642,21 +14595,24 @@ class OGInfinity {
     alertHostileIncomingMode.value = getOption("alertHostileIncomingMode");
     optiondiv.appendChild(alertHostileIncomingMode);
 
-    optiondiv = featureSettings.appendChild(
-      createDOM(
-        "span",
-        { style: "display: flex;justify-content: space-between; align-items: center;" },
-        this.getTranslatedText(222)
-      )
-    );
-    const importExportReminderMode = DOM.createDOM("select", { class: "ogl-selectInput ogl-w-125 tooltip" });
-    importExportReminderMode.append(
-      DOM.createDOM("option", { value: "0" }, this.getTranslatedText(212)),
-      DOM.createDOM("option", { value: "1" }, this.getTranslatedText(223)),
-      DOM.createDOM("option", { value: "2" }, this.getTranslatedText(224))
-    );
-    importExportReminderMode.value = getOption("importExportReminderMode");
-    optiondiv.appendChild(importExportReminderMode);
+    if(!OGAME_VERSION_AT_LEAST_13_0_0) {
+      //Disabled for V13
+      optiondiv = featureSettings.appendChild(
+        createDOM(
+          "span",
+          { style: "display: flex;justify-content: space-between; align-items: center;" },
+          this.getTranslatedText(222)
+        )
+      );
+      const importExportReminderMode = DOM.createDOM("select", { class: "ogl-selectInput ogl-w-125 tooltip" });
+      importExportReminderMode.append(
+        DOM.createDOM("option", { value: "0" }, this.getTranslatedText(212)),
+        DOM.createDOM("option", { value: "1" }, this.getTranslatedText(223)),
+        DOM.createDOM("option", { value: "2" }, this.getTranslatedText(224))
+      );
+      importExportReminderMode.value = getOption("importExportReminderMode");
+      optiondiv.appendChild(importExportReminderMode);
+    }
 
     optiondiv = featureSettings.appendChild(
       createDOM(
@@ -16111,7 +16067,7 @@ class OGInfinity {
       const smallplanet = planet.parentElement.parentElement;
       const planetId = planet.parentElement.href.match(/=(\d+)/)[1];
       const planetFromEmpire = OGIData.empire.find((p) => p.id === parseInt(planetId));
-      const moonFromEmpire = planetFromEmpire.moon;
+      const moonFromEmpire = planetFromEmpire?.moon;
       const planetCoords = planet.textContent.trim();
 
       /* MOON CONSTRUCTIION */
