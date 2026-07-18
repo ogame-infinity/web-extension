@@ -5049,19 +5049,20 @@ class OGInfinity {
       dprodw = 0;
     let sum = OGIData.empire.length;
     sum &&
-      OGIData.empire.forEach((planetObj) => {
-        mlvl += Number(planetObj[1]);
-        mprodh += Number(planetObj.production.hourly[0] || 0);
-        mprodd += Number(planetObj.production.daily[0] || 0);
-        mprodw += Number(planetObj.production.weekly[0] || 0);
-        clvl += Number(planetObj[2]);
-        cprodh += Number(planetObj.production.hourly[1] || 0);
-        cprodd += Number(planetObj.production.daily[1] || 0);
-        cprodw += Number(planetObj.production.weekly[1] || 0);
-        dlvl += Number(planetObj[3]);
-        dprodh += Number(planetObj.production.hourly[2] || 0);
-        dprodd += Number(planetObj.production.daily[2] || 0);
-        dprodw += Number(planetObj.production.weekly[2] || 0);
+      OGIData.empire.forEach((planet) => {
+        debugger;
+        mlvl += Number(planet[1]);
+        mprodh += Number(planet.production.hourly[0] || 0);
+        mprodd += Number(planet.production.daily[0] || 0);
+        mprodw += Number(planet.production.weekly[0] || 0);
+        clvl += Number(planet[2]);
+        cprodh += Number(planet.production.hourly[1] || 0);
+        cprodd += Number(planet.production.daily[1] || 0);
+        cprodw += Number(planet.production.weekly[1] || 0);
+        dlvl += Number(planet[3]);
+        dprodh += Number(planet.production.hourly[2] || 0);
+        dprodd += Number(planet.production.daily[2] || 0);
+        dprodw += Number(planet.production.weekly[2] || 0);
       });
     let mStorage = Math.ceil((Math.log(Math.ceil(mprodd / 5000)) * 33) / 22);
     let cStorage = Math.ceil((Math.log(Math.ceil(cprodd / 5000)) * 33) / 22);
