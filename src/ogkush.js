@@ -14680,6 +14680,7 @@ class OGInfinity {
     alertHostileIncomingMode.value = getOption("alertHostileIncomingMode");
     optiondiv.appendChild(alertHostileIncomingMode);
 
+   let importExportReminderMode;
    if(!OGAME_VERSION_AT_LEAST_13_0_0) {
       //Disabled for V13
       optiondiv = featureSettings.appendChild(
@@ -14689,7 +14690,7 @@ class OGInfinity {
           this.getTranslatedText(222)
         )
       );
-      const importExportReminderMode = DOM.createDOM("select", { class: "ogl-selectInput ogl-w-125 tooltip" });
+      importExportReminderMode = DOM.createDOM("select", { class: "ogl-selectInput ogl-w-125 tooltip" });
       importExportReminderMode.append(
         DOM.createDOM("option", { value: "0" }, this.getTranslatedText(212)),
         DOM.createDOM("option", { value: "1" }, this.getTranslatedText(223)),
@@ -15250,7 +15251,7 @@ class OGInfinity {
     simulator.appendChild(simulatorInput);
     settingDiv.appendChild(saveBtn);
     saveBtn.addEventListener("click", () => {
-      if(!OGAME_VERSION_AT_LEAST_13_0_0) this.json.options.importExportReminderMode = importExportReminderMode.value;
+      if(!OGAME_VERSION_AT_LEAST_13_0_0) this.json.options.importExportReminderMode = importExportReminderMode?.value;
       this.json.options.rvalLimit = fromFormatedNumber(rvalInput.value, true);
       this.json.options.rvalSelfLimitPlanet = fromFormatedNumber(rvalSelfInputPlanet.value, true);
       this.json.options.rvalSelfLimitMoon = fromFormatedNumber(rvalSelfInputMoon.value, true);
