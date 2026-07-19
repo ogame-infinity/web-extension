@@ -1690,7 +1690,10 @@ class OGInfinity {
     this.chat();
     this.uvlinks();
     this.OverviewPage.MakePrettierOverview(this.page);
-    this.TraderImportExportPage.RemindMeImportExport(this.page);
+    if(!OGAME_VERSION_AT_LEAST_13_0_0) {
+      //Disabled for V13
+      this.TraderImportExportPage.RemindMeImportExport(this.page); 
+    }
     this.betterHighscore();
     this.overviewDates();
     needsUtil.display();
@@ -3089,70 +3092,92 @@ class OGInfinity {
         object.deuterium = fleetDispatcher.deuteriumOnPlanet - fleetDispatcher.cargoDeuterium;
         object.deuterium -= fuel;
         if (!this.current.isMoon && object.metal < object.metalStorage && object.production.hourly[0] == 0) {
-          object.production.hourly[0] = Math.floor(
-            (resourcesBar.resources.metal.baseProduction +
-              resourcesBar.techs[1].production.metal * object.production.productionFactor) *
-              3600
-          );
-          object.production.daily[0] =
-            Math.floor(
+          if(OGAME_VERSION_AT_LEAST_13_0_0) {
+            object.production.hourly[0] = Math.floor((resourcesBar.resources.metal.baseProduction + resourcesBar.resources.metal.production) * 3600);
+            object.production.daily[0] = object.production.hourly[0] * 24;
+            object.production.weekly[0] = object.production.daily[0] * 7;
+          }
+          else {
+            object.production.hourly[0] = Math.floor(
               (resourcesBar.resources.metal.baseProduction +
                 resourcesBar.techs[1].production.metal * object.production.productionFactor) *
                 3600
-            ) * 24;
-          object.production.weekly[0] =
-            Math.floor(
-              (resourcesBar.resources.metal.baseProduction +
-                resourcesBar.techs[1].production.metal * object.production.productionFactor) *
-                3600
-            ) *
-            24 *
-            7;
+            );
+            object.production.daily[0] =
+              Math.floor(
+                (resourcesBar.resources.metal.baseProduction +
+                  resourcesBar.techs[1].production.metal * object.production.productionFactor) *
+                  3600
+              ) * 24;
+            object.production.weekly[0] =
+              Math.floor(
+                (resourcesBar.resources.metal.baseProduction +
+                  resourcesBar.techs[1].production.metal * object.production.productionFactor) *
+                  3600
+              ) *
+              24 *
+              7;
+          }
         }
         if (!this.current.isMoon && object.crystal < object.crystalStorage && object.production.hourly[1] == 0) {
-          object.production.hourly[1] = Math.floor(
-            (resourcesBar.resources.crystal.baseProduction +
-              resourcesBar.techs[2].production.crystal * object.production.productionFactor) *
-              3600
-          );
-          object.production.daily[1] =
-            Math.floor(
+          if(OGAME_VERSION_AT_LEAST_13_0_0) {
+            object.production.hourly[1] = Math.floor((resourcesBar.resources.crystal.baseProduction + resourcesBar.resources.crystal.production) * 3600);
+            object.production.daily[1] = object.production.hourly[1] * 24;
+            object.production.weekly[1] = object.production.daily[1] * 7;
+          }
+          else
+          {
+            object.production.hourly[1] = Math.floor(
               (resourcesBar.resources.crystal.baseProduction +
                 resourcesBar.techs[2].production.crystal * object.production.productionFactor) *
                 3600
-            ) * 24;
-          object.production.weekly[1] =
-            Math.floor(
-              (resourcesBar.resources.crystal.baseProduction +
-                resourcesBar.techs[2].production.crystal * object.production.productionFactor) *
-                3600
-            ) *
-            24 *
-            7;
+            );
+            object.production.daily[1] =
+              Math.floor(
+                (resourcesBar.resources.crystal.baseProduction +
+                  resourcesBar.techs[2].production.crystal * object.production.productionFactor) *
+                  3600
+              ) * 24;
+            object.production.weekly[1] =
+              Math.floor(
+                (resourcesBar.resources.crystal.baseProduction +
+                  resourcesBar.techs[2].production.crystal * object.production.productionFactor) *
+                  3600
+              ) *
+              24 *
+              7;
+          }
         }
         if (!this.current.isMoon && object.deuterium < object.deuteriumStorage && object.production.hourly[2] == 0) {
-          object.production.hourly[2] = Math.floor(
-            (resourcesBar.resources.deuterium.baseProduction +
-              resourcesBar.techs[3].production.deuterium * object.production.productionFactor -
-              resourcesBar.techs[12].consumption.deuterium) *
-              3600
-          );
-          object.production.daily[2] =
-            Math.floor(
+          if(OGAME_VERSION_AT_LEAST_13_0_0) {
+            object.production.hourly[2] = Math.floor((resourcesBar.resources.deuterium.baseProduction + resourcesBar.resources.deuterium.production) * 3600);
+            object.production.daily[2] = object.production.hourly[2] * 24;
+            object.production.weekly[2] = object.production.daily[2] * 7;
+          }
+          else {
+            object.production.hourly[2] = Math.floor(
               (resourcesBar.resources.deuterium.baseProduction +
                 resourcesBar.techs[3].production.deuterium * object.production.productionFactor -
                 resourcesBar.techs[12].consumption.deuterium) *
                 3600
-            ) * 24;
-          object.production.weekly[2] =
-            Math.floor(
-              (resourcesBar.resources.deuterium.baseProduction +
-                resourcesBar.techs[3].production.deuterium * object.production.productionFactor -
-                resourcesBar.techs[12].consumption.deuterium) *
-                3600
-            ) *
-            24 *
-            7;
+            );
+            object.production.daily[2] =
+              Math.floor(
+                (resourcesBar.resources.deuterium.baseProduction +
+                  resourcesBar.techs[3].production.deuterium * object.production.productionFactor -
+                  resourcesBar.techs[12].consumption.deuterium) *
+                  3600
+              ) * 24;
+            object.production.weekly[2] =
+              Math.floor(
+                (resourcesBar.resources.deuterium.baseProduction +
+                  resourcesBar.techs[3].production.deuterium * object.production.productionFactor -
+                  resourcesBar.techs[12].consumption.deuterium) *
+                  3600
+              ) *
+              24 *
+              7;
+          }
         }
         fleetDispatcher.shipsToSend.forEach((ship) => {
           object[ship.id] -= ship.number;
