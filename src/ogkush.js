@@ -37,6 +37,29 @@ import OverviewPage from "./ctxpage/overview/OverviewPage.js";
 import TraderImportExportPage from "./ctxpage/traderOverview/TraderImportExportPage.js";
 import RecyclingYieldCalculator from "./util/recyclingYieldCalculator.js";
 
+const OGAME_VERSION = document.querySelector("meta[name='ogame-version']")?.content || "0.0.0";
+function IsOgameVersionEqualOrGreaterThan(v) {
+  // Extract the numeric parts of the version strings and convert them to numbers for comparison (ex: "13.0.0-r1" -> "13.0.0")
+  const cleanVersion = (v) => v.split("-")[0].split(".").map(Number);
+
+  const ogameVersionParts = cleanVersion(OGAME_VERSION);
+  const vParts = cleanVersion(v);
+
+  const maxLength = Math.max(ogameVersionParts.length, vParts.length);
+
+  for (let i = 0; i < maxLength; i++) {
+    const ogameV = ogameVersionParts[i] || 0;
+    const b = vParts[i] || 0;
+
+    if (ogameV > b) return true; // Ogame version is greater
+    if (ogameV < b) return false; // Ogame version is lesser
+  }
+  
+  return true; // Versions are equal
+}
+
+const OGAME_VERSION_AT_LEAST_13_0_0 = IsOgameVersionEqualOrGreaterThan("13.0.0");
+
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 //const VERSION = "__VERSION__";
 const logger = getLogger();
@@ -11641,16 +11664,21 @@ class OGInfinity {
 
         // production bonus
         const metalDiv = htmlDocument.querySelector(
-          "inner-bonus-item-heading[data-toggable='subcategoryResources0'] .subCategoryBonus"
+          OGAME_VERSION_AT_LEAST_13_0_0 ? "inner-bonus-item-heading[data-toggable='metal'] .subCategoryBonus"
+          : "inner-bonus-item-heading[data-toggable='subcategoryResources0'] .subCategoryBonus"
         );
         const crystalDiv = htmlDocument.querySelector(
-          "inner-bonus-item-heading[data-toggable='subcategoryResources1'] .subCategoryBonus"
+          OGAME_VERSION_AT_LEAST_13_0_0 ? "inner-bonus-item-heading[data-toggable='crystal'] .subCategoryBonus"
+          : "inner-bonus-item-heading[data-toggable='subcategoryResources1'] .subCategoryBonus"
         );
         const deuteriumDiv = htmlDocument.querySelector(
-          "inner-bonus-item-heading[data-toggable='subcategoryResources2'] .subCategoryBonus"
+          OGAME_VERSION_AT_LEAST_13_0_0 ? "inner-bonus-item-heading[data-toggable='deuterium'] .subCategoryBonus"
+          : "inner-bonus-item-heading[data-toggable='subcategoryResources2'] .subCategoryBonus"
         );
+        
         const energyDiv = htmlDocument.querySelector(
-          "inner-bonus-item-heading[data-toggable='subcategoryResources3'] .subCategoryBonus"
+          OGAME_VERSION_AT_LEAST_13_0_0 ? "inner-bonus-item-heading[data-toggable='energy'] .subCategoryBonus"
+          : "inner-bonus-item-heading[data-toggable='subcategoryResources3'] .subCategoryBonus"
         );
         const productionBonus = [
           metalDiv ? parseBonus(metalDiv.textContent) : 0,
@@ -11661,7 +11689,8 @@ class OGInfinity {
 
         // expedition bonus
         const expeditionDiv = htmlDocument.querySelector(
-          "inner-bonus-item-heading[data-toggable='subcategoryResourcesExpedition'] .subCategoryBonus"
+          OGAME_VERSION_AT_LEAST_13_0_0 ? "inner-bonus-item-heading[data-toggable='ResultBooster'] .subCategoryBonus"
+          : "inner-bonus-item-heading[data-toggable='subcategoryResourcesExpedition'] .subCategoryBonus"
         );
         const expeditionBonus = expeditionDiv ? parseBonus(expeditionDiv.textContent) : 0;
 
@@ -11669,32 +11698,40 @@ class OGInfinity {
         const technologyCostReduction = {};
         const technologyTimeReduction = {};
         htmlDocument
-          .querySelectorAll("inner-bonus-item-heading[data-toggable^='subcategoryCostAndTime']")
+          .querySelectorAll(
+            OGAME_VERSION_AT_LEAST_13_0_0 ? "bonus-item-content[data-toggable-target^='costreduction'] bonus-item-content-holder > inner-bonus-item-heading"
+            : "inner-bonus-item-heading[data-toggable^='subcategoryCostAndTime']")
           .forEach((category) => {
-            const techId = category.getAttribute("data-toggable").split("subcategoryCostAndTime")[1];
-            const bonus = category.querySelectorAll("bonus-item");
-            technologyCostReduction[techId] = parseBonus(bonus[0].textContent);
-            technologyTimeReduction[techId] = parseBonus(bonus[1].textContent);
+            let techId = OGAME_VERSION_AT_LEAST_13_0_0 ? category.getAttribute("data-toggable") : category.getAttribute("data-toggable").split("subcategoryCostAndTime")[1];
+            if(OGAME_VERSION_AT_LEAST_13_0_0 && techId  == -200) techId = "LfResearch";
+
+              const bonus = category.querySelectorAll("bonus-item");
+              technologyCostReduction[techId] = parseBonus(bonus[0].textContent);
+              technologyTimeReduction[techId] = parseBonus(bonus[1].textContent);            
           });
 
         // class bonus
         const classBonus = {};
         const collectorDiv = htmlDocument.querySelector(
-          "inner-bonus-item-heading[data-toggable='subcategoryCharacterclasses1'] .subCategoryBonus"
+           OGAME_VERSION_AT_LEAST_13_0_0 ? "inner-bonus-item-heading[data-toggable='601'] .subCategoryBonus"
+          : "inner-bonus-item-heading[data-toggable='subcategoryCharacterclasses1'] .subCategoryBonus"
         );
         const generalDiv = htmlDocument.querySelector(
-          "inner-bonus-item-heading[data-toggable='subcategoryCharacterclasses2'] .subCategoryBonus"
+         OGAME_VERSION_AT_LEAST_13_0_0 ? "inner-bonus-item-heading[data-toggable='602'] .subCategoryBonus"
+          : "inner-bonus-item-heading[data-toggable='subcategoryCharacterclasses2'] .subCategoryBonus"
         );
         const discovererDiv = htmlDocument.querySelector(
-          "inner-bonus-item-heading[data-toggable='subcategoryCharacterclasses3'] .subCategoryBonus"
+          OGAME_VERSION_AT_LEAST_13_0_0 ? "inner-bonus-item-heading[data-toggable='603'] .subCategoryBonus"
+          : "inner-bonus-item-heading[data-toggable='subcategoryCharacterclasses3'] .subCategoryBonus"
         );
         classBonus.miner = collectorDiv ? parseBonus(collectorDiv.textContent.match(/[\d].*/)[0]) : 0;
         classBonus.warrior = generalDiv ? parseBonus(generalDiv.textContent.match(/[\d].*/)[0]) : 0;
         classBonus.explorer = discovererDiv ? parseBonus(discovererDiv.textContent.match(/[\d].*/)[0]) : 0;
-
+        
         // crawler bonus
         const crawlerDiv = htmlDocument.querySelectorAll(
-          "inner-bonus-item-heading[data-toggable='subcategoryMiscImprovedCrawler'] bonus-item"
+        OGAME_VERSION_AT_LEAST_13_0_0 ? "inner-bonus-item-heading[data-toggable='buggyBonus'] bonus-item"
+          : "inner-bonus-item-heading[data-toggable='subcategoryMiscImprovedCrawler'] bonus-item"
         );
         const crawlerConsumptionBonus = crawlerDiv.length ? parseBonus(crawlerDiv[0].textContent) : 0;
         const crawlerProductionBonus = crawlerDiv.length ? parseBonus(crawlerDiv[1].textContent) : 0;
@@ -14618,21 +14655,24 @@ class OGInfinity {
     alertHostileIncomingMode.value = getOption("alertHostileIncomingMode");
     optiondiv.appendChild(alertHostileIncomingMode);
 
-    optiondiv = featureSettings.appendChild(
-      createDOM(
-        "span",
-        { style: "display: flex;justify-content: space-between; align-items: center;" },
-        this.getTranslatedText(222)
-      )
-    );
-    const importExportReminderMode = DOM.createDOM("select", { class: "ogl-selectInput ogl-w-125 tooltip" });
-    importExportReminderMode.append(
-      DOM.createDOM("option", { value: "0" }, this.getTranslatedText(212)),
-      DOM.createDOM("option", { value: "1" }, this.getTranslatedText(223)),
-      DOM.createDOM("option", { value: "2" }, this.getTranslatedText(224))
-    );
-    importExportReminderMode.value = getOption("importExportReminderMode");
-    optiondiv.appendChild(importExportReminderMode);
+   if(!OGAME_VERSION_AT_LEAST_13_0_0) {
+      //Disabled for V13
+      optiondiv = featureSettings.appendChild(
+        createDOM(
+          "span",
+          { style: "display: flex;justify-content: space-between; align-items: center;" },
+          this.getTranslatedText(222)
+        )
+      );
+      const importExportReminderMode = DOM.createDOM("select", { class: "ogl-selectInput ogl-w-125 tooltip" });
+      importExportReminderMode.append(
+        DOM.createDOM("option", { value: "0" }, this.getTranslatedText(212)),
+        DOM.createDOM("option", { value: "1" }, this.getTranslatedText(223)),
+        DOM.createDOM("option", { value: "2" }, this.getTranslatedText(224))
+      );
+      importExportReminderMode.value = getOption("importExportReminderMode");
+      optiondiv.appendChild(importExportReminderMode);
+    }
 
     optiondiv = featureSettings.appendChild(
       createDOM(
@@ -15185,7 +15225,7 @@ class OGInfinity {
     simulator.appendChild(simulatorInput);
     settingDiv.appendChild(saveBtn);
     saveBtn.addEventListener("click", () => {
-      this.json.options.importExportReminderMode = importExportReminderMode.value;
+      if(!OGAME_VERSION_AT_LEAST_13_0_0) this.json.options.importExportReminderMode = importExportReminderMode.value;
       this.json.options.rvalLimit = fromFormatedNumber(rvalInput.value, true);
       this.json.options.rvalSelfLimitPlanet = fromFormatedNumber(rvalSelfInputPlanet.value, true);
       this.json.options.rvalSelfLimitMoon = fromFormatedNumber(rvalSelfInputMoon.value, true);
