@@ -75,7 +75,7 @@ class SpyMessagesAnalyzer {
     let table = document.querySelector(".ogl-spyTable");
 
     if (!table) {
-      const target = document.querySelector("#messagewrapper .messagePaginator");
+      const target = document.querySelector(OgamePageData.isAtLeast_13_0_0 ? "#messages .messagePaginator" : "#messagewrapper .messagePaginator");
       table = createDOM("table", { class: "ogl-spyTable" });
       target.parentNode.insertBefore(table, target);
 

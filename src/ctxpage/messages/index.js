@@ -5,6 +5,7 @@ import ExpeditionMessagesAnalyzer from "../../ctxcontent/services/analyzer/Exped
 import FightMessagesAnalyzer from "../../ctxcontent/services/analyzer/FightMessagesAnalyzer.js";
 import HarvestMessagesAnalyzer from "../../ctxcontent/services/analyzer/HarvestMessagesAnalyzer.js";
 import TradeMessagesAnalyzer from "../../ctxcontent/services/analyzer/TradeMessagesAnalyzer.js";
+import OgamePageData from "../../util/OgamePageData.js";
 
 export const messagesTabs = Object.freeze({
   // Name: ID
@@ -38,7 +39,7 @@ class Messages {
     ];
 
     // Observe tab change
-    obs(document.querySelector("#messagecontainercomponent"), (elements) => {
+    obs(document.querySelector(OgamePageData.isAtLeast_13_0_0 ? "#messagescomponent" :"#messagecontainercomponent"), (elements) => {
       elements.forEach((element) => {
         // We want only if nodes has been added
         if (element.addedNodes.length === 0) return;
@@ -50,7 +51,7 @@ class Messages {
     });
 
     // if messages have been already loaded before observer start
-    if (document.querySelector("#messagecontainercomponent #messagewrapper")) {
+    if (document.querySelector(OgamePageData.isAtLeast_13_0_0 ? "#messagescomponent #messages" : "#messagecontainercomponent #messagewrapper")) {
       this.#parseMessages();
     }
   }
@@ -71,14 +72,15 @@ class Messages {
 
   #currentTab() {
     const currentTab = document.querySelector(
-      "#messagecontainercomponent #messagewrapper .tabsWrapper .innerTabItem.active"
+      OgamePageData.isAtLeast_13_0_0 ? "#messagescomponent #messages .tabsWrapper .innerTabItem.active"
+      : "#messagecontainercomponent #messagewrapper .tabsWrapper .innerTabItem.active"
     );
 
     return this.#checkTab(currentTab);
   }
 
   #tabControls(tabElement) {
-    const element = document.querySelector("#messagewrapper .messagesHolder");
+    const element = document.querySelector(OgamePageData.isAtLeast_13_0_0 ? "#messages .messagesHolder" : "#messagewrapper .messagesHolder");
 
     if (!element) {
       this.#logger.error("Control element not found");
@@ -97,9 +99,9 @@ class Messages {
     if (!elementControls) return;
 
     // If no sub tabs
-    if (document.querySelectorAll("#messagewrapper .tabsWrapper > .innerTabItem")?.length <= 1) return elementControls;
+    if (document.querySelectorAll(OgamePageData.isAtLeast_13_0_0 ? "#messages .tabsWrapper > .innerTabItem" : "#messagewrapper .tabsWrapper > .innerTabItem")?.length <= 1) return elementControls;
 
-    const current_sub_tab = elementControls.querySelector("#messagewrapper .tabsWrapper > .innerTabItem.active");
+    const current_sub_tab = elementControls.querySelector(OgamePageData.isAtLeast_13_0_0 ? "#messages .tabsWrapper > .innerTabItem.active" : "#messagewrapper .tabsWrapper > .innerTabItem.active");
 
     return this.#checkTab(current_sub_tab);
   }
