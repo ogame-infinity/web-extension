@@ -36,7 +36,6 @@ import * as iconVisibility from "./util/iconVisibility.js";
 import OverviewPage from "./ctxpage/overview/OverviewPage.js";
 import TraderImportExportPage from "./ctxpage/traderOverview/TraderImportExportPage.js";
 import RecyclingYieldCalculator from "./util/recyclingYieldCalculator.js";
-import ogameVersion from "./util/OgameVersion.js";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 //const VERSION = "__VERSION__";
@@ -1668,7 +1667,7 @@ class OGInfinity {
     this.chat();
     this.uvlinks();
     this.OverviewPage.MakePrettierOverview(this.page);
-    if(!ogameVersion.isAtLeast_13_0_0) {
+    if(!OgamePageData.isAtLeast_13_0_0) {
       //Disabled for V13
       this.TraderImportExportPage.RemindMeImportExport(this.page); 
     }
@@ -3070,7 +3069,7 @@ class OGInfinity {
         object.deuterium = fleetDispatcher.deuteriumOnPlanet - fleetDispatcher.cargoDeuterium;
         object.deuterium -= fuel;
         if (!this.current.isMoon && object.metal < object.metalStorage && object.production.hourly[0] == 0) {
-          if(ogameVersion.isAtLeast_13_0_0) {
+          if(OgamePageData.isAtLeast_13_0_0) {
             object.production.hourly[0] = Math.floor((resourcesBar.resources.metal.baseProduction + resourcesBar.resources.metal.production) * 3600);
             object.production.daily[0] = object.production.hourly[0] * 24;
             object.production.weekly[0] = object.production.daily[0] * 7;
@@ -3098,7 +3097,7 @@ class OGInfinity {
           }
         }
         if (!this.current.isMoon && object.crystal < object.crystalStorage && object.production.hourly[1] == 0) {
-          if(ogameVersion.isAtLeast_13_0_0) {
+          if(OgamePageData.isAtLeast_13_0_0) {
             object.production.hourly[1] = Math.floor((resourcesBar.resources.crystal.baseProduction + resourcesBar.resources.crystal.production) * 3600);
             object.production.daily[1] = object.production.hourly[1] * 24;
             object.production.weekly[1] = object.production.daily[1] * 7;
@@ -3127,7 +3126,7 @@ class OGInfinity {
           }
         }
         if (!this.current.isMoon && object.deuterium < object.deuteriumStorage && object.production.hourly[2] == 0) {
-          if(ogameVersion.isAtLeast_13_0_0) {
+          if(OgamePageData.isAtLeast_13_0_0) {
             object.production.hourly[2] = Math.floor((resourcesBar.resources.deuterium.baseProduction + resourcesBar.resources.deuterium.production) * 3600);
             object.production.daily[2] = object.production.hourly[2] * 24;
             object.production.weekly[2] = object.production.daily[2] * 7;
@@ -11667,20 +11666,20 @@ class OGInfinity {
 
         // production bonus
         const metalDiv = htmlDocument.querySelector(
-          ogameVersion.isAtLeast_13_0_0 ? "inner-bonus-item-heading[data-toggable='metal'] .subCategoryBonus"
+          OgamePageData.isAtLeast_13_0_0 ? "inner-bonus-item-heading[data-toggable='metal'] .subCategoryBonus"
           : "inner-bonus-item-heading[data-toggable='subcategoryResources0'] .subCategoryBonus"
         );
         const crystalDiv = htmlDocument.querySelector(
-          ogameVersion.isAtLeast_13_0_0 ? "inner-bonus-item-heading[data-toggable='crystal'] .subCategoryBonus"
+          OgamePageData.isAtLeast_13_0_0 ? "inner-bonus-item-heading[data-toggable='crystal'] .subCategoryBonus"
           : "inner-bonus-item-heading[data-toggable='subcategoryResources1'] .subCategoryBonus"
         );
         const deuteriumDiv = htmlDocument.querySelector(
-          ogameVersion.isAtLeast_13_0_0 ? "inner-bonus-item-heading[data-toggable='deuterium'] .subCategoryBonus"
+          OgamePageData.isAtLeast_13_0_0 ? "inner-bonus-item-heading[data-toggable='deuterium'] .subCategoryBonus"
           : "inner-bonus-item-heading[data-toggable='subcategoryResources2'] .subCategoryBonus"
         );
         
         const energyDiv = htmlDocument.querySelector(
-          ogameVersion.isAtLeast_13_0_0 ? "inner-bonus-item-heading[data-toggable='energy'] .subCategoryBonus"
+          OgamePageData.isAtLeast_13_0_0 ? "inner-bonus-item-heading[data-toggable='energy'] .subCategoryBonus"
           : "inner-bonus-item-heading[data-toggable='subcategoryResources3'] .subCategoryBonus"
         );
         const productionBonus = [
@@ -11692,7 +11691,7 @@ class OGInfinity {
 
         // expedition bonus
         const expeditionDiv = htmlDocument.querySelector(
-          ogameVersion.isAtLeast_13_0_0 ? "inner-bonus-item-heading[data-toggable='ResultBooster'] .subCategoryBonus"
+          OgamePageData.isAtLeast_13_0_0 ? "inner-bonus-item-heading[data-toggable='ResultBooster'] .subCategoryBonus"
           : "inner-bonus-item-heading[data-toggable='subcategoryResourcesExpedition'] .subCategoryBonus"
         );
         const expeditionBonus = expeditionDiv ? parseBonus(expeditionDiv.textContent) : 0;
@@ -11702,11 +11701,11 @@ class OGInfinity {
         const technologyTimeReduction = {};
         htmlDocument
           .querySelectorAll(
-            ogameVersion.isAtLeast_13_0_0 ? "bonus-item-content[data-toggable-target^='costreduction'] bonus-item-content-holder > inner-bonus-item-heading"
+            OgamePageData.isAtLeast_13_0_0 ? "bonus-item-content[data-toggable-target^='costreduction'] bonus-item-content-holder > inner-bonus-item-heading"
             : "inner-bonus-item-heading[data-toggable^='subcategoryCostAndTime']")
           .forEach((category) => {
-            let techId = ogameVersion.isAtLeast_13_0_0 ? category.getAttribute("data-toggable") : category.getAttribute("data-toggable").split("subcategoryCostAndTime")[1];
-            if(ogameVersion.isAtLeast_13_0_0 && techId  == -200) techId = "LfResearch";
+            let techId = OgamePageData.isAtLeast_13_0_0 ? category.getAttribute("data-toggable") : category.getAttribute("data-toggable").split("subcategoryCostAndTime")[1];
+            if(OgamePageData.isAtLeast_13_0_0 && techId  == -200) techId = "LfResearch";
 
               const bonus = category.querySelectorAll("bonus-item");
               technologyCostReduction[techId] = parseBonus(bonus[0].textContent);
@@ -11716,15 +11715,15 @@ class OGInfinity {
         // class bonus
         const classBonus = {};
         const collectorDiv = htmlDocument.querySelector(
-           ogameVersion.isAtLeast_13_0_0 ? "inner-bonus-item-heading[data-toggable='601'] .subCategoryBonus"
+           OgamePageData.isAtLeast_13_0_0 ? "inner-bonus-item-heading[data-toggable='601'] .subCategoryBonus"
           : "inner-bonus-item-heading[data-toggable='subcategoryCharacterclasses1'] .subCategoryBonus"
         );
         const generalDiv = htmlDocument.querySelector(
-         ogameVersion.isAtLeast_13_0_0 ? "inner-bonus-item-heading[data-toggable='602'] .subCategoryBonus"
+         OgamePageData.isAtLeast_13_0_0 ? "inner-bonus-item-heading[data-toggable='602'] .subCategoryBonus"
           : "inner-bonus-item-heading[data-toggable='subcategoryCharacterclasses2'] .subCategoryBonus"
         );
         const discovererDiv = htmlDocument.querySelector(
-          ogameVersion.isAtLeast_13_0_0 ? "inner-bonus-item-heading[data-toggable='603'] .subCategoryBonus"
+          OgamePageData.isAtLeast_13_0_0 ? "inner-bonus-item-heading[data-toggable='603'] .subCategoryBonus"
           : "inner-bonus-item-heading[data-toggable='subcategoryCharacterclasses3'] .subCategoryBonus"
         );
         classBonus.miner = collectorDiv ? parseBonus(collectorDiv.textContent.match(/[\d].*/)[0]) : 0;
@@ -11733,7 +11732,7 @@ class OGInfinity {
         
         // crawler bonus
         const crawlerDiv = htmlDocument.querySelectorAll(
-        ogameVersion.isAtLeast_13_0_0 ? "inner-bonus-item-heading[data-toggable='buggyBonus'] bonus-item"
+        OgamePageData.isAtLeast_13_0_0 ? "inner-bonus-item-heading[data-toggable='buggyBonus'] bonus-item"
           : "inner-bonus-item-heading[data-toggable='subcategoryMiscImprovedCrawler'] bonus-item"
         );
         const crawlerConsumptionBonus = crawlerDiv.length ? parseBonus(crawlerDiv[0].textContent) : 0;
@@ -12164,7 +12163,7 @@ class OGInfinity {
         prodFactor = Math.round(prodFactor * 100) / 100;
 
         // Until we get planet production hourly (or complete producion) from new V13 API, we can not trust it
-        if (ogameVersion.isAtLeast_13_0_0) prodFactor = 1;
+        if (OgamePageData.isAtLeast_13_0_0) prodFactor = 1;
 
         crawlerProd = Math.min(
           crawlerProd * crawlerFactor * prodFactor,
@@ -14662,7 +14661,7 @@ class OGInfinity {
     optiondiv.appendChild(alertHostileIncomingMode);
 
    let importExportReminderMode;
-   if(!ogameVersion.isAtLeast_13_0_0) {
+   if(!OgamePageData.isAtLeast_13_0_0) {
       //Disabled for V13
       optiondiv = featureSettings.appendChild(
         createDOM(
@@ -15232,7 +15231,7 @@ class OGInfinity {
     simulator.appendChild(simulatorInput);
     settingDiv.appendChild(saveBtn);
     saveBtn.addEventListener("click", () => {
-      if(!ogameVersion.isAtLeast_13_0_0) this.json.options.importExportReminderMode = importExportReminderMode?.value;
+      if(!OgamePageData.isAtLeast_13_0_0) this.json.options.importExportReminderMode = importExportReminderMode?.value;
       this.json.options.rvalLimit = fromFormatedNumber(rvalInput.value, true);
       this.json.options.rvalSelfLimitPlanet = fromFormatedNumber(rvalSelfInputPlanet.value, true);
       this.json.options.rvalSelfLimitMoon = fromFormatedNumber(rvalSelfInputMoon.value, true);
