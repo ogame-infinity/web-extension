@@ -16,6 +16,7 @@ import PlayerClass from "../../../util/enum/playerClass.js";
 import OgamePageData from "../../../util/OgamePageData.js";
 import OGIData from "../../../util/OGIData.js";
 import Translator from "../../../util/translate.js";
+import ogameVersion from "../../../util/OgameVersion.js";
 
 class SpyMessagesAnalyzer {
   #logger;
@@ -75,7 +76,7 @@ class SpyMessagesAnalyzer {
     let table = document.querySelector(".ogl-spyTable");
 
     if (!table) {
-      const target = document.querySelector("#messagewrapper .messagePaginator");
+      const target = document.querySelector(ogameVersion.isAtLeast_13_0_0 ? "#messages .messagePaginator" : "#messagewrapper .messagePaginator");
       table = createDOM("table", { class: "ogl-spyTable" });
       target.parentNode.insertBefore(table, target);
 
