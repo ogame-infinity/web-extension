@@ -12185,6 +12185,9 @@ class OGInfinity {
           0;
         prodFactor = Math.round(prodFactor * 100) / 100;
 
+        // Until we get planet production hourly (or complete producion) from new V13 API, we can not trust it
+        if (OGAME_VERSION_AT_LEAST_13_0_0) prodFactor = 1;
+
         crawlerProd = Math.min(
           crawlerProd * crawlerFactor * prodFactor,
           mineProd * prodFactor * this.json.resourceBuggyMaxProductionBoost
