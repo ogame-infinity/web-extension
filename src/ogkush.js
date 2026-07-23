@@ -1667,10 +1667,7 @@ class OGInfinity {
     this.chat();
     this.uvlinks();
     this.OverviewPage.MakePrettierOverview(this.page);
-    if(!OgamePageData.isAtLeast_13_0_0) {
-      //Disabled for V13
-      this.TraderImportExportPage.RemindMeImportExport(this.page); 
-    }
+    this.TraderImportExportPage.RemindMeImportExport(this.page); 
     this.betterHighscore();
     this.overviewDates();
     needsUtil.display();
@@ -14660,25 +14657,21 @@ class OGInfinity {
     alertHostileIncomingMode.value = getOption("alertHostileIncomingMode");
     optiondiv.appendChild(alertHostileIncomingMode);
 
-   let importExportReminderMode;
-   if(!OgamePageData.isAtLeast_13_0_0) {
-      //Disabled for V13
-      optiondiv = featureSettings.appendChild(
-        createDOM(
-          "span",
-          { style: "display: flex;justify-content: space-between; align-items: center;" },
-          this.getTranslatedText(222)
-        )
-      );
-      importExportReminderMode = DOM.createDOM("select", { class: "ogl-selectInput ogl-w-125 tooltip" });
-      importExportReminderMode.append(
-        DOM.createDOM("option", { value: "0" }, this.getTranslatedText(212)),
-        DOM.createDOM("option", { value: "1" }, this.getTranslatedText(223)),
-        DOM.createDOM("option", { value: "2" }, this.getTranslatedText(224))
-      );
-      importExportReminderMode.value = getOption("importExportReminderMode");
-      optiondiv.appendChild(importExportReminderMode);
-    }
+    let importExportReminderMode;
+    //Disabled for V13
+    optiondiv = featureSettings.appendChild(
+      createDOM( "span", 
+        { style: "display: flex;justify-content: space-between; align-items: center;" }, 
+        this.getTranslatedText(222))
+    );
+    importExportReminderMode = DOM.createDOM("select", { class: "ogl-selectInput ogl-w-125 tooltip" });
+    importExportReminderMode.append(
+      DOM.createDOM("option", { value: "0" }, this.getTranslatedText(212)),
+      DOM.createDOM("option", { value: "1" }, this.getTranslatedText(223)),
+      DOM.createDOM("option", { value: "2" }, this.getTranslatedText(224))
+    );
+    importExportReminderMode.value = getOption("importExportReminderMode");
+    optiondiv.appendChild(importExportReminderMode);
 
     optiondiv = featureSettings.appendChild(
       createDOM(
@@ -15231,7 +15224,7 @@ class OGInfinity {
     simulator.appendChild(simulatorInput);
     settingDiv.appendChild(saveBtn);
     saveBtn.addEventListener("click", () => {
-      if(!OgamePageData.isAtLeast_13_0_0) this.json.options.importExportReminderMode = importExportReminderMode?.value;
+      this.json.options.importExportReminderMode = importExportReminderMode?.value;
       this.json.options.rvalLimit = fromFormatedNumber(rvalInput.value, true);
       this.json.options.rvalSelfLimitPlanet = fromFormatedNumber(rvalSelfInputPlanet.value, true);
       this.json.options.rvalSelfLimitMoon = fromFormatedNumber(rvalSelfInputMoon.value, true);
