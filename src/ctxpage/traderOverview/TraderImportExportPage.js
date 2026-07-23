@@ -3,6 +3,7 @@ import * as DOM from "../../util/dom.js";
 import { getLogger } from "../../util/logger.js";
 import OGIData from "../../util/OGIData.js";
 import * as wait from "../../util/wait.js";
+import OgamePageData from "../../util/OgamePageData.js";
 
 class TraderImportExportPage {
   logger;
@@ -15,22 +16,38 @@ class TraderImportExportPage {
     const abortController = new AbortController();
     window.onbeforeunload = () => abortController.abort();
 
-    const traderImportExportPageRequest = (href) =>
-      fetch(`?${href.toString()}`, { signal: abortController.signal })
-        .then((response) => response.text())
-        .then((string) => {
-          return new DOMParser()
-            .parseFromString(string, "text/html")
-            .querySelector("#div_traderImportExport .content .right_content");
-        });
+    const searchParams = OgamePageData.isAtLeast_13_0_0
+      ? new URLSearchParams({ page: "componentOnly", component: "externaldataexport", action: "importExportInfo", asJson: "1" })
+      : new URLSearchParams({ page: "ajax", component: "traderimportexport" })
 
-    const request = traderImportExportPageRequest(
-      new URLSearchParams({ page: "ajax", component: "traderimportexport" })
-    );
-    return request.then((element) => {
-      this.logger.info("Checked import/export activity");
-      return this.#isImportExportActive(element);
-    });
+    if(OgamePageData.isAtLeast_13_0_0) {
+      return fetch(`?${searchParams.toString()}`, { signal: abortController.signal, headers: {"X-Requested-With": "XMLHttpRequest"} })
+      .then((response) => response.json())
+      .then((data) =>  {
+        if(data)
+        {
+          if(data.hasBought == 'false' || data.gotItem == 'false') return { active: true, rarity: data.rarity };
+          return { active: false };
+          /*
+          rarity:
+          rare ?
+          uncommon => confirmed
+          common ?
+          buddy ?
+          epic ?
+           */
+        }
+      });
+    }
+    else
+    {
+      return fetch(`?${searchParams.toString()}`, { signal: abortController.signal })
+        .then((response) => response.text())
+        .then((string) => new DOMParser()
+          .parseFromString(string, "text/html")
+          .querySelector("#div_traderImportExport .content .right_content"))
+        .then((element) => this.#isImportExportActive(element));
+    }
   }
 
   #isImportExportActive(element) {
@@ -38,7 +55,7 @@ class TraderImportExportPage {
     const bargain_overlay = element.querySelector(".bargain_overlay");
 
     if (paymentElement.style.display === "block") {
-      return true;
+      return { active: true };
     }
 
     if (
@@ -46,9 +63,9 @@ class TraderImportExportPage {
       (bargain_overlay.querySelector(".bargain.import_bargain.change:not(.hidden)") ||
         bargain_overlay.querySelector(".bargain.import_bargain.take:not(.hidden)"))
     ) {
-      return true;
+      return { active: true };
     }
-    return false;
+    return { active: false };
   }
 
   RemindMeImportExport(page) {
@@ -94,11 +111,13 @@ class TraderImportExportPage {
       return nextReminder < now;
     };
 
-    const updateReminder = (date, mustRemind) => {
-      OGIData._json.reminders["importExport"] = {
-        next: date,
-        mustRemind: mustRemind,
-      };
+    const updateReminder = (date, mustRemind, rarity = null) => {
+      const importExportData = OGIData._json.reminders["importExport"] || {};
+      importExportData.next = date;
+      importExportData.mustRemind = mustRemind;
+      if(rarity) importExportData.rarity = rarity;
+
+      OGIData._json.reminders["importExport"] = importExportData;
       OGIData.Save();
     };
 
@@ -112,16 +131,17 @@ class TraderImportExportPage {
         const menuItem =
           document.querySelector("#left .menubutton[data-ipi-hint='ipiToolbarTrader']") ??
           document.querySelector("#leftMenu .menubutton[data-ipi-hint='ipiToolbarTrader']");
-        if (page == "traderOverview") {
-          const importExportShop = document.querySelector("#js_traderImportExport");
+        if (page == (OgamePageData.isAtLeast_13_0_0 ? "trader" : "traderOverview")) {
+          const importExportShop = document.querySelector(OgamePageData.isAtLeast_13_0_0 ? "#js_importexport" : "#js_traderImportExport");
           if (importExportShop) {
             if (importExportReminderMode == 1) {
               addHint(menuItem);
               addHint(importExportShop.querySelector("h2"));
             } else if (importExportReminderMode == 2) addHint(importExportShop);
             importExportShop.addEventListener("click", () => {
-              wait.waitForQuerySelector("#div_traderImportExport", 250, 10000).then((traderImportExportDiv) => {
-                if (this.#isImportExportActive(traderImportExportDiv)) {
+              wait.waitForQuerySelector(OgamePageData.isAtLeast_13_0_0 ? "#div_importexport" : "#div_traderImportExport", 250, 10000).then((traderImportExportDiv) => {
+                const importExportStatus = this.#isImportExportActive(traderImportExportDiv);
+                if (importExportStatus.active) {
                   // Import/export is active, wee need to detect when user clicks the take button
                   const paymentElement = traderImportExportDiv.querySelector(".payment");
                   const payButton = traderImportExportDiv.querySelector("a.pay ");
@@ -165,11 +185,11 @@ class TraderImportExportPage {
 
     if (isObsolete()) {
       //check the import/export page only if the reminder is obsolete.
-      this.#isImportExportActiveRequest().then((isActive) => {
+      this.#isImportExportActiveRequest().then((status) => {
         //immediately update the reminder to avoid multiple checks
-        updateReminder(getNextReminderDate(), isActive);
+        updateReminder(getNextReminderDate(), status.active, status.rarity);
         // show the reminder if import/export is active
-        if (isActive) remind();
+        if (status.active) remind();
       });
     } else remind();
   }
