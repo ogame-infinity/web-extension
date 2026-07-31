@@ -15375,6 +15375,14 @@ class OGInfinity {
         placeholder: "TM-XXXX-XXXX-XXXX-XXXX",
       })
     );
+    // Reveal the team key while the input is focused so the user can verify what they
+    // typed. Blur restores the masked view.
+    ptreInput.addEventListener("focus", () => {
+      ptreInput.type = "text";
+    });
+    ptreInput.addEventListener("blur", () => {
+      ptreInput.type = "password";
+    });
 
     settingDiv.appendChild(createDOM("hr"));
     let keys = settingDiv.appendChild(createDOM("div", { style: "display: grid;" }));
