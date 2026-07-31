@@ -13,8 +13,8 @@ let pendingPtreKey = "";
 
 contentContextInit({
   ptre: {
-    galaxy: function (changes, ptreKey = null, serverTime = null) {
-      return dataHelper.scan(changes, ptreKey, serverTime);
+    galaxy: function (galaxy, system, positions, additionnal, ptreKey = null, serverTime = null) {
+      return dataHelper.scan(galaxy, system, positions, additionnal, ptreKey, serverTime);
     },
     setTeamKey: function (key) {
       pendingPtreKey = typeof key === "string" ? key : "";

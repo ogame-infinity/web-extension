@@ -4081,12 +4081,7 @@ class OGInfinity {
   }
 
   scan() {
-    let sided = document.querySelectorAll(".ogl-stalkPlanets > a");
     if (!this.activities) this.activities = {};
-    let exists = false;
-    let changes = [];
-    let resets = [];
-    let data = {};
     let ptreJSON = {};
     let baseCords = galaxy + ":" + system;
     let secureCoords =
@@ -4095,52 +4090,90 @@ class OGInfinity {
     if (secureCoords !== baseCords || (doubleCheckCoords && doubleCheckCoords !== baseCords + ":1")) {
       return;
     }
-    document.querySelectorAll("#galaxycomponent .galaxyRow.ctContentRow").forEach((row, index) => {
-      let coords = baseCords + ":" + Number(index + 1);
-      let target = document.querySelector(`.ogl-target-list .ogl-stalkPlanets [data-coords="${coords}"]`);
+
+    // PTRE gala snapshot state - positions 1..15 only (see PTRE_MAX_POS below).
+    // Non-PTRE OGI DOM features (marker/tooltip/activity refresh) run on ALL rows the
+    // DOM exposes, including the expedition slot at position 16 if present, so any
+    // future feature can safely enhance them.
+    const PTRE_MIN_POS = 1;
+    const PTRE_MAX_POS = 15;
+    const galaPositions = {};
+    const galaAdditionnal = {};
+    for (let pos = PTRE_MIN_POS; pos <= PTRE_MAX_POS; pos++) {
+      galaPositions[pos] = { playerId: -1, planetId: -1, moonId: -1 };
+      galaAdditionnal[pos] = { playerName: "", playerRank: -1, playerStatus: "" };
+    }
+
+    document.querySelectorAll("#galaxycomponent .galaxyRow.ctContentRow").forEach((row, indexInDom) => {
+      // Derive the OGame position from the row id (robust against DOM re-ordering
+      // and against extra rows OGame may add). Fallback to DOM index only if the id
+      // is missing / malformed.
+      const posMatch = /^galaxyRow(\d+)$/.exec(row.id || "");
+      const pos = posMatch ? Number(posMatch[1]) : indexInDom + 1;
+      const coords = baseCords + ":" + pos;
+      const isPtrePos = pos >= PTRE_MIN_POS && pos <= PTRE_MAX_POS;
+
+      const target = document.querySelector(`.ogl-target-list .ogl-stalkPlanets [data-coords="${coords}"]`);
       if (target) {
         this.updateSideActivity(target, this.getActivity(row));
       }
 
-      let playerDiv = row.querySelector(".cellPlayerName div");
+      const playerDiv = row.querySelector(".cellPlayerName div");
 
       if (playerDiv) {
-        exists = true;
-        let planetDiv = row.querySelector(".cellPlanet div");
-        let moonDiv = row.querySelector(".cellMoon div");
-        let playerId = playerDiv.getAttribute("id").replace("player", "");
-        let planetId = planetDiv ? planetDiv.getAttribute("data-planet-id") : -1;
-        let moonId = moonDiv ? moonDiv.getAttribute("data-moon-id") : -1;
-        let name = playerDiv.querySelector("span:first-of-type").textContent;
+        const planetDiv = row.querySelector(".cellPlanet div");
+        const moonDiv = row.querySelector(".cellMoon div");
+        const rawPlayerId = playerDiv.getAttribute("id")?.replace("player", "");
+        const playerId = rawPlayerId && rawPlayerId !== "" ? Number(rawPlayerId) : -1;
+        const rawPlanetId = planetDiv ? planetDiv.getAttribute("data-planet-id") : null;
+        const planetId = rawPlanetId ? Number(rawPlanetId) : -1;
+        const rawMoonId = moonDiv ? moonDiv.getAttribute("data-moon-id") : null;
+        const moonId = rawMoonId ? Number(rawMoonId) : -1;
+        const name = playerDiv.querySelector("span:first-of-type")?.textContent || "";
 
-        changes.push({
-          id: playerId,
-          name,
-          planetId,
-          moon: moonId > -1 ? parseInt(moonId) : false,
-          moonId,
-          coords,
-        });
-
-        let sided = document.querySelectorAll(".ogl-stalkPlanets");
-        if (sided.length != 0) {
-          sided.forEach((side) => {
-            if (playerId == side.getAttribute("player-id")) {
-              this.activities[coords] = this.getActivity(row);
-            } else {
+        // Status flags (matches EasyPTRE extraction).
+        let statusStr = "";
+        const preElem = row.querySelector(".cellPlayerName pre");
+        if (preElem) {
+          preElem.querySelectorAll("span").forEach((span) => {
+            const m = typeof span.className === "string" ? span.className.match(/status_abbr_(\w+)/) : null;
+            if (m) {
+              const s = m[1];
+              if (s === "inactive") statusStr += "i";
+              else if (s === "longinactive") statusStr += "I";
+              else if (s === "vacation") statusStr += "v";
+              else if (s === "admin") statusStr += "a";
             }
           });
         }
 
-        // PTRE activities
+        // PTRE snapshot: only for real planet positions.
+        if (isPtrePos) {
+          galaPositions[pos] = { playerId, planetId, moonId };
+          galaAdditionnal[pos].playerName = name;
+          galaAdditionnal[pos].playerStatus = statusStr;
+        }
+
+        const sidedAll = document.querySelectorAll(".ogl-stalkPlanets");
+        if (sidedAll.length != 0) {
+          sidedAll.forEach((side) => {
+            if (playerId == side.getAttribute("player-id")) {
+              this.activities[coords] = this.getActivity(row);
+            }
+          });
+        }
+
+        // PTRE activities (stalked / marked / searched players only, positions 1..15).
+        const playerIdStr = String(playerId);
         if (
+          isPtrePos &&
           this.json.options.ptreTK &&
           playerId > -1 &&
-          (this.json.sideStalk.indexOf(parseInt(playerId)) > -1 ||
-            this.json.sideStalk.indexOf(playerId) > -1 ||
-            this.markedPlayers.indexOf(playerId) > -1 ||
+          (this.json.sideStalk.indexOf(playerId) > -1 ||
+            this.json.sideStalk.indexOf(playerIdStr) > -1 ||
+            this.markedPlayers.indexOf(playerIdStr) > -1 ||
             (this.json.searchHistory.length > 0 &&
-              playerId == this.json.searchHistory[this.json.searchHistory.length - 1].id))
+              playerIdStr == this.json.searchHistory[this.json.searchHistory.length - 1].id))
         ) {
           let planetActivity = row.querySelector("[data-planet-id] .activity.minute15")
             ? "*"
@@ -4157,7 +4190,7 @@ class OGInfinity {
           ptreJSON[coords].activity = planetActivity;
           ptreJSON[coords].galaxy = galaxy;
           ptreJSON[coords].system = system;
-          ptreJSON[coords].position = Number(index + 1).toString();
+          ptreJSON[coords].position = String(pos);
           ptreJSON[coords].main = false;
 
           if (moonId > -1) {
@@ -4167,19 +4200,13 @@ class OGInfinity {
           }
         }
       } else {
-        let sided = document.querySelectorAll(`.ogl-stalkPlanets [data-coords="${coords}"]`);
+        // Empty position: refresh sidebar activity for the stalk tooltip if the coord is watched.
+        const sided = document.querySelectorAll(`.ogl-stalkPlanets [data-coords="${coords}"]`);
         if (sided.length != 0) {
           if (!document.querySelector(".ogl-tooltip.ogl-active") && document.querySelector(".ogl-tooltip")) {
             document.querySelector(".ogl-tooltip").classList.add("ogl-active");
           }
           this.activities[coords] = this.getActivity(row);
-          changes.push({
-            id: sided[0].parentElement.getAttribute("player-id"),
-            moon: false,
-            moonId: undefined,
-            coords,
-            deleted: true,
-          });
         }
       }
     });
@@ -4202,19 +4229,37 @@ class OGInfinity {
       this.ptreActivityUpdate(ptreJSON, systemCoords);
     }
 
-    //DISPATCH EVENT
-    data.changes = changes;
-
-    data.serverTime = serverTime && typeof serverTime.getTime !== "undefined" ? serverTime.getTime() : null;
-    data.ptreKey = this.json.options.ptreTK ?? null;
-    pageContextRequest("ptre", "galaxy", data.changes, data.ptreKey, data.serverTime)
-      .then((value) => {
-        if (Object.keys(value.response).length > 0) {
-          ptreService.updateGalaxy(OgamePageData.gameLang, this.universe, value.response);
-        }
-      })
-      .finally(() => "nothing");
-    //document.dispatchEvent(new CustomEvent("ogi-galaxy", { detail: data }), true, true);
+    // Galaxy scan dispatch. Runs unconditionally so the OGI-internal maps
+    // (scannedPlanets/scannedPlayers -> stalking sidebar, tooltips, search box) are
+    // refreshed even when no PTRE team key is set. PTRE work is gated inside scan().
+    // Any failure here must NOT propagate to the OGame galaxy render path.
+    try {
+      const serverTimeMs =
+        serverTime && typeof serverTime.getTime !== "undefined" ? serverTime.getTime() : null;
+      const ptreKey = this.json.options.ptreTK || null;
+      pageContextRequest(
+        "ptre",
+        "galaxy",
+        Number(galaxy),
+        Number(system),
+        galaPositions,
+        galaAdditionnal,
+        ptreKey,
+        serverTimeMs
+      )
+        .then((value) => {
+          try {
+            if (value && value.response && Object.keys(value.response).length > 0) {
+              ptreService.updateGalaxy(OgamePageData.gameLang, this.universe, value.response);
+            }
+          } catch (err) {
+            console.error("[OGI][PTRE] updateGalaxy failed", err);
+          }
+        })
+        .catch((err) => console.error("[OGI][PTRE] galaxy request failed", err));
+    } catch (err) {
+      console.error("[OGI][PTRE] galaxy dispatch failed", err);
+    }
 
     document.querySelectorAll("div:not(.ogl-target-list) .ogl-stalkPlanets").forEach((reset) => {
       this.refreshStalk(reset);
@@ -15299,14 +15344,18 @@ class OGInfinity {
     }
 
     settingDiv.appendChild(createDOM("hr"));
-    let keys = settingDiv.appendChild(createDOM("div", { style: "display: grid;" }));
-    keys.appendChild(createDOM("h1", {}, this.getTranslatedText(147)));
-    let ptre = keys.appendChild(
+
+    // ---------- PTRE section (dedicated) ----------
+    let ptreSection = settingDiv.appendChild(createDOM("div", { style: "display: grid;" }));
+    ptreSection.appendChild(createDOM("h1", {}, "PTRE settings"));
+
+    // Row 1: Team Key label + input.
+    let ptreKeyRow = ptreSection.appendChild(
       createDOM("span")
         .appendChild(createDOM("a", { href: "https://ptre.chez.gg/", target: "_blank" }, "PTRE"))
         .parentElement.appendChild(document.createTextNode(" Teamkey")).parentElement
     );
-    let ptreInput = ptre.appendChild(
+    let ptreInput = ptreKeyRow.appendChild(
       createDOM("input", {
         type: "password",
         class: "ogl-ptreTeamKey tooltip",
@@ -15314,6 +15363,10 @@ class OGInfinity {
         placeholder: "TM-XXXX-XXXX-XXXX-XXXX",
       })
     );
+
+    settingDiv.appendChild(createDOM("hr"));
+    let keys = settingDiv.appendChild(createDOM("div", { style: "display: grid;" }));
+    keys.appendChild(createDOM("h1", {}, this.getTranslatedText(147)));
     let pantry = keys.appendChild(
       createDOM("span")
         .appendChild(createDOM("a", { href: "https://getpantry.cloud/", target: "_blank" }, "Pantry"))
