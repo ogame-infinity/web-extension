@@ -4119,17 +4119,29 @@ class OGInfinity {
       }
 
       const playerDiv = row.querySelector(".cellPlayerName div");
+      // own-planet rows have NO <div> inside .cellPlayerName (just two <span>s, one
+      // with class .ownPlayerRow bearing the player name). Detect it as a fallback so we
+      // don't miss the current player's own planets in the DOM walk.
+      const ownPlayerSpan = playerDiv ? null : row.querySelector(".cellPlayerName .ownPlayerRow");
 
-      if (playerDiv) {
+      if (playerDiv || ownPlayerSpan) {
         const planetDiv = row.querySelector(".cellPlanet div");
         const moonDiv = row.querySelector(".cellMoon div");
-        const rawPlayerId = playerDiv.getAttribute("id")?.replace("player", "");
-        const playerId = rawPlayerId && rawPlayerId !== "" ? Number(rawPlayerId) : -1;
+        let playerId = -1;
+        let name = "";
+        if (playerDiv) {
+          const rawPlayerId = playerDiv.getAttribute("id")?.replace("player", "");
+          playerId = rawPlayerId && rawPlayerId !== "" ? Number(rawPlayerId) : -1;
+          name = playerDiv.querySelector("span:first-of-type")?.textContent || "";
+        } else {
+          // own-planet row: no player id in the row itself, fall back to the current player id.
+          playerId = Number.isFinite(this.playerId) ? this.playerId : -1;
+          name = ownPlayerSpan.textContent?.trim() || "";
+        }
         const rawPlanetId = planetDiv ? planetDiv.getAttribute("data-planet-id") : null;
         const planetId = rawPlanetId ? Number(rawPlanetId) : -1;
         const rawMoonId = moonDiv ? moonDiv.getAttribute("data-moon-id") : null;
         const moonId = rawMoonId ? Number(rawMoonId) : -1;
-        const name = playerDiv.querySelector("span:first-of-type")?.textContent || "";
 
         // Status flags (matches EasyPTRE extraction).
         let statusStr = "";
