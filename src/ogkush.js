@@ -15361,11 +15361,23 @@ class OGInfinity {
     let ptreSection = settingDiv.appendChild(createDOM("div", { style: "display: grid;" }));
     ptreSection.appendChild(createDOM("h1", {}, "PTRE settings"));
 
-    // Row 1: Team Key label + input.
-    let ptreKeyRow = ptreSection.appendChild(
-      createDOM("span")
-        .appendChild(createDOM("a", { href: "https://ptre.chez.gg/", target: "_blank" }, "PTRE"))
-        .parentElement.appendChild(document.createTextNode(" Teamkey")).parentElement
+    const savedPtreKey = this.json.options.ptreTK;
+    const ptreEnabled =
+      typeof savedPtreKey === "string" && savedPtreKey.startsWith("TM") && savedPtreKey.replace(/-/g, "").length === 18;
+
+    let ptreKeyRow = ptreSection.appendChild(createDOM("span"));
+    ptreKeyRow.appendChild(createDOM("a", { href: "https://ptre.chez.gg/", target: "_blank" }, "PTRE"));
+    ptreKeyRow.appendChild(document.createTextNode(" Teamkey "));
+    ptreKeyRow.appendChild(
+      createDOM(
+        "span",
+        {
+          style: ptreEnabled
+            ? "font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px; letter-spacing: 0.3px; background: #1f7a3a; color: #dff5e2;"
+            : "font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px; letter-spacing: 0.3px; background: #5a2a2a; color: #f5dcdc;",
+        },
+        ptreEnabled ? "ENABLED" : "DISABLED"
+      )
     );
     let ptreInput = ptreKeyRow.appendChild(
       createDOM("input", {
