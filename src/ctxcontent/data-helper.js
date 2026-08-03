@@ -10,11 +10,11 @@ const ptreLogger = getLogger("data-helper.ptre");
 /** Number of positions per system stored in `galaxyStorage` (dense layout). */
 const SCANNED_SYSTEM_POSITION_COUNT = 15;
 /** Filler for absent players/planets/moons in a `galaxyStorage` position. */
-const EMPTY_POSITION = Object.freeze({ playerId: -1, planetId: -1, moonId: -1, ts: -1 });
+const EMPTY_POSITION = Object.freeze({ playerId: -1, planetId: -1, moonId: -1 });
 
 /**
  * Build a fresh empty snapshot with exactly SCANNED_SYSTEM_POSITION_COUNT positions.
- * @return {Object<string, {playerId:number, planetId:number, moonId:number, ts:number}>}
+ * @return {Object<string, {playerId:number, planetId:number, moonId:number}>}
  */
 function generateEmptySystem() {
   const snap = {};
@@ -206,9 +206,8 @@ export class DataHelper {
    *        OGame page's wall-clock server time. NOT a reliable UTC Unix ms: the value is
    *        interpreted in the browser's timezone, so on a server whose timezone differs
    *        from the browser's (e.g. `.en` for a CEST user) it is offset by the timezone
-   *        delta. Sent as-is in the PTRE payload's `timestamp_ig` and written to `ts`
-   *        on positions that get persisted. Do NOT compare directly with
-   *        `lastGalaxyUpdateTS` (Unix seconds from the public API).
+   *        delta. Sent as-is in the PTRE payload's `timestamp_ig`. Do NOT compare directly
+   *        with `lastGalaxyUpdateTS` (Unix seconds from the public API).
    * @return {Object<string, object>} - PTRE payload keyed by "g:s:p"; empty when no diff
    *         or when no team key.
    */
@@ -277,13 +276,11 @@ export class DataHelper {
           // `currentSystemSnapshot` must contain the full dense 15-position map so that,
           // when we persist below, `galaxyStorage[g][s]` always exposes 15 slots. We can't
           // decide up front to skip - a change at a later position would need the earlier
-          // ones too. `ts` records the server time of this scan; it only survives on disk
-          // when at least one position in this system moved.
+          // ones too.
           currentSystemSnapshot[pos] = {
             playerId: cur.playerId,
             planetId: cur.planetId,
             moonId: cur.moonId,
-            ts: serverTime ?? -1,
           };
           const changed =
             !previousSystemFound ||
@@ -334,9 +331,7 @@ export class DataHelper {
 
       // Persist only when at least one position in the system actually moved.
       // Identical revisits (same player/planet/moon layout as previously stored) skip
-      // the write to avoid disk churn during heavy browsing. Stale `ts` values on the
-      // persisted snapshot can only linger until the next weekly API refresh, which
-      // wipes `galaxyStorage` entirely in update().
+      // the write to avoid disk churn during heavy browsing.
       if (teamKey && systemChanged) {
         if (!this.galaxyStorage[galaxy]) this.galaxyStorage[galaxy] = {};
         this.galaxyStorage[galaxy][system] = currentSystemSnapshot;
@@ -447,7 +442,6 @@ export class DataHelper {
             playerId: -1,
             planetId: -1,
             moonId: -1,
-            ts: newGalaxyTs,
           };
         }
         updatedSystemsCount++;
@@ -457,7 +451,6 @@ export class DataHelper {
         playerId: planet.player,
         planetId: planet.id,
         moonId: planet.moon ? planet.moon : -1,
-        ts: newGalaxyTs,
       };
       updatedPlanetsCount++;
       if (planet.moon) updatedMoonsCount++;
@@ -473,7 +466,7 @@ export class DataHelper {
     const logger = getLogger("updateUniverse");
 
     if (this.loading) return;
-    if (!isNaN(this.lastUpdate) && new Date() - this.lastUpdate < 30 * 60 * 1e3) {
+    if (!isNaN(this.lastUpdate) && new Date() - this.lastUpdate < 1 * 60 * 1e3) {
       logger.debug("Last ogame's data update was: " + this.lastUpdate);
       return;
     }
