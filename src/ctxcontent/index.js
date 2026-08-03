@@ -22,6 +22,29 @@ contentContextInit({
         dataHelper.rebuildGalaxyStorage(pendingPtreKey);
       }
     },
+    galaxyInfo: function () {
+      if (!dataHelper || !dataHelper.galaxyStorage) {
+        return Promise.resolve({ systemCount: 0, lastGalaxyUpdateTS: -1, storageBytes: 0 });
+      }
+      let systemCount = 0;
+      for (const g in dataHelper.galaxyStorage) {
+        systemCount += Object.keys(dataHelper.galaxyStorage[g]).length;
+      }
+      const lastGalaxyUpdateTS = dataHelper.lastGalaxyUpdateTS ?? -1;
+      const key = `ogi-galaxy-${UNIVERSE}`;
+      return new Promise((resolve) => {
+        try {
+          chrome.storage.local.get([key], (result) => {
+            let storageBytes = 0;
+            const raw = result?.[key];
+            if (typeof raw === "string") storageBytes = new Blob([raw]).size;
+            resolve({ systemCount, lastGalaxyUpdateTS, storageBytes });
+          });
+        } catch (_) {
+          resolve({ systemCount, lastGalaxyUpdateTS, storageBytes: 0 });
+        }
+      });
+    },
   },
   messages: {
     expeditionType: getExpeditionType,

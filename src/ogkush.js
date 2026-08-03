@@ -15396,6 +15396,41 @@ class OGInfinity {
       ptreInput.type = "password";
     });
 
+    // Systems count row in PTRE settings. Live query against `dataHelper.galaxyStorage`
+    // via the page->content bridge - the value reflects the current in-memory store
+    // at the moment the settings modal opens.
+    let ptreLastApiUpdateRow = ptreSection.appendChild(createDOM("span"));
+    ptreLastApiUpdateRow.textContent = "Last API update: ...";
+    let ptreSystemCountRow = ptreSection.appendChild(createDOM("span"));
+    ptreSystemCountRow.textContent = "Systems count: ...";
+    let ptreStorageSizeRow = ptreSection.appendChild(createDOM("span"));
+    ptreStorageSizeRow.textContent = "Storage size: ...";
+    pageContextRequest("ptre", "galaxyInfo")
+      .then((r) => {
+        const n = r?.response?.systemCount ?? 0;
+        ptreSystemCountRow.textContent = `Systems count: ${n}`;
+        const ts = r?.response?.lastGalaxyUpdateTS ?? -1;
+        if (ts > 0) {
+          const d = new Date(ts * 1000);
+          const formatted = d.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
+          ptreLastApiUpdateRow.textContent = `Last API update: ${formatted}`;
+        } else {
+          ptreLastApiUpdateRow.textContent = "Last API update: never";
+        }
+        const bytes = r?.response?.storageBytes ?? 0;
+        let sizeStr;
+        if (bytes >= 1024 * 1024) sizeStr = `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+        else if (bytes >= 1024) sizeStr = `${(bytes / 1024).toFixed(1)} KB`;
+        else sizeStr = `${bytes} B`;
+        ptreStorageSizeRow.textContent = `Storage size: ${sizeStr}`;
+      })
+      .catch((err) => {
+        console.warn("[OGI][PTRE] galaxyInfo failed", err);
+        ptreSystemCountRow.textContent = "Systems count: (unavailable)";
+        ptreLastApiUpdateRow.textContent = "Last API update: (unavailable)";
+        ptreStorageSizeRow.textContent = "Storage size: (unavailable)";
+      });
+
     settingDiv.appendChild(createDOM("hr"));
     let keys = settingDiv.appendChild(createDOM("div", { style: "display: grid;" }));
     keys.appendChild(createDOM("h1", {}, this.getTranslatedText(147)));

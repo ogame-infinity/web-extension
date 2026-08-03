@@ -232,6 +232,10 @@ export class DataHelper {
       const currentSystemSnapshot = {};
       let systemChanged = false;
 
+      if (!previousSystemFound) {
+        ptreLogger.debug("[GALAXY] [" + galaxy + ":" + system + "] Warning: No previous snapshot found!");
+      }
+
       for (let pos = 1; pos <= SCANNED_SYSTEM_POSITION_COUNT; pos++) {
         const cur = positions[pos] || positions[String(pos)] || { playerId: -1, planetId: -1, moonId: -1 };
         const extra = (additionnal && (additionnal[pos] || additionnal[String(pos)])) || {};
