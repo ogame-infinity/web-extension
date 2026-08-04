@@ -4364,7 +4364,7 @@ class OGInfinity {
     };
     
     if (this.page === "facilities") {
-      const openOverlay = document.querySelector("#jumpgateOpenOverlay");
+      const openOverlay = document.querySelector("#facilities .overlay");
       openOverlay.href = "";
       openOverlay.addEventListener("click", () => openJumpgate());
     }
