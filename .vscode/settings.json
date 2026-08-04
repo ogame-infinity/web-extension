@@ -5,5 +5,6 @@
     "prettier.useTabs": false,
     "prettier.semi": true,
     "prettier.singleQuote": false,
-    "prettier.quoteProps": "consistent"
+    "prettier.quoteProps": "consistent",
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
 }
