@@ -270,7 +270,8 @@ export class DataHelper {
     chrome.storage.local.set({ [key]: payload }, () => {
       const lastError = chrome.runtime.lastError;
       if (lastError) {
-        this._lastFlushError = `write (${payload.length}B): ${lastError.message}`;
+        const bytes = new Blob([payload]).size;
+        this._lastFlushError = `write (${bytes}B): ${lastError.message}`;
         logger.error(`[${key}] write failed: ${this._lastFlushError}`);
         return;
       }
