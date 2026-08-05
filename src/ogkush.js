@@ -4252,17 +4252,17 @@ class OGInfinity {
   }
 
   jumpGate() {
-    let jumpTimes = [60, 53, 47, 41, 36, 31, 27, 23, 19, 17, 14, 13, 11, 10, 10];
-    for (const [coords, t] of Object.entries(this.json.jumpGate)) {
-      let time = new Date(t);
+    const jumpTimes = [60, 53, 47, 41, 36, 31, 27, 23, 19, 17, 14, 13, 11, 10, 10];
+    for (const [moonId, t] of Object.entries(this.json.jumpGate)) {
+      const time = new Date(t);
       this.planetList.forEach((planet) => {
-        if (planet.querySelector(".planet-koords").textContent == coords) {
-          let moonlink = planet.querySelector(".moonlink");
-          let gateLevel = Number(moonlink.getAttribute("data-jumpgatelevel"));
-          let updateCounter = () => {
-            let diff = (new Date() - time) / 1e3 / 60;
-            let refreshTime = jumpTimes[gateLevel - 1] / this.json.speedFleetWar;
-            let count = Math.round(refreshTime - diff);
+        const moonlink = planet.querySelector(".moonlink");
+        if ((moonlink ? new URL(moonlink.href).searchParams.get("cp") : null) === moonId) {
+          const gateLevel = Number(moonlink.getAttribute("data-jumpgatelevel"));
+          const updateCounter = () => {
+            const diff = (new Date() - time) / 1e3 / 60;
+            const refreshTime = jumpTimes[gateLevel - 1] / this.json.speedFleetWar;
+            const count = Math.round(refreshTime - diff);
             counter.textContent = count + "'";
             if (count > 0) {
               if (count < 10) {
@@ -4274,59 +4274,101 @@ class OGInfinity {
               }
               return true;
             } else {
-              delete this.json.jumpGate[coords];
+              delete this.json.jumpGate[moonId];
               this.saveData();
               return false;
             }
           };
-          let counter = moonlink.appendChild(createDOM("div", { class: "ogk-gate-counter" }));
+          const counter = moonlink.appendChild(createDOM("div", { class: "ogk-gate-counter" }));
           updateCounter();
-          let inter = setInterval(() => {
+          const inter = setInterval(() => {
             if (!updateCounter()) clearInterval(inter);
           }, 1e3);
         }
       });
     }
     if (!this.current.isMoon) return;
-    let oj = openJumpgate;
+    
+    if (OgamePageData.isAtLeast_13_0_0) {
+      jumpgateDone = (data) => {
+        var data = $.parseJSON(data);
+        if (data.success) {
+          planet = data["targetMoon"];
+          /* ogi code */
+          const dest = data["targetMoon"];
+          const origin = new URL(this.current.planet.querySelector(".moonlink").href).searchParams.get("cp");
+          const time = new Date();
+          this.json.jumpGate[planet] = time;
+          this.json.jumpGate[origin] = time;
+          this.saveData();
+          /* end ogi code */
+          $('.overlayDiv').dialog('destroy');
+          if (data.redirectUrl) {
+            window.location.href = data.redirectUrl;
+          }
+        } else {
+          showNotification(data.error, 'error');
+        }
+        if (typeof data.newAjaxToken != 'undefined') {
+          setNewTokenData(data.newAjaxToken);
+        }
+      };
+    } else {
+      jumpgateDone = (data) => {
+        var data = $.parseJSON(data);
+        if (data["status"]) {
+          planet = data["targetMoon"];
+          /* ogi code */
+          const dest = data["targetMoon"];
+          const origin = new URL(this.current.planet.querySelector(".moonlink").href).searchParams.get("cp");
+          const time = new Date();
+          this.json.jumpGate[planet] = time;
+          this.json.jumpGate[origin] = time;
+          this.saveData();
+          /* end ogi code */
+          $('.overlayDiv').dialog('destroy');
+        }
+        errorBoxAsArray(data["errorbox"]);
+        if (typeof data.newAjaxToken != 'undefined') {
+          setNewTokenData(data.newAjaxToken);
+        }
+      };
+    }
+    
+    const oj = openJumpgate;
     openJumpgate = () => {
       oj();
-      let init = false;
-      let inter = setInterval(() => {
-        try {
-          if (init) {
-            clearInterval(inter);
-            return;
-          }
-          let jg = jumpToTarget;
-          jumpToTarget = () => {
-            origin = this.current.coords;
-            let dest = document.querySelector(".fright select").selectedOptions[0].text;
-            dest = dest.split("[")[1].replace("]", "").trim();
-            let time = new Date();
-            this.json.jumpGate[dest] = time;
-            this.json.jumpGate[origin] = time;
-            this.saveData();
-            jg();
-          };
-          $("#jumpgate .send_all").after(createDOM("span", { class: "select-most" }));
-          $(".select-most").on("click", () => {
-            let kept =
-              this.json.options.kept[this.current.coords + (this.current.isMoon ? "M" : "P")] ??
-              this.json.options.defaultKeptMoon ??
-              this.json.options.defaultKept;
-            document.querySelectorAll(".ship_input_row input").forEach((elem) => {
-              let id = elem.getAttribute("name").replace("ship_", "");
-              let max = elem.getAttribute("rel");
-              $(elem).val(Math.max(0, max - (kept[id] || 0)));
+      const jumpGateObserver = new OGIObserver();
+      const myObs = jumpGateObserver(
+        document.getElementById("ingamepage"),
+        () => {
+          const jumpgate = document.getElementById("jumpgate");
+          if (jumpgate && !document.getElementById("jumpgateNotReady")) {
+            jumpgate.querySelector(".send_all").after(createDOM("span", { class: "select-most" }));
+            jumpgate.querySelector(".select-most").addEventListener("click", () => {
+              const kept =
+                this.json.options.kept[this.current.coords + (this.current.isMoon ? "M" : "P")] ??
+                this.json.options.defaultKeptMoon ??
+                this.json.options.defaultKept;
+              jumpgate.querySelectorAll(".ship_input_row input").forEach((elem) => {
+                const id = elem.getAttribute("name").replace("ship_", "");
+                const max = elem.getAttribute("rel");
+                elem.value = Math.max(0, max - (kept[id] || 0));
+              });
             });
-            $("#continue").focus();
-          });
-          init = true;
-        } catch (e) {}
-      }, 100);
+            myObs.disconnect();
+          }
+        },
+        { subtree: true, childList: true }
+      );
     };
-    if (this.rawURL.searchParams.get("opengate") == "1") {
+    
+    if (this.page === "facilities") {
+      const openOverlay = document.querySelector("#facilities .overlay");
+      openOverlay.href = "";
+      openOverlay.addEventListener("click", () => openJumpgate());
+    }
+    if (this.rawURL.searchParams.get("opengate") === "1") {
       openJumpgate();
     }
   }
