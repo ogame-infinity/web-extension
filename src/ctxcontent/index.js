@@ -43,6 +43,7 @@ function processData() {
         delete tempSaveData.lastGalaxyUpdateTS;
         // Runtime-only setTimeout id; must not survive a reload.
         delete tempSaveData._galaxyFlushTimer;
+        delete tempSaveData._lastFlushError;
 
         chrome.storage.local.set({ [UNIVERSE]: tempSaveData }, function (at) {});
       });

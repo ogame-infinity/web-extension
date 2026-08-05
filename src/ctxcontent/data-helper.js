@@ -254,11 +254,27 @@ export class DataHelper {
       clearTimeout(this._galaxyFlushTimer);
       this._galaxyFlushTimer = null;
     }
-    chrome.storage.local.set({
-      [`ogi-galaxy-${this.universe}`]: JSON.stringify({
+    const logger = getLogger("galaxyStorage");
+    const key = `ogi-galaxy-${this.universe}`;
+    let payload;
+    try {
+      payload = JSON.stringify({
         galaxyStorage: this.galaxyStorage,
         lastGalaxyUpdateTS: this.lastGalaxyUpdateTS,
-      }),
+      });
+    } catch (err) {
+      this._lastFlushError = `serialize: ${err && err.message ? err.message : err}`;
+      logger.error(`[${key}] serialize failed: ${this._lastFlushError}`);
+      return;
+    }
+    chrome.storage.local.set({ [key]: payload }, () => {
+      const lastError = chrome.runtime.lastError;
+      if (lastError) {
+        this._lastFlushError = `write (${payload.length}B): ${lastError.message}`;
+        logger.error(`[${key}] write failed: ${this._lastFlushError}`);
+        return;
+      }
+      this._lastFlushError = null;
     });
   }
 
