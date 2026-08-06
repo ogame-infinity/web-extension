@@ -11479,7 +11479,9 @@ class OGInfinity {
         }
 
         // use fleet templates if activated and available
-        let timeFleetTemplate = null, speedFleetTemplate = null, templateApplied = false;
+        let timeFleetTemplate = null,
+          speedFleetTemplate = null,
+          templateApplied = false;
         if (this.json.options.expedition.standardFleet) {
           const selectShipsFromFleetTemplate = (fleetTemplate) => {
             for (const template of fleetTemplate) {
@@ -11502,7 +11504,7 @@ class OGInfinity {
                 if (template.id == null) break;
               }
             }
-          }
+          };
           if (this.admiral) {
             selectShipsFromFleetTemplate(expeditionFleetTemplates);
           }
