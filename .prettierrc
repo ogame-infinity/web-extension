@@ -5,5 +5,5 @@
   "useTabs": false,
   "semi": true,
   "singleQuote": false,
-  "quoteProps": "consistent"
+  "quoteProps": "as-needed"
 }
