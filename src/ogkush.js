@@ -11309,10 +11309,10 @@ class OGInfinity {
         this.saveData();
       };
 
-      if (this.commander) {
-        const editTemplate = document.querySelectorAll("#fleetTemplates .actions a.editTemplate");
-        editTemplate.forEach((editTemplate) => {
-          const fleetId = editTemplate.getAttribute("onclick").match(/\d+(?=\);)/)[0];
+      // add mx buttons to choose fleet template
+      if (this.commander || this.admiral) {
+        document.querySelectorAll(".actions a.editTemplate").forEach((editTemplate) => {
+          const fleetId = editTemplate.getAttribute("onclick").match(/(?<=\", )\d+/)[0];
           const a = createDOM("a", {
             class: "tooltip js_hideTipOnMobile icon_link",
             title: this.getTranslatedText(165),
@@ -11323,7 +11323,7 @@ class OGInfinity {
           mx.classList.toggle("ogl-active", fleetId == this.json.options.expedition.standardFleetId);
           mx.classList.toggle("ogl-inactive", fleetId != this.json.options.expedition.standardFleetId);
           mx.addEventListener("click", () => updateStandardFleet(fleetId));
-          editTemplate.parentElement.prepend(a);
+          editTemplate.before(a);
         });
         const updateStandardFleet = (id) => {
           document.querySelectorAll(".ogl-mission-icon.ogl-mission-15.ogi-expedition-fleet").forEach((mx) => {
@@ -11478,22 +11478,46 @@ class OGInfinity {
           warningText += this.getTranslatedText(107) + "<br>";
         }
 
-        if (this.commander && this.json.options.expedition.standardFleet) {
-          standardFleets.forEach((template) => {
-            if (template.id == this.json.options.expedition.standardFleetId) {
-              let enoughShips = true;
-              for (const ship in template.ships) {
-                if (template.ships[ship] > availableShips[ship]) enoughShips = false;
-              }
-              if (enoughShips) {
-                for (const ship in template.ships) selectedShips[ship] = template.ships[ship];
-                warningText = "";
+        // use fleet templates if activated and available
+        let timeFleetTemplate = null, speedFleetTemplate = null, templateApplied = false;
+        if (this.json.options.expedition.standardFleet) {
+          const selectShipsFromFleetTemplate = (fleetTemplate) => {
+            for (const template of fleetTemplate) {
+              if (template.id == this.json.options.expedition.standardFleetId) {
+                if (!!template.fleetSpeed) speedFleetTemplate = template.fleetSpeed;
+                if (!!template.expeditionTime) timeFleetTemplate = template.expeditionTime;
+                let enoughShips = true;
+                for (const ship in template.ships) {
+                  if (template.ships[ship] > availableShips[ship]) enoughShips = false;
+                }
+                if (enoughShips) {
+                  for (const ship in template.ships) selectedShips[ship] = template.ships[ship];
+                  warningText = "";
+                } else {
+                  warningText = this.getTranslatedText(164) + "<br>" + warningText + "<br>";
+                }
+                templateApplied = true;
+                break;
               } else {
-                warningText = this.getTranslatedText(164) + "<br>" + warningText + "<br>";
+                if (template.id == null) break;
               }
             }
-          });
+          }
+          if (this.admiral) {
+            selectShipsFromFleetTemplate(expeditionFleetTemplates);
+          }
+          if (this.commander && !templateApplied) {
+            selectShipsFromFleetTemplate(OgamePageData.isAtLeast_13_0_0 ? standardFleetTemplates : standardFleets);
+          }
         }
+
+        // select expedition time and speed, using default options and templates
+        const expeditionTime = timeFleetTemplate ? timeFleetTemplate : this.json.options.expedition.defaultTime;
+        const expeditionSpeed = (speedFleetTemplate ? speedFleetTemplate : 100) / 10;
+        document.querySelector("#expeditiontime").value = expeditionTime;
+        const dropdown = document.querySelector("#expeditiontime + .dropdown > a");
+        if (dropdown) dropdown.textContent = expeditionTime;
+        document.querySelector(`.ogl-fleetSpeed div[data-step="${expeditionSpeed}"]`).click();
 
         for (const ship in selectedShips) this.selectShips(~~ship, selectedShips[ship]);
         if (warningText.length) fadeBox(warningText, true);
