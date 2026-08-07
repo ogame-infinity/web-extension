@@ -8736,21 +8736,22 @@ li.resource {
 }
 
 .ogl-mission-icon.ogl-mission-15.ogi-expedition-fleet {
-  width: 14px;
-  height: 14px;
-  margin: 0px;
-  margin-bottom: 1px;
-  background-size: calc(14px * 11) !important;
+  width: 16px;
+  height: 16px;
+  background-size: calc(16px * 11) !important;
   display: inline-block;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  transform: scale(1);
 }
 
 .ogl-mission-icon.ogl-mission-15.ogi-expedition-fleet.ogl-inactive {
-  background-position: 0 calc(-14px * 2) !important;
+  background-position: 0 calc(-16px * 2 + 0.25px) !important;
 }
 
 .ogl-mission-icon.ogl-mission-15.ogi-expedition-fleet.ogl-active,
 .ogl-mission-icon.ogl-mission-15.ogi-expedition-fleet:hover {
-  background-position: 0 calc(-14px * 1) !important;
+  background-position: 0 calc(-16px * 1) !important;
 }
 
 .ogl-fleet-ship.choice {

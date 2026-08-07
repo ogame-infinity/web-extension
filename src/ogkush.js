@@ -11277,7 +11277,7 @@ class OGInfinity {
         this.saveData();
       });
 
-      if (this.commander) {
+      if (this.commander || this.admiral) {
         const expeditionFleet = optionsDiv.appendChild(
           createDOM("div", { class: "ogl-option choice-expedition-icon expedition-fleet" })
         );
@@ -11315,6 +11315,7 @@ class OGInfinity {
           const fleetId = editTemplate.getAttribute("onclick").match(/(?<=\", )\d+/)[0];
           const a = createDOM("a", {
             class: "tooltip js_hideTipOnMobile icon_link",
+            style: "margin-right: 3px;",
             title: this.getTranslatedText(165),
           });
           const mx = a.appendChild(
