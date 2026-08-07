@@ -11307,30 +11307,49 @@ class OGInfinity {
       };
 
       // add mx buttons to choose fleet template
-      if (this.commander || this.admiral) {
-        document.querySelectorAll(".actions a.editTemplate").forEach((editTemplate) => {
-          const fleetId = editTemplate.getAttribute("onclick").match(/(?<=\", )\d+/)[0];
-          const a = createDOM("a", {
-            class: "tooltip js_hideTipOnMobile icon_link",
-            style: "margin-right: 3px;",
-            title: this.getTranslatedText(165),
+      const addMxSelectors = (divId) => {
+        const addTemplateSelectors = (templateDivId) => {
+          document.querySelectorAll(`${templateDivId} .actions a.editTemplate`).forEach((editTemplate) => {
+            const fleetId = editTemplate.getAttribute("onclick").match(/(?<=\", )\d+/)[0];
+            const a = createDOM("a", {
+              class: "tooltip js_hideTipOnMobile icon_link",
+              style: "margin-right: 3px;",
+              title: this.getTranslatedText(165),
+            });
+            const mx = a.appendChild(
+              createDOM("span", { class: "ogl-mission-icon ogl-mission-15 ogi-expedition-fleet", id: fleetId })
+            );
+            mx.classList.toggle("ogl-active", fleetId == this.json.options.expedition.standardFleetId);
+            mx.classList.toggle("ogl-inactive", fleetId != this.json.options.expedition.standardFleetId);
+            mx.addEventListener("click", () => updateStandardFleet(fleetId));
+            editTemplate.before(a);
           });
-          const mx = a.appendChild(
-            createDOM("span", { class: "ogl-mission-icon ogl-mission-15 ogi-expedition-fleet", id: fleetId })
-          );
-          mx.classList.toggle("ogl-active", fleetId == this.json.options.expedition.standardFleetId);
-          mx.classList.toggle("ogl-inactive", fleetId != this.json.options.expedition.standardFleetId);
-          mx.addEventListener("click", () => updateStandardFleet(fleetId));
-          editTemplate.before(a);
-        });
-        const updateStandardFleet = (id) => {
-          document.querySelectorAll(".ogl-mission-icon.ogl-mission-15.ogi-expedition-fleet").forEach((mx) => {
-            mx.classList.toggle("ogl-active", mx.id == id);
-            mx.classList.toggle("ogl-inactive", mx.id != id);
-          });
-          this.json.options.expedition.standardFleetId = id;
-          this.saveData();
+          const updateStandardFleet = (id) => {
+            document.querySelectorAll(".ogl-mission-icon.ogl-mission-15.ogi-expedition-fleet").forEach((mx) => {
+              mx.classList.toggle("ogl-active", mx.id == id);
+              mx.classList.toggle("ogl-inactive", mx.id != id);
+            });
+            this.json.options.expedition.standardFleetId = id;
+            this.saveData();
+          };
         };
+        const templateObserver = new OGIObserver();
+        const myObs = templateObserver(
+          document.querySelector(divId),
+          () => {
+            addTemplateSelectors(divId);
+          },
+          { subtree: false, childList: true }
+        );
+        addTemplateSelectors(divId);
+      };
+      if (this.commander) {
+        addMxSelectors(OgamePageData.isAtLeast_13_0_0 ? "#standardfleettemplatecomponent" : "#zeuch666");
+      }
+      if (this.admiral) {
+        addMxSelectors(
+          OgamePageData.isAtLeast_13_0_0 ? "#expeditionfleettemplatecomponent" : "#expeditionFleetOverlay"
+        );
       }
 
       btnExpe.addEventListener("mouseover", () => this.tooltip(btnExpe, optionsContainerDiv, false, false, 750));
