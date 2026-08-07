@@ -11216,9 +11216,6 @@ class OGInfinity {
       !fleetDispatcher.isOnVacation
     ) {
       if (!document.querySelector("#allornone .allornonewrap")) return;
-      document.querySelector("#expeditiontime").value = this.json.options.expedition.defaultTime;
-      const dropdown = document.querySelector("#expeditiontime + .dropdown > a");
-      if (dropdown) dropdown.textContent = this.json.options.expedition.defaultTime;
       const btnExpe = createDOM("button", {
         class: `ogl-expedition ${this.json.options.expedition.cargoShip == 202 ? "smallCargo" : "largeCargo"}`,
       });
@@ -11494,7 +11491,7 @@ class OGInfinity {
                   if (template.ships[ship] > availableShips[ship]) enoughShips = false;
                 }
                 if (enoughShips) {
-                  for (const ship in template.ships) selectedShips[ship] = template.ships[ship];
+                  for (const ship in selectedShips) selectedShips[ship] = template.ships[ship] ?? 0;
                   warningText = "";
                 } else {
                   warningText = this.getTranslatedText(164) + "<br>" + warningText + "<br>";
