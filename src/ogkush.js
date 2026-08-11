@@ -1602,11 +1602,12 @@ class OGInfinity {
     const rightObserver = new OGIObserver();
     const ogkush = this;
 
+    const rightId =  OgamePageData.isAtLeast_13_0_0 ? "planetbarcomponent" : "right";
     rightObserver(
-      document.getElementById("right"),
+      document.getElementById(rightId),
       (mutations) => {
         mutations.forEach((mutation) => {
-          if (mutation.target.id === "right") {
+          if (mutation.target.id === rightId) {
             ogkush.planetList = document.querySelectorAll(".smallplanet");
             ogkush.current.planet = (
               document.querySelector("#planetList .active") ?? document.querySelector("#planetList .planetlink")
