@@ -851,32 +851,6 @@ deleteReports() {
     }, 10000);
   }
 
-    deleteBtn.click();
-
-    const refresh = this.reportsToDelete.length === 0;
-
-    $(document).on("ajaxSuccess", function (e, xhr, settings) {
-      const urlParams = new URLSearchParams(settings.url);
-      const requestPayload = new URLSearchParams(settings.data);
-
-      if (xhr?.responseJSON?.status !== "success") return;
-      if (urlParams.get("action") !== "flagDeleted") return;
-
-      if (!requestPayload.getAll("messageIds[]").includes(report.id)) {
-        return;
-      }
-
-      // Only hide the row once the deletion is actually confirmed by the server.
-      row.classList.add("hide");
-
-      if (!refresh) {
-        new Promise((r) => setTimeout(r, 100)).then(() => {
-          obj.deleteReports();
-        });
-      }
-    });
-  }
-
   #ptreSpy() {
     if (!OGIData.options.ptreTK) return;
 
