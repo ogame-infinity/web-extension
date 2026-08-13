@@ -780,38 +780,48 @@ class SpyMessagesAnalyzer {
     this.deleteReports();
   }
 
-deleteReports() {
+  deleteReports() {
     this.#logger.debug("Delete messages", this.reportsToDelete);
 
     if (this.reportsToDelete.length === 0) return;
 
-    const { report, row } = this.reportsToDelete.shift();
-    this.#logger.debug("Messages to be deleted", report.id);
+    // Take everything queued right now as a single batch. Manual clicks queue one report
+    // at a time and call deleteReports() immediately, so they end up as a batch of one.
+    // The auto-delete pass queues several reports and calls deleteReports() once after
+    // building the whole table, so those go out together as one request.
+    const batch = this.reportsToDelete;
+    this.reportsToDelete = [];
+
+    const messageIds = batch.map(({ report }) => report.id);
+    this.#logger.debug("Messages to be deleted", messageIds);
+
+    // Optimistic UI: hide the rows immediately instead of waiting for server confirmation.
+    // ogame.messages.flagDeleted() has been confirmed to work safely with a detached element
+    // (it looks up the row and any open dialog by data-msg-id itself, and no-ops harmlessly
+    // if it doesn't find them), so the deletion itself is reliable - this only guards against
+    // genuinely unexpected failures (a thrown error, or no server confirmation at all).
+    batch.forEach(({ row }) => row.classList.add("hide"));
+
     const obj = this;
 
+    const revert = (reason) => {
+      obj.#logger.warn(`Deletion failed for [${messageIds.join(", ")}]: ${reason}`);
+      batch.forEach(({ row }) => row.classList.remove("hide"));
+    };
+
     try {
-      const deleteBtn = document.querySelector(`.msgDeleteBtn[data-message-id="${report.id}"]`);
-
-      if (deleteBtn) {
-        deleteBtn.click();
-      } else {
-        this.#logger.debug(`Native button not in DOM for report ${report.id}, calling ogame.messages.flagDeleted directly`);
-
-        const fakeBtn = document.createElement("button");
-        fakeBtn.setAttribute("data-message-id", report.id);
-        ogame.messages.flagDeleted(fakeBtn);
-      }
+      // ogame.messages.flagDeleted() reads $(obj).data('messageId'), which can be a single
+      // id or an array of ids - passing the whole batch sends one request instead of one
+      // per report.
+      const fakeBtn = document.createElement("button");
+      $(fakeBtn).data("messageId", messageIds);
+      ogame.messages.flagDeleted(fakeBtn);
     } catch (err) {
-      this.#logger.error(`Failed to delete report ${report.id}`, err);
-
-      new Promise((r) => setTimeout(r, 100)).then(() => {
-        obj.deleteReports();
-      });
-
+      // Something failed synchronously (e.g. the game changed how flagDeleted works).
+      // Undo the optimistic hide right away instead of waiting for a reload.
+      revert(err);
       return;
     }
-
-    const refresh = this.reportsToDelete.length === 0;
 
     let settled = false;
 
@@ -819,35 +829,29 @@ deleteReports() {
       const urlParams = new URLSearchParams(settings.url);
       const requestPayload = new URLSearchParams(settings.data);
 
-      if (xhr?.responseJSON?.status !== "success") return;
       if (urlParams.get("action") !== "flagDeleted") return;
 
-      if (!requestPayload.getAll("messageIds[]").includes(report.id)) {
-        return;
-      }
+      const requestIds = requestPayload.getAll("messageIds[]");
+      if (!messageIds.every((id) => requestIds.includes(String(id)))) return;
 
       settled = true;
       $(document).off("ajaxSuccess", onAjaxSuccess);
 
-      // Only hide the row once the deletion is actually confirmed by the server.
-      row.classList.add("hide");
-
-      if (!refresh) {
-        new Promise((r) => setTimeout(r, 100)).then(() => {
-          obj.deleteReports();
-        });
+      if (xhr?.responseJSON?.status !== "success") {
+        revert("server responded with a non-success status");
       }
     };
 
     $(document).on("ajaxSuccess", onAjaxSuccess);
 
-    // Safety net: if the server never confirms this specific deletion (request failed,
-    // unexpected response, etc.), don't leave the listener attached to document forever.
+    // Safety net: if the server never confirms this batch (request failed, unexpected
+    // response, etc.), don't leave the listener attached to document forever, and undo
+    // the optimistic hide instead of leaving the user misled until they reload.
     setTimeout(() => {
       if (settled) return;
 
       $(document).off("ajaxSuccess", onAjaxSuccess);
-      this.#logger.warn(`Deletion of report ${report.id} was never confirmed by the server`);
+      revert("no server confirmation within 10s");
     }, 10000);
   }
 
