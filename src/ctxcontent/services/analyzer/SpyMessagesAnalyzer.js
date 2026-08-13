@@ -780,7 +780,7 @@ class SpyMessagesAnalyzer {
     this.deleteReports();
   }
 
-  deleteReports() {
+deleteReports() {
     this.#logger.debug("Delete messages", this.reportsToDelete);
 
     if (this.reportsToDelete.length === 0) return;
@@ -789,13 +789,20 @@ class SpyMessagesAnalyzer {
     this.#logger.debug("Messages to be deleted", report.id);
     const obj = this;
 
-    const deleteBtn = document.querySelector(`.msgDeleteBtn[data-message-id="${report.id}"]`);
+    try {
+      const deleteBtn = document.querySelector(`.msgDeleteBtn[data-message-id="${report.id}"]`);
 
-    if (!deleteBtn) {
-      // The native message row got unloaded from the DOM (pagination), the click has
-      // nothing to trigger and would silently do nothing. Keep the row visible instead of
-      // hiding it as if it had been deleted, and move on to the next queued report.
-      this.#logger.warn(`Could not delete report ${report.id}: native message button not found in DOM`);
+      if (deleteBtn) {
+        deleteBtn.click();
+      } else {
+        this.#logger.debug(`Native button not in DOM for report ${report.id}, calling ogame.messages.flagDeleted directly`);
+
+        const fakeBtn = document.createElement("button");
+        fakeBtn.setAttribute("data-message-id", report.id);
+        ogame.messages.flagDeleted(fakeBtn);
+      }
+    } catch (err) {
+      this.#logger.error(`Failed to delete report ${report.id}`, err);
 
       new Promise((r) => setTimeout(r, 100)).then(() => {
         obj.deleteReports();
@@ -803,6 +810,46 @@ class SpyMessagesAnalyzer {
 
       return;
     }
+
+    const refresh = this.reportsToDelete.length === 0;
+
+    let settled = false;
+
+    const onAjaxSuccess = function (e, xhr, settings) {
+      const urlParams = new URLSearchParams(settings.url);
+      const requestPayload = new URLSearchParams(settings.data);
+
+      if (xhr?.responseJSON?.status !== "success") return;
+      if (urlParams.get("action") !== "flagDeleted") return;
+
+      if (!requestPayload.getAll("messageIds[]").includes(report.id)) {
+        return;
+      }
+
+      settled = true;
+      $(document).off("ajaxSuccess", onAjaxSuccess);
+
+      // Only hide the row once the deletion is actually confirmed by the server.
+      row.classList.add("hide");
+
+      if (!refresh) {
+        new Promise((r) => setTimeout(r, 100)).then(() => {
+          obj.deleteReports();
+        });
+      }
+    };
+
+    $(document).on("ajaxSuccess", onAjaxSuccess);
+
+    // Safety net: if the server never confirms this specific deletion (request failed,
+    // unexpected response, etc.), don't leave the listener attached to document forever.
+    setTimeout(() => {
+      if (settled) return;
+
+      $(document).off("ajaxSuccess", onAjaxSuccess);
+      this.#logger.warn(`Deletion of report ${report.id} was never confirmed by the server`);
+    }, 10000);
+  }
 
     deleteBtn.click();
 
