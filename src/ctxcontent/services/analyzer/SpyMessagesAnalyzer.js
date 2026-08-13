@@ -839,7 +839,18 @@ class SpyMessagesAnalyzer {
 
       if (xhr?.responseJSON?.status !== "success") {
         revert("server responded with a non-success status");
+        return;
       }
+
+      // ogame.messages.flagDeleted() only cleans up the native message row for a single
+      // id - when messageId is an array, it gets stringified straight into the selector
+      // (e.g. ".msg[data-msg-id='123,456']"), which matches nothing. So for a batch, the
+      // server-side deletion succeeds but the native rows never disappear from the list
+      // below. Clean them up ourselves instead of relying on that. Safe to always run:
+      // if the game already removed a row (single-delete case), this is just a no-op.
+      messageIds.forEach((id) => {
+        document.querySelector(`.messagesHolder .msg[data-msg-id='${id}']`)?.remove();
+      });
     };
 
     $(document).on("ajaxSuccess", onAjaxSuccess);
