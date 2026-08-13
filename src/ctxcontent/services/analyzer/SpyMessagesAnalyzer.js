@@ -619,8 +619,7 @@ class SpyMessagesAnalyzer {
         const optColDeleteButton = createDOM("button", { class: "icon icon_trash" });
         optColDeleteButton.setAttribute("data-id", report.id);
         optColDeleteButton.addEventListener("click", () => {
-          bodyRow.classList.add("hide");
-          this.reportsToDelete.push(report);
+          this.reportsToDelete.push({ report, row: bodyRow });
 
           this.deleteReports();
         });
@@ -637,8 +636,7 @@ class SpyMessagesAnalyzer {
             ) <
             OGIData.options.rvalLimit
         ) {
-          bodyRow.classList.add("hide");
-          this.reportsToDelete.push(report);
+          this.reportsToDelete.push({ report, row: bodyRow });
         }
       } else if (document.querySelector('.messagesTrashcanBtns button.custom_btn[disabled="disabled"]')) {
         const optColRestoreButton = createDOM("button", { class: "icon icon_restore" });
@@ -787,12 +785,26 @@ class SpyMessagesAnalyzer {
 
     if (this.reportsToDelete.length === 0) return;
 
-    const report = this.reportsToDelete.shift();
+    const { report, row } = this.reportsToDelete.shift();
     this.#logger.debug("Messages to be deleted", report.id);
     const obj = this;
 
-    if (!document.querySelector(`.msgDeleteBtn[data-message-id="${report.id}"]`)) return;
-    document.querySelector(`.msgDeleteBtn[data-message-id="${report.id}"]`).click();
+    const deleteBtn = document.querySelector(`.msgDeleteBtn[data-message-id="${report.id}"]`);
+
+    if (!deleteBtn) {
+      // The native message row got unloaded from the DOM (pagination), the click has
+      // nothing to trigger and would silently do nothing. Keep the row visible instead of
+      // hiding it as if it had been deleted, and move on to the next queued report.
+      this.#logger.warn(`Could not delete report ${report.id}: native message button not found in DOM`);
+
+      new Promise((r) => setTimeout(r, 100)).then(() => {
+        obj.deleteReports();
+      });
+
+      return;
+    }
+
+    deleteBtn.click();
 
     const refresh = this.reportsToDelete.length === 0;
 
@@ -806,6 +818,9 @@ class SpyMessagesAnalyzer {
       if (!requestPayload.getAll("messageIds[]").includes(report.id)) {
         return;
       }
+
+      // Only hide the row once the deletion is actually confirmed by the server.
+      row.classList.add("hide");
 
       if (!refresh) {
         new Promise((r) => setTimeout(r, 100)).then(() => {
