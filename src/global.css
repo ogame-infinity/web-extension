@@ -4318,14 +4318,13 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
 .moonlink .ogl-timer,
 .planetlink .ogl-timer {
   background: #00692a;
-  border: 1px solid #121a23;
   border-radius: 50%;
   bottom: 0;
   content: "";
   height: 5px;
-  right: 1px;
+  right: 2px;
   position: absolute;
-  top: 1px;
+  top: 2px;
   width: 5px;
 }
 
