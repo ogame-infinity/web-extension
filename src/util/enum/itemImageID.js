@@ -1,5 +1,5 @@
 import itemType from "./itemType.js";
-
+// prettier-ignore
 export default Object.freeze({
   // Metal boosters
   "cea22d098a0b48c8960101e05c0bd2a7fadc72c5": { type: itemType.Metal, bonus: 0.1 },
