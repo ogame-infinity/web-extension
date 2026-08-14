@@ -13110,7 +13110,7 @@ class OGInfinity {
     if (this.json.tchat) {
       ogame.chat.loadChatLogWithPlayer(Number(id));
     } else {
-      document.location = `https://s${this.universe}-${OgamePageData.gameLang}.ogame.gameforge.com/game/index.php?page=chat&playerId=${id}`;
+      document.location = `https://s${this.universe}-${OgamePageData.gameLang}.ogame.gameforge.com/game/index.php?page=ingame&component=chat&playerId=${id}`;
     }
   }
 
