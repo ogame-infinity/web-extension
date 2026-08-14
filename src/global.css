@@ -564,6 +564,10 @@ input[type="password"]::selection {
   opacity: 1;
 }
 
+.fleetStatus #slots {
+  display: block !important;
+}
+
 .fleetStatus .fleft:first-of-type .advice span {
   margin-right: 5px;
   color: #9099a3;
@@ -575,6 +579,12 @@ input[type="password"]::selection {
   font-weight: 800;
   color: #ddd;
   line-height: 27px !important;
+}
+
+.fleetStatus .fleft,
+.fleetStatus .fleft:first-of-type .bonus:first-of-type,
+.fleetStatus .fleft .ogk-label.ogi-info {
+  margin-left: 10px;
 }
 
 #shipsChosen .sprite.recycler,
