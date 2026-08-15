@@ -23,7 +23,6 @@ class SpyMessagesAnalyzer {
   #tabId;
   #onTrash = false;
   reportsToDelete = [];
-  #countRestoration = 0;
   #spyReports = [];
 
   constructor() {
@@ -640,18 +639,10 @@ class SpyMessagesAnalyzer {
         }
       } else if (document.querySelector('.messagesTrashcanBtns button.custom_btn[disabled="disabled"]')) {
         const optColRestoreButton = createDOM("button", { class: "icon icon_restore" });
-        optColRestoreButton.getAttribute("data-id", report.id);
+        optColRestoreButton.setAttribute("data-id", report.id);
 
         optColRestoreButton.addEventListener("click", () => {
-          bodyRow.classList.add("hide");
-          this.#countRestoration++;
-          new Promise((r) => setTimeout(r, 300)).then(() => {
-            this.#countRestoration--;
-            if (!document.querySelector(`.msgRestoreBtn[data-message-id="${report.id}"]`)) return;
-            document.querySelector(`.msgRestoreBtn[data-message-id="${report.id}"]`).click();
-          });
-          new Promise((r) => setTimeout(r, 800)).then(() => {
-            if (this.#countRestoration > 0) return;
+          this.#flagDeleted([report.id], [bodyRow], () => {
             window.dispatchEvent(new CustomEvent("ogi-spyTableReload"));
           });
         });
@@ -780,38 +771,25 @@ class SpyMessagesAnalyzer {
     this.deleteReports();
   }
 
-  deleteReports() {
-    this.#logger.debug("Delete messages", this.reportsToDelete);
-
-    if (this.reportsToDelete.length === 0) return;
-
-    // Take everything queued right now as a single batch. Manual clicks queue one report
-    // at a time and call deleteReports() immediately, so they end up as a batch of one.
-    // The auto-delete pass queues several reports and calls deleteReports() once after
-    // building the whole table, so those go out together as one request.
-    const batch = this.reportsToDelete;
-    this.reportsToDelete = [];
-
-    const messageIds = batch.map(({ report }) => report.id);
-    this.#logger.debug("Messages to be deleted", messageIds);
-
-    // Optimistic UI: hide the rows immediately instead of waiting for server confirmation.
-    // ogame.messages.flagDeleted() has been confirmed to work safely with a detached element
-    // (it looks up the row and any open dialog by data-msg-id itself, and no-ops harmlessly
-    // if it doesn't find them), so the deletion itself is reliable - this only guards against
-    // genuinely unexpected failures (a thrown error, or no server confirmation at all).
-    batch.forEach(({ row }) => row.classList.add("hide"));
-
+  // Shared by delete and restore: the game reuses the same ogame.messages.flagDeleted()
+  // endpoint for both actions (toggles the message's trashed state), and it's been confirmed
+  // to work safely with a detached element regardless of whether the real button is in the
+  // DOM - it looks up the row and any open dialog by data-msg-id itself, and no-ops harmlessly
+  // if it doesn't find them. rows are hidden optimistically and only put back if something
+  // genuinely goes wrong (thrown error, or no server confirmation within 10s).
+  #flagDeleted(messageIds, rows, onConfirmed) {
     const obj = this;
 
+    rows.forEach((row) => row.classList.add("hide"));
+
     const revert = (reason) => {
-      obj.#logger.warn(`Deletion failed for [${messageIds.join(", ")}]: ${reason}`);
-      batch.forEach(({ row }) => row.classList.remove("hide"));
+      obj.#logger.warn(`Action failed for [${messageIds.join(", ")}]: ${reason}`);
+      rows.forEach((row) => row.classList.remove("hide"));
     };
 
     try {
       // ogame.messages.flagDeleted() reads $(obj).data('messageId'), which can be a single
-      // id or an array of ids - passing the whole batch sends one request instead of one
+      // id or an array of ids - passing several at once sends one request instead of one
       // per report.
       const fakeBtn = document.createElement("button");
       $(fakeBtn).data("messageId", messageIds);
@@ -842,15 +820,7 @@ class SpyMessagesAnalyzer {
         return;
       }
 
-      // ogame.messages.flagDeleted() only cleans up the native message row for a single
-      // id - when messageId is an array, it gets stringified straight into the selector
-      // (e.g. ".msg[data-msg-id='123,456']"), which matches nothing. So for a batch, the
-      // server-side deletion succeeds but the native rows never disappear from the list
-      // below. Clean them up ourselves instead of relying on that. Safe to always run:
-      // if the game already removed a row (single-delete case), this is just a no-op.
-      messageIds.forEach((id) => {
-        document.querySelector(`.messagesHolder .msg[data-msg-id='${id}']`)?.remove();
-      });
+      onConfirmed?.();
     };
 
     $(document).on("ajaxSuccess", onAjaxSuccess);
@@ -864,6 +834,35 @@ class SpyMessagesAnalyzer {
       $(document).off("ajaxSuccess", onAjaxSuccess);
       revert("no server confirmation within 10s");
     }, 10000);
+  }
+
+  deleteReports() {
+    this.#logger.debug("Delete messages", this.reportsToDelete);
+
+    if (this.reportsToDelete.length === 0) return;
+
+    // Take everything queued right now as a single batch. Manual clicks queue one report
+    // at a time and call deleteReports() immediately, so they end up as a batch of one.
+    // The auto-delete pass queues several reports and calls deleteReports() once after
+    // building the whole table, so those go out together as one request.
+    const batch = this.reportsToDelete;
+    this.reportsToDelete = [];
+
+    const messageIds = batch.map(({ report }) => report.id);
+    const rows = batch.map(({ row }) => row);
+    this.#logger.debug("Messages to be deleted", messageIds);
+
+    this.#flagDeleted(messageIds, rows, () => {
+      // ogame.messages.flagDeleted() only cleans up the native message row for a single
+      // id - when messageId is an array, it gets stringified straight into the selector
+      // (e.g. ".msg[data-msg-id='123,456']"), which matches nothing. So for a batch, the
+      // server-side deletion succeeds but the native rows never disappear from the list
+      // below. Clean them up ourselves instead of relying on that. Safe to always run:
+      // if the game already removed a row (single-delete case), this is just a no-op.
+      messageIds.forEach((id) => {
+        document.querySelector(`.messagesHolder .msg[data-msg-id='${id}']`)?.remove();
+      });
+    });
   }
 
   #ptreSpy() {
