@@ -1,6 +1,5 @@
 import { getLogger } from "../util/logger.js";
 import { COORDINATE_PLANET, toNumber as toNumberCoordinate } from "../util/ogame.coordinate.js";
-import OGIData from "../util/OGIData.js";
 import { getAlliances } from "./helpers/universe.alliances.js";
 import { getPlayersHighscore, NAN_HIGHSCORE } from "./helpers/universe.highscore.js";
 import { getPlanets } from "./helpers/universe.planets.js";
@@ -12,6 +11,8 @@ export class DataHelper {
     this.names = {};
     this.topScore = 0;
     this.loading = false;
+    // Transient cache of the last successful universe.xml fetch. Stripped from the persisted blob in processData().
+    this._galaxySnapshot = null;
   }
 
   init() {
@@ -288,6 +289,72 @@ export class DataHelper {
     }, delayMs);
   }
 
+  // Rebuild `galaxyStorage` from the cached API snapshot. The PTRE key is
+  // never stored on DataHelper; callers must supply it (same pattern as scan()).
+  // No-op when the key is missing, when no snapshot has been cached yet, or
+  // when the cached snapshot is not strictly newer than the persisted state.
+  rebuildGalaxyStorage(ptreKey) {
+    const logger = getLogger("updateUniverse");
+    if (!ptreKey) {
+      logger.debug(`[galaxyStorage] rebuild skipped: no PTRE key`);
+      return;
+    }
+    if (!this._galaxySnapshot) {
+      logger.debug(`[galaxyStorage] rebuild skipped: no cached snapshot`);
+      return;
+    }
+    const newGalaxyTs = this._galaxySnapshot.timestamp;
+    const previousGalaxyTs = this.lastGalaxyUpdateTS ?? -1;
+    if (!Number.isFinite(newGalaxyTs) || newGalaxyTs <= previousGalaxyTs) {
+      logger.debug(`[galaxyStorage] rebuild skipped: prevTs=${previousGalaxyTs} newTS=${newGalaxyTs}`);
+      return;
+    }
+
+    const galaxyBuildStart = performance.now();
+    this.galaxyStorage = {};
+    let updatedSystemsCount = 0;
+    let updatedPlanetsCount = 0;
+    let updatedMoonsCount = 0;
+
+    this._galaxySnapshot.planetList.forEach((planet) => {
+      const parts = (planet.coords || "").split(":");
+      if (parts.length !== 3) return;
+      const g = parts[0];
+      const s = parts[1];
+      const p = parts[2];
+
+      if (!this.galaxyStorage[g]) {
+        this.galaxyStorage[g] = {};
+      }
+      if (!this.galaxyStorage[g][s]) {
+        this.galaxyStorage[g][s] = {};
+        for (let i = 1; i <= 15; i++) {
+          this.galaxyStorage[g][s][String(i)] = {
+            playerId: -1,
+            planetId: -1,
+            moonId: -1,
+            ts: newGalaxyTs,
+          };
+        }
+        updatedSystemsCount++;
+      }
+
+      this.galaxyStorage[g][s][p] = {
+        playerId: planet.player,
+        planetId: planet.id,
+        moonId: planet.moon ? planet.moon : -1,
+        ts: newGalaxyTs,
+      };
+      updatedPlanetsCount++;
+      if (planet.moon) updatedMoonsCount++;
+    });
+
+    this.lastGalaxyUpdateTS = newGalaxyTs;
+    const galaxyBuildDurationMs = Math.round(performance.now() - galaxyBuildStart);
+    logger.debug(`[galaxyStorage] New data: systems=${updatedSystemsCount} planets=${updatedPlanetsCount} moons=${updatedMoonsCount} | TS=${this.lastGalaxyUpdateTS} | Took ${galaxyBuildDurationMs}ms`);
+    this.flushGalaxyStorage();
+  }
+
   async update() {
     const logger = getLogger("updateUniverse");
 
@@ -309,68 +376,16 @@ export class DataHelper {
       ]);
 
       // ----------------------------------------------
-      // Galaxy Storage Update (snapshot of all planets in the universe)
-      // universe.xml is updated ONCE A WEEK (except for migrations, merge, etc)
-      // Only update this structure if the API has been updated
-      // Otherwise, it is purely useless (and we wont keep PTRE tracking data)
-      // The build is also gated on the presence of a PTRE team key in settings (might and should change)
-
-      const galaxyBuildStart = performance.now();
+      // Galaxy Snapshot Cache (planets fetched from universe.xml, once a week)
+      // The actual `galaxyStorage` rebuild is deferred to rebuildGalaxyStorage(ptreKey)
+      // so the PTRE team key never crosses into the content-script context.
       const playerPlanets = planetsSnapshot.planets;
-      const planetList = planetsSnapshot.planetList;
-      const newGalaxyTs = planetsSnapshot.timestamp;
-      const previousGalaxyTs = this.lastGalaxyUpdateTS ?? -1;
-      const galaxyUpdateNeeded = Number.isFinite(newGalaxyTs) && newGalaxyTs > previousGalaxyTs;
-      const ptreKeyPresent = !!(OGIData.options && OGIData.options.ptreTK);
-
-      logger.debug(`[galaxyStorage] prevTs=${previousGalaxyTs} newTS=${newGalaxyTs} => ${galaxyUpdateNeeded ? "OPEN" : "SKIP"} | PTRE=${ptreKeyPresent}`);
-
-      if (galaxyUpdateNeeded && ptreKeyPresent) {
-        // Do not use current storage if API was really updated
-        this.galaxyStorage = {};
-        let updatedSystemsCount = 0;
-        let updatedPlanetsCount = 0;
-        let updatedMoonsCount = 0;
-
-        planetList.forEach((planet) => {
-          const parts = (planet.coords || "").split(":");
-          if (parts.length !== 3) return;
-          const g = parts[0];
-          const s = parts[1];
-          const p = parts[2];
-
-          if (!this.galaxyStorage[g]) {
-            this.galaxyStorage[g] = {};
-          }
-          if (!this.galaxyStorage[g][s]) {
-            this.galaxyStorage[g][s] = {};
-            for (let i = 1; i <= 15; i++) {
-              this.galaxyStorage[g][s][String(i)] = {
-                playerId: -1,
-                planetId: -1,
-                moonId: -1,
-                ts: newGalaxyTs,
-              };
-            }
-            updatedSystemsCount++;
-          }
-
-          this.galaxyStorage[g][s][p] = {
-            playerId: planet.player,
-            planetId: planet.id,
-            moonId: planet.moon ? planet.moon : -1,
-            ts: newGalaxyTs,
-          };
-          updatedPlanetsCount++;
-          if (planet.moon) updatedMoonsCount++;
-        });
-
-        this.lastGalaxyUpdateTS = newGalaxyTs;
-        const galaxyBuildDurationMs = Math.round(performance.now() - galaxyBuildStart);
-        logger.debug(`[galaxyStorage] New data: systems=${updatedSystemsCount} planets=${updatedPlanetsCount} moons=${updatedMoonsCount} | TS=${this.lastGalaxyUpdateTS} | Took ${galaxyBuildDurationMs}ms`);
-        this.flushGalaxyStorage();
-      }
-      // End Galaxy Storage Update
+      this._galaxySnapshot = {
+        planetList: planetsSnapshot.planetList,
+        timestamp: planetsSnapshot.timestamp,
+      };
+      logger.debug(`[galaxyStorage] snapshot cached (ts=${planetsSnapshot.timestamp})`);
+      // End Galaxy Snapshot Cache
       // --------------------------------------------
 
       // -- TopScore --------------------------------

@@ -7,10 +7,20 @@ import { DataHelper } from "./data-helper.js";
 
 const mainLogger = getLogger();
 
+// PTRE team key held in the content script only for the lifetime of the tab.
+// Pushed in from the page via `ptre.setTeamKey`; never persisted here.
+let pendingPtreKey = "";
+
 contentContextInit({
   ptre: {
     galaxy: function (changes, ptreKey = null, serverTime = null) {
       return dataHelper.scan(changes, ptreKey, serverTime);
+    },
+    setTeamKey: function (key) {
+      pendingPtreKey = typeof key === "string" ? key : "";
+      if (pendingPtreKey && dataHelper && dataHelper._galaxySnapshot) {
+        dataHelper.rebuildGalaxyStorage(pendingPtreKey);
+      }
     },
   },
   messages: {
@@ -32,6 +42,9 @@ function processData() {
   universes[UNIVERSE].init().then(() => {
     try {
       universes[UNIVERSE].update().then(() => {
+        if (pendingPtreKey && universes[UNIVERSE]._galaxySnapshot) {
+          universes[UNIVERSE].rebuildGalaxyStorage(pendingPtreKey);
+        }
         let tempSaveData = { ...universes[UNIVERSE] };
         tempSaveData.lastUpdate = universes[UNIVERSE].lastUpdate.toJSON();
         tempSaveData.lastPlanetsUpdate = universes[UNIVERSE].lastPlanetsUpdate.toJSON();
@@ -44,6 +57,7 @@ function processData() {
         // Runtime-only setTimeout id; must not survive a reload.
         delete tempSaveData._galaxyFlushTimer;
         delete tempSaveData._lastFlushError;
+        delete tempSaveData._galaxySnapshot;
 
         chrome.storage.local.set({ [UNIVERSE]: tempSaveData }, function (at) {});
       });
