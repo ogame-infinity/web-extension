@@ -23,7 +23,7 @@ class SpyMessagesAnalyzer {
   #tabId;
   #onTrash = false;
   reportsToDelete = [];
-  #spyReports = [];
+  #spyReports = {};
 
   constructor() {
     this.#logger = getLogger("SpyMessagesAnalyer");
@@ -46,7 +46,7 @@ class SpyMessagesAnalyzer {
     )
       return;
 
-    this.#spyReports = [];
+    this.#spyReports = {};
 
     document.querySelector(".ogl-spyTable")?.remove();
     document.querySelector(".ogl-tableOptions")?.remove();
@@ -96,7 +96,7 @@ class SpyMessagesAnalyzer {
       if (!report.targetIsSelf) this.#spyReports[report.id] = report;
     });
 
-    if (this.#spyReports.length === 0) return;
+    if (Object.keys(this.#spyReports).length === 0) return;
 
     this.#spyTableBody(table);
   }
@@ -656,8 +656,7 @@ class SpyMessagesAnalyzer {
           renta[round] = Math.round((report.total * Math.pow(1 - report.loot / 100, round) * report.loot) / 100);
         }
 
-        if (renta.length > 1) {
-          const line = gainCol.parentElement;
+        const line = gainCol.parentElement;
 
           if (line.getAttribute("data") === "expanded") {
             line.setAttribute("data", "closed");
@@ -760,7 +759,6 @@ class SpyMessagesAnalyzer {
             extraLine.appendChild(createDOM("td"));
             extraLine.appendChild(createDOM("td"));
           }
-        }
       };
 
       gainCol.addEventListener("click", () => {
@@ -882,49 +880,55 @@ class SpyMessagesAnalyzer {
       // Check if the spy data already exists and skip if it does
       if (OGIData.spies[id]) return;
 
-      const tmpHTML = createDOM("div", {});
-      tmpHTML.insertAdjacentHTML("afterbegin", message.querySelector("span.player").getAttribute("data-tooltip-title"));
-      const playerID = tmpHTML.querySelector("[data-playerId]").getAttribute("data-playerId");
+      try {
+        const tmpHTML = createDOM("div", {});
+        tmpHTML.insertAdjacentHTML("afterbegin", message.querySelector("span.player").getAttribute("data-tooltip-title"));
+        const playerID = tmpHTML.querySelector("[data-playerId]").getAttribute("data-playerId");
 
-      const spyFromUrl = new URLSearchParams(
-        message.querySelector(".custom_btn.msgAttackBtn").getAttribute("onclick").split(/=(.*)/)[1].slice(1, -1)
-      );
+        const spyFromUrl = new URLSearchParams(
+          message.querySelector(".custom_btn.msgAttackBtn").getAttribute("onclick").split(/=(.*)/)[1].slice(1, -1)
+        );
 
-      const type = parseInt(spyFromUrl.get("type"));
-      const timestamp = dataRaw.getAttribute("data-raw-timestamp");
+        const type = parseInt(spyFromUrl.get("type"));
+        const timestamp = dataRaw.getAttribute("data-raw-timestamp");
 
-      const spy = {
-        id: id,
-        targetPlayerId: playerId,
-        sourcePlayerId: playerID,
-        galaxy: spyFromUrl.get("galaxy"),
-        system: spyFromUrl.get("system"),
-        position: spyFromUrl.get("position"),
-        type: type,
-        timestamp: timestamp * 1e3,
-      };
+        const spy = {
+          id: id,
+          targetPlayerId: playerId,
+          sourcePlayerId: playerID,
+          galaxy: spyFromUrl.get("galaxy"),
+          system: spyFromUrl.get("system"),
+          position: spyFromUrl.get("position"),
+          type: type,
+          timestamp: timestamp * 1e3,
+        };
 
-      ptreJSON[id] = {
-        player_id: spy.sourcePlayerId,
-        teamkey: OGIData.options.ptreTK,
-        galaxy: spy.galaxy,
-        system: spy.system,
-        position: spy.position,
-        spy_message_ts: spy.timestamp,
-        moon: {
-          activity: type === planetType.planet ? "60" : "*",
-        },
-        main: false,
-        activity: type === planetType.planet ? "*" : "60",
-      };
+        ptreJSON[id] = {
+          player_id: spy.sourcePlayerId,
+          teamkey: OGIData.options.ptreTK,
+          galaxy: spy.galaxy,
+          system: spy.system,
+          position: spy.position,
+          spy_message_ts: spy.timestamp,
+          moon: {
+            activity: type === planetType.planet ? "60" : "*",
+          },
+          main: false,
+          activity: type === planetType.planet ? "*" : "60",
+        };
 
-      message.classList.add("ogl-reportReady");
+        message.classList.add("ogl-reportReady");
 
-      OGIData.spies[id] = spy;
+        OGIData.spies[id] = spy;
+      } catch (err) {
+        // Don't let one unexpected message shape (missing player tooltip, attack button,
+        // etc.) throw and stop the rest of the batch from being sent to PTRE.
+        this.#logger.warn(`Skipping PTRE data for message ${id}: unexpected message shape`, err);
+      }
     });
 
     if (Object.keys(ptreJSON).length > 0) {
-      ptreService.importPlayerActivity(OgamePageData.gameLang, universe, ptreJSON).finally(() => "Do nothing");
+      ptreService.importPlayerActivity(OgamePageData.gameLang, universe, ptreJSON).catch(() => {});
     }
   }
 }
