@@ -1536,6 +1536,8 @@ class OGInfinity {
     this.json.reminders = this.json.reminders || {};
     this.isLoading = false;
     this.autoQueue = new AutoQueue();
+
+    pageContextRequest("ptre", "setTeamKey", this.json.options.ptreTK || "");
   }
 
   start() {
@@ -15471,6 +15473,7 @@ class OGInfinity {
         this.json.options.ptreTK = "";
         // TODO: Display an error message "Invalid PTRE Team Key Format. TK should look like: TM-XXXX-XXXX-XXXX-XXXX"
       }
+      pageContextRequest("ptre", "setTeamKey", this.json.options.ptreTK || "");
       this.json.options.pantryKey = pantryInput.value.trim();
       this.json.options.simulator = simulatorInput.value;
       this.json.options.expedition.defaultTime = Math.max(1, Math.min(~~expeditionDefaultTime.value, 16));
