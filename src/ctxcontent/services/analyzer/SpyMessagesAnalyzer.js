@@ -881,9 +881,10 @@ class SpyMessagesAnalyzer {
       if (OGIData.spies[id]) return;
 
       try {
-        const tmpHTML = createDOM("div", {});
-        tmpHTML.insertAdjacentHTML("afterbegin", message.querySelector("span.player").getAttribute("data-tooltip-title"));
-        const playerID = tmpHTML.querySelector("[data-playerId]").getAttribute("data-playerId");
+        const playerID = message
+          .querySelector("span.player")
+          .getAttribute("data-tooltip-title")
+          .match(/data-playerId="(\d+)"/)?.[1];
 
         const spyFromUrl = new URLSearchParams(
           message.querySelector(".custom_btn.msgAttackBtn").getAttribute("onclick").split(/=(.*)/)[1].slice(1, -1)
