@@ -6682,7 +6682,13 @@ class OGInfinity {
   }
 
   generateHiscoreLink(playerid) {
-    return `https://s${this.universe}-${OgamePageData.gameLang}.ogame.gameforge.com/game/index.php?page=highscore&searchRelId=${playerid}`;
+    const url = new URLSearchParams({
+      page: "ingame",
+      component: "highscore",
+      searchRelId: playerid,
+    });
+
+    return `?${url.toString()}`;
   }
 
   getPlayerStatus(status, noob) {
@@ -6705,11 +6711,9 @@ class OGInfinity {
       let controlRow = planetsColumn.appendChild(createDOM("div", { class: "ogl-search-controls" }));
       let name = `<span>${player.name}</span> <span class="${this.getPlayerStatus(
         player.status
-      )}"></span>\n                  <a target="_self"\n                    href="https://s${this.universe}-${
-        OgamePageData.gameLang
-      }.ogame.gameforge.com/game/index.php?page=highscore&searchRelId=${
+      )}"></span>\n                  <a target="_self"\n                    href="${this.generateHiscoreLink(
         player.id
-      }"\n                    class="ogl-ranking">#${player.points.position || "b"}\n                  </a>`;
+      )}"\n                    class="ogl-ranking">#${player.points.position || "b"}\n                  </a>`;
       controlRow.appendChild(this.createDOM("span", {}, name));
       let btns = controlRow.appendChild(createDOM("div"));
 
