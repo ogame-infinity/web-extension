@@ -52,8 +52,9 @@ function generateBuddyLink(playerId) {
 
 function generateHighScoreLink(playerid) {
   const url = new URLSearchParams({
-    page: "highscore",
-    searchRelId: playerId,
+    page: "ingame",
+    component: "highscore",
+    searchRelId: playerid,
   });
 
   return `?${url.toString()}`;
