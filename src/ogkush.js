@@ -35,6 +35,7 @@ import ogiMode from "./util/enum/ogiMode.js";
 import * as iconVisibility from "./util/iconVisibility.js";
 import OverviewPage from "./ctxpage/overview/OverviewPage.js";
 import TraderImportExportPage from "./ctxpage/traderOverview/TraderImportExportPage.js";
+import { addTemplateSelector } from "./ctxpage/fleetdispatch/templates.js";
 import RecyclingYieldCalculator from "./util/recyclingYieldCalculator.js";
 
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
@@ -3876,10 +3877,37 @@ class OGInfinity {
     let timeout;
     let previousSystem = null;
     doExpedition = () => {
-      const link = `?page=ingame&component=fleetdispatch&oglMode=6&galaxy=${galaxy}&system=${system}&position=16`;
-      window.location.href = "https://" + window.location.host + window.location.pathname + link;
+      const url = new URLSearchParams({
+        page: "ingame",
+        component: "fleetdispatch",
+        oglMode: "6",
+        galaxy: `${galaxy}`,
+        system: `${system}`,
+        position: "16",
+      });
+      window.location.href = `?${url.toString()}`;
     };
+
+    if (this.admiral) {
+      addTemplateSelector("#expeditionfleettemplatecomponent", "admiral");
+    }
+
+    const preselectTemplate = () => {
+      const id = getOption("expedition.standardFleetId");
+      if (id && this.admiral && getOption("expedition.standardFleetType") === "admiral") {
+        const templateSelect = document.querySelector(".expeditionFleetTemplateSelect");
+        const option = templateSelect.querySelector(`option[value="${id}"]`);
+        if (option) {
+          templateSelect.value = id;
+          const dropdown = document.querySelector(".expeditionFleetTemplateSelect + .dropdown > a");
+          if (dropdown) dropdown.textContent = option.textContent;
+          templateSelect.dispatchEvent(new Event("change"));
+        }
+      }
+    };
+
     let callback = () => {
+      preselectTemplate();
       this.addGalaxyMarkers();
       this.addGalaxyTooltips();
       this.highlightTarget();
@@ -11312,49 +11340,11 @@ class OGInfinity {
       };
 
       // add mx buttons to choose fleet template
-      const addMxSelectors = (divId) => {
-        const addTemplateSelectors = (templateDivId) => {
-          document.querySelectorAll(`${templateDivId} .actions a.editTemplate`).forEach((editTemplate) => {
-            const fleetId = editTemplate.getAttribute("onclick").match(/(?<=\", )\d+/)[0];
-            const a = createDOM("a", {
-              class: "tooltip js_hideTipOnMobile icon_link",
-              style: "margin-right: 3px;",
-              title: this.getTranslatedText(165),
-            });
-            const mx = a.appendChild(
-              createDOM("span", { class: "ogl-mission-icon ogl-mission-15 ogi-expedition-fleet", id: fleetId })
-            );
-            mx.classList.toggle("ogl-active", fleetId == this.json.options.expedition.standardFleetId);
-            mx.classList.toggle("ogl-inactive", fleetId != this.json.options.expedition.standardFleetId);
-            mx.addEventListener("click", () => updateStandardFleet(fleetId));
-            editTemplate.before(a);
-          });
-          const updateStandardFleet = (id) => {
-            document.querySelectorAll(".ogl-mission-icon.ogl-mission-15.ogi-expedition-fleet").forEach((mx) => {
-              mx.classList.toggle("ogl-active", mx.id == id);
-              mx.classList.toggle("ogl-inactive", mx.id != id);
-            });
-            this.json.options.expedition.standardFleetId = id;
-            this.saveData();
-          };
-        };
-        const templateObserver = new OGIObserver();
-        const myObs = templateObserver(
-          document.querySelector(divId),
-          () => {
-            addTemplateSelectors(divId);
-          },
-          { subtree: false, childList: true }
-        );
-        addTemplateSelectors(divId);
-      };
       if (this.commander) {
-        addMxSelectors(OgamePageData.isAtLeast_13_0_0 ? "#standardfleettemplatecomponent" : "#zeuch666");
+        addTemplateSelector("#standardfleettemplatecomponent", "commander");
       }
       if (this.admiral) {
-        addMxSelectors(
-          OgamePageData.isAtLeast_13_0_0 ? "#expeditionfleettemplatecomponent" : "#expeditionFleetOverlay"
-        );
+        addTemplateSelector("#expeditionfleettemplatecomponent", "admiral");
       }
 
       btnExpe.addEventListener("mouseover", () => this.tooltip(btnExpe, optionsContainerDiv, false, false, 750));
@@ -11501,37 +11491,37 @@ class OGInfinity {
         }
 
         // use fleet templates if activated and available
-        let timeFleetTemplate = null,
-          speedFleetTemplate = null,
-          templateApplied = false;
+        let timeFleetTemplate = null;
+        let speedFleetTemplate = null;
         if (this.json.options.expedition.standardFleet) {
-          const selectShipsFromFleetTemplate = (fleetTemplate) => {
-            for (const template of fleetTemplate) {
-              if (template.id == this.json.options.expedition.standardFleetId) {
-                if (!!template.fleetSpeed) speedFleetTemplate = template.fleetSpeed;
-                if (!!template.expeditionTime) timeFleetTemplate = template.expeditionTime;
-                let enoughShips = true;
-                for (const ship in template.ships) {
-                  if (template.ships[ship] > availableShips[ship]) enoughShips = false;
-                }
-                if (enoughShips) {
-                  for (const ship in selectedShips) selectedShips[ship] = template.ships[ship] ?? 0;
-                  warningText = "";
+          const selectShipsFromFleetTemplate = (fleetTemplate, templateType) => {
+            if (templateType === getOption("expedition.standardFleetType")) {
+              for (const template of fleetTemplate) {
+                if (template.id === Number(getOption("expedition.standardFleetId"))) {
+                  if (!!template.fleetSpeed) speedFleetTemplate = template.fleetSpeed;
+                  if (!!template.expeditionTime) timeFleetTemplate = template.expeditionTime;
+                  let enoughShips = true;
+                  for (const ship in template.ships) {
+                    if (template.ships[ship] > availableShips[ship]) enoughShips = false;
+                  }
+                  if (enoughShips) {
+                    for (const ship in selectedShips) selectedShips[ship] = template.ships[ship] ?? 0;
+                    warningText = "";
+                  } else {
+                    warningText = this.getTranslatedText(164) + "<br>" + warningText + "<br>";
+                  }
+                  break;
                 } else {
-                  warningText = this.getTranslatedText(164) + "<br>" + warningText + "<br>";
+                  if (template.id == null) break;
                 }
-                templateApplied = true;
-                break;
-              } else {
-                if (template.id == null) break;
               }
             }
           };
           if (this.admiral) {
-            selectShipsFromFleetTemplate(expeditionFleetTemplates);
+            selectShipsFromFleetTemplate(expeditionFleetTemplates, "admiral");
           }
-          if (this.commander && !templateApplied) {
-            selectShipsFromFleetTemplate(OgamePageData.isAtLeast_13_0_0 ? standardFleetTemplates : standardFleets);
+          if (this.commander) {
+            selectShipsFromFleetTemplate(standardFleetTemplates, "commander");
           }
         }
 
