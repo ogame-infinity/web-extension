@@ -4404,6 +4404,12 @@ div.ogi-movement .ogi-movement-target .ogi-movement-target-coords span,
   position: relative !important;
 }
 
+#sendExpeditionFleetTemplateFleet:before {
+  margin: 1px 0 0 -6px !important;
+  position: relative !important;
+  left: 2px !important;
+}
+
 .planetlink .planet-name {
   color: #fff !important;
   font-weight: 400 !important;
