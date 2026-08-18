@@ -1603,7 +1603,7 @@ class OGInfinity {
     const rightObserver = new OGIObserver();
     const ogkush = this;
 
-    const rightId =  OgamePageData.isAtLeast_13_0_0 ? "planetbarcomponent" : "right";
+    const rightId = OgamePageData.isAtLeast_13_0_0 ? "planetbarcomponent" : "right";
     rightObserver(
       document.getElementById(rightId),
       (mutations) => {
