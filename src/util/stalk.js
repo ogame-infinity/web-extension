@@ -627,6 +627,52 @@ export function update(planets) {
   return domArr;
 }
 
+function getVisibleSideStalkPlanetCount(container) {
+  return Array.from(container.children).filter(
+    (planet) => planet.tagName === "A" && !Array.from(planet.classList).some((className) => /delete/i.test(className))
+  ).length;
+}
+
+function updateSideStalkPlayerTitle(playerTitle, playerName, container) {
+  const planetCount = getVisibleSideStalkPlanetCount(container);
+  const playerTitleText = `${playerName} - [${planetCount}]`;
+
+  playerTitle.textContent = playerTitleText;
+  playerTitle.title = playerTitleText;
+}
+
+function observeSideStalkPlayerTitle(playerTitle, playerName, container) {
+  const shouldUpdateTitle = (mutation) => {
+    if (mutation.type === "childList" && mutation.target === container) {
+      return Array.from(mutation.addedNodes)
+        .concat(Array.from(mutation.removedNodes))
+        .some((node) => node.tagName === "A");
+    }
+
+    return (
+      mutation.type === "attributes" && mutation.target.parentElement === container && mutation.target.tagName === "A"
+    );
+  };
+
+  const observer = new MutationObserver((mutations) => {
+    if (!container.isConnected) {
+      observer.disconnect();
+      return;
+    }
+
+    if (mutations.some(shouldUpdateTitle)) {
+      updateSideStalkPlayerTitle(playerTitle, playerName, container);
+    }
+  });
+
+  observer.observe(container, {
+    childList: true,
+    attributes: true,
+    attributeFilter: ["class"],
+    subtree: true,
+  });
+}
+
 export function side(playerId) {
   const sideStalk = OGIData.sideStalk;
   if (playerId) {
@@ -696,13 +742,15 @@ export function side(playerId) {
       });
     }
     player.get(playerId).then((p) => {
-      sideStalk.appendChild(
+      const playerTitle = sideStalk.appendChild(
         createDOM("div", { style: "cursor: pointer", class: "ogi-title " + player.status(p.status) }, p.name)
       );
       sideStalk.appendChild(createDOM("hr"));
       let container = sideStalk.appendChild(createDOM("div", { class: "ogl-stalkPlanets", "player-id": p.id }));
       let planets = update(p.planets);
       planets.forEach((dom) => container.appendChild(dom));
+      updateSideStalkPlayerTitle(playerTitle, p.name, container);
+      observeSideStalkPlayerTitle(playerTitle, p.name, container);
 
       highlightTarget();
 
