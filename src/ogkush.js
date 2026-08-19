@@ -9866,15 +9866,15 @@ class OGInfinity {
               createDOM(
                 "div",
                 { class: "ogl-quickPlanet" },
-                `${union.name} [${union.galaxy}:${union.system}:${union.planet}] ${union.planettype == 1 ? "P" : "M"}`
+                `${union.name} [${union.galaxy}:${union.system}:${union.position}] ${union.planetType == 1 ? "P" : "M"}`
               )
             );
             unionDiv.addEventListener("click", () => {
               fleetDispatcher.union = union.id;
-              fleetDispatcher.targetPlanet.position = union.planet;
+              fleetDispatcher.targetPlanet.position = union.position;
               fleetDispatcher.targetPlanet.system = union.system;
               fleetDispatcher.targetPlanet.galaxy = union.galaxy;
-              fleetDispatcher.targetPlanet.type = union.planettype;
+              fleetDispatcher.targetPlanet.type = union.planetType;
               galaxyInput.value = fleetDispatcher.targetPlanet.galaxy;
               systemInput.value = fleetDispatcher.targetPlanet.system;
               positionInput.value = fleetDispatcher.targetPlanet.position;
