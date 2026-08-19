@@ -2242,12 +2242,36 @@ const translation = Object.freeze({
       br: "Destaque",
     },
     225: {
-      de: undefined,
-      en: undefined,
-      es: undefined,
-      fr: undefined,
-      tr: undefined,
-      br: undefined,
+      de: "Aus Historic entfernen",
+      en: "Remove from Historic",
+      es: "Quitar de Historic",
+      fr: "Retirer de Historic",
+      tr: "Historic'ten kaldır",
+      br: "Remover do Historic",
+    },
+    226: {
+      de: "{player} aus Historic entfernt",
+      en: "{player} removed from Historic",
+      es: "{player} quitado de Historic",
+      fr: "{player} retiré de Historic",
+      tr: "{player} Historic'ten kaldırıldı",
+      br: "{player} removido do Historic",
+    },
+    227: {
+      de: "Rückgängig",
+      en: "Undo",
+      es: "Deshacer",
+      fr: "Annuler",
+      tr: "Geri al",
+      br: "Desfazer",
+    },
+    228: {
+      de: "Keine Spieler in Historic",
+      en: "No players in Historic",
+      es: "No hay jugadores en Historic",
+      fr: "Aucun joueur dans Historic",
+      tr: "Historic'te oyuncu yok",
+      br: "Nenhum jogador no Historic",
     },
   },
 });
@@ -2306,8 +2330,7 @@ class Translator {
       this.logger.debug(`Translations (${currentLanguage}) will be updated`);
 
       this.#ForceUpdateAllTechNamesFromEmpire(translations, empireFromPlanets);
-      if(empireFromMoons)
-      {
+      if (empireFromMoons) {
         this.#ForceUpdateAllTechNamesFromEmpire(translations, empireFromMoons);
       }
 
