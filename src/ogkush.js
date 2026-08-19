@@ -3893,8 +3893,10 @@ class OGInfinity {
     }
 
     const preselectTemplate = () => {
-      const id = getOption("expedition.standardFleetId");
-      if (id && this.admiral && getOption("expedition.standardFleetType") === "admiral") {
+      const options = getOption("expedition");
+      if (!options.standardFleet) return;
+      const id = options.standardFleetId;
+      if (id && this.admiral && options.standardFleetType === "admiral") {
         const templateSelect = document.querySelector(".expeditionFleetTemplateSelect");
         const option = templateSelect.querySelector(`option[value="${id}"]`);
         if (option) {
@@ -11495,9 +11497,9 @@ class OGInfinity {
         let speedFleetTemplate = null;
         if (this.json.options.expedition.standardFleet) {
           const selectShipsFromFleetTemplate = (fleetTemplate, templateType) => {
-            if (templateType === getOption("expedition.standardFleetType")) {
+            if (templateType === this.json.options.expedition.standardFleetType) {
               for (const template of fleetTemplate) {
-                if (template.id === Number(getOption("expedition.standardFleetId"))) {
+                if (template.id === Number(this.json.options.expedition.standardFleetId)) {
                   if (!!template.fleetSpeed) speedFleetTemplate = template.fleetSpeed;
                   if (!!template.expeditionTime) timeFleetTemplate = template.expeditionTime;
                   let enoughShips = true;

@@ -7,8 +7,7 @@ import Translator from "../../../util/translate.js";
 
 export function addTemplateSelector(templateDivId, templateType) {
   const addMxSelectors = (divId, type) => {
-    const selectedFleetId = getOption("expedition.standardFleetId");
-    const selectedTemplateType = getOption("expedition.standardFleetType");
+    const options = getOption("expedition");
     document.querySelectorAll(`${divId} .actions a.editTemplate`).forEach((editTemplate) => {
       const fleetId = editTemplate.getAttribute("onclick").match(/(?<=\", )\d+/)[0];
       const a = DOM.createDOM("a", {
@@ -23,7 +22,7 @@ export function addTemplateSelector(templateDivId, templateType) {
           "data-type": type,
         })
       );
-      const isSelected = fleetId === selectedFleetId && type === selectedTemplateType;
+      const isSelected = fleetId === options.standardFleetId && type === options.standardFleetType;
       mx.classList.toggle("ogl-active", isSelected);
       mx.classList.toggle("ogl-inactive", !isSelected);
       mx.addEventListener("click", () => updateStandardFleet(fleetId, type));
@@ -35,8 +34,10 @@ export function addTemplateSelector(templateDivId, templateType) {
         mx.classList.toggle("ogl-active", isSelected);
         mx.classList.toggle("ogl-inactive", !isSelected);
       });
-      setOption("expedition.standardFleetId", id);
-      setOption("expedition.standardFleetType", type);
+      const options = getOption("expedition");
+      options.standardFleetId = id;
+      options.standardFleetType = type;
+      setOption("expedition", options);
       OGIData.Save();
     };
   };
