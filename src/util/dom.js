@@ -20,3 +20,17 @@ export function createSVG(element, attributes) {
   }
   return e;
 }
+
+// function to change OGame custom select element
+export function changeOGSelect(selector, value) {
+  const select = document.querySelector(selector);
+  if (select) {
+    const option = select.querySelector(`option[value="${value}"]`);
+    if (option) {
+      select.value = value;
+      const dropdown = document.querySelector(selector + " + .dropdown > a");
+      if (dropdown) dropdown.textContent = option.textContent;
+      select.dispatchEvent(new Event("change"));
+    }
+  }
+}
