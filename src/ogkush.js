@@ -3897,14 +3897,7 @@ class OGInfinity {
       if (!options.standardFleet) return;
       const id = options.standardFleetId;
       if (id && this.admiral && options.standardFleetType === "admiral") {
-        const templateSelect = document.querySelector(".expeditionFleetTemplateSelect");
-        const option = templateSelect.querySelector(`option[value="${id}"]`);
-        if (option) {
-          templateSelect.value = id;
-          const dropdown = document.querySelector(".expeditionFleetTemplateSelect + .dropdown > a");
-          if (dropdown) dropdown.textContent = option.textContent;
-          templateSelect.dispatchEvent(new Event("change"));
-        }
+        DOM.changeOGSelect(".expeditionFleetTemplateSelect", id);
       }
     };
 
