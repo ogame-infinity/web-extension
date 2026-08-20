@@ -11,23 +11,47 @@ export class DataHelper {
     this.names = {};
     this.topScore = 0;
     this.loading = false;
+    // Transient cache of the last successful universe.xml fetch. Stripped from the persisted blob in processData().
+    this._galaxySnapshot = null;
   }
 
   init() {
     return new Promise(async (resolve, reject) => {
-      chrome.storage.local.get("ogi-scanned-" + this.universe, (result) => {
-        let json;
-        try {
-          json = JSON.parse(result["ogi-scanned-" + this.universe]);
-        } catch (error) {
-          json = {};
+      chrome.storage.local.get(
+        ["ogi-scanned-" + this.universe, "ogi-galaxy-" + this.universe],
+        (result) => {
+          let scannedJson;
+          try {
+            scannedJson = JSON.parse(result["ogi-scanned-" + this.universe]);
+          } catch (error) {
+            scannedJson = {};
+          }
+          this.scannedPlanets = scannedJson.scannedPlanets || {};
+          this.scannedPlayers = scannedJson.scannedPlayers || {};
+          this.lastPlayersUpdate = this.lastPlayersUpdate || new Date(0);
+          this.lastPlanetsUpdate = this.lastPlayersUpdate || new Date(0);
+
+          // Galaxy storage lives in its own key so hot writes (from scan()) stay small
+          // and never drag the big `[UNIVERSE]` blob along. The dedicated key is the
+          // SOLE source of truth; do not fall back to `this.galaxyStorage` /
+          // `this.lastGalaxyUpdateTS` values inherited from the big blob via
+          // Object.assign in main() - a manual reset would be defeated otherwise.
+          let galaxyJson;
+          try {
+            galaxyJson = JSON.parse(result["ogi-galaxy-" + this.universe]);
+          } catch (error) {
+            galaxyJson = null;
+          }
+          if (galaxyJson && typeof galaxyJson === "object") {
+            this.galaxyStorage = galaxyJson.galaxyStorage || {};
+            this.lastGalaxyUpdateTS = galaxyJson.lastGalaxyUpdateTS ?? -1;
+          } else {
+            this.galaxyStorage = {};
+            this.lastGalaxyUpdateTS = -1;
+          }
+          resolve();
         }
-        this.scannedPlanets = json.scannedPlanets || {};
-        this.scannedPlayers = json.scannedPlayers || {};
-        this.lastPlayersUpdate = this.lastPlayersUpdate || new Date(0);
-        this.lastPlanetsUpdate = this.lastPlayersUpdate || new Date(0);
-        resolve();
-      });
+      );
     });
   }
 
@@ -223,6 +247,114 @@ export class DataHelper {
     });
   }
 
+  // Immediate persistence of galaxyStorage into its dedicated key. Callers that
+  // update this store frequently (e.g. scan() from the PTRE PR) should prefer
+  // scheduleGalaxyStorageFlush() to coalesce writes.
+  flushGalaxyStorage() {
+    if (this._galaxyFlushTimer) {
+      clearTimeout(this._galaxyFlushTimer);
+      this._galaxyFlushTimer = null;
+    }
+    const logger = getLogger("galaxyStorage");
+    const key = `ogi-galaxy-${this.universe}`;
+    let payload;
+    try {
+      payload = JSON.stringify({
+        galaxyStorage: this.galaxyStorage,
+        lastGalaxyUpdateTS: this.lastGalaxyUpdateTS,
+      });
+    } catch (err) {
+      this._lastFlushError = `serialize: ${err && err.message ? err.message : err}`;
+      logger.error(`[${key}] serialize failed: ${this._lastFlushError}`);
+      return;
+    }
+    chrome.storage.local.set({ [key]: payload }, () => {
+      const lastError = chrome.runtime.lastError;
+      if (lastError) {
+        const bytes = new Blob([payload]).size;
+        this._lastFlushError = `write (${bytes}B): ${lastError.message}`;
+        logger.error(`[${key}] write failed: ${this._lastFlushError}`);
+        return;
+      }
+      this._lastFlushError = null;
+    });
+  }
+
+  // Debounced flush. Multiple calls within `delayMs` collapse into one write.
+  scheduleGalaxyStorageFlush(delayMs = 2000) {
+    if (this._galaxyFlushTimer) return;
+    this._galaxyFlushTimer = setTimeout(() => {
+      this._galaxyFlushTimer = null;
+      this.flushGalaxyStorage();
+    }, delayMs);
+  }
+
+  // Rebuild `galaxyStorage` from the cached API snapshot. The PTRE key is
+  // never stored on DataHelper; callers must supply it (same pattern as scan()).
+  // No-op when the key is missing, when no snapshot has been cached yet, or
+  // when the cached snapshot is not strictly newer than the persisted state.
+  rebuildGalaxyStorage(ptreKey) {
+    const logger = getLogger("updateUniverse");
+    if (!ptreKey) {
+      logger.debug(`[galaxyStorage] rebuild skipped: no PTRE key`);
+      return;
+    }
+    if (!this._galaxySnapshot) {
+      logger.debug(`[galaxyStorage] rebuild skipped: no cached snapshot`);
+      return;
+    }
+    const newGalaxyTs = this._galaxySnapshot.timestamp;
+    const previousGalaxyTs = this.lastGalaxyUpdateTS ?? -1;
+    if (!Number.isFinite(newGalaxyTs) || newGalaxyTs <= previousGalaxyTs) {
+      logger.debug(`[galaxyStorage] rebuild skipped: prevTs=${previousGalaxyTs} newTS=${newGalaxyTs}`);
+      return;
+    }
+
+    const galaxyBuildStart = performance.now();
+    this.galaxyStorage = {};
+    let updatedSystemsCount = 0;
+    let updatedPlanetsCount = 0;
+    let updatedMoonsCount = 0;
+
+    this._galaxySnapshot.planetList.forEach((planet) => {
+      const parts = (planet.coords || "").split(":");
+      if (parts.length !== 3) return;
+      const g = parts[0];
+      const s = parts[1];
+      const p = parts[2];
+
+      if (!this.galaxyStorage[g]) {
+        this.galaxyStorage[g] = {};
+      }
+      if (!this.galaxyStorage[g][s]) {
+        this.galaxyStorage[g][s] = {};
+        for (let i = 1; i <= 15; i++) {
+          this.galaxyStorage[g][s][String(i)] = {
+            playerId: -1,
+            planetId: -1,
+            moonId: -1,
+            ts: newGalaxyTs,
+          };
+        }
+        updatedSystemsCount++;
+      }
+
+      this.galaxyStorage[g][s][p] = {
+        playerId: planet.player,
+        planetId: planet.id,
+        moonId: planet.moon ? planet.moon : -1,
+        ts: newGalaxyTs,
+      };
+      updatedPlanetsCount++;
+      if (planet.moon) updatedMoonsCount++;
+    });
+
+    this.lastGalaxyUpdateTS = newGalaxyTs;
+    const galaxyBuildDurationMs = Math.round(performance.now() - galaxyBuildStart);
+    logger.debug(`[galaxyStorage] New data: systems=${updatedSystemsCount} planets=${updatedPlanetsCount} moons=${updatedMoonsCount} | TS=${this.lastGalaxyUpdateTS} | Took ${galaxyBuildDurationMs}ms`);
+    this.flushGalaxyStorage();
+  }
+
   async update() {
     const logger = getLogger("updateUniverse");
 
@@ -236,12 +368,25 @@ export class DataHelper {
     let players = {};
 
     try {
-      const [playersScore, playersInformation, playerPlanets, allianceInformation] = await Promise.all([
+      const [playersScore, playersInformation, planetsSnapshot, allianceInformation] = await Promise.all([
         getPlayersHighscore(this.universe),
         getPlayers(this.universe),
         getPlanets(this.universe),
         getAlliances(this.universe),
       ]);
+
+      // ----------------------------------------------
+      // Galaxy Snapshot Cache (planets fetched from universe.xml, once a week)
+      // The actual `galaxyStorage` rebuild is deferred to rebuildGalaxyStorage(ptreKey)
+      // so the PTRE team key never crosses into the content-script context.
+      const playerPlanets = planetsSnapshot.planets;
+      this._galaxySnapshot = {
+        planetList: planetsSnapshot.planetList,
+        timestamp: planetsSnapshot.timestamp,
+      };
+      logger.debug(`[galaxyStorage] snapshot cached (ts=${planetsSnapshot.timestamp})`);
+      // End Galaxy Snapshot Cache
+      // --------------------------------------------
 
       // -- TopScore --------------------------------
       /** @type {HighscoreTypes | undefined} */

@@ -15042,6 +15042,14 @@ class OGInfinity {
         <input type="checkbox" id="scan" name="scan">`
       )
     );
+    let galaxyBox = dataManagement.appendChild(
+      this.createDOM(
+        "div",
+        { class: "ogi-checkbox" },
+        `<label for="galaxy_reset">${this.getTranslatedText(226)}</label>
+        <input type="checkbox" id="galaxy_reset" name="galaxy_reset">`
+      )
+    );
     let OptionsBox = dataManagement.appendChild(
       this.createDOM(
         "div",
@@ -15382,6 +15390,9 @@ class OGInfinity {
         json.spies = {};
         if (scanBox.children[1].checked) {
           document.dispatchEvent(new CustomEvent("ogi-clear"));
+        }
+        if (galaxyBox.children[1].checked) {
+          document.dispatchEvent(new CustomEvent("ogi-galaxy-clear"));
         }
         if (purgeBox.children[1].checked) {
           this.purgeLocalStorage();
