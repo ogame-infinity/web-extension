@@ -3888,18 +3888,17 @@ class OGInfinity {
       window.location.href = `?${url.toString()}`;
     };
 
-    if (this.admiral) {
-      addTemplateSelector("#expeditionfleettemplatecomponent", "admiral");
-    }
-
     const preselectTemplate = () => {
       const options = getOption("expedition");
       if (!options.standardFleet) return;
-      const id = options.standardFleetId;
-      if (id && this.admiral && options.standardFleetType === "admiral") {
-        DOM.changeOGSelect(".expeditionFleetTemplateSelect", id);
+      if (options.standardFleetId && this.admiral && options.standardFleetType === "admiral") {
+        DOM.changeOGSelect(".expeditionFleetTemplateSelect", options.standardFleetId);
       }
-    };
+    }
+
+    if (this.admiral) {
+      addTemplateSelector("#expeditionfleettemplatecomponent", "admiral", preselectTemplate);
+    }
 
     let callback = () => {
       preselectTemplate();

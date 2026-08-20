@@ -1,11 +1,10 @@
 import { getOption, setOption } from "../conf-options.js";
 import * as DOM from "../../util/dom.js";
-import OgamePageData from "../../util/OgamePageData.js";
 import OGIData from "../../util/OGIData.js";
 import OGIObserver from "../../../util/observer.js";
 import Translator from "../../../util/translate.js";
 
-export function addTemplateSelector(templateDivId, templateType) {
+export function addTemplateSelector(templateDivId, templateType, updateCallback) {
   const addMxSelectors = (divId, type) => {
     const options = getOption("expedition");
     document.querySelectorAll(`${divId} .actions a.editTemplate`).forEach((editTemplate) => {
@@ -39,6 +38,7 @@ export function addTemplateSelector(templateDivId, templateType) {
       options.standardFleetType = type;
       setOption("expedition", options);
       OGIData.Save();
+      if (typeof updateCallback === 'function') updateCallback();
     };
   };
   const templateObserver = new OGIObserver();
