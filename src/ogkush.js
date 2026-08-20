@@ -3894,7 +3894,7 @@ class OGInfinity {
       if (options.standardFleetId && this.admiral && options.standardFleetType === "admiral") {
         DOM.changeOGSelect(".expeditionFleetTemplateSelect", options.standardFleetId);
       }
-    }
+    };
 
     if (this.admiral) {
       addTemplateSelector("#expeditionfleettemplatecomponent", "admiral", preselectTemplate);

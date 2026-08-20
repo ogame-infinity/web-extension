@@ -27,7 +27,7 @@ export function addTemplateSelector(templateDivId, templateType, updateCallback)
       mx.addEventListener("click", () => updateStandardFleet(fleetId, type));
       editTemplate.before(a);
     });
-    if (typeof updateCallback === 'function') updateCallback();
+    if (typeof updateCallback === "function") updateCallback();
     const updateStandardFleet = (id, type) => {
       document.querySelectorAll(".ogl-mission-icon.ogl-mission-15.ogi-expedition-fleet").forEach((mx) => {
         const isSelected = mx.getAttribute("data-id") === id && mx.getAttribute("data-type") === type;
@@ -39,7 +39,7 @@ export function addTemplateSelector(templateDivId, templateType, updateCallback)
       options.standardFleetType = type;
       setOption("expedition", options);
       OGIData.Save();
-      if (typeof updateCallback === 'function') updateCallback();
+      if (typeof updateCallback === "function") updateCallback();
     };
   };
   const templateObserver = new OGIObserver();
