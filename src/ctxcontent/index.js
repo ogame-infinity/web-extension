@@ -7,10 +7,43 @@ import { DataHelper } from "./data-helper.js";
 
 const mainLogger = getLogger();
 
+// PTRE team key held in the content script only for the lifetime of the tab.
+// Pushed in from the page via `ptre.setTeamKey`; never persisted here.
+let pendingPtreKey = "";
+
 contentContextInit({
   ptre: {
-    galaxy: function (changes, ptreKey = null, serverTime = null) {
-      return dataHelper.scan(changes, ptreKey, serverTime);
+    galaxy: function (galaxy, system, positions, additionnal, ptreKey = null, serverTime = null) {
+      return dataHelper.scan(galaxy, system, positions, additionnal, ptreKey, serverTime);
+    },
+    setTeamKey: function (key) {
+      pendingPtreKey = typeof key === "string" ? key : "";
+      if (pendingPtreKey && dataHelper && dataHelper._galaxySnapshot) {
+        dataHelper.rebuildGalaxyStorage(pendingPtreKey);
+      }
+    },
+    galaxyInfo: function () {
+      if (!dataHelper || !dataHelper.galaxyStorage) {
+        return Promise.resolve({ systemCount: 0, lastGalaxyUpdateTS: -1, storageBytes: 0 });
+      }
+      let systemCount = 0;
+      for (const g in dataHelper.galaxyStorage) {
+        systemCount += Object.keys(dataHelper.galaxyStorage[g]).length;
+      }
+      const lastGalaxyUpdateTS = dataHelper.lastGalaxyUpdateTS ?? -1;
+      const key = `ogi-galaxy-${UNIVERSE}`;
+      return new Promise((resolve) => {
+        try {
+          chrome.storage.local.get([key], (result) => {
+            let storageBytes = 0;
+            const raw = result?.[key];
+            if (typeof raw === "string") storageBytes = new Blob([raw]).size;
+            resolve({ systemCount, lastGalaxyUpdateTS, storageBytes });
+          });
+        } catch (_) {
+          resolve({ systemCount, lastGalaxyUpdateTS, storageBytes: 0 });
+        }
+      });
     },
   },
   messages: {
@@ -32,10 +65,22 @@ function processData() {
   universes[UNIVERSE].init().then(() => {
     try {
       universes[UNIVERSE].update().then(() => {
+        if (pendingPtreKey && universes[UNIVERSE]._galaxySnapshot) {
+          universes[UNIVERSE].rebuildGalaxyStorage(pendingPtreKey);
+        }
         let tempSaveData = { ...universes[UNIVERSE] };
         tempSaveData.lastUpdate = universes[UNIVERSE].lastUpdate.toJSON();
         tempSaveData.lastPlanetsUpdate = universes[UNIVERSE].lastPlanetsUpdate.toJSON();
         tempSaveData.lastPlayersUpdate = universes[UNIVERSE].lastPlayersUpdate.toJSON();
+        // galaxyStorage lives in its own key `ogi-galaxy-<UNIVERSE>`; don't
+        // duplicate it into the big blob or a manual reset gets resurrected
+        // on next boot via Object.assign in main().
+        delete tempSaveData.galaxyStorage;
+        delete tempSaveData.lastGalaxyUpdateTS;
+        // Runtime-only setTimeout id; must not survive a reload.
+        delete tempSaveData._galaxyFlushTimer;
+        delete tempSaveData._lastFlushError;
+        delete tempSaveData._galaxySnapshot;
 
         chrome.storage.local.set({ [UNIVERSE]: tempSaveData }, function (at) {});
       });
@@ -91,6 +136,13 @@ window.addEventListener(
 
 document.addEventListener("ogi-clear", function (e) {
   dataHelper.clearData();
+});
+document.addEventListener("ogi-galaxy-clear", function (e) {
+  if (dataHelper) {
+    dataHelper.galaxyStorage = {};
+    dataHelper.lastGalaxyUpdateTS = -1;
+  }
+  chrome.storage.local.remove(`ogi-galaxy-${UNIVERSE}`);
 });
 document.addEventListener("ogi-notification", function (e) {
   const msg = Object.assign({ iconUrl: "assets/images/logo128.png" }, e.detail);
