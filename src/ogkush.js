@@ -1602,7 +1602,7 @@ class OGInfinity {
     const rightObserver = new OGIObserver();
     const ogkush = this;
 
-    const rightId =  OgamePageData.isAtLeast_13_0_0 ? "planetbarcomponent" : "right";
+    const rightId = OgamePageData.isAtLeast_13_0_0 ? "planetbarcomponent" : "right";
     rightObserver(
       document.getElementById(rightId),
       (mutations) => {
@@ -3043,7 +3043,7 @@ class OGInfinity {
     if (
       this.page == "fleetdispatch" &&
       document.querySelector("#civilships") &&
-      fleetDispatcher.shipsOnPlanet.length != 0
+      fleetDispatcher.shipsOnPlanet.some((x) => x.number > 0)
     ) {
       FleetDispatcher.prototype.updateEmptySystems = function (newData) {
         this.emptySystems = newData || 0;
@@ -9544,7 +9544,7 @@ class OGInfinity {
   }
 
   betterFleetDispatcher() {
-    if (this.page == "fleetdispatch" && fleetDispatcher.shipsOnPlanet.length == 0) {
+    if (this.page == "fleetdispatch" && !fleetDispatcher.shipsOnPlanet.some((x) => x.number > 0)) {
       // shipyard links when no ships on planets
       const totalResources = Math.max(
         0,
@@ -9590,7 +9590,7 @@ class OGInfinity {
     if (
       this.page == "fleetdispatch" &&
       document.querySelector("#civilships") &&
-      fleetDispatcher.shipsOnPlanet.length != 0
+      fleetDispatcher.shipsOnPlanet.some((x) => x.number > 0)
     ) {
       let metalAvailable = Math.max(0, fleetDispatcher.metalOnPlanet);
       let crystalAvailable = Math.max(0, fleetDispatcher.crystalOnPlanet);
@@ -11217,7 +11217,7 @@ class OGInfinity {
   expedition() {
     if (
       this.page == "fleetdispatch" &&
-      fleetDispatcher.shipsOnPlanet?.find((x) => x.number > 0) !== undefined &&
+      fleetDispatcher.shipsOnPlanet.some((x) => x.number > 0) &&
       !fleetDispatcher.isOnVacation
     ) {
       if (!document.querySelector("#allornone .allornonewrap")) return;
@@ -17022,7 +17022,7 @@ class OGInfinity {
   collect() {
     if (
       this.page == "fleetdispatch" &&
-      fleetDispatcher.shipsOnPlanet?.find((x) => x.number > 0) !== undefined &&
+      fleetDispatcher.shipsOnPlanet.some((x) => x.number > 0) &&
       !fleetDispatcher.isOnVacation
     ) {
       let cargoChoice = createDOM("div", { class: "ogk-collect-cargo" });
@@ -17211,7 +17211,7 @@ class OGInfinity {
   customMissions() {
     if (
       this.page == "fleetdispatch" &&
-      fleetDispatcher.shipsOnPlanet?.find((x) => x.number > 0) !== undefined &&
+      fleetDispatcher.shipsOnPlanet.some((x) => x.number > 0) &&
       !fleetDispatcher.isOnVacation
     ) {
       let missionsDiv = document.querySelector("#allornone .secondcol");
@@ -17723,7 +17723,7 @@ class OGInfinity {
   }
 
   selectBestCargoShip(preferredShipId = null) {
-    if (fleetDispatcher.currentPage == "fleet1" && fleetDispatcher.shipsOnPlanet.length != 0) {
+    if (fleetDispatcher.currentPage == "fleet1" && fleetDispatcher.shipsOnPlanet.some((x) => x.number > 0)) {
       let metalAvailable = Math.max(0, fleetDispatcher.metalOnPlanet);
       let crystalAvailable = Math.max(0, fleetDispatcher.crystalOnPlanet);
       let deutAvailable = Math.max(0, fleetDispatcher.deuteriumOnPlanet);
