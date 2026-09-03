@@ -4368,8 +4368,10 @@ class OGInfinity {
 
     if (this.page === "facilities") {
       const openOverlay = document.querySelector("#facilities .overlay");
-      openOverlay.href = "";
-      openOverlay.addEventListener("click", () => openJumpgate());
+      if (openOverlay) {
+        openOverlay.href = "";
+        openOverlay.addEventListener("click", () => openJumpgate());
+      }
     }
     if (this.rawURL.searchParams.get("opengate") === "1") {
       openJumpgate();
