@@ -9,11 +9,17 @@ import OgamePageData from "./OgamePageData.js";
 import OGIData from "./OGIData.js";
 import { loading } from "./loading.js";
 import { action } from "./ptre.js";
+import Translator from "./translate.js";
 
 const rawUrl = new URL(window.location.href);
 const page = rawUrl.searchParams.get("component") || rawUrl.searchParams.get("page");
 const universe = window.location.host.replace(/\D/g, "");
 let keepTooltip = OGIData.keepTooltip || true;
+let undoSideStalkRemoval = null;
+let undoSideStalkTimer = null;
+
+const SIDE_STALK_UNDO_DURATION = 6000;
+const SIDE_STALK_UNDO_FADE_DURATION = 300;
 
 function sendMessage(id) {
   if (OGIData.tchat) {
@@ -110,6 +116,181 @@ function generateGalaxyLink(coords, playerId = undefined) {
   });
 
   return `?${url.toString()}`;
+}
+
+function getRemovedFromHistoricText(playerName) {
+  return Translator.translate(226).replace("{player}", playerName);
+}
+
+function removeSideStalkPlayer(playerId) {
+  playerId = parseInt(playerId);
+  const sideStalk = OGIData.sideStalk.slice();
+  const index = sideStalk.indexOf(playerId);
+
+  if (index === -1) return null;
+
+  sideStalk.splice(index, 1);
+  OGIData.sideStalk = sideStalk;
+
+  return { playerId, index };
+}
+
+function restoreSideStalkPlayer(removedPlayer) {
+  const sideStalk = OGIData.sideStalk.slice();
+
+  if (!removedPlayer || sideStalk.includes(removedPlayer.playerId)) return;
+
+  sideStalk.splice(removedPlayer.index, 0, removedPlayer.playerId);
+  OGIData.sideStalk = sideStalk;
+}
+
+function clearSideStalkUndo(resetRemoval = true) {
+  if (undoSideStalkTimer) clearTimeout(undoSideStalkTimer);
+  undoSideStalkTimer = null;
+  if (resetRemoval) undoSideStalkRemoval = null;
+}
+
+function getHistoricTitle(sideStalk) {
+  return Array.from(sideStalk.children).find((child) => child.classList.contains("title"));
+}
+
+function updateHistoricTitle(sideStalk) {
+  const title = getHistoricTitle(sideStalk);
+
+  if (title) title.textContent = "Historic " + OGIData.sideStalk.length + "/20";
+}
+
+function removeHistoricEmptyState(list) {
+  list.querySelector(".ogi-sideStalkEmpty")?.remove();
+}
+
+function ensureHistoricEmptyState(list) {
+  if (OGIData.sideStalk.length || list.querySelector(".ogi-sideStalkUndo, .ogi-sideStalkEmpty")) return;
+
+  list.appendChild(createDOM("div", { class: "ogi-sideStalkEmpty" }, Translator.translate(228)));
+}
+
+function removeExistingSideStalkUndo(sideStalk) {
+  sideStalk.querySelectorAll(".ogi-sideStalkUndo").forEach((undo) => undo.remove());
+}
+
+function showSideStalkUndo(list, playerName) {
+  clearSideStalkUndo(false);
+  removeHistoricEmptyState(list);
+
+  const undo = list.querySelector(".ogi-sideStalkUndo") || list.appendChild(createSideStalkUndoRow(playerName));
+
+  undo.querySelector(".ogi-sideStalkUndoButton").addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    restoreSideStalkPlayer(undoSideStalkRemoval);
+    clearSideStalkUndo();
+    renderHistoricList(list.closest(".ogl-sideStalk"));
+  });
+
+  undoSideStalkTimer = setTimeout(() => {
+    undo.classList.add("ogi-removing");
+    undoSideStalkTimer = setTimeout(() => {
+      undo.remove();
+      clearSideStalkUndo();
+      ensureHistoricEmptyState(list);
+    }, SIDE_STALK_UNDO_FADE_DURATION);
+  }, SIDE_STALK_UNDO_DURATION);
+}
+
+function createSideStalkUndoRow(playerName) {
+  const undo = createDOM("div", { class: "ogl-player ogi-sideStalkUndo" });
+  undo.appendChild(createDOM("span", { class: "ogi-sideStalkUndoMessage" }, getRemovedFromHistoricText(playerName)));
+  undo.appendChild(
+    createDOM("button", { class: "ogi-sideStalkUndoButton", type: "button" }, Translator.translate(227))
+  );
+
+  return undo;
+}
+
+function removeSideStalkPlayerWithFeedback(playerId, playerName, sideStalk, showUndoOnTop = false, playerRow = null) {
+  const removedPlayer = removeSideStalkPlayer(playerId);
+
+  if (!removedPlayer) return;
+
+  undoSideStalkRemoval = removedPlayer;
+
+  if (!showUndoOnTop && playerRow?.isConnected && playerRow.closest(".ogl-sideStalk") === sideStalk) {
+    const list = playerRow.closest(".ogi-sideStalkList");
+
+    if (list) {
+      removeExistingSideStalkUndo(sideStalk);
+      removeHistoricEmptyState(list);
+      playerRow.replaceWith(createSideStalkUndoRow(playerName));
+      updateHistoricTitle(sideStalk);
+      showSideStalkUndo(list, playerName);
+      return;
+    }
+  }
+
+  const list = renderHistoricList(sideStalk, { playerName, index: removedPlayer.index, showOnTop: showUndoOnTop });
+  showSideStalkUndo(list, playerName);
+}
+
+function renderHistoricList(sideStalk, undoRow = null) {
+  sideStalk.replaceChildren();
+  sideStalk.appendChild(createDOM("div", { class: "title" }, "Historic " + OGIData.sideStalk.length + "/20"));
+  sideStalk.appendChild(createDOM("hr"));
+
+  const list = sideStalk.appendChild(createDOM("div", { class: "ogi-sideStalkList" }));
+
+  if (undoRow?.showOnTop) {
+    list.appendChild(createSideStalkUndoRow(undoRow.playerName));
+  }
+
+  if (!OGIData.sideStalk.length) {
+    list.appendChild(createDOM("div", { class: "ogi-sideStalkEmpty" }, Translator.translate(228)));
+    return list;
+  }
+
+  OGIData.sideStalk
+    .slice()
+    .reverse()
+    .forEach((id, visualIndex) => {
+      if (undoRow && !undoRow.showOnTop && visualIndex === OGIData.sideStalk.length - undoRow.index) {
+        list.appendChild(createSideStalkUndoRow(undoRow.playerName));
+      }
+
+      const playerDiv = list.appendChild(createDOM("div", { class: "ogl-player" }));
+      player.get(id).then((p) => {
+        if (!OGIData.sideStalk.includes(parseInt(p.id))) {
+          playerDiv.remove();
+          return;
+        }
+
+        playerDiv.appendChild(createDOM("span", { class: player.status(p.status) }, p.name));
+        const actions = playerDiv.appendChild(createDOM("span", { class: "ogi-sideStalkPlayerActions" }));
+        actions.appendChild(createDOM("span", { class: "ogi-sideStalkRank" }, "#" + p.points.position));
+        const removeBtn = actions.appendChild(
+          createDOM("button", {
+            class: "icon icon_trash tooltip ogi-sideStalkRemove",
+            title: Translator.translate(225),
+            "aria-label": Translator.translate(225),
+            type: "button",
+          })
+        );
+
+        playerDiv.addEventListener("click", () => {
+          side(p.id);
+        });
+        removeBtn.addEventListener("click", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          removeSideStalkPlayerWithFeedback(p.id, p.name, sideStalk, false, playerDiv);
+        });
+      });
+    });
+
+  if (undoRow && !undoRow.showOnTop && undoRow.index === 0) {
+    list.appendChild(createSideStalkUndoRow(undoRow.playerName));
+  }
+
+  return list;
 }
 
 export function stalk(sender, player, delay = undefined) {
@@ -447,6 +628,52 @@ export function update(planets) {
   return domArr;
 }
 
+function getVisibleSideStalkPlanetCount(container) {
+  return Array.from(container.children).filter(
+    (planet) => planet.tagName === "A" && !Array.from(planet.classList).some((className) => /delete/i.test(className))
+  ).length;
+}
+
+function updateSideStalkPlayerTitle(playerTitle, playerName, container) {
+  const planetCount = getVisibleSideStalkPlanetCount(container);
+  const playerTitleText = `${playerName} - [${planetCount}]`;
+
+  playerTitle.textContent = playerTitleText;
+  playerTitle.title = playerTitleText;
+}
+
+function observeSideStalkPlayerTitle(playerTitle, playerName, container) {
+  const shouldUpdateTitle = (mutation) => {
+    if (mutation.type === "childList" && mutation.target === container) {
+      return Array.from(mutation.addedNodes)
+        .concat(Array.from(mutation.removedNodes))
+        .some((node) => node.tagName === "A");
+    }
+
+    return (
+      mutation.type === "attributes" && mutation.target.parentElement === container && mutation.target.tagName === "A"
+    );
+  };
+
+  const observer = new MutationObserver((mutations) => {
+    if (!container.isConnected) {
+      observer.disconnect();
+      return;
+    }
+
+    if (mutations.some(shouldUpdateTitle)) {
+      updateSideStalkPlayerTitle(playerTitle, playerName, container);
+    }
+  });
+
+  observer.observe(container, {
+    childList: true,
+    attributes: true,
+    attributeFilter: ["class"],
+    subtree: true,
+  });
+}
+
 export function side(playerId) {
   const sideStalk = OGIData.sideStalk;
   if (playerId) {
@@ -473,7 +700,7 @@ export function side(playerId) {
       sideStalk.remove();
     }
     sideStalk = document.querySelector("#links").appendChild(createDOM("div", { class: "ogl-sideStalk" }));
-    let actBtn, watchlistBtn, ptreBtn;
+    let actBtn, watchlistBtn, ptreBtn, removeBtn;
     const options = OGIData.options;
     if (!options.sideStalkVisible) {
       sideStalk.classList.add("ogi-hidden");
@@ -492,6 +719,14 @@ export function side(playerId) {
           createDOM("a", { class: "ogl-text-btn ogl-ptre-acti tooltip", title: "Display PTRE data" }, "PTRE")
         );
       }
+      removeBtn = sideStalk.appendChild(
+        createDOM("button", {
+          class: "icon icon_trash tooltip ogi-sideStalkRemoveDetail",
+          title: Translator.translate(225),
+          "aria-label": Translator.translate(225),
+          type: "button",
+        })
+      );
       const closeBtn = sideStalk.appendChild(
         createDOM(
           "span",
@@ -508,13 +743,15 @@ export function side(playerId) {
       });
     }
     player.get(playerId).then((p) => {
-      sideStalk.appendChild(
+      const playerTitle = sideStalk.appendChild(
         createDOM("div", { style: "cursor: pointer", class: "ogi-title " + player.status(p.status) }, p.name)
       );
       sideStalk.appendChild(createDOM("hr"));
       let container = sideStalk.appendChild(createDOM("div", { class: "ogl-stalkPlanets", "player-id": p.id }));
       let planets = update(p.planets);
       planets.forEach((dom) => container.appendChild(dom));
+      updateSideStalkPlayerTitle(playerTitle, p.name, container);
+      observeSideStalkPlayerTitle(playerTitle, p.name, container);
 
       highlightTarget();
 
@@ -537,24 +774,15 @@ export function side(playerId) {
         });
       watchlistBtn &&
         watchlistBtn.addEventListener("click", () => {
-          sideStalk.replaceChildren();
-          sideStalk.appendChild(createDOM("div", { class: "title" }, "Historic " + OGIData.sideStalk.length + "/20"));
-          sideStalk.appendChild(createDOM("hr"));
-          OGIData.sideStalk
-            .slice()
-            .reverse()
-            .forEach((id) => {
-              player.get(id).then((p) => {
-                let playerDiv = sideStalk.appendChild(createDOM("div", { class: "ogl-player" }));
-                playerDiv.appendChild(createDOM("span", { class: player.status(p.status) }, p.name));
-                playerDiv.appendChild(createDOM("span", {}, "#" + p.points.position));
-                playerDiv.addEventListener("click", () => {
-                  side(p.id);
-                });
-              });
-            });
+          renderHistoricList(sideStalk);
         });
 
+      removeBtn &&
+        removeBtn.addEventListener("click", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          removeSideStalkPlayerWithFeedback(p.id, p.name, sideStalk, true);
+        });
       if (ptreBtn) {
         ptreBtn.addEventListener("click", () => {
           loading();
