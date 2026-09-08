@@ -14097,11 +14097,9 @@ class OGInfinity {
             }
             if (event.key.toUpperCase() == "E") {
               document.querySelector(".ogl-expedition").click();
-              document.querySelector("#continueToFleet2").click();
             }
             if (event.key.toUpperCase() == "C") {
               document.querySelector(".ogl-collect").click();
-              document.querySelector("#continueToFleet2").click();
             }
             if (event.key.toUpperCase() == "N") document.querySelector("#resetall").click();
             if (event.key.toUpperCase() == "A") document.querySelector("#sendall").click();
