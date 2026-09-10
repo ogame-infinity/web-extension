@@ -3358,6 +3358,8 @@ class OGInfinity {
         this.json.speedFleetWar = Number(xml.querySelector("speedFleetWar").innerHTML);
         this.json.speedFleetPeaceful = Number(xml.querySelector("speedFleetPeaceful").innerHTML);
         this.json.speedFleetHolding = Number(xml.querySelector("speedFleetHolding").innerHTML);
+        this.json.fleetIgnoreEmptySystems = Number(xml.querySelector("fleetIgnoreEmptySystems").innerHTML) == 1;
+        this.json.fleetIgnoreInactiveSystems = Number(xml.querySelector("fleetIgnoreInactiveSystems").innerHTML) == 1;
         this.json.researchDivisor = Number(xml.querySelector("researchDurationDivisor").innerHTML);
         this.json.trashsimSettings = {
           speed: xml.querySelector("speedFleetWar").innerHTML,
@@ -10002,10 +10004,19 @@ class OGInfinity {
       returnDiv.style.visibility = "hidden";
       info.appendChild(createDOM("div", {}, this.getTranslatedText(49)));
       let consDiv = info.appendChild(createDOM("div", { class: "undermark" }));
-      info.appendChild(createDOM("div", {}, this.getTranslatedText(229)));
-      let emptySystemsDiv = info.appendChild(createDOM("div", { class: "ogl-empty-systems" }));
-      info.appendChild(createDOM("div", {}, this.getTranslatedText(229)));
-      let inactiveSystemsDiv = info.appendChild(createDOM("div", { class: "ogl-inactive-systems" }));
+
+      let emptySystemsDiv;
+      let inactiveSystemsDiv
+
+      if(this.json.fleetIgnoreEmptySystems) {
+        info.appendChild(createDOM("div", {}, this.getTranslatedText(229)));
+        emptySystemsDiv = info.appendChild(createDOM("div", { class: "ogl-empty-systems" }));
+      }
+      
+      if(this.json.fleetIgnoreInactiveSystems) {
+        info.appendChild(createDOM("div", {}, this.getTranslatedText(230)));
+        inactiveSystemsDiv = info.appendChild(createDOM("div", { class: "ogl-inactive-systems" }));
+      }
 
       // fleet speed selector in page fleet 1
       const slider = DOM.createDOM("div", { style: "margin-top: 10px" });
@@ -10313,8 +10324,8 @@ class OGInfinity {
           consDiv.textContent = "-";
           arrivalDiv.textContent = "-";
           returnDiv.textContent = "-";
-          emptySystemsDiv.textContent = "-";
-          inactiveSystemsDiv.textContent = "-";
+          if(emptySystemsDiv) emptySystemsDiv.textContent = "-";
+          if(inactiveSystemsDiv) inactiveSystemsDiv.textContent = "-";
           document
             .querySelector(".ogl-dispatch .ogl-missions")
             .replaceChildren(createDOM("span", { style: "color: #9099a3" }, `${that.getTranslatedText(111)}`));
@@ -10358,20 +10369,24 @@ class OGInfinity {
           icon.classList.add("ogl-active");
         }
         durationDiv.replaceChildren(createDOM("strong", {}, formatTime(fleetDispatcher.getDuration())));
-        if(fleetDispatcher.emptySystems > 0) {
-          emptySystemsDiv.textContent = fleetDispatcher.emptySystems;
-          emptySystemsDiv.classList.add("middlemark");
-        } else {
-          emptySystemsDiv.textContent = "-";
-          emptySystemsDiv.classList.remove("middlemark");
+        if(emptySystemsDiv) {
+          if(fleetDispatcher.emptySystems > 0) {
+            emptySystemsDiv.textContent = fleetDispatcher.emptySystems;
+            emptySystemsDiv.classList.add("middlemark");
+          } else {
+            emptySystemsDiv.textContent = "-";
+            emptySystemsDiv.classList.remove("middlemark");
+          }
         }
 
-        if(fleetDispatcher.inactiveSystems > 0) {
-          inactiveSystemsDiv.textContent = fleetDispatcher.inactiveSystems;
-          inactiveSystemsDiv.classList.add("middlemark");
-        } else {
-          inactiveSystemsDiv.textContent = "-";
-          inactiveSystemsDiv.classList.remove("middlemark");
+        if(inactiveSystemsDiv) {
+          if(fleetDispatcher.inactiveSystems > 0) {
+            inactiveSystemsDiv.textContent = fleetDispatcher.inactiveSystems;
+            inactiveSystemsDiv.classList.add("middlemark");
+          } else {
+            inactiveSystemsDiv.textContent = "-";
+            inactiveSystemsDiv.classList.remove("middlemark");
+          }
         }
         consDiv.textContent = toFormatedNumber(fleetDispatcher.getConsumption(), 0);
         if (fleetDispatcher.getConsumption() > deutAvailable) {
