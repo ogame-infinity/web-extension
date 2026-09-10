@@ -2274,12 +2274,12 @@ const translation = Object.freeze({
       br: "Nenhum jogador no Historic",
     },
     226: {
-      de: "Galaxie-Speicher",
-      en: "Galaxy Storage",
-      es: "Almacenamiento de galaxia",
-      fr: "Stockage de la Galaxie",
-      tr: "Galaksi depolama",
-      br: "Armazenamento de galáxia",
+      de: "Galaxie-Speicher (PTRE)",
+      en: "Galaxy Storage (PTRE)",
+      es: "Almacenamiento de galaxia (PTRE)",
+      fr: "Stockage de la Galaxie (PTRE)",
+      tr: "Galaksi depolama (PTRE)",
+      br: "Armazenamento de galáxia (PTRE)",
     },
   },
 });
