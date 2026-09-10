@@ -100,6 +100,7 @@ const _options = {
   lifeformConstructionsIconsDisplayMode: 4,
   lifeformResearchsIconsDisplayMode: 4,
   ownFleetYieldIconsDisplayMode: 4,
+  ptreDebugLogs: false,
 };
 
 export function initConfOptions(options) {

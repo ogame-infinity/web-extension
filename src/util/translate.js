@@ -2273,6 +2273,14 @@ const translation = Object.freeze({
       tr: "Historic'te oyuncu yok",
       br: "Nenhum jogador no Historic",
     },
+    229: {
+      de: "PTRE Debug-Logs",
+      en: "PTRE debug logs",
+      es: "Logs de depuración PTRE",
+      fr: "Logs de debug PTRE",
+      tr: "PTRE hata ayıklama günlükleri",
+      br: "Logs de depuração PTRE",
+    },
     226: {
       de: "Galaxie-Speicher (PTRE)",
       en: "Galaxy Storage (PTRE)",

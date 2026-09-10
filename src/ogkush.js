@@ -1538,6 +1538,7 @@ class OGInfinity {
     this.autoQueue = new AutoQueue();
 
     pageContextRequest("ptre", "setTeamKey", this.json.options.ptreTK || "");
+    pageContextRequest("ptre", "setDebugLogs", !!this.json.options.ptreDebugLogs);
   }
 
   start() {
@@ -15410,12 +15411,30 @@ class OGInfinity {
     // Systems count row in PTRE settings. Live query against `dataHelper.galaxyStorage`
     // via the page->content bridge - the value reflects the current in-memory store
     // at the moment the settings modal opens.
+    let ptreDebugLogsRow = ptreSection.appendChild(
+      createDOM(
+        "span",
+        { style: "display: flex;justify-content: space-between; align-items: center;" },
+        this.getTranslatedText(229)
+      )
+    );
+    let ptreDebugLogsCheck = ptreDebugLogsRow.appendChild(createDOM("input", { type: "checkbox" }));
+    ptreDebugLogsCheck.addEventListener("change", () => {
+      this.json.options.ptreDebugLogs = ptreDebugLogsCheck.checked;
+      pageContextRequest("ptre", "setDebugLogs", !!this.json.options.ptreDebugLogs);
+      this.saveData();
+    });
+    if (this.json.options.ptreDebugLogs) {
+      ptreDebugLogsCheck.checked = true;
+    }
+
     let ptreLastApiUpdateRow = ptreSection.appendChild(createDOM("span"));
     ptreLastApiUpdateRow.textContent = "Last API update: ...";
     let ptreSystemCountRow = ptreSection.appendChild(createDOM("span"));
     ptreSystemCountRow.textContent = "Systems count: ...";
     let ptreStorageSizeRow = ptreSection.appendChild(createDOM("span"));
     ptreStorageSizeRow.textContent = "Storage size: ...";
+
     pageContextRequest("ptre", "galaxyInfo")
       .then((r) => {
         const n = r?.response?.systemCount ?? 0;

@@ -32,6 +32,8 @@ export class DataHelper {
     this.loading = false;
     // Transient cache of the last successful universe.xml fetch. Stripped from the persisted blob in processData().
     this._galaxySnapshot = null;
+    // Pushed from the page via `ptre.setDebugLogs`; gates the verbose scan() debug output.
+    this._ptreDebugLogs = false;
   }
 
   init() {
@@ -226,7 +228,7 @@ export class DataHelper {
       const currentSystemSnapshot = {};
       let systemChanged = false;
 
-      if (teamKey && !previousSystemFound) {
+      if (teamKey && !previousSystemFound && this._ptreDebugLogs) {
         ptreLogger.debug("[GALAXY] [" + galaxy + ":" + system + "] Warning: No previous snapshot found!");
       }
 
@@ -235,10 +237,12 @@ export class DataHelper {
         const extra = (additionnal && (additionnal[pos] || additionnal[String(pos)])) || {};
         const coords = galaxy + ":" + system + ":" + pos;
 
-        ptreLogger.debug("[GALAXY] [" + coords +"] Player " + previousSystemSnapshot[pos].playerId + "=>" + cur.playerId +
-            " | Planet: " + previousSystemSnapshot[pos].planetId + "=>" + cur.planetId +
-            " | Moon: " + previousSystemSnapshot[pos].moonId + "=>" + cur.moonId +
-            " (" + (extra.playerName || "") + " - " + (extra.playerRank ?? -1) + ")");
+        if (this._ptreDebugLogs) {
+          ptreLogger.debug("[GALAXY] [" + coords +"] Player " + previousSystemSnapshot[pos].playerId + "=>" + cur.playerId +
+              " | Planet: " + previousSystemSnapshot[pos].planetId + "=>" + cur.planetId +
+              " | Moon: " + previousSystemSnapshot[pos].moonId + "=>" + cur.moonId +
+              " (" + (extra.playerName || "") + " - " + (extra.playerRank ?? -1) + ")");
+        }
 
         // ---- Section A: scannedPlanets / scannedPlayers (always runs, no teamKey needed).
         // Restores pre-PR-533 semantics: only write when the (coords, moon-presence) pair
@@ -279,7 +283,9 @@ export class DataHelper {
             cur.planetId !== previousSystemSnapshot[pos].planetId ||
             cur.moonId !== previousSystemSnapshot[pos].moonId;
           if (changed) {
-            ptreLogger.debug("[GALAXY] [" + coords + "] Position changed");
+            if (this._ptreDebugLogs) {
+              ptreLogger.debug("[GALAXY] [" + coords + "] Position changed");
+            }
             systemChanged = true;
 
             const entry = {
