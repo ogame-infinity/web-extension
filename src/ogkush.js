@@ -4202,6 +4202,17 @@ class OGInfinity {
             ? "*"
             : row.querySelector("[data-moon-id] .activity")?.textContent.trim() || 60;
 
+          // Sum of the debris resource stacks. PTRE contract: -1 = no data, 0+ = actual size.
+          // An empty `.cellDebris` (no children) is a confirmed empty field, not missing data.
+          let cdrTotalSize = -1;
+          const debrisCell = row.querySelector(".cellDebris");
+          if (debrisCell) {
+            cdrTotalSize = 0;
+            debrisCell.querySelectorAll(".debris-content").forEach((el) => {
+              cdrTotalSize += fromFormatedNumber(el.textContent.replace(/(\D*)/, "")) || 0;
+            });
+          }
+
           ptreJSON[coords] = {};
           ptreJSON[coords].id = planetId;
           ptreJSON[coords].player_id = playerId;
@@ -4212,6 +4223,7 @@ class OGInfinity {
           ptreJSON[coords].system = system;
           ptreJSON[coords].position = String(pos);
           ptreJSON[coords].main = false;
+          ptreJSON[coords].cdr_total_size = cdrTotalSize;
 
           if (moonId > -1) {
             ptreJSON[coords].moon = {};
