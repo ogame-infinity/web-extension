@@ -3703,11 +3703,13 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
   z-index: 10;
 }
 
-.ogl-sideStalk > a {
+.ogl-sideStalk > a,
+.ogl-sideStalk > .ogi-sideStalkRemoveDetail {
   opacity: 0.5;
 }
 
-.ogl-sideStalk:hover > a {
+.ogl-sideStalk:hover > a,
+.ogl-sideStalk:hover > .ogi-sideStalkRemoveDetail {
   opacity: 1;
 }
 
@@ -3739,11 +3741,17 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
 }
 
 .ogl-sideStalk .ogl-player {
+  align-items: center;
   border: solid 2px #2f2f2f;
   background: #1e2123;
+  box-sizing: border-box;
+  display: flex;
+  gap: 5px;
+  justify-content: space-between;
   padding: 5px;
   margin-bottom: 3px;
   font-size: 11px;
+  min-height: 27px;
   border-radius: 5px;
   cursor: pointer;
 }
@@ -3752,12 +3760,118 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
   border-color: #3c536d;
 }
 
+.ogl-sideStalk .ogl-player > span:first-child {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .ogl-sideStalk .ogi-ranking,
-.ogl-sideStalk .ogl-player span:last-child {
+.ogl-sideStalk .ogl-player .ogi-sideStalkRank {
   font-size: 10px;
   color: #e6648e !important;
-  float: right;
-  margin-left: 5px;
+}
+
+.ogl-sideStalk .ogi-sideStalkPlayerActions {
+  align-items: center;
+  display: flex;
+  flex: 0 0 24px;
+  height: 16px;
+  justify-content: flex-end;
+  min-width: 24px;
+  position: relative;
+}
+
+.ogl-sideStalk .ogi-sideStalkRank,
+.ogl-sideStalk .ogi-sideStalkRemove {
+  display: block;
+  line-height: 16px !important;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.ogl-sideStalk .ogl-player .ogi-sideStalkRemove {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.ogl-sideStalk .ogl-player:hover .ogi-sideStalkRank,
+.ogl-sideStalk .ogl-player:focus-within .ogi-sideStalkRank {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.ogl-sideStalk .ogl-player:hover .ogi-sideStalkRemove,
+.ogl-sideStalk .ogl-player:focus-within .ogi-sideStalkRemove {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.ogl-sideStalk .ogi-sideStalkRemoveDetail {
+  border: 0;
+  margin-right: 3px;
+  padding: 0;
+  vertical-align: bottom;
+}
+
+.ogl-sideStalk button.ogi-sideStalkRemove {
+  border: 0;
+  padding: 0;
+}
+
+.ogl-sideStalk .ogi-sideStalkEmpty {
+  clear: both;
+  color: #bbb;
+  font-size: 11px;
+  line-height: 14px;
+  margin-top: 8px;
+}
+
+.ogl-sideStalk .ogi-sideStalkUndo {
+  background: rgba(120, 45, 45, 0.28);
+  border-color: #7f4c4c;
+  color: #d9b0b0;
+  cursor: default;
+  opacity: 1;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.ogl-sideStalk .ogi-sideStalkUndo.ogi-removing {
+  opacity: 0;
+  transform: translateY(-2px);
+}
+
+.ogl-sideStalk .ogi-sideStalkUndoMessage {
+  display: block;
+  flex: 1 1 auto;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ogl-sideStalk .ogi-sideStalkUndoButton {
+  background: none;
+  border: 0;
+  color: #ffc9c9;
+  cursor: pointer;
+  flex: 0 0 auto;
+  font-size: 11px;
+  line-height: 14px;
+  margin: 0;
+  padding: 0;
+  white-space: nowrap;
+}
+
+.ogl-sideStalk .ogi-sideStalkUndoButton:hover,
+.ogl-sideStalk .ogi-sideStalkUndoButton:focus {
+  color: #c75817;
 }
 
 .ogl-sideStalk.ogi-hidden {
