@@ -4129,11 +4129,16 @@ class OGInfinity {
       if (playerDiv || ownPlayerSpan) {
         const planetDiv = row.querySelector(".cellPlanet div");
         const moonDiv = row.querySelector(".cellMoon div");
+        // Normalize any non-finite parse result to -1 so downstream diffs don't fire on NaN !== NaN.
+        const toFiniteId = (v) => {
+          const n = Number(v);
+          return Number.isFinite(n) ? n : -1;
+        };
         let playerId = -1;
         let name = "";
         if (playerDiv) {
           const rawPlayerId = playerDiv.getAttribute("id")?.replace("player", "");
-          playerId = rawPlayerId && rawPlayerId !== "" ? Number(rawPlayerId) : -1;
+          playerId = rawPlayerId ? toFiniteId(rawPlayerId) : -1;
           name = playerDiv.querySelector("span:first-of-type")?.textContent || "";
         } else {
           // own-planet row: no player id in the row itself, fall back to the current player id.
@@ -4141,9 +4146,9 @@ class OGInfinity {
           name = ownPlayerSpan.textContent?.trim() || "";
         }
         const rawPlanetId = planetDiv ? planetDiv.getAttribute("data-planet-id") : null;
-        const planetId = rawPlanetId ? Number(rawPlanetId) : -1;
+        const planetId = rawPlanetId ? toFiniteId(rawPlanetId) : -1;
         const rawMoonId = moonDiv ? moonDiv.getAttribute("data-moon-id") : null;
-        const moonId = rawMoonId ? Number(rawMoonId) : -1;
+        const moonId = rawMoonId ? toFiniteId(rawMoonId) : -1;
 
         // Status flags (matches EasyPTRE extraction).
         let statusStr = "";
