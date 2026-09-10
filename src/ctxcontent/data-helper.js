@@ -5,6 +5,25 @@ import { getPlayersHighscore, NAN_HIGHSCORE } from "./helpers/universe.highscore
 import { getPlanets } from "./helpers/universe.planets.js";
 import { DEFAULT_PLAYER, getPlayers } from "./helpers/universe.players.js";
 
+const ptreLogger = getLogger("data-helper.ptre");
+
+/** Number of positions per system stored in `galaxyStorage` (dense layout). */
+const SCANNED_SYSTEM_POSITION_COUNT = 15;
+/** Filler for absent players/planets/moons in a `galaxyStorage` position. */
+const EMPTY_POSITION = Object.freeze({ playerId: -1, planetId: -1, moonId: -1 });
+
+/**
+ * Build a fresh empty snapshot with exactly SCANNED_SYSTEM_POSITION_COUNT positions.
+ * @return {Object<string, {playerId:number, planetId:number, moonId:number}>}
+ */
+function generateEmptySystem() {
+  const snap = {};
+  for (let pos = 1; pos <= SCANNED_SYSTEM_POSITION_COUNT; pos++) {
+    snap[pos] = { ...EMPTY_POSITION };
+  }
+  return snap;
+}
+
 export class DataHelper {
   constructor(universe) {
     this.universe = universe;
@@ -49,6 +68,7 @@ export class DataHelper {
             this.galaxyStorage = {};
             this.lastGalaxyUpdateTS = -1;
           }
+
           resolve();
         }
       );
@@ -158,82 +178,171 @@ export class DataHelper {
     return response;
   }
 
-  scan(system, ptreKey = null, serverTime = null) {
-    let ptrePosition = {};
+  /**
+   * Process the current galaxy view (positions 1..15).
+   *
+   * Runs unconditionally two side-effect groups:
+   *   1. Non-PTRE - updates `scannedPlanets` / `scannedPlayers` (consumed by `getPlayer()`
+   *      and `filter()` for the stalking sidebar, tooltips, target list and search box)
+   *      and persists them via `saveData()`.
+   *   2. PTRE (only when `teamKey` is provided) - diffs the incoming positions against the
+   *      persisted per-(g,s) snapshot in `this.galaxyStorage[g][s]`, returns the changed positions
+   *      only in the returned payload, and persists the new snapshot only when at least one
+   *      position moved (identical revisits skip the disk write). On first-ever visit of the
+   *      system, all 15 positions are emitted (populated AND empty) so PTRE learns its initial
+   *      shape.
+   *
+   * Any failure is logged and returns an empty payload; galaxy rendering is never impacted.
+   *
+   * @param {number} galaxy
+   * @param {number} system
+   * @param {Object<string, {playerId:number, planetId:number, moonId:number}>} positions
+   *        Keys "1".."15". Missing player/planet/moon -> -1.
+   * @param {Object<string, {playerName:string, playerRank:number, playerStatus:string}>} additionnal
+   *        Keys "1".."15". Enrichment collected live in the page context.
+   * @param {string|null} teamKey - PTRE team key. When null/empty, PTRE work is skipped
+   *        and only the non-PTRE side effects run.
+   * @param {number|null} serverTime - Milliseconds from a JS `Date` built by ogkush from the
+   *        OGame page's wall-clock server time. NOT a reliable UTC Unix ms: the value is
+   *        interpreted in the browser's timezone, so on a server whose timezone differs
+   *        from the browser's (e.g. `.en` for a CEST user) it is offset by the timezone
+   *        delta. Sent as-is in the PTRE payload's `timestamp_ig`. Do NOT compare directly
+   *        with `lastGalaxyUpdateTS` (Unix seconds from the public API).
+   * @return {Object<string, object>} - PTRE payload keyed by "g:s:p"; empty when no diff
+   *         or when no team key.
+   */
+  scan(galaxy, system, positions, additionnal, teamKey = null, serverTime = null) {
+    const payload = {};
+    try {
+      if (!positions) {
+        return payload;
+      }
 
-    system.forEach((row) => {
-      let sameOld = false;
-      if (!this.scannedPlanets[row.id]) {
-        this.scannedPlanets[row.id] = {};
+      // Previous snapshot: loaded from `galaxyStorage` when a team key is set and we
+      // already have data for this (galaxy, system); otherwise an empty stand-in so the
+      // diff / departure logic below stays uniform. `previousSystemFound` distinguishes
+      // "first-ever visit of this system" (false) from "we have a stored snapshot" (true):
+      // on first visit we force-emit all 15 positions - populated AND empty - so PTRE
+      // learns the initial shape of the system. Without a team key we never persist and
+      // never emit (keyless behavior matches master).
+      const storedSystem = this.galaxyStorage && this.galaxyStorage[galaxy] ? this.galaxyStorage[galaxy][system] : undefined;
+      const previousSystemFound = Boolean(teamKey && storedSystem);
+      const previousSystemSnapshot = previousSystemFound ? storedSystem : generateEmptySystem();
+      const currentSystemSnapshot = {};
+      let systemChanged = false;
+
+      if (!previousSystemFound) {
+        ptreLogger.debug("[GALAXY] [" + galaxy + ":" + system + "] Warning: No previous snapshot found!");
       }
-      if (!this.scannedPlayers[row.id] && row.name) {
-        this.scannedPlayers[row.id] = row.name;
-      }
-      let player = this.players[row.id];
-      let known = false;
-      if (player) {
-        this.players[row.id].planets.forEach((planet) => {
-          if (row.coords == planet.coords) {
-            sameOld = true;
+
+      for (let pos = 1; pos <= SCANNED_SYSTEM_POSITION_COUNT; pos++) {
+        const cur = positions[pos] || positions[String(pos)] || { playerId: -1, planetId: -1, moonId: -1 };
+        const extra = (additionnal && (additionnal[pos] || additionnal[String(pos)])) || {};
+        const coords = galaxy + ":" + system + ":" + pos;
+
+        ptreLogger.debug("[GALAXY] [" + coords +"] Player " + previousSystemSnapshot[pos].playerId + "=>" + cur.playerId +
+            " | Planet: " + previousSystemSnapshot[pos].planetId + "=>" + cur.planetId +
+            " | Moon: " + previousSystemSnapshot[pos].moonId + "=>" + cur.moonId +
+            " (" + (extra.playerName || "") + " - " + (extra.playerRank ?? -1) + ")");
+
+        // ---- Non-PTRE side effects: refresh OGI's internal maps used by getPlayer/filter.
+        // Runs regardless of whether a PTRE team key is set (matches master behavior).
+        if (cur.playerId !== -1) {
+          if (!this.scannedPlanets[cur.playerId]) {
+            this.scannedPlanets[cur.playerId] = {};
           }
-          if (row.coords == planet.coords && row.moon == planet.moon) {
-            known = true;
+          this.scannedPlanets[cur.playerId][coords] = cur.moonId > -1 ? cur.moonId : false;
+          if (extra.playerName && !this.scannedPlayers[cur.playerId]) {
+            this.scannedPlayers[cur.playerId] = extra.playerName;
           }
-        });
-      }
+        }
 
-      if (ptreKey && (!known || row.deleted)) {
-        ptrePosition[row.coords] = {};
-        ptrePosition[row.coords].id = row.planetId || -1;
-        ptrePosition[row.coords].teamkey = ptreKey;
-        ptrePosition[row.coords].galaxy = row.coords.split(":")[0];
-        ptrePosition[row.coords].system = row.coords.split(":")[1];
-        ptrePosition[row.coords].position = row.coords.split(":")[2];
-        ptrePosition[row.coords].timestamp_ig = serverTime;
-        if (row.moon) {
-          ptrePosition[row.coords].moon = {};
-          ptrePosition[row.coords].moon.id = row.moonId || -1;
+        // Departure detected: flip the prior occupant's coord to null in scannedPlanets
+        // so getPlayer() renders it as deleted. Safe without a team key: the previous
+        // snapshot is empty in that case, so this never fires spuriously.
+        if (previousSystemSnapshot[pos].playerId !== -1 && cur.playerId === -1) {
+          if (!this.scannedPlanets[previousSystemSnapshot[pos].playerId]) {
+            this.scannedPlanets[previousSystemSnapshot[pos].playerId] = {};
+          }
+          this.scannedPlanets[previousSystemSnapshot[pos].playerId][coords] = null;
         }
-      }
 
-      if (!known) {
-        this.scannedPlanets[row.id][row.coords] = row.moon;
-        if (ptreKey && row.id) {
-          let currentPlayer = player ?? "{id:" + row.id + ", name:" + row.name + "}";
-          ptrePosition[row.coords].player_id = row.id;
-          ptrePosition[row.coords].name = row.name || false;
-          ptrePosition[row.coords].rank = currentPlayer?.points?.position || -1;
-          ptrePosition[row.coords].score = currentPlayer?.points?.score || -1;
-          ptrePosition[row.coords].fleet = currentPlayer?.military?.ships || -1;
-          ptrePosition[row.coords].status = currentPlayer?.status;
-          ptrePosition[row.coords].old_player_id = sameOld ? ptrePosition[row.coords].player_id : -1;
-          ptrePosition[row.coords].timestamp_api = sameOld && this.lastUpdate ? this.lastUpdate : -1;
-          ptrePosition[row.coords].old_name = sameOld ? ptrePosition[row.coords].name : false;
-          ptrePosition[row.coords].old_rank = sameOld ? ptrePosition[row.coords].rank : -1;
-          ptrePosition[row.coords].old_score = sameOld ? ptrePosition[row.coords].score : -1;
-          ptrePosition[row.coords].old_fleet = sameOld ? ptrePosition[row.coords].fleet : -1;
+        // ---- PTRE-only: build the delta payload when a team key is set.
+        // On first-ever visit of this system (`previousSystemFound === false`) we
+        // force-emit every position - including empty ones - so PTRE learns the
+        // full initial shape of the system.
+        if (teamKey) {
+          // Build the snapshot for this position regardless of whether it changed:
+          // `currentSystemSnapshot` must contain the full dense 15-position map so that,
+          // when we persist below, `galaxyStorage[g][s]` always exposes 15 slots. We can't
+          // decide up front to skip - a change at a later position would need the earlier
+          // ones too.
+          currentSystemSnapshot[pos] = {
+            playerId: cur.playerId,
+            planetId: cur.planetId,
+            moonId: cur.moonId,
+          };
+          const changed =
+            !previousSystemFound ||
+            cur.playerId !== previousSystemSnapshot[pos].playerId ||
+            cur.planetId !== previousSystemSnapshot[pos].planetId ||
+            cur.moonId !== previousSystemSnapshot[pos].moonId;
+          if (changed) {
+            ptreLogger.debug("[GALAXY] [" + coords + "] Position changed");
+            systemChanged = true;
+
+            const entry = {
+              id: cur.planetId,
+              teamkey: teamKey,
+              galaxy: galaxy,
+              system: system,
+              position: pos,
+              timestamp_ig: serverTime,
+            };
+            if (cur.moonId !== -1) {
+              entry.moon = { id: cur.moonId };
+            }
+
+            // Current-player fields (best-effort enrichment from the OGame public API cache).
+            const curPlayer = cur.playerId !== -1 && this.players ? this.players[cur.playerId] : undefined;
+            entry.player_id = cur.playerId;
+            entry.name = extra.playerName || curPlayer?.name || false;
+            entry.rank = extra.playerRank ?? curPlayer?.points?.position ?? -1;
+            entry.score = curPlayer?.points?.score ?? -1;
+            entry.fleet = curPlayer?.military?.ships ?? -1;
+            entry.status = cur.playerId === -1 ? -1 : extra.playerStatus ?? curPlayer?.status ?? "";
+
+            // Previous-occupant fields.
+            const prevPlayer =
+              previousSystemSnapshot[pos].playerId !== -1 && this.players
+                ? this.players[previousSystemSnapshot[pos].playerId]
+                : undefined;
+            entry.old_player_id = previousSystemSnapshot[pos].playerId;
+            entry.timestamp_api = this.lastUpdate || -1;
+            entry.old_name = prevPlayer?.name || false;
+            entry.old_rank = prevPlayer?.points?.position ?? -1;
+            entry.old_score = prevPlayer?.points?.score ?? -1;
+            entry.old_fleet = prevPlayer?.military?.ships ?? -1;
+
+            payload[coords] = entry;
+          }
         }
+      }// End positions loop
+
+      // Persist only when at least one position in the system actually moved.
+      // Identical revisits (same player/planet/moon layout as previously stored) skip
+      // the write to avoid disk churn during heavy browsing.
+      if (teamKey && systemChanged) {
+        if (!this.galaxyStorage[galaxy]) this.galaxyStorage[galaxy] = {};
+        this.galaxyStorage[galaxy][system] = currentSystemSnapshot;
+        this.scheduleGalaxyStorageFlush();
       }
-      if (row.deleted) {
-        this.scannedPlanets[row.id][row.coords] = null;
-        if (ptreKey && row.id) {
-          ptrePosition[row.coords].player_id = -1;
-          ptrePosition[row.coords].name = false;
-          ptrePosition[row.coords].rank = -1;
-          ptrePosition[row.coords].score = -1;
-          ptrePosition[row.coords].fleet = -1;
-          ptrePosition[row.coords].status = -1;
-          ptrePosition[row.coords].old_player_id = row.id || -1;
-          ptrePosition[row.coords].timestamp_api = this.lastUpdate || -1;
-          ptrePosition[row.coords].old_name = player?.name || false;
-          ptrePosition[row.coords].old_rank = player?.points?.position || -1;
-          ptrePosition[row.coords].old_score = player?.points?.score || -1;
-          ptrePosition[row.coords].old_fleet = player?.military?.ships || -1;
-        }
-      }
-    });
-    this.saveData();
-    return ptrePosition;
+      this.saveData();
+    } catch (err) {
+      ptreLogger.error("scan failed", err);
+      return {};
+    }
+    return payload;
   }
 
   saveData() {
@@ -333,7 +442,6 @@ export class DataHelper {
             playerId: -1,
             planetId: -1,
             moonId: -1,
-            ts: newGalaxyTs,
           };
         }
         updatedSystemsCount++;
@@ -343,7 +451,6 @@ export class DataHelper {
         playerId: planet.player,
         planetId: planet.id,
         moonId: planet.moon ? planet.moon : -1,
-        ts: newGalaxyTs,
       };
       updatedPlanetsCount++;
       if (planet.moon) updatedMoonsCount++;
@@ -359,7 +466,7 @@ export class DataHelper {
     const logger = getLogger("updateUniverse");
 
     if (this.loading) return;
-    if (!isNaN(this.lastUpdate) && new Date() - this.lastUpdate < 30 * 60 * 1e3) {
+    if (!isNaN(this.lastUpdate) && new Date() - this.lastUpdate < 1 * 60 * 1e3) {
       logger.debug("Last ogame's data update was: " + this.lastUpdate);
       return;
     }
