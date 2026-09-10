@@ -40,6 +40,7 @@ import RecyclingYieldCalculator from "./util/recyclingYieldCalculator.js";
 const DISCORD_INVITATION_URL = "https://discord.gg/8Y4SWup";
 //const VERSION = "__VERSION__";
 const logger = getLogger();
+const ptreActivityLogger = getLogger("ogkush.ptre.activity");
 pageContextInit();
 
 var dataHelper = (function () {
@@ -4309,6 +4310,25 @@ class OGInfinity {
       if (typeof mainPlanet !== "undefined") {
         ptreJSON[coords].main = mainPlanet.coords === coords || false;
       }
+    }
+
+    if (this.json.options.ptreDebugLogs) {
+      const coordsList = Object.keys(ptreJSON);
+      ptreActivityLogger.debug(
+        "[ACTIVITY] Sending " + coordsList.length + " position(s) to PTRE (system " + systemCoords[0] + ":" + systemCoords[1] + ")"
+      );
+      coordsList.forEach((coords) => {
+        const entry = ptreJSON[coords];
+        const moonPart = entry.moon
+          ? " | Moon: " + entry.moon.id + " act=" + entry.moon.activity
+          : " | Moon: -";
+        ptreActivityLogger.debug(
+          "[ACTIVITY] [" + coords + "] Player " + entry.player_id +
+            " | Planet: " + entry.id + " act=" + entry.activity +
+            moonPart +
+            " | CDR: " + entry.cdr_total_size
+        );
+      });
     }
 
     ptreService.importPlayerActivity(OgamePageData.gameLang, this.universe, ptreJSON).then((result) => {
