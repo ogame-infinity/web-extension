@@ -2249,6 +2249,14 @@ const translation = Object.freeze({
       tr: undefined,
       br: undefined,
     },
+    226: {
+      de: "Galaxie-Speicher",
+      en: "Galaxy Storage",
+      es: "Almacenamiento de galaxia",
+      fr: "Stockage de la Galaxie",
+      tr: "Galaksi depolama",
+      br: "Armazenamento de galáxia",
+    },
   },
 });
 

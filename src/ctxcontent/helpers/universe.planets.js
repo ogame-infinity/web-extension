@@ -3,11 +3,18 @@ import { requestOGamePlanets } from "../services/request.ogamePlanets.js";
 /**
  *
  * @param {string} universe
- * @return Promise<PlayerPlanetsMap>
+ * @return Promise<PlanetsSnapshot>
  */
 export function getPlanets(universe) {
-  const planetResponse = requestOGamePlanets(universe).then(toPlanetResponse);
-  return planetResponse.then(toPlanetMap);
+  return requestOGamePlanets(universe).then((response) => {
+    const timestamp = parseInt(response.document.documentElement.getAttribute("timestamp"), 10);
+    const planetList = toPlanetResponse(response);
+    return {
+      planets: toPlanetMap(planetList),
+      planetList: planetList,
+      timestamp: Number.isFinite(timestamp) ? timestamp : -1,
+    };
+  });
 }
 
 /**
@@ -48,6 +55,13 @@ function toPlanetResponse(response) {
 
 /**
  * @typedef {Map<number, PlanetResponse[]>} PlayerPlanetsMap
+ */
+
+/**
+ * @typedef {Object} PlanetsSnapshot
+ * @property {PlayerPlanetsMap} planets - planets grouped by player id
+ * @property {PlanetResponse[]} planetList - flat list of every planet in the universe
+ * @property {number} timestamp - universe.xml root `timestamp` attribute (unix seconds), -1 if missing
  */
 
 /**
