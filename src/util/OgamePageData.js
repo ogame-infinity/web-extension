@@ -10,7 +10,6 @@ class OgamePageData {
     this._currentPosition = parseInt(this._currentCoordinates.split(":")[2]);
     this._currentPositionType =  document.querySelector('meta[name="ogame-planet-type"]').getAttribute("content") === 'planet' ? 1 : 3;
     this._donutSystem = document.querySelector('meta[name="ogame-donut-system"]').getAttribute("content") === "1";
-    
   }
   /** @type {string} */
   get gameLang() {
@@ -73,7 +72,6 @@ class OgamePageData {
   get donutSystem() {
     return this._donutSystem;
   }
-
 }
 
 export default new OgamePageData();
