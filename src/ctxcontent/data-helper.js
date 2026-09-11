@@ -181,15 +181,16 @@ export class DataHelper {
   /**
    * Process the current galaxy view (positions 1..15).
    *
-   * Runs unconditionally two side-effect groups:
-   *   1. Non-PTRE - updates `scannedPlanets` / `scannedPlayers` (consumed by `getPlayer()`
-   *      and `filter()` for the stalking sidebar, tooltips, target list and search box)
-   *      and persists them via `saveData()`.
-   *   2. PTRE (only when `teamKey` is provided) - diffs the incoming positions against the
-   *      persisted per-(g,s) snapshot in `this.galaxyStorage[g][s]`, returns the changed positions
-   *      only in the returned payload, and persists the new snapshot only when at least one
-   *      position moved (identical revisits skip the disk write). On first-ever visit of the
-   *      system, all 15 positions are emitted (populated AND empty) so PTRE learns its initial
+   * Two independent responsibilities, evaluated per position:
+   *   Section A - refresh `scannedPlanets` / `scannedPlayers` (consumed by `getPlayer()` /
+   *      `filter()` for the stalking sidebar, tooltips, target list and search box). Runs
+   *      regardless of `teamKey`. Writes only for genuinely new info: the `known` gate
+   *      matches (coords, moon-presence) against `this.players[playerId].planets` so planets
+   *      already known from the public API do not get flagged as `.ogl-scan`.
+   *   Section B - PTRE galaxy diff. Runs only when `teamKey` is set. Diffs against the
+   *      persisted per-(g,s) snapshot in `this.galaxyStorage[g][s]`, returns the changed
+   *      positions in the payload, and persists the new snapshot only when at least one
+   *      position moved. First-ever visit emits all 15 positions so PTRE learns the initial
    *      shape.
    *
    * Any failure is logged and returns an empty payload; galaxy rendering is never impacted.
@@ -200,8 +201,7 @@ export class DataHelper {
    *        Keys "1".."15". Missing player/planet/moon -> -1.
    * @param {Object<string, {playerName:string, playerRank:number, playerStatus:string}>} additionnal
    *        Keys "1".."15". Enrichment collected live in the page context.
-   * @param {string|null} teamKey - PTRE team key. When null/empty, PTRE work is skipped
-   *        and only the non-PTRE side effects run.
+   * @param {string|null} teamKey - PTRE team key. When null/empty, Section B is skipped.
    * @param {number|null} serverTime - Milliseconds from a JS `Date` built by ogkush from the
    *        OGame page's wall-clock server time. NOT a reliable UTC Unix ms: the value is
    *        interpreted in the browser's timezone, so on a server whose timezone differs
@@ -218,20 +218,15 @@ export class DataHelper {
         return payload;
       }
 
-      // Previous snapshot: loaded from `galaxyStorage` when a team key is set and we
-      // already have data for this (galaxy, system); otherwise an empty stand-in so the
-      // diff / departure logic below stays uniform. `previousSystemFound` distinguishes
-      // "first-ever visit of this system" (false) from "we have a stored snapshot" (true):
-      // on first visit we force-emit all 15 positions - populated AND empty - so PTRE
-      // learns the initial shape of the system. Without a team key we never persist and
-      // never emit (keyless behavior matches master).
+      // Section B state only. Kept out of Section A so scannedPlanets/scannedPlayers
+      // bookkeeping stays independent of the galaxyStorage machinery.
       const storedSystem = this.galaxyStorage && this.galaxyStorage[galaxy] ? this.galaxyStorage[galaxy][system] : undefined;
       const previousSystemFound = Boolean(teamKey && storedSystem);
       const previousSystemSnapshot = previousSystemFound ? storedSystem : generateEmptySystem();
       const currentSystemSnapshot = {};
       let systemChanged = false;
 
-      if (!previousSystemFound) {
+      if (teamKey && !previousSystemFound) {
         ptreLogger.debug("[GALAXY] [" + galaxy + ":" + system + "] Warning: No previous snapshot found!");
       }
 
@@ -245,29 +240,25 @@ export class DataHelper {
             " | Moon: " + previousSystemSnapshot[pos].moonId + "=>" + cur.moonId +
             " (" + (extra.playerName || "") + " - " + (extra.playerRank ?? -1) + ")");
 
-        // ---- Non-PTRE side effects: refresh OGI's internal maps used by getPlayer/filter.
-        // Runs regardless of whether a PTRE team key is set (matches master behavior).
+        // ---- Section A: scannedPlanets / scannedPlayers (always runs, no teamKey needed).
+        // Restores pre-PR-533 semantics: only write when the (coords, moon-presence) pair
+        // is not already known via the public-API `this.players` cache.
         if (cur.playerId !== -1) {
           if (!this.scannedPlanets[cur.playerId]) {
             this.scannedPlanets[cur.playerId] = {};
           }
-          this.scannedPlanets[cur.playerId][coords] = cur.moonId > -1 ? cur.moonId : false;
-          if (extra.playerName && !this.scannedPlayers[cur.playerId]) {
+          if (!this.scannedPlayers[cur.playerId] && extra.playerName) {
             this.scannedPlayers[cur.playerId] = extra.playerName;
           }
-        }
-
-        // Departure detected: flip the prior occupant's coord to null in scannedPlanets
-        // so getPlayer() renders it as deleted. Safe without a team key: the previous
-        // snapshot is empty in that case, so this never fires spuriously.
-        if (previousSystemSnapshot[pos].playerId !== -1 && cur.playerId === -1) {
-          if (!this.scannedPlanets[previousSystemSnapshot[pos].playerId]) {
-            this.scannedPlanets[previousSystemSnapshot[pos].playerId] = {};
+          const hasMoon = cur.moonId > -1;
+          const known = this.players && this.players[cur.playerId]
+            ? this.players[cur.playerId].planets.some((p) => p.coords === coords && !!p.moon === hasMoon) : false;
+          if (!known) {
+            this.scannedPlanets[cur.playerId][coords] = hasMoon ? cur.moonId : false;
           }
-          this.scannedPlanets[previousSystemSnapshot[pos].playerId][coords] = null;
         }
 
-        // ---- PTRE-only: build the delta payload when a team key is set.
+        // ---- Section B: build the PTRE delta payload when a team key is set.
         // On first-ever visit of this system (`previousSystemFound === false`) we
         // force-emit every position - including empty ones - so PTRE learns the
         // full initial shape of the system.
