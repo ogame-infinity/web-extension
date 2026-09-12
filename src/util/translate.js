@@ -2058,12 +2058,12 @@ const translation = Object.freeze({
       br: "Abrir o relatório de espionagem",
     },
     189: {
-      de: "Rentabilitätswert (Feindsicht)",
-      en: "Profitability value (enemy point of view)",
-      es: "Valor de la rentabilidad (punto de vista del enemigo)",
-      fr: "Valeur de rentabilité (point de vue ennemi)",
-      tr: "Kârlılık değeri (düşman bakış açısı)",
-      br: "Valor de rentabilidade (ponto de vista inimigo)",
+      de: "„ (Gegner-Ansicht)",
+      en: "” (enemy view)",
+      es: "” (vista enemigo)",
+      fr: "— (vue ennemi)",
+      tr: "” (düşman bakışı)",
+      br: "” (vista inimigo)",
     },
     190: {
       de: "Ihre Mindestrentabilität, um von Feinden als interessant angesehen zu werden",
