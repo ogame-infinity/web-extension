@@ -22,6 +22,9 @@ contentContextInit({
         dataHelper.rebuildGalaxyStorage(pendingPtreKey);
       }
     },
+    setDebugLogs: function (enabled) {
+      if (dataHelper) dataHelper._ptreDebugLogs = !!enabled;
+    },
     galaxyInfo: function () {
       if (!dataHelper || !dataHelper.galaxyStorage) {
         return Promise.resolve({ systemCount: 0, lastGalaxyUpdateTS: -1, storageBytes: 0 });
