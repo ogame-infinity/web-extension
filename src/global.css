@@ -677,7 +677,7 @@ input[type="password"]::selection {
 .ogl-dispatch .ogl-missions {
   height: 30px;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-around !important;
   text-align: center;
   align-content: center;
 }
@@ -883,6 +883,9 @@ input[type="password"]::selection {
   border-image: initial;
   padding: 10px;
   margin-left: 10px;
+}
+.ogl-res-transport:has(a[tech-id="210"]){
+    height: 145px;
 }
 
 #fleet1 .planet-header.shortHeader {
