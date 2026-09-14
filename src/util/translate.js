@@ -2289,6 +2289,22 @@ const translation = Object.freeze({
       tr: "Galaksi depolama (PTRE)",
       br: "Armazenamento de galáxia (PTRE)",
     },
+    229: {
+      de: "Leere Systeme",
+      en: "Empty systems",
+      es: "Sistemas vacíos",
+      fr: "Systèmes vides",
+      tr: "Boş sistemler",
+      br: "Sistemas vazios",
+    },
+    230: {
+      de: "Inaktive Systeme",
+      en: "Inactive systems",
+      es: "Sistemas inactivos",
+      fr: "Systèmes inactifs",
+      tr: "Pasif sistemler",
+      br: "Sistemas inativos",
+    },
   },
 });
 
