@@ -2249,7 +2249,7 @@ const translation = Object.freeze({
       tr: "Historic'ten kaldır",
       br: "Remover do Historic",
     },
-    226: {
+    198: {
       de: "{player} aus Historic entfernt",
       en: "{player} removed from Historic",
       es: "{player} quitado de Historic",
