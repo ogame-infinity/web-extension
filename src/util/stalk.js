@@ -119,7 +119,7 @@ function generateGalaxyLink(coords, playerId = undefined) {
 }
 
 function getRemovedFromHistoricText(playerName) {
-  return Translator.translate(226).replace("{player}", playerName);
+  return Translator.translate(198).replace("{player}", playerName);
 }
 
 function removeSideStalkPlayer(playerId) {
