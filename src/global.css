@@ -1993,43 +1993,43 @@ strong {
   color: #ffd700eb !important;
 }
 
-#technologydetails .information > ul li:only-child {
+#technologydetails.ogk-technology-details .information > ul li:only-child {
   margin-bottom: 10px;
 }
 
-#technologydetails .ogk-sum,
-#technologydetails .ogk-sum .ogl-date {
+#technologydetails.ogk-technology-details .ogk-sum,
+#technologydetails.ogk-technology-details .ogk-sum .ogl-date {
   color: #cec452 !important;
 }
 
-#technologydetails time.ogk-sum {
+#technologydetails.ogk-technology-details time.ogk-sum {
   position: absolute;
   right: -140px;
   width: 130px;
   font-weight: 800;
 }
 
-#technologydetails .build_duration time,
-#technologydetails .roi_duration time {
+#technologydetails.ogk-technology-details .build_duration time,
+#technologydetails.ogk-technology-details .roi_duration time {
   text-align: right;
 }
 
-#technologydetails .narrow strong {
+#technologydetails.ogk-technology-details .narrow strong {
   font-weight: 100 !important;
 }
 
-#technologydetails .details {
+#technologydetails.ogk-technology-details .details {
   background-color: #5d788c;
   padding: 2px 5px;
   border-radius: 2px;
   font-weight: 800;
 }
 
-#technologydetails button.details {
+#technologydetails.ogk-technology-details button.details {
   color: #fff !important;
 }
 
-#technologydetails .ogk-lvl {
+#technologydetails.ogk-technology-details .ogk-lvl {
   font-size: 14px;
   font-weight: 800;
   color: #ff9600;
@@ -2037,15 +2037,15 @@ strong {
   text-align: center;
 }
 
-#technologydetails #build_amount {
+#technologydetails.ogk-technology-details #build_amount {
   height: 32px !important;
 }
 
-#technologydetails .build_amount .maximum::before {
+#technologydetails.ogk-technology-details .build_amount .maximum::before {
   content: none !important;
 }
 
-#technologydetails .build_amount .maximum {
+#technologydetails.ogk-technology-details .build_amount .maximum {
   display: block !important;
   position: absolute !important;
   margin: 0 0 0 30px !important;
@@ -2055,7 +2055,7 @@ strong {
   background: 0 0 !important;
 }
 
-#technologydetails > .sprite {
+#technologydetails.ogk-technology-details > .sprite {
   height: 199px !important;
   display: flex !important;
   align-items: start;
@@ -2063,49 +2063,49 @@ strong {
   backdrop-filter: grayscale(100%);
 }
 
-#technologydetails .mCustomScrollBox {
+#technologydetails.ogk-technology-details .mCustomScrollBox {
   background: #000000a6;
 }
 
-#technologydetails .ogl-fleetInfo {
+#technologydetails.ogk-technology-details .ogl-fleetInfo {
   opacity: 0.5;
   color: #ccc;
 }
 
-#technologydetails .ogl-fleetInfo:hover {
+#technologydetails.ogk-technology-details .ogl-fleetInfo:hover {
   opacity: 1;
 }
 
-#technologydetails .resource.icon::before {
+#technologydetails.ogk-technology-details .resource.icon::before {
   border-radius: 5px;
   width: 38px !important;
   height: 25px !important;
   border: solid 1px #000 !important;
 }
 
-#technologydetails .description .txt_box button {
+#technologydetails.ogk-technology-details .description .txt_box button {
   display: none;
 }
 
-#technologydetails .build_amount {
+#technologydetails.ogk-technology-details .build_amount {
   top: 140px !important;
 }
 
-#technologydetails button.downgrade {
+#technologydetails.ogk-technology-details button.downgrade {
   top: 165px !important;
   opacity: 0.6;
 }
 
-#technologydetails button.downgrade:hover {
+#technologydetails.ogk-technology-details button.downgrade:hover {
   opacity: 1;
 }
 
-#technologydetails button.downgrade span {
+#technologydetails.ogk-technology-details button.downgrade span {
   display: none !important;
 }
 
-#technologydetails a.upgrade,
-#technologydetails button.upgrade {
+#technologydetails.ogk-technology-details a.upgrade,
+#technologydetails.ogk-technology-details button.upgrade {
   width: 95px !important;
   height: 36px !important;
   background: transparent url("https://gf3.geo.gfsrv.net/cdneb/f5f81e8302aaad56c958c033677fb8.png") 0 0 no-repeat;
@@ -2114,8 +2114,8 @@ strong {
   padding: 0 !important;
 }
 
-#technologydetails a.upgrade:hover,
-#technologydetails button.upgrade:hover {
+#technologydetails.ogk-technology-details a.upgrade:hover,
+#technologydetails.ogk-technology-details button.upgrade:hover {
   background-position-y: -36px !important;
 }
 
@@ -2138,14 +2138,14 @@ button.build-it_premium:hover {
   background-position-y: -36px !important;
 }
 
-#technologydetails a.upgrade span,
-#technologydetails button.upgrade span {
+#technologydetails.ogk-technology-details a.upgrade span,
+#technologydetails.ogk-technology-details button.upgrade span {
   font-size: 14px;
   line-height: 36px !important;
 }
 
-#technologydetails button.build-it_premium span,
-#technologydetails button.build-it_premium:disabled span {
+#technologydetails.ogk-technology-details button.build-it_premium span,
+#technologydetails.ogk-technology-details button.build-it_premium:disabled span {
   font-size: 14px;
   line-height: 36px !important;
 }
@@ -2154,13 +2154,13 @@ button.build-it_premium:hover {
   display: none !important;
 }
 
-#technologydetails .ogk-titles {
+#technologydetails.ogk-technology-details .ogk-titles {
   left: -54px;
   position: absolute;
   top: 29px;
 }
 
-#technologydetails .costs p {
+#technologydetails.ogk-technology-details .costs p {
   display: none !important;
 }
 
@@ -2173,25 +2173,25 @@ button.build-it_premium:hover {
   margin-left: 80px;
 }
 
-#technologydetails .information > ul li {
+#technologydetails.ogk-technology-details .information > ul li {
   width: 285px !important;
   margin-bottom: 2px !important;
 }
 
-#technologydetails .information > ul li:only-child {
+#technologydetails.ogk-technology-details .information > ul li:only-child {
   margin-bottom: 15px !important;
 }
 
-#technologydetails .value {
+#technologydetails.ogk-technology-details .value {
   float: right !important;
 }
 
-.build-it_wrap {
+#technologydetails.ogk-technology-details .build-it_wrap {
   height: 50px !important;
   top: 40px !important;
 }
 
-#technologydetails .technology_tree {
+#technologydetails.ogk-technology-details .technology_tree {
   opacity: 0.85 !important;
   background-color: transparent !important;
   position: relative !important;
@@ -2203,27 +2203,27 @@ button.build-it_premium:hover {
   background: #141e27 !important;
 }
 
-#technologydetails > .description {
+#technologydetails.ogk-technology-details > .description {
   background: #0e1014 !important;
 }
 
-#technologydetails > .description .txt_box {
+#technologydetails.ogk-technology-details > .description .txt_box {
   padding-left: 10px !important;
   width: 90% !important;
 }
 
-#technologydetails .costs {
+#technologydetails.ogk-technology-details .costs {
   top: 40px !important;
   left: 60px !important;
 }
 
-#technologydetails .resource.icon {
+#technologydetails.ogk-technology-details .resource.icon {
   height: 75px !important;
   width: 60px;
   margin: 0 2px;
 }
 
-#technologydetails .information > ul:first-of-type {
+#technologydetails.ogk-technology-details .information > ul:first-of-type {
   height: 83px;
   align-items: end;
   display: flex;
@@ -2234,7 +2234,7 @@ button.build-it_premium:hover {
   width: auto !important;
 }
 
-#technologydetails .information > ul:first-of-type strong {
+#technologydetails.ogk-technology-details .information > ul:first-of-type strong {
   font-weight: 100 !important;
 }
 
@@ -8490,7 +8490,7 @@ span.resbuttons {
   visibility: hidden;
 }
 
-#technologydetails .technology_tree {
+#technologydetails.ogk-technology-details .technology_tree {
   opacity: 0.85 !important;
   background-color: transparent !important;
   position: relative !important;
