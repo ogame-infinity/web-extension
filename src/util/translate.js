@@ -11,6 +11,7 @@ const translation = Object.freeze({
       fr: "Mine de métal",
       tr: "Metal Madeni",
       br: "Mina de Metal",
+      it: "Miniera di metallo",
     },
     2: {
       de: "Kristallmine",
@@ -19,6 +20,7 @@ const translation = Object.freeze({
       fr: "Mine de cristal",
       tr: "Kristal Madeni",
       br: "Mina de Cristal",
+      it: "Miniera di cristallo",
     },
     3: {
       de: "Deuterium-Synthetisierer",
@@ -27,6 +29,7 @@ const translation = Object.freeze({
       fr: "Synthétiseur de deutérium",
       tr: "Deuterium Madeni",
       br: "Sintetizador de Deutério",
+      it: "Sintetizzatore di deuterio",
     },
     4: {
       de: "Solarkraftwerk",
@@ -35,6 +38,7 @@ const translation = Object.freeze({
       fr: "Centrale électrique solaire",
       tr: "Solar Enerji Santrali",
       br: "Planta de Energia Solar",
+      it: "Centrale solare",
     },
     12: {
       de: "Fusionskraftwerk",
@@ -43,6 +47,7 @@ const translation = Object.freeze({
       fr: "Centrale électrique de fusion",
       tr: "Füzyoenerji Santrali",
       br: "Reator de fusão",
+      it: "Centrale a fusione",
     },
     14: {
       de: "Roboterfabrik",
@@ -51,6 +56,7 @@ const translation = Object.freeze({
       fr: "Usine de robots",
       tr: "Robot Fabrikası",
       br: "Fabrica de Robos",
+      it: "Fabbrica dei robot",
     },
     15: {
       de: "Nanitenfabrik",
@@ -59,6 +65,7 @@ const translation = Object.freeze({
       fr: "Usine de nanites",
       tr: "Nanit Fabrikasi",
       br: "Fabrica de nanites",
+      it: "Fabbrica di naniti",
     },
     21: {
       de: "Raumschiffswerft",
@@ -67,6 +74,7 @@ const translation = Object.freeze({
       fr: "Chantier spatial",
       tr: "Uzay Tersanesi",
       br: "Hangar",
+      it: "Cantiere spaziale",
     },
     22: {
       de: "Metallspeicher",
@@ -75,6 +83,7 @@ const translation = Object.freeze({
       fr: "Hangar de métal",
       tr: "Metal Deposu",
       br: "Depósito de metal",
+      it: "Deposito di metallo",
     },
     23: {
       de: "Kristallspeicher",
@@ -83,6 +92,7 @@ const translation = Object.freeze({
       fr: "Hangar de cristal",
       tr: "Kristal Deposu",
       br: "Depósito de Cristal",
+      it: "Deposito di cristallo",
     },
     24: {
       de: "Deuteriumtank",
@@ -91,6 +101,7 @@ const translation = Object.freeze({
       fr: "Réservoir de deutérium",
       tr: "Deuterium Tankeri",
       br: "Deposito de deutério",
+      it: "Serbatoio di deuterio",
     },
     31: {
       de: "Forschungslabor",
@@ -99,6 +110,7 @@ const translation = Object.freeze({
       fr: "Laboratoire de recherche",
       tr: "Araştırma Laboratuvarı",
       br: "Laboratório de Pesquisas",
+      it: "Laboratorio di ricerca",
     },
     33: {
       de: "Terraformer",
@@ -107,6 +119,7 @@ const translation = Object.freeze({
       fr: "Terraformeur",
       tr: "Terraformer",
       br: "Terraformador",
+      it: "Terraformer",
     },
     34: {
       de: "Allianzdepot",
@@ -115,6 +128,7 @@ const translation = Object.freeze({
       fr: "Dépôt de ravitaillement",
       tr: "İttifak Deposu",
       br: "Depósito da aliança",
+      it: "Deposito dell'alleanza",
     },
     36: {
       de: "Raumdock",
@@ -123,6 +137,7 @@ const translation = Object.freeze({
       fr: "Dock spatial",
       tr: "Uzay İskelesi",
       br: "Estaleiro Espacial",
+      it: "Bacino spaziale",
     },
     41: {
       de: "Mondbasis",
@@ -131,6 +146,7 @@ const translation = Object.freeze({
       fr: "Base lunaire",
       tr: "Ay Üssü",
       br: "Base Lunar",
+      it: "Base lunare",
     },
     42: {
       de: "Sensorphalanx",
@@ -139,6 +155,7 @@ const translation = Object.freeze({
       fr: "Phalange de capteur",
       tr: "Sensör Filanx",
       br: "Sensor Phalanx",
+      it: "Falange di sensori",
     },
     43: {
       de: "Sprungtor",
@@ -147,6 +164,7 @@ const translation = Object.freeze({
       fr: "Porte de saut spatial",
       tr: "Sıçrama Geçidi",
       br: "Portal de Salto Quântico",
+      it: "Portale iperspaziale",
     },
     44: {
       de: "Raketensilo",
@@ -155,6 +173,7 @@ const translation = Object.freeze({
       fr: "Silo de missiles",
       tr: "Füze Silosu",
       br: "Silo de mísseis",
+      it: "Silo missilistico",
     },
     106: {
       de: "Spionagetechnik",
@@ -163,6 +182,7 @@ const translation = Object.freeze({
       fr: "Technologie Espionnage",
       tr: "Casusluk Tekniği",
       br: "Tecnologia de Espionagem",
+      it: "Tecnologia di spionaggio",
     },
     108: {
       de: "Computertechnik",
@@ -171,6 +191,7 @@ const translation = Object.freeze({
       fr: "Technologie Ordinateur",
       tr: "Bilgisayar Tekniği",
       br: "Tecnologia de Computadores",
+      it: "Tecnologia informatica",
     },
     109: {
       de: "Waffentechnik",
@@ -179,6 +200,7 @@ const translation = Object.freeze({
       fr: "Technologie Armes",
       tr: "Silah Tekniği",
       br: "Tecnologia de armas",
+      it: "Tecnologia delle armi",
     },
     110: {
       de: "Schildtechnik",
@@ -187,6 +209,7 @@ const translation = Object.freeze({
       fr: "Technologie Bouclier",
       tr: "Kalkan Tekniği",
       br: "Tecnologia de escudo",
+      it: "Tecnologia degli scudi",
     },
     111: {
       de: "Raumschiffpanzerung",
@@ -195,6 +218,7 @@ const translation = Object.freeze({
       fr: "Technologie Protection des vaisseaux spatiaux",
       tr: "Uzay gemisi zırhı",
       br: "Tecnologia de blindagem",
+      it: "Tecnologia delle corazze",
     },
     113: {
       de: "Energietechnik",
@@ -203,6 +227,7 @@ const translation = Object.freeze({
       fr: "Technologie énergétique",
       tr: "Enerji Tekniği",
       br: "Tecnologia de energia",
+      it: "Tecnologia energetica",
     },
     114: {
       de: "Hyperraumtechnik",
@@ -211,6 +236,7 @@ const translation = Object.freeze({
       fr: "Technologie hyperespace",
       tr: "Hiperuzay Tekniği",
       br: "Tecnologia de Hiperespaço",
+      it: "Tecnologia iperspaziale",
     },
     115: {
       de: "Verbrennungstriebwerk",
@@ -219,6 +245,7 @@ const translation = Object.freeze({
       fr: "Réacteur à combustion",
       tr: "Yanma motoru",
       br: "Motor de combustão",
+      it: "Propulsore a combustione",
     },
     117: {
       de: "Impulstriebwerk",
@@ -227,6 +254,7 @@ const translation = Object.freeze({
       fr: "Réacteur à impulsion",
       tr: "İtki motoru",
       br: "Motor de impulsão",
+      it: "Propulsore a impulso",
     },
     118: {
       de: "Hyperraumantrieb",
@@ -235,6 +263,7 @@ const translation = Object.freeze({
       fr: "Propulsion hyperespace",
       tr: "Hiperuzay iticisi",
       br: "Motor propulsor de hiperespaço",
+      it: "Propulsore iperspaziale",
     },
     120: {
       de: "Lasertechnik",
@@ -243,6 +272,7 @@ const translation = Object.freeze({
       fr: "Technologie Laser",
       tr: "Lazer Teknolojisi",
       br: "Tecnologia de Laser",
+      it: "Tecnologia laser",
     },
     121: {
       de: "Ionentechnik",
@@ -251,6 +281,7 @@ const translation = Object.freeze({
       fr: "Technologie à ions",
       tr: "İyon Teknolojisi",
       br: "Tecnologia de íons",
+      it: "Tecnologia ionica",
     },
     122: {
       de: "Plasmatechnik",
@@ -259,6 +290,7 @@ const translation = Object.freeze({
       fr: "Technologie Plasma",
       tr: "Plazma Teknolojisi",
       br: "Tecnologia de Plasma",
+      it: "Tecnologia del plasma",
     },
     123: {
       de: "Intergalaktisches Forschungsnetzwerk",
@@ -267,6 +299,7 @@ const translation = Object.freeze({
       fr: "Réseau de recherche intergalactique",
       tr: "Galaksiler arası araştırma ağı",
       br: "Rede intergalática de pesquisas",
+      it: "Rete intergalattica di ricerca",
     },
     124: {
       de: "Astrophysik",
@@ -275,6 +308,7 @@ const translation = Object.freeze({
       fr: "Astrophysique",
       tr: "Astrofizik",
       br: "Astrofísica",
+      it: "Astrofisica",
     },
     199: {
       de: "Gravitonforschung",
@@ -283,6 +317,7 @@ const translation = Object.freeze({
       fr: "Technologie Graviton",
       tr: "Graviton Teknolojisi",
       br: "Tecnologia de gravitação",
+      it: "Tecnologia gravitronica",
     },
     202: {
       de: "Kleiner Transporter",
@@ -291,6 +326,7 @@ const translation = Object.freeze({
       fr: "Petit transporteur",
       tr: "Küçük Nakliye Gemisi",
       br: "Cargueiro pequeno",
+      it: "Cargo leggero",
     },
     203: {
       de: "Großer Transporter",
@@ -299,6 +335,7 @@ const translation = Object.freeze({
       fr: "Grand transporteur",
       tr: "Büyük Nakliye Gemisi",
       br: "Cargueiro Grande",
+      it: "Cargo pesante",
     },
     204: {
       de: "Leichter Jäger",
@@ -307,6 +344,7 @@ const translation = Object.freeze({
       fr: "Chasseur léger",
       tr: "Hafif Avcı",
       br: "Caça ligeiro",
+      it: "Caccia leggero",
     },
     205: {
       de: "Schwerer Jäger",
@@ -315,6 +353,7 @@ const translation = Object.freeze({
       fr: "Chasseur lourd",
       tr: "Ağır Avcı",
       br: "Caça pesado",
+      it: "Caccia pesante",
     },
     206: {
       de: "Kreuzer",
@@ -323,6 +362,7 @@ const translation = Object.freeze({
       fr: "Croiseur",
       tr: "Kruvazör",
       br: "Cruzador",
+      it: "Incrociatore",
     },
     207: {
       de: "Schlachtschiff",
@@ -331,6 +371,7 @@ const translation = Object.freeze({
       fr: "Vaisseau de bataille",
       tr: "Komuta Gemisi",
       br: "Nave de batalha",
+      it: "Nave da battaglia",
     },
     208: {
       de: "Kolonieschiff",
@@ -339,6 +380,7 @@ const translation = Object.freeze({
       fr: "Vaisseau de colonisation",
       tr: "Koloni Gemisi",
       br: "Nave Colonizadora",
+      it: "Nave colonizzatrice",
     },
     209: {
       de: "Recycler",
@@ -347,6 +389,7 @@ const translation = Object.freeze({
       fr: "Recycleur",
       tr: "Geri Dönüşümcü",
       br: "Reciclador",
+      it: "Riciclatrice",
     },
     210: {
       de: "Spionagesonde",
@@ -355,6 +398,7 @@ const translation = Object.freeze({
       fr: "Sonde d`espionnage",
       tr: "Casusluk Sondası",
       br: "Sonda de espionagem",
+      it: "Sonda spia",
     },
     211: {
       de: "Bomber",
@@ -363,6 +407,7 @@ const translation = Object.freeze({
       fr: "Bombardier",
       tr: "Bombardıman Gemisi",
       br: "Bombardeiro",
+      it: "Bombardiere",
     },
     212: {
       de: "Solarsatellit",
@@ -371,6 +416,7 @@ const translation = Object.freeze({
       fr: "Satellite solaire",
       tr: "Solar Uydu",
       br: "Satélite solar",
+      it: "Satellite solare",
     },
     213: {
       de: "Zerstörer",
@@ -379,6 +425,7 @@ const translation = Object.freeze({
       fr: "Destructeur",
       tr: "Muhrip",
       br: "Destruídor",
+      it: "Cacciatorpediniere",
     },
     214: {
       de: "Todesstern",
@@ -387,6 +434,7 @@ const translation = Object.freeze({
       fr: "Étoile de la mort",
       tr: "Ölüm Yıldızı",
       br: "Estrela da morte",
+      it: "Morte Nera",
     },
     215: {
       de: "Schlachtkreuzer",
@@ -395,6 +443,7 @@ const translation = Object.freeze({
       fr: "Traqueur",
       tr: "Fırkateyn",
       br: "Interceptador",
+      it: "Incrociatore da battaglia",
     },
     217: {
       de: "Crawler",
@@ -403,6 +452,7 @@ const translation = Object.freeze({
       fr: "Foreuse",
       tr: "Paletli",
       br: "Rastejador",
+      it: "Crawler",
     },
     218: {
       de: "Reaper",
@@ -411,6 +461,7 @@ const translation = Object.freeze({
       fr: "Faucheur",
       tr: "Azrail",
       br: "Ceifeira",
+      it: "Mietitore",
     },
     219: {
       de: "Pathfinder",
@@ -419,6 +470,7 @@ const translation = Object.freeze({
       fr: "Éclaireur",
       tr: "Rehber",
       br: "Explorador",
+      it: "Pathfinder",
     },
     401: {
       de: "Raketenwerfer",
@@ -427,6 +479,7 @@ const translation = Object.freeze({
       fr: "Lanceur de missiles",
       tr: "Roketatar",
       br: "Lançador de Mísseis",
+      it: "Lanciamissili",
     },
     402: {
       de: "Leichtes Lasergeschütz",
@@ -435,6 +488,7 @@ const translation = Object.freeze({
       fr: "Artillerie laser légère",
       tr: "Hafif Lazer Topu",
       br: "Laser Pequeno",
+      it: "Laser leggero",
     },
     403: {
       de: "Schweres Lasergeschütz",
@@ -443,6 +497,7 @@ const translation = Object.freeze({
       fr: "Artillerie laser lourde",
       tr: "Ağır Lazer Topu",
       br: "Laser pesado",
+      it: "Laser pesante",
     },
     404: {
       de: "Gaußkanone",
@@ -451,6 +506,7 @@ const translation = Object.freeze({
       fr: "Canon de Gauss",
       tr: "Gaus Topu",
       br: "Canhão de Gaus",
+      it: "Cannone gauss",
     },
     405: {
       de: "Ionengeschütz",
@@ -459,6 +515,7 @@ const translation = Object.freeze({
       fr: "Artillerie à ions",
       tr: "İyon Topu",
       br: "Canhão de íons",
+      it: "Cannone ionico",
     },
     406: {
       de: "Plasmawerfer",
@@ -467,6 +524,7 @@ const translation = Object.freeze({
       fr: "Lanceur de plasma",
       tr: "Plazma Atıcı",
       br: "Canhão de Plasma",
+      it: "Cannone al plasma",
     },
     407: {
       de: "Kleine Schildkuppel",
@@ -475,6 +533,7 @@ const translation = Object.freeze({
       fr: "Petit bouclier",
       tr: "Küçük Kalkan Kubbesi",
       br: "Pequeno escudo planetário",
+      it: "Cupola scudo piccola",
     },
     408: {
       de: "Große Schildkuppel",
@@ -483,6 +542,7 @@ const translation = Object.freeze({
       fr: "Grand bouclier",
       tr: "Büyük Kalkan Kubbesi",
       br: "Grande escudo planetário",
+      it: "Cupola scudo grande",
     },
     502: {
       de: "Abfangrakete",
@@ -491,6 +551,7 @@ const translation = Object.freeze({
       fr: "Missile d`interception",
       tr: "Yakalıyıcı Roketler",
       br: "Míssel de interceptação",
+      it: "Missile anti-balistico",
     },
     503: {
       de: "Interplanetarrakete",
@@ -499,8 +560,9 @@ const translation = Object.freeze({
       fr: "Missile interplanétaire",
       tr: "Gezegenler Arası Roketler",
       br: "Míssel interplanetário",
+      it: "Missile interplanetario",
     },
-    label: { de: undefined, en: undefined, es: undefined, fr: undefined, tr: undefined, br: undefined },
+    label: { de: undefined, en: undefined, es: undefined, fr: undefined, tr: undefined, br: undefined, it: undefined },
   },
   res: {
     0: {
@@ -510,6 +572,7 @@ const translation = Object.freeze({
       fr: "Métal",
       tr: "Metal",
       br: "Metal",
+      it: "Metallo",
     },
     1: {
       de: "Kristall",
@@ -518,6 +581,7 @@ const translation = Object.freeze({
       fr: "Cristal",
       tr: "Kristal",
       br: "Cristal",
+      it: "Cristallo",
     },
     2: {
       de: "Deuterium",
@@ -526,6 +590,7 @@ const translation = Object.freeze({
       fr: "Deutérium",
       tr: "Deuterium",
       br: "Deutério",
+      it: "Deuterio",
     },
     3: {
       de: "Dunkle Materie",
@@ -534,6 +599,7 @@ const translation = Object.freeze({
       fr: "Antimatière",
       tr: "Karanlık Madde",
       br: "Matéria negra",
+      it: "Materia oscura",
     },
     4: {
       de: "Energie",
@@ -542,6 +608,7 @@ const translation = Object.freeze({
       fr: "Énergie",
       tr: "Enerji",
       br: "Energia",
+      it: "Energia",
     },
   },
   text: {
@@ -552,6 +619,7 @@ const translation = Object.freeze({
       fr: "Paramètres",
       tr: "Ayarlar",
       br: "Configurações",
+      it: "Impostazioni",
     },
     1: {
       de: "Zielliste",
@@ -560,6 +628,7 @@ const translation = Object.freeze({
       fr: "Liste des cibles",
       tr: "Hedefler Listesi",
       br: "Lista de Alvos",
+      it: "Lista obiettivi",
     },
     2: {
       de: "Spielersuche",
@@ -568,6 +637,7 @@ const translation = Object.freeze({
       fr: "Recherche de joueur",
       tr: "Oyuncu Arama",
       br: "Busca de jogadores",
+      it: "Ricerca giocatore",
     },
     3: {
       de: "Statistik",
@@ -576,6 +646,7 @@ const translation = Object.freeze({
       fr: "Statistiques",
       tr: "İstatistikler",
       br: "Estatísticas",
+      it: "Statistiche",
     },
     4: {
       de: "Übersicht",
@@ -584,6 +655,7 @@ const translation = Object.freeze({
       fr: "Aperçu",
       tr: "Genel Bakış",
       br: "Visão geral",
+      it: "Panoramica",
     },
     5: {
       de: "Planetenübersicht",
@@ -592,6 +664,7 @@ const translation = Object.freeze({
       fr: "Aperçu des planètes",
       tr: "Gezegenler Genel Bakışı",
       br: "Visão de planetas",
+      it: "Panoramica pianeti",
     },
     6: {
       de: "Hier",
@@ -600,6 +673,7 @@ const translation = Object.freeze({
       fr: "Ici",
       tr: "Burada",
       br: "Aqui",
+      it: "Qui",
     },
     7: {
       de: "Fehlerberichte",
@@ -608,6 +682,7 @@ const translation = Object.freeze({
       fr: "Rapport de bug",
       tr: "Hata Bildirme",
       br: "Reporte de bugs",
+      it: "Segnalazione bug",
     },
     8: {
       de: "Featureanfrage",
@@ -616,6 +691,7 @@ const translation = Object.freeze({
       fr: "Demande de fonctionnalité",
       tr: "Özellik İsteği",
       br: "Pedir uma nova função",
+      it: "Richiesta funzionalità",
     },
     9: {
       de: "Universumseigenschaften",
@@ -624,6 +700,7 @@ const translation = Object.freeze({
       fr: "Caractéristiques de l'univers",
       tr: "Evren Özellikleri",
       br: "Características do Universo",
+      it: "Caratteristiche universo",
     },
     10: {
       de: "Punkte #1",
@@ -632,6 +709,7 @@ const translation = Object.freeze({
       fr: "Point #1",
       tr: "1.Oyuncunun Puanı",
       br: "Pontos Top #1",
+      it: "Punti #1",
     },
     11: {
       de: "Öko Geschwindigkeit",
@@ -640,6 +718,7 @@ const translation = Object.freeze({
       fr: "Vitesse éco",
       tr: "Ekonomi Hızı",
       br: "Velocidade da economia",
+      it: "Velocità economia",
     },
     12: {
       de: "Flottengeschwindigkeit (feindlich)",
@@ -648,6 +727,7 @@ const translation = Object.freeze({
       fr: "Vitesse de flotte (guerre)",
       tr: "Saldırı Filo Hızı",
       br: "Velocidade de naves (Ataque)",
+      it: "Velocità flotta (guerra)",
     },
     13: {
       de: "Flottengeschwindigkeit (friedlich)",
@@ -656,6 +736,7 @@ const translation = Object.freeze({
       fr: "Vitesse de flotte (paisible)",
       tr: "Barışçıl Filo Hızı",
       br: "Velocidade de naves (Pacífica)",
+      it: "Velocità flotta (pace)",
     },
     14: {
       de: "Flottengeschwindigkeit (halten)",
@@ -664,6 +745,7 @@ const translation = Object.freeze({
       fr: "Vitesse de la flotte (en attente)",
       tr: "Durma Filo Hızı",
       br: "Velocidade de Naves (Guardar)",
+      it: "Velocità flotta (stazionamento)",
     },
     15: {
       de: "Datenverwaltung",
@@ -672,6 +754,7 @@ const translation = Object.freeze({
       fr: "Gestion de données",
       tr: "Veri Yönetimi",
       br: "Gestão de dados",
+      it: "Gestione dati",
     },
     16: {
       de: "Expeditionsdaten",
@@ -680,6 +763,7 @@ const translation = Object.freeze({
       fr: "Données d'expéditions",
       tr: "Sefer Verileri",
       br: "Dados das expedições",
+      it: "Dati spedizioni",
     },
     17: {
       de: "Kampfdaten",
@@ -688,6 +772,7 @@ const translation = Object.freeze({
       fr: "Données des Combats",
       tr: "Savaş Verileri",
       br: "Dados de combate",
+      it: "Dati combattimenti",
     },
     18: {
       de: "Zieldaten",
@@ -696,6 +781,7 @@ const translation = Object.freeze({
       fr: "Données des cibles",
       tr: "Hedef Verileri",
       br: "Dados de alvos",
+      it: "Dati obiettivi",
     },
     19: {
       de: "Gescannte Daten (Galaxie)",
@@ -704,6 +790,7 @@ const translation = Object.freeze({
       fr: "Données numérisées (galaxie)",
       tr: "Taranan Veriler (galaksi)",
       br: "Dados escaneados (galaxia)",
+      it: "Dati scansionati (galassia)",
     },
     20: {
       de: "Optionsdaten",
@@ -712,6 +799,7 @@ const translation = Object.freeze({
       fr: "Données d'options",
       tr: "Seçenekler Verisi",
       br: "Dados das opções",
+      it: "Dati opzioni",
     },
     21: {
       de: "Cache und temporäre Daten",
@@ -720,6 +808,7 @@ const translation = Object.freeze({
       fr: "Données de cache et temporaires",
       tr: "Önbellek ve Geçici Veriler",
       br: "Cache e dados temporários",
+      it: "Cache e dati temporanei",
     },
     22: {
       de: "Andere Add-On-Daten",
@@ -728,6 +817,7 @@ const translation = Object.freeze({
       fr: "Données d'autres add-ons",
       tr: "Diğer Eklenti Verileri",
       br: "Outros dados de add-on's",
+      it: "Altri dati delle estensioni",
     },
     23: {
       de: "Aktualisieren",
@@ -736,6 +826,7 @@ const translation = Object.freeze({
       fr: "Mettre à jour",
       tr: "Güncelle",
       br: "Atualizar",
+      it: "Aggiorna",
     },
     24: {
       de: "Exportieren",
@@ -744,6 +835,7 @@ const translation = Object.freeze({
       fr: "Exportation",
       tr: "Dışa Aktar",
       br: "Exportar",
+      it: "Esporta",
     },
     25: {
       de: "Importieren",
@@ -752,6 +844,7 @@ const translation = Object.freeze({
       fr: "Importer",
       tr: "İçe Aktar",
       br: "Importar",
+      it: "Importa",
     },
     26: {
       de: "Zurücksetzen",
@@ -760,6 +853,7 @@ const translation = Object.freeze({
       fr: "Réinitialiser",
       tr: "Sıfırla",
       br: "Resetar",
+      it: "Reimposta",
     },
     27: {
       de: "Speichern",
@@ -768,6 +862,7 @@ const translation = Object.freeze({
       fr: "Sauvegarder",
       tr: "Kaydet",
       br: "Salvar",
+      it: "Salva",
     },
     28: {
       de: "Verbleibende Ressourcen",
@@ -776,6 +871,7 @@ const translation = Object.freeze({
       fr: "Ressources restantes",
       tr: "Saklanacak kaynaklar",
       br: "Recursos para manter",
+      it: "Risorse da conservare",
     },
     29: {
       de: "Verbleibende Schiffe",
@@ -784,6 +880,7 @@ const translation = Object.freeze({
       fr: "Navires restants",
       tr: "Saklanacak gemiler",
       br: "Naves para manter",
+      it: "Navi da conservare",
     },
     30: {
       de: "Standardmission (eigene)",
@@ -792,6 +889,7 @@ const translation = Object.freeze({
       fr: "Mission par défaut (propre)",
       tr: "Varsayılan görev (kendi)",
       br: "Missões padrão (próprias)",
+      it: "Missione predefinita (proprie)",
     },
     31: {
       de: "Standardmission (andere)",
@@ -800,6 +898,7 @@ const translation = Object.freeze({
       fr: "Mission par défaut (autres)",
       tr: "Varsayılan görev (başkaları)",
       br: "Missões padrão (outras)",
+      it: "Missione predefinita (altri)",
     },
     32: {
       de: "Standardmission (Expedition)",
@@ -808,6 +907,7 @@ const translation = Object.freeze({
       fr: "Mission par défaut (expédition)",
       tr: "Varsayılan görev (sefer)",
       br: "Missão padrão (expedições)",
+      it: "Missione predefinita (spedizione)",
     },
     33: {
       de: "Aktivitätstimer anzeigen",
@@ -816,6 +916,7 @@ const translation = Object.freeze({
       fr: "Afficher les minuteurs d'activité",
       tr: "Etkinlik zamanlayıcılarını göster",
       br: "Mostrar times de atividade",
+      it: "Mostra timer di attività",
     },
     34: {
       de: "Weniger aggressive automatische Aktualisierung des Imperiums",
@@ -824,6 +925,7 @@ const translation = Object.freeze({
       fr: "Récupération automatique de l'Empire moins agressif",
       tr: "Daha az agresif imparatorluk otomatik güncellemesi",
       br: "Atualização automática do império menos agressiva",
+      it: "Aggiornamento automatico dell'impero meno aggressivo",
     },
     35: {
       de: "Rentabilitätswert",
@@ -832,6 +934,7 @@ const translation = Object.freeze({
       fr: "Valeur de rentabilité",
       tr: "Amortisman değeri",
       br: "Valor de rentabilidade",
+      it: "Valore di redditività",
     },
     36: {
       de: "Uhren auf die lokale Zeitzone umstellen",
@@ -840,6 +943,7 @@ const translation = Object.freeze({
       fr: "Changer les horloges au fuseau horaire local",
       tr: "Saatleri yerel saat dilimine değiştir",
       br: "Mostrar horário local",
+      it: "Converti gli orologi al fuso orario locale",
     },
     37: {
       de: "Prozentsatz der derzeit im Flug befindlichen Flotte",
@@ -848,6 +952,7 @@ const translation = Object.freeze({
       fr: "Pourcentage de la flotte actuellement en vol",
       tr: "Şu anda uçuşta olan filonun yüzdesi",
       br: "Porcentagem de naves atualmente em vôo",
+      it: "Percentuale di flotta attualmente in volo",
     },
     38: {
       de: "Fliegend",
@@ -856,6 +961,7 @@ const translation = Object.freeze({
       fr: "En vol",
       tr: "Havada",
       br: "Viajando",
+      it: "In volo",
     },
     39: {
       de: "Fehlend",
@@ -864,6 +970,7 @@ const translation = Object.freeze({
       fr: "Manquant",
       tr: "Eksik",
       br: "Restante",
+      it: "Mancanti",
     },
     40: {
       de: "Gesamt",
@@ -872,6 +979,7 @@ const translation = Object.freeze({
       fr: "Total",
       tr: "Toplam",
       br: "Total",
+      it: "Totale",
     },
     41: {
       de: "Expeditionen",
@@ -880,6 +988,7 @@ const translation = Object.freeze({
       fr: "Expéditions",
       tr: "Sefer",
       br: "Expedições",
+      it: "Spedizioni",
     },
     42: {
       de: "Planet",
@@ -888,6 +997,7 @@ const translation = Object.freeze({
       fr: "Planète",
       tr: "Gezegen",
       br: "Planeta",
+      it: "Pianeta",
     },
     43: {
       de: "Ankunft",
@@ -896,6 +1006,7 @@ const translation = Object.freeze({
       fr: "Arrivée",
       tr: "Varış",
       br: "Chegada",
+      it: "Arrivo",
     },
     44: {
       de: "Dauer",
@@ -904,6 +1015,7 @@ const translation = Object.freeze({
       fr: "Durée",
       tr: "Süre",
       br: "Duração",
+      it: "Durata",
     },
     45: {
       de: "Rückkehr",
@@ -912,6 +1024,7 @@ const translation = Object.freeze({
       fr: "Retour",
       tr: "Dönüş",
       br: "Retornar",
+      it: "Ritorno",
     },
     46: {
       de: "Keine Missionen...",
@@ -920,6 +1033,7 @@ const translation = Object.freeze({
       fr: "Aucune mission...",
       tr: "Görev yok...",
       br: "Sem missões...",
+      it: "Nessuna missione...",
     },
     47: {
       de: "Ladekapazität",
@@ -928,6 +1042,7 @@ const translation = Object.freeze({
       fr: "Fret",
       tr: "Nakliye Kapasitesi",
       br: "Capacidade de carga",
+      it: "Capacità di carico",
     },
     48: {
       de: "Geschwindigkeit",
@@ -936,6 +1051,7 @@ const translation = Object.freeze({
       fr: "Vitesse",
       tr: "Hız",
       br: "Velocidade",
+      it: "Velocità",
     },
     49: {
       de: "Treibstoffverbrauch",
@@ -944,6 +1060,7 @@ const translation = Object.freeze({
       fr: "Consommation",
       tr: "Yakıt tüketimi",
       br: "Consumo de combustível",
+      it: "Consumo di carburante",
     },
     50: {
       de: "Amortisationsdauer",
@@ -952,6 +1069,7 @@ const translation = Object.freeze({
       fr: "Période de remboursement",
       tr: "Amortisman süresi",
       br: "Tempo de retorno",
+      it: "Periodo di ammortamento",
     },
     51: {
       de: "Ökonomie",
@@ -960,6 +1078,7 @@ const translation = Object.freeze({
       fr: "Économie",
       tr: "Ekonomi",
       br: "Economia",
+      it: "Economia",
     },
     52: {
       de: "Forschung",
@@ -968,6 +1087,7 @@ const translation = Object.freeze({
       fr: "Recherche",
       tr: "Araştırma",
       br: "Pesquisa",
+      it: "Ricerca",
     },
     53: {
       de: "Militär",
@@ -976,6 +1096,7 @@ const translation = Object.freeze({
       fr: "Militaire",
       tr: "Askeri",
       br: "Militar",
+      it: "Militare",
     },
     54: {
       de: "Verteidigung",
@@ -984,6 +1105,7 @@ const translation = Object.freeze({
       fr: "Défense",
       tr: "Savunma",
       br: "Defesa",
+      it: "Difesa",
     },
     55: {
       de: "Sieg",
@@ -992,6 +1114,7 @@ const translation = Object.freeze({
       fr: "Gagné",
       tr: "Kazandın",
       br: "Vitória",
+      it: "Vittoria",
     },
     56: {
       de: "Niederlage",
@@ -1000,6 +1123,7 @@ const translation = Object.freeze({
       fr: "Perdus",
       tr: "Kaybettin",
       br: "Derrota",
+      it: "Sconfitta",
     },
     57: {
       de: "Unentschieden",
@@ -1008,6 +1132,7 @@ const translation = Object.freeze({
       fr: "Match nul",
       tr: "Berabere",
       br: "Empate",
+      it: "Pareggio",
     },
     58: {
       de: "API in die Zwischenablage kopiert",
@@ -1016,6 +1141,7 @@ const translation = Object.freeze({
       fr: "Clé API copiée dans le presse-papiers",
       tr: "API Anahtarı panoya kopyalandı",
       br: "Api Key copiada para área de transferência",
+      it: "Chiave API copiata negli appunti",
     },
     59: {
       de: "Verhältnis",
@@ -1024,6 +1150,7 @@ const translation = Object.freeze({
       fr: "Rapport",
       tr: "Oran",
       br: "Média",
+      it: "Rapporto",
     },
     60: {
       de: "Stunde",
@@ -1032,6 +1159,7 @@ const translation = Object.freeze({
       fr: "Heure",
       tr: "Saatlik Üretim",
       br: "Hora",
+      it: "Ora",
     },
     61: {
       de: "Tag",
@@ -1040,6 +1168,7 @@ const translation = Object.freeze({
       fr: "Jour",
       tr: "Günlük Üretim",
       br: "Dia",
+      it: "Giorno",
     },
     62: {
       de: "Woche",
@@ -1048,6 +1177,7 @@ const translation = Object.freeze({
       fr: "Semaine",
       tr: "Haftalık Üretim",
       br: "Semana",
+      it: "Settimana",
     },
     63: {
       de: "Flotte",
@@ -1056,6 +1186,7 @@ const translation = Object.freeze({
       fr: "Flotte",
       tr: "Filo",
       br: "Frota",
+      it: "Flotta",
     },
     64: {
       de: "Schiffe",
@@ -1064,6 +1195,7 @@ const translation = Object.freeze({
       fr: "navires",
       tr: "Gemi",
       br: "Naves",
+      it: "navi",
     },
     65: {
       de: "Recycling",
@@ -1072,6 +1204,7 @@ const translation = Object.freeze({
       fr: "Recyclage",
       tr: "GD Kapasitesi",
       br: "Reciclagem",
+      it: "Riciclaggio",
     },
     66: {
       de: "Für diese Funktionen ist der Commander erforderlich ...",
@@ -1080,6 +1213,7 @@ const translation = Object.freeze({
       fr: "L'officier de commandement est requis pour ces fonctions...",
       tr: "Bu özellikler için komutan subayı gereklidir...",
       br: "O comandante é necessário para essa função",
+      it: "Per queste funzioni è necessario l'ufficiale Comandante...",
     },
     67: {
       de: "Ressourcen",
@@ -1088,6 +1222,7 @@ const translation = Object.freeze({
       fr: "Ressources",
       tr: "Kaynaklar",
       br: "Recursos",
+      it: "Risorse",
     },
     68: {
       de: "Verluste",
@@ -1096,6 +1231,7 @@ const translation = Object.freeze({
       fr: "Pertes",
       tr: "Kayıplar",
       br: "Perdas",
+      it: "Perdite",
     },
     69: {
       de: "Recycled",
@@ -1104,6 +1240,7 @@ const translation = Object.freeze({
       fr: "Recyclé",
       tr: "Hurda",
       br: "Reciclado",
+      it: "Riciclato",
     },
     70: {
       de: "Treibstoff",
@@ -1112,6 +1249,7 @@ const translation = Object.freeze({
       fr: "Carburant",
       tr: "Harcanan Deu",
       br: "Combustível",
+      it: "Carburante",
     },
     71: {
       de: "S. Loch",
@@ -1120,6 +1258,7 @@ const translation = Object.freeze({
       fr: "Trou noir",
       tr: "Kara Delik",
       br: "Buraco Negro",
+      it: "Buco nero",
     },
     72: {
       de: "Beste Kämpfe",
@@ -1128,6 +1267,7 @@ const translation = Object.freeze({
       fr: "Meilleurs combats",
       tr: "En iyi Savaşlar",
       br: "Melhores combates",
+      it: "Migliori combattimenti",
     },
     73: {
       de: "Name",
@@ -1136,6 +1276,7 @@ const translation = Object.freeze({
       fr: "Nom",
       tr: "Adı",
       br: "Nome",
+      it: "Nome",
     },
     74: {
       de: "Beute",
@@ -1144,6 +1285,7 @@ const translation = Object.freeze({
       fr: "Pillage",
       tr: "Ganimet",
       br: "Faturamento",
+      it: "Bottino",
     },
     75: {
       de: "Schaden",
@@ -1152,6 +1294,7 @@ const translation = Object.freeze({
       fr: "Dommage",
       tr: "Hasar",
       br: "Danos",
+      it: "Danni",
     },
     76: {
       de: "Trümmerfeld",
@@ -1160,6 +1303,7 @@ const translation = Object.freeze({
       fr: "Débris",
       tr: "Enkaz alanı",
       br: "Destroços",
+      it: "Campo di detriti",
     },
     77: {
       de: "Anpassen",
@@ -1168,6 +1312,7 @@ const translation = Object.freeze({
       fr: "Ajuster",
       tr: "Ayarla",
       br: "Ajuste",
+      it: "Regola",
     },
     78: {
       de: "Items",
@@ -1176,6 +1321,7 @@ const translation = Object.freeze({
       fr: "Items",
       tr: "Öğeler",
       br: "Itens",
+      it: "Oggetti",
     },
     79: {
       de: "Aliens",
@@ -1184,6 +1330,7 @@ const translation = Object.freeze({
       fr: "Aliens",
       tr: "Yabancılar",
       br: "Alienígenas",
+      it: "Alieni",
     },
     80: {
       de: "Piraten",
@@ -1192,6 +1339,7 @@ const translation = Object.freeze({
       fr: "Pirates",
       tr: "Korsanlar",
       br: "Piratas",
+      it: "Pirati",
     },
     81: {
       de: "Verspätung",
@@ -1200,6 +1348,7 @@ const translation = Object.freeze({
       fr: "En retard",
       tr: "Geç",
       br: "Atraso",
+      it: "In ritardo",
     },
     82: {
       de: "Frühzeitig",
@@ -1208,6 +1357,7 @@ const translation = Object.freeze({
       fr: "En avance",
       tr: "Erken",
       br: "Adiantado",
+      it: "In anticipo",
     },
     83: {
       de: "Leer",
@@ -1216,6 +1366,7 @@ const translation = Object.freeze({
       fr: "Vide",
       tr: "Boş",
       br: "Vazio",
+      it: "Vuoto",
     },
     84: {
       de: "Händler",
@@ -1224,6 +1375,7 @@ const translation = Object.freeze({
       fr: "Marchands",
       tr: "Tüccar",
       br: "Mercador",
+      it: "Mercante",
     },
     85: {
       de: "Produktion",
@@ -1232,6 +1384,7 @@ const translation = Object.freeze({
       fr: "Production",
       tr: "Üretim",
       br: "Produção",
+      it: "Produzione",
     },
     86: {
       de: "Kampf",
@@ -1240,6 +1393,7 @@ const translation = Object.freeze({
       fr: "Combat",
       tr: "Savaş Araştırmaları",
       br: "Combate",
+      it: "Combattimento",
     },
     87: {
       de: "Antrieb",
@@ -1248,6 +1402,7 @@ const translation = Object.freeze({
       fr: "Propulsion",
       tr: "Sürüş Araştırmaları",
       br: "Propulsão",
+      it: "Propulsione",
     },
     88: {
       de: "Empfohlene Weiterentwicklung",
@@ -1256,6 +1411,7 @@ const translation = Object.freeze({
       fr: "Développement ultérieur recommandé",
       tr: "Tavsiye edilen ileri geliştirme (Amortisman Hesabı)",
       br: "Desenvolvimento recomendado para o futuro",
+      it: "Sviluppo ulteriore consigliato",
     },
     89: {
       de: "Lebensformen",
@@ -1264,6 +1420,7 @@ const translation = Object.freeze({
       fr: "Forme de vie",
       tr: "Canlı Türleri",
       br: "Formas de vida",
+      it: "Forme di vita",
     },
     90: {
       de: "Minen",
@@ -1272,6 +1429,7 @@ const translation = Object.freeze({
       fr: "Mines",
       tr: "Madenler",
       br: "Minas",
+      it: "Miniere",
     },
     91: {
       de: "Allgemein",
@@ -1280,6 +1438,7 @@ const translation = Object.freeze({
       fr: "Général",
       tr: "Genel",
       br: "General",
+      it: "Generale",
     },
     92: {
       de: "Kämpfe",
@@ -1288,6 +1447,7 @@ const translation = Object.freeze({
       fr: "Combat",
       tr: "Savaşlar",
       br: "Combates",
+      it: "Combattimenti",
     },
     93: {
       de: "Astro",
@@ -1296,6 +1456,7 @@ const translation = Object.freeze({
       fr: "Astro",
       tr: "Astro",
       br: "Astro",
+      it: "Astro",
     },
     94: {
       de: "Computer",
@@ -1304,6 +1465,7 @@ const translation = Object.freeze({
       fr: "Ordinateur",
       tr: "Bilgisayar T.",
       br: "Computadores",
+      it: "Computer",
     },
     95: {
       de: "Hyperraum",
@@ -1312,6 +1474,7 @@ const translation = Object.freeze({
       fr: "Hyperespace",
       tr: "Hiperuzay T.",
       br: "Hiperespaço",
+      it: "Iperspazio",
     },
     96: {
       de: "Plasma",
@@ -1320,6 +1483,7 @@ const translation = Object.freeze({
       fr: "Plasma",
       tr: "Plazma",
       br: "Plasma",
+      it: "Plasma",
     },
     97: {
       de: "Datum",
@@ -1328,6 +1492,7 @@ const translation = Object.freeze({
       fr: "Date",
       tr: "Tarih",
       br: "Data",
+      it: "Data",
     },
     98: {
       de: "Koordinaten",
@@ -1336,6 +1501,7 @@ const translation = Object.freeze({
       fr: "Coordonnées",
       tr: "Koordinatlar",
       br: "Coordenadas",
+      it: "Coordinate",
     },
     99: {
       de: "Beute",
@@ -1344,6 +1510,7 @@ const translation = Object.freeze({
       fr: "Butin",
       tr: "Ganimet",
       br: "Faturamento",
+      it: "Bottino",
     },
     100: {
       de: "Flotte",
@@ -1352,6 +1519,7 @@ const translation = Object.freeze({
       fr: "Flotte",
       tr: "Filo",
       br: "Frota",
+      it: "Flotta",
     },
     101: {
       de: "Standard Expeditionsdauer",
@@ -1360,6 +1528,7 @@ const translation = Object.freeze({
       fr: "Heure d'expédition par défaut",
       tr: "Varsayılan sefer süresi",
       br: "Tempo padrão da epedição",
+      it: "Durata spedizione predefinita",
     },
     102: {
       de: "Aktionen",
@@ -1368,6 +1537,7 @@ const translation = Object.freeze({
       fr: "Actions",
       tr: "Eylemler",
       br: "Ações",
+      it: "Azioni",
     },
     103: {
       de: "Optionen",
@@ -1376,6 +1546,7 @@ const translation = Object.freeze({
       fr: "Options",
       tr: "Seçenekler",
       br: "Opções",
+      it: "Opzioni",
     },
     104: {
       de: "Automatisches Löschen von nicht rentablen Berichten aktivieren/deaktivieren, unter Berücksichtigung von: Plünderung, Flotten- und Verteidigungstrümmerfeld (Deuterium zu Trümmerfeld und 70% Verteidigungsreparatur werden angenommen).",
@@ -1384,6 +1555,7 @@ const translation = Object.freeze({
       fr: "Activer/Désactiver la suppression automatique des rapports non rentables en tenant compte  du pillage, du champ de ruine de la flotte et de la défense (on suppose que le deuterium se transforme en champ de ruine et que 70 % de la défense est réparée).",
       tr: "Karlı olmayan raporların otomatik silinmesini etkinleştir/devre dışı bırakma: yağma, filo ve savunma enkaz alanı (deuteriumdan enkaz alanına ve %70 savunma onarımı varsayılmaktadır).",
       br: "Ativar/Desativar atuomaticamente a detecção de reports não rentavéis: faturamento, destroços de frota e defesa (Deutério gasto até os destroços e custos de reparo de 70% da defesa são considerados)",
+      it: "Abilita/Disabilita l'eliminazione automatica dei report non redditizi tenendo conto di: bottino, campo di detriti di flotta e difesa (si assume deuterio nel campo di detriti e 70% di riparazione della difesa).",
     },
     105: {
       de: "Minimale Rentabilität, um als interessant angesehen zu werden",
@@ -1392,6 +1564,7 @@ const translation = Object.freeze({
       fr: "Rentabilité minimale d'une cible pour être considéré comme intéressante",
       tr: "İlginç kabul edilecek en düşük hedef karlılık",
       br: "Rentabilidade mínima desejada",
+      it: "Redditività minima dell'obiettivo per essere considerato interessante",
     },
     106: {
       de: "Spionagetabelle aktivieren/deaktivieren",
@@ -1400,6 +1573,7 @@ const translation = Object.freeze({
       fr: "Active/désactive le tableau d'espionnage",
       tr: "Casusluk tablosunu etkinleştir/devre dışı bırak",
       br: "Ativar/Desativar tabela de espionagens",
+      it: "Attiva/disattiva tabella spionaggio",
     },
     107: {
       de: "Nicht genügend Transportschiffe...",
@@ -1408,6 +1582,7 @@ const translation = Object.freeze({
       fr: "Pas assez de navires de transport...",
       tr: "Yeterli kargo gemisi yok...",
       br: "Total de cargueiros insuficientes...",
+      it: "Navi da carico insufficienti...",
     },
     108: {
       de: "Kein Kampfschiff...",
@@ -1416,6 +1591,7 @@ const translation = Object.freeze({
       fr: "Pas de vaisseau militaire...",
       tr: "Savaş gemisi yok...",
       br: "Sem naves de combate...",
+      it: "Nessuna nave da guerra...",
     },
     109: {
       de: "Keine Spionagesonde...",
@@ -1424,6 +1600,7 @@ const translation = Object.freeze({
       fr: "Pas de sonde d'espionnage...",
       tr: "Casusluk Sondası yok...",
       br: "Nenhuma sonda de espionagem...",
+      it: "Nessuna sonda spia...",
     },
     110: {
       de: "Kein Pathfinder...",
@@ -1432,6 +1609,7 @@ const translation = Object.freeze({
       fr: "Pas d'éclaireur...",
       tr: "Rehber yok...",
       br: "Sem explorador...",
+      it: "Nessun Pathfinder...",
     },
     111: {
       de: "Keine Mission...",
@@ -1440,6 +1618,7 @@ const translation = Object.freeze({
       fr: "Pas de mission...",
       tr: "Görev yok...",
       br: "Nenhuma missão...",
+      it: "Nessuna missione...",
     },
     112: {
       de: "Unbekannte Expeditionsnachricht...",
@@ -1448,6 +1627,7 @@ const translation = Object.freeze({
       fr: "Message d'expédition inconnu...",
       tr: "Bilinmeyen sefer mesajı...",
       br: "Mensagem de expedição desconhecida...",
+      it: "Messaggio di spedizione sconosciuto...",
     },
     113: {
       de: "Hilf mir alle zu finden",
@@ -1456,6 +1636,7 @@ const translation = Object.freeze({
       fr: "Aidez-moi à les trouver tous",
       tr: "Onları bulmama yardım et !",
       br: "Me ajude a encontrar todos",
+      it: "Aiutami a trovarli tutti",
     },
     114: {
       de: "Warnung: Expeditionsposition wird schwach...",
@@ -1464,6 +1645,7 @@ const translation = Object.freeze({
       fr: "Attention: la position d'expédition devient saturée...",
       tr: "Uyarı: Sefer konumu zayıflıyor...",
       br: "Atenção: posição da expedição está ficando ruim...",
+      it: "Attenzione: la posizione di spedizione si sta indebolendo...",
     },
     115: {
       de: "Fehler: Keine Schiffe ausgewählt",
@@ -1472,6 +1654,7 @@ const translation = Object.freeze({
       fr: "Erreur: aucun navire sélectionné",
       tr: "Hata: Hiç gemi seçilmedi",
       br: "Erro: Sem naves selecionadas",
+      it: "Errore: nessuna nave selezionata",
     },
     116: {
       de: "Fehler: Keine Mission verfügbar",
@@ -1480,6 +1663,7 @@ const translation = Object.freeze({
       fr: "Erreur: aucune mission disponible",
       tr: "Hata: Kullanılabilir görev yok",
       br: "Erro: Sem missões disponíveis",
+      it: "Errore: nessuna missione disponibile",
     },
     117: {
       de: "Fehler: Aktueller Planet/Mond",
@@ -1488,6 +1672,7 @@ const translation = Object.freeze({
       fr: "Erreur: planète/lune actuelle",
       tr: "Hata: Mevcut gezegen/ay",
       br: "Erro: Planeta/Lua atual",
+      it: "Errore: pianeta/luna attuale",
     },
     118: {
       de: "Keine neue Kolonie",
@@ -1496,6 +1681,7 @@ const translation = Object.freeze({
       fr: "Pas de nouvelle colonie",
       tr: "Yeni koloni yok",
       br: "Nenhuma colônia nova",
+      it: "Nessuna nuova colonia",
     },
     119: {
       de: "Handelskurs",
@@ -1504,6 +1690,7 @@ const translation = Object.freeze({
       fr: "Taux d'échange",
       tr: "Ticaret oranı",
       br: "Taxa de troca",
+      it: "Tasso di cambio",
     },
     120: {
       de: "Rentabilität",
@@ -1512,6 +1699,7 @@ const translation = Object.freeze({
       fr: "Rentabilité",
       tr: "Amortisman",
       br: "Rentabilidade",
+      it: "Redditività",
     },
     121: {
       de: "Die Amortisationszeit errechnet sich aus der Differenz der Gesamtproduktion und den Kosten für die Zielstufe. Ausreichende Energieversorgung und unveränderte globale Produktionsbooster (Spieler- und Allianzklasse, Offiziere) werden vorausgesetzt. Zur Bewertung der Ressourcen wird der angegebene Handelskurs verwendet. Bei Minen wird die Änderung der Gesamtproduktion durch erhöhtes Crawler-Limit berücksichtigt, dabei wird der Produktionsfaktor und eine eventuelle Begrenzung wie angegeben verwendet. Für die Astrophysik werden die Forschungskosten und die Kosten für den Bau von Minen auf der neuen Kolonie bis zum Durchschnittslevel berücksichtigt. Die Produktionsänderung wird durch die durchschnittliche Planetenparameter angenähert, da die tatsächliche Produktion von der Temperatur und der Position der neuen Kolonie abhängt. Baukosten für die Energieversorgung oder andere Anlagen werden nicht berücksichtigt.",
@@ -1520,6 +1708,7 @@ const translation = Object.freeze({
       fr: "La période de remboursement est calculée en fonction de la différence entre la production totale et le coût pour le niveau cible. Un approvisionnement énergétique suffisant et des boosters de production globaux inchangés (classe de joueur et d'alliance, officiers) sont supposés. Le taux d'échange configuré est utilisé pour évaluer les ressources. Pour les mines, le changement de production totale dû à l'augmentation de la limite de foreuses est pris en compte, en utilisant les paramètres ci-dessus. Pour l'astrophysique, le coût de recherche et le coût de construction des mines au niveau moyen sur la nouvelle colonie sont pris en compte. Le changement de production est approximé par les paramètres moyens de la planète, car la production réelle dépend de la température et de la position de la nouvelle colonie. Les coûts de construction pour l'approvisionnement en énergie ou d'autres installations ne sont pas pris en compte.",
       tr: "Geri ödeme süresi, toplam üretimdeki farka ve hedef seviyenin maliyetine göre hesaplanır. Yeterli enerji arzı ve değişmeyen küresel üretim artırıcıları (oyuncu ve ittifak sınıfı, görevliler) varsayılır. Yapılandırılan ticaret oranı, değeri belirlemek için kullanılır. kaynaklar. Madenler için, artan paletli sınırına bağlı olarak toplam üretimdeki değişiklik, yukarıdan yapılan ayarlar kullanılarak dikkate alınır. Astrofizik için araştırma maliyeti ve yeni kolonide mayın inşa etme maliyeti ortalama seviyeye dikkate alınır. Üretimdeki değişiklik, ortalama gezegen parametrelerine yakındır, çünkü gerçek üretim yeni koloninin sıcaklığına ve konumuna bağlıdır. Enerji tedariki veya diğer tesisler için inşaat maliyetleri dikkate alınmaz.",
       br: "O período de retorno é calculado baseado na diferença no total de produção e o custo para o level alvo. Assume-se que haja energia suficiente e reforços de produção globais (classes de jogador, aliança e oficiais) são considerados. A taxa de negociação configurada é considerada para avaliar os recursos. Para minas, a alteração da produção total devido ao aumento do limite re rastreadores é considerado, usando as configurações acima. Para astrofísica, são levados em consideração o custo da pesquisa e o custo médio de construção das minas ao nivel médio de uma nova colônia. A mudança na produção é aproximada pelos parâmetros médios pois a produção real depende da temperatura e posição da nova colônia. Os custos para construção de fornecimento de energia e outras instalações não são considerados.",
+      it: "Il periodo di ammortamento è calcolato in base alla differenza di produzione totale e al costo per il livello obiettivo. Si presuppongono alimentazione energetica sufficiente e bonus di produzione globali invariati (classe giocatore e alleanza, ufficiali). Per valutare le risorse viene usato il tasso di cambio configurato. Per le miniere si tiene conto della variazione della produzione totale dovuta all'aumento del limite dei crawler, usando le impostazioni sopra. Per l'Astrofisica si considerano il costo di ricerca e il costo di costruzione delle miniere al livello medio sulla nuova colonia. La variazione di produzione è approssimata con i parametri medi del pianeta, poiché la produzione reale dipende dalla temperatura e dalla posizione della nuova colonia. I costi di costruzione per l'energia o altre strutture non sono considerati.",
     },
     122: {
       de: "Nur Werte größer oder gleich 1 ...",
@@ -1528,6 +1717,7 @@ const translation = Object.freeze({
       fr: "Seules les valeurs supérieures ou égales à 1 sont autorisées...",
       tr: "Sadece 1'e eşit veya daha büyük değerler izin verilir...",
       br: "Apenas valores maiores que 1 são permitidos...",
+      it: "Sono consentiti solo valori maggiori o uguali a 1...",
     },
     123: {
       de: "Alle Nachrichten löschen",
@@ -1536,6 +1726,7 @@ const translation = Object.freeze({
       fr: "Supprimer tous les messages",
       tr: "Tüm mesajları sil",
       br: "Apagar todas as mensagens",
+      it: "Elimina tutti i messaggi",
     },
     124: {
       de: "Feindliche Spionageberichte löschen",
@@ -1544,6 +1735,7 @@ const translation = Object.freeze({
       fr: "Supprimer les rapports d'espionnage ennemis",
       tr: "Düşman casus raporlarını sil",
       br: "Apagar relatórios de espionagem de inimigos",
+      it: "Elimina i report spia nemici",
     },
     125: {
       de: "Wenn aktiviert, wird die Anzahl der Crawler mit den derzeit gebauten Crawlern begrenzt.",
@@ -1552,6 +1744,7 @@ const translation = Object.freeze({
       fr: "S'il est activé, le nombre de foreuses sera limité à celles actuellement construites.",
       tr: "Etkinleştirildiğinde, paletlilerin sayısı şu anda üretilen paletlilerle sınırlanır.",
       br: "Se ativado, o numero de rastejadores será limitado ao numero atual de rastejadores construídos.",
+      it: "Se attivato, il numero di crawler sarà limitato ai crawler attualmente costruiti.",
     },
     126: {
       de: "Crawler Produktionsfaktor",
@@ -1560,6 +1753,7 @@ const translation = Object.freeze({
       fr: "Facteur de production des foreuses",
       tr: "Paletli üretim faktörü",
       br: "Fator de produção dos rastejadores",
+      it: "Fattore di produzione dei crawler",
     },
     127: {
       de: "Ziel",
@@ -1568,6 +1762,7 @@ const translation = Object.freeze({
       fr: "Destination",
       tr: "Hedef",
       br: "Destino",
+      it: "Destinazione",
     },
     128: {
       de: "Ressourcentransport",
@@ -1576,6 +1771,7 @@ const translation = Object.freeze({
       fr: "Transport des ressources",
       tr: "Nakliye",
       br: "Transporte de recursos",
+      it: "Trasporto risorse",
     },
     129: {
       de: "Abriss",
@@ -1584,6 +1780,7 @@ const translation = Object.freeze({
       fr: "Démolition",
       tr: "Yıkım",
       br: "Demolição",
+      it: "Demolizione",
     },
     130: {
       de: "Filter",
@@ -1592,6 +1789,7 @@ const translation = Object.freeze({
       fr: "Filtre",
       tr: "Filtre",
       br: "Filtro",
+      it: "Filtro",
     },
     131: {
       de: "Kapazität",
@@ -1600,6 +1798,7 @@ const translation = Object.freeze({
       fr: "Capacité",
       tr: "Kapasite",
       br: "Capacidade",
+      it: "Capacità",
     },
     132: {
       de: "Füllzeit",
@@ -1608,6 +1807,7 @@ const translation = Object.freeze({
       fr: "Temps de remplissage",
       tr: "Dolum süresi",
       br: "Tempo de preenchimento",
+      it: "Tempo di riempimento",
     },
     133: {
       de: "Beitragen oder Bugs melden",
@@ -1616,6 +1816,7 @@ const translation = Object.freeze({
       fr: "Contribuer ou signaler un bug",
       tr: "Katkıda bulunun veya hata bildirin",
       br: "Contribuir ou relatar um bug",
+      it: "Contribuisci o segnala un bug",
     },
     134: {
       de: "Flottenaktivität der Planeten anzeigen",
@@ -1624,6 +1825,7 @@ const translation = Object.freeze({
       fr: "Afficher l'activité de la flotte des planètes",
       tr: "Gezegenlerin filo etkinliğini görüntüle",
       br: "Mostrar atividade de frota dos planetas",
+      it: "Mostra attività di flotta dei pianeti",
     },
     135: {
       de: "Filter invertieren",
@@ -1632,6 +1834,7 @@ const translation = Object.freeze({
       fr: "Inverser le filtre",
       tr: "Filtreyi ters çevir",
       br: "Inverter filtro",
+      it: "Inverti filtro",
     },
     136: {
       de: "Forschungsgeschwindigkeit",
@@ -1640,6 +1843,7 @@ const translation = Object.freeze({
       fr: "Vitesse de recherche",
       tr: "Araştırma hızı",
       br: "Velocidade de pesquisa",
+      it: "Velocità di ricerca",
     },
     137: {
       de: "Aktivität",
@@ -1648,6 +1852,7 @@ const translation = Object.freeze({
       fr: "Activité",
       tr: "Etkinlik",
       br: "Atividade",
+      it: "Attività",
     },
     138: {
       de: "Navigationspfeile in mobiler Version anzeigen",
@@ -1656,6 +1861,7 @@ const translation = Object.freeze({
       fr: "Flèches de navigation en version mobile",
       tr: "Mobil sürümde gezinme okları",
       br: "Setas de navegação na versão mobile",
+      it: "Frecce di navigazione nella versione mobile",
     },
     139: {
       de: "Entdeckungen",
@@ -1664,6 +1870,7 @@ const translation = Object.freeze({
       fr: "Découvertes",
       tr: "Keşifler",
       br: "Descobertas",
+      it: "Scoperte",
     },
     140: {
       de: "Menschen",
@@ -1672,6 +1879,7 @@ const translation = Object.freeze({
       fr: "Les humains",
       tr: "İnsanlar",
       br: "Humanos",
+      it: "Umani",
     },
     141: {
       de: "Rock’tal",
@@ -1680,6 +1888,7 @@ const translation = Object.freeze({
       fr: "Roctas",
       tr: "Rock’tal",
       br: "Rock’tal",
+      it: "Rock'tal",
     },
     142: {
       de: "Mechas",
@@ -1688,6 +1897,7 @@ const translation = Object.freeze({
       fr: "Mécas",
       tr: "Mekalar",
       br: "Mechas",
+      it: "Mechas",
     },
     143: {
       de: "Kaelesh",
@@ -1696,6 +1906,7 @@ const translation = Object.freeze({
       fr: "Kaeleshs",
       tr: "Kaelesh",
       br: "Kaelesh",
+      it: "Kaelesh",
     },
     144: {
       de: "Erfahrung",
@@ -1704,6 +1915,7 @@ const translation = Object.freeze({
       fr: "Expérience",
       tr: "Deneyim",
       br: "Experiência",
+      it: "Esperienza",
     },
     145: {
       de: "Artefakte",
@@ -1712,6 +1924,7 @@ const translation = Object.freeze({
       fr: "Artéfacts",
       tr: "Artefaktlar",
       br: "Artefatos",
+      it: "Artefatti",
     },
     146: {
       de: "Abgeschlossenen Vorgang anzeigen",
@@ -1720,6 +1933,7 @@ const translation = Object.freeze({
       fr: "Indiquer les processus terminé",
       tr: "Tamamlanmış işlemi belirt",
       br: "Indicar fim de processo",
+      it: "Indica processo terminato",
     },
     147: {
       de: "Externe Tools",
@@ -1728,6 +1942,7 @@ const translation = Object.freeze({
       fr: "Outils externes",
       tr: "Diğer Araçlar",
       br: "Ferramentas externas",
+      it: "Strumenti esterni",
     },
     148: {
       de: "Standardmissionen",
@@ -1736,6 +1951,7 @@ const translation = Object.freeze({
       fr: "Missions par défaut",
       tr: "Tamamlanmış görevler",
       br: "Missões padrão",
+      it: "Missioni predefinite",
     },
     149: {
       de: "Expeditionsfrachtlimit (%)",
@@ -1744,6 +1960,7 @@ const translation = Object.freeze({
       fr: "Limite de fret d'expédition (%)",
       tr: "Sefer kargo limiti (%)",
       br: "Limite de carga na expedição (%)",
+      it: "Limite carico spedizione (%)",
     },
     150: {
       de: "Expeditionen vor der Rotation",
@@ -1752,6 +1969,7 @@ const translation = Object.freeze({
       fr: "Expéditions avant rotation",
       tr: "Rotasyon öncesi sefer gezileri",
       br: "Número de expedições antes da rotação",
+      it: "Spedizioni prima della rotazione",
     },
     151: {
       de: "Fehler: kein PTRE-Teamkey registriert",
@@ -1760,6 +1978,7 @@ const translation = Object.freeze({
       fr: "Erreur : aucune clé d'équipe PTRE enregistrée",
       tr: "Hata: hiçbir takım anahtarı PTRE kaydedilmedi",
       br: "Erro: Sem chave de equipe do PTRE registrada",
+      it: "Errore: nessuna chiave team PTRE registrata",
     },
     152: {
       de: "Bester Bericht",
@@ -1768,6 +1987,7 @@ const translation = Object.freeze({
       fr: "Meilleur rapport",
       tr: "En i̇yi rapor",
       br: "Melhor reporte",
+      it: "Miglior report",
     },
     153: {
       de: "Berichtsdetails",
@@ -1776,6 +1996,7 @@ const translation = Object.freeze({
       fr: "Détails du rapport",
       tr: "Rapor detayları",
       br: "Detalhes do reporte",
+      it: "Dettagli report",
     },
     154: {
       de: "Zielprofil",
@@ -1784,6 +2005,7 @@ const translation = Object.freeze({
       fr: "Profil de la cible",
       tr: "Hedef profili",
       br: "Perfil do alvo",
+      it: "Profilo obiettivo",
     },
     155: {
       de: "- Keine Aktivität erkannt",
@@ -1792,6 +2014,7 @@ const translation = Object.freeze({
       fr: "- Aucune activité détectée",
       tr: "- Hiçbir etkinlik algılanmadı",
       br: "- Sem atividade detectada",
+      it: "- Nessuna attività rilevata",
     },
     156: {
       de: "- Einige Aktivitäten erkannt",
@@ -1800,6 +2023,7 @@ const translation = Object.freeze({
       fr: "- Peu d'activités détectées",
       tr: "- Birkaç etkinlik algılandı",
       br: "- Pouca atividade detectada",
+      it: "- Poche attività rilevate",
     },
     157: {
       de: "- Einige Aktivitäten erkannt",
@@ -1808,6 +2032,7 @@ const translation = Object.freeze({
       fr: "- Quelques activités détectées",
       tr: "- Bazı etkinlikler algılandı",
       br: "- Algumas atividades detectadas",
+      it: "- Alcune attività rilevate",
     },
     158: {
       de: "- Viele Aktivitäten erkannt",
@@ -1816,6 +2041,7 @@ const translation = Object.freeze({
       fr: "- Beaucoup d'activités détectées",
       tr: "- Çok sayıda etkinlik algılandı",
       br: "- Muita atividade detectada",
+      it: "- Molte attività rilevate",
     },
     159: {
       de: "<br>- Perfekt überprüft",
@@ -1824,6 +2050,7 @@ const translation = Object.freeze({
       fr: "<br>- Parfaitement vérifié",
       tr: "<br>- Mükemmel kontrol edildi",
       br: "<br>- Verificado perfeitamente",
+      it: "<br>- Verificato perfettamente",
     },
     160: {
       de: "<br>- Gut überprüft",
@@ -1832,6 +2059,7 @@ const translation = Object.freeze({
       fr: "<br>- Bien vérifié",
       tr: "<br>- Güzel kontrol edildi",
       br: "<br>- Verificação boa",
+      it: "<br>- Verificato bene",
     },
     161: {
       de: "<br>- Ordentlich überprüft",
@@ -1840,6 +2068,7 @@ const translation = Object.freeze({
       fr: "<br>- Moyennement vérifié",
       tr: "<br>- Uygun bir şekilde kontrol edildi",
       br: "<br>- Verificação decente",
+      it: "<br>- Verificato discretamente",
     },
     162: {
       de: "Schlecht überprüft",
@@ -1848,6 +2077,7 @@ const translation = Object.freeze({
       fr: "Mal vérifié",
       tr: "Kötü kontrol edildi",
       br: "Verificação ruim",
+      it: "Verificato male",
     },
     163: {
       de: "Nicht überprüft",
@@ -1856,6 +2086,7 @@ const translation = Object.freeze({
       fr: "Non vérifié",
       tr: "Kontrol edilmedi",
       br: "Não verificado",
+      it: "Non verificato",
     },
     164: {
       de: "Fehlende Schiffe für die ausgewählte Flottenzusammensetzung...",
@@ -1864,6 +2095,7 @@ const translation = Object.freeze({
       fr: "Vaisseaux manquants pour la composition de flotte choisie...",
       tr: "Seçilen filo bileşimi için eksik gemiler...",
       br: "Sem naves suficientes para a composição de frota escolhida...",
+      it: "Navi insufficienti per la composizione di flotta scelta...",
     },
     165: {
       de: "Verwendung für Expeditionen",
@@ -1872,6 +2104,7 @@ const translation = Object.freeze({
       fr: "Utiliser pour les expéditions",
       tr: "Sefer gezileri için kullanın",
       br: "Usar para expedições",
+      it: "Usa per le spedizioni",
     },
     166: {
       de: undefined,
@@ -1880,6 +2113,7 @@ const translation = Object.freeze({
       fr: undefined,
       tr: undefined,
       br: undefined,
+      it: undefined,
     },
     167: {
       de: "Entdeckungsdaten",
@@ -1888,6 +2122,7 @@ const translation = Object.freeze({
       fr: "Données de découvertes",
       tr: "Keşifler Verileri",
       br: "Dados de descobertas",
+      it: "Dati scoperte",
     },
     168: {
       de: "Daten werden geladen. Bitte warten...",
@@ -1896,6 +2131,7 @@ const translation = Object.freeze({
       fr: "Chargement des données. Veuillez patienter...",
       tr: "Veri yükleniyor. Lütfen bekleyin...",
       br: "Carregando dados. Por favor, aguarde...",
+      it: "Caricamento dati. Attendere prego...",
     },
     169: {
       de: "Externes Tool nicht in 'Einstellung' konfiguriert",
@@ -1904,6 +2140,7 @@ const translation = Object.freeze({
       fr: "Outil externe non configuré dans 'Paramètres'",
       tr: "Harici takım 'Ayarlar' da yapılandırılmamış",
       br: "Ferramenta externa não configurada nos 'Ajustes'",
+      it: "Strumento esterno non configurato nelle 'Impostazioni'",
     },
     170: {
       de: "Kampfsimulator",
@@ -1912,6 +2149,7 @@ const translation = Object.freeze({
       fr: "Simulateur de combat",
       tr: "Savaş simülatörü",
       br: "Simulador de batalhas",
+      it: "Simulatore di battaglia",
     },
     171: {
       de: "Wähle eine Option...",
@@ -1920,6 +2158,7 @@ const translation = Object.freeze({
       fr: "Sélectionnez l'option...",
       tr: "Seçeneği seçin...",
       br: "Selecione uma opção...",
+      it: "Seleziona un'opzione...",
     },
     172: {
       de: "Letzte zurückrufen",
@@ -1928,6 +2167,7 @@ const translation = Object.freeze({
       fr: "Rappel dernier",
       tr: "Geri çağrı son",
       br: "Voltar último",
+      it: "Richiama l'ultima",
     },
     173: {
       de: "Einh.",
@@ -1936,6 +2176,7 @@ const translation = Object.freeze({
       fr: "Uts",
       tr: "Birim",
       br: "Unid.",
+      it: "Unità",
     },
     174: {
       de: "MSE",
@@ -1944,6 +2185,7 @@ const translation = Object.freeze({
       fr: "USM",
       tr: "MSB",
       br: "SEM",
+      it: "UMS",
     },
     175: {
       de: "KSE",
@@ -1952,6 +2194,7 @@ const translation = Object.freeze({
       fr: "USC",
       tr: "CSB",
       br: "SEC",
+      it: "UCS",
     },
     176: {
       de: "DSE",
@@ -1960,6 +2203,7 @@ const translation = Object.freeze({
       fr: "USD",
       tr: "DSB",
       br: "SED",
+      it: "UDS",
     },
     177: {
       de: "Summe in Einheiten von Ressourcen",
@@ -1968,6 +2212,7 @@ const translation = Object.freeze({
       fr: "Somme en unités de ressources",
       tr: "Kaynak birimlerinde toplam",
       br: "Soma em unidades de recursos",
+      it: "Somma in unità di risorse",
     },
     178: {
       de: "Summe als Metallstandardeinheit",
@@ -1976,6 +2221,7 @@ const translation = Object.freeze({
       fr: "Somme en unité standard de métal",
       tr: "Metal standart birimi olarak toplam",
       br: "Soma equivalente em metal",
+      it: "Somma in unità standard di metallo",
     },
     179: {
       de: "Summe als Kristallstandardeinheit",
@@ -1984,6 +2230,7 @@ const translation = Object.freeze({
       fr: "Somme en unité standard de cristal",
       tr: "Kristal standart birimi olarak toplam",
       br: "Soma equivalente em cristal",
+      it: "Somma in unità standard di cristallo",
     },
     180: {
       de: "Summe als Deuteriumstandardeinheit",
@@ -1992,6 +2239,7 @@ const translation = Object.freeze({
       fr: "Somme en unité standard de deutérium",
       tr: "Döteryum standart birimi olarak toplam",
       br: "Soma equivalente em deutério",
+      it: "Somma in unità standard di deuterio",
     },
     181: {
       de: "Standard-Ressourceneinheit",
@@ -2000,6 +2248,7 @@ const translation = Object.freeze({
       fr: "Unité standard de ressources",
       tr: "Standart kaynak birimi",
       br: "Unidade padrão de recursos",
+      it: "Unità standard di risorse",
     },
     182: {
       de: "Spionageberichte anhängen, wenn Sie die Seite wechseln",
@@ -2008,6 +2257,7 @@ const translation = Object.freeze({
       fr: "Ajouter les rapports d'espionnage lorsque vous changez de page",
       tr: "Sayfa değiştirdiğinizde casus raporlarını ekle",
       br: "Anexar relatórios de espionagem ao mudar de página",
+      it: "Allega i report spia quando cambi pagina",
     },
     183: {
       de: "Feindliche Flotten",
@@ -2016,6 +2266,7 @@ const translation = Object.freeze({
       fr: "Flottes hostiles",
       tr: "Düşman filoları",
       br: "Frotas hostis",
+      it: "Flotte ostili",
     },
     184: {
       de: "Standardmäßig",
@@ -2024,6 +2275,7 @@ const translation = Object.freeze({
       fr: "Par défaut",
       tr: "Varsayılan olarak",
       br: "Por padrão",
+      it: "Predefinito",
     },
     185: {
       de: "Gepulstes Symbol",
@@ -2032,6 +2284,7 @@ const translation = Object.freeze({
       fr: "Icone animé",
       tr: "Darbeli simge",
       br: "Ícone pulsado",
+      it: "Icona pulsante",
     },
     186: {
       de: "Gepulster Hintergrund",
@@ -2040,6 +2293,7 @@ const translation = Object.freeze({
       fr: "Arrière plan animé",
       tr: "Darbeli arka plan",
       br: "Fundo pulsado",
+      it: "Sfondo pulsante",
     },
     187: {
       de: "Alarmmodus für feindliche Flotten",
@@ -2048,6 +2302,7 @@ const translation = Object.freeze({
       fr: "Mode d'alerte de flotte hostile",
       tr: "Düşman Filosu Uyarı Modu",
       br: "Modo de alerta de frota hostil",
+      it: "Modalità di allerta flotta ostile",
     },
     188: {
       de: "Öffnen Sie den Spionagebericht",
@@ -2056,6 +2311,7 @@ const translation = Object.freeze({
       fr: "Ouvrir le rapport d'espionnage",
       tr: "Casus raporunu aç",
       br: "Abrir o relatório de espionagem",
+      it: "Apri il report spia",
     },
     189: {
       de: "„ (Gegner-Ansicht)",
@@ -2064,6 +2320,7 @@ const translation = Object.freeze({
       fr: "— (vue ennemi)",
       tr: "” (düşman bakışı)",
       br: "” (vista inimigo)",
+      it: "” (vista nemico)",
     },
     190: {
       de: "Ihre Mindestrentabilität, um von Feinden als interessant angesehen zu werden",
@@ -2072,6 +2329,7 @@ const translation = Object.freeze({
       fr: "Votre rentabilité minimale pour être considéré comme intéressante par l'ennemi",
       tr: "Yeterli kârınız düşman tarafından ilginç olarak kabul edilmesi için",
       br: "Seu lucro mínimo para ser considerado interessante pelo inimigo",
+      it: "La tua redditività minima per essere considerato interessante dal nemico",
     },
     191: {
       de: "Spionagedaten",
@@ -2080,6 +2338,7 @@ const translation = Object.freeze({
       fr: "Données d'espionnage",
       tr: "Casus verileri",
       br: "Dados de espionagem",
+      it: "Dati spionaggio",
     },
     192: {
       de: "Mond",
@@ -2088,6 +2347,7 @@ const translation = Object.freeze({
       fr: "Lune",
       tr: "Ay",
       br: "Lua",
+      it: "Luna",
     },
     193: {
       de: "Planet",
@@ -2096,6 +2356,7 @@ const translation = Object.freeze({
       fr: "Planète",
       tr: "Gezegen",
       br: "Planeta",
+      it: "Pianeta",
     },
     194: {
       de: "Mond",
@@ -2104,6 +2365,7 @@ const translation = Object.freeze({
       fr: "Lune",
       tr: "Ay",
       br: "Lua",
+      it: "Luna",
     },
     195: {
       de: "Benutzerdefinierte Missionen",
@@ -2112,6 +2374,7 @@ const translation = Object.freeze({
       fr: "Missions personnalisées",
       tr: "Özel görevler",
       br: "Missões personalizadas",
+      it: "Missioni personalizzate",
     },
     196: {
       de: "Anzahl der Missionen",
@@ -2120,6 +2383,7 @@ const translation = Object.freeze({
       fr: "Nombre de missions",
       tr: "Görevlerin sayısı",
       br: "Número de missões",
+      it: "Numero di missioni",
     },
     197: {
       de: "Sind Sie sicher, dass Sie diese Aktion durchführen möchten?",
@@ -2128,6 +2392,7 @@ const translation = Object.freeze({
       fr: "Êtes-vous sûr de vouloir effectuer cette action ?",
       tr: "Bu işlemi yapmak istediğinizden emin misiniz?",
       br: "Você tem certeza de que deseja realizar esta ação?",
+      it: "Sei sicuro di voler eseguire questa azione?",
     },
     211: {
       de: "Der Bericht ist nicht mehr verfügbar",
@@ -2136,6 +2401,7 @@ const translation = Object.freeze({
       fr: "Le rapport n'est plus disponible",
       tr: "Rapor artık mevcut değil",
       br: "O relatório não está mais disponível",
+      it: "Il report non è più disponibile",
     },
     212: {
       de: "Versteckt",
@@ -2144,6 +2410,7 @@ const translation = Object.freeze({
       fr: "Masqué",
       tr: "Gizli",
       br: "Oculto",
+      it: "Nascosto",
     },
     213: {
       de: "Sichtbar",
@@ -2152,6 +2419,7 @@ const translation = Object.freeze({
       fr: "Visible",
       tr: "Görünür",
       br: "Visível",
+      it: "Visibile",
     },
     214: {
       de: "Sichtbar mit Info-Tooltip",
@@ -2160,6 +2428,7 @@ const translation = Object.freeze({
       fr: "Visible avec info-bulle",
       tr: "Açıklayıcı ipucu ile görünür",
       br: "Visível com tooltip",
+      it: "Visibile con tooltip",
     },
     215: {
       de: "Sichtbar mit Weiterleitung",
@@ -2168,6 +2437,7 @@ const translation = Object.freeze({
       fr: "Visible avec redirection",
       tr: "Yeniden yönlendirme ile görünür",
       br: "Visível com redirecionamento",
+      it: "Visibile con reindirizzamento",
     },
     216: {
       de: "Sichtbar mit Info-Tooltip und Weiterleitung",
@@ -2176,6 +2446,7 @@ const translation = Object.freeze({
       fr: "Visible avec info-bulle et redirection",
       tr: "Açıklayıcı ipucu ve yeniden yönlendirme ile görünür",
       br: "Visível com tooltip e redirecionamento",
+      it: "Visibile con tooltip e reindirizzamento",
     },
     217: {
       de: "Bau",
@@ -2184,6 +2455,7 @@ const translation = Object.freeze({
       fr: "Construction",
       tr: "İnşaat",
       br: "Construção",
+      it: "Costruzione",
     },
     218: {
       de: "Lebensform-Konstruktionen",
@@ -2192,6 +2464,7 @@ const translation = Object.freeze({
       fr: "Constructions de formes de vie",
       tr: "Yaşam formu inşaatları",
       br: "Construções de formas de vida",
+      it: "Costruzioni forme di vita",
     },
     219: {
       de: "Lebensform-Forschung",
@@ -2200,6 +2473,7 @@ const translation = Object.freeze({
       fr: "Recherches des formes de vie",
       tr: "Yaşam formu araştırmaları",
       br: "Pesquisas de formas de vida",
+      it: "Ricerca forme di vita",
     },
     220: {
       de: "Eigener Flottenausbeutewert",
@@ -2208,6 +2482,7 @@ const translation = Object.freeze({
       fr: "Valeur de rendement de la flotte",
       tr: "Kendi filonuzun verim değeri",
       br: "Valor de rendimento da própria frota",
+      it: "Valore di rendimento della flotta propria",
     },
     221: {
       de: "Symbole",
@@ -2216,6 +2491,7 @@ const translation = Object.freeze({
       fr: "Icônes",
       tr: "Simge",
       br: "Ícones",
+      it: "Icone",
     },
     222: {
       de: "Import/Export Erinnerung",
@@ -2224,6 +2500,7 @@ const translation = Object.freeze({
       fr: "Rappel d'import/export",
       tr: "İthalat/İhracat Hatırlatıcısı",
       br: "Lembrete de Importação/Exportação",
+      it: "Promemoria Import/Export",
     },
     223: {
       de: "Diskret",
@@ -2232,6 +2509,7 @@ const translation = Object.freeze({
       fr: "Discret",
       tr: "Gizli",
       br: "Discreto",
+      it: "Discreto",
     },
     224: {
       de: "Hervorheben",
@@ -2240,6 +2518,7 @@ const translation = Object.freeze({
       fr: "Mise en évidence",
       tr: "Vurgula",
       br: "Destaque",
+      it: "Evidenzia",
     },
     225: {
       de: "Aus Historic entfernen",
@@ -2248,6 +2527,7 @@ const translation = Object.freeze({
       fr: "Retirer de Historic",
       tr: "Historic'ten kaldır",
       br: "Remover do Historic",
+      it: "Rimuovi dallo Storico",
     },
     198: {
       de: "{player} aus Historic entfernt",
@@ -2256,6 +2536,7 @@ const translation = Object.freeze({
       fr: "{player} retiré de Historic",
       tr: "{player} Historic'ten kaldırıldı",
       br: "{player} removido do Historic",
+      it: "{player} rimosso dallo Storico",
     },
     227: {
       de: "Rückgängig",
@@ -2264,6 +2545,7 @@ const translation = Object.freeze({
       fr: "Annuler",
       tr: "Geri al",
       br: "Desfazer",
+      it: "Annulla",
     },
     228: {
       de: "Keine Spieler in Historic",
@@ -2272,6 +2554,7 @@ const translation = Object.freeze({
       fr: "Aucun joueur dans Historic",
       tr: "Historic'te oyuncu yok",
       br: "Nenhum jogador no Historic",
+      it: "Nessun giocatore nello Storico",
     },
     229: {
       de: "PTRE Debug-Logs",
@@ -2280,6 +2563,7 @@ const translation = Object.freeze({
       fr: "Logs de debug PTRE",
       tr: "PTRE hata ayıklama günlükleri",
       br: "Logs de depuração PTRE",
+      it: "Log di debug PTRE",
     },
     226: {
       de: "Galaxie-Speicher (PTRE)",
@@ -2288,6 +2572,7 @@ const translation = Object.freeze({
       fr: "Stockage de la Galaxie (PTRE)",
       tr: "Galaksi depolama (PTRE)",
       br: "Armazenamento de galáxia (PTRE)",
+      it: "Archiviazione galassia (PTRE)",
     },
     229: {
       de: "Leere Systeme",
@@ -2296,6 +2581,7 @@ const translation = Object.freeze({
       fr: "Systèmes vides",
       tr: "Boş sistemler",
       br: "Sistemas vazios",
+      it: "Sistemi vuoti",
     },
     230: {
       de: "Inaktive Systeme",
@@ -2304,13 +2590,14 @@ const translation = Object.freeze({
       fr: "Systèmes inactifs",
       tr: "Pasif sistemler",
       br: "Sistemas inativos",
+      it: "Sistemi inattivi",
     },
   },
 });
 
 const language = OgamePageData.playerLang;
 let currentLanguage = ["ar", "mx"].includes(language) ? "es" : language;
-currentLanguage = ["de", "en", "es", "fr", "tr", "br"].includes(currentLanguage) ? currentLanguage : "en";
+currentLanguage = ["de", "en", "es", "fr", "tr", "br", "it"].includes(currentLanguage) ? currentLanguage : "en";
 
 class Translator {
   logger = getLogger("Translator");
