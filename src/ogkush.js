@@ -2407,6 +2407,8 @@ class OGInfinity {
             elemTechnologyDetailsContent.append(json.content[json.target]);
             elemTechnologyDetails.addClass(anchor.data("technologydetails-size")).offset(anchor.offset());
           }
+          const technologyDetailsNode = document.querySelector("#technologydetails");
+          technologyDetailsNode?.classList.add("ogk-technology-details");
           localStorage.setItem("detailsOpen", true);
           $(document).trigger("ajaxShowElement", typeof technologyId === "undefined" ? 0 : technologyId);
           let costDiv = document.querySelector(".costs");
