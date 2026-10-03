@@ -293,6 +293,11 @@ const BUIDLING_INFO = {
     baseCost: [20000, 20000, 1000],
     factorCost: 2,
   },
+  45: {
+    name: "Interstellar Anomaly Scanner",
+    baseCost: [84, 42, 14],
+    factorCost: 1.4,
+  },
   // Moon
   41: {
     name: "Lunar Base",
@@ -308,6 +313,42 @@ const BUIDLING_INFO = {
     name: "Star gate",
     baseCost: [2000000, 4000000, 2000000],
     factorCost: 2,
+  },
+  // Orion Control Centre
+  4001: {
+    name: "Star Intergalactic Recovery Centre",
+    baseCost: [75000, 52500, 22500],
+    factorCost: 1.5,
+  },
+  4002: {
+    name: "Lithium Electrolysis Lab",
+    baseCost: [52500, 37500, 37500],
+    factorCost: 1.5,
+  },
+  4003: {
+    name: "Metal Recycling Unit",
+    baseCost: [112500, 37500, 18000],
+    factorCost: 1.5,
+  },
+  4004: {
+    name: "Crystal Finishing Station",
+    baseCost: [37500, 67500, 27000],
+    factorCost: 1.5,
+  },
+  4005: {
+    name: "Anomaly Analysis Centre",
+    baseCost: [67500, 37500, 22500],
+    factorCost: 1.5,
+  },
+  4006: {
+    name: "High-Pressure Deuterium Tanks",
+    baseCost: [30000, 37500, 45000],
+    factorCost: 1.5,
+  },
+  4007: {
+    name: "Catalytic Convertor",
+    baseCost: [127500, 112500, 52500],
+    factorCost: 1.5,
   },
   // Human
   11101: {
@@ -1334,7 +1375,7 @@ const RESEARCH_INFO = {
 };
 
 const SUPPLIES_TECHID = [1, 2, 3, 4, 12, 22, 23, 24];
-const FACILITIES_TECHID = [14, 15, 21, 31, 33, 34, 36, 44, 41, 42, 43];
+const FACILITIES_TECHID = [14, 15, 21, 31, 33, 34, 36, 44, 41, 42, 43, 45];
 const IONTECHNOLOGY_BONUS = 0.04;
 const PLASMATECH_BONUS = [0.01, 0.0066, 0.0033];
 const ENGINEER_ENERGY_BONUS = 0.1;
