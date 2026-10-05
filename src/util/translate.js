@@ -2185,7 +2185,7 @@ const translation = Object.freeze({
       fr: "USM",
       tr: "MSB",
       br: "SEM",
-      it: "UMS",
+      it: "MSU",
     },
     175: {
       de: "KSE",
@@ -2194,7 +2194,7 @@ const translation = Object.freeze({
       fr: "USC",
       tr: "CSB",
       br: "SEC",
-      it: "UCS",
+      it: "CSU",
     },
     176: {
       de: "DSE",
@@ -2203,7 +2203,7 @@ const translation = Object.freeze({
       fr: "USD",
       tr: "DSB",
       br: "SED",
-      it: "UDS",
+      it: "DSU",
     },
     177: {
       de: "Summe in Einheiten von Ressourcen",
@@ -2574,7 +2574,7 @@ const translation = Object.freeze({
       br: "Armazenamento de galáxia (PTRE)",
       it: "Archiviazione galassia (PTRE)",
     },
-    229: {
+    199: {
       de: "Leere Systeme",
       en: "Empty systems",
       es: "Sistemas vacíos",
