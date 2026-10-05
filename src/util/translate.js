@@ -2574,7 +2574,7 @@ const translation = Object.freeze({
       br: "Armazenamento de galáxia (PTRE)",
       it: "Archiviazione galassia (PTRE)",
     },
-    229: {
+    199: {
       de: "Leere Systeme",
       en: "Empty systems",
       es: "Sistemas vacíos",
