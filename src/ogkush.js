@@ -1573,8 +1573,9 @@ class OGInfinity {
           fuelConsumption: fleetDispatcher.fleetHelper.shipsData[id].fuelConsumption,
         };
       }
-      fleetDispatcher.apiTechData.forEach((tech) => {
-        this.json.technology[tech[0]] = tech[1];
+      // apiTechData was removed in OGame 13.1, apiDataJson.researches holds the same data as { id: level }
+      Object.entries(fleetDispatcher.apiDataJson?.researches ?? {}).forEach(([id, level]) => {
+        this.json.technology[id] = level;
       });
     }
     document.querySelectorAll(".moonlink").forEach((elem) => {
