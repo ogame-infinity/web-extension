@@ -295,8 +295,8 @@ const BUIDLING_INFO = {
   },
   45: {
     name: "Interstellar Anomaly Scanner",
-    baseCost: [84, 42, 14],
-    factorCost: 1.4,
+    baseCost: [90, 45, 15],
+    factorCost: 1.5,
   },
   // Moon
   41: {
