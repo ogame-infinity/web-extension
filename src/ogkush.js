@@ -34,6 +34,7 @@ import shipEnum from "./util/enum/ship.js";
 import ogiMode from "./util/enum/ogiMode.js";
 import * as iconVisibility from "./util/iconVisibility.js";
 import OverviewPage from "./ctxpage/overview/OverviewPage.js";
+import storageTimers from "./ctxpage/overview/storageTimers.js";
 import TraderImportExportPage from "./ctxpage/traderOverview/TraderImportExportPage.js";
 import RecyclingYieldCalculator from "./util/recyclingYieldCalculator.js";
 
@@ -1686,7 +1687,7 @@ class OGInfinity {
     this.checkRedirect();
     this.updateProductionProgress(false); //We haven't refreshed the empire data recently => false
     this.updateSpaceShipsPresence();
-    this.showStorageTimers();
+    storageTimers.show();
     // this.showTabTimer(); TODO: enable when timer is moved to the clock area
     this.markLifeforms();
     this.navigationArrows();
@@ -17158,155 +17159,6 @@ class OGInfinity {
     if (technoDetails) {
       let selector = `.technology[data-technology='${technoDetails}'] span`;
       wait.waitForQuerySelector(selector).then(() => document.querySelector(selector).click());
-    }
-  }
-
-  showStorageTimers() {
-    if (this.page == "overview" && OGIData.empire[this.current.index]) {
-      let currentDate = new Date();
-      let timeZoneChange = this.json.options.timeZone ? 0 : this.json.timezoneDiff;
-      let metalStorage = resourcesBar.resources.metal.storage;
-      let metalResources = resourcesBar.resources.metal.amount;
-      let metalProduction = this.current.isMoon
-        ? 0
-        : Math.floor(OGIData.empire[this.current.index].production.hourly[0]);
-      let metalTime = (metalStorage - metalResources) / metalProduction;
-      let metalDate = new Date(currentDate.getTime() + (metalTime * 3600 - timeZoneChange) * 1e3);
-      let metalFull = metalResources >= metalStorage;
-      if (metalFull) metalProduction = 0;
-      let crystalStorage = resourcesBar.resources.crystal.storage;
-      let crystalResources = resourcesBar.resources.crystal.amount;
-      let crystalProduction = this.current.isMoon
-        ? 0
-        : Math.floor(OGIData.empire[this.current.index].production.hourly[1]);
-      let crystalTime = (crystalStorage - crystalResources) / crystalProduction;
-      let crystalDate = new Date(currentDate.getTime() + (crystalTime * 3600 - timeZoneChange) * 1e3);
-      let crystalFull = crystalResources >= crystalStorage;
-      if (crystalFull) crystalProduction = 0;
-      let deuteriumStorage = resourcesBar.resources.deuterium.storage;
-      let deuteriumResources = resourcesBar.resources.deuterium.amount;
-      let deuteriumProduction = this.current.isMoon
-        ? 0
-        : Math.floor(OGIData.empire[this.current.index].production.hourly[2]);
-      let deuteriumTime = (deuteriumStorage - deuteriumResources) / deuteriumProduction;
-      let deuteriumDate = new Date(currentDate.getTime() + (deuteriumTime * 3600 - timeZoneChange) * 1e3);
-      let deuteriumFull = deuteriumResources >= deuteriumStorage;
-      if (deuteriumFull) deuteriumProduction = 0;
-      let table = document.querySelector("#planetDetails tbody");
-      let metal_1 = table.insertBefore(createDOM("tr"), table.children[0]);
-      metal_1.appendChild(createDOM("td", { class: "desc" }, `${this.getTranslatedText(22, "tech")}:`));
-      metal_1.appendChild(
-        this.createDOM(
-          "td",
-          { class: "data" },
-          `<span class="${metalProduction > 0 ? "undermark" : "overmark"}">(+${toFormatedNumber(
-            metalProduction
-          )})</span><span class="${
-            metalResources >= metalStorage ? " overmark" : ""
-          }" id="metal-storage"> ${toFormatedNumber(Math.floor(metalResources))} / ${toFormatedNumber(
-            metalStorage,
-            null,
-            true
-          )}</span>`
-        )
-      );
-      let metal_2 = table.insertBefore(createDOM("tr"), table.children[1]);
-      metal_2.appendChild(createDOM("td", { class: "desc" }, ""));
-      metal_2.appendChild(
-        this.createDOM(
-          "td",
-          { class: "data" },
-          `<span class="${metalTime > 0 && metalTime != Infinity ? "ogl-date" : "overmark"}"> ${
-            metalTime > 0 && metalTime != Infinity
-              ? getFormatedDate(metalDate.getTime(), "[d].[m].[y] - [G]:[i]:[s]")
-              : "-"
-          }</span>`
-        )
-      );
-      let crystal_1 = table.insertBefore(createDOM("tr"), table.children[2]);
-      crystal_1.appendChild(createDOM("td", { class: "desc" }, `${this.getTranslatedText(23, "tech")}:`));
-      crystal_1.appendChild(
-        this.createDOM(
-          "td",
-          { class: "data" },
-          `<span class="${crystalProduction > 0 ? "undermark" : "overmark"}"> (+${toFormatedNumber(
-            crystalProduction
-          )})</span><span class="${
-            crystalResources >= crystalStorage ? " overmark" : ""
-          }" id="crystal-storage"> ${toFormatedNumber(Math.floor(crystalResources))} / ${toFormatedNumber(
-            crystalStorage,
-            null,
-            true
-          )}</span>`
-        )
-      );
-      let crystal_2 = table.insertBefore(createDOM("tr"), table.children[3]);
-      crystal_2.appendChild(createDOM("td", { class: "desc" }, ""));
-      crystal_2.appendChild(
-        this.createDOM(
-          "td",
-          { class: "data" },
-          `<span class="${crystalTime > 0 && crystalTime != Infinity ? "ogl-date" : "overmark"}"> ${
-            crystalTime > 0 && crystalTime != Infinity
-              ? getFormatedDate(crystalDate.getTime(), "[d].[m].[y] - [G]:[i]:[s]")
-              : "-"
-          }</span></span>`
-        )
-      );
-      let deuterium_1 = table.insertBefore(createDOM("tr"), table.children[4]);
-      deuterium_1.appendChild(createDOM("td", { class: "desc" }, `${this.getTranslatedText(24, "tech")}:`));
-      deuterium_1.appendChild(
-        this.createDOM(
-          "td",
-          { class: "data" },
-          `<span class="${deuteriumProduction > 0 ? "undermark" : "overmark"}"> (+${toFormatedNumber(
-            deuteriumProduction
-          )})</span><span class="${
-            deuteriumResources >= deuteriumStorage ? " overmark" : ""
-          }" id = "deuterium-storage" > ${toFormatedNumber(Math.floor(deuteriumResources))} / ${toFormatedNumber(
-            deuteriumStorage,
-            null,
-            true
-          )}</span>`
-        )
-      );
-      let deuterium_2 = table.insertBefore(createDOM("tr"), table.children[5]);
-      deuterium_2.appendChild(createDOM("td", { class: "desc" }, ""));
-      deuterium_2.appendChild(
-        this.createDOM(
-          "td",
-          { class: "data" },
-          `<span class="${deuteriumTime > 0 && deuteriumTime != Infinity ? "ogl-date" : "overmark"}"> ${
-            deuteriumTime > 0 && deuteriumTime != Infinity
-              ? getFormatedDate(deuteriumDate.getTime(), "[d].[m].[y] - [G]:[i]:[s]")
-              : "-"
-          }</span></span>`
-        )
-      );
-      let updater = setInterval(() => {
-        let updateTime = new Date().getTime();
-        if (
-          (updateTime > metalDate.getTime() && !metalFull) ||
-          (updateTime > crystalDate.getTime() && !crystalFull) ||
-          (updateTime > deuteriumDate.getTime() && !deuteriumFull)
-        ) {
-          clearInterval(updater);
-          location.reload();
-        }
-        if (metalProduction + crystalProduction + deuteriumProduction > 0) {
-          document.querySelector("#metal-storage").textContent = ` ${toFormatedNumber(
-            Math.floor(resourcesBar.resources.metal.amount)
-          )} / ${toFormatedNumber(metalStorage, null, true)}`;
-          document.querySelector("#crystal-storage").textContent = ` ${toFormatedNumber(
-            Math.floor(resourcesBar.resources.crystal.amount)
-          )} / ${toFormatedNumber(crystalStorage, null, true)}`;
-          document.querySelector("#deuterium-storage").textContent = ` ${toFormatedNumber(
-            Math.floor(resourcesBar.resources.deuterium.amount)
-          )} / ${toFormatedNumber(deuteriumStorage, null, true)}`;
-        } else {
-          clearInterval(updater);
-        }
-      }, 2000);
     }
   }
 
