@@ -8,8 +8,11 @@ class OgamePageData {
     this._currentGalaxy = parseInt(this._currentCoordinates.split(":")[0]);
     this._currentSystem = parseInt(this._currentCoordinates.split(":")[1]);
     this._currentPosition = parseInt(this._currentCoordinates.split(":")[2]);
-    this._currentPositionType =  document.querySelector('meta[name="ogame-planet-type"]').getAttribute("content") === 'planet' ? 1 : 3;
+    this._currentPositionType =
+      document.querySelector('meta[name="ogame-planet-type"]').getAttribute("content") === "planet" ? 1 : 3;
     this._donutSystem = document.querySelector('meta[name="ogame-donut-system"]').getAttribute("content") === "1";
+    this._rawURL = new URL(window.location.href);
+    this._page = this._rawURL.searchParams.get("component") || this._rawURL.searchParams.get("page");
   }
   /** @type {string} */
   get gameLang() {
@@ -28,7 +31,7 @@ class OgamePageData {
   get isAtLeast_13_0_0() {
     return this._isAtLeast_13_0_0;
   }
-  
+
   static #IsVersionEqualOrGreaterThan(ogameVersion, compareVersion) {
     // Extract the numeric parts of the version strings and convert them to numbers for comparison (ex: "13.0.0-r1" -> "13.0.0")
     const cleanVersion = (v) => v.split("-")[0].split(".").map(Number);
@@ -45,7 +48,7 @@ class OgamePageData {
       if (ogameV > b) return true; // Ogame version is greater
       if (ogameV < b) return false; // Ogame version is lesser
     }
-  
+
     return true; // Versions are equal
   }
   /** @type {string} */
@@ -71,6 +74,14 @@ class OgamePageData {
   /** @type {boolean} */
   get donutSystem() {
     return this._donutSystem;
+  }
+  /** @type {string} */
+  get rawURL() {
+    return this._rawURL;
+  }
+  /** @type {string} */
+  get page() {
+    return this._page;
   }
 }
 
