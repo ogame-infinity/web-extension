@@ -10048,7 +10048,7 @@ class OGInfinity {
       let inactiveSystemsDiv
 
       if(this.json.fleetIgnoreEmptySystems) {
-        info.appendChild(createDOM("div", {}, this.getTranslatedText(229)));
+        info.appendChild(createDOM("div", {}, this.getTranslatedText(199)));
         emptySystemsDiv = info.appendChild(createDOM("div", { class: "ogl-empty-systems" }));
       }
       
