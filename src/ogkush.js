@@ -34,6 +34,7 @@ import shipEnum from "./util/enum/ship.js";
 import ogiMode from "./util/enum/ogiMode.js";
 import * as iconVisibility from "./util/iconVisibility.js";
 import OverviewPage from "./ctxpage/overview/OverviewPage.js";
+import storageTimers from "./ctxpage/overview/storageTimers.js";
 import TraderImportExportPage from "./ctxpage/traderOverview/TraderImportExportPage.js";
 import RecyclingYieldCalculator from "./util/recyclingYieldCalculator.js";
 
@@ -1687,7 +1688,7 @@ class OGInfinity {
     this.checkRedirect();
     this.updateProductionProgress(false); //We haven't refreshed the empire data recently => false
     this.updateSpaceShipsPresence();
-    this.showStorageTimers();
+    storageTimers.show();
     // this.showTabTimer(); TODO: enable when timer is moved to the clock area
     this.markLifeforms();
     this.navigationArrows();
@@ -3223,8 +3224,8 @@ class OGInfinity {
         return typeof this.onFleetSentRedirectUrl === "string"
           ? this.onFleetSentRedirectUrl
           : typeof this.onFleetSentRedirectUrl === "function"
-          ? this.onFleetSentRedirectUrl()
-          : undefined;
+            ? this.onFleetSentRedirectUrl()
+            : undefined;
       });
       $(".send_all").before(createDOM("span", { class: "select-most" }));
       $(".allornonewrap > .secondcol > span.select-most").on("click", () => {
@@ -4278,8 +4279,7 @@ class OGInfinity {
     // refreshed even when no PTRE team key is set. PTRE work is gated inside scan().
     // Any failure here must NOT propagate to the OGame galaxy render path.
     try {
-      const serverTimeMs =
-        serverTime && typeof serverTime.getTime !== "undefined" ? serverTime.getTime() : null;
+      const serverTimeMs = serverTime && typeof serverTime.getTime !== "undefined" ? serverTime.getTime() : null;
       const ptreKey = this.json.options.ptreTK || null;
       pageContextRequest(
         "ptre",
@@ -4326,18 +4326,29 @@ class OGInfinity {
     if (this.json.options.ptreDebugLogs) {
       const coordsList = Object.keys(ptreJSON);
       ptreActivityLogger.debug(
-        "[ACTIVITY] Sending " + coordsList.length + " position(s) to PTRE (system " + systemCoords[0] + ":" + systemCoords[1] + ")"
+        "[ACTIVITY] Sending " +
+          coordsList.length +
+          " position(s) to PTRE (system " +
+          systemCoords[0] +
+          ":" +
+          systemCoords[1] +
+          ")"
       );
       coordsList.forEach((coords) => {
         const entry = ptreJSON[coords];
-        const moonPart = entry.moon
-          ? " | Moon: " + entry.moon.id + " act=" + entry.moon.activity
-          : " | Moon: -";
+        const moonPart = entry.moon ? " | Moon: " + entry.moon.id + " act=" + entry.moon.activity : " | Moon: -";
         ptreActivityLogger.debug(
-          "[ACTIVITY] [" + coords + "] Player " + entry.player_id +
-            " | Planet: " + entry.id + " act=" + entry.activity +
+          "[ACTIVITY] [" +
+            coords +
+            "] Player " +
+            entry.player_id +
+            " | Planet: " +
+            entry.id +
+            " act=" +
+            entry.activity +
             moonPart +
-            " | CDR: " + entry.cdr_total_size
+            " | CDR: " +
+            entry.cdr_total_size
         );
       });
     }
@@ -9754,14 +9765,12 @@ class OGInfinity {
         dispatch.style.display = "none";
       }
       let destination = dispatch.appendChild(createDOM("div", { class: "ogl-dest" }));
-      let systemButtons = destination.appendChild(createDOM("div", { class: "ogl-system-buttons", system: fleetDispatcher.targetPlanet.system }));
+      let systemButtons = destination.appendChild(
+        createDOM("div", { class: "ogl-system-buttons", system: fleetDispatcher.targetPlanet.system })
+      );
 
-      let systemInputMinus = systemButtons.appendChild(
-        createDOM("span", { class: "ogl-system-input-minus" })
-      );
-      let systemInputPlus = systemButtons.appendChild(
-        createDOM("span", { class: "ogl-system-input-plus" })
-      );
+      let systemInputMinus = systemButtons.appendChild(createDOM("span", { class: "ogl-system-input-minus" }));
+      let systemInputPlus = systemButtons.appendChild(createDOM("span", { class: "ogl-system-input-plus" }));
       let resDiv = dispatch.appendChild(createDOM("div"));
       let actions = resDiv.appendChild(createDOM("div", { class: "ogl-transport" }));
       let coords = destination.appendChild(createDOM("div", { class: "ogl-coords" }));
@@ -9922,10 +9931,9 @@ class OGInfinity {
                 if (missionURL != 0 && missions.includes(missionURL)) {
                   defaultMission = missionURL;
                 } else if (fleetDispatcher.targetPlanet.position == 16) {
-                  if(fleetDispatcher.mission !== 15 && fleetDispatcher.mission !== 6) {
-                  defaultMission = that.json.options.expeditionMission == 15 ? 15 : 6;
-                  }
-                  else {
+                  if (fleetDispatcher.mission !== 15 && fleetDispatcher.mission !== 6) {
+                    defaultMission = that.json.options.expeditionMission == 15 ? 15 : 6;
+                  } else {
                     defaultMission = fleetDispatcher.mission;
                   }
                 } else if (fleetDispatcher.targetIsBuddyOrAllyMember || !missions.includes(1)) {
@@ -10047,14 +10055,14 @@ class OGInfinity {
       let consDiv = info.appendChild(createDOM("div", { class: "undermark" }));
 
       let emptySystemsDiv;
-      let inactiveSystemsDiv
+      let inactiveSystemsDiv;
 
       if(this.json.fleetIgnoreEmptySystems) {
         info.appendChild(createDOM("div", {}, this.getTranslatedText(199)));
         emptySystemsDiv = info.appendChild(createDOM("div", { class: "ogl-empty-systems" }));
       }
-      
-      if(this.json.fleetIgnoreInactiveSystems) {
+
+      if (this.json.fleetIgnoreInactiveSystems) {
         info.appendChild(createDOM("div", {}, this.getTranslatedText(230)));
         inactiveSystemsDiv = info.appendChild(createDOM("div", { class: "ogl-inactive-systems" }));
       }
@@ -10185,7 +10193,7 @@ class OGInfinity {
             return false;
           }
         }
-        if(this.rawURL.searchParams.get("mission") == 6) {
+        if (this.rawURL.searchParams.get("mission") == 6) {
           if (index == 6) {
             return true;
           } else {
@@ -10365,8 +10373,8 @@ class OGInfinity {
           consDiv.textContent = "-";
           arrivalDiv.textContent = "-";
           returnDiv.textContent = "-";
-          if(emptySystemsDiv) emptySystemsDiv.textContent = "-";
-          if(inactiveSystemsDiv) inactiveSystemsDiv.textContent = "-";
+          if (emptySystemsDiv) emptySystemsDiv.textContent = "-";
+          if (inactiveSystemsDiv) inactiveSystemsDiv.textContent = "-";
           document
             .querySelector(".ogl-dispatch .ogl-missions")
             .replaceChildren(createDOM("span", { style: "color: #9099a3" }, `${that.getTranslatedText(111)}`));
@@ -10410,8 +10418,8 @@ class OGInfinity {
           icon.classList.add("ogl-active");
         }
         durationDiv.replaceChildren(createDOM("strong", {}, formatTime(fleetDispatcher.getDuration())));
-        if(emptySystemsDiv) {
-          if(fleetDispatcher.emptySystems > 0) {
+        if (emptySystemsDiv) {
+          if (fleetDispatcher.emptySystems > 0) {
             emptySystemsDiv.textContent = fleetDispatcher.emptySystems;
             emptySystemsDiv.classList.add("middlemark");
           } else {
@@ -10420,8 +10428,8 @@ class OGInfinity {
           }
         }
 
-        if(inactiveSystemsDiv) {
-          if(fleetDispatcher.inactiveSystems > 0) {
+        if (inactiveSystemsDiv) {
+          if (fleetDispatcher.inactiveSystems > 0) {
             inactiveSystemsDiv.textContent = fleetDispatcher.inactiveSystems;
             inactiveSystemsDiv.classList.add("middlemark");
           } else {
@@ -10473,14 +10481,14 @@ class OGInfinity {
         if (candidate <= 0) candidate = fleetDispatcher.fleetHelper.MAX_SYSTEM;
         else if (candidate > fleetDispatcher.fleetHelper.MAX_SYSTEM) candidate = 1;
         systemButtons.setAttribute("system", candidate);
-            
+
         // if system is set, increase or decrease it by one
         if (systemInput.value) {
           const finalSystem = parseInt(systemButtons.getAttribute("system") ?? "1");
           systemInput.value = finalSystem;
           systemInput.setAttribute("value", finalSystem);
         }
-        systemButtons.setAttribute("processing", "false")
+        systemButtons.setAttribute("processing", "false");
         const processing = systemButtons.getAttribute("processing");
         if (processing === "true") return;
         systemButtons.setAttribute("processing", "true");
@@ -10491,13 +10499,9 @@ class OGInfinity {
           fleetDispatcher.fetchTargetPlayerData();
           fleetDispatcher.refresh();
         }, 250)();
-      }
-      systemInputMinus.addEventListener(
-        "click", () => plusOrMinSystem(false)
-      );
-      systemInputPlus.addEventListener(
-        "click", () => plusOrMinSystem(true)
-      );
+      };
+      systemInputMinus.addEventListener("click", () => plusOrMinSystem(false));
+      systemInputPlus.addEventListener("click", () => plusOrMinSystem(true));
       systemInput.addEventListener("click", () => {
         systemInput.value = "";
         document.querySelector("#missionsDiv").setAttribute("data", "true");
@@ -17164,155 +17168,6 @@ class OGInfinity {
     }
   }
 
-  showStorageTimers() {
-    if (this.page == "overview" && OGIData.empire[this.current.index]) {
-      let currentDate = new Date();
-      let timeZoneChange = this.json.options.timeZone ? 0 : this.json.timezoneDiff;
-      let metalStorage = resourcesBar.resources.metal.storage;
-      let metalResources = resourcesBar.resources.metal.amount;
-      let metalProduction = this.current.isMoon
-        ? 0
-        : Math.floor(OGIData.empire[this.current.index].production.hourly[0]);
-      let metalTime = (metalStorage - metalResources) / metalProduction;
-      let metalDate = new Date(currentDate.getTime() + (metalTime * 3600 - timeZoneChange) * 1e3);
-      let metalFull = metalResources >= metalStorage;
-      if (metalFull) metalProduction = 0;
-      let crystalStorage = resourcesBar.resources.crystal.storage;
-      let crystalResources = resourcesBar.resources.crystal.amount;
-      let crystalProduction = this.current.isMoon
-        ? 0
-        : Math.floor(OGIData.empire[this.current.index].production.hourly[1]);
-      let crystalTime = (crystalStorage - crystalResources) / crystalProduction;
-      let crystalDate = new Date(currentDate.getTime() + (crystalTime * 3600 - timeZoneChange) * 1e3);
-      let crystalFull = crystalResources >= crystalStorage;
-      if (crystalFull) crystalProduction = 0;
-      let deuteriumStorage = resourcesBar.resources.deuterium.storage;
-      let deuteriumResources = resourcesBar.resources.deuterium.amount;
-      let deuteriumProduction = this.current.isMoon
-        ? 0
-        : Math.floor(OGIData.empire[this.current.index].production.hourly[2]);
-      let deuteriumTime = (deuteriumStorage - deuteriumResources) / deuteriumProduction;
-      let deuteriumDate = new Date(currentDate.getTime() + (deuteriumTime * 3600 - timeZoneChange) * 1e3);
-      let deuteriumFull = deuteriumResources >= deuteriumStorage;
-      if (deuteriumFull) deuteriumProduction = 0;
-      let table = document.querySelector("#planetDetails tbody");
-      let metal_1 = table.insertBefore(createDOM("tr"), table.children[0]);
-      metal_1.appendChild(createDOM("td", { class: "desc" }, `${this.getTranslatedText(22, "tech")}:`));
-      metal_1.appendChild(
-        this.createDOM(
-          "td",
-          { class: "data" },
-          `<span class="${metalProduction > 0 ? "undermark" : "overmark"}">(+${toFormatedNumber(
-            metalProduction
-          )})</span><span class="${
-            metalResources >= metalStorage ? " overmark" : ""
-          }" id="metal-storage"> ${toFormatedNumber(Math.floor(metalResources))} / ${toFormatedNumber(
-            metalStorage,
-            null,
-            true
-          )}</span>`
-        )
-      );
-      let metal_2 = table.insertBefore(createDOM("tr"), table.children[1]);
-      metal_2.appendChild(createDOM("td", { class: "desc" }, ""));
-      metal_2.appendChild(
-        this.createDOM(
-          "td",
-          { class: "data" },
-          `<span class="${metalTime > 0 && metalTime != Infinity ? "ogl-date" : "overmark"}"> ${
-            metalTime > 0 && metalTime != Infinity
-              ? getFormatedDate(metalDate.getTime(), "[d].[m].[y] - [G]:[i]:[s]")
-              : "-"
-          }</span>`
-        )
-      );
-      let crystal_1 = table.insertBefore(createDOM("tr"), table.children[2]);
-      crystal_1.appendChild(createDOM("td", { class: "desc" }, `${this.getTranslatedText(23, "tech")}:`));
-      crystal_1.appendChild(
-        this.createDOM(
-          "td",
-          { class: "data" },
-          `<span class="${crystalProduction > 0 ? "undermark" : "overmark"}"> (+${toFormatedNumber(
-            crystalProduction
-          )})</span><span class="${
-            crystalResources >= crystalStorage ? " overmark" : ""
-          }" id="crystal-storage"> ${toFormatedNumber(Math.floor(crystalResources))} / ${toFormatedNumber(
-            crystalStorage,
-            null,
-            true
-          )}</span>`
-        )
-      );
-      let crystal_2 = table.insertBefore(createDOM("tr"), table.children[3]);
-      crystal_2.appendChild(createDOM("td", { class: "desc" }, ""));
-      crystal_2.appendChild(
-        this.createDOM(
-          "td",
-          { class: "data" },
-          `<span class="${crystalTime > 0 && crystalTime != Infinity ? "ogl-date" : "overmark"}"> ${
-            crystalTime > 0 && crystalTime != Infinity
-              ? getFormatedDate(crystalDate.getTime(), "[d].[m].[y] - [G]:[i]:[s]")
-              : "-"
-          }</span></span>`
-        )
-      );
-      let deuterium_1 = table.insertBefore(createDOM("tr"), table.children[4]);
-      deuterium_1.appendChild(createDOM("td", { class: "desc" }, `${this.getTranslatedText(24, "tech")}:`));
-      deuterium_1.appendChild(
-        this.createDOM(
-          "td",
-          { class: "data" },
-          `<span class="${deuteriumProduction > 0 ? "undermark" : "overmark"}"> (+${toFormatedNumber(
-            deuteriumProduction
-          )})</span><span class="${
-            deuteriumResources >= deuteriumStorage ? " overmark" : ""
-          }" id = "deuterium-storage" > ${toFormatedNumber(Math.floor(deuteriumResources))} / ${toFormatedNumber(
-            deuteriumStorage,
-            null,
-            true
-          )}</span>`
-        )
-      );
-      let deuterium_2 = table.insertBefore(createDOM("tr"), table.children[5]);
-      deuterium_2.appendChild(createDOM("td", { class: "desc" }, ""));
-      deuterium_2.appendChild(
-        this.createDOM(
-          "td",
-          { class: "data" },
-          `<span class="${deuteriumTime > 0 && deuteriumTime != Infinity ? "ogl-date" : "overmark"}"> ${
-            deuteriumTime > 0 && deuteriumTime != Infinity
-              ? getFormatedDate(deuteriumDate.getTime(), "[d].[m].[y] - [G]:[i]:[s]")
-              : "-"
-          }</span></span>`
-        )
-      );
-      let updater = setInterval(() => {
-        let updateTime = new Date().getTime();
-        if (
-          (updateTime > metalDate.getTime() && !metalFull) ||
-          (updateTime > crystalDate.getTime() && !crystalFull) ||
-          (updateTime > deuteriumDate.getTime() && !deuteriumFull)
-        ) {
-          clearInterval(updater);
-          location.reload();
-        }
-        if (metalProduction + crystalProduction + deuteriumProduction > 0) {
-          document.querySelector("#metal-storage").textContent = ` ${toFormatedNumber(
-            Math.floor(resourcesBar.resources.metal.amount)
-          )} / ${toFormatedNumber(metalStorage, null, true)}`;
-          document.querySelector("#crystal-storage").textContent = ` ${toFormatedNumber(
-            Math.floor(resourcesBar.resources.crystal.amount)
-          )} / ${toFormatedNumber(crystalStorage, null, true)}`;
-          document.querySelector("#deuterium-storage").textContent = ` ${toFormatedNumber(
-            Math.floor(resourcesBar.resources.deuterium.amount)
-          )} / ${toFormatedNumber(deuteriumStorage, null, true)}`;
-        } else {
-          clearInterval(updater);
-        }
-      }, 2000);
-    }
-  }
-
   collect() {
     if (
       this.page == "fleetdispatch" &&
@@ -17513,10 +17368,9 @@ class OGInfinity {
       fleetDispatcher.shipsOnPlanet.some((x) => x.number > 0) &&
       !fleetDispatcher.isOnVacation
     ) {
-
       const getMissionClass = (mission) => {
-        if(mission == 4) return "statio";
-        if(mission == 6) return "spy"
+        if (mission == 4) return "statio";
+        if (mission == 6) return "spy";
         return "";
       };
 
@@ -17926,23 +17780,20 @@ class OGInfinity {
               };
               const target = findTargetByIdOrCoords(selectedTarget);
 
-              if(selectedRoute.mission == 6)
-              {
+              if (selectedRoute.mission == 6) {
                 const systemDistance = this.rawURL.searchParams.get("systemDistance") ?? 0;
                 let candidateSystem = OgamePageData.currentSystem + parseInt(systemDistance);
-                if(OgamePageData.donutSystem)
-                {
+                if (OgamePageData.donutSystem) {
                   const maxSystem = fleetDispatcher.fleetHelper.MAX_SYSTEM;
-                  if(candidateSystem > maxSystem) candidateSystem = candidateSystem - maxSystem;
-                  if(candidateSystem < 1) candidateSystem = maxSystem + candidateSystem;
+                  if (candidateSystem > maxSystem) candidateSystem = candidateSystem - maxSystem;
+                  if (candidateSystem < 1) candidateSystem = maxSystem + candidateSystem;
                 }
                 document.querySelector(".ogl-coords #galaxyInput").value = OgamePageData.currentGalaxy;
                 document.querySelector(".ogl-coords #systemInput").value = candidateSystem;
-                document.querySelector(".ogl-coords #positionInput").value = 16;                
+                document.querySelector(".ogl-coords #positionInput").value = 16;
               }
               //if target doesn't exist anymore (moved or destroyed) do not select a target and let the player select a new one by himself to avoid error and bad experience
-              else if(target)
-              {
+              else if (target) {
                 document.querySelector(".ogl-coords #galaxyInput").value = target.galaxy;
                 document.querySelector(".ogl-coords #systemInput").value = target.system;
                 document.querySelector(".ogl-coords #positionInput").value = target.position;
@@ -17971,7 +17822,6 @@ class OGInfinity {
                 });
               }
 
-
               //select cargo
               document.querySelector(".ogl-cargo a.send_none").click();
               if (this.json.options.customMissions[customMissionId].resources) {
@@ -17993,12 +17843,10 @@ class OGInfinity {
                * here, we don't care about keep ships options, because it's a ghosting / emergency feature
                * so if the player want to keep his probe, he will get it at fleet return
                */
-              if(selectedRoute.mission == 6){ 
-                const hasProbeSelected = fleetDispatcher.shipsToSend.some(s => s.id == 210);
-                if(!hasProbeSelected)this.selectShips(210, 1);                
+              if (selectedRoute.mission == 6) {
+                const hasProbeSelected = fleetDispatcher.shipsToSend.some((s) => s.id == 210);
+                if (!hasProbeSelected) this.selectShips(210, 1);
               }
-
-
 
               fleetDispatcher.refreshTarget();
               fleetDispatcher.updateTarget();
@@ -18036,41 +17884,40 @@ class OGInfinity {
                 });
                 // but some parameters could help for performance with rotation
                 if (rotation) {
-                  urlParams.set("mission", selectedRoute.mission);//preselect mission
-                  if(selectedRoute.mission == 6) {
+                  urlParams.set("mission", selectedRoute.mission); //preselect mission
+                  if (selectedRoute.mission == 6) {
                     //find next coords for targe with nextId
-                    const nextTarget = OGIData.empire.find(p => p.id == nextId) ?? OGIData.empire.find(p => p.moon && p.moon.id == nextId)?.moon;
-                    if(nextTarget.galaxy) urlParams.set("galaxy", nextTarget.galaxy);
-                    if(nextTarget.system) urlParams.set("system", nextTarget.system);
-                    urlParams.set("position", 16);//preselect P16
-                    urlParams.set("type", 1);//preselect planetType
+                    const nextTarget =
+                      OGIData.empire.find((p) => p.id == nextId) ??
+                      OGIData.empire.find((p) => p.moon && p.moon.id == nextId)?.moon;
+                    if (nextTarget.galaxy) urlParams.set("galaxy", nextTarget.galaxy);
+                    if (nextTarget.system) urlParams.set("system", nextTarget.system);
+                    urlParams.set("position", 16); //preselect P16
+                    urlParams.set("type", 1); //preselect planetType
 
-                  /*
-                   * if there is some change in system, we need to calculate the difference of coordinates 
-                   * to apply it to the next target for preselection
-                   */
+                    /*
+                     * if there is some change in system, we need to calculate the difference of coordinates
+                     * to apply it to the next target for preselection
+                     */
 
-                    if(fleetDispatcher.targetPlanet.system !== OgamePageData.currentSystem)
-                    {
+                    if (fleetDispatcher.targetPlanet.system !== OgamePageData.currentSystem) {
                       const maxSystem = fleetDispatcher.fleetHelper.MAX_SYSTEM;
                       let distance = fleetDispatcher.targetPlanet.system - OgamePageData.currentSystem;
                       // In a donut system, if the distance is greater than half of the max, it's shorter to go through the loop.
-                      if (OgamePageData.donutSystem )
-                      {                    
-                        if(Math.abs(distance) > maxSystem / 2) {
+                      if (OgamePageData.donutSystem) {
+                        if (Math.abs(distance) > maxSystem / 2) {
                           distance = distance > 0 ? distance - maxSystem : distance + maxSystem;
                         }
                       }
                       urlParams.set("systemDistance", distance);
                     }
-                  }
-                  else {
+                  } else {
                     const nextTarget = selectedRoute.target[nextId];
-                    if(nextTarget) {
-                      if(nextTarget.galaxy) urlParams.set("galaxy", nextTarget.galaxy);
-                      if(nextTarget.system) urlParams.set("system", nextTarget.system);
-                      if(nextTarget.position) urlParams.set("position", nextTarget.position);
-                      if(nextTarget.type) urlParams.set("type", nextTarget.type);
+                    if (nextTarget) {
+                      if (nextTarget.galaxy) urlParams.set("galaxy", nextTarget.galaxy);
+                      if (nextTarget.system) urlParams.set("system", nextTarget.system);
+                      if (nextTarget.position) urlParams.set("position", nextTarget.position);
+                      if (nextTarget.type) urlParams.set("type", nextTarget.type);
                     }
                   }
                 }
