@@ -93,6 +93,7 @@ const _options = {
     sendProbe: true,
     standardFleet: false,
     standardFleetId: 0,
+    standardFleetType: null,
   },
   overview_display_planet_details: true,
   overview_display_planet_buffBar: true,

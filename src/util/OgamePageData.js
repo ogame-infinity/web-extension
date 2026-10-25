@@ -13,14 +13,12 @@ class OgamePageData {
     this._donutSystem = document.querySelector('meta[name="ogame-donut-system"]').getAttribute("content") === "1";
     this._rawURL = new URL(window.location.href);
     this._page = this._rawURL.searchParams.get("component") || this._rawURL.searchParams.get("page");
-  }
-  /** @type {string} */
-  get gameLang() {
-    return this._gameLang;
-  }
-  /** @type {string} */
-  get playerLang() {
-    return this._playerLang;
+    this._commander = !!document.querySelector("#officers > a.commander.on");
+    this._geologist = !!document.querySelector("#officers > a.geologist.on");
+    this._technocrat = !!document.querySelector("#officers > a.technocrat.on");
+    this._admiral = !!document.querySelector("#officers > a.admiral.on");
+    this._engineer = !!document.querySelector("#officers > a.engineer.on");
+    this._allOfficers = !!document.querySelector("#officers.all");
   }
 
   /** @type {string} */
@@ -30,6 +28,38 @@ class OgamePageData {
   /** @type {boolean} */
   get isAtLeast_13_0_0() {
     return this._isAtLeast_13_0_0;
+  }
+  /** @type {string} */
+  get gameLang() {
+    return this._gameLang;
+  }
+  /** @type {string} */
+  get playerLang() {
+    return this._playerLang;
+  }
+  /** @type {boolean} */
+  get commander() {
+    return this._commander;
+  }
+  /** @type {boolean} */
+  get geologist() {
+    return this._geologist;
+  }  
+  /** @type {boolean} */
+  get technocrat() {
+    return this._technocrat;
+  }
+    /** @type {boolean} */
+  get admiral() {
+    return this._admiral;
+  }
+    /** @type {boolean} */
+  get engineer() {
+    return this._engineer;
+  }
+    /** @type {boolean} */
+  get allOfficers() {
+    return this._allOfficers;
   }
 
   static #IsVersionEqualOrGreaterThan(ogameVersion, compareVersion) {
