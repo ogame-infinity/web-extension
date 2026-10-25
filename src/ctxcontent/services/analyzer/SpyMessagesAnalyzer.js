@@ -23,8 +23,7 @@ class SpyMessagesAnalyzer {
   #tabId;
   #onTrash = false;
   reportsToDelete = [];
-  #countRestoration = 0;
-  #spyReports = [];
+  #spyReports = {};
 
   constructor() {
     this.#logger = getLogger("SpyMessagesAnalyer");
@@ -47,7 +46,7 @@ class SpyMessagesAnalyzer {
     )
       return;
 
-    this.#spyReports = [];
+    this.#spyReports = {};
 
     document.querySelector(".ogl-spyTable")?.remove();
     document.querySelector(".ogl-tableOptions")?.remove();
@@ -97,7 +96,7 @@ class SpyMessagesAnalyzer {
       if (!report.targetIsSelf) this.#spyReports[report.id] = report;
     });
 
-    if (this.#spyReports.length === 0) return;
+    if (Object.keys(this.#spyReports).length === 0) return;
 
     this.#spyTableBody(table);
   }
@@ -619,8 +618,7 @@ class SpyMessagesAnalyzer {
         const optColDeleteButton = createDOM("button", { class: "icon icon_trash" });
         optColDeleteButton.setAttribute("data-id", report.id);
         optColDeleteButton.addEventListener("click", () => {
-          bodyRow.classList.add("hide");
-          this.reportsToDelete.push(report);
+          this.reportsToDelete.push({ report, row: bodyRow });
 
           this.deleteReports();
         });
@@ -637,23 +635,14 @@ class SpyMessagesAnalyzer {
             ) <
             OGIData.options.rvalLimit
         ) {
-          bodyRow.classList.add("hide");
-          this.reportsToDelete.push(report);
+          this.reportsToDelete.push({ report, row: bodyRow });
         }
       } else if (document.querySelector('.messagesTrashcanBtns button.custom_btn[disabled="disabled"]')) {
         const optColRestoreButton = createDOM("button", { class: "icon icon_restore" });
-        optColRestoreButton.getAttribute("data-id", report.id);
+        optColRestoreButton.setAttribute("data-id", report.id);
 
         optColRestoreButton.addEventListener("click", () => {
-          bodyRow.classList.add("hide");
-          this.#countRestoration++;
-          new Promise((r) => setTimeout(r, 300)).then(() => {
-            this.#countRestoration--;
-            if (!document.querySelector(`.msgRestoreBtn[data-message-id="${report.id}"]`)) return;
-            document.querySelector(`.msgRestoreBtn[data-message-id="${report.id}"]`).click();
-          });
-          new Promise((r) => setTimeout(r, 800)).then(() => {
-            if (this.#countRestoration > 0) return;
+          this.#flagDeleted([report.id], [bodyRow], () => {
             window.dispatchEvent(new CustomEvent("ogi-spyTableReload"));
           });
         });
@@ -667,8 +656,7 @@ class SpyMessagesAnalyzer {
           renta[round] = Math.round((report.total * Math.pow(1 - report.loot / 100, round) * report.loot) / 100);
         }
 
-        if (renta.length > 1) {
-          const line = gainCol.parentElement;
+        const line = gainCol.parentElement;
 
           if (line.getAttribute("data") === "expanded") {
             line.setAttribute("data", "closed");
@@ -771,7 +759,6 @@ class SpyMessagesAnalyzer {
             extraLine.appendChild(createDOM("td"));
             extraLine.appendChild(createDOM("td"));
           }
-        }
       };
 
       gainCol.addEventListener("click", () => {
@@ -782,36 +769,97 @@ class SpyMessagesAnalyzer {
     this.deleteReports();
   }
 
+  // Shared by delete and restore: the game reuses the same ogame.messages.flagDeleted()
+  // endpoint for both actions (toggles the message's trashed state), and it's been confirmed
+  // to work safely with a detached element regardless of whether the real button is in the
+  // DOM - it looks up the row and any open dialog by data-msg-id itself, and no-ops harmlessly
+  // if it doesn't find them. rows are hidden optimistically and only put back if something
+  // genuinely goes wrong (thrown error, or no server confirmation within 10s).
+  #flagDeleted(messageIds, rows, onConfirmed) {
+    const obj = this;
+
+    rows.forEach((row) => row.classList.add("hide"));
+
+    const revert = (reason) => {
+      obj.#logger.warn(`Action failed for [${messageIds.join(", ")}]: ${reason}`);
+      rows.forEach((row) => row.classList.remove("hide"));
+    };
+
+    try {
+      // ogame.messages.flagDeleted() reads $(obj).data('messageId'), which can be a single
+      // id or an array of ids - passing several at once sends one request instead of one
+      // per report.
+      const fakeBtn = document.createElement("button");
+      $(fakeBtn).data("messageId", messageIds);
+      ogame.messages.flagDeleted(fakeBtn);
+    } catch (err) {
+      // Something failed synchronously (e.g. the game changed how flagDeleted works).
+      // Undo the optimistic hide right away instead of waiting for a reload.
+      revert(err);
+      return;
+    }
+
+    let settled = false;
+
+    const onAjaxSuccess = function (e, xhr, settings) {
+      const urlParams = new URLSearchParams(settings.url);
+      const requestPayload = new URLSearchParams(settings.data);
+
+      if (urlParams.get("action") !== "flagDeleted") return;
+
+      const requestIds = requestPayload.getAll("messageIds[]");
+      if (!messageIds.every((id) => requestIds.includes(String(id)))) return;
+
+      settled = true;
+      $(document).off("ajaxSuccess", onAjaxSuccess);
+
+      if (xhr?.responseJSON?.status !== "success") {
+        revert("server responded with a non-success status");
+        return;
+      }
+
+      onConfirmed?.();
+    };
+
+    $(document).on("ajaxSuccess", onAjaxSuccess);
+
+    // Safety net: if the server never confirms this batch (request failed, unexpected
+    // response, etc.), don't leave the listener attached to document forever, and undo
+    // the optimistic hide instead of leaving the user misled until they reload.
+    setTimeout(() => {
+      if (settled) return;
+
+      $(document).off("ajaxSuccess", onAjaxSuccess);
+      revert("no server confirmation within 10s");
+    }, 10000);
+  }
+
   deleteReports() {
     this.#logger.debug("Delete messages", this.reportsToDelete);
 
     if (this.reportsToDelete.length === 0) return;
 
-    const report = this.reportsToDelete.shift();
-    this.#logger.debug("Messages to be deleted", report.id);
-    const obj = this;
+    // Take everything queued right now as a single batch. Manual clicks queue one report
+    // at a time and call deleteReports() immediately, so they end up as a batch of one.
+    // The auto-delete pass queues several reports and calls deleteReports() once after
+    // building the whole table, so those go out together as one request.
+    const batch = this.reportsToDelete;
+    this.reportsToDelete = [];
 
-    if (!document.querySelector(`.msgDeleteBtn[data-message-id="${report.id}"]`)) return;
-    document.querySelector(`.msgDeleteBtn[data-message-id="${report.id}"]`).click();
+    const messageIds = batch.map(({ report }) => report.id);
+    const rows = batch.map(({ row }) => row);
+    this.#logger.debug("Messages to be deleted", messageIds);
 
-    const refresh = this.reportsToDelete.length === 0;
-
-    $(document).on("ajaxSuccess", function (e, xhr, settings) {
-      const urlParams = new URLSearchParams(settings.url);
-      const requestPayload = new URLSearchParams(settings.data);
-
-      if (xhr?.responseJSON?.status !== "success") return;
-      if (urlParams.get("action") !== "flagDeleted") return;
-
-      if (!requestPayload.getAll("messageIds[]").includes(report.id)) {
-        return;
-      }
-
-      if (!refresh) {
-        new Promise((r) => setTimeout(r, 100)).then(() => {
-          obj.deleteReports();
-        });
-      }
+    this.#flagDeleted(messageIds, rows, () => {
+      // ogame.messages.flagDeleted() only cleans up the native message row for a single
+      // id - when messageId is an array, it gets stringified straight into the selector
+      // (e.g. ".msg[data-msg-id='123,456']"), which matches nothing. So for a batch, the
+      // server-side deletion succeeds but the native rows never disappear from the list
+      // below. Clean them up ourselves instead of relying on that. Safe to always run:
+      // if the game already removed a row (single-delete case), this is just a no-op.
+      messageIds.forEach((id) => {
+        document.querySelector(`.messagesHolder .msg[data-msg-id='${id}']`)?.remove();
+      });
     });
   }
 
@@ -832,49 +880,56 @@ class SpyMessagesAnalyzer {
       // Check if the spy data already exists and skip if it does
       if (OGIData.spies[id]) return;
 
-      const tmpHTML = createDOM("div", {});
-      tmpHTML.insertAdjacentHTML("afterbegin", message.querySelector("span.player").getAttribute("data-tooltip-title"));
-      const playerID = tmpHTML.querySelector("[data-playerId]").getAttribute("data-playerId");
+      try {
+        const playerID = message
+          .querySelector("span.player")
+          .getAttribute("data-tooltip-title")
+          .match(/data-playerId="(\d+)"/)?.[1];
 
-      const spyFromUrl = new URLSearchParams(
-        message.querySelector(".custom_btn.msgAttackBtn").getAttribute("onclick").split(/=(.*)/)[1].slice(1, -1)
-      );
+        const spyFromUrl = new URLSearchParams(
+          message.querySelector(".custom_btn.msgAttackBtn").getAttribute("onclick").split(/=(.*)/)[1].slice(1, -1)
+        );
 
-      const type = parseInt(spyFromUrl.get("type"));
-      const timestamp = dataRaw.getAttribute("data-raw-timestamp");
+        const type = parseInt(spyFromUrl.get("type"));
+        const timestamp = dataRaw.getAttribute("data-raw-timestamp");
 
-      const spy = {
-        id: id,
-        targetPlayerId: playerId,
-        sourcePlayerId: playerID,
-        galaxy: spyFromUrl.get("galaxy"),
-        system: spyFromUrl.get("system"),
-        position: spyFromUrl.get("position"),
-        type: type,
-        timestamp: timestamp * 1e3,
-      };
+        const spy = {
+          id: id,
+          targetPlayerId: playerId,
+          sourcePlayerId: playerID,
+          galaxy: spyFromUrl.get("galaxy"),
+          system: spyFromUrl.get("system"),
+          position: spyFromUrl.get("position"),
+          type: type,
+          timestamp: timestamp * 1e3,
+        };
 
-      ptreJSON[id] = {
-        player_id: spy.sourcePlayerId,
-        teamkey: OGIData.options.ptreTK,
-        galaxy: spy.galaxy,
-        system: spy.system,
-        position: spy.position,
-        spy_message_ts: spy.timestamp,
-        moon: {
-          activity: type === planetType.planet ? "60" : "*",
-        },
-        main: false,
-        activity: type === planetType.planet ? "*" : "60",
-      };
+        ptreJSON[id] = {
+          player_id: spy.sourcePlayerId,
+          teamkey: OGIData.options.ptreTK,
+          galaxy: spy.galaxy,
+          system: spy.system,
+          position: spy.position,
+          spy_message_ts: spy.timestamp,
+          moon: {
+            activity: type === planetType.planet ? "60" : "*",
+          },
+          main: false,
+          activity: type === planetType.planet ? "*" : "60",
+        };
 
-      message.classList.add("ogl-reportReady");
+        message.classList.add("ogl-reportReady");
 
-      OGIData.spies[id] = spy;
+        OGIData.spies[id] = spy;
+      } catch (err) {
+        // Don't let one unexpected message shape (missing player tooltip, attack button,
+        // etc.) throw and stop the rest of the batch from being sent to PTRE.
+        this.#logger.warn(`Skipping PTRE data for message ${id}: unexpected message shape`, err);
+      }
     });
 
     if (Object.keys(ptreJSON).length > 0) {
-      ptreService.importPlayerActivity(OgamePageData.gameLang, universe, ptreJSON).finally(() => "Do nothing");
+      ptreService.importPlayerActivity(OgamePageData.gameLang, universe, ptreJSON).catch(() => {});
     }
   }
 }

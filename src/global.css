@@ -677,7 +677,7 @@ input[type="password"]::selection {
 .ogl-dispatch .ogl-missions {
   height: 30px;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-around !important;
   text-align: center;
   align-content: center;
 }
@@ -883,6 +883,9 @@ input[type="password"]::selection {
   border-image: initial;
   padding: 10px;
   margin-left: 10px;
+}
+.ogl-res-transport:has(a[tech-id="210"]){
+    height: 145px;
 }
 
 #fleet1 .planet-header.shortHeader {
@@ -1196,7 +1199,7 @@ input[type="password"]::selection {
   transform: scale(0.75);
 }
 
-.ogl-dest > div {
+.ogl-dest > div:not(.ogl-system-buttons) {
   width: 0;
   margin-bottom: 5px;
   width: 300px;
@@ -1212,7 +1215,7 @@ input[type="password"]::selection {
   background: linear-gradient(0deg, #1a232d, transparent);
 }
 
-.ogl-dest > div:nth-child(2) {
+.ogl-dest > div:nth-child(3) {
   margin-bottom: 10px;
 }
 
@@ -1269,17 +1272,54 @@ input[type="password"]::selection {
 .ogl-dest .ogl-union-btn:hover {
   filter: sepia(70%) hue-rotate(-50deg) saturate(11) brightness(0.8);
 }
+/* Hide system input buttons minus and plus, if custom mission with spy mission is not active */
+.ogl-dest:not(:has(.ogk-customMission.ogl-active)):not(:has(.ogl-mission-icon.ogl-active[mission="6"])) .ogl-system-buttons {
+  display: none;
+}
+.ogl-dest .ogl-system-buttons{
+  position: relative;
+}
+.ogl-dest .ogl-system-input-minus,
+.ogl-dest .ogl-system-input-plus {
+  height: 23px;
+  width: 23px;
+  justify-content: center;
+  cursor: pointer;
+  background: #5b768a70;
+  border-radius: 50%;
+  position: absolute;
+  top: -9px;
+  height: 15px;
+  width: 15px;
+  display: inline-block;
+  align-content: center;
+  text-align: center;
+  font-weight: bolder;
+}
+.ogl-dest .ogl-system-input-minus{
+  left: 51px;
+}
+.ogl-dest .ogl-system-input-minus::before{
+  content: "-";
+}
+.ogl-dest .ogl-system-input-plus{
+  left: 92.5px;
+}
+.ogl-dest .ogl-system-input-plus::before{
+  content: "+";
+}
+
+
 
 .ogl-dest .ogl-coords .ogl-homes {
-  width: 50px;
   height: auto;
+  width: 69px;
   display: flex;
   height: 23px;
   justify-content: center;
   cursor: pointer;
   background: #5b768a70;
   border-radius: 5px;
-  width: 69px;
   margin-left: 5px;
 }
 
@@ -1304,7 +1344,8 @@ input[type="password"]::selection {
   margin-left: -2px;
   padding: 3px;
 }
-
+.ogl-dest .ogl-system-input-minus:hover,
+.ogl-dest .ogl-system-input-plus:hover,
 .ogl-dest .ogl-coords .ogl-homes:hover {
   filter: hue-rotate(180deg) saturate(150%);
   opacity: 1;
@@ -1952,43 +1993,43 @@ strong {
   color: #ffd700eb !important;
 }
 
-#technologydetails .information > ul li:only-child {
+#technologydetails.ogk-technology-details .information > ul li:only-child {
   margin-bottom: 10px;
 }
 
-#technologydetails .ogk-sum,
-#technologydetails .ogk-sum .ogl-date {
+#technologydetails.ogk-technology-details .ogk-sum,
+#technologydetails.ogk-technology-details .ogk-sum .ogl-date {
   color: #cec452 !important;
 }
 
-#technologydetails time.ogk-sum {
+#technologydetails.ogk-technology-details time.ogk-sum {
   position: absolute;
   right: -140px;
   width: 130px;
   font-weight: 800;
 }
 
-#technologydetails .build_duration time,
-#technologydetails .roi_duration time {
+#technologydetails.ogk-technology-details .build_duration time,
+#technologydetails.ogk-technology-details .roi_duration time {
   text-align: right;
 }
 
-#technologydetails .narrow strong {
+#technologydetails.ogk-technology-details .narrow strong {
   font-weight: 100 !important;
 }
 
-#technologydetails .details {
+#technologydetails.ogk-technology-details .details {
   background-color: #5d788c;
   padding: 2px 5px;
   border-radius: 2px;
   font-weight: 800;
 }
 
-#technologydetails button.details {
+#technologydetails.ogk-technology-details button.details {
   color: #fff !important;
 }
 
-#technologydetails .ogk-lvl {
+#technologydetails.ogk-technology-details .ogk-lvl {
   font-size: 14px;
   font-weight: 800;
   color: #ff9600;
@@ -1996,15 +2037,15 @@ strong {
   text-align: center;
 }
 
-#technologydetails #build_amount {
+#technologydetails.ogk-technology-details #build_amount {
   height: 32px !important;
 }
 
-#technologydetails .build_amount .maximum::before {
+#technologydetails.ogk-technology-details .build_amount .maximum::before {
   content: none !important;
 }
 
-#technologydetails .build_amount .maximum {
+#technologydetails.ogk-technology-details .build_amount .maximum {
   display: block !important;
   position: absolute !important;
   margin: 0 0 0 30px !important;
@@ -2014,7 +2055,7 @@ strong {
   background: 0 0 !important;
 }
 
-#technologydetails > .sprite {
+#technologydetails.ogk-technology-details > .sprite {
   height: 199px !important;
   display: flex !important;
   align-items: start;
@@ -2022,49 +2063,49 @@ strong {
   backdrop-filter: grayscale(100%);
 }
 
-#technologydetails .mCustomScrollBox {
+#technologydetails.ogk-technology-details .mCustomScrollBox {
   background: #000000a6;
 }
 
-#technologydetails .ogl-fleetInfo {
+#technologydetails.ogk-technology-details .ogl-fleetInfo {
   opacity: 0.5;
   color: #ccc;
 }
 
-#technologydetails .ogl-fleetInfo:hover {
+#technologydetails.ogk-technology-details .ogl-fleetInfo:hover {
   opacity: 1;
 }
 
-#technologydetails .resource.icon::before {
+#technologydetails.ogk-technology-details .resource.icon::before {
   border-radius: 5px;
   width: 38px !important;
   height: 25px !important;
   border: solid 1px #000 !important;
 }
 
-#technologydetails .description .txt_box button {
+#technologydetails.ogk-technology-details .description .txt_box button {
   display: none;
 }
 
-#technologydetails .build_amount {
+#technologydetails.ogk-technology-details .build_amount {
   top: 140px !important;
 }
 
-#technologydetails button.downgrade {
+#technologydetails.ogk-technology-details button.downgrade {
   top: 165px !important;
   opacity: 0.6;
 }
 
-#technologydetails button.downgrade:hover {
+#technologydetails.ogk-technology-details button.downgrade:hover {
   opacity: 1;
 }
 
-#technologydetails button.downgrade span {
+#technologydetails.ogk-technology-details button.downgrade span {
   display: none !important;
 }
 
-#technologydetails a.upgrade,
-#technologydetails button.upgrade {
+#technologydetails.ogk-technology-details a.upgrade,
+#technologydetails.ogk-technology-details button.upgrade {
   width: 95px !important;
   height: 36px !important;
   background: transparent url("https://gf3.geo.gfsrv.net/cdneb/f5f81e8302aaad56c958c033677fb8.png") 0 0 no-repeat;
@@ -2073,8 +2114,8 @@ strong {
   padding: 0 !important;
 }
 
-#technologydetails a.upgrade:hover,
-#technologydetails button.upgrade:hover {
+#technologydetails.ogk-technology-details a.upgrade:hover,
+#technologydetails.ogk-technology-details button.upgrade:hover {
   background-position-y: -36px !important;
 }
 
@@ -2097,14 +2138,14 @@ button.build-it_premium:hover {
   background-position-y: -36px !important;
 }
 
-#technologydetails a.upgrade span,
-#technologydetails button.upgrade span {
+#technologydetails.ogk-technology-details a.upgrade span,
+#technologydetails.ogk-technology-details button.upgrade span {
   font-size: 14px;
   line-height: 36px !important;
 }
 
-#technologydetails button.build-it_premium span,
-#technologydetails button.build-it_premium:disabled span {
+#technologydetails.ogk-technology-details button.build-it_premium span,
+#technologydetails.ogk-technology-details button.build-it_premium:disabled span {
   font-size: 14px;
   line-height: 36px !important;
 }
@@ -2113,13 +2154,13 @@ button.build-it_premium:hover {
   display: none !important;
 }
 
-#technologydetails .ogk-titles {
+#technologydetails.ogk-technology-details .ogk-titles {
   left: -54px;
   position: absolute;
   top: 29px;
 }
 
-#technologydetails .costs p {
+#technologydetails.ogk-technology-details .costs p {
   display: none !important;
 }
 
@@ -2132,25 +2173,25 @@ button.build-it_premium:hover {
   margin-left: 80px;
 }
 
-#technologydetails .information > ul li {
+#technologydetails.ogk-technology-details .information > ul li {
   width: 285px !important;
   margin-bottom: 2px !important;
 }
 
-#technologydetails .information > ul li:only-child {
+#technologydetails.ogk-technology-details .information > ul li:only-child {
   margin-bottom: 15px !important;
 }
 
-#technologydetails .value {
+#technologydetails.ogk-technology-details .value {
   float: right !important;
 }
 
-.build-it_wrap {
+#technologydetails.ogk-technology-details .build-it_wrap {
   height: 50px !important;
   top: 40px !important;
 }
 
-#technologydetails .technology_tree {
+#technologydetails.ogk-technology-details .technology_tree {
   opacity: 0.85 !important;
   background-color: transparent !important;
   position: relative !important;
@@ -2162,27 +2203,27 @@ button.build-it_premium:hover {
   background: #141e27 !important;
 }
 
-#technologydetails > .description {
+#technologydetails.ogk-technology-details > .description {
   background: #0e1014 !important;
 }
 
-#technologydetails > .description .txt_box {
+#technologydetails.ogk-technology-details > .description .txt_box {
   padding-left: 10px !important;
   width: 90% !important;
 }
 
-#technologydetails .costs {
+#technologydetails.ogk-technology-details .costs {
   top: 40px !important;
   left: 60px !important;
 }
 
-#technologydetails .resource.icon {
+#technologydetails.ogk-technology-details .resource.icon {
   height: 75px !important;
   width: 60px;
   margin: 0 2px;
 }
 
-#technologydetails .information > ul:first-of-type {
+#technologydetails.ogk-technology-details .information > ul:first-of-type {
   height: 83px;
   align-items: end;
   display: flex;
@@ -2193,7 +2234,7 @@ button.build-it_premium:hover {
   width: auto !important;
 }
 
-#technologydetails .information > ul:first-of-type strong {
+#technologydetails.ogk-technology-details .information > ul:first-of-type strong {
   font-weight: 100 !important;
 }
 
@@ -3703,11 +3744,13 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
   z-index: 10;
 }
 
-.ogl-sideStalk > a {
+.ogl-sideStalk > a,
+.ogl-sideStalk > .ogi-sideStalkRemoveDetail {
   opacity: 0.5;
 }
 
-.ogl-sideStalk:hover > a {
+.ogl-sideStalk:hover > a,
+.ogl-sideStalk:hover > .ogi-sideStalkRemoveDetail {
   opacity: 1;
 }
 
@@ -3739,11 +3782,17 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
 }
 
 .ogl-sideStalk .ogl-player {
+  align-items: center;
   border: solid 2px #2f2f2f;
   background: #1e2123;
+  box-sizing: border-box;
+  display: flex;
+  gap: 5px;
+  justify-content: space-between;
   padding: 5px;
   margin-bottom: 3px;
   font-size: 11px;
+  min-height: 27px;
   border-radius: 5px;
   cursor: pointer;
 }
@@ -3752,12 +3801,118 @@ div[data-raw-depletion="4"] + .msgHead a.txt_link {
   border-color: #3c536d;
 }
 
+.ogl-sideStalk .ogl-player > span:first-child {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .ogl-sideStalk .ogi-ranking,
-.ogl-sideStalk .ogl-player span:last-child {
+.ogl-sideStalk .ogl-player .ogi-sideStalkRank {
   font-size: 10px;
   color: #e6648e !important;
-  float: right;
-  margin-left: 5px;
+}
+
+.ogl-sideStalk .ogi-sideStalkPlayerActions {
+  align-items: center;
+  display: flex;
+  flex: 0 0 24px;
+  height: 16px;
+  justify-content: flex-end;
+  min-width: 24px;
+  position: relative;
+}
+
+.ogl-sideStalk .ogi-sideStalkRank,
+.ogl-sideStalk .ogi-sideStalkRemove {
+  display: block;
+  line-height: 16px !important;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.ogl-sideStalk .ogl-player .ogi-sideStalkRemove {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.ogl-sideStalk .ogl-player:hover .ogi-sideStalkRank,
+.ogl-sideStalk .ogl-player:focus-within .ogi-sideStalkRank {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.ogl-sideStalk .ogl-player:hover .ogi-sideStalkRemove,
+.ogl-sideStalk .ogl-player:focus-within .ogi-sideStalkRemove {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.ogl-sideStalk .ogi-sideStalkRemoveDetail {
+  border: 0;
+  margin-right: 3px;
+  padding: 0;
+  vertical-align: bottom;
+}
+
+.ogl-sideStalk button.ogi-sideStalkRemove {
+  border: 0;
+  padding: 0;
+}
+
+.ogl-sideStalk .ogi-sideStalkEmpty {
+  clear: both;
+  color: #bbb;
+  font-size: 11px;
+  line-height: 14px;
+  margin-top: 8px;
+}
+
+.ogl-sideStalk .ogi-sideStalkUndo {
+  background: rgba(120, 45, 45, 0.28);
+  border-color: #7f4c4c;
+  color: #d9b0b0;
+  cursor: default;
+  opacity: 1;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.ogl-sideStalk .ogi-sideStalkUndo.ogi-removing {
+  opacity: 0;
+  transform: translateY(-2px);
+}
+
+.ogl-sideStalk .ogi-sideStalkUndoMessage {
+  display: block;
+  flex: 1 1 auto;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ogl-sideStalk .ogi-sideStalkUndoButton {
+  background: none;
+  border: 0;
+  color: #ffc9c9;
+  cursor: pointer;
+  flex: 0 0 auto;
+  font-size: 11px;
+  line-height: 14px;
+  margin: 0;
+  padding: 0;
+  white-space: nowrap;
+}
+
+.ogl-sideStalk .ogi-sideStalkUndoButton:hover,
+.ogl-sideStalk .ogi-sideStalkUndoButton:focus {
+  color: #c75817;
 }
 
 .ogl-sideStalk.ogi-hidden {
@@ -8341,7 +8496,7 @@ span.resbuttons {
   visibility: hidden;
 }
 
-#technologydetails .technology_tree {
+#technologydetails.ogk-technology-details .technology_tree {
   opacity: 0.85 !important;
   background-color: transparent !important;
   position: relative !important;
@@ -8926,8 +9081,11 @@ li.resource {
   transform-origin: top right;
   width: 28px;
 }
-.ogk-customMission.statio:before {
+.ogk-customMission.statio::before {
   background-position: -112px -4px;
+}
+.ogk-customMission.spy::before {
+  background-position: -220px -4px;
 }
 
 .ogk-customMission::after {
@@ -9112,6 +9270,7 @@ li.resource {
   background-position: -112px -4px;
 }
 
+.ogk-customMission.ogl-active,
 .ogk-customMission:hover,
 .ogl-collect:hover,
 .ogl-expedition:hover {
