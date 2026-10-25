@@ -1574,8 +1574,9 @@ class OGInfinity {
           fuelConsumption: fleetDispatcher.fleetHelper.shipsData[id].fuelConsumption,
         };
       }
-      fleetDispatcher.apiTechData.forEach((tech) => {
-        this.json.technology[tech[0]] = tech[1];
+      // apiTechData was removed in OGame 13.1, apiDataJson.researches holds the same data as { id: level }
+      Object.entries(fleetDispatcher.apiDataJson?.researches ?? {}).forEach(([id, level]) => {
+        this.json.technology[id] = level;
       });
     }
     document.querySelectorAll(".moonlink").forEach((elem) => {
@@ -2408,6 +2409,8 @@ class OGInfinity {
             elemTechnologyDetailsContent.append(json.content[json.target]);
             elemTechnologyDetails.addClass(anchor.data("technologydetails-size")).offset(anchor.offset());
           }
+          const technologyDetailsNode = document.querySelector("#technologydetails");
+          technologyDetailsNode?.classList.add("ogk-technology-details");
           localStorage.setItem("detailsOpen", true);
           $(document).trigger("ajaxShowElement", typeof technologyId === "undefined" ? 0 : technologyId);
           let costDiv = document.querySelector(".costs");
@@ -10054,8 +10057,8 @@ class OGInfinity {
       let emptySystemsDiv;
       let inactiveSystemsDiv;
 
-      if (this.json.fleetIgnoreEmptySystems) {
-        info.appendChild(createDOM("div", {}, this.getTranslatedText(229)));
+      if(this.json.fleetIgnoreEmptySystems) {
+        info.appendChild(createDOM("div", {}, this.getTranslatedText(199)));
         emptySystemsDiv = info.appendChild(createDOM("div", { class: "ogl-empty-systems" }));
       }
 
