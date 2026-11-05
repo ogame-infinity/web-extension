@@ -4103,6 +4103,8 @@ class OGInfinity {
           }
           if (planet.coords == coords) {
             if (planet.deleted) {
+              // .ogl-scan color is !important and would mask the red.
+              elem.classList.remove("ogl-scan");
               elem.classList.add("ogl-deleted");
             }
             this.updateSideActivity(elem, this.activities[planet.coords]);
@@ -4139,8 +4141,17 @@ class OGInfinity {
     const galaAdditionnal = {};
     for (let pos = PTRE_MIN_POS; pos <= PTRE_MAX_POS; pos++) {
       galaPositions[pos] = { playerId: -1, planetId: -1, moonId: -1 };
-      galaAdditionnal[pos] = { playerName: "", playerRank: -1, playerStatus: "" };
+      galaAdditionnal[pos] = { playerName: "", playerRank: -1, playerStatus: "", previousOwnerId: -1 };
     }
+    // Stalked player whose list still shows `coords` but who is not `currentPlayerId` (-1 if none).
+    const findPreviousOwnerId = (coords, currentPlayerId) => {
+      for (const link of document.querySelectorAll(`.ogl-stalkPlanets [data-coords="${coords}"]`)) {
+        const raw = link.closest(".ogl-stalkPlanets")?.getAttribute("player-id");
+        const id = raw ? Number(raw) : -1;
+        if (Number.isFinite(id) && id > -1 && id !== currentPlayerId) return id;
+      }
+      return -1;
+    };
 
     document.querySelectorAll("#galaxycomponent .galaxyRow.ctContentRow").forEach((row, indexInDom) => {
       // Derive the OGame position from the row id (robust against DOM re-ordering
@@ -4207,6 +4218,10 @@ class OGInfinity {
           galaPositions[pos] = { playerId, planetId, moonId };
           galaAdditionnal[pos].playerName = name;
           galaAdditionnal[pos].playerStatus = statusStr;
+          // Skip on unparsed player id, or every stalked owner of this coord would be flagged.
+          if (playerId > -1) {
+            galaAdditionnal[pos].previousOwnerId = findPreviousOwnerId(coords, playerId);
+          }
         }
 
         const sidedAll = document.querySelectorAll(".ogl-stalkPlanets");
@@ -4274,6 +4289,9 @@ class OGInfinity {
             document.querySelector(".ogl-tooltip").classList.add("ogl-active");
           }
           this.activities[coords] = this.getActivity(row);
+          if (isPtrePos) {
+            galaAdditionnal[pos].previousOwnerId = findPreviousOwnerId(coords, -1);
+          }
         }
       }
     });

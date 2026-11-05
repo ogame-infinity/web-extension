@@ -187,7 +187,7 @@ export class DataHelper {
    *   Section A - refresh `scannedPlanets` / `scannedPlayers` (consumed by `getPlayer()` /
    *      `filter()` for the stalking sidebar, tooltips, target list and search box). Runs
    *      regardless of `teamKey`. Writes only for genuinely new info: the `known` gate
-   *      matches (coords, moon-presence) against `this.players[playerId].planets` so planets
+   *      matches (coords, moon id) against `this.players[playerId].planets` so planets
    *      already known from the public API do not get flagged as `.ogl-scan`.
    *   Section B - PTRE galaxy diff. Runs only when `teamKey` is set. Diffs against the
    *      persisted per-(g,s) snapshot in `this.galaxyStorage[g][s]`, returns the changed
@@ -201,8 +201,10 @@ export class DataHelper {
    * @param {number} system
    * @param {Object<string, {playerId:number, planetId:number, moonId:number}>} positions
    *        Keys "1".."15". Missing player/planet/moon -> -1.
-   * @param {Object<string, {playerName:string, playerRank:number, playerStatus:string}>} additionnal
+   * @param {Object<string, {playerName:string, playerRank:number, playerStatus:string, previousOwnerId:number}>} additionnal
    *        Keys "1".."15". Enrichment collected live in the page context.
+   *        `previousOwnerId` (-1 if none): stalked player who no longer owns this coord
+   *        (now empty or taken by another player).
    * @param {string|null} teamKey - PTRE team key. When null/empty, Section B is skipped.
    * @param {number|null} serverTime - Milliseconds from a JS `Date` built by ogkush from the
    *        OGame page's wall-clock server time. NOT a reliable UTC Unix ms: the value is
@@ -245,7 +247,7 @@ export class DataHelper {
         }
 
         // ---- Section A: scannedPlanets / scannedPlayers (always runs, no teamKey needed).
-        // Restores pre-PR-533 semantics: only write when the (coords, moon-presence) pair
+        // Restores pre-PR-533 semantics: only write when the (coords, moon id) pair
         // is not already known via the public-API `this.players` cache.
         if (cur.playerId !== -1) {
           if (!this.scannedPlanets[cur.playerId]) {
@@ -255,11 +257,19 @@ export class DataHelper {
             this.scannedPlayers[cur.playerId] = extra.playerName;
           }
           const hasMoon = cur.moonId > -1;
+          // API reports no moon as 0, the galaxy view as -1.
           const known = this.players && this.players[cur.playerId]
-            ? this.players[cur.playerId].planets.some((p) => p.coords === coords && !!p.moon === hasMoon) : false;
+            ? this.players[cur.playerId].planets.some((p) => p.coords === coords && (p.moon || -1) === cur.moonId) : false;
           if (!known) {
             this.scannedPlanets[cur.playerId][coords] = hasMoon ? cur.moonId : false;
           }
+        }
+        if (extra.previousOwnerId > -1 && extra.previousOwnerId !== cur.playerId) {
+          // null is rendered as deleted (red) by getPlayer().
+          if (!this.scannedPlanets[extra.previousOwnerId]) {
+            this.scannedPlanets[extra.previousOwnerId] = {};
+          }
+          this.scannedPlanets[extra.previousOwnerId][coords] = null;
         }
 
         // ---- Section B: build the PTRE delta payload when a team key is set.
