@@ -1592,7 +1592,7 @@ class OGInfinity {
       if (planet && this.current.id == planet.id) this.current.index = index;
     });
     // update current place resources in empire data for methods that need more updated data
-    const place = this.current.isMoon ? OGIData.empire[this.current.index].moon : OGIData.empire[this.current.index];
+    const place = this.current.isMoon ? OGIData.empire[this.current.index]?.moon : OGIData.empire[this.current.index];
     if (place) {
       ["metal", "crystal", "deuterium"].forEach((res) => (place[res] = Math.floor(resourcesBar.resources[res].amount)));
     }
@@ -10097,7 +10097,7 @@ class OGInfinity {
       let emptySystemsDiv;
       let inactiveSystemsDiv;
 
-      if(this.json.fleetIgnoreEmptySystems) {
+      if (this.json.fleetIgnoreEmptySystems) {
         info.appendChild(createDOM("div", {}, this.getTranslatedText(199)));
         emptySystemsDiv = info.appendChild(createDOM("div", { class: "ogl-empty-systems" }));
       }
