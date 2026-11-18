@@ -71,54 +71,66 @@ export default Object.freeze({
   // 3 Resource boosters
   "5c05331666d25a9aad33abfeeb455efa8b7feb53": { type: itemType.All3Resources, bonus: 0.1 },   // not released yet
   "753db6375b65c4b6b05c5b73dd2ea02f26993c94": { type: itemType.All3Resources, bonus: 0.1 },   // not released yet
+  "182d69c2a5c9ce659b887e0b16165366680c5f2d": { type: itemType.All3Resources, bonus: 0.15 },
+  "ed36e16a22b9115d6a763de79374ec1591414e4d": { type: itemType.All3Resources, bonus: 0.15 },   // PTS
   "1c633f2c013527fe03545840701f9a2673537d74": { type: itemType.All3Resources, bonus: 0.15 },
   "2258aecdf4cbf77d2b668fbe7d1e46e83462be51": { type: itemType.All3Resources, bonus: 0.15 },
   "a742456736e9246fbd4e8519b12476cf8b29913c": { type: itemType.All3Resources, bonus: 0.15 },
-  "ed36e16a22b9115d6a763de79374ec1591414e4d": { type: itemType.All3Resources, bonus: 0.15 },
-  "381122d926bb12d2240fc329041ca9355406d301": { type: itemType.All3Resources, bonus: 0.2 },
+  "751e29bc1002224bf05de643b3178db80291faa7": { type: itemType.All3Resources, bonus: 0.2 },
+  "381122d926bb12d2240fc329041ca9355406d301": { type: itemType.All3Resources, bonus: 0.2 },   // PTS
   "79e4e2a9669662751164a75c7dceaf0ce2bbd4fa": { type: itemType.All3Resources, bonus: 0.2 },
   "a4abe6da3a6a7d5b88f63f811c493778ced69f48": { type: itemType.All3Resources, bonus: 0.2 },   // not released yet
   "b94f87944e2815af2542f1c30fbc720d1de29abe": { type: itemType.All3Resources, bonus: 0.2 },
   "fb23cc9ddccda9a22ef411b7e24b23e228fa5fc8": { type: itemType.All3Resources, bonus: 0.2 },
-  "b4b92e4ad81c560825787220f615699e502b9747": { type: itemType.All3Resources, bonus: 0.25 },
+  "b805ca0c8ee49275947cb56369f4a0b3ea10ae68": { type: itemType.All3Resources, bonus: 0.25 },
+  "b4b92e4ad81c560825787220f615699e502b9747": { type: itemType.All3Resources, bonus: 0.25 },   // PTS
   "dbd066e28c71e9c97365e8b29b60ba02e88e442c": { type: itemType.All3Resources, bonus: 0.25 },
   "ec039cbe52a12ed43ed8822b6d360fba1ede5f27": { type: itemType.All3Resources, bonus: 0.25 },
   "f209b636b7041cc29f3c964997b933c6c9d6fb57": { type: itemType.All3Resources, bonus: 0.25 },
-  "00cc719dd012b6fb0913da50de46758e2f3e9236": { type: itemType.All3Resources, bonus: 0.3 },
   "169057973ab2620bc30050249a835748db5c7a0b": { type: itemType.All3Resources, bonus: 0.3 },
   "5450b8ae1561339826ef02efd60bb37488d12d58": { type: itemType.All3Resources, bonus: 0.3 },
   "7fab2257add77de56bbe526bc5f4f2cfdb4d2a74": { type: itemType.All3Resources, bonus: 0.3 },
+  "c5cf520811521c565fa96e80f4026e4b3a047872": { type: itemType.All3Resources, bonus: 0.3 },
+  "00cc719dd012b6fb0913da50de46758e2f3e9236": { type: itemType.All3Resources, bonus: 0.3 },   // PTS
   "19aa1099a6215804abef197ab894996d70cabbca": { type: itemType.All3Resources, bonus: 0.4 },
   "6ee984de285f3062d2a6126db876fb458c316e5d": { type: itemType.All3Resources, bonus: 0.4 },
-  "b2ca451344b10fd65ec1bf02e8c8232b99c67c21": { type: itemType.All3Resources, bonus: 0.4 },
   "d430856a13181a44190b10b7f7da21056d6c4550": { type: itemType.All3Resources, bonus: 0.4 },
+  "f03a3ab31e3dc227fc44bb9723a9049f2aefbe94": { type: itemType.All3Resources, bonus: 0.4 },
+  "b2ca451344b10fd65ec1bf02e8c8232b99c67c21": { type: itemType.All3Resources, bonus: 0.4 },   // PTS
   // Expedition resource boosters
   "6f72d2dcb23508c560f0fa35ec440b3d1b90448a": { type: itemType.ExpeditionResources, bonus: 0.1 },
-  "abf6af973a72ced44f0896531330d7dc176b19ac": { type: itemType.ExpeditionResources, bonus: 0.1 },
   "b1b9720f28ddf8c827d22de4a4ffd6688da313bd": { type: itemType.ExpeditionResources, bonus: 0.1 },
+  "b43ab2c66d274865dc17c1be973864c592f1a17a": { type: itemType.ExpeditionResources, bonus: 0.1 },
+  "abf6af973a72ced44f0896531330d7dc176b19ac": { type: itemType.ExpeditionResources, bonus: 0.1 },   // PTS
   "ba4b9d7f3ab68863f09aea6a181119c51e2c5385": { type: itemType.ExpeditionResources, bonus: 0.1 },
-  "05e3d8c3326f230934b40fb08493d0c7c07b6c1c": { type: itemType.ExpeditionResources, bonus: 0.15 },
   "3bb48a097ac3de286416302f3cf899a21652f568": { type: itemType.ExpeditionResources, bonus: 0.15 },
   "830dcc46684445ba94cc22f8d2733d497d4710a7": { type: itemType.ExpeditionResources, bonus: 0.15 },
+  "bc5b6df98cc9da6f6bb81fb9f6c785615f1f3860": { type: itemType.ExpeditionResources, bonus: 0.15 },
+  "05e3d8c3326f230934b40fb08493d0c7c07b6c1c": { type: itemType.ExpeditionResources, bonus: 0.15 },   // PTS
   "c5c657877dff57ac6259b46c584c5686f728d56a": { type: itemType.ExpeditionResources, bonus: 0.15 },
   "04afd0281a5cf55e630a0dfa0b728676adf86a6a": { type: itemType.ExpeditionResources, bonus: 0.2 },
   "5d92137e661b08357166d3be1b968c8ce30f0120": { type: itemType.ExpeditionResources, bonus: 0.2 },
-  "a6e4f7fe70d89fb4e722d6cef1734e2f0d0e5381": { type: itemType.ExpeditionResources, bonus: 0.2 },
+  "8b8a96b4b001fbbf2d59127238571883902b356c": { type: itemType.ExpeditionResources, bonus: 0.2 },
+  "a6e4f7fe70d89fb4e722d6cef1734e2f0d0e5381": { type: itemType.ExpeditionResources, bonus: 0.2 },   // PTS
   "cc88dd761ad05465b36969cacf352a8fa801ec52": { type: itemType.ExpeditionResources, bonus: 0.2 },
   "4bcebdea863cf45824bd9c0cdba1cf8bb0ed8915": { type: itemType.ExpeditionResources, bonus: 0.25 },
   "70e6803a60486fd49d60679a58a97b0089797474": { type: itemType.ExpeditionResources, bonus: 0.25 },
+  "a172cec8959dae5173aa8011a6d1ba5687898379": { type: itemType.ExpeditionResources, bonus: 0.25 },
+  "b5d2bd3e01f75087c51414501f6d5218e7fd8c62": { type: itemType.ExpeditionResources, bonus: 0.25 },   // PTS
   "af805cbd0d3bd12afb18c90ca769a32a66871e54": { type: itemType.ExpeditionResources, bonus: 0.25 },
-  "b5d2bd3e01f75087c51414501f6d5218e7fd8c62": { type: itemType.ExpeditionResources, bonus: 0.25 },
   "2dcd0ed54997dda504724b2267fc0a7397297088": { type: itemType.ExpeditionResources, bonus: 0.3 },
-  "4929631d1ac6f662d1c1852a603de494c665172b": { type: itemType.ExpeditionResources, bonus: 0.3 },
+  "c37555bb5e612c25dd1d2aabf67d923ce6225c4c": { type: itemType.ExpeditionResources, bonus: 0.3 },
+  "4929631d1ac6f662d1c1852a603de494c665172b": { type: itemType.ExpeditionResources, bonus: 0.3 },   // PTS
   "d66aa9a2b73296f7295008644a5835e2fa9c9be7": { type: itemType.ExpeditionResources, bonus: 0.3 },   // not released yet
   "e3e80c8c522e5066c8a12aeebb7e2c8b524ece11": { type: itemType.ExpeditionResources, bonus: 0.3 },
   "faa65740777d61a34a92e9445003970011247e1f": { type: itemType.ExpeditionResources, bonus: 0.3 },
   "03e6aa411be58b309eeac5db82623c990001f24d": { type: itemType.ExpeditionResources, bonus: 0.35 },
   "66cdcb6c022a979633fcead6802fcadae243f76a": { type: itemType.ExpeditionResources, bonus: 0.35 },
-  "f758f64b2da63ee220162d7aec58c089a4a7b3aa": { type: itemType.ExpeditionResources, bonus: 0.35 },
+  "889e0b529217ab9e607d7003977c162bfd8230be": { type: itemType.ExpeditionResources, bonus: 0.35 },
+  "f758f64b2da63ee220162d7aec58c089a4a7b3aa": { type: itemType.ExpeditionResources, bonus: 0.35 },   // PTS
   "fa1a449b3fe2e92e0b4deba85db82c52da2af5f7": { type: itemType.ExpeditionResources, bonus: 0.35 },
-  "4b65482ce5faf60dfa2ee0a0c1b7e47d41aab7cb": { type: itemType.ExpeditionResources, bonus: 0.4 },
+  "133642df6c06fbdceed0ab1d7194fa9f114a5f6c": { type: itemType.ExpeditionResources, bonus: 0.4 },
+  "4b65482ce5faf60dfa2ee0a0c1b7e47d41aab7cb": { type: itemType.ExpeditionResources, bonus: 0.4 },   // PTS
   "50ea0536418728bf05f18850743d66e328b59fa7": { type: itemType.ExpeditionResources, bonus: 0.4 },
   "a0ec3a3d6cc4993e9cce8ea517d971a11e797aaf": { type: itemType.ExpeditionResources, bonus: 0.4 },
   "c9047df6407fce9583ccc8e1a5547f630fa968df": { type: itemType.ExpeditionResources, bonus: 0.4 },
