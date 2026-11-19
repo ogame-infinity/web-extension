@@ -15576,32 +15576,93 @@ class OGInfinity {
     ptreSystemCountRow.textContent = "Systems count: ...";
     let ptreStorageSizeRow = ptreSection.appendChild(createDOM("span"));
     ptreStorageSizeRow.textContent = "Storage size: ...";
+    let ptreAllStorageRow = ptreSection.appendChild(createDOM("span"));
+    let ptreAllStorageText = ptreAllStorageRow.appendChild(createDOM("span", {}, "Storage size - all universes: ..."));
+    let ptreAllStorageToggle = createDOM("a", { href: "#" }, "Details");
+    ptreAllStorageRow.append(" (", ptreAllStorageToggle, ")");
+    let ptreAllStorageTable = ptreSection.appendChild(
+      createDOM("table", { class: "ogl-ptre-storage-table", style: "display: none;" })
+    );
+    ptreAllStorageToggle.addEventListener("click", (e) => {
+      e.preventDefault();
+      ptreAllStorageTable.style.display = ptreAllStorageTable.style.display === "none" ? "table" : "none";
+    });
 
-    pageContextRequest("ptre", "galaxyInfo")
-      .then((r) => {
-        const n = r?.response?.systemCount ?? 0;
-        ptreSystemCountRow.textContent = `Systems count: ${n}`;
-        const ts = r?.response?.lastGalaxyUpdateTS ?? -1;
-        if (ts > 0) {
-          const d = new Date(ts * 1000);
-          const formatted = d.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
-          ptreLastApiUpdateRow.textContent = `Last API update: ${formatted}`;
-        } else {
-          ptreLastApiUpdateRow.textContent = "Last API update: never";
-        }
-        const bytes = r?.response?.storageBytes ?? 0;
-        let sizeStr;
-        if (bytes >= 1024 * 1024) sizeStr = `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-        else if (bytes >= 1024) sizeStr = `${(bytes / 1024).toFixed(1)} KB`;
-        else sizeStr = `${bytes} B`;
-        ptreStorageSizeRow.textContent = `Storage size: ${sizeStr}`;
-      })
-      .catch((err) => {
-        console.warn("[OGI][PTRE] galaxyInfo failed", err);
-        ptreSystemCountRow.textContent = "Systems count: (unavailable)";
-        ptreLastApiUpdateRow.textContent = "Last API update: (unavailable)";
-        ptreStorageSizeRow.textContent = "Storage size: (unavailable)";
-      });
+    const formatPtreBytes = (bytes) => {
+      if (bytes >= 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+      if (bytes >= 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+      return `${bytes} B`;
+    };
+    const formatPtreGalaxyTs = (ts) =>
+      ts > 0
+        ? new Date(ts * 1000).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" })
+        : "never";
+
+    const refreshPtreStorageInfo = () => {
+      pageContextRequest("ptre", "galaxyInfo")
+        .then((r) => {
+          ptreSystemCountRow.textContent = `Systems count: ${r?.response?.systemCount ?? 0}`;
+          ptreLastApiUpdateRow.textContent = `Last API update: ${formatPtreGalaxyTs(
+            r?.response?.lastGalaxyUpdateTS ?? -1
+          )}`;
+          ptreStorageSizeRow.textContent = `Storage size: ${formatPtreBytes(r?.response?.storageBytes ?? 0)}`;
+        })
+        .catch((err) => {
+          console.warn("[OGI][PTRE] galaxyInfo failed", err);
+          ptreSystemCountRow.textContent = "Systems count: (unavailable)";
+          ptreLastApiUpdateRow.textContent = "Last API update: (unavailable)";
+          ptreStorageSizeRow.textContent = "Storage size: (unavailable)";
+        });
+
+      pageContextRequest("ptre", "galaxyInfoAll")
+        .then((r) => {
+          const current = r?.response?.current;
+          const list = r?.response?.universes ?? [];
+          const totalBytes = list.reduce((sum, u) => sum + (u.storageBytes ?? 0), 0);
+          ptreAllStorageText.textContent = `Storage size - all universes: ${formatPtreBytes(totalBytes)}`;
+
+          ptreAllStorageTable.replaceChildren(
+            createDOM(
+              "tr",
+              {},
+              createDOM("th", {}, "Universe"),
+              createDOM("th", {}, "Last update"),
+              createDOM("th", {}, "Systems"),
+              createDOM("th", {}, "Size"),
+              createDOM("th", {}, "Delete")
+            )
+          );
+          list.forEach((u) => {
+            const deleteBtn = createDOM(
+              "button",
+              { type: "button", class: "btn_blue ogl-btn_red" },
+              "Delete"
+            );
+            deleteBtn.addEventListener("click", () => {
+              deleteBtn.disabled = true;
+              pageContextRequest("ptre", "galaxyDelete", u.universe)
+                .catch((err) => console.warn("[OGI][PTRE] galaxyDelete failed", err))
+                .finally(refreshPtreStorageInfo);
+            });
+            ptreAllStorageTable.appendChild(
+              createDOM(
+                "tr",
+                {},
+                createDOM("td", {}, u.universe === current ? `${u.universe} (current)` : u.universe),
+                createDOM("td", {}, formatPtreGalaxyTs(u.lastGalaxyUpdateTS ?? -1)),
+                createDOM("td", {}, String(u.systemCount ?? 0)),
+                createDOM("td", {}, formatPtreBytes(u.storageBytes ?? 0)),
+                createDOM("td", {}, deleteBtn)
+              )
+            );
+          });
+        })
+        .catch((err) => {
+          console.warn("[OGI][PTRE] galaxyInfoAll failed", err);
+          ptreAllStorageText.textContent = "Storage size - all universes: (unavailable)";
+        });
+    };
+    refreshPtreStorageInfo();
 
     settingDiv.appendChild(createDOM("hr"));
     let keys = settingDiv.appendChild(createDOM("div", { style: "display: grid;" }));
