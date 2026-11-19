@@ -489,6 +489,33 @@ input[type="password"]::selection {
   width: 180px !important;
 }
 
+.ogl-settings .ogl-ptre-storage-table {
+  width: 100%;
+  margin-top: 4px;
+  border-collapse: collapse;
+}
+
+.ogl-settings .ogl-ptre-storage-table th {
+  color: #5d7fa4;
+  font-weight: 700;
+  text-align: left;
+}
+
+.ogl-settings .ogl-ptre-storage-table th,
+.ogl-settings .ogl-ptre-storage-table td {
+  padding: 1px 4px;
+  border-bottom: 1px solid #1e2a36;
+  white-space: nowrap;
+}
+
+.ogl-settings .ogl-ptre-storage-table button {
+  min-width: 0;
+  height: 16px;
+  line-height: 14px;
+  padding: 0 6px;
+  font-size: 10px;
+}
+
 .ogl-settings .ogl-selectInput {
   color: #bbb !important;
   border: solid 1px rgb(58 72 86) !important;

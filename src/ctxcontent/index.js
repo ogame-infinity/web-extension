@@ -48,6 +48,18 @@ contentContextInit({
         }
       });
     },
+    galaxyInfoAll: function () {
+      return listGalaxyStorages();
+    },
+    galaxyDelete: function (universe) {
+      if (typeof universe !== "string" || !/^[\w-]+$/.test(universe)) {
+        throw new Error(`Invalid universe: ${universe}`);
+      }
+      if (universe === UNIVERSE) {
+        return clearCurrentGalaxyStorage().then(() => true);
+      }
+      return chrome.storage.local.remove(GALAXY_KEY_PREFIX + universe).then(() => true);
+    },
   },
   messages: {
     expeditionType: getExpeditionType,
@@ -55,9 +67,61 @@ contentContextInit({
 });
 
 const UNIVERSE = window.location.host.split(".")[0];
+const GALAXY_KEY_PREFIX = "ogi-galaxy-";
 let universes = {};
 let currentUniverse = null;
 let dataHelper = null;
+
+/**
+ * Lists every universe owning a persisted galaxy storage (`ogi-galaxy-<universe>`).
+ * @return {Promise<{current: string, universes: {universe: string, systemCount: number, lastGalaxyUpdateTS: number, storageBytes: number}[]}>}
+ */
+async function listGalaxyStorages() {
+  const storage = chrome.storage.local;
+  // getKeys() (Chrome 130+) avoids loading every universe blob just to find the galaxy keys.
+  const stored =
+    typeof storage.getKeys === "function"
+      ? await storage.get((await storage.getKeys()).filter((k) => k.startsWith(GALAXY_KEY_PREFIX)))
+      : await storage.get(null);
+
+  const list = [];
+  for (const key in stored) {
+    if (!key.startsWith(GALAXY_KEY_PREFIX)) continue;
+    const raw = stored[key];
+    let systemCount = 0;
+    let lastGalaxyUpdateTS = -1;
+    try {
+      const json = JSON.parse(raw);
+      lastGalaxyUpdateTS = json?.lastGalaxyUpdateTS ?? -1;
+      for (const g in json?.galaxyStorage || {}) {
+        systemCount += Object.keys(json.galaxyStorage[g]).length;
+      }
+    } catch (_) {
+      // Corrupted entry: still listed so it can be deleted.
+    }
+    list.push({
+      universe: key.slice(GALAXY_KEY_PREFIX.length),
+      systemCount,
+      lastGalaxyUpdateTS,
+      storageBytes: typeof raw === "string" ? new Blob([raw]).size : 0,
+    });
+  }
+  list.sort((a, b) => a.universe.localeCompare(b.universe));
+  return { current: UNIVERSE, universes: list };
+}
+
+function clearCurrentGalaxyStorage() {
+  if (dataHelper) {
+    // A pending debounced flush would otherwise resurrect the deleted key.
+    if (dataHelper._galaxyFlushTimer) {
+      clearTimeout(dataHelper._galaxyFlushTimer);
+      dataHelper._galaxyFlushTimer = null;
+    }
+    dataHelper.galaxyStorage = {};
+    dataHelper.lastGalaxyUpdateTS = -1;
+  }
+  return chrome.storage.local.remove(GALAXY_KEY_PREFIX + UNIVERSE);
+}
 
 function processData() {
   if (dataHelper) {
@@ -141,11 +205,7 @@ document.addEventListener("ogi-clear", function (e) {
   dataHelper.clearData();
 });
 document.addEventListener("ogi-galaxy-clear", function (e) {
-  if (dataHelper) {
-    dataHelper.galaxyStorage = {};
-    dataHelper.lastGalaxyUpdateTS = -1;
-  }
-  chrome.storage.local.remove(`ogi-galaxy-${UNIVERSE}`);
+  clearCurrentGalaxyStorage();
 });
 document.addEventListener("ogi-notification", function (e) {
   const msg = Object.assign({ iconUrl: "assets/images/logo128.png" }, e.detail);
