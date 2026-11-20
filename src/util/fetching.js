@@ -44,18 +44,6 @@ export function fetchXml(input, init) {
 }
 
 /**
- * @param {RequestInfo|URL} input
- * @param {RequestInit} [init]
- * @return {Promise<FetchResponse<Object>>}
- */
-export function fetchJson(input, init) {
-  init = fixInit(init);
-  return fetch(input, init).then(async (response) => {
-    return new FetchResponse(await response.json(), response.headers);
-  });
-}
-
-/**
  *
  * @param {RequestInit} init
  * @return {RequestInit}
