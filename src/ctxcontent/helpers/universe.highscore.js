@@ -37,15 +37,6 @@ export function getPlayersHighscore(universe) {
 }
 
 /**
- * @param universe
- * @return {Promise<Map<number, ScoreResult>>}
- */
-export function getAllianceHighscore(universe) {
-  const allianceTypePromises = requestHighscore(universe, HIGHSCORE_CATEGORY.ALLIANCE);
-  return Promise.all(allianceTypePromises).then(toScoreMap);
-}
-
-/**
  * @param {string} universe
  * @param {typeof HIGHSCORE_CATEGORY} category
  * @return {Promise<ActorScore>[]}
