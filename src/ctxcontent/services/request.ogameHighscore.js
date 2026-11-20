@@ -2,7 +2,6 @@ import { fetchXml } from "../../util/fetching.js";
 
 export const HIGHSCORE_CATEGORY = Object.freeze({
   PLAYER: 1,
-  ALLIANCE: 2,
 });
 
 export const HIGHSCORE_TYPE = Object.freeze({
