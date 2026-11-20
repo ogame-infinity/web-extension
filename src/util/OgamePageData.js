@@ -82,7 +82,7 @@ class OgamePageData {
   /** @type {boolean} */
   get geologist() {
     return this._geologist;
-  }  
+  }
   /** @type {boolean} */
   get technocrat() {
     return this._technocrat;
