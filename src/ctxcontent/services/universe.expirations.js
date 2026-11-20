@@ -71,15 +71,3 @@ export async function setUniverseExpiration(universe, key, date) {
   _temp.get(universeExpiryName).set(key, timestamp);
   chrome.storage.local.set({ [universeExpiryName]: toNative(_temp.get(universeExpiryName)) }).then((_) => void 0);
 }
-
-/**
- * Function to set the Time to Live (TTL) for a universe's expiration key.
- * @param {string} universe
- * @param {string} key
- * @param {number} ttl
- * @return {Promise<void>}
- */
-export function setUniverseExpirationTTL(universe, key, ttl) {
-  const date = new Date().getTime() + ttl;
-  return setUniverseExpiration(universe, key, date);
-}
