@@ -10,8 +10,8 @@ Declaration `callbackEvents.contentContextInit(callbackCommandMap)`
 
 ```json
 {
-  "ptre": {
-    "galaxy": "PtreGalaxyScannerFunction"
+  "galaxy": {
+    "ingestSystem": "IngestGalaxySystemFunction"
   },
   "messages": {
     "expeditionType": "GetExpeditionTypeFunction"
@@ -38,18 +38,25 @@ Result: **ResponseCallbackEvent**
 
 ---
 
-### PtreGalaxyScannerFunction (ptre.galaxy)
+### IngestGalaxySystemFunction (galaxy.ingestSystem)
+
+Calls `DataHelper.ingestGalaxySystem()`: updates the OGI stalk diffs (`scannedPlanets`) and, when a PTRE Team Key is given, computes the PTRE galaxy diff.
 
 **Arguments**
-- *changes*: 
-- *ptreKey*: PTRE Team Key
-- *serverTime*:  
+- *galaxy*, *system*: displayed system
+- *positions*: positions "1".."15" `{ playerId, planetId, moonId }` (-1 when absent)
+- *additionnal*: positions "1".."15" `{ playerName, playerRank, playerStatus, previousOwnerId }`
+- *ptreKey*: PTRE Team Key (PTRE diff skipped when empty)
+- *serverTime*: OGame server time (ms), sent as `timestamp_ig`
+
+**Result**
+- PTRE payload keyed by `"g:s:p"` (empty when no diff or no key)
 
 How to call from the page context.
 ```js
 callbackEvents.pageContextRequest(
-  "ptre", "galaxy", 
-  changes, ptreKey, serverTime
+  "galaxy", "ingestSystem",
+  galaxy, system, positions, additionnal, ptreKey, serverTime
 )
 ```
 
