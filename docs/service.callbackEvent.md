@@ -9,7 +9,7 @@ It allows you to:
 - Invoke them from the page with arguments and receive a typed asynchronous response.
 
 It is used in the project to expose, for example, the commands:
-- `ptre.galaxy(changes, ptreKey?, serverTime?)`
+- `galaxy.ingestSystem(galaxy, system, positions, additionnal, ptreKey?, serverTime?)`
 - `messages.expeditionType(message)`
 
 See the real registration in `src/ctxcontent/index.js` and its consumption in `src/ogkush.js` and `src/ctxpage/messages-analyzer/index.js`.
@@ -82,10 +82,10 @@ import { contentContextInit } from "../util/service.callbackEvent.js";
 import { getExpeditionType } from "./callbacks/expedition-type.js";
 
 contentContextInit({
-  ptre: {
-    galaxy(changes, ptreKey = null, serverTime = null) {
+  galaxy: {
+    ingestSystem(galaxy, system, positions, additionnal, ptreKey = null, serverTime = null) {
       // return a Promise or a value; it will be handled as async
-      return dataHelper.scan(changes, ptreKey, serverTime);
+      return dataHelper.ingestGalaxySystem(galaxy, system, positions, additionnal, ptreKey, serverTime);
     },
   },
   messages: {
@@ -109,15 +109,15 @@ try {
   console.error("ExpeditionType error:", err.response);
 }
 
-// Example: PTRE scanner
-await pageContextRequest("ptre", "galaxy", changes, ptreKey, serverTime);
+// Example: ingest the displayed galaxy system (OGI stalk diffs + PTRE galaxy diff)
+await pageContextRequest("galaxy", "ingestSystem", galaxy, system, positions, additionnal, ptreKey, serverTime);
 ```
 
 ---
 
 ## Relation with existing documentation
 The file `docs/context.content.commands.md` lists the exposed commands and shows invocation examples. That documentation is correct regarding commands and arguments for:
-- `ptre.galaxy(changes, ptreKey?, serverTime?)`
+- `galaxy.ingestSystem(galaxy, system, positions, additionnal, ptreKey?, serverTime?)`
 - `messages.expeditionType(message)` which returns `{ type: string, busy: boolean }` (this last flag is currently always `false`).
 
 Additional clarifications worth noting (that were not detailed there):

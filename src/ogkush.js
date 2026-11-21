@@ -3921,7 +3921,7 @@ class OGInfinity {
       this.addGalaxyMarkers();
       this.addGalaxyTooltips();
       this.highlightTarget();
-      this.scan();
+      this.processGalaxySystem();
     };
 
     let dc = displayContentGalaxy;
@@ -4120,7 +4120,7 @@ class OGInfinity {
     });
   }
 
-  scan() {
+  processGalaxySystem() {
     if (!this.activities) this.activities = {};
     let ptreJSON = {};
     let baseCords = galaxy + ":" + system;
@@ -4314,16 +4314,17 @@ class OGInfinity {
       this.ptreActivityUpdate(ptreJSON, systemCoords);
     }
 
-    // Galaxy scan dispatch. Runs unconditionally so the OGI-internal maps
+    // Galaxy system dispatch. Runs unconditionally so the OGI-internal maps
     // (scannedPlanets/scannedPlayers -> stalking sidebar, tooltips, search box) are
-    // refreshed even when no PTRE team key is set. PTRE work is gated inside scan().
+    // refreshed even when no PTRE team key is set. PTRE work is gated inside
+    // DataHelper.ingestGalaxySystem().
     // Any failure here must NOT propagate to the OGame galaxy render path.
     try {
       const serverTimeMs = serverTime && typeof serverTime.getTime !== "undefined" ? serverTime.getTime() : null;
       const ptreKey = this.json.options.ptreTK || null;
       pageContextRequest(
-        "ptre",
         "galaxy",
+        "ingestSystem",
         Number(galaxy),
         Number(system),
         galaPositions,
