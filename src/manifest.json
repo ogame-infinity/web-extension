@@ -35,7 +35,7 @@
   },
   "manifest_version": 3,
   "name": "Ogame Infinity",
-  "permissions": ["storage"],
+  "permissions": ["storage", "unlimitedStorage"],
   "update_url": "https://clients2.google.com/service/update2/crx",
   "version": "0.0.0",
   "web_accessible_resources": [
