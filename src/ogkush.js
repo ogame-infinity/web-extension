@@ -15512,7 +15512,7 @@ class OGInfinity {
     settingDiv.appendChild(createDOM("hr"));
 
     // ---------- PTRE section (dedicated) ----------
-    let ptreSection = settingDiv.appendChild(createDOM("div", { style: "display: grid;" }));
+    let ptreSection = settingDiv.appendChild(createDOM("div", { class: "ogl-ptre-section", style: "display: grid;" }));
     ptreSection.appendChild(createDOM("h1", {}, "PTRE settings"));
 
     const savedPtreKey = this.json.options.ptreTK;
@@ -15550,9 +15550,6 @@ class OGInfinity {
       ptreInput.type = "password";
     });
 
-    // Systems count row in PTRE settings. Live query against `dataHelper.galaxyStorage`
-    // via the page->content bridge - the value reflects the current in-memory store
-    // at the moment the settings modal opens.
     let ptreDebugLogsRow = ptreSection.appendChild(
       createDOM(
         "span",
@@ -15570,22 +15567,33 @@ class OGInfinity {
       ptreDebugLogsCheck.checked = true;
     }
 
-    let ptreLastApiUpdateRow = ptreSection.appendChild(createDOM("span"));
-    ptreLastApiUpdateRow.textContent = "Last API update: ...";
-    let ptreSystemCountRow = ptreSection.appendChild(createDOM("span"));
-    ptreSystemCountRow.textContent = "Systems count: ...";
-    let ptreStorageSizeRow = ptreSection.appendChild(createDOM("span"));
-    ptreStorageSizeRow.textContent = "Storage size: ...";
-    let ptreAllStorageRow = ptreSection.appendChild(createDOM("span"));
-    let ptreAllStorageText = ptreAllStorageRow.appendChild(createDOM("span", {}, "Storage size - all universes: ..."));
-    let ptreAllStorageToggle = createDOM("a", { href: "#" }, "Details");
-    ptreAllStorageRow.append(" (", ptreAllStorageToggle, ")");
+    // Label on the left, value on the right; returns the value element.
+    const addPtreInfoRow = (label) => {
+      const row = ptreSection.appendChild(
+        createDOM("div", { class: "ogl-ptre-info-row" }, createDOM("span", {}, label))
+      );
+      return row.appendChild(createDOM("span", { class: "ogl-ptre-info-value" }, "..."));
+    };
+
+    // Current-universe values come from `dataHelper.galaxyStorage` via the page->content
+    // bridge and reflect the in-memory store at the moment the settings modal opens.
+    ptreSection.appendChild(createDOM("div", { class: "ogl-ptre-subtitle" }, "Galaxy storage - current universe"));
+    let ptreLastApiUpdateValue = addPtreInfoRow("Last API update");
+    let ptreSystemCountValue = addPtreInfoRow("Systems count");
+    let ptreStorageSizeValue = addPtreInfoRow("Storage size");
+
+    ptreSection.appendChild(createDOM("div", { class: "ogl-ptre-subtitle" }, "Galaxy storage - all universes"));
+    let ptreAllStorageValue = addPtreInfoRow("Storage size");
+    let ptreAllStorageToggle = createDOM("a", { href: "#", class: "ogl-ptre-details-toggle" }, "Details ▾");
+    ptreAllStorageValue.parentElement.appendChild(ptreAllStorageToggle);
     let ptreAllStorageTable = ptreSection.appendChild(
       createDOM("table", { class: "ogl-ptre-storage-table", style: "display: none;" })
     );
     ptreAllStorageToggle.addEventListener("click", (e) => {
       e.preventDefault();
-      ptreAllStorageTable.style.display = ptreAllStorageTable.style.display === "none" ? "table" : "none";
+      const show = ptreAllStorageTable.style.display === "none";
+      ptreAllStorageTable.style.display = show ? "table" : "none";
+      ptreAllStorageToggle.textContent = show ? "Details ▴" : "Details ▾";
     });
 
     const formatPtreBytes = (bytes) => {
@@ -15601,17 +15609,15 @@ class OGInfinity {
     const refreshPtreStorageInfo = () => {
       pageContextRequest("ptre", "galaxyInfo")
         .then((r) => {
-          ptreSystemCountRow.textContent = `Systems count: ${r?.response?.systemCount ?? 0}`;
-          ptreLastApiUpdateRow.textContent = `Last API update: ${formatPtreGalaxyTs(
-            r?.response?.lastGalaxyUpdateTS ?? -1
-          )}`;
-          ptreStorageSizeRow.textContent = `Storage size: ${formatPtreBytes(r?.response?.storageBytes ?? 0)}`;
+          ptreSystemCountValue.textContent = String(r?.response?.systemCount ?? 0);
+          ptreLastApiUpdateValue.textContent = formatPtreGalaxyTs(r?.response?.lastGalaxyUpdateTS ?? -1);
+          ptreStorageSizeValue.textContent = formatPtreBytes(r?.response?.storageBytes ?? 0);
         })
         .catch((err) => {
           console.warn("[OGI][PTRE] galaxyInfo failed", err);
-          ptreSystemCountRow.textContent = "Systems count: (unavailable)";
-          ptreLastApiUpdateRow.textContent = "Last API update: (unavailable)";
-          ptreStorageSizeRow.textContent = "Storage size: (unavailable)";
+          ptreSystemCountValue.textContent = "(unavailable)";
+          ptreLastApiUpdateValue.textContent = "(unavailable)";
+          ptreStorageSizeValue.textContent = "(unavailable)";
         });
 
       pageContextRequest("ptre", "galaxyInfoAll")
@@ -15619,7 +15625,9 @@ class OGInfinity {
           const current = r?.response?.current;
           const list = r?.response?.universes ?? [];
           const totalBytes = list.reduce((sum, u) => sum + (u.storageBytes ?? 0), 0);
-          ptreAllStorageText.textContent = `Storage size - all universes: ${formatPtreBytes(totalBytes)}`;
+          ptreAllStorageValue.textContent = `${formatPtreBytes(totalBytes)} (${list.length} universe${
+            list.length > 1 ? "s" : ""
+          })`;
 
           ptreAllStorageTable.replaceChildren(
             createDOM(
@@ -15659,7 +15667,7 @@ class OGInfinity {
         })
         .catch((err) => {
           console.warn("[OGI][PTRE] galaxyInfoAll failed", err);
-          ptreAllStorageText.textContent = "Storage size - all universes: (unavailable)";
+          ptreAllStorageValue.textContent = "(unavailable)";
         });
     };
     // Stale-universe cleanup runs only here (settings opening), never during regular play.
