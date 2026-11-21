@@ -51,6 +51,9 @@ contentContextInit({
     galaxyInfoAll: function () {
       return listGalaxyStorages();
     },
+    galaxyPurgeStale: function () {
+      return purgeStaleGalaxyStorages();
+    },
     galaxyDelete: function (universe) {
       if (typeof universe !== "string" || !/^[\w-]+$/.test(universe)) {
         throw new Error(`Invalid universe: ${universe}`);
@@ -68,6 +71,9 @@ contentContextInit({
 
 const UNIVERSE = window.location.host.split(".")[0];
 const GALAXY_KEY_PREFIX = "ogi-galaxy-";
+// The public planets API refreshes weekly, so a storage older than this would be
+// rebuilt anyway on the next visit of its universe.
+const GALAXY_STALE_MS = 8 * 24 * 60 * 60 * 1000;
 let universes = {};
 let currentUniverse = null;
 let dataHelper = null;
@@ -108,6 +114,25 @@ async function listGalaxyStorages() {
   }
   list.sort((a, b) => a.universe.localeCompare(b.universe));
   return { current: UNIVERSE, universes: list };
+}
+
+/**
+ * Removes the galaxy storage of every other universe whose last API update is older than
+ * GALAXY_STALE_MS (or unknown). The current universe is never purged.
+ * @return {Promise<string[]>} purged universes
+ */
+async function purgeStaleGalaxyStorages() {
+  const { universes: list } = await listGalaxyStorages();
+  const now = Date.now();
+  const stale = list
+    .filter((u) => u.universe !== UNIVERSE)
+    .filter((u) => !(u.lastGalaxyUpdateTS > 0 && now - u.lastGalaxyUpdateTS * 1000 <= GALAXY_STALE_MS))
+    .map((u) => u.universe);
+  if (stale.length > 0) {
+    await chrome.storage.local.remove(stale.map((universe) => GALAXY_KEY_PREFIX + universe));
+    getLogger("galaxyStorage").info(`Purged stale galaxy storage: ${stale.join(", ")}`);
+  }
+  return stale;
 }
 
 function clearCurrentGalaxyStorage() {

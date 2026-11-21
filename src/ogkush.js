@@ -15662,7 +15662,10 @@ class OGInfinity {
           ptreAllStorageText.textContent = "Storage size - all universes: (unavailable)";
         });
     };
-    refreshPtreStorageInfo();
+    // Stale-universe cleanup runs only here (settings opening), never during regular play.
+    pageContextRequest("ptre", "galaxyPurgeStale")
+      .catch((err) => console.warn("[OGI][PTRE] galaxyPurgeStale failed", err))
+      .finally(refreshPtreStorageInfo);
 
     settingDiv.appendChild(createDOM("hr"));
     let keys = settingDiv.appendChild(createDOM("div", { style: "display: grid;" }));
