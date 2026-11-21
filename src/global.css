@@ -489,6 +489,34 @@ input[type="password"]::selection {
   width: 180px !important;
 }
 
+.ogl-settings .ogl-ptre-section {
+  row-gap: 3px;
+}
+
+.ogl-settings .ogl-ptre-subtitle {
+  margin-top: 6px;
+  padding-bottom: 1px;
+  border-bottom: 1px solid #1e2a36;
+  color: #5d7fa4;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.ogl-settings .ogl-ptre-info-row {
+  display: flex;
+  align-items: center;
+  padding-left: 8px;
+}
+
+.ogl-settings .ogl-ptre-info-value {
+  margin-left: auto;
+  color: #ccc;
+}
+
+.ogl-settings .ogl-ptre-details-toggle {
+  margin-left: 8px;
+}
+
 .ogl-settings .ogl-ptre-storage-table {
   width: 100%;
   margin-top: 4px;
