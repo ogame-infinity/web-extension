@@ -67,9 +67,15 @@ function processData() {
   }
   universes[UNIVERSE].init().then(() => {
     try {
+      const previousUpdate = universes[UNIVERSE].lastUpdate;
       universes[UNIVERSE].update().then(() => {
         if (pendingPtreKey && universes[UNIVERSE]._galaxySnapshot) {
           universes[UNIVERSE].rebuildGalaxyStorage(pendingPtreKey);
+        }
+        // The blob only holds the public API snapshot: when update() did not reload it
+        // (throttled, already loading or failed), the stored copy is already up to date.
+        if (universes[UNIVERSE].lastUpdate === previousUpdate) {
+          return;
         }
         let tempSaveData = { ...universes[UNIVERSE] };
         tempSaveData.lastUpdate = universes[UNIVERSE].lastUpdate.toJSON();
