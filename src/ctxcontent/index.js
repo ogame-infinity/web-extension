@@ -4,6 +4,7 @@ import { contentContextInit } from "../util/service.callbackEvent.js";
 import * as wait from "../util/wait.js";
 import { getExpeditionType } from "./callbacks/expedition-type.js";
 import { DataHelper } from "./data-helper.js";
+import { scheduleDailyStorageCleanup } from "./services/storage.cleanup.js";
 
 const mainLogger = getLogger();
 
@@ -238,4 +239,6 @@ export function main() {
   injectScript("libs/lz-string.min.js", null, false);
   injectScript("libs/purify.min.js", null, false);
   injectScript("ogkush.js", null, true);
+
+  scheduleDailyStorageCleanup(UNIVERSE);
 }
