@@ -15187,9 +15187,11 @@ class OGInfinity {
       this.createDOM(
         "h1",
         {},
-        `${this.getTranslatedText(15)}<span style="font-weight: 100;color: white; float:right"> <strong class="${
+        `${this.getTranslatedText(15)} - ${
+          OgamePageData.universeUrl.split(".")[0]
+        }<span style="font-weight: 100;color: white; float:right"> <strong class="${
           size.total > 4 ? "overmark" : "undermark"
-        }"> ${size.total}</strong>  / 5 Mb`
+        }"> ${size.total}</strong>  / 5 MB`
       )
     );
     let expeditionsBox = dataManagement.appendChild(
@@ -15270,7 +15272,7 @@ class OGInfinity {
         { class: "ogi-checkbox" },
         `<label for="purge">${this.getTranslatedText(22)}<span class="${size.other > 3 ? "undermark" : "overmark"}"> (${
           size.other
-        }Mb)</span></label>
+        }MB)</span></label>
         <input type="checkbox" id="purge" name="purge">`
       )
     );
