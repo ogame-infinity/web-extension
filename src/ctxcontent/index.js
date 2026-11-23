@@ -80,6 +80,10 @@ function processData() {
         // on next boot via Object.assign in main().
         delete tempSaveData.galaxyStorage;
         delete tempSaveData.lastGalaxyUpdateTS;
+        // Same for scannedPlanets / scannedPlayers: their only source of truth is
+        // `ogi-scanned-<UNIVERSE>` (init() always overwrites them on load).
+        delete tempSaveData.scannedPlanets;
+        delete tempSaveData.scannedPlayers;
         // Runtime-only setTimeout id; must not survive a reload.
         delete tempSaveData._galaxyFlushTimer;
         delete tempSaveData._lastFlushError;
