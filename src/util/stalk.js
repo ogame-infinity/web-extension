@@ -9,6 +9,7 @@ import OgamePageData from "./OgamePageData.js";
 import OGIData from "./OGIData.js";
 import { loading } from "./loading.js";
 import { action } from "./ptre.js";
+import { fetchTeamPositions } from "./ptre.teamPositions.js";
 import Translator from "./translate.js";
 
 const rawUrl = new URL(window.location.href);
@@ -700,7 +701,7 @@ export function side(playerId) {
       sideStalk.remove();
     }
     sideStalk = document.querySelector("#links").appendChild(createDOM("div", { class: "ogl-sideStalk" }));
-    let actBtn, watchlistBtn, ptreBtn, removeBtn;
+    let actBtn, watchlistBtn, ptreBtn, syncBtn, removeBtn;
     const options = OGIData.options;
     if (!options.sideStalkVisible) {
       sideStalk.classList.add("ogi-hidden");
@@ -717,6 +718,9 @@ export function side(playerId) {
       if (OGIData.options.ptreTK) {
         ptreBtn = sideStalk.appendChild(
           createDOM("a", { class: "ogl-text-btn ogl-ptre-acti tooltip", title: "Display PTRE data" }, "PTRE")
+        );
+        syncBtn = sideStalk.appendChild(
+          createDOM("a", { class: "ogl-text-btn material-icons tooltip", title: "Sync PTRE team positions" }, "sync")
         );
       }
       removeBtn = sideStalk.appendChild(
@@ -791,6 +795,27 @@ export function side(playerId) {
             action(null, p);
           }, 20);
         });
+      }
+      // Positions seen by the PTRE team: automatic (delayed per player) when the player is shown,
+      // forced by the sync button. Re-render only when something new was added for this player.
+      const refreshFromTeam = (force) =>
+        fetchTeamPositions(p.id, force)
+          .then((added) => {
+            if ((added > 0 || force) && OGIData.sideStalk[OGIData.sideStalk.length - 1] === Number(p.id)) side();
+          })
+          .catch((err) => console.warn("[OGI][PTRE] team positions failed", err))
+          .finally(() => {
+            if (syncBtn) syncBtn.removeAttribute("style");
+          });
+      if (syncBtn) {
+        syncBtn.addEventListener("click", () => {
+          syncBtn.style.opacity = "0.4";
+          syncBtn.style.pointerEvents = "none";
+          refreshFromTeam(true);
+        });
+      }
+      if (options.sideStalkVisible) {
+        refreshFromTeam(false);
       }
       container.appendChild(
         createDOM("div", { class: "ogl-right ogl-date" }, dateTime.timeSince(new Date(p.lastUpdate)))
