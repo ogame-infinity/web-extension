@@ -34,7 +34,7 @@ function universeOfKey(key) {
 /**
  * Remove every key of the universes (other than `currentUniverse`) whose data was not refreshed
  * for more than UNIVERSE_STALE_MS. The last refresh is `lastUpdate` in the `<universe>` blob,
- * set by DataHelper.update() while the universe is played; a universe without a readable
+ * set by DataHelper.refreshPublicApiData() while the universe is played; a universe without a readable
  * `lastUpdate` (orphan keys) is purged too.
  * @param {string} currentUniverse
  * @param {number} [now]

@@ -99,7 +99,7 @@ export class DataHelper {
     this.lastPlanetsUpdate = new Date(0);
     this.lastUpdate = new Date(0);
     this.saveData();
-    this.update();
+    this.refreshPublicApiData();
   }
 
   filter(name, alliance) {
@@ -546,7 +546,7 @@ export class DataHelper {
     return removed;
   }
 
-  async update() {
+  async refreshPublicApiData() {
     const logger = getLogger("updateUniverse");
 
     if (this.loading) return;
