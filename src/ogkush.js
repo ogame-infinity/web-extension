@@ -1375,21 +1375,22 @@ class OGInfinity {
   TraderImportExportPage = new TraderImportExportPage();
 
   constructor() {
-    this.playerId = parseInt(document.querySelector('meta[name="ogame-player-id"]').content);
-    this.commander = document.querySelector("#officers > a.commander.on") !== null;
-    this.rawURL = new URL(window.location.href);
-    this.page = this.rawURL.searchParams.get("component") || this.rawURL.searchParams.get("page");
-    if (document.querySelector("#characterclass .explorer")) {
-      this.playerClass = PLAYER_CLASS_EXPLORER;
-    } else if (document.querySelector("#characterclass .warrior")) {
-      this.playerClass = PLAYER_CLASS_WARRIOR;
-    } else if (document.querySelector("#characterclass .miner")) {
-      this.playerClass = PLAYER_CLASS_MINER;
-    } else {
-      this.playerClass = PLAYER_CLASS_NONE;
-    }
+    // transitional, use OgamePageData properties instead
+    this.rawURL = OgamePageData.rawURL;
+    this.mode = OgamePageData.mode;
+    this.page = OgamePageData.page;
+    this.universeUrl = OgamePageData.universeUrl;
+    this.commander = OgamePageData.commander;
+    this.geologist = OgamePageData.geologist;
+    this.technocrat = OgamePageData.technocrat;
+    this.admiral = OgamePageData.admiral;
+    this.engineer = OgamePageData.engineer;
+    this.allOfficers = OgamePageData.allOfficers;
+    this.playerId = OgamePageData.playerId;
+    this.universe = OgamePageData.universe;
+    this.playerClass = OgamePageData.playerClass;
+    //
 
-    this.mode = this.rawURL.searchParams.get("oglMode") || ogiMode.DEFAULT;
     this.planetList = document.querySelectorAll(".smallplanet");
     document.querySelectorAll(".planet-koords").forEach((elem) => (elem.textContent = elem.textContent.slice(1, -1)));
 
@@ -1407,19 +1408,8 @@ class OGInfinity {
       type: planetType.planet,
     };
 
-    const getMetaValue = (name) => {
-      return document.querySelector(`meta[name="${name}"]`);
-    };
-
     this.isMobile = "ontouchstart" in document.documentElement;
     this.eventAction = this.isMobile ? "touchstart" : "mouseenter";
-    this.universe = window.location.host.replace(/\D/g, "");
-    this.universeUrl = `https://${getMetaValue("ogame-universe").content}`;
-    this.geologist = !!document.querySelector(".geologist.on");
-    this.technocrat = !!document.querySelector(".technocrat.on");
-    this.admiral = !!document.querySelector(".admiral.on");
-    this.engineer = !!document.querySelector(".engineer.on");
-    this.allOfficers = !!document.querySelector("#officers.all");
     this.current = {};
     this.current.planet = (
       document.querySelector("#planetList .active") ?? document.querySelector("#planetList .planetlink")
