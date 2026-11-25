@@ -20,7 +20,7 @@ On Chrome, `chrome.storage.local` is limited to 10 MB for the whole extension un
 
 | Key | Content | Written by | Read by |
 |---|---|---|---|
-| `<U>` | Public API snapshot: `players`, `names`, `topScore`, `lastUpdate`, `lastPlayersUpdate`, `lastPlanetsUpdate` (copy of the `DataHelper` object without the keys stored elsewhere, see [Page load sequence](#page-load-sequence)) | `processData()` in `index.js`, only when `update()` actually reloaded the API data | `main()` in `index.js` (`Object.assign` into the `DataHelper`) |
+| `<U>` | Public API snapshot: `players`, `names`, `topScore`, `lastUpdate`, `lastPlayersUpdate`, `lastPlanetsUpdate` (copy of the `DataHelper` object without the keys stored elsewhere, see [Page load sequence](#page-load-sequence)) | `processData()` in `index.js`, only when `refreshPublicApiData()` actually reloaded the API data | `main()` in `index.js` (`Object.assign` into the `DataHelper`) |
 | `ogi-scanned-<U>` | JSON **string** `{ scannedPlanets, scannedPlayers }` | `DataHelper.saveData()` | `DataHelper.init()` |
 | `ogi-galaxy-<U>` | JSON **string** `{ galaxyStorage, lastGalaxyUpdateTS }` (PTRE only) | `DataHelper.flushGalaxyStorage()` | `DataHelper.init()` |
 
@@ -32,9 +32,9 @@ Extension-wide key (not tied to a universe): `ogi-storage-cleanup` = `{ lastRun 
 
 1. `main()` reads `<U>` and copies it into a new `DataHelper` (`Object.assign`). If this fails, the **whole** `chrome.storage.local` is cleared (all universes).
 2. `processData()` calls `init()`, which reads `ogi-scanned-<U>` and `ogi-galaxy-<U>`. These dedicated keys are the **only source of truth** for `scannedPlanets`, `scannedPlayers`, `galaxyStorage` and `lastGalaxyUpdateTS`. Until `init()` completes, `scannedPlanets` / `scannedPlayers` are empty objects (set by the constructor), so `getPlayer()` already works with the API planets only.
-3. `update()` refreshes the public API data (see below).
+3. `refreshPublicApiData()` refreshes the public API data (see below).
 4. With a PTRE team key, `rebuildGalaxyStorage()` rebuilds `galaxyStorage` when a newer API snapshot is available.
-5. Only if `update()` actually reloaded the API data (`lastUpdate` changed), the `DataHelper` is saved back into `<U>`, without the keys stored elsewhere (`galaxyStorage`, `lastGalaxyUpdateTS`, `scannedPlanets`, `scannedPlayers`) and the runtime fields (`_galaxyFlushTimer`, `_lastFlushError`, `_galaxySnapshot`). Otherwise the stored copy is already up to date and is not rewritten.
+5. Only if `refreshPublicApiData()` actually reloaded the API data (`lastUpdate` changed), the `DataHelper` is saved back into `<U>`, without the keys stored elsewhere (`galaxyStorage`, `lastGalaxyUpdateTS`, `scannedPlanets`, `scannedPlayers`) and the runtime fields (`_galaxyFlushTimer`, `_lastFlushError`, `_galaxySnapshot`). Otherwise the stored copy is already up to date and is not rewritten.
 
 ## `players`: public API snapshot
 
@@ -71,9 +71,9 @@ Extension-wide key (not tied to a universe): `ogi-storage-cleanup` = `{ lastRun 
 
 ### Update
 
-`players` is only written by `DataHelper.update()`, which **rebuilds it entirely** from `players.xml`, `universe.xml`, `alliances.xml` and the highscores. Nothing else modifies it: the galaxy view only reads it.
+`players` is only written by `DataHelper.refreshPublicApiData()`, which **rebuilds it entirely** from `players.xml`, `universe.xml`, `alliances.xml` and the highscores. Nothing else modifies it: the galaxy view only reads it.
 
-`update()` runs on page load when the previous update is older than 30 minutes. The XML files go through the browser HTTP cache (`cache: "default"`); `universe.xml` (planets and moons) only changes about once a week.
+`refreshPublicApiData()` runs on page load when the previous update is older than 30 minutes. The XML files go through the browser HTTP cache (`cache: "default"`); `universe.xml` (planets and moons) only changes about once a week.
 
 ## `scannedPlanets` / `scannedPlayers`: galaxy diffs
 
@@ -123,7 +123,7 @@ The whole `ogi-scanned-<U>` key is saved after each system.
 
 ### Update from the API: prune
 
-Right after `players` is rebuilt, `update()` calls `pruneScannedPlanets()`, which removes the entries the API now agrees with, then saves `ogi-scanned-<U>` if something changed:
+Right after `players` is rebuilt, `refreshPublicApiData()` calls `pruneScannedPlanets()`, which removes the entries the API now agrees with, then saves `ogi-scanned-<U>` if something changed:
 
 | Entry | Removed when |
 |---|---|
@@ -133,7 +133,7 @@ Right after `players` is rebuilt, `update()` calls `pruneScannedPlanets()`, whic
 
 Entries still ahead of the API are kept and will be removed by a later snapshot, or when the galaxy view confirms the API again.
 
-`update()` also resets `scannedPlayers` to `{}`.
+`refreshPublicApiData()` also resets `scannedPlayers` to `{}`.
 
 ### Display: `getPlayer()`
 
@@ -183,7 +183,7 @@ Deleting the current universe (Delete button or settings reset "galaxy") also ca
 Source: [`src/ctxcontent/services/storage.cleanup.js`](../src/ctxcontent/services/storage.cleanup.js), scheduled by `main()` in `index.js`.
 
 - **When**: 3 minutes after a page load, on any universe, at most once a day. The last run is stored in `ogi-storage-cleanup` (shared by all universes and tabs, written before the purge so concurrent tabs skip it).
-- **What**: every **other** universe whose `<U>.lastUpdate` is older than **8 days**, or missing / unreadable (orphan keys). `lastUpdate` is refreshed by `update()` whenever the universe is played, so it is the "last played" date. The current universe is never purged.
+- **What**: every **other** universe whose `<U>.lastUpdate` is older than **8 days**, or missing / unreadable (orphan keys). `lastUpdate` is refreshed by `refreshPublicApiData()` whenever the universe is played, so it is the "last played" date. The current universe is never purged.
 - **Removed keys**: `<U>`, `ogi-scanned-<U>`, `ogi-galaxy-<U>`, `<U>-expirations`, `<U>-universe-data-information`. All keys of a universe are kept or removed together.
 - **Next visit**: `<U>` is rebuilt from the API, `ogi-galaxy-<U>` too with a PTRE team key. The lost `ogi-scanned-<U>` diffs are covered by the weekly API snapshot by then.
 
@@ -193,9 +193,9 @@ Purged universes are logged in the console (`Purged universes not played for 8+ 
 
 | Data | Automatic | Manual |
 |---|---|---|
-| `players` (`<U>`) | Rebuilt by `update()`; whole universe purged after 8 days unplayed | none |
+| `players` (`<U>`) | Rebuilt by `refreshPublicApiData()`; whole universe purged after 8 days unplayed | none |
 | `scannedPlanets` | `pruneScannedPlanets()` after each API refresh; entry removed when the galaxy view confirms the API; whole universe purged after 8 days unplayed | Settings reset "Planet changes seen in galaxy" (`ogi-clear` → `clearData()`), current universe only |
-| `scannedPlayers` | Reset by every `update()` | Settings reset "Planet changes seen in galaxy" |
+| `scannedPlayers` | Reset by every `refreshPublicApiData()` | Settings reset "Planet changes seen in galaxy" |
 | `galaxyStorage` | Rebuilt on each new API snapshot; whole universe purged after 8 days unplayed | Settings → PTRE: Delete button per universe (any universe); settings reset "galaxy" (`ogi-galaxy-clear`), current universe only |
 | Everything (all universes) | `chrome.storage.local.clear()` if `<U>` cannot be loaded in `main()` | none |
 
@@ -204,7 +204,7 @@ A universe that is no longer played (closed or merged universe) loses all its ke
 ## Known limitations
 
 - `<U>` is a copy of the whole `DataHelper` object minus the excluded keys: it also contains runtime fields (`universe`, `loading`, `_ptreDebugLogs`) that are not needed.
-- `lastUpdate`, `lastPlayersUpdate` and `lastPlanetsUpdate` are always set together by `update()` and hold the same value.
+- `lastUpdate`, `lastPlayersUpdate` and `lastPlanetsUpdate` are always set together by `refreshPublicApiData()` and hold the same value.
 - `galaxyStorage` is only rebuilt when the API data was reloaded on the current page load: a PTRE team key added less than 30 minutes after the last API refresh only gets the systems visited in the galaxy view until the next refresh.
 - `ogi-scanned-<U>` and `ogi-galaxy-<U>` store a JSON string instead of an object: Chrome serializes it a second time and counts the escaped quotes in the quota (about +17%).
 - A scanned entry replacing an API planet loses its `id`: if it is the homeworld, the next lowest id is shown as homeworld.
