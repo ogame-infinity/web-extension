@@ -41,6 +41,10 @@ export class DataHelper {
     this.names = {};
     this.topScore = 0;
     this.loading = false;
+    // Loaded from `ogi-scanned-<universe>` by init(); empty until then so getPlayer() never
+    // reads undefined while init() is still pending.
+    this.scannedPlanets = {};
+    this.scannedPlayers = {};
     // Transient cache of the last successful universe.xml fetch. Stripped from the persisted blob in processData().
     this._galaxySnapshot = null;
     // Pushed from the page via `ptre.setDebugLogs`; gates the verbose diffPtreGalaxySystem() debug output.
@@ -399,8 +403,6 @@ export class DataHelper {
       [`ogi-scanned-${this.universe}`]: JSON.stringify({
         scannedPlanets: this.scannedPlanets,
         scannedPlayers: this.scannedPlayers,
-        lastPlayersUpdate: this.lastPlayersUpdate,
-        lastPlanetsUpdate: this.lastPlanetsUpdate,
       }),
     });
   }
