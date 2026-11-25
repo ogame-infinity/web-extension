@@ -13,10 +13,12 @@ const mainLogger = getLogger();
 let pendingPtreKey = "";
 
 contentContextInit({
-  ptre: {
-    galaxy: function (galaxy, system, positions, additionnal, ptreKey = null, serverTime = null) {
-      return dataHelper.scan(galaxy, system, positions, additionnal, ptreKey, serverTime);
+  galaxy: {
+    ingestSystem: function (galaxy, system, positions, additionnal, ptreKey = null, serverTime = null) {
+      return dataHelper.ingestGalaxySystem(galaxy, system, positions, additionnal, ptreKey, serverTime);
     },
+  },
+  ptre: {
     setTeamKey: function (key) {
       pendingPtreKey = typeof key === "string" ? key : "";
       if (pendingPtreKey && dataHelper && dataHelper._galaxySnapshot) {
