@@ -15586,6 +15586,7 @@ class OGInfinity {
     let ptreAllStorageValue = addPtreInfoRow("Storage size");
     let ptreAllStorageToggle = createDOM("a", { href: "#", class: "ogl-ptre-details-toggle" }, "Details ▾");
     ptreAllStorageValue.parentElement.appendChild(ptreAllStorageToggle);
+    let ptreLastCleanupValue = addPtreInfoRow("Last cleaning");
     let ptreAllStorageTable = ptreSection.appendChild(
       createDOM("table", { class: "ogl-ptre-storage-table", style: "display: none;" })
     );
@@ -15628,6 +15629,9 @@ class OGInfinity {
           ptreAllStorageValue.textContent = `${formatPtreBytes(totalBytes)} (${list.length} universe${
             list.length > 1 ? "s" : ""
           })`;
+          const lastCleanup = r?.response?.lastCleanup ?? -1;
+          ptreLastCleanupValue.textContent =
+            lastCleanup > 0 ? `${Math.round((Date.now() - lastCleanup) / 3600e3)}h` : "never";
 
           ptreAllStorageTable.replaceChildren(
             createDOM(
@@ -15668,6 +15672,7 @@ class OGInfinity {
         .catch((err) => {
           console.warn("[OGI][PTRE] galaxyInfoAll failed", err);
           ptreAllStorageValue.textContent = "(unavailable)";
+          ptreLastCleanupValue.textContent = "(unavailable)";
         });
     };
     refreshPtreStorageInfo();

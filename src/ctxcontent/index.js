@@ -4,7 +4,7 @@ import { contentContextInit } from "../util/service.callbackEvent.js";
 import * as wait from "../util/wait.js";
 import { getExpeditionType } from "./callbacks/expedition-type.js";
 import { DataHelper } from "./data-helper.js";
-import { scheduleDailyStorageCleanup } from "./services/storage.cleanup.js";
+import { getLastCleanupTime, scheduleDailyStorageCleanup } from "./services/storage.cleanup.js";
 
 const mainLogger = getLogger();
 
@@ -49,8 +49,8 @@ contentContextInit({
         }
       });
     },
-    galaxyInfoAll: function () {
-      return listGalaxyStorages();
+    galaxyInfoAll: async function () {
+      return { ...(await listGalaxyStorages()), lastCleanup: await getLastCleanupTime() };
     },
     galaxyDelete: function (universe) {
       if (typeof universe !== "string" || !/^[\w-]+$/.test(universe)) {

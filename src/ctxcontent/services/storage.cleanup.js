@@ -75,6 +75,14 @@ export async function purgeStaleUniverses(currentUniverse, now = Date.now()) {
 }
 
 /**
+ * @return {Promise<number>} time (ms) of the last daily cleanup run, -1 if it never ran
+ */
+export async function getLastCleanupTime() {
+  const lastRun = (await chrome.storage.local.get(CLEANUP_STATE_KEY))[CLEANUP_STATE_KEY]?.lastRun;
+  return Number.isFinite(lastRun) ? lastRun : -1;
+}
+
+/**
  * Run purgeStaleUniverses() at most once a day (all universes and tabs share the marker),
  * `delayMs` after the page load so it never competes with the page rendering.
  * @param {string} currentUniverse
