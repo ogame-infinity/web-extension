@@ -1,11 +1,19 @@
 import { getLogger } from "../util/logger.js";
+import { setDefaultCacheMode } from "../util/fetching.js";
 import { COORDINATE_PLANET, toNumber as toNumberCoordinate } from "../util/ogame.coordinate.js";
 import { getAlliances } from "./helpers/universe.alliances.js";
 import { getPlayersHighscore, NAN_HIGHSCORE } from "./helpers/universe.highscore.js";
 import { getPlanets } from "./helpers/universe.planets.js";
 import { DEFAULT_PLAYER, getPlayers } from "./helpers/universe.players.js";
+import { storageLogger } from "./services/storage.logger.js";
 
 const ptreLogger = getLogger("data-helper.ptre");
+
+/**
+ * sessionStorage flag set by the settings reset "API data (players, planets, PTRE galaxy)": the next
+ * refreshPublicApiData() of this tab bypasses the browser HTTP cache for the API files.
+ */
+export const API_RELOAD_FLAG = "ogi-api-reload";
 
 /** Number of positions per system stored in `galaxyStorage` (dense layout). */
 const SCANNED_SYSTEM_POSITION_COUNT = 15;
@@ -92,14 +100,13 @@ export class DataHelper {
     });
   }
 
+  // Only the planet changes seen in the galaxy view (`ogi-scanned-<U>`); the public API
+  // data is kept and not downloaded again.
   clearData() {
     this.scannedPlanets = {};
     this.scannedPlayers = {};
-    this.lastPlayersUpdate = new Date(0);
-    this.lastPlanetsUpdate = new Date(0);
-    this.lastUpdate = new Date(0);
     this.saveData();
-    this.refreshPublicApiData();
+    storageLogger.log(`[${this.universe}] planet changes seen in galaxy cleared (ogi-scanned-${this.universe})`);
   }
 
   filter(name, alliance) {
@@ -415,7 +422,7 @@ export class DataHelper {
       clearTimeout(this._galaxyFlushTimer);
       this._galaxyFlushTimer = null;
     }
-    const logger = getLogger("galaxyStorage");
+    const logger = storageLogger;
     const key = `ogi-galaxy-${this.universe}`;
     let payload;
     try {
@@ -425,7 +432,7 @@ export class DataHelper {
       });
     } catch (err) {
       this._lastFlushError = `serialize: ${err && err.message ? err.message : err}`;
-      logger.error(`[${key}] serialize failed: ${this._lastFlushError}`);
+      logger.error(`[galaxyStoragePTRE] ${key} serialize failed: ${this._lastFlushError}`);
       return;
     }
     chrome.storage.local.set({ [key]: payload }, () => {
@@ -433,7 +440,7 @@ export class DataHelper {
       if (lastError) {
         const bytes = new Blob([payload]).size;
         this._lastFlushError = `write (${bytes}B): ${lastError.message}`;
-        logger.error(`[${key}] write failed: ${this._lastFlushError}`);
+        logger.error(`[galaxyStoragePTRE] ${key} write failed: ${this._lastFlushError}`);
         return;
       }
       this._lastFlushError = null;
@@ -454,19 +461,19 @@ export class DataHelper {
   // No-op when the key is missing, when no snapshot has been cached yet, or
   // when the cached snapshot is not strictly newer than the persisted state.
   rebuildGalaxyStorage(ptreKey) {
-    const logger = getLogger("updateUniverse");
+    const logger = storageLogger;
     if (!ptreKey) {
-      logger.debug(`[galaxyStorage] rebuild skipped: no PTRE key`);
+      logger.debug(`[galaxyStoragePTRE] rebuild skipped: no PTRE key`);
       return;
     }
     if (!this._galaxySnapshot) {
-      logger.debug(`[galaxyStorage] rebuild skipped: no cached snapshot`);
+      logger.debug(`[galaxyStoragePTRE] rebuild skipped: no cached snapshot`);
       return;
     }
     const newGalaxyTs = this._galaxySnapshot.timestamp;
     const previousGalaxyTs = this.lastGalaxyUpdateTS ?? -1;
     if (!Number.isFinite(newGalaxyTs) || newGalaxyTs <= previousGalaxyTs) {
-      logger.debug(`[galaxyStorage] rebuild skipped: prevTs=${previousGalaxyTs} newTS=${newGalaxyTs}`);
+      logger.debug(`[galaxyStoragePTRE] rebuild skipped: prevTs=${previousGalaxyTs} newTS=${newGalaxyTs}`);
       return;
     }
 
@@ -509,7 +516,7 @@ export class DataHelper {
 
     this.lastGalaxyUpdateTS = newGalaxyTs;
     const galaxyBuildDurationMs = Math.round(performance.now() - galaxyBuildStart);
-    logger.debug(`[galaxyStorage] New data: systems=${updatedSystemsCount} planets=${updatedPlanetsCount} moons=${updatedMoonsCount} | TS=${this.lastGalaxyUpdateTS} | Took ${galaxyBuildDurationMs}ms`);
+    logger.debug(`[galaxyStoragePTRE] New data: systems=${updatedSystemsCount} planets=${updatedPlanetsCount} moons=${updatedMoonsCount} | TS=${this.lastGalaxyUpdateTS} | Took ${galaxyBuildDurationMs}ms`);
     this.flushGalaxyStorage();
   }
 
@@ -547,7 +554,7 @@ export class DataHelper {
   }
 
   async refreshPublicApiData() {
-    const logger = getLogger("updateUniverse");
+    const logger = storageLogger;
 
     if (this.loading) return;
     if (!isNaN(this.lastUpdate) && new Date() - this.lastUpdate < 30 * 60 * 1e3) {
@@ -557,6 +564,11 @@ export class DataHelper {
 
     this.loading = true;
     let players = {};
+    const bypassCache = sessionStorage.getItem(API_RELOAD_FLAG) === "1";
+    if (bypassCache) {
+      logger.log("Reloading the API files without the browser cache");
+      setDefaultCacheMode("reload");
+    }
 
     try {
       const [playersScore, playersInformation, planetsSnapshot, allianceInformation] = await Promise.all([
@@ -575,7 +587,7 @@ export class DataHelper {
         planetList: planetsSnapshot.planetList,
         timestamp: planetsSnapshot.timestamp,
       };
-      logger.debug(`[galaxyStorage] snapshot cached (ts=${planetsSnapshot.timestamp})`);
+      logger.debug(`[galaxyStoragePTRE] snapshot cached (ts=${planetsSnapshot.timestamp})`);
       // End Galaxy Snapshot Cache
       // --------------------------------------------
 
@@ -621,6 +633,7 @@ export class DataHelper {
       this.lastPlayersUpdate = new Date();
       this.lastPlanetsUpdate = new Date();
       this.scannedPlayers = {};
+      if (bypassCache) sessionStorage.removeItem(API_RELOAD_FLAG);
 
       const prunedCount = this.pruneScannedPlanets();
       if (prunedCount > 0) {
@@ -628,9 +641,10 @@ export class DataHelper {
         this.saveData();
       }
     } catch (err) {
-      logger.error(err);
+      logger.error("Public API data refresh failed", err);
     } finally {
       this.loading = false;
+      if (bypassCache) setDefaultCacheMode("default");
     }
   }
 }

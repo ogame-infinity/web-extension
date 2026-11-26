@@ -15283,12 +15283,12 @@ class OGInfinity {
         <input type="checkbox" id="scan" name="scan">`
       )
     );
-    let galaxyBox = dataManagement.appendChild(
+    let universeDataBox = dataManagement.appendChild(
       this.createDOM(
         "div",
         { class: "ogi-checkbox" },
-        `<label for="galaxy_reset">${this.getTranslatedText(226)}</label>
-        <input type="checkbox" id="galaxy_reset" name="galaxy_reset">`
+        `<label for="universe_data_reset">${this.getTranslatedText(231)}</label>
+        <input type="checkbox" id="universe_data_reset" name="universe_data_reset">`
       )
     );
     let OptionsBox = dataManagement.appendChild(
@@ -15769,7 +15769,7 @@ class OGInfinity {
       this.saveData();
       document.querySelector(".ogl-dialog .close-tooltip").click();
     });
-    resetBtn.addEventListener("click", () => {
+    resetBtn.addEventListener("click", async () => {
       let reset = confirm("Are you sure ? :)");
       if (reset) {
         let json = {};
@@ -15785,11 +15785,10 @@ class OGInfinity {
         json.combats = {};
         json.combatsSums = {};
         json.spies = {};
+        json.markers = {};
+        json.playerMarkers = {};
         if (scanBox.children[1].checked) {
           document.dispatchEvent(new CustomEvent("ogi-clear"));
-        }
-        if (galaxyBox.children[1].checked) {
-          document.dispatchEvent(new CustomEvent("ogi-galaxy-clear"));
         }
         if (purgeBox.children[1].checked) {
           this.purgeLocalStorage();
@@ -15827,17 +15826,25 @@ class OGInfinity {
         }
         if (!targetsBox.children[1].checked) {
           json.markers = this.json.markers;
+          json.playerMarkers = this.json.playerMarkers;
         }
         if (!spiesBox.children[1].checked) {
           json.spies = this.json.spies;
         }
         if (!OptionsBox.children[1].checked) {
           json.options = this.json.options;
-          json.options.empire = false;
+          // The empire panel needs the empire data wiped by "Cache and Temp data".
+          if (cacheBox.children[1].checked) json.options.empire = false;
         }
         this.json = json;
         this.json.needSync = false;
         this.saveData();
+        if (universeDataBox.children[1].checked) {
+          // Wait for the keys to be removed: the page reload below would cut the request.
+          await pageContextRequest("storage", "resetUniverseApi").catch((error) =>
+            getLogger("settings").error("API data reset failed", error)
+          );
+        }
         document.location = document.location.origin + "/game/index.php?page=ingame&component=overview ";
       }
     });

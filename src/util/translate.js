@@ -2565,15 +2565,6 @@ const translation = Object.freeze({
       br: "Logs de depuração PTRE",
       it: "Log di debug PTRE",
     },
-    226: {
-      de: "Galaxie-Speicher (PTRE)",
-      en: "Galaxy Storage (PTRE)",
-      es: "Almacenamiento de galaxia (PTRE)",
-      fr: "Stockage de la Galaxie (PTRE)",
-      tr: "Galaksi depolama (PTRE)",
-      br: "Armazenamento de galáxia (PTRE)",
-      it: "Archiviazione galassia (PTRE)",
-    },
     199: {
       de: "Leere Systeme",
       en: "Empty systems",
@@ -2591,6 +2582,15 @@ const translation = Object.freeze({
       tr: "Pasif sistemler",
       br: "Sistemas inativos",
       it: "Sistemi inattivi",
+    },
+    231: {
+      de: "API-Daten (Spieler, Planeten, PTRE-Galaxie)",
+      en: "API data (players, planets, PTRE galaxy)",
+      es: "Datos de la API (jugadores, planetas, galaxia PTRE)",
+      fr: "Données API (joueurs, planètes, galaxie PTRE)",
+      tr: "API verileri (oyuncular, gezegenler, PTRE galaksi)",
+      br: "Dados da API (jogadores, planetas, galáxia PTRE)",
+      it: "Dati API (giocatori, pianeti, galassia PTRE)",
     },
   },
 });
