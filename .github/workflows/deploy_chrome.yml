@@ -1,0 +1,62 @@
+name: Deploy to Chrome Web Store
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version number (e.g. 2.5.10)
+        required: true
+        type: string
+      mode:
+        description: "publish (upload + submit for review) or upload-only (draft, not submitted)"
+        type: choice
+        options:
+          - publish
+          - upload-only
+        default: publish
+
+jobs:
+  deploy:
+    environment: Publishing
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Check version
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          if ! [[ "$VERSION" =~ ^[0-9]+(\.[0-9]+){0,3}$ ]]; then
+            echo "::error::Invalid version \"$VERSION\": expected 1 to 4 dot-separated numbers (e.g. 2.5.10)"
+            exit 1
+          fi
+
+      - name: Packaging
+        env:
+          VERSION: ${{ inputs.version }}
+        run: ./packaging.sh "$VERSION"
+
+      - name: Upload package
+        uses: actions/upload-artifact@v4
+        with:
+          name: ogi-chrome-${{ inputs.version }}
+          path: dist/ogi-chrome.zip
+
+      # Chrome Web Store API v2, see https://github.com/fregante/chrome-webstore-upload-cli
+      - name: Chrome Web Store (${{ inputs.mode }})
+        env:
+          MODE: ${{ inputs.mode }}
+          BPP_KEYS: ${{ secrets.BPP_KEYS }}
+          PUBLISHER_ID: ${{ vars.CWS_PUBLISHER_ID }}
+        run: |
+          key() { jq -r ".chrome.$1 // empty" <<<"$BPP_KEYS"; }
+          CLIENT_ID=$(key clientId) CLIENT_SECRET=$(key clientSecret) REFRESH_TOKEN=$(key refreshToken) EXTENSION_ID=$(key extId)
+          export CLIENT_ID CLIENT_SECRET REFRESH_TOKEN EXTENSION_ID
+          command=()
+          if [ "$MODE" = upload-only ]; then command=(upload); fi
+          npx -y chrome-webstore-upload-cli@4.0.2 "${command[@]}" --source dist/ogi-chrome.zip

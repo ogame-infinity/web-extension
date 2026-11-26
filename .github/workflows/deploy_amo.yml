@@ -1,4 +1,4 @@
-name: Deploy to AMO
+name: Deploy to Firefox Add-ons (AMO)
 
 on:
   # Allows you to run this workflow manually from the Actions tab

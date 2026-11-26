@@ -1,6 +1,7 @@
-# This is a basic workflow to help you get started with Actions
+# Former workflow (PlasmoHQ/bpp: Chrome Web Store API v1.1, Firefox, Edge), kept as a fallback.
+# Use the "Deploy to ..." workflows first.
 
-name: Publishing
+name: Publishing (Fallback)
 
 # Controls when the workflow will run
 on:
