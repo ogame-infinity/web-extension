@@ -162,7 +162,20 @@ function processData() {
         delete tempSaveData._lastFlushError;
         delete tempSaveData._galaxySnapshot;
 
-        chrome.storage.local.set({ [UNIVERSE]: tempSaveData }, function (at) {});
+        const saved = universes[UNIVERSE];
+        chrome.storage.local.set({ [UNIVERSE]: tempSaveData }, function () {
+          if (chrome.runtime.lastError) {
+            mainLogger.error(`[${UNIVERSE}] not saved: ${chrome.runtime.lastError.message}`);
+            return;
+          }
+          const planets = Object.values(saved.players ?? {}).flatMap((player) => player.planets ?? []);
+          const universeTs = saved._galaxySnapshot?.timestamp;
+          mainLogger.log(
+            `[${UNIVERSE}] saved: ${Object.keys(saved.players ?? {}).length} players, ${planets.length} planets` +
+              ` (${planets.filter((planet) => planet.moon > 0).length} moons)` +
+              ` | universe.xml ${universeTs > 0 ? new Date(universeTs * 1000).toLocaleString() : "?"}`
+          );
+        });
       });
       dataHelper = universes[UNIVERSE];
     } catch (e) {
