@@ -176,7 +176,7 @@ The PTRE settings show the galaxy storage through the callback bridge (`ptre.*` 
 
 Sizes are the length of the stored JSON string: Chrome counts about 17% more in its quota (see [Known limitations](#known-limitations)).
 
-Deleting the current universe (Delete button or settings reset "galaxy") also cancels the pending debounced write, otherwise it would write the key back 2 s later.
+Deleting the current universe (Delete button or settings reset "API data (players, planets, PTRE galaxy)") also cancels the pending debounced write, otherwise it would write the key back 2 s later.
 
 ## Daily purge of unplayed universes
 
@@ -193,13 +193,17 @@ Purged universes are logged in the console (`Purged universes not played for 8+ 
 
 | Data | Automatic | Manual |
 |---|---|---|
-| `players` (`<U>`) | Rebuilt by `refreshPublicApiData()`; whole universe purged after 8 days unplayed | none |
-| `scannedPlanets` | `pruneScannedPlanets()` after each API refresh; entry removed when the galaxy view confirms the API; whole universe purged after 8 days unplayed | Settings reset "Planet changes seen in galaxy" (`ogi-clear` → `clearData()`), current universe only |
+| `players` (`<U>`) | Rebuilt by `refreshPublicApiData()`; whole universe purged after 8 days unplayed | Settings reset "API data (players, planets, PTRE galaxy)" (`storage.resetUniverseApi`): removes every key of the current universe (`<U>`, `ogi-galaxy-<U>`, `<U>-*`) except `ogi-scanned-<U>`, then the page reload downloads the API files again, bypassing the browser cache (`ogi-api-reload` flag in `sessionStorage`), and rebuilds the PTRE galaxy |
+| `scannedPlanets` | `pruneScannedPlanets()` after each API refresh; entry removed when the galaxy view confirms the API; whole universe purged after 8 days unplayed | Settings reset "Planet changes seen in galaxy" (`ogi-clear` → `clearData()`, the API data is not downloaded again), current universe only |
 | `scannedPlayers` | Reset by every `refreshPublicApiData()` | Settings reset "Planet changes seen in galaxy" |
-| `galaxyStorage` | Rebuilt on each new API snapshot; whole universe purged after 8 days unplayed | Settings → PTRE: Delete button per universe (any universe); settings reset "galaxy" (`ogi-galaxy-clear`), current universe only |
+| `galaxyStorage` | Rebuilt on each new API snapshot; whole universe purged after 8 days unplayed | Settings → PTRE: Delete button per universe (any universe, rebuilt at the next API refresh); settings reset "API data (players, planets, PTRE galaxy)", current universe only (rebuilt right away) |
 | Everything (all universes) | `chrome.storage.local.clear()` if `<U>` cannot be loaded in `main()` | none |
 
 A universe that is no longer played (closed or merged universe) loses all its keys 8 days after the last visit, through the [daily purge](#daily-purge-of-unplayed-universes). The page `localStorage` (`ogk-data`) of that universe cannot be cleaned from another universe.
+
+## Console logs
+
+Every operation on `<U>`, `ogi-scanned-<U>` and `ogi-galaxy-<U>` (load, public API refresh, write, settings resets, PTRE galaxy rebuild / delete, daily purge) is logged by a single logger, `universeStorage` (`src/ctxcontent/services/storage.logger.js`): type `universeStorage` in the console filter. Messages about `ogi-galaxy-<U>` only start with `[galaxyStoragePTRE]`. Debug-level lines (skips, load) are hidden by default in Chrome ("Verbose" level). The galaxy view ingestion (normal gameplay) is not logged.
 
 ## Known limitations
 

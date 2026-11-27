@@ -1,6 +1,16 @@
 const domParser = new DOMParser();
 
 const abortController = new AbortController();
+let defaultCacheMode = "default";
+
+/**
+ * HTTP cache mode used by fetchXml() / fetchJson() when the caller does not set one.
+ * @param {RequestCache} mode - e.g. "reload" to bypass the browser cache
+ */
+export function setDefaultCacheMode(mode) {
+  defaultCacheMode = mode;
+}
+
 window.onbeforeunload = () => abortController.abort();
 
 /** @template T */
@@ -64,7 +74,7 @@ function fixInit(init) {
   if (!init) {
     return {
       signal: abortController.signal,
-      cache: "default",
+      cache: defaultCacheMode,
     };
   }
 
@@ -73,7 +83,7 @@ function fixInit(init) {
   }
 
   if (!Object.hasOwn(init, "cache")) {
-    init.cache = "default";
+    init.cache = defaultCacheMode;
   }
 
   return init;

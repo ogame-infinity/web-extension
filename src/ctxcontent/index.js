@@ -3,8 +3,9 @@ import { injectScript } from "../util/runContext.js";
 import { contentContextInit } from "../util/service.callbackEvent.js";
 import * as wait from "../util/wait.js";
 import { getExpeditionType } from "./callbacks/expedition-type.js";
-import { DataHelper } from "./data-helper.js";
+import { API_RELOAD_FLAG, DataHelper } from "./data-helper.js";
 import { getLastCleanupTime, scheduleDailyStorageCleanup } from "./services/storage.cleanup.js";
+import { storageLogger } from "./services/storage.logger.js";
 
 const mainLogger = getLogger();
 
@@ -13,6 +14,29 @@ const mainLogger = getLogger();
 let pendingPtreKey = "";
 
 contentContextInit({
+  storage: {
+    /**
+     * Settings reset "API data (players, planets, PTRE galaxy)": removes every `chrome.storage.local`
+     * key of the current universe (`<U>`, `ogi-galaxy-<U>`, `<U>-*`) except `ogi-scanned-<U>` (own
+     * settings line), then flags the next API refresh of this tab to bypass the browser cache.
+     * The page reloads right after.
+     * @return {Promise<string[]>} removed keys
+     */
+    resetUniverseApi: async function () {
+      if (dataHelper?._galaxyFlushTimer) {
+        clearTimeout(dataHelper._galaxyFlushTimer);
+        dataHelper._galaxyFlushTimer = null;
+      }
+      const universeKey = new RegExp(`(^|-)${UNIVERSE}(-|$)`);
+      const keys = Object.keys(await chrome.storage.local.get(null)).filter(
+        (key) => universeKey.test(key) && key !== `ogi-scanned-${UNIVERSE}`
+      );
+      await chrome.storage.local.remove(keys);
+      sessionStorage.setItem(API_RELOAD_FLAG, "1");
+      storageLogger.log(`[${UNIVERSE}] storage reset, removed: ${keys.join(", ")}`);
+      return keys;
+    },
+  },
   galaxy: {
     ingestSystem: function (galaxy, system, positions, additionnal, ptreKey = null, serverTime = null) {
       return dataHelper.ingestGalaxySystem(galaxy, system, positions, additionnal, ptreKey, serverTime);
@@ -61,7 +85,10 @@ contentContextInit({
       if (universe === UNIVERSE) {
         return clearCurrentGalaxyStorage().then(() => true);
       }
-      return chrome.storage.local.remove(GALAXY_KEY_PREFIX + universe).then(() => true);
+      return chrome.storage.local.remove(GALAXY_KEY_PREFIX + universe).then(() => {
+        storageLogger.log(`[galaxyStoragePTRE] ${GALAXY_KEY_PREFIX + universe} deleted`);
+        return true;
+      });
     },
   },
   messages: {
@@ -123,7 +150,9 @@ function clearCurrentGalaxyStorage() {
     dataHelper.galaxyStorage = {};
     dataHelper.lastGalaxyUpdateTS = -1;
   }
-  return chrome.storage.local.remove(GALAXY_KEY_PREFIX + UNIVERSE);
+  return chrome.storage.local
+    .remove(GALAXY_KEY_PREFIX + UNIVERSE)
+    .then(() => storageLogger.log(`[galaxyStoragePTRE] ${GALAXY_KEY_PREFIX + UNIVERSE} deleted`));
 }
 
 function processData() {
@@ -142,6 +171,7 @@ function processData() {
         // The blob only holds the public API snapshot: when refreshPublicApiData() did not reload it
         // (throttled, already loading or failed), the stored copy is already up to date.
         if (universes[UNIVERSE].lastUpdate === previousUpdate) {
+          storageLogger.debug(`[${UNIVERSE}] not rewritten: public API data not reloaded`);
           return;
         }
         let tempSaveData = { ...universes[UNIVERSE] };
@@ -162,11 +192,24 @@ function processData() {
         delete tempSaveData._lastFlushError;
         delete tempSaveData._galaxySnapshot;
 
-        chrome.storage.local.set({ [UNIVERSE]: tempSaveData }, function (at) {});
+        const saved = universes[UNIVERSE];
+        chrome.storage.local.set({ [UNIVERSE]: tempSaveData }, function () {
+          if (chrome.runtime.lastError) {
+            storageLogger.error(`[${UNIVERSE}] not saved: ${chrome.runtime.lastError.message}`);
+            return;
+          }
+          const planets = Object.values(saved.players ?? {}).flatMap((player) => player.planets ?? []);
+          const universeTs = saved._galaxySnapshot?.timestamp;
+          storageLogger.log(
+            `[${UNIVERSE}] saved: ${Object.keys(saved.players ?? {}).length} players, ${planets.length} planets` +
+              ` (${planets.filter((planet) => planet.moon > 0).length} moons)` +
+              ` | universe.xml ${universeTs > 0 ? new Date(universeTs * 1000).toLocaleString() : "?"}`
+          );
+        });
       });
       dataHelper = universes[UNIVERSE];
     } catch (e) {
-      console.error(e);
+      storageLogger.error(`[${UNIVERSE}] processData failed`, e);
       universes = {};
     }
   });
@@ -217,9 +260,6 @@ window.addEventListener(
 document.addEventListener("ogi-clear", function (e) {
   dataHelper.clearData();
 });
-document.addEventListener("ogi-galaxy-clear", function (e) {
-  clearCurrentGalaxyStorage();
-});
 document.addEventListener("ogi-notification", function (e) {
   const msg = Object.assign({ iconUrl: "assets/images/logo128.png" }, e.detail);
   chrome.runtime.sendMessage({ type: "notification", universe: UNIVERSE, message: msg }, function (response) {});
@@ -239,10 +279,15 @@ export function main() {
           tempSaveData.lastPlayersUpdate = new Date(tempSaveData.lastPlayersUpdate);
           universes[UNIVERSE] = new DataHelper(UNIVERSE);
           dataHelper = Object.assign(universes[UNIVERSE], tempSaveData);
+          storageLogger.debug(
+            `[${UNIVERSE}] loaded (last public API update: ${dataHelper.lastUpdate.toLocaleString()})`
+          );
         } catch (e) {
-          console.error(e);
+          storageLogger.error(`[${UNIVERSE}] cannot be read, clearing ALL extension storage`, e);
           chrome.storage.local.clear();
         }
+      } else {
+        storageLogger.log(`[${UNIVERSE}] no stored public API data: first load`);
       }
       processData();
     });

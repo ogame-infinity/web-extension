@@ -1,6 +1,4 @@
-import { getLogger } from "../../util/logger.js";
-
-const logger = getLogger("storageCleanup");
+import { storageLogger as logger } from "./storage.logger.js";
 
 /** Extension-wide marker (shared by all universes): `{ lastRun: <ms> }`. */
 const CLEANUP_STATE_KEY = "ogi-storage-cleanup";
@@ -62,7 +60,10 @@ export async function purgeStaleUniverses(currentUniverse, now = Date.now()) {
     if (Number.isFinite(lastUpdate) && now - lastUpdate <= UNIVERSE_STALE_MS) continue;
     stale.push({ universe, lastUpdate: Number.isFinite(lastUpdate) ? new Date(lastUpdate).toISOString() : null });
   }
-  if (stale.length === 0) return [];
+  if (stale.length === 0) {
+    logger.debug("Daily storage cleanup: no universe to purge");
+    return [];
+  }
 
   const existing = new Set(keys);
   await storage.remove(stale.flatMap(({ universe }) => universeKeys(universe)).filter((k) => existing.has(k)));
