@@ -719,10 +719,10 @@ export function side(playerId) {
         ptreBtn = sideStalk.appendChild(
           createDOM("a", { class: "ogl-text-btn ogl-ptre-acti tooltip", title: "Display PTRE data" }, "PTRE")
         );
-        syncBtn = sideStalk.appendChild(
-          createDOM("a", { class: "ogl-text-btn material-icons tooltip", title: "Sync PTRE team positions" }, "sync")
-        );
       }
+      syncBtn = sideStalk.appendChild(
+        createDOM("a", { class: "ogl-text-btn material-icons tooltip", title: "Sync PTRE positions" }, "sync")
+      );
       removeBtn = sideStalk.appendChild(
         createDOM("button", {
           class: "icon icon_trash tooltip ogi-sideStalkRemoveDetail",
@@ -796,8 +796,9 @@ export function side(playerId) {
           }, 20);
         });
       }
-      // Positions seen by the PTRE team: automatic (delayed per player) when the player is shown,
-      // forced by the sync button. Re-render only when something new was added for this player.
+      // Recent positions from PTRE (playerData.xml + team events when a team key is set): automatic
+      // (delayed per player) when the player is shown, forced by the sync button. Re-render only
+      // when something new was added for this player.
       const refreshFromTeam = (force) =>
         fetchTeamPositions(p.id, force)
           .then((added) => {

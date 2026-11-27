@@ -111,7 +111,7 @@ export class DataHelper {
   }
 
   /**
-   * Add the positions of `playerId` seen by the PTRE team (api_galaxy_get_infos.php) to
+   * Add the recent positions of `playerId` returned by PTRE (api_galaxy_get_infos.php) to
    * `scannedPlanets`. Only adds information: a planet unknown to both the public API and the
    * local diffs, or a moon on a known planet that has none yet. A known moon is never replaced by
    * another moon id, and a local "gone" entry stays red: the next galaxy visit refreshes them anyway.

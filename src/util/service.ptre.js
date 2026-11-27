@@ -55,7 +55,8 @@ export function getPlayerInfos(country, universe, teamKey, cleanPlayerName, play
 }
 
 /**
- * Positions of a player seen by the PTRE team (galaxy changes newer than the public API snapshot).
+ * Recent positions of a player from PTRE: playerData.xml when newer than the public universe
+ * snapshot, plus the galaxy changes seen by the team when `teamKey` is set (may be empty).
  * Only positions currently owned by `playerId` are returned (no departures).
  * @return {Promise<PtreResponse & {galaxy_array: {player_id: number|string, coords: string, id: number|string, moon: {id: number|string}}[]}>}
  */

@@ -11,8 +11,10 @@ const universe = window.location.host.replace(/\D/g, "");
 const PLAYER_FETCH_DELAY_MS = 60 * 60 * 1000;
 
 /**
- * Ask PTRE for the positions of `playerId` seen by the team and add the new ones to the local
- * `scannedPlanets` (content script, see DataHelper.importPtrePositions()).
+ * Ask PTRE for the recent positions of `playerId` and add the new ones to the local
+ * `scannedPlanets` (content script, see DataHelper.importPtrePositions()). Works without PTRE
+ * team key: PTRE then only returns the planets of playerData.xml when newer than the universe
+ * snapshot. With a team key, the positions seen by the team are replayed on top.
  *
  * At most one request per player every PLAYER_FETCH_DELAY_MS unless `force`. The last request
  * time of each player is kept in `OGIData.ptreGalaxyFetch` (survives page loads) and expired
@@ -23,9 +25,9 @@ const PLAYER_FETCH_DELAY_MS = 60 * 60 * 1000;
  * @return {Promise<number>} number of positions added locally (0 when skipped or nothing new)
  */
 export async function fetchTeamPositions(playerId, force = false) {
-  const teamKey = OGIData.options.ptreTK;
+  const teamKey = OGIData.options.ptreTK || "";
   playerId = Number(playerId);
-  if (!teamKey || !(playerId > 0)) return 0;
+  if (!(playerId > 0)) return 0;
 
   const now = Date.now();
   const stored = OGIData.ptreGalaxyFetch;
