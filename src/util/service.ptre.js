@@ -55,6 +55,33 @@ export function getPlayerInfos(country, universe, teamKey, cleanPlayerName, play
 }
 
 /**
+ * Recent positions of a player from PTRE: playerData.xml when newer than the public universe
+ * snapshot, plus the galaxy changes seen by the team when `teamKey` is set (may be empty).
+ * Only positions currently owned by `playerId` are returned (no departures).
+ * @return {Promise<PtreResponse & {galaxy_array: {player_id: number|string, coords: string, id: number|string, moon: {id: number|string}}[]}>}
+ */
+export function getGalaxyInfos(country, universe, teamKey, playerId) {
+  const url = new URL(PTRE_URL.concat("api_galaxy_get_infos.php"));
+  _buildQueryString(url.searchParams, {
+    country: country,
+    univers: universe,
+    team_key: teamKey,
+    player_id: playerId,
+  });
+
+  return fetch(url, {
+    method: "GET",
+    signal: abortController.signal,
+    mode: "cors",
+  })
+    .then((response) => response.json())
+    .catch((reason) => {
+      logger.error(reason);
+      throw reason;
+    });
+}
+
+/**
  * @return {Promise<PtreResponse>}
  */
 export function updateGalaxy(country, universe, position) {

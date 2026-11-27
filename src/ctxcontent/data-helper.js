@@ -125,6 +125,39 @@ export class DataHelper {
     return possible;
   }
 
+  /**
+   * Add the recent positions of `playerId` returned by PTRE (api_galaxy_get_infos.php) to
+   * `scannedPlanets`. Only adds information: a planet unknown to both the public API and the
+   * local diffs, or a moon on a known planet that has none yet. A known moon is never replaced by
+   * another moon id, and a local "gone" entry stays red: the next galaxy visit refreshes them anyway.
+   * @param {number} playerId
+   * @param {{player_id: number|string, coords: string, moon?: {id: number|string}}[]} positions
+   * @return {number} number of entries added
+   */
+  importPtrePositions(playerId, positions) {
+    if (!this.scannedPlanets || !Array.isArray(positions)) return 0;
+    playerId = Number(playerId);
+    const apiPlanets = (this.players && this.players[playerId]?.planets) || [];
+    let added = 0;
+    for (const position of positions) {
+      const coords = position?.coords;
+      if (Number(position?.player_id) !== playerId || !/^\d+:\d+:\d+$/.test(coords || "")) continue;
+      const moonId = Number(position.moon?.id) > 0 ? Number(position.moon.id) : -1;
+      const local = this.scannedPlanets[playerId]?.[coords];
+      if (local === null) continue;
+      const apiPlanet = apiPlanets.find((p) => p.coords === coords);
+      const knownPlanet = local !== undefined || apiPlanet !== undefined;
+      // No moon: API 0, scannedPlanets false, PTRE -1.
+      const hasKnownMoon = local !== undefined ? local !== false : Number(apiPlanet?.moon) > 0;
+      if (knownPlanet && (moonId === -1 || hasKnownMoon)) continue;
+      if (!this.scannedPlanets[playerId]) this.scannedPlanets[playerId] = {};
+      this.scannedPlanets[playerId][coords] = moonId > 0 ? moonId : false;
+      added++;
+    }
+    if (added > 0) this.saveData();
+    return added;
+  }
+
   getPlayer(id) {
     if (isNaN(Number(id))) {
       id = this.names[id];

@@ -28,6 +28,9 @@ contentContextInit({
     setDebugLogs: function (enabled) {
       if (dataHelper) dataHelper._ptreDebugLogs = !!enabled;
     },
+    importTeamPositions: function (playerId, positions) {
+      return dataHelper ? dataHelper.importPtrePositions(playerId, positions) : 0;
+    },
     galaxyInfo: function () {
       if (!dataHelper || !dataHelper.galaxyStorage) {
         return Promise.resolve({ systemCount: 0, lastGalaxyUpdateTS: -1, storageBytes: 0 });

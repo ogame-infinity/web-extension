@@ -140,6 +140,15 @@ class OGIData {
 
     this.#save();
   }
+  /** Last PTRE team positions request per player id (ms), see util/ptre.teamPositions.js. */
+  get ptreGalaxyFetch() {
+    return this._json.ptreGalaxyFetch || {};
+  }
+  set ptreGalaxyFetch(ptreGalaxyFetch) {
+    this._json.ptreGalaxyFetch = ptreGalaxyFetch;
+
+    this.#save();
+  }
 
   get welcome() {
     return this._json.welcome;
